@@ -11,10 +11,98 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act001.Act001_Main"
-    tools:showIn="@layout/act001_main">
+    tools:showIn="@layout/act001_main"
+    android:background="@drawable/cubos"
+    android:gravity="center_vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:paddingRight="30dp"
+        android:paddingLeft="30dp"
+        android:paddingTop="50dp"
+        android:paddingBottom="50dp"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/namoa_logo"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/white"
+            android:padding="10dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E-mail / nickname"
+            android:textColor="@color/bootstrap_brand_secondary_text"
+            android:textSize="20sp"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_blue_light"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textColor="@color/bootstrap_brand_secondary_text"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint=""
+            android:backgroundTint="@android:color/holo_blue_light"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:bootstrapBrand="secondary"
+                app:roundedCorners="true"
+                app:bootstrapText="Cancel"
+                app:bootstrapSize="lg"
+                />
+            <View
+                android:layout_width="5dp"
+                android:layout_height="match_parent"/>
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:bootstrapBrand="primary"
+                app:roundedCorners="true"
+                app:bootstrapText="Login"
+                app:bootstrapSize="lg"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+
+
+
+
 </RelativeLayout>
