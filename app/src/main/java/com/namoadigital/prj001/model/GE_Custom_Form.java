@@ -1,0 +1,63 @@
+package com.namoadigital.prj001.model;
+
+/**
+ * Created by neomatrix on 7/22/16.
+ */
+
+public class GE_Custom_Form {
+
+    private long customer_code;
+    private int custom_form_type;
+    private int custom_form_code;
+    private int custom_form_version;
+    private String custom_form_status;
+    private int require_signature;
+
+    public long getCustomer_code() {
+        return customer_code;
+    }
+
+    public void setCustomer_code(long customer_code) {
+        this.customer_code = customer_code;
+    }
+
+    public int getCustom_form_type() {
+        return custom_form_type;
+    }
+
+    public void setCustom_form_type(int custom_form_type) {
+        this.custom_form_type = custom_form_type;
+    }
+
+    public int getCustom_form_code() {
+        return custom_form_code;
+    }
+
+    public void setCustom_form_code(int custom_form_code) {
+        this.custom_form_code = custom_form_code;
+    }
+
+    public int getCustom_form_version() {
+        return custom_form_version;
+    }
+
+    public void setCustom_form_version(int custom_form_version) {
+        this.custom_form_version = custom_form_version;
+    }
+
+    public String getCustom_form_status() {
+        return custom_form_status;
+    }
+
+    public void setCustom_form_status(String custom_form_status) {
+        this.custom_form_status = custom_form_status;
+    }
+
+    public int getRequire_signature() {
+        return require_signature;
+    }
+
+    public void setRequire_signature(int require_signature) {
+        this.require_signature = require_signature;
+    }
+}
