@@ -3,17 +3,13 @@ package com.namoadigital.prj001.ui.act001;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.ToolBox;
-import com.namoadigital.prj001.util.ToolBox_Con;
 
 public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
@@ -26,8 +22,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act001_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
         //
         initVars();
         initActions();
