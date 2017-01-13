@@ -85,7 +85,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     "",
                     "",
                     sMessage,
-                    1
+                    0
             );
         } else {
             enableProgressDialog(
