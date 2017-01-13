@@ -6,8 +6,9 @@ package com.namoadigital.prj001.ui.act001;
 
 public interface Act001_Main_Presenter {
 
-
     void executeLoginProcess(String email, String password, String nfc, int status);
+
+    void validateLogin(String login, String password, String nfc_code);
 
 
 }

@@ -1,19 +1,30 @@
 package com.namoadigital.prj001.ui.act001;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.ToolBox;
 
 public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
+    public static final int ET_LOGIN = 1;
+    public static final int ET_PASSWORD = 2;
+
     private Context context;
+
+    private MKEditTextNM mk_login;
+    private EditText et_password;
+    private BootstrapButton btn_login;
 
     private Act001_Main_Presenter mPresenter;
 
@@ -32,6 +43,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private void initVars() {
         context = getBaseContext();
         //
+        mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
+        et_password = (EditText) findViewById(R.id.act001_et_password);
+        btn_login = (BootstrapButton) findViewById(R.id.act001_btn_login);
+        //
         mPresenter = new Act001_Main_Presenter_Impl(
                 context,
                 this
@@ -41,7 +56,19 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void initActions() {
+        mk_login.setmBARCODE(true);
+        mk_login.setmOCR(false);
+        mk_login.setmNFC(false);
 
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.validateLogin(mk_login.getText().toString().trim(),
+                                         et_password.getText().toString().trim(),
+                                         ""
+                                        );
+            }
+        });
     }
 
     @Override
@@ -75,6 +102,33 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     public void updatePD(int type, String sMessage) {
         updateProgressDialog(type, sMessage);
+    }
+
+    @Override
+    public void showAlertMsg(String title, String message) {
+        AlertDialog.Builder alertD =  new AlertDialog.Builder(this);
+        alertD
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Ok",null);
+
+        alertD.show();
+    }
+
+    @Override
+    public void fieldFocus(int index) {
+        switch (index) {
+            case ET_LOGIN:
+                //ToolBox.showSoftKeyboard(mk_login, context);
+                mk_login.requestFocus();
+                break;
+            case ET_PASSWORD:
+                //ToolBox.showSoftKeyboard(et_password, context);
+                et_password.requestFocus();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

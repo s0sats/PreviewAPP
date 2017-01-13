@@ -9,11 +9,8 @@ public class Constant {
     /**
      * PROJECT ID - PRJ001 - SMS
      */
-//    public static final String PRJ001_CODE = "PRJ001";
-//    public static final String PRJ001_VERSION = "0.1";
-    public static final String PRJ001_CODE = "SMS001";
-    public static final String PRJ001_VERSION = "1.5";
-
+    public static final String PRJ001_CODE = "PRJ001";
+    public static final String PRJ001_VERSION = "0.1";
 
     /**
      * UI Module
@@ -46,6 +43,7 @@ public class Constant {
     public static final String USER_PWD = "userpwd";
     public static final String USER_NFC = "usernfc";
     public static final String USER_STATUS = "userstatus";
+    public static final String USER_CUSTOMER_CODE = "usercustomercode";
     public static final String USER_TYPE = "usertype";
 
     public static final String LOGIN_TYPE = "login_type";
@@ -61,10 +59,10 @@ public class Constant {
     /**
      * WebService
      */
-    public static final String WS_SYNC = "https://dev.namoadigital.com/ws/sms001/server_sync.ws";
-    public static final String WS_LICENSE = "https://dev.namoadigital.com/ws/sms001/server_license.ws";
-    public static final String WS_SAVE = "https://dev.namoadigital.com/ws/sms001/server_save.ws";
-    public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/sms001/server_serial.ws";
+    public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
+    public static final String WS_LICENSE = "https://dev.namoadigital.com/ws/prj001/server_license.ws";
+    public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";
+    public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
 
 
 

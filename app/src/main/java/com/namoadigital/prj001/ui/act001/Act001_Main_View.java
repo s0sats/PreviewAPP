@@ -8,6 +8,10 @@ public interface Act001_Main_View {
 
     void updatePD(int type, String sMessage);
 
-
+    void showAlertMsg(String title, String message);
+    //
+    // VERIFICAR NECESSIDADE DA INCLUSÃO DO METODO
+    //showSoftKeyboard NA TOOLBOX DA LIBRARY OU DO PROJETO.
+    void fieldFocus(int index);
 
 }

@@ -25,7 +25,8 @@
         android:paddingLeft="20dp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        >
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,8 +43,8 @@
             android:textSize="20sp"
             />
 
-        <EditText
-            android:id="@+id/act001_et_login"
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act001_mk_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_light"
@@ -66,6 +67,7 @@
             android:layout_height="wrap_content"
             android:hint=""
             android:backgroundTint="@android:color/holo_blue_light"
+            android:inputType="textPassword"
             />
         <View
             android:layout_width="match_parent"

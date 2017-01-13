@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -72,6 +73,8 @@ public class WS_Access extends IntentService {
     private MD_ProductDao productDao;
     private MD_Product_CategoryDao product_categoryDao;
 
+    private StringBuilder sResult;
+
     public WS_Access() {
         super("WS_Access");
     }
@@ -90,17 +93,24 @@ public class WS_Access extends IntentService {
             int status = bundle.getInt(Constant.USER_STATUS);
             int type = bundle.getInt(Constant.USER_TYPE);
 
+            sResult = new StringBuilder();
+
+
             processWSSync(user, password, nfc, status, type);
 
         } catch (Exception e) {
             String results = "ERROR: ";
 
             if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - ";
+                results += "JsonParse - " + sResult.toString();
+                sb.append(results);
+
+            } else {
+                sb.append(results)
+                        .append(e.toString());
             }
 
-            sb.append(results)
-                    .append(sb.toString());
+            Log.d("HH", sb.toString());
 
             sendBCStatus(0, sb.toString(), "", "1");
 
@@ -250,6 +260,8 @@ public class WS_Access extends IntentService {
                 Constant.WS_SYNC,
                 gson.toJson(env)
         );
+
+        sResult.append(resultado);
 
         TSync_Cus_Rec rec = gson.fromJson(
                 resultado,

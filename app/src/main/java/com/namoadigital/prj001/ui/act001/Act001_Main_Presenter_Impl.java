@@ -30,10 +30,35 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         bundle.putString(Constant.USER_PWD, password);
         bundle.putString(Constant.USER_NFC, nfc);
         bundle.putInt(Constant.USER_STATUS, status);
+        bundle.putInt(Constant.USER_CUSTOMER_CODE, 0);
         bundle.putInt(Constant.USER_TYPE, 1);
         //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void validateLogin(String login, String password, String nfc_code) {
+
+        if (nfc_code.trim().length() == 0) {
+
+            if (login.trim().length() == 0) {
+                mView.showAlertMsg("Form", "Error: Email is Required!!!");
+                mView.fieldFocus(Act001_Main.ET_LOGIN);
+                return;
+            }
+            //
+            if (password.trim().length() == 0) {
+                mView.showAlertMsg("Form", "Error: PassWord is Required!!!");
+                mView.fieldFocus(Act001_Main.ET_PASSWORD);
+                return;
+            }
+        }
+        //Verifica se exite conexao antes de chamar WS
+        //if(ToolBox.isOnline){
+            executeLoginProcess(login,password,nfc_code,0);
+        //}
+
     }
 }
