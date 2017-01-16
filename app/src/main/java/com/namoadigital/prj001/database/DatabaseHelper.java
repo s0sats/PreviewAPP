@@ -63,6 +63,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             script.append(" create table if not exists [ge_custom_form_products] ([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [product_code] int not null, [active] int not null, constraint pk_ge_custom_form_products primary key(customer_code, custom_form_type, custom_form_code, custom_form_version, product_code));");
             script.append(" create table if not exists [md_products] ([customer_code] int not null, [product_code] int not null, [product_id] text not null COLLATE NOCASE, [product_desc] text not null COLLATE NOCASE, [active] int not null, [require_serial] int not null, [allow_new_serial_cl] int not null, constraint pk_md_products primary key(customer_code, product_code));");
             script.append(" create table if not exists [md_product_categorys] ([customer_code] int not null, [category_code] int not null, [category_code_father] int not null, [struc_type] text not null COLLATE NOCASE, [product_code] int not null, [category_desc] text not null COLLATE NOCASE, [active] int not null, constraint pk_md_product_categorys primary key(customer_code, category_code));");
+            script.append(" create table if not exists [md_operations] ([customer_code] int not null, [operation_code] int not null, [operation_desc] text not null COLLATE NOCASE, [active] int not null, [alias_service_oper] int not null, [alias_service_com] int not null, constraint pk_md_operations primary key(customer_code, operation_code));");
+            script.append(" create table if not exists [md_sites] ([customer_code] int not null, [site_code] int not null, [site_id] text not null COLLATE NOCASE,  [site_desc] text not null COLLATE NOCASE, [active] int not null, constraint pk_md_sites primary key(customer_code, site_code));");
             //
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_SMS001', 'APP SMS 01');");
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
@@ -91,16 +93,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //
         script.append(" drop table if exists parametros;");
         script.append(" drop table if exists users;");
-        script.append(" drop table if exists list_users;");
-        script.append(" drop table if exists list_customers;");
-        script.append(" drop table if exists modules;");
-        script.append(" drop table if exists module_ress;");
-        script.append(" drop table if exists module_res_txts;");
-        script.append(" drop table if exists module_res_txt_transs;");
-        script.append(" drop table if exists txt_trans_dts;");
-        script.append(" drop table if exists formf_types;");
-        script.append(" drop table if exists formfs;");
-        script.append(" drop table if exists formf_fields;");
+        script.append(" drop table if exists ev_user_customers;");
+        script.append(" drop table if exists ev_customers;");
+        script.append(" drop table if exists ev_customer_translates;");
+
+        script.append(" drop table if exists ev_modules;");
+        script.append(" drop table if exists ev_module_ress;");
+        script.append(" drop table if exists ev_module_res_txts;");
+        script.append(" drop table if exists ev_module_res_txt_transs;");
+        script.append(" drop table if exists ev_translates;");
+
+        script.append(" drop table if exists ge_custom_form_types;");
+        script.append(" drop table if exists ge_custom_forms;");
+        script.append(" drop table if exists ge_custom_form_fields;");
+
+        script.append(" drop table if exists ge_custom_form_datas;");
+        script.append(" drop table if exists ge_custom_form_data_fields;");
+        script.append(" drop table if exists ge_custom_form_products;");
+
+        script.append(" drop table if exists md_products;");
+        script.append(" drop table if exists md_product_categorys;");
+        script.append(" drop table if exists md_operations;");
+        script.append(" drop table if exists md_sites;");
         //
         String[] scripts = script.toString().split(";");
         //
