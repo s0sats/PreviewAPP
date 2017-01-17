@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.receiver.WBR_Access;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by neomatrix on 13/01/17.
@@ -32,14 +33,10 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mView.loadCustomers(
                 ev_customerDao.query_HM(
                             new EV_User_Customer_Sql_001(
-                                    //ToolBox_Con.getPreference_User_Code(context)
-                                    "6"
+                                    ToolBox_Con.getPreference_User_Code(context)
                             ).toSqlQuery()
                 )
         );
-
-
-
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act001;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +12,6 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 
@@ -82,14 +80,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*mPresenter.validateLogin(mk_login.getText().toString().trim(),
+                mPresenter.validateLogin(mk_login.getText().toString().trim(),
                         et_password.getText().toString().trim(),
                         ""
-                );*/
-
-                Intent intent = new Intent(context, Act002_Main.class);
-                startActivity(intent);
-                finish();
+                );
 
             }
         });
