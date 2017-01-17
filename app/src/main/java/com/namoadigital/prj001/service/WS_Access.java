@@ -21,7 +21,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_CategoryDao;
-import com.namoadigital.prj001.dao.UserDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.model.EV_Customer;
 import com.namoadigital.prj001.model.EV_Customer_Translate;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -37,12 +37,12 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Category;
 import com.namoadigital.prj001.model.TSync_Cus_Env;
 import com.namoadigital.prj001.model.TSync_Cus_Rec;
-import com.namoadigital.prj001.model.User;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.receiver.WBR_Access;
 import com.namoadigital.prj001.sql.EV_Customer_Id_SqlSpecification;
 import com.namoadigital.prj001.sql.EV_Customer_Translate_SqlSpecification_001;
 import com.namoadigital.prj001.sql.EV_Translate_Id_SqlSpecification;
-import com.namoadigital.prj001.sql.EV_User_Customer_SqlSpecification_001;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.User_EMail_PSql_Specification;
 import com.namoadigital.prj001.sql.User_Nfc_Code_SqlSpecification;
 import com.namoadigital.prj001.util.Constant;
@@ -58,7 +58,7 @@ import java.util.ArrayList;
 
 public class WS_Access extends IntentService {
 
-    private UserDao userDao;
+    private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
     private EV_CustomerDao ev_customerDao;
     private EV_Customer_TranslateDao customer_translateDao;
@@ -130,7 +130,7 @@ public class WS_Access extends IntentService {
 
     private void processWSSync(String sUser, String sPassword, String sNfc, int iStatus, int iType) throws Exception {
 
-        userDao = new UserDao(getApplicationContext());
+        userDao = new EV_UserDao(getApplicationContext());
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
         ev_customerDao = new EV_CustomerDao(getApplicationContext());
         customer_translateDao = new EV_Customer_TranslateDao(getApplicationContext());
@@ -150,7 +150,7 @@ public class WS_Access extends IntentService {
 
         Gson gson = new Gson();
 
-        User user = null;
+        EV_User user = null;
         EV_Customer customer = null;
         EV_Translate translate = null;
         EV_Customer_Translate customer_translate = null;
@@ -189,9 +189,9 @@ public class WS_Access extends IntentService {
                 }
 
                 if (user != null) {
-                    env.setDate_db(user.getDtsync());
+                    //env.setDate_db(user.getDtsync());
                 } else {
-                    env.setDate_db("1900-01-01 00:00:00 +00:00");
+                    //env.setDate_db("1900-01-01 00:00:00 +00:00");
                 }
 
                 env.setUser_code(0);
@@ -210,7 +210,7 @@ public class WS_Access extends IntentService {
                 user = userDao.getByString(ToolBox_Con.getPreference_User_Code(getApplicationContext()));
 
                 EV_User_Customer user_customer = ev_user_customerDao.getByString(
-                        new EV_User_Customer_SqlSpecification_001(
+                        new EV_User_Customer_Sql_002(
                                 String.valueOf(user.getUser_code()),
                                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
                         ).toSqlQuery()
@@ -229,7 +229,7 @@ public class WS_Access extends IntentService {
                         ).toSqlQuery()
                 );
 
-                env.setDate_db(user.getDtsync());
+                //env.setDate_db(user.getDtsync());
                 env.setUser_code(user.getUser_code());
                 env.setCustomer_code(user_customer.getCustomer_code());
                 env.setTranslate_code(user_customer.getTranslate_code());
@@ -247,8 +247,8 @@ public class WS_Access extends IntentService {
                 }
 
                 env.setEmail_p(user.getEmail_p());
-                env.setPassword(ToolBox_Inf.md5(user.getPassword()).toUpperCase());
-                env.setNfc_code(user.getNfc_code());
+                env.setPassword(ToolBox_Inf.md5(""));
+                env.setNfc_code("");
 
                 if (translate != null) {
                     env.setDate_db_translate(translate.getDate_db_translate());
@@ -283,6 +283,7 @@ public class WS_Access extends IntentService {
                 rec.getLogin(),
                 rec.getLicense(),
                 rec.getLink_url(),
+                0,
                 0
         )) {
             return;
@@ -573,7 +574,7 @@ public class WS_Access extends IntentService {
             product_categoryDao.addUpdate(products, false);
         }
 
-        user.setDtsync(rec.getDate_db());
+        //user.setDtsync(rec.getDate_db());
         userDao.addUpdate(user);
         //
         if (iType == 2) {

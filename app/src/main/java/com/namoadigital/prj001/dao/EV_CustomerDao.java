@@ -129,7 +129,7 @@ public class EV_CustomerDao implements Dao<EV_Customer> {
     }
 
 //    /**
-//     * Not Applicable. User String Query
+//     * Not Applicable. EV_User String Query
 //     *
 //     * @param id
 //     */

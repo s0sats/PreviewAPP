@@ -42,8 +42,8 @@
         <receiver android:name=".receiver.WBR_GetCustomer" />
         <service android:name=".service.WS_GetCustomer" />
 
-        <receiver android:name=".receiver.WBR_Login" />
-        <service android:name=".service.WS_Login" />
+        <receiver android:name=".receiver.WBR_Session" />
+        <service android:name=".service.WS_Session" />
 
         <receiver android:name=".receiver.WBR_Sync" />
         <service android:name=".service.WS_Sync" />

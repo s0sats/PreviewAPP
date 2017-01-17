@@ -10,7 +10,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.database.Mapper;
-import com.namoadigital.prj001.model.User;
+import com.namoadigital.prj001.model.EV_User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,23 +19,22 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class UserDao implements Dao<User> {
+public class EV_UserDao implements Dao<EV_User> {
     private final SQLiteOpenHelper openHelper;
-    private final Mapper<User, ContentValues> toContentValuesMapper;
-    private final Mapper<Cursor, User> toUserMapper;
+    private final Mapper<EV_User, ContentValues> toContentValuesMapper;
+    private final Mapper<Cursor, EV_User> toUserMapper;
 
-    public static final String TABLE = "users";
+    public static final String TABLE = "ev_users";
     public static final String USER_CODE = "user_code";
     public static final String USER_NICK = "user_nick";
     public static final String EMAIL_P = "email_p";
     public static final String PASSWORD = "password";
     public static final String NFC_CODE = "nfc_code";
-    public static final String DTSYNC = "dtsync";
 
-    private String[] columns = {USER_CODE, USER_NICK, EMAIL_P, PASSWORD, NFC_CODE, DTSYNC};
+    private String[] columns = {USER_CODE, USER_NICK, EMAIL_P, PASSWORD, NFC_CODE};
 
 
-    public UserDao(Context context) {
+    public EV_UserDao(Context context) {
         this.openHelper = DatabaseHelper.getInstance(context);
         //
         this.toContentValuesMapper = new UserToContentValuesMapper();
@@ -43,7 +42,7 @@ public class UserDao implements Dao<User> {
     }
 
     @Override
-    public void addUpdate(User user) {
+    public void addUpdate(EV_User user) {
         SQLiteDatabase db = null;
 
         try {
@@ -67,7 +66,7 @@ public class UserDao implements Dao<User> {
     }
 
     @Override
-    public void addUpdate(Iterable<User> users, boolean status) {
+    public void addUpdate(Iterable<EV_User> users, boolean status) {
         SQLiteDatabase db = null;
 
         try {
@@ -79,7 +78,7 @@ public class UserDao implements Dao<User> {
                 db.delete(TABLE, null, null);
             }
 
-            for (User user : users) {
+            for (EV_User user : users) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(user)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
                     sbWhere.append(USER_CODE).append(" = ").append(String.valueOf(user.getUser_code()));
@@ -159,8 +158,8 @@ public class UserDao implements Dao<User> {
     }
 
 //    @Override
-//    public User getById(long id) {
-//        User user = null;
+//    public EV_User getById(long id) {
+//        EV_User user = null;
 //        SQLiteDatabase db = null;
 //
 //        try {
@@ -189,8 +188,8 @@ public class UserDao implements Dao<User> {
 //    }
 
     @Override
-    public User getByString(String s_query) {
-        User user = null;
+    public EV_User getByString(String s_query) {
+        EV_User user = null;
         SQLiteDatabase db = null;
 
         try {
@@ -216,8 +215,8 @@ public class UserDao implements Dao<User> {
     }
 
     @Override
-    public List<User> query(String s_query) {
-        List<User> users = new ArrayList<>();
+    public List<EV_User> query(String s_query) {
+        List<EV_User> users = new ArrayList<>();
         SQLiteDatabase db = null;
 
         try {
@@ -227,7 +226,7 @@ public class UserDao implements Dao<User> {
             Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
-                User uAux = toUserMapper.map(cursor);
+                EV_User uAux = toUserMapper.map(cursor);
                 users.add(uAux);
             }
 
@@ -275,9 +274,9 @@ public class UserDao implements Dao<User> {
         return users;
     }
 
-    private class UserToContentValuesMapper implements Mapper<User, ContentValues> {
+    private class UserToContentValuesMapper implements Mapper<EV_User, ContentValues> {
         @Override
-        public ContentValues map(User user) {
+        public ContentValues map(EV_User user) {
             ContentValues contentValues = new ContentValues();
 
             if (user.getUser_code() > -1) {
@@ -289,31 +288,19 @@ public class UserDao implements Dao<User> {
             if (user.getEmail_p() != null) {
                 contentValues.put(EMAIL_P, user.getEmail_p());
             }
-            if (user.getPassword() != null) {
-                contentValues.put(PASSWORD, user.getPassword());
-            }
-            if (user.getNfc_code() != null) {
-                contentValues.put(NFC_CODE, user.getNfc_code());
-            }
-            if (user.getDtsync() != null) {
-                contentValues.put(DTSYNC, user.getDtsync());
-            }
 
             return contentValues;
         }
     }
 
-    private class CursorToUserMapper implements Mapper<Cursor, User> {
+    private class CursorToUserMapper implements Mapper<Cursor, EV_User> {
         @Override
-        public User map(android.database.Cursor cursor) {
-            User user = new User();
+        public EV_User map(android.database.Cursor cursor) {
+            EV_User user = new EV_User();
 
             user.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
             user.setUser_nick(cursor.getString(cursor.getColumnIndex(USER_NICK)));
             user.setEmail_p(cursor.getString(cursor.getColumnIndex(EMAIL_P)));
-            user.setPassword(cursor.getString(cursor.getColumnIndex(PASSWORD)));
-            user.setNfc_code(cursor.getString(cursor.getColumnIndex(NFC_CODE)));
-            user.setDtsync(cursor.getString(cursor.getColumnIndex(DTSYNC)));
 
             return user;
         }

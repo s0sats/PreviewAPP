@@ -23,6 +23,7 @@ public class Constant {
     public static int DB_VERSION;
     public static String DB_PATH;
     public static String DB_PATH_ZIP;
+    public static String DB_ZIP_NAME;
     public static String DB_NAME;
     public static String DB_ZIP;
 
@@ -62,6 +63,7 @@ public class Constant {
     /**
      * WebService
      */
+    public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
     public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
     public static final String WS_LICENSE = "https://dev.namoadigital.com/ws/prj001/server_license.ws";
     public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";

@@ -13,8 +13,6 @@ public class EV_User_Customer {
     private String translate_desc;
     private String nls_date_format;
     private int keyuser;
-    private int blocked;
-    private int active;
 
     public long getUser_code() {
         return user_code;
@@ -80,19 +78,4 @@ public class EV_User_Customer {
         this.keyuser = keyuser;
     }
 
-    public int getBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(int blocked) {
-        this.blocked = blocked;
-    }
-
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
-    }
 }

@@ -1,9 +1,7 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.EV_TranslateDao;
-import com.namoadigital.prj001.dao.UserDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.model.EV_Translate;
 
 /**
  * Created by neomatrix on 7/13/16.

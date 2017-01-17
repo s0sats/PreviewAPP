@@ -33,9 +33,7 @@ public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
     public static final String TRANSLATE_DESC = "translate_desc";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
     public static final String KEYUSER = "keyuser";
-    public static final String BLOCKED = "blocked";
-    public static final String ACTIVE = "active";
-    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT,KEYUSER, BLOCKED, ACTIVE};
+    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER};
 
     public EV_User_CustomerDao(Context context) {
         this.openHelper = DatabaseHelper.getInstance(context);
@@ -240,8 +238,6 @@ public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
             ev_user_customer.setLanguage_code(cursor.getString(cursor.getColumnIndex(LANGUAGE_CODE)));
             ev_user_customer.setNls_date_format(cursor.getString(cursor.getColumnIndex(NLS_DATE_FORMAT)));
             ev_user_customer.setKeyuser(cursor.getInt(cursor.getColumnIndex(KEYUSER)));
-            ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
-            ev_user_customer.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)));
 
             return ev_user_customer;
         }
@@ -275,12 +271,6 @@ public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
             }
             if (ev_user_customer.getKeyuser() > -1) {
                 contentValues.put(KEYUSER, ev_user_customer.getKeyuser());
-            }
-            if (ev_user_customer.getBlocked() > -1) {
-                contentValues.put(BLOCKED, ev_user_customer.getBlocked());
-            }
-            if (ev_user_customer.getActive() > -1) {
-                contentValues.put(ACTIVE, ev_user_customer.getActive());
             }
 
             return contentValues;

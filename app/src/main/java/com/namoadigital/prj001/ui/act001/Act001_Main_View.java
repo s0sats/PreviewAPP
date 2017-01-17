@@ -14,4 +14,6 @@ public interface Act001_Main_View {
     //showSoftKeyboard NA TOOLBOX DA LIBRARY OU DO PROJETO.
     void fieldFocus(int index);
 
+    void showPD();
+
 }

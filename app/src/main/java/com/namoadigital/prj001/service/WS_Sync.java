@@ -6,8 +6,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.UserDao;
-import com.namoadigital.prj001.receiver.WBR_Login;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -17,7 +16,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class WS_Sync extends IntentService {
 
-    private UserDao userDao;
+    private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
 
     private StringBuilder sResult;
@@ -70,7 +69,7 @@ public class WS_Sync extends IntentService {
 
     private void processWSLO(String user, String password, String nfc, String status, String statusjump) {
 
-        userDao = new UserDao(getApplicationContext());
+        userDao = new EV_UserDao(getApplicationContext());
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
 
         Gson gson = new Gson();

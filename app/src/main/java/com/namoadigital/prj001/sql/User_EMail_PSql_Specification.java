@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.UserDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -21,9 +21,9 @@ public class User_EMail_PSql_Specification implements Specification {
 
         return sb
                 .append(" select * from ")
-                .append(UserDao.TABLE)
+                .append(EV_UserDao.TABLE)
                 .append(" where ")
-                .append(UserDao.EMAIL_P)
+                .append(EV_UserDao.EMAIL_P)
                 .append(" ='")
                 .append(s_EMail_P)
                 .append("'")

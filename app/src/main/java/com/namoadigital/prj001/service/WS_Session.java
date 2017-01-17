@@ -6,26 +6,24 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.UserDao;
-import com.namoadigital.prj001.receiver.WBR_GetCustomer;
-import com.namoadigital.prj001.receiver.WBR_Login;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.dao.EV_UserDao;
+import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 16/01/17.
  */
 
-public class WS_Login extends IntentService {
+public class WS_Session extends IntentService {
 
-    private UserDao userDao;
+    private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
 
     private StringBuilder sResult;
 
 
-    public WS_Login() {
-        super("WS_Login");
+    public WS_Session() {
+        super("WS_Session");
     }
 
     @Override
@@ -63,7 +61,7 @@ public class WS_Login extends IntentService {
 
         } finally {
 
-            WBR_Login.completeWakefulIntent(intent);
+            WBR_Session.completeWakefulIntent(intent);
 
         }
 
@@ -71,7 +69,7 @@ public class WS_Login extends IntentService {
 
     private void processWSLO(String user, String password, String nfc, String status, String statusjump) {
 
-        userDao = new UserDao(getApplicationContext());
+        userDao = new EV_UserDao(getApplicationContext());
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
 
         Gson gson = new Gson();

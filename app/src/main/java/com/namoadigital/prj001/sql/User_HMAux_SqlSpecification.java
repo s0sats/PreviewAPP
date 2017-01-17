@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.UserDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -18,7 +18,7 @@ public class User_HMAux_SqlSpecification implements Specification {
 
         return sb
                 .append(" select user_code, user_nick, email_p from ")
-                .append(UserDao.TABLE)
+                .append(EV_UserDao.TABLE)
                 .append(";")
                 .append("user_code#user_nick#email_p")
                 .toString();

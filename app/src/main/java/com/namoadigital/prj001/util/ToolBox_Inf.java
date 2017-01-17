@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.WSValidationResult;
+import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
 import java.io.BufferedInputStream;
@@ -323,10 +326,20 @@ public class ToolBox_Inf {
         context.sendBroadcast(mIntent);
     }
 
-    public static boolean processWSCheck(Context context, String sVersion, String sLogin, String sLicence, String s_Link, int iStatus) {
+    public static void executeUpdSW(Context context, String link, String required) {
+        Intent mIntent = new Intent(context, WBR_UpdateSoftware.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.SW_LINK, link);
+        bundle.putString(Constant.SW_REQUIRED, required);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    public static boolean processWSCheck(Context context, String sVersion, String sLogin, String sLicence, String s_Link, int iStatus, int iStatus_OD) {
         switch (sVersion) {
             case "STABLE":
-
                 break;
 
             case "UPDATE_REQUIRED":
@@ -382,9 +395,13 @@ public class ToolBox_Inf {
                 return false;
 
             case "USER_OTHER_DEVICE":
-                sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+                if (iStatus_OD == 0) {
+                    sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
 
-                return false;
+                    return false;
+                } else {
+                    return true;
+                }
 
             case "SESSION_NOT_FOUND":
                 sendBCStatus(context, "SESSION_NOT_FOUND", "SESSION_NOT_FOUND", s_Link, "0");

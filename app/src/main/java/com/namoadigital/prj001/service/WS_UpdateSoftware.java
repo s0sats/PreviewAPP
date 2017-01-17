@@ -4,15 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 
-import com.google.gson.Gson;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.UserDao;
-import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -54,15 +48,14 @@ public class WS_UpdateSoftware extends IntentService {
 
                 processUpdate();
 
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Ending Update Process...", "", "0");
-
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Update Process...", "", "0");
 
             } else {
 
                 if (l_version_required.equals("0")) {
-                    //sendBroadCastStatus(Constantes.SWAKESERVICEVERSIONUPDATE_STATUS_ERROR_GO, "Process End " + " - " + SystemClock.elapsedRealtime() + "\n");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "ERROR: On Update. Empty Link...", "", "0");
                 } else {
-                    //sendBroadCastStatus(Constantes.SWAKESERVICEVERSIONUPDATE_STATUS_ERROR_END, "Process End " + " - " + SystemClock.elapsedRealtime() + "\n");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_2", "ERROR: On Update. Empty Link...", "", "0");
                 }
             }
 
@@ -103,7 +96,7 @@ public class WS_UpdateSoftware extends IntentService {
                 local_link
         );
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE", "Close App for Update Process...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_APP", "Close App for Update Process...", "", "0");
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(

@@ -10,6 +10,7 @@ import static com.namoadigital.prj001.util.Constant.DB_PATH;
 import static com.namoadigital.prj001.util.Constant.DB_PATH_ZIP;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION;
 import static com.namoadigital.prj001.util.Constant.DB_ZIP;
+import static com.namoadigital.prj001.util.Constant.DB_ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.IMG_PATH;
 import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
@@ -43,6 +44,7 @@ public class AppBase extends Application {
         DB_VERSION = 1;
 
         DB_ZIP = DB_PATH_ZIP + "/namoa_sms.zip";
+        DB_ZIP_NAME = "namoa_sms.zip";
         //
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         //CACHE_PATH = DB_PATH + "/CC_CACHE";

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.receiver.WBR_Access;
+import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
 
 /**
@@ -23,16 +24,13 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
     }
 
     @Override
-    public void executeLoginProcess(String user, String password, String nfc, int status, int status_jump) {
-        Intent mIntent = new Intent(context, WBR_Access.class);
+    public void executeLoginProcess(String user, String password, String nfc, int status_jump) {
+        Intent mIntent = new Intent(context, WBR_GetCustomer.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GC_USER_CODE, user);
         bundle.putString(Constant.GC_PWD, password);
         bundle.putString(Constant.GC_NFC, nfc);
-        bundle.putInt(Constant.GC_STATUS, status);
         bundle.putInt(Constant.GC_STATUS_JUMP, status_jump);
-        bundle.putInt(Constant.USER_CUSTOMER_CODE, 0);
-        bundle.putInt(Constant.USER_TYPE, 1);
         //
         mIntent.putExtras(bundle);
         //
@@ -58,7 +56,9 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         }
         //Verifica se exite conexao antes de chamar WS
         //if(ToolBox_Inf.isOnline){
-        executeLoginProcess(login, password, nfc_code, 0, 0);
+        mView.showPD();
+        //
+        executeLoginProcess(login, password, nfc_code, 0);
         //}
 
     }
