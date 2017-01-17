@@ -17,6 +17,7 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -191,6 +192,15 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         ToolBox_Inf.call_Act001_Main(context);
     }
 
+    @Override
+    public void showPD() {
+        enableProgressDialog(
+                "Get Cusmoters",
+                "Start Processing...",
+                "Cancel",
+                "Ok"
+        );
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
