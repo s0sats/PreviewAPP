@@ -20,8 +20,8 @@
         <activity
             android:name=".ui.act001.Act001_Main"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,9 +35,20 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-
         <receiver android:name=".receiver.WBR_Access" />
         <service android:name=".service.WS_Access" />
+
+        <receiver android:name=".receiver.WBR_GetCustomer" />
+        <service android:name=".service.WS_GetCustomer" />
+
+        <receiver android:name=".receiver.WBR_Login" />
+        <service android:name=".service.WS_Login" />
+
+        <receiver android:name=".receiver.WBR_Sync" />
+        <service android:name=".service.WS_Sync" />
+
+        <receiver android:name=".receiver.WBR_UpdateSoftware" />
+        <service android:name=".service.WS_UpdateSoftware" />
 
     </application>
 

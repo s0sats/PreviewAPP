@@ -6,7 +6,7 @@ package com.namoadigital.prj001.ui.act001;
 
 public interface Act001_Main_View {
 
-    void updatePD(int type, String sMessage);
+    void updatePD(String type, String sMessage);
 
     void showAlertMsg(String title, String message);
     //

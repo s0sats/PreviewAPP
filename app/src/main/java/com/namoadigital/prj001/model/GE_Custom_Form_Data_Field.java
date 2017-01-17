@@ -4,8 +4,7 @@ import android.graphics.BitmapFactory;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.journeyapps.barcodescanner.Util;
-import com.namoadigital.prj001.util.ToolBox;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,7 +126,7 @@ public class GE_Custom_Form_Data_Field {
                     JSONObject jsonObjectAux = new JSONObject();
                     //
                     if (this.value.startsWith("/sdcard/")){
-                        jsonObjectAux.put("VALUE", ToolBox.BitMapToBase64(BitmapFactory.decodeFile(value)));
+                        jsonObjectAux.put("VALUE", ToolBox_Inf.BitMapToBase64(BitmapFactory.decodeFile(value)));
                     } else {
                         jsonObjectAux.put("VALUE", value);
                     }

@@ -2,7 +2,11 @@ package com.namoadigital.prj001.ui.act001;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +17,9 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.util.ToolBox;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
 
 public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
@@ -28,16 +34,33 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     private Act001_Main_Presenter mPresenter;
 
+    //private SWReceiver_Dialog swReceiver_dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act001_main);
+
+        SERVICE_TYPE = "LOGIN";
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         //
         initVars();
         initActions();
+        //
+        //swReceiver_dialog = new SWReceiver_Dialog();
+        //IntentFilter filter = new IntentFilter(Constant.SW_TYPE_BR);
+        //filter.addCategory(Intent.CATEGORY_DEFAULT);
+        //
+        //registerReceiver(swReceiver_dialog, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        //unregisterReceiver(swReceiver_dialog);
+
+        super.onDestroy();
     }
 
     private void initVars() {
@@ -52,7 +75,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 this
         );
         //
-        ToolBox.mkDirectory();
+        ToolBox_Inf.mkDirectory();
     }
 
     private void initActions() {
@@ -64,9 +87,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             @Override
             public void onClick(View view) {
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
-                                         et_password.getText().toString().trim(),
-                                         ""
-                                        );
+                        et_password.getText().toString().trim(),
+                        ""
+                );
             }
         });
     }
@@ -85,6 +108,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     "",
                     "",
                     sMessage,
+                    1,
                     0
             );
         } else {
@@ -95,22 +119,22 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     "Ok"
             );
 
-            updatePD(1, sMessage);
+            updatePD("ERROR_1", sMessage);
         }
     }
 
     @Override
-    public void updatePD(int type, String sMessage) {
+    public void updatePD(String type, String sMessage) {
         updateProgressDialog(type, sMessage);
     }
 
     @Override
     public void showAlertMsg(String title, String message) {
-        AlertDialog.Builder alertD =  new AlertDialog.Builder(this);
+        AlertDialog.Builder alertD = new AlertDialog.Builder(this);
         alertD
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("Ok",null);
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Ok", null);
 
         alertD.show();
     }
@@ -119,11 +143,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     public void fieldFocus(int index) {
         switch (index) {
             case ET_LOGIN:
-                //ToolBox.showSoftKeyboard(mk_login, context);
+                //ToolBox_Inf.showSoftKeyboard(mk_login, context);
                 mk_login.requestFocus();
                 break;
             case ET_PASSWORD:
-                //ToolBox.showSoftKeyboard(et_password, context);
+                //ToolBox_Inf.showSoftKeyboard(et_password, context);
                 et_password.requestFocus();
                 break;
             default:
@@ -131,40 +155,197 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
     }
 
-    @Override
-    protected void updateProgressDialog(int type, String message) {
 
-        progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setOnClickListener(actNoEmpty);
-        progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actNoEmpty);
 
-        switch (type) {
-            case 0:
-                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
-                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
-                break;
-            case 1:
-                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
-                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
-                break;
-            case 2:
-                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
-                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
-                break;
-            case 3:
-                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
-                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
-                break;
-            case 4:
-                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
-                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
-                break;
-            case 5:
-                break;
+//    @Override
+//    protected void updateProgressDialog(String type, String message) {
+//
+//        progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setOnClickListener(actNoEmpty);
+//        progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actNoEmpty);
+//
+//        //progressDialog.setButton(ProgressDialog.BUTTON_POSITIVE, "Cancel", new DialogInterface.OnClickListener() {
+//        //    @Override
+//        //    public void onClick(DialogInterface dialog, int which) {
+//        //    }
+//        //});
+//
+//        //progressDialog.setButton(ProgressDialog.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener() {
+//        //    @Override
+//        //    public void onClick(DialogInterface dialog, int which) {
+//        //    }
+//        //});
+//
+//        switch (type) {
+//            case "STATUS":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+//
+//                break;
+//
+//            case "ERROR_1":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                break;
+//
+//            case "ERROR_2":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                break;
+//
+//            case "UPDATE_REQUIRED":
+//                if (SERVICE_TYPE.equalsIgnoreCase("LOGIN")) {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                    progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setOnClickListener(actLogin);
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actUpdate);
+//                }
+//
+//                break;
+//
+//            case "VERSION_ERRO":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actUpdate);
+//
+//                break;
+//
+//            case "VERSION_INVALID":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actUpdate);
+//
+//                break;
+//
+//            case "VERSION_EXPIRED":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actUpdate);
+//
+//                break;
+//
+//            case "LOGIN_ERRO":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                if (SERVICE_TYPE.equalsIgnoreCase("LOGIN")) {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actNoEmpty);
+//                } else {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//                }
+//
+//                break;
+//
+//            case "USER_INVALID":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                if (SERVICE_TYPE.equalsIgnoreCase("LOGIN")) {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actNoEmpty);
+//                } else {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//                }
+//
+//                break;
+//
+//            case "USER_BLOCKED":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                if (SERVICE_TYPE.equalsIgnoreCase("LOGIN")) {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actNoEmpty);
+//                } else {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//                }
+//
+//                break;
+//
+//            case "USER_CANCELLED":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                if (SERVICE_TYPE.equalsIgnoreCase("LOGIN")) {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actNoEmpty);
+//                } else {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//                }
+//
+//                break;
+//
+//            case "USER_OTHER_DEVICE":
+//                if (SERVICE_TYPE.equalsIgnoreCase("LOGIN")) {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                    progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setOnClickListener(actLogin);
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actOtherDevice);
+//
+//                } else {
+//                    progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                    progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//
+//                }
+//
+//                break;
+//
+//            case "SESSION_NOT_FOUND":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//
+//                break;
+//
+//            case "NOK":
+//                progressDialog.getButton(ProgressDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+//
+//                progressDialog.getButton(ProgressDialog.BUTTON_POSITIVE).setOnClickListener(actLogin);
+//
+//                break;
+//
+//            case "DISMISS":
+//                progressDialog.dismiss();
+//
+//                break;
+//
+//            default:
+//                break;
+//
+//        }
+//
+//        progressDialog.setMessage(message);
+//
+//    }
 
-            default:
-                break;
-        }
-    }
+//    protected View.OnClickListener actUpdate = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            int i = 0;
+//        }
+//    };
+//
+//    protected View.OnClickListener actLogin = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            int i = 0;
+//        }
+//    };
+//
+//    protected View.OnClickListener actOtherDevice = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            int i = 0;
+//        }
+//    };
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,4 +369,21 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
+
+//    protected class SWReceiver_Dialog extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//
+//            String mType = intent.getStringExtra(Constant.SW_TYPE);
+//            String mValue = intent.getStringExtra(Constant.SW_VALUE);
+//            String mLink = intent.getStringExtra(Constant.SW_LINK);
+//            String mRequired = intent.getStringExtra(Constant.SW_REQUIRED);
+//
+//            updateProgressDialog(
+//                    mType,
+//                    mValue
+//            );
+//        }
+//    }
 }

@@ -46,7 +46,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_SqlSpecification_001;
 import com.namoadigital.prj001.sql.User_EMail_PSql_Specification;
 import com.namoadigital.prj001.sql.User_Nfc_Code_SqlSpecification;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.io.File;
@@ -87,14 +87,14 @@ public class WS_Access extends IntentService {
 
         try {
 
-            String user = bundle.getString(Constant.USER_ID);
-            String password = bundle.getString(Constant.USER_PWD);
-            String nfc = bundle.getString(Constant.USER_NFC);
-            int status = bundle.getInt(Constant.USER_STATUS);
+            String user = bundle.getString(Constant.GC_USER_CODE);
+            String password = bundle.getString(Constant.GC_PWD);
+            String nfc = bundle.getString(Constant.GC_NFC);
+            int status = bundle.getInt(Constant.GC_STATUS);
+            int statusjump = bundle.getInt(Constant.GC_STATUS_JUMP);
             int type = bundle.getInt(Constant.USER_TYPE);
 
             sResult = new StringBuilder();
-
 
             processWSSync(user, password, nfc, status, type);
 
@@ -112,7 +112,13 @@ public class WS_Access extends IntentService {
 
             Log.d("HH", sb.toString());
 
-            sendBCStatus(0, sb.toString(), "", "1");
+            // Erro grave Ok sem programacao
+
+            //sendBCStatus(1, sb.toString(), "", "0");
+
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+
+
 
         } finally {
 
@@ -139,6 +145,9 @@ public class WS_Access extends IntentService {
         productDao = new MD_ProductDao(getApplicationContext());
         product_categoryDao = new MD_Product_CategoryDao(getApplicationContext());
 
+        // Informativo sem botoes
+        //sendBCStatus(0, "Starting Sync", "", "0");
+
         Gson gson = new Gson();
 
         User user = null;
@@ -150,7 +159,7 @@ public class WS_Access extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         //
-        env.setDevice_code(ToolBox.uniqueID(getApplicationContext()));
+        env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
         env.setManufacturer(Build.MANUFACTURER);
         env.setModel(Build.MODEL);
         env.setOs("ANDROID");
@@ -190,7 +199,7 @@ public class WS_Access extends IntentService {
                 env.setTranslate_code(0);
                 env.setDate_db_customer("1900-01-01 00:00:00 +00:00");
                 env.setEmail_p(sUser);
-                env.setPassword(ToolBox.md5(sPassword).toUpperCase());
+                env.setPassword(ToolBox_Inf.md5(sPassword).toUpperCase());
                 env.setNfc_code(sNfc);
 
                 env.setDate_db_translate("1900-01-01 00:00:00 +00:00");
@@ -238,7 +247,7 @@ public class WS_Access extends IntentService {
                 }
 
                 env.setEmail_p(user.getEmail_p());
-                env.setPassword(ToolBox.md5(user.getPassword()).toUpperCase());
+                env.setPassword(ToolBox_Inf.md5(user.getPassword()).toUpperCase());
                 env.setNfc_code(user.getNfc_code());
 
                 if (translate != null) {
@@ -267,6 +276,46 @@ public class WS_Access extends IntentService {
                 resultado,
                 TSync_Cus_Rec.class
         );
+
+        if (!ToolBox_Inf.processWSCheck(
+                getApplicationContext(),
+                rec.getVersion(),
+                rec.getLogin(),
+                rec.getLicense(),
+                rec.getLink_url(),
+                0
+        )) {
+            return;
+        }
+
+        int i = 10;
+
+
+
+//        com.namoa_digital.namoa_library.util.HMAux wsVal = ToolBox_Inf.processWsValidation(iStatus, rec.getVersion(), rec.getLogin(), rec.getLicense());
+//
+//        switch (Integer.parseInt(wsVal.get(HMAux.TEXT_01))){
+//            case 0:
+//                break;
+//            case 1:
+//                // Update Required
+//                if (iStatus != 2){
+//                    // Caixa de Dialogo com dois botoes (Cancelar / Ok)
+//                    // Reprogramar os Botoes (Cancelar/Ok)
+//                    sendBCStatus(2, wsVal.get(HMAux.TEXT_02), rec.getLink_url(), "0");
+//                }
+//                break;
+//            case 2:
+//                // USER_OTHER_DEVICE
+//                cfgForcedLogin(iType, wsVal.get(HMAux.TEXT_02));
+//                break;
+//            case 3:
+//                // Erros
+//                cfgError(wsVal.get(HMAux.TEXT_02));
+//            default:
+//                break;
+//        }
+
 
         // Desvio
 
@@ -313,7 +362,7 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        ToolBox.downloadZip(rec.getZip(), Constant.DB_ZIP);
+        ToolBox_Inf.downloadZip(rec.getZip(), Constant.DB_ZIP);
         //
 
 //        enviarBroadCastStatus(
@@ -323,7 +372,7 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        ToolBox.unpackZip("", Constant.DB_ZIP);
+        ToolBox_Inf.unpackZip("", Constant.DB_ZIP);
 
 //        enviarBroadCastStatus(
 //                Constantes.SWAKESERVICEFULL_STATUS_UPTUX,
@@ -332,12 +381,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        File[] files_Customers = ToolBox.getListOfFiles_v2("ev_user_customer-");
+        File[] files_Customers = ToolBox_Inf.getListOfFiles_v2("ev_user_customer-");
 
         for (File _file : files_Customers) {
 
             ArrayList<EV_User_Customer> customers = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<EV_User_Customer>>() {
                     }.getType()
             );
@@ -351,12 +400,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        File[] files_auxs = ToolBox.getListOfFiles_v2("ev_module_res-");
+        File[] files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
 
         for (File _file : files_auxs) {
 
             ArrayList<EV_Module_Res> module_ress = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<EV_Module_Res>>() {
                     }.getType()
             );
@@ -371,12 +420,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("ev_module_res_txt-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
 
         for (File _file : files_auxs) {
 
             ArrayList<EV_Module_Res_Txt> module_res_txts = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<EV_Module_Res_Txt>>() {
                     }.getType()
             );
@@ -391,12 +440,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("ev_module_res_txt_trans-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
 
         for (File _file : files_auxs) {
 
             ArrayList<EV_Module_Res_Txt_Trans> module_res_txt_transs = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<EV_Module_Res_Txt_Trans>>() {
                     }.getType()
             );
@@ -411,12 +460,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("ge_custom_form_type-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_type-");
 
         for (File _file : files_auxs) {
 
             ArrayList<GE_Custom_Form_Type> custom_form_types = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<GE_Custom_Form_Type>>() {
                     }.getType()
             );
@@ -431,12 +480,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("ge_custom_form-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form-");
 
         for (File _file : files_auxs) {
 
             ArrayList<GE_Custom_Form> custom_forms = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<GE_Custom_Form>>() {
                     }.getType()
             );
@@ -451,12 +500,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("ge_custom_form_field-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_field-");
 
         for (File _file : files_auxs) {
 
             ArrayList<GE_Custom_Form_Field> custom_form_fields = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<GE_Custom_Form_Field>>() {
                     }.getType()
             );
@@ -471,12 +520,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("ge_custom_form_product-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
 
         for (File _file : files_auxs) {
 
             ArrayList<GE_Custom_Form_Product> custom_form_products = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<GE_Custom_Form_Product>>() {
                     }.getType()
             );
@@ -491,12 +540,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("md_product-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product-");
 
         for (File _file : files_auxs) {
 
             ArrayList<MD_Product> products = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<MD_Product>>() {
                     }.getType()
             );
@@ -511,12 +560,12 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        files_auxs = ToolBox.getListOfFiles_v2("md_product_category-");
+        files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product_category-");
 
         for (File _file : files_auxs) {
 
             ArrayList<MD_Product_Category> products = gson.fromJson(
-                    ToolBox.getContents(_file),
+                    ToolBox_Inf.getContents(_file),
                     new TypeToken<ArrayList<MD_Product_Category>>() {
                     }.getType()
             );
@@ -538,7 +587,7 @@ public class WS_Access extends IntentService {
             customer_translateDao.addUpdate(customer_translate);
         }
 
-        ToolBox.deleteAllFOD(Constant.ZIP_PATH);
+        ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
 //        enviarBroadCastStatus(
 //                Constantes.SWAKESERVICEFULL_STATUS_UPTUX,
@@ -560,15 +609,45 @@ public class WS_Access extends IntentService {
 
     }
 
-    public void sendBCStatus(int type, String value, String link, String required) {
-        Intent mIntent = new Intent(Constant.LOGIN_TYPE);
-        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        //
-        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_TYPE, type);
-        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_VALUE, value);
-        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_LINK, link);
-        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_REQUIRED, required);
-        //
-        sendBroadcast(mIntent);
+    private void cfgError(String msg) {
+        if (msg.equalsIgnoreCase("VERSION_INVALID") || msg.equalsIgnoreCase("VERSION_EXPIRED")){
+            // Erro grave Ok reprogramacao para o download
+            //sendBCStatus(5, msg, "", "0");
+        } else {
+            // Erro grave Ok sem programacao
+            //sendBCStatus(4, msg, "", "0");
+        }
     }
+
+    private void cfgForcedLogin(int iType, String msg) {
+        switch (iType){
+            case 1:
+                // Dialog Reprogramar os dois botoes
+                // (Cancelar Fechar Dialog / Ok reprogramar para ativer o servico com force login
+                //sendBCStatus(3, msg, "", "0");
+
+                break;
+            case 2:
+                // Dialog Reprogramar um botao
+                // (Ok reprogramar ir para a tela de login
+                //sendBCStatus(4, msg, "", "0");
+                break;
+            default:
+                break;
+        }
+
+
+    }
+
+//    public void sendBCStatus(int type, String value, String link, String required) {
+//        Intent mIntent = new Intent(Constant.LOGIN_TYPE);
+//        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+//        //
+//        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_TYPE, type);
+//        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_VALUE, value);
+//        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_LINK, link);
+//        //mIntent.putExtra(Constantes.SWAKESERVICEFULL_REQUIRED, required);
+//        //
+//        sendBroadcast(mIntent);
+//    }
 }

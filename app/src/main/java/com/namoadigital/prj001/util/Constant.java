@@ -39,16 +39,19 @@ public class Constant {
     /**
      * Service Login Parameter
      */
-    public static final String USER_ID = "userid";
-    public static final String USER_PWD = "userpwd";
-    public static final String USER_NFC = "usernfc";
-    public static final String USER_STATUS = "userstatus";
+    public static final String GC_USER_CODE = "userid";
+    public static final String GC_PWD = "userpwd";
+    public static final String GC_NFC = "usernfc";
+    public static final String GC_STATUS = "userstatus";
+    public static final String GC_STATUS_JUMP = "userstatusjump";
     public static final String USER_CUSTOMER_CODE = "usercustomercode";
     public static final String USER_TYPE = "usertype";
 
-    public static final String LOGIN_TYPE = "login_type";
-    public static final int STATUS_RUN = 0;
-    public static final int STATUS_OK = 1;
+    public static final String SW_TYPE_BR = "sw_type_br";
+    public static final String SW_TYPE = "sw_type";
+    public static final String SW_VALUE = "sw_value";
+    public static final String SW_LINK = "sw_link";
+    public static final String SW_REQUIRED = "sw_required";
 
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";

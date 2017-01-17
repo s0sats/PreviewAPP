@@ -23,13 +23,14 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
     }
 
     @Override
-    public void executeLoginProcess(String user, String password, String nfc, int status) {
+    public void executeLoginProcess(String user, String password, String nfc, int status, int status_jump) {
         Intent mIntent = new Intent(context, WBR_Access.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.USER_ID, user);
-        bundle.putString(Constant.USER_PWD, password);
-        bundle.putString(Constant.USER_NFC, nfc);
-        bundle.putInt(Constant.USER_STATUS, status);
+        bundle.putString(Constant.GC_USER_CODE, user);
+        bundle.putString(Constant.GC_PWD, password);
+        bundle.putString(Constant.GC_NFC, nfc);
+        bundle.putInt(Constant.GC_STATUS, status);
+        bundle.putInt(Constant.GC_STATUS_JUMP, status_jump);
         bundle.putInt(Constant.USER_CUSTOMER_CODE, 0);
         bundle.putInt(Constant.USER_TYPE, 1);
         //
@@ -56,8 +57,8 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             }
         }
         //Verifica se exite conexao antes de chamar WS
-        //if(ToolBox.isOnline){
-            executeLoginProcess(login,password,nfc_code,0);
+        //if(ToolBox_Inf.isOnline){
+        executeLoginProcess(login, password, nfc_code, 0, 0);
         //}
 
     }

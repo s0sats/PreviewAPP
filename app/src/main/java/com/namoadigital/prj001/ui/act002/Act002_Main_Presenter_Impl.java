@@ -32,10 +32,10 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     public void executeSyncProcess(String user, String password, String nfc, long customer_code, int status) {
         Intent mIntent = new Intent(context, WBR_Access.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.USER_ID, user);
-        bundle.putString(Constant.USER_PWD, password);
-        bundle.putString(Constant.USER_NFC, nfc);
-        bundle.putInt(Constant.USER_STATUS, status);
+        bundle.putString(Constant.GC_USER_CODE, user);
+        bundle.putString(Constant.GC_PWD, password);
+        bundle.putString(Constant.GC_NFC, nfc);
+        bundle.putInt(Constant.GC_STATUS, status);
         bundle.putLong(Constant.USER_CUSTOMER_CODE, customer_code);
         bundle.putInt(Constant.USER_TYPE, 1);
         //

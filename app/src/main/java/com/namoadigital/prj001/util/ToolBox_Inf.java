@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.Settings;
@@ -9,6 +10,7 @@ import android.util.Base64;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.WSValidationResult;
+import com.namoadigital.prj001.ui.act001.Act001_Main;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -37,7 +39,7 @@ import java.util.zip.ZipInputStream;
  * Created by neomatrix on 09/01/17.
  */
 
-public class ToolBox {
+public class ToolBox_Inf {
 
     public static void mkDirectory() {
         File dirDB = new File(Constant.DB_PATH);
@@ -170,6 +172,37 @@ public class ToolBox {
         inputStream.close();
     }
 
+    public static void downloadNewVersion(String urlPath, String localPath) throws Exception {
+
+        URL url = new URL(urlPath);
+        //
+        URLConnection connection = url.openConnection();
+        //
+        File file = new File(localPath);
+        if (file.exists()) {
+            file.delete();
+        }
+        //
+        connection.setReadTimeout(60000);
+        connection.setConnectTimeout(60000);
+        //
+        FileOutputStream outputStream = new FileOutputStream(localPath, true);
+        //
+        InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+        byte[] data = new byte[1024];
+        //
+        int n;
+        //
+        while ((n = inputStream.read(data)) != -1) {
+            outputStream.write(data, 0, n);
+        }
+        //
+        outputStream.flush();
+        outputStream.close();
+        //
+        inputStream.close();
+    }
+
     public static boolean unpackZip(String path, String zipname) {
 
         String stp = Constant.ZIP_PATH + "/";
@@ -270,124 +303,114 @@ public class ToolBox {
         }
     }
 
-    /**
-     * Analyse WS returns and return a list of validationStatus.
-     *
-     * @param version_returns The ws version status returns
-     * @param login_returns   The ws login status returns
-     * @param licence_returns The ws licence status returns
-     * @return
-     */
-    private static List<WSValidationResult> checkWsValidation(String version_returns, String login_returns, String licence_returns) {
-        List<WSValidationResult> validationResultList = new ArrayList<>();
-        WSValidationResult validationVersion;
-        WSValidationResult validationLogin;
-        WSValidationResult validationLicence;
+    public static void deletarDownloadFile(String sName) {
+        File file = new File(sName);
 
-        switch (version_returns) {
-            case "STABLE":
-                validationVersion = new WSValidationResult("OK", "OK", "0", true);
-                break;
-            case "UPDATE_REQUIRED":
-                validationVersion = new WSValidationResult("VERSION", version_returns, "1", true);
-                break;
-            case "VERSION_ERRO":
-                validationVersion = new WSValidationResult("VERSION", version_returns, "2", false);
-                break;
-            case "VERSION_INVALID":
-                validationVersion = new WSValidationResult("VERSION", version_returns, "3", false);
-                break;
-            case "VERSION_EXPIRED":
-                validationVersion = new WSValidationResult("VERSION", version_returns, "4", false);
-                break;
-            default:
-                validationVersion = new WSValidationResult("NOK", "NOK", "NOK", false);
+        if (file.exists()) {
+            file.delete();
         }
-        //Add Version obj validatation into the list
-        validationResultList.add(validationVersion);
-        //
-        switch (login_returns) {
-            case "OK":
-                validationLogin = new WSValidationResult("OK", "OK", "5", true);
-                break;
-            case "LOGIN_ERRO":
-                validationLogin = new WSValidationResult("LOGIN", login_returns, "6", false);
-                break;
-            case "USER_INVALID":
-                validationLogin = new WSValidationResult("LOGIN", login_returns, "7", false);
-                break;
-            case "USER_BLOCKED":
-                validationLogin = new WSValidationResult("LOGIN", login_returns, "8", false);
-                break;
-            case "USER_CANCELLED":
-                validationLogin = new WSValidationResult("LOGIN", login_returns, "9", false);
-                break;
-            case "USER_OTHER_DEVICE":
-                validationLogin = new WSValidationResult("LOGIN", login_returns, "10", true);
-                break;
-            default:
-                validationLogin = new WSValidationResult("NOK", "NOK", "NOK", false);
-        }
-        //Add Login obj validatation into the list
-        validationResultList.add(validationLogin);
-
-        switch (licence_returns) {
-            case "OK":
-                NULL:
-                validationLicence = new WSValidationResult("OK", "OK", "OK", true);
-                break;
-            case "NOK":
-                validationLicence = new WSValidationResult("LICENCE", licence_returns, "NOK", false);
-                break;
-            default:
-                validationLicence = new WSValidationResult("NOK", "NOK", "NOK", false);
-        }
-        //Add Licence obj validatation into the list
-        validationResultList.add(validationLicence);
-
-        return validationResultList;
     }
 
-    /**
-     * Process the WS validation returns
-     *
-     * @param ignoreVersion   Set 1 if the loop needs to ignore version verification
-     * @param version_returns The ws version status returns
-     * @param login_returns   The ws login status returns
-     * @param licence_returns The ws licence status returns
-     * @return A HmAux with 2 values:
-     * Texto_1 : Validation status 0, 1, 2, 3;
-     * Texto_2 : Validation mensage , when exists;
-     */
-    public static HMAux processWsValidation(int ignoreVersion, String version_returns, String login_returns, String licence_returns) {
-        HMAux hmAux = new HMAux();
-        List<WSValidationResult> validationList = checkWsValidation(version_returns, login_returns, licence_returns);
-        //Loop through validation list.The ignoreVersion var, define where the loop starts
-        for (int i = ignoreVersion; i < validationList.size(); i++) {
-            WSValidationResult objAux = validationList.get(i);
-            //If type is ok, updates HmAux and jump to next item
-            if (objAux.getType().equals("OK")) {
-                hmAux.put(HMAux.TEXTO_01, "0");
-                hmAux.put(HMAux.TEXTO_02, "OK");
-                continue;
-            }
-            //If type isn't ok, but the item is valid,
-            //so it's a situation we have to treat specifically.
-            //Those situation are:
-            //App Version requires update;
-            //The user login is already logged in other device.
-            if (objAux.isValid()) {
-                hmAux.put(HMAux.TEXTO_01, (objAux.getType().equals("VERSION") ? "1" : "2"));
-                hmAux.put(HMAux.TEXTO_02, objAux.getMsg());
-                return hmAux;
-            } else {
-                //Any other situation means an "abort" error.
-                hmAux.put(HMAux.TEXTO_01, "3");
-                hmAux.put(HMAux.TEXTO_02, objAux.getMsg());
-                return hmAux;
-            }
+    public static void sendBCStatus(Context context, String type, String value, String link, String required) {
+        Intent mIntent = new Intent(Constant.SW_TYPE_BR);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+
+        mIntent.putExtra(Constant.SW_TYPE, type);
+        mIntent.putExtra(Constant.SW_VALUE, value);
+        mIntent.putExtra(Constant.SW_LINK, link);
+        mIntent.putExtra(Constant.SW_REQUIRED, required);
+
+        context.sendBroadcast(mIntent);
+    }
+
+    public static boolean processWSCheck(Context context, String sVersion, String sLogin, String sLicence, String s_Link, int iStatus) {
+        switch (sVersion) {
+            case "STABLE":
+
+                break;
+
+            case "UPDATE_REQUIRED":
+                if (iStatus == 0) {
+                    sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE_REQUIRED", s_Link, "0");
+
+                    return false;
+                } else {
+                    return true;
+                }
+
+            case "VERSION_ERRO":
+                sendBCStatus(context, "VERSION_ERRO", "VERSION_ERRO", s_Link, "1");
+
+                return false;
+
+            case "VERSION_INVALID":
+                sendBCStatus(context, "VERSION_INVALID", "VERSION_INVALID", s_Link, "1");
+
+                return false;
+
+            case "VERSION_EXPIRED":
+                sendBCStatus(context, "VERSION_EXPIRED", "VERSION_EXPIRED", s_Link, "1");
+
+                return false;
+
+            default:
+                break;
         }
-        return hmAux;
+
+        switch (sLogin) {
+            case "OK":
+                break;
+
+            case "LOGIN_ERRO":
+                sendBCStatus(context, "LOGIN_ERRO", "LOGIN_ERRO", s_Link, "0");
+
+                return false;
+
+            case "USER_INVALID":
+                sendBCStatus(context, "USER_INVALID", "USER_INVALID", s_Link, "0");
+
+                return false;
+
+            case "USER_BLOCKED":
+                sendBCStatus(context, "USER_BLOCKED", "USER_BLOCKED", s_Link, "0");
+
+                return false;
+
+            case "USER_CANCELLED":
+                sendBCStatus(context, "USER_CANCELLED", "USER_CANCELLED", s_Link, "0");
+
+                return false;
+
+            case "USER_OTHER_DEVICE":
+                sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+
+                return false;
+
+            case "SESSION_NOT_FOUND":
+                sendBCStatus(context, "SESSION_NOT_FOUND", "SESSION_NOT_FOUND", s_Link, "0");
+
+                return false;
+
+
+            default:
+                break;
+        }
+
+        switch (sLicence) {
+            case "OK":
+
+                break;
+
+            case "NOK":
+                sendBCStatus(context, "NOK", "NOK", s_Link, "0");
+
+                return false;
+
+            default:
+                break;
+        }
+
+        return true;
     }
 
     public static String BitMapToBase64(Bitmap bm) {
@@ -412,5 +435,11 @@ public class ToolBox {
         } else {
             return null;
         }
+    }
+
+    public static void call_Act001_Main(Context context) {
+        Intent mIntent = new Intent(context, Act001_Main.class);
+
+        context.startActivity(mIntent);
     }
 }
