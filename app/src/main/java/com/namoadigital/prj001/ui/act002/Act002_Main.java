@@ -1,13 +1,19 @@
 package com.namoadigital.prj001.ui.act002;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.database.HMAux;
 
 import java.util.List;
@@ -17,6 +23,9 @@ import java.util.List;
  */
 
 public class Act002_Main extends Base_Activity implements Act002_Main_View{
+    private Context context;
+    private ListView lv_customers;
+    private Act002_Main_Presenter mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,16 +40,52 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     }
 
     private void initVars() {
-
+        context =  getBaseContext();
+        //
+        mPresenter = new Act002_Main_Presenter_Impl(context,this);
+        //
+        lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
+        //
+        mPresenter.getAllCustomers();
+        //
     }
 
     private void initActions() {
+        lv_customers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                //
+                //mPresenter.getToken);
+            }
+        });
 
     }
 
 
     @Override
     public void loadCustomers(List<HMAux> customers) {
+        String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
+        int[] to = {R.id.act002_list_cell_tv_name};
+        lv_customers.setAdapter(
+                new SimpleAdapter(
+                        context,
+                        customers,
+                        R.layout.lib_custom_cell,
+                        from,
+                        to
+                )
+        );
+
+    }
+
+    @Override
+    public void callAct001() {
+
+    }
+
+    @Override
+    public void callAct003() {
 
     }
 

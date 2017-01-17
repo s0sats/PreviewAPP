@@ -16,16 +16,13 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:paddingBottom="50dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        android:paddingTop="50dp">
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/act002_lv_customers"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="@color/padrao_TRANSPARENT"/>
 
     </LinearLayout>
 

@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.dao.EV_CustomerDao;
+import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.receiver.WBR_Access;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 
 /**
@@ -14,17 +17,38 @@ import com.namoadigital.prj001.util.Constant;
 public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     private Context context;
-
     private Act002_Main_View mView;
+    private EV_CustomerDao ev_customerDao;
+    private HMAux HMCustomer;
 
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
         this.mView = mView;
+        this.ev_customerDao = new EV_CustomerDao(context);
     }
-
 
     @Override
     public void getAllCustomers() {
+        mView.loadCustomers(
+                ev_customerDao.query_HM(
+                            new EV_User_Customer_Sql_001(
+                                    //ToolBox_Con.getPreference_User_Code(context)
+                                    "6"
+                            ).toSqlQuery()
+                )
+        );
+
+
+
+    }
+
+    @Override
+    public void getToken(HMAux item) {
+        /*this.HMCustomer = item;
+        Intent intent =  new Intent(context, WBR_Login.class);
+        Bundle bundle =  new Bundle();
+        bundle.putString();*/
+
 
     }
 
