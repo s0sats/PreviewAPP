@@ -78,7 +78,7 @@ public class WS_GetCustomer extends IntentService {
 
     private void processWS_GC(String user, String password, String nfc, int statusjump) throws Exception {
 
-        ev_userDao = new EV_UserDao(getApplicationContext());
+        ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
 
         Gson gson = new Gson();

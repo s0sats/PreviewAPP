@@ -3,24 +3,21 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.Parametro;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by neomatrix on 11/01/17.
+ * Created by neomatrix on 18/01/17.
  */
 
-public class ParametroDao implements Dao<Parametro> {
-    private final SQLiteOpenHelper openHelper;
+public class ParametroDao extends BaseDao implements Dao<Parametro> {
     private final Mapper<Parametro, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, Parametro> toParametroMapper;
 
@@ -33,9 +30,8 @@ public class ParametroDao implements Dao<Parametro> {
 
     private String[] columns = {PARAMETRO_CODE, NOME, DESCRICAO, VALOR_DEFAULT, VALOR_CUSTOMIZADO};
 
-
-    public ParametroDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public ParametroDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
         //
         this.toContentValuesMapper = new ParametroToContentValuesMapper();
         this.toParametroMapper = new CursorToParametroMapper();
@@ -44,11 +40,9 @@ public class ParametroDao implements Dao<Parametro> {
 
     @Override
     public void addUpdate(Parametro parametro) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(parametro)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -64,15 +58,16 @@ public class ParametroDao implements Dao<Parametro> {
                 db.close();
             }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<Parametro> parametros, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -97,15 +92,15 @@ public class ParametroDao implements Dao<Parametro> {
                 db.close();
             }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
@@ -115,36 +110,15 @@ public class ParametroDao implements Dao<Parametro> {
                 db.close();
             }
         }
-    }
 
-//    @Override
-//    public void remove(long id) {
-//        SQLiteDatabase db = null;
-//
-//        try {
-//
-//            db = openHelper.getWritableDatabase();
-//
-//            StringBuilder sbWhere = new StringBuilder();
-//            sbWhere.append(PARAMETRO_CODE).append(" = '").append(id).append("'");
-//
-//            db.delete(TABLE, sbWhere.toString(), null);
-//
-//        } catch (Exception e) {
-//        } finally {
-//            if (db != null) {
-//                db.close();
-//            }
-//        }
-//    }
+        closeDB();
+    }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
@@ -154,46 +128,17 @@ public class ParametroDao implements Dao<Parametro> {
                 db.close();
             }
         }
-    }
 
-//    @Override
-//    public Parametro getById(long id) {
-//        Parametro parametro = null;
-//        SQLiteDatabase db = null;
-//
-//        try {
-//
-//            db = openHelper.getReadableDatabase();
-//            StringBuilder sbWhere = new StringBuilder();
-//            sbWhere.append(PARAMETRO_CODE).append(" = '").append(id).append("'");
-//
-//            Cursor cursor = db.query(TABLE, columns, sbWhere.toString(), null, null, null, null);
-//
-//            while (cursor.moveToNext()) {
-//                parametro = toParametroMapper.map(cursor);
-//
-//            }
-//
-//            cursor.close();
-//        } catch (Exception e) {
-//
-//        } finally {
-//            if (db != null) {
-//                db.close();
-//            }
-//        }
-//
-//        return parametro;
-//    }
+        closeDB();
+    }
 
     @Override
     public Parametro getByString(String s_query) {
         Parametro parametro = null;
-        SQLiteDatabase db = null;
+
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -210,17 +155,18 @@ public class ParametroDao implements Dao<Parametro> {
             }
         }
 
+        closeDB();
+
         return parametro;
     }
 
     @Override
     public List<Parametro> query(String s_query) {
         List<Parametro> parametros = new ArrayList<>();
-        SQLiteDatabase db = null;
+
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -238,13 +184,16 @@ public class ParametroDao implements Dao<Parametro> {
             }
         }
 
+        closeDB();
+
         return parametros;
     }
 
     @Override
     public List<HMAux> query_HM(String s_query) {
         List<HMAux> parametros = new ArrayList<>();
-        SQLiteDatabase db = null;
+
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
@@ -252,10 +201,7 @@ public class ParametroDao implements Dao<Parametro> {
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
-
 
             while (cursor.moveToNext()) {
                 parametros.add(toHMAuxMapper.map(cursor));
@@ -269,6 +215,8 @@ public class ParametroDao implements Dao<Parametro> {
                 db.close();
             }
         }
+
+        closeDB();
 
         return parametros;
     }
