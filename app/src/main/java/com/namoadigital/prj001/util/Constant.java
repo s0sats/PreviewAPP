@@ -27,6 +27,16 @@ public class Constant {
     public static String DB_NAME;
     public static String DB_ZIP;
 
+    public static String DB_NAME_BASE = "namoa.db3";
+
+    public static String DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
+
+    public static int DB_VERSION_BASE = 1;
+    public static int DB_VERSION_CUSTOM = 1;
+
+    public static String DB_MODE_MULTI = "MULTI";
+    public static String DB_MODE_SINGLE = "SINGLE";
+
     /**
      * Directory Definition
      */

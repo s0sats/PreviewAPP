@@ -44,7 +44,6 @@ import com.namoadigital.prj001.sql.EV_Customer_Translate_SqlSpecification_001;
 import com.namoadigital.prj001.sql.EV_Translate_Id_SqlSpecification;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.User_EMail_PSql_Specification;
-import com.namoadigital.prj001.sql.User_Nfc_Code_SqlSpecification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -130,7 +129,7 @@ public class WS_Access extends IntentService {
 
     private void processWSSync(String sUser, String sPassword, String sNfc, int iStatus, int iType) throws Exception {
 
-        userDao = new EV_UserDao(getApplicationContext());
+        userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
         ev_customerDao = new EV_CustomerDao(getApplicationContext());
         customer_translateDao = new EV_Customer_TranslateDao(getApplicationContext());
@@ -172,19 +171,11 @@ public class WS_Access extends IntentService {
                     user = userDao.getByString(
                             new User_EMail_PSql_Specification(sUser).toSqlQuery()
                     );
-                } else {
-                    user = userDao.getByString(
-                            new User_Nfc_Code_SqlSpecification(sNfc).toSqlQuery()
-                    );
                 }
 
                 if (!sUser.equals("")) {
                     user = userDao.getByString(
                             new User_EMail_PSql_Specification(sUser).toSqlQuery()
-                    );
-                } else {
-                    user = userDao.getByString(
-                            new User_Nfc_Code_SqlSpecification(sNfc).toSqlQuery()
                     );
                 }
 
