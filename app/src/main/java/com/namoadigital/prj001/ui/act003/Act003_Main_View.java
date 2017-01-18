@@ -1,8 +1,15 @@
 package com.namoadigital.prj001.ui.act003;
 
+
+import com.namoadigital.prj001.database.HMAux;
+
+import java.util.List;
+
 /**
  * Created by neomatrix on 17/01/17.
  */
 
 public interface Act003_Main_View {
+
+    void loadOperations(List<HMAux> operations);
 }

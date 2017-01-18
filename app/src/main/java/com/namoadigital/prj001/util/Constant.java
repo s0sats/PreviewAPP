@@ -56,6 +56,9 @@ public class Constant {
 
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";
+    public static final String LOGIN_USER_EMAIL = "login_user_email";
+    public static final String LOGIN_USER_PWD = "login_user_pwd";
+    public static final String LOGIN_USER_NFC = "login_user_nfc";
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
     public static final String NLS_DATE_FORMAT = "nls_date_format";

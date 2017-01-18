@@ -9,9 +9,9 @@ import com.namoadigital.prj001.database.Specification;
 
 public class MD_Operation_Sql_001 implements Specification {
 
-    private String s_customer_code;
+    private long s_customer_code;
 
-    public MD_Operation_Sql_001(String s_customer_code) {
+    public MD_Operation_Sql_001(long s_customer_code) {
         this.s_customer_code = s_customer_code;
     }
 
@@ -20,11 +20,11 @@ public class MD_Operation_Sql_001 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("SELECT\n" +
-                        "   s.operation_code,\n" +
-                        "   s.operation_desc,\n" +
-                        "   s.alias_service_oper,\n" +
-                        "   s.alias_service_com "+
+                .append("SELECT " +
+                        "   operation_code, " +
+                        "   operation_desc, " +
+                        "   alias_service_oper, " +
+                        "   alias_service_com "+
                         "FROM ")
                 .append(MD_OperationDao.TABLE)
                 .append(" WHERE " +

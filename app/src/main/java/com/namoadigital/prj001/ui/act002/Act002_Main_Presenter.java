@@ -12,6 +12,6 @@ public interface Act002_Main_Presenter {
 
     void getToken(HMAux item);
 
-    void executeSyncProcess(String email, String password, String nfc, long customer_code, int status);
+    void executeSessionProcess(String email, String password, String nfc, long customer_code, int status);
 
 }

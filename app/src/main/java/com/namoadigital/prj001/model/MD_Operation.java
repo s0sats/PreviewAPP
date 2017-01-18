@@ -9,7 +9,6 @@ public class MD_Operation {
     private long customer_code;
     private long operation_code;
     private String operation_desc;
-    private int active;
     private int alias_service_oper;
     private int alias_service_com;
 
@@ -37,14 +36,6 @@ public class MD_Operation {
         this.operation_desc = operation_desc;
     }
 
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
-    }
-
     public int getAlias_service_oper() {
         return alias_service_oper;
     }
@@ -52,7 +43,6 @@ public class MD_Operation {
     public void setAlias_service_oper(int alias_service_oper) {
         this.alias_service_oper = alias_service_oper;
     }
-
     public int getAlias_service_com() {
         return alias_service_com;
     }

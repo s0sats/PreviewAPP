@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act002;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.database.HMAux;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
@@ -55,8 +58,12 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                //mPresenter.getToken);
+                ToolBox_Con.setPreference_Customer_Code(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
+                ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
+                ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);
+
+                callAct003(context);
+                //mPresenter.executeSessionProcess();
             }
         });
 
@@ -66,7 +73,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     @Override
     public void loadCustomers(List<HMAux> customers) {
         String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
-        int[] to = {R.id.act002_list_cell_tv_name};
+        int[] to = {R.id.lib_custom_cell_tv_item};
         lv_customers.setAdapter(
                 new SimpleAdapter(
                         context,
@@ -85,8 +92,10 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     }
 
     @Override
-    public void callAct003() {
-
+    public void callAct003(Context context) {
+        Intent mIntent =  new Intent(context, Act003_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
     }
 
     @Override

@@ -236,7 +236,6 @@ public class MD_OperationDao implements Dao<MD_Operation> {
             md_operation.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             md_operation.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
             md_operation.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
-            md_operation.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)));
             md_operation.setAlias_service_oper(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_OPER)));
             md_operation.setAlias_service_com(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_COM)));
             
@@ -257,9 +256,6 @@ public class MD_OperationDao implements Dao<MD_Operation> {
             }
             if (md_operation.getOperation_desc() != null) {
                 contentValues.put(OPERATION_DESC, md_operation.getOperation_desc());
-            }
-            if (md_operation.getActive() > -1) {
-                contentValues.put(ACTIVE, md_operation.getActive());
             }
             if (md_operation.getAlias_service_oper() > -1) {
                 contentValues.put(ALIAS_SERVICE_OPER, md_operation.getAlias_service_oper());

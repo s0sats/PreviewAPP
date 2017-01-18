@@ -186,7 +186,36 @@ public class ToolBox_Con {
                 ""
         );
     }
+    //
+    public static String getPreference_User_Email(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
 
+        return sharedPreferences.getString(
+                Constant.LOGIN_USER_EMAIL,
+                ""
+        );
+    }
+    //
+    public static String getPreference_User_Pwd(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.LOGIN_USER_PWD,
+                ""
+        );
+    }
+    //
+    public static String getPreference_User_NFC(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.LOGIN_USER_NFC,
+                ""
+        );
+    }
     public static void setPreference_User_Code(Context context, String user_code) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -239,6 +268,36 @@ public class ToolBox_Con {
         ).apply();
     }
 
+    public static void setPreference_User_Email(Context context, String email) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_EMAIL,
+                email
+        ).apply();
+    }
+
+    public static void setPreference_User_Pwd(Context context, String pwd) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_PWD,
+                pwd
+        ).apply();
+    }
+
+    public static void setPreference_User_NFC(Context context, String nfc) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_NFC,
+                nfc
+        ).apply();
+    }
+
 
     public static void zerarPreferences(Context context) {
         SharedPreferences sharedPreferences =
@@ -252,6 +311,21 @@ public class ToolBox_Con {
         sharedPreferences.edit().putString(
                 Constant.LOGIN_USER_CODE_NICK,
                 String.valueOf("")
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_EMAIL,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_PWD,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_NFC,
+                ""
         ).apply();
         //
         sharedPreferences.edit().putLong(

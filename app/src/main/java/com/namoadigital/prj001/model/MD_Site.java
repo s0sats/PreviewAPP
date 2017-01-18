@@ -10,7 +10,6 @@ public class MD_Site {
     private long site_code;
     private String site_id;
     private String site_desc;
-    private int active;
 
     public long getCustomer_code() {
         return customer_code;
@@ -44,11 +43,4 @@ public class MD_Site {
         this.site_desc = site_desc;
     }
 
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
-    }
 }

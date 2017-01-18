@@ -1,12 +1,8 @@
 package com.namoadigital.prj001.ui.act001;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +14,6 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 
@@ -174,7 +169,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     public void call_Act002_Main(Context context) {
         Intent mIntent = new Intent(context, Act002_Main.class);
-
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mIntent);
     }
 
@@ -224,21 +219,4 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
-
-//    protected class SWReceiver_Dialog extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//
-//            String mType = intent.getStringExtra(Constant.SW_TYPE);
-//            String mValue = intent.getStringExtra(Constant.SW_VALUE);
-//            String mLink = intent.getStringExtra(Constant.SW_LINK);
-//            String mRequired = intent.getStringExtra(Constant.SW_REQUIRED);
-//
-//            updateProgressDialog(
-//                    mType,
-//                    mValue
-//            );
-//        }
-//    }
 }

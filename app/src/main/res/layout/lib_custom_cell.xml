@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="5dp">
 
@@ -13,15 +14,15 @@
         android:padding="15dp">
 
         <TextView
-            android:id="@+id/act002_list_cell_tv_name"
+            android:id="@+id/lib_custom_cell_tv_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nome"
             android:textColor="@drawable/lib_custom_cell_font_color"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/act002_list_cell_tv_lang"
+            android:id="@+id/lib_custom_cell_tv_sub_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

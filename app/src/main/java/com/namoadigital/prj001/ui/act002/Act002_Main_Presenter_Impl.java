@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.namoadigital.prj001.dao.EV_CustomerDao;
 import com.namoadigital.prj001.database.HMAux;
-import com.namoadigital.prj001.receiver.WBR_Access;
+import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -50,8 +50,8 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     @Override
-    public void executeSyncProcess(String user, String password, String nfc, long customer_code, int status) {
-        Intent mIntent = new Intent(context, WBR_Access.class);
+    public void executeSessionProcess(String user, String password, String nfc, long customer_code, int status) {
+        Intent mIntent = new Intent(context, WBR_Session.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GC_USER_CODE, user);
         bundle.putString(Constant.GC_PWD, password);

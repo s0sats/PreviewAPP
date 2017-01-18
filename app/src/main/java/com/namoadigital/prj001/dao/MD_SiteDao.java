@@ -239,8 +239,6 @@ public class MD_SiteDao implements Dao<MD_Site> {
             md_site.setSite_code(cursor.getLong(cursor.getColumnIndex(SITE_CODE)));
             md_site.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
             md_site.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
-            md_site.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)));
-
             return md_site;
         }
 
@@ -263,10 +261,6 @@ public class MD_SiteDao implements Dao<MD_Site> {
             if (md_site.getSite_desc() != null) {
                 contentValues.put(SITE_DESC, md_site.getSite_desc());
             }
-            if (md_site.getActive() > -1) {
-                contentValues.put(ACTIVE, md_site.getActive());
-            }
-
             return contentValues;
 
         }        

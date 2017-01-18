@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act002;
 
+import android.content.Context;
+
 import com.namoadigital.prj001.database.HMAux;
 
 import java.util.List;
@@ -14,7 +16,7 @@ public interface Act002_Main_View {
     //Chama activity de login
     void callAct001();
     //Chama activity com lista de operations
-    void callAct003();
+    void callAct003(Context context);
 
 
 
