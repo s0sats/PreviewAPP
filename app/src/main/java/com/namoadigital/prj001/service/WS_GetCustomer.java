@@ -79,7 +79,7 @@ public class WS_GetCustomer extends IntentService {
     private void processWS_GC(String user, String password, String nfc, int statusjump) throws Exception {
 
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
+        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
         Gson gson = new Gson();
 
@@ -113,9 +113,9 @@ public class WS_GetCustomer extends IntentService {
             return;
         }
 
-        ToolBox_Inf.downloadZip(rec.getZip(), Constant.DB_ZIP);
+        ToolBox_Inf.downloadZip(rec.getZip(), Constant.ZIP_NAME_FULL);
 
-        ToolBox_Inf.unpackZip("", Constant.DB_ZIP_NAME);
+        ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User...", "", "0");
 

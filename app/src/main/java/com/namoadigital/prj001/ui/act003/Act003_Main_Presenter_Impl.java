@@ -2,8 +2,8 @@ package com.namoadigital.prj001.ui.act003;
 
 import android.content.Context;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_OperationDao;
-import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
 

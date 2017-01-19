@@ -5,14 +5,17 @@ import android.os.Environment;
 
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
-import static com.namoadigital.prj001.util.Constant.DB_NAME;
+import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
+import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
+import static com.namoadigital.prj001.util.Constant.DB_NAME_BASE;
+import static com.namoadigital.prj001.util.Constant.DB_NAME_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_PATH;
-import static com.namoadigital.prj001.util.Constant.DB_PATH_ZIP;
-import static com.namoadigital.prj001.util.Constant.DB_VERSION;
-import static com.namoadigital.prj001.util.Constant.DB_ZIP;
-import static com.namoadigital.prj001.util.Constant.DB_ZIP_NAME;
+import static com.namoadigital.prj001.util.Constant.DB_VERSION_BASE;
+import static com.namoadigital.prj001.util.Constant.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.IMG_PATH;
 import static com.namoadigital.prj001.util.Constant.THU_PATH;
+import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
+import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
 
 /**
@@ -31,24 +34,25 @@ public class AppBase extends Application {
 
         //DB_PATH = getFilesDir().getPath();
 
-        DB_PATH_ZIP = DB_PATH + "/zips";
-        ZIP_PATH = DB_PATH_ZIP;
+        ZIP_PATH = DB_PATH + "/zips";;
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
 
-        DB_NAME = Environment
-                .getExternalStorageDirectory().getPath() + "/namoa"
-                + "/namoa_sms.db3";
-        //DB_NAME = "namoa_sms.db3";
+        ZIP_NAME = "namoa_sms.zip";
+        ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
-        DB_VERSION = 1;
-
-        DB_ZIP = DB_PATH_ZIP + "/namoa_sms.zip";
-        DB_ZIP_NAME = "namoa_sms.zip";
-        //
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         //CACHE_PATH = DB_PATH + "/CC_CACHE";
 
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
+
+        DB_NAME_BASE = "namoa_sms.db3";
+        DB_VERSION_BASE = 1;
+        DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
+
+        DB_NAME_CUSTOM = "cc.db3";
+        DB_VERSION_CUSTOM = 1;
+        DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
+
     }
 }

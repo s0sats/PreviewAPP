@@ -13,8 +13,8 @@ import com.namoadigital.prj001.util.Constant;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper mInstance = null;
 
-    private static final String DATABASE_NAME = Constant.DB_NAME;
-    private static final int DATABASE_VERSION = Constant.DB_VERSION;
+    private static final String DATABASE_NAME = Constant.DB_NAME_BASE;
+    private static final int DATABASE_VERSION = Constant.DB_VERSION_CUSTOM;
 
     private Context context;
 

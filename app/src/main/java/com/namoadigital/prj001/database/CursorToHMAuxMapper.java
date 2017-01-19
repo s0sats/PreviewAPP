@@ -2,6 +2,8 @@ package com.namoadigital.prj001.database;
 
 import android.database.Cursor;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+
 /**
  * Created by neomatrix on 09/01/17.
  */

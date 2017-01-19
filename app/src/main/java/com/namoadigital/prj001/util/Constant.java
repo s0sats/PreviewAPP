@@ -20,19 +20,16 @@ public class Constant {
     /**
      * DataBase Definition
      */
-    public static int DB_VERSION;
+    //public static int DB_VERSION;
     public static String DB_PATH;
-    public static String DB_PATH_ZIP;
-    public static String DB_ZIP_NAME;
-    public static String DB_NAME;
-    public static String DB_ZIP;
 
-    public static String DB_NAME_BASE = "namoa.db3";
-
+    public static String DB_NAME_BASE;
     public static String DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
+    public static int DB_VERSION_BASE;
 
-    public static int DB_VERSION_BASE = 1;
-    public static int DB_VERSION_CUSTOM = 1;
+    public static String DB_NAME_CUSTOM;
+    public static String DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
+    public static int DB_VERSION_CUSTOM;
 
     public static String DB_MODE_MULTI = "MULTI";
     public static String DB_MODE_SINGLE = "SINGLE";
@@ -43,6 +40,9 @@ public class Constant {
     public static String ZIP_PATH;
     public static String IMG_PATH;
     public static String THU_PATH;
+
+    public static String ZIP_NAME;
+    public static String ZIP_NAME_FULL;
 
     public static String CACHE_PATH;
     public static String CACHE_PATH_PHOTO;

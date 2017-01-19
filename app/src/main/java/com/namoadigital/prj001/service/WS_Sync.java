@@ -71,7 +71,7 @@ public class WS_Sync extends IntentService {
     private void processWSLO(String user, String password, String nfc, String status, String statusjump) {
 
         userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
+        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
         Gson gson = new Gson();
 

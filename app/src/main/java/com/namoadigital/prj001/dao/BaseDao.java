@@ -5,9 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.namoadigital.prj001.database.DatabaseHelperMulti;
 import com.namoadigital.prj001.database.DatabaseHelperSingle;
-import com.namoadigital.prj001.util.Constant;
-
-import static com.namoadigital.prj001.util.Constant.DB_MODE_MULTI;
 
 /**
  * Created by neomatrix on 18/01/17.

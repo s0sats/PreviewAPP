@@ -130,7 +130,7 @@ public class WS_Access extends IntentService {
     private void processWSSync(String sUser, String sPassword, String sNfc, int iStatus, int iType) throws Exception {
 
         userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext());
+        ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_customerDao = new EV_CustomerDao(getApplicationContext());
         customer_translateDao = new EV_Customer_TranslateDao(getApplicationContext());
         translateDao = new EV_TranslateDao(getApplicationContext());
@@ -354,7 +354,7 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        ToolBox_Inf.downloadZip(rec.getZip(), Constant.DB_ZIP);
+        ToolBox_Inf.downloadZip(rec.getZip(), Constant.ZIP_NAME_FULL);
         //
 
 //        enviarBroadCastStatus(
@@ -364,7 +364,7 @@ public class WS_Access extends IntentService {
 //                "0"
 //        );
         //
-        ToolBox_Inf.unpackZip("", Constant.DB_ZIP);
+        ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
 
 //        enviarBroadCastStatus(
 //                Constantes.SWAKESERVICEFULL_STATUS_UPTUX,

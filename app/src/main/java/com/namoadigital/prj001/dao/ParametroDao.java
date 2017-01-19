@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.Parametro;
 import com.namoadigital.prj001.util.Constant;

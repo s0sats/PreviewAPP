@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act002;
 
-import com.namoadigital.prj001.database.HMAux;
+import com.namoa_digital.namoa_library.util.HMAux;
 
 /**
  * Created by neomatrix on 13/01/17.

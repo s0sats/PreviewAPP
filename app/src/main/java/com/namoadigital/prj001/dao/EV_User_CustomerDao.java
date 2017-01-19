@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.util.Constant;
@@ -32,7 +32,8 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String NLS_DATE_FORMAT = "nls_date_format";
     public static final String KEYUSER = "keyuser";
     public static final String BLOCKED = "blocked";
-    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED};
+    public static final String SESSION_APP = "session_app";
+    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP};
 
     public EV_User_CustomerDao(Context context,String DB_NAME, int DB_VERSION) {
         //Ultimo parametro refrece se a tabela fica no banco principal
@@ -215,6 +216,8 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setLanguage_code(cursor.getString(cursor.getColumnIndex(LANGUAGE_CODE)));
             ev_user_customer.setNls_date_format(cursor.getString(cursor.getColumnIndex(NLS_DATE_FORMAT)));
             ev_user_customer.setKeyuser(cursor.getInt(cursor.getColumnIndex(KEYUSER)));
+            ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
+            ev_user_customer.setSession_app(cursor.getString(cursor.getColumnIndex(SESSION_APP)));
 
             return ev_user_customer;
         }
@@ -249,6 +252,13 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             if (ev_user_customer.getKeyuser() > -1) {
                 contentValues.put(KEYUSER, ev_user_customer.getKeyuser());
             }
+            if (ev_user_customer.getBlocked() > -1) {
+                contentValues.put(BLOCKED, ev_user_customer.getBlocked());
+            }
+            if (ev_user_customer.getSession_app() != null) {
+                contentValues.put(SESSION_APP, ev_user_customer.getSession_app());
+            }
+
 
             return contentValues;
         }

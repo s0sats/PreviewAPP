@@ -7,10 +7,10 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_OperationDao;
-import com.namoadigital.prj001.database.HMAux;
 
 import java.util.List;
 

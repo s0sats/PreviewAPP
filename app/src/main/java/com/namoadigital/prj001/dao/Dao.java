@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.dao;
 
 
-import com.namoadigital.prj001.database.HMAux;
+import com.namoa_digital.namoa_library.util.HMAux;
 
 import java.util.List;
 
