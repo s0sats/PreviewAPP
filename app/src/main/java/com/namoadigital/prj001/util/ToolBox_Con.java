@@ -186,6 +186,7 @@ public class ToolBox_Con {
                 ""
         );
     }
+
     //
     public static String getPreference_User_Email(Context context) {
         SharedPreferences sharedPreferences =
@@ -196,6 +197,7 @@ public class ToolBox_Con {
                 ""
         );
     }
+
     //
     public static String getPreference_User_Pwd(Context context) {
         SharedPreferences sharedPreferences =
@@ -206,6 +208,7 @@ public class ToolBox_Con {
                 ""
         );
     }
+
     //
     public static String getPreference_User_NFC(Context context) {
         SharedPreferences sharedPreferences =
@@ -216,6 +219,7 @@ public class ToolBox_Con {
                 ""
         );
     }
+
     public static void setPreference_User_Code(Context context, String user_code) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -343,6 +347,10 @@ public class ToolBox_Con {
                 ""
         ).apply();
 
+    }
+
+    private String customDBPath(String customer_code) {
+        return (Constant.DB_PATH + "/C_" + customer_code + ".db3");
     }
 
 
