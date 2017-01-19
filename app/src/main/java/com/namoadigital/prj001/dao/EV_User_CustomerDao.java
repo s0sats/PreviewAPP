@@ -195,7 +195,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
 
             cursor.close();
         } catch (Exception e) {
-
+            String st = e.toString();
         } finally {
         }
 

@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.EV_CustomerDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -19,19 +19,19 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     private Context context;
     private Act002_Main_View mView;
-    private EV_CustomerDao ev_customerDao;
+    private EV_User_CustomerDao ev_user_customerDao;
     private HMAux HMCustomer;
 
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
         this.mView = mView;
-        this.ev_customerDao = new EV_CustomerDao(context);
+        this.ev_user_customerDao = new EV_User_CustomerDao(context,Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
     }
 
     @Override
     public void getAllCustomers() {
         mView.loadCustomers(
-                ev_customerDao.query_HM(
+                ev_user_customerDao.query_HM(
                             new EV_User_Customer_Sql_001(
                                     ToolBox_Con.getPreference_User_Code(context)
                             ).toSqlQuery()
