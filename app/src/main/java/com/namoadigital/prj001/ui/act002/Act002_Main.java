@@ -10,11 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -29,6 +29,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
+    private Lib_Custom_Cell_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +73,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
 
     @Override
     public void loadCustomers(List<HMAux> customers) {
-        String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
+
+        mAdapter =  new Lib_Custom_Cell_Adapter(context,R.layout.lib_custom_cell,customers);
+        lv_customers.setAdapter(mAdapter);
+
+        /*String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
         int[] to = {R.id.lib_custom_cell_tv_item};
         lv_customers.setAdapter(
                 new SimpleAdapter(
@@ -82,8 +87,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
                         from,
                         to
                 )
-        );
-
+        );*/
     }
 
     @Override
