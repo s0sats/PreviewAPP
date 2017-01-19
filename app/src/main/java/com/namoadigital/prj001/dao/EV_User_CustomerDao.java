@@ -33,7 +33,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String KEYUSER = "keyuser";
     public static final String BLOCKED = "blocked";
     public static final String SESSION_APP = "session_app";
-    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP};
+    public static final String PENDING = "pending";
+
+    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP,PENDING};
 
     public EV_User_CustomerDao(Context context,String DB_NAME, int DB_VERSION) {
         //Ultimo parametro refrece se a tabela fica no banco principal
@@ -218,6 +220,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setKeyuser(cursor.getInt(cursor.getColumnIndex(KEYUSER)));
             ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
             ev_user_customer.setSession_app(cursor.getString(cursor.getColumnIndex(SESSION_APP)));
+            ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
 
             return ev_user_customer;
         }
@@ -257,6 +260,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             }
             if (ev_user_customer.getSession_app() != null) {
                 contentValues.put(SESSION_APP, ev_user_customer.getSession_app());
+            }
+            if (ev_user_customer.getPending() > -1) {
+                contentValues.put(PENDING, ev_user_customer.getPending());
             }
 
 

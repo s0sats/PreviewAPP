@@ -15,6 +15,7 @@ public class EV_User_Customer {
     private int keyuser;
     private int blocked;
     private String session_app;
+    private int pending;
 
     public long getUser_code() {
         return user_code;
@@ -94,5 +95,13 @@ public class EV_User_Customer {
 
     public void setSession_app(String session_app) {
         this.session_app = session_app;
+    }
+
+    public int getPending() {
+        return pending;
+    }
+
+    public void setPending(int pending) {
+        this.pending = pending;
     }
 }
