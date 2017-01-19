@@ -3,14 +3,12 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.HMAux;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,8 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
-    private final SQLiteOpenHelper openHelper;
+public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer> {
+
     private final Mapper<EV_User_Customer, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, EV_User_Customer> toEV_User_CustomerMapper;
 
@@ -33,62 +31,62 @@ public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
     public static final String TRANSLATE_DESC = "translate_desc";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
     public static final String KEYUSER = "keyuser";
-    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER};
+    public static final String BLOCKED = "blocked";
+    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED};
 
-    public EV_User_CustomerDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
-        //
+    public EV_User_CustomerDao(Context context,String DB_NAME, int DB_VERSION) {
+        //Ultimo parametro refrece se a tabela fica no banco principal
+        //ou no banco por customer.
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
+
         this.toContentValuesMapper = new EV_CustomerToContentValuesMapper();
         this.toEV_User_CustomerMapper = new CursorToEV_CustomerMapper();
     }
 
     @Override
-    public void addUpdate(EV_User_Customer customer) {
-        SQLiteDatabase db = null;
+    public void addUpdate(EV_User_Customer user_customer) {
+
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
-
-            if (db.insert(TABLE, null, toContentValuesMapper.map(customer)) == -1) {
+            if (db.insert(TABLE, null, toContentValuesMapper.map(user_customer)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(customer.getUser_code())).append("'");
+                sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(user_customer.getUser_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer.getCustomer_code())).append("'");
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(user_customer.getCustomer_code())).append("'");
 
-                db.update(TABLE, toContentValuesMapper.map(customer), sbWhere.toString(), null);
+                db.update(TABLE, toContentValuesMapper.map(user_customer), sbWhere.toString(), null);
             }
 
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+        closeDB();
+
     }
 
     @Override
-    public void addUpdate(Iterable<EV_User_Customer> customers, boolean status) {
-        SQLiteDatabase db = null;
+    public void addUpdate(Iterable<EV_User_Customer> userCustomers, boolean status) {
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
                 db.delete(TABLE, null, null);
             }
 
-            for (EV_User_Customer customer : customers) {
-                if (db.insert(TABLE, null, toContentValuesMapper.map(customer)) == -1) {
+            for (EV_User_Customer userCustomer : userCustomers) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(userCustomer)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(USER_CODE).append(" = '").append(String.valueOf(customer.getUser_code())).append("'");
+                    sbWhere.append(USER_CODE).append(" = ").append(String.valueOf(userCustomer.getUser_code()));
                     sbWhere.append(" and ");
-                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(customer.getCustomer_code())).append("'");
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(userCustomer.getCustomer_code())).append("'");
 
-                    db.update(TABLE, toContentValuesMapper.map(customer), sbWhere.toString(), null);
+                    db.update(TABLE, toContentValuesMapper.map(userCustomer), sbWhere.toString(), null);
                 }
             }
 
@@ -96,86 +94,71 @@ public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+        closeDB();
     }
 
     @Override
-    public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+    public void addUpdate(String sQuery) {
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
-
-            db.execSQL(s_query);
+            db.execSQL(sQuery);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
-    public void remove(String s_query) {
-        SQLiteDatabase db = null;
+    public void remove(String sQuery) {
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
-
-            db.execSQL(s_query);
+            db.execSQL(sQuery);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+        closeDB();
     }
 
     @Override
-    public EV_User_Customer getByString(String s_query) {
-        EV_User_Customer customer = null;
-        SQLiteDatabase db = null;
+    public EV_User_Customer getByString(String sQuery) {
+        EV_User_Customer userCustomer = null;
+        openDB();
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
-            Cursor cursor = db.rawQuery(s_query, null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                customer = toEV_User_CustomerMapper.map(cursor);
+                userCustomer = toEV_User_CustomerMapper.map(cursor);
             }
 
             cursor.close();
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
-        return customer;
+        closeDB();
+
+        return userCustomer;
     }
 
     @Override
-    public List<EV_User_Customer> query(String s_query) {
+    public List<EV_User_Customer> query(String sQuery) {
         List<EV_User_Customer> customers = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
-            Cursor cursor = db.rawQuery(s_query, null);
+            Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
                 EV_User_Customer uAux = toEV_User_CustomerMapper.map(cursor);
@@ -186,44 +169,38 @@ public class EV_User_CustomerDao implements Dao<EV_User_Customer> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
+        closeDB();
         return customers;
     }
 
     @Override
-    public List<HMAux> query_HM(String s_query) {
-        List<HMAux> customers = new ArrayList<>();
-        SQLiteDatabase db = null;
+    public List<HMAux> query_HM(String sQuery) {
+        List<HMAux>  userCustomers = new ArrayList<>();
+        openDB();
 
-        String s_query_div[] = s_query.split(";");
+        String s_query_div[] = sQuery.split(";");
 
         Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
 
-
             while (cursor.moveToNext()) {
-                customers.add(toHMAuxMapper.map(cursor));
+                userCustomers.add(toHMAuxMapper.map(cursor));
             }
 
             cursor.close();
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
-        return customers;
+        closeDB();
+
+        return userCustomers;
     }
 
     private class CursorToEV_CustomerMapper implements Mapper<Cursor, EV_User_Customer> {

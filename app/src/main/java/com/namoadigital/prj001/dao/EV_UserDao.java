@@ -51,9 +51,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
@@ -84,10 +81,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
@@ -104,9 +97,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
@@ -122,9 +112,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
@@ -147,9 +134,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
@@ -175,9 +159,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
@@ -206,9 +187,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         closeDB();
