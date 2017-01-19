@@ -3,14 +3,12 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Operation;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,7 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 16/01/2017.
  */
 
-public class MD_OperationDao implements Dao<MD_Operation> {
-    private final SQLiteOpenHelper openHelper;
+public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
     private final Mapper<MD_Operation, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Operation> toMD_OperationMapper;
 
@@ -34,19 +31,18 @@ public class MD_OperationDao implements Dao<MD_Operation> {
 
     private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_DESC,ACTIVE, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
 
-    public MD_OperationDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public MD_OperationDao(Context context,String DB_NAME, int DB_VERSION) {
+        //Ultimo parametro refrece se a tabela fica no banco principal
+        //ou no banco por customer.
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         this.toContentValuesMapper = new MD_OperationToContentValuesMapper();
         this.toMD_OperationMapper = new CursorMD_OperationMapper();
     }
 
     @Override
     public void addUpdate(MD_Operation md_operation) {
-        SQLiteDatabase db = null;
-
+        openDB();
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(md_operation)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -61,20 +57,16 @@ public class MD_OperationDao implements Dao<MD_Operation> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<MD_Operation> md_operations, boolean status) {
-        SQLiteDatabase db = null;
-
+        openDB();
+        //
         try {
-
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -98,58 +90,41 @@ public class MD_OperationDao implements Dao<MD_Operation> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
-
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
-
+        openDB();
+        //
         try {
-
-            db = openHelper.getWritableDatabase();
-
             db.execSQL(s_query);
-
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
-
+        openDB();
+        //
         try {
-
-            db = openHelper.getWritableDatabase();
-
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+        closeDB();
     }
 
     @Override
     public MD_Operation getByString(String s_query) {
         MD_Operation md_operation = null;
-        SQLiteDatabase db = null;
-
+        openDB();
+        //
         try {
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
@@ -160,10 +135,8 @@ public class MD_OperationDao implements Dao<MD_Operation> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+        closeDB();
 
         return md_operation;
     }
@@ -171,12 +144,9 @@ public class MD_OperationDao implements Dao<MD_Operation> {
     @Override
     public List<MD_Operation> query(String s_query) {
         List<MD_Operation> md_operations = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query, null);
 
             while (cursor.moveToNext()) {
@@ -188,26 +158,21 @@ public class MD_OperationDao implements Dao<MD_Operation> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
-
+        closeDB();
         return md_operations;
     }
 
     @Override
     public List<HMAux> query_HM(String s_query) {
         List<HMAux> md_operations = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
         Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query_div[0], null);
 
@@ -220,11 +185,8 @@ public class MD_OperationDao implements Dao<MD_Operation> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
-
+        closeDB();
         return md_operations;
     }
 

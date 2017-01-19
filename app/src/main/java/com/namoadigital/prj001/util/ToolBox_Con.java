@@ -349,7 +349,7 @@ public class ToolBox_Con {
 
     }
 
-    private String customDBPath(String customer_code) {
+    public static String customDBPath(long customer_code) {
         return (Constant.DB_PATH + "/C_" + customer_code + ".db3");
     }
 
