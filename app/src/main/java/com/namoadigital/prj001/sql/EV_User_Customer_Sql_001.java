@@ -23,13 +23,16 @@ public class EV_User_Customer_Sql_001 implements Specification {
                 .append(" SELECT " +
                         "      customer_code, " +
                         "      customer_name, " +
-                        "      translate_code " +
+                        "      translate_code, " +
+                        "      blocked, " +
+                        "      session_app," +
+                        "      pending " +
                         " FROM ")
                 .append(EV_User_CustomerDao.TABLE)
                 .append(" WHERE " +
                              EV_User_CustomerDao.USER_CODE +" = '"+s_user_code+"' " +
                         " ORDER by customer_name;")
-                .append("customer_code#customer_name#translate_code")
+                .append("customer_code#customer_name#translate_code#blocked#session_app#pending")
                 .toString();
     }
 }
