@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nome"
-                android:textColor="@drawable/lib_custom_cell_font_color"
+                android:textColor="@color/lib_custom_cell_font_color"
                 android:textSize="17sp"/>
 
             <TextView
@@ -46,6 +46,14 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/cloud_upload"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/lib_custom_cell_tv_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="8dp"
+                android:visibility="gone"
                 />
             <View
                 android:layout_width="10dp"
@@ -54,7 +62,8 @@
                 android:id="@+id/lib_custom_cell_iv_002"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/key_variant" />
+                android:src="@drawable/key_variant"
+                android:visibility="gone"/>
     </LinearLayout>
 
 

@@ -7,4 +7,10 @@
     <!-- Footer -->
     <color name="colorFooterWhite">#FFFFFFFF</color>
 
+    <!--Lib Custom Cell Color -->
+    <color name="lib_cc_bg_info_light">#555bc0de</color>
+    <color name="lib_cc_bg_warning_light">#55f0ad4e</color>
+
+
+
 </resources>

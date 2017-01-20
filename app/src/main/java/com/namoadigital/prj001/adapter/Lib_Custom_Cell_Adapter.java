@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter  {
             //
             convertView = mInflater.inflate(resource,parent,false);
         }
-
+        //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.lib_custom_cell_ll_background);
         //
         TextView tvItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_item);
@@ -64,28 +65,43 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter  {
         ImageView iv001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
         //
         ImageView iv002 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_002);
-
+        //
+        TextView  tvTopQty = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_top);
+        //Resgata HmAux com as informações
         HMAux item = source.get(position);
 
+        //Inicia configuraçõa dos elementos
         tvItem.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
 
         tvSubItem.setVisibility(View.GONE);
 
-        if(item.get(EV_User_CustomerDao.BLOCKED).equals(0)){
-            llBackground.setBackgroundColor(context.getResources().getColor(R.color.bootstrap_brand_warning));
+        //Define layout da celula e baseado no campo blocked
+        if(!item.get(EV_User_CustomerDao.BLOCKED).equals("0")){
+            Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+            llBackground.setBackground(llDrawable);
+            tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+        }else{
+            Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_warning_base);
+            llBackground.setBackground(llDrawable);
+            tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
+            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
         }
-
-        if(!item.get(EV_User_CustomerDao.PENDING).equals(0)){
+        //Se existe itens pendente de envio, exibe icone e seta qtd no tvTop
+        if(!item.get(EV_User_CustomerDao.PENDING).equals("0")){
             iv001.setVisibility(View.VISIBLE);
-            iv001.setColorFilter(R.color.bootstrap_brand_primary);
+            iv001.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_primary));
+            //
+            tvTopQty.setVisibility(View.VISIBLE);
+            tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));
         }
-
+        //Configura icone de sessession baseado no valor.
         if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0){
             iv002.setVisibility(View.VISIBLE);
-            iv002.setColorFilter(R.color.bootstrap_brand_success);
+            iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_success));
         }  else {
             iv002.setVisibility(View.VISIBLE);
-            iv002.setColorFilter(R.color.bootstrap_brand_danger);
+            iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_danger));
         }
 
         return convertView;
