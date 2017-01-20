@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.namoadigital.prj001.receiver.WBR_Access;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -61,5 +62,19 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         executeLoginProcess(login, password, nfc_code, 0);
         //}
 
+    }
+
+    @Override
+    public void checkLogin() {
+        String user_code = ToolBox_Con.getPreference_User_Code(context);
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+
+        if (!user_code.equals("")) {
+            if (customer_code != -1) {
+                mView.call_Act003_Main(context);
+            } else {
+                mView.call_Act002_Main(context);
+            }
+        }
     }
 }

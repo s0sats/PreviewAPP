@@ -303,7 +303,7 @@ public class ToolBox_Con {
     }
 
 
-    public static void zerarPreferences(Context context) {
+    public static void cleanPreferences(Context context) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 

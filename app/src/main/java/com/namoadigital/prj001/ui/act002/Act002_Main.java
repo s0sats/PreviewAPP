@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -119,6 +120,15 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.act01_action_settings) {
+
+            ToolBox_Con.cleanPreferences(context);
+
+            Intent mIntent = new Intent(context, Act001_Main.class);
+
+            context.startActivity(mIntent);
+
+            finish();
+
             return true;
         }
 

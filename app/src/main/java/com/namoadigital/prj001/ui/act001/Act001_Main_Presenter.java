@@ -10,5 +10,7 @@ public interface Act001_Main_Presenter {
 
     void validateLogin(String login, String password, String nfc_code);
 
+    void checkLogin();
+
 
 }

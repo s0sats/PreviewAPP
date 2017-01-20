@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -49,18 +50,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         initVars();
         initActions();
-        //
-        //swReceiver_dialog = new SWReceiver_Dialog();
-        //IntentFilter filter = new IntentFilter(Constant.SW_TYPE_BR);
-        //filter.addCategory(Intent.CATEGORY_DEFAULT);
-        //
-        //registerReceiver(swReceiver_dialog, filter);
     }
 
     @Override
     protected void onDestroy() {
-        //unregisterReceiver(swReceiver_dialog);
-
         super.onDestroy();
     }
 
@@ -77,6 +70,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         );
         //
         ToolBox_Inf.mkDirectory();
+        mPresenter.checkLogin();
     }
 
     private void initActions() {
@@ -167,18 +161,29 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
         //
-        call_Act002_Main(context);
-        //
         progressDialog.dismiss();
         //
-        finish();
+        call_Act002_Main(context);
     }
 
+    @Override
     public void call_Act002_Main(Context context) {
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         context.startActivity(mIntent);
+
+        finish();
+    }
+
+    @Override
+    public void call_Act003_Main(Context context) {
+        Intent mIntent = new Intent(context, Act003_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(mIntent);
+
+        finish();
     }
 
     @Override

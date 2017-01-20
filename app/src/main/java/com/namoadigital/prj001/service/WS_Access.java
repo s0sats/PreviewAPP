@@ -268,17 +268,17 @@ public class WS_Access extends IntentService {
                 TSync_Cus_Rec.class
         );
 
-        if (!ToolBox_Inf.processWSCheck(
-                getApplicationContext(),
-                rec.getVersion(),
-                rec.getLogin(),
-                rec.getLicense(),
-                rec.getLink_url(),
-                0,
-                0
-        )) {
-            return;
-        }
+//        if (!ToolBox_Inf.processWSCheck(
+//                getApplicationContext(),
+//                rec.getVersion(),
+//                rec.getLogin(),
+//                rec.getLicense(),
+//                rec.getLink_url(),
+//                0,
+//                0
+//        )) {
+//            return;
+//        }
 
         int i = 10;
 

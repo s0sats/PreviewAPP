@@ -101,11 +101,10 @@ public class WS_GetCustomer extends IntentService {
                 TGC_Rec.class
         );
 
-        if (!ToolBox_Inf.processWSCheck(
+        if (!ToolBox_Inf.processWSCheck_GC(
                 getApplicationContext(),
                 rec.getVersion(),
                 rec.getLogin(),
-                "OK",
                 (rec.getLink_url() != null) ? rec.getLink_url() : "",
                 statusjump,
                 1
@@ -120,7 +119,7 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User...", "", "0");
 
         File[] files_Users = ToolBox_Inf.getListOfFiles_v2("ev_user-");
-        //Recebe dados do usuário para inserir nas preferencias
+
         EV_User userInfo = null;
 
         for (File _file : files_Users) {
@@ -147,12 +146,12 @@ public class WS_GetCustomer extends IntentService {
             );
             ev_user_customerDao.addUpdate(customers, false);
         }
-        //Seta preferencias do user
-        ToolBox_Con.setPreference_User_Code(getApplicationContext(),String.valueOf(userInfo.getUser_code()));
-        ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(),String.valueOf(userInfo.getUser_code()));
-        ToolBox_Con.setPreference_User_Email(getApplicationContext(),userInfo.getEmail_p());
-        ToolBox_Con.setPreference_User_Pwd(getApplicationContext(),ToolBox_Inf.md5(password).toUpperCase());
-        ToolBox_Con.setPreference_User_NFC(getApplicationContext(),String.valueOf(nfc));
+
+        ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
+        ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
+        ToolBox_Con.setPreference_User_Email(getApplicationContext(), userInfo.getEmail_p());
+        ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), ToolBox_Inf.md5(password).toUpperCase());
+        ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
 

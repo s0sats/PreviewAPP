@@ -337,94 +337,64 @@ public class ToolBox_Inf {
         context.sendBroadcast(mIntent);
     }
 
-    public static boolean processWSCheck(Context context, String sVersion, String sLogin, String sLicence, String s_Link, int iStatus, int iStatus_OD) {
-        switch (sVersion) {
-            case "STABLE":
-                break;
-
-            case "UPDATE_REQUIRED":
-                if (iStatus == 0) {
-                    sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE_REQUIRED", s_Link, "0");
+    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD) {
+        if (sVersion != null) {
+            switch (sVersion) {
+                case "VERSION_INVALID":
+                    sendBCStatus(context, "VERSION_INVALID", "VERSION INVALID", s_Link, "1");
 
                     return false;
-                } else {
-                    return true;
-                }
 
-            case "VERSION_ERRO":
-                sendBCStatus(context, "VERSION_ERRO", "VERSION_ERRO", s_Link, "1");
-
-                return false;
-
-            case "VERSION_INVALID":
-                sendBCStatus(context, "VERSION_INVALID", "VERSION_INVALID", s_Link, "1");
-
-                return false;
-
-            case "VERSION_EXPIRED":
-                sendBCStatus(context, "VERSION_EXPIRED", "VERSION_EXPIRED", s_Link, "1");
-
-                return false;
-
-            default:
-                break;
-        }
-
-        switch (sLogin) {
-            case "OK":
-                break;
-
-            case "LOGIN_ERRO":
-                sendBCStatus(context, "LOGIN_ERRO", "LOGIN_ERRO", s_Link, "0");
-
-                return false;
-
-            case "USER_INVALID":
-                sendBCStatus(context, "USER_INVALID", "USER_INVALID", s_Link, "0");
-
-                return false;
-
-            case "USER_BLOCKED":
-                sendBCStatus(context, "USER_BLOCKED", "USER_BLOCKED", s_Link, "0");
-
-                return false;
-
-            case "USER_CANCELLED":
-                sendBCStatus(context, "USER_CANCELLED", "USER_CANCELLED", s_Link, "0");
-
-                return false;
-
-            case "USER_OTHER_DEVICE":
-                if (iStatus_OD == 0) {
-                    sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+                case "EXPIRED":
+                    sendBCStatus(context, "EXPIRED", "VERSION EXPIRED", s_Link, "1");
 
                     return false;
-                } else {
-                    return true;
-                }
 
-            case "SESSION_NOT_FOUND":
-                sendBCStatus(context, "SESSION_NOT_FOUND", "SESSION_NOT_FOUND", s_Link, "0");
+                case "UPDATE_REQUIRED":
+                    if (iStatus == 0) {
+                        sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE_REQUIRED", s_Link, "0");
 
-                return false;
+                        return false;
+                    } else {
+                        return true;
+                    }
 
 
-            default:
-                break;
+                case "STABLE":
+                    break;
+
+                default:
+                    break;
+            }
         }
 
-        switch (sLicence) {
-            case "OK":
+        if (sLogin != null) {
+            switch (sLogin) {
+                case "USER_INVALID":
+                    sendBCStatus(context, "USER_INVALID", "USER INVALID", s_Link, "0");
 
-                break;
+                    return false;
 
-            case "NOK":
-                sendBCStatus(context, "NOK", "NOK", s_Link, "0");
+                case "USER_CANCELLED":
+                    sendBCStatus(context, "USER_CANCELLED", "USER CANCELLED", s_Link, "0");
 
-                return false;
+                    return false;
 
-            default:
-                break;
+                case "USER_OTHER_DEVICE":
+                    if (iStatus_OD == 0) {
+                        sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+
+                        return false;
+                    } else {
+                        return true;
+                    }
+
+                case "OK":
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         return true;
