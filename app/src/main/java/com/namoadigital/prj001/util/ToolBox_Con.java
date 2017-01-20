@@ -220,6 +220,37 @@ public class ToolBox_Con {
         );
     }
 
+    //
+    public static String getPreference_User_NFC_TMP(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.LOGIN_USER_NFC_TMP,
+                ""
+        );
+    }
+    //
+    public static String getPreference_Customer_Code_TMP(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.LOGIN_CUSTOMER_CODE_TMP,
+                ""
+        );
+    }
+    //
+    public static String getPreference_Translate_Code_TMP(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE_TEMP,
+                ""
+        );
+    }
+    //
     public static void setPreference_User_Code(Context context, String user_code) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -252,16 +283,6 @@ public class ToolBox_Con {
         ).apply();
     }
 
-    public static void setPreference_Customer_Code_Name(Context context, String customer_code_name) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putString(
-                Constant.LOGIN_CUSTOMER_CODE_NAME,
-                customer_code_name
-        ).apply();
-    }
-
     public static void setPreference_Customer_nls_date_format(Context context, String nls_date_format) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -269,6 +290,26 @@ public class ToolBox_Con {
         sharedPreferences.edit().putString(
                 Constant.NLS_DATE_FORMAT,
                 nls_date_format
+        ).apply();
+    }
+
+    public static void setPreference_Customer_Code_TMP(Context context, long customer_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.LOGIN_CUSTOMER_CODE_TMP,
+                customer_code
+        ).apply();
+    }
+
+    public static void setPreference_Translate_Code_TMP(Context context, String translate_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE_TEMP,
+                translate_code
         ).apply();
     }
 
@@ -298,6 +339,16 @@ public class ToolBox_Con {
 
         sharedPreferences.edit().putString(
                 Constant.LOGIN_USER_NFC,
+                nfc
+        ).apply();
+    }
+
+    public static void setPreference_User_NFC_TMP(Context context, String nfc) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_NFC_TMP,
                 nfc
         ).apply();
     }

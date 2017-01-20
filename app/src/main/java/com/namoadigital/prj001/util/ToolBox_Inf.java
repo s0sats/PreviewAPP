@@ -9,9 +9,6 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 
-import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.WSValidationResult;
-import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
@@ -30,10 +27,8 @@ import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -421,6 +416,84 @@ public class ToolBox_Inf {
             case "NOK":
                 sendBCStatus(context, "NOK", "NOK", s_Link, "0");
 
+                return false;
+
+            default:
+                break;
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * @param context
+     * @param validation
+     * @param error_msg
+     * @param s_Link
+     * @param iStatus - Se deve validar update_required.0 valida , 1 não valida
+     * @param iStatus_OD - Se deve validar forced_login.0 valida , 1 não valida
+     * @return
+     */
+    public static boolean processWSCheckValidation(Context context, String validation, String error_msg ,String s_Link, int iStatus, int iStatus_OD) {
+        switch (validation) {
+            case "OK":
+                break;
+
+            case "UPDATE_REQUIRED":
+                if (iStatus == 0) {
+                    sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE REQUIRED", s_Link, "0");
+
+                    return false;
+                } else {
+                    return true;
+                }
+
+            case "VERSION_ERRO":
+                sendBCStatus(context, "VERSION_ERRO", error_msg, s_Link, "1");
+
+                return false;
+
+            case "VERSION_INVALID":
+                sendBCStatus(context, "VERSION_INVALID", error_msg, s_Link, "1");
+
+                return false;
+
+            case "VERSION_EXPIRED":
+                sendBCStatus(context, "VERSION_EXPIRED", error_msg, s_Link, "1");
+
+                return false;
+
+            case "LOGIN_ERRO":
+                sendBCStatus(context, "LOGIN_ERRO", error_msg, s_Link, "0");
+
+                return false;
+
+            case "USER_INVALID":
+                sendBCStatus(context, "USER_INVALID", error_msg, s_Link, "0");
+
+                return false;
+
+            case "USER_BLOCKED":
+                sendBCStatus(context, "USER_BLOCKED", error_msg, s_Link, "0");
+
+                return false;
+
+            case "USER_CANCELLED":
+                sendBCStatus(context, "USER_CANCELLED", error_msg, s_Link, "0");
+
+                return false;
+
+            case "USER_OTHER_DEVICE":
+                if (iStatus_OD == 0) {
+                    sendBCStatus(context, "USER_OTHER_DEVICE", error_msg, s_Link, "0");
+                    return false;
+                } else {
+                    return true;
+                }
+
+            case "SESSION_NOT_FOUND":
+                sendBCStatus(context, "SESSION_NOT_FOUND", error_msg, s_Link, "0");
                 return false;
 
             default:

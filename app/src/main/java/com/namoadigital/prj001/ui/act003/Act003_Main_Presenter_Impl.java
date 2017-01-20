@@ -23,7 +23,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
         this.context = context;
         this.mView = mView;
         //
-        this.md_operationDao = new MD_OperationDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_BASE);
+        this.md_operationDao = new MD_OperationDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
     }
 
     @Override
