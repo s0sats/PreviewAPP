@@ -42,6 +42,10 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
             script.append("create table if not exists [md_operations] ([customer_code] int not null, [operation_code] int not null, [operation_desc] text not null COLLATE NOCASE, [active] int not null, [alias_service_oper] int not null, [alias_service_com] int not null, constraint pk_md_operations primary key(customer_code, operation_code));");
             script.append("create table if not exists [md_sites] ([customer_code] int not null, [site_code] int not null, [site_id] text not null COLLATE NOCASE,  [site_desc] text not null COLLATE NOCASE, [active] int not null, constraint pk_md_sites primary key(customer_code, site_code));");
             //
+            script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_SMS001', 'APP SMS 01');");
+            script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
+            script_dados.append(" insert into ev_modules (module_code, module_name) values ('SYS', 'System');");
+            //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
             //

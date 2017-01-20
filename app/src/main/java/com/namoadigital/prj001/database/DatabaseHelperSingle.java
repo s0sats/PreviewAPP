@@ -29,10 +29,6 @@ public class DatabaseHelperSingle extends SQLiteOpenHelper {
             script.append("create table if not exists [ev_users] ([user_code] int not null, [user_nick] text not null COLLATE NOCASE, [email_p] text not null COLLATE NOCASE, constraint pk_users primary key(user_code));");
             script.append("create table if not exists [ev_user_customers] ([user_code] int not null, [customer_code] int not null, [customer_name] text not null COLLATE NOCASE, [translate_code] int not null, [language_code] text not null COLLATE NOCASE, [translate_desc] text not null COLLATE NOCASE, [nls_date_format] text not null COLLATE NOCASE, [keyuser] int not null, [blocked] int not null, [session_app] text not null COLLATE NOCASE,[pending] int not null DEFAULT 0, constraint pk_list_customers primary key(user_code,customer_code));");
             //
-            script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_SMS001', 'APP SMS 01');");
-            script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
-            script_dados.append(" insert into ev_modules (module_code, module_name) values ('SYS', 'System');");
-            //
             String[] scripts        = script.toString().split(";");
             String[] scripts_dados =  script_dados.toString().split(";");
             //

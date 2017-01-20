@@ -76,7 +76,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter  {
         tvSubItem.setVisibility(View.GONE);
 
         //Define layout da celula e baseado no campo blocked
-        if(!item.get(EV_User_CustomerDao.BLOCKED).equals("0")){
+        if(item.get(EV_User_CustomerDao.BLOCKED).equals("0")){
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
             llBackground.setBackground(llDrawable);
             tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
