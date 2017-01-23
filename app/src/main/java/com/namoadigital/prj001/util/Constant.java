@@ -77,6 +77,10 @@ public class Constant {
      * WebService
      */
     public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
+    public static final String WS_GETSESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
+
+
+
     public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
     public static final String WS_LICENSE = "https://dev.namoadigital.com/ws/prj001/server_license.ws";
     public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";

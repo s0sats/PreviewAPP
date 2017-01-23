@@ -37,6 +37,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act002_main);
 
+        SERVICE_TYPE = "SESSION";
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //

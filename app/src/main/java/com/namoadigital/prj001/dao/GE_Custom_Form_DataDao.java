@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,7 @@ import java.util.List;
  * Created by neonhugo on 11/01/17.
  */
 
-public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
-
-    private final SQLiteOpenHelper openHelper;
+public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_Form_Data> {
     private final Mapper<GE_Custom_Form_Data, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Data> toGE_Custom_Form_DataMapper;
 
@@ -43,8 +42,8 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
 
     private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE_START, USER_CODE_END, TOKEN};
 
-    public GE_Custom_Form_DataDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public GE_Custom_Form_DataDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new GE_Custom_Form_DataToContentValuesMapper();
         this.toGE_Custom_Form_DataMapper = new GE_Custom_Form_DataMapper();
@@ -52,11 +51,9 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
 
     @Override
     public void addUpdate(GE_Custom_Form_Data custom_form_data) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -75,19 +72,17 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<GE_Custom_Form_Data> custom_form_datas, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -115,57 +110,47 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public GE_Custom_Form_Data getByString(String s_query) {
         GE_Custom_Form_Data custom_form_data = null;
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -177,10 +162,9 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return custom_form_data;
     }
@@ -188,11 +172,9 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
     @Override
     public List<GE_Custom_Form_Data> query(String s_query) {
         List<GE_Custom_Form_Data> custom_form_datas = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -205,10 +187,9 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return custom_form_datas;
     }
@@ -216,15 +197,13 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
     @Override
     public List<HMAux> query_HM(String s_query) {
         ArrayList<HMAux> custom_form_datas = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
         Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query_div[0], null);
 
@@ -236,10 +215,9 @@ public class GE_Custom_Form_DataDao implements Dao<GE_Custom_Form_Data> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return custom_form_datas;
     }

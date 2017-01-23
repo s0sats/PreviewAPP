@@ -31,10 +31,10 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
 
     private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_DESC,ACTIVE, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
 
+
     public MD_OperationDao(Context context,String DB_NAME, int DB_VERSION) {
-        //Ultimo parametro refrece se a tabela fica no banco principal
-        //ou no banco por customer.
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
+
         this.toContentValuesMapper = new MD_OperationToContentValuesMapper();
         this.toMD_OperationMapper = new CursorMD_OperationMapper();
     }

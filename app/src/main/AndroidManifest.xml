@@ -42,9 +42,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"></activity>
 
-        <receiver android:name=".receiver.WBR_Access" />
-        <service android:name=".service.WS_Access" />
-
         <receiver android:name=".receiver.WBR_GetCustomer" />
         <service android:name=".service.WS_GetCustomer" />
 

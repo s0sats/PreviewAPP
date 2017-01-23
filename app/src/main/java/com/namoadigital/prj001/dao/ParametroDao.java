@@ -28,8 +28,6 @@ public class ParametroDao extends BaseDao implements Dao<Parametro> {
     public static final String VALOR_DEFAULT = "valor_default";
     public static final String VALOR_CUSTOMIZADO = "valor_customizado";
 
-    private String[] columns = {PARAMETRO_CODE, NOME, DESCRICAO, VALOR_DEFAULT, VALOR_CUSTOMIZADO};
-
     public ParametroDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
         //

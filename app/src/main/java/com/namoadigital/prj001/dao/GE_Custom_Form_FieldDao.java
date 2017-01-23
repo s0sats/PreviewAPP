@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
-    private final SQLiteOpenHelper openHelper;
+public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Form_Field> {
     private final Mapper<GE_Custom_Form_Field, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Field> toGE_Custom_Form_FieldMapper;
 
@@ -41,8 +41,8 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
     public static final String ACTIVE = "active";
     private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_SEQ, CUSTOM_FORM_DATA_TYPE, CUSTOM_FORM_DATA_SIZE, CUSTOM_FORM_DATA_MASK, CUSTOM_FORM_DATA_CONTENT, CUSTOM_FORM_LOCAL_LINK, CUSTOM_FORM_ORDER, PAGE, REQUIRED, ACTIVE};
 
-    public GE_Custom_Form_FieldDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public GE_Custom_Form_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new GE_Custom_Form_FieldToContentValuesMapper();
         this.toGE_Custom_Form_FieldMapper = new CursorGE_Custom_Form_FieldMapper();
@@ -50,11 +50,9 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
 
     @Override
     public void addUpdate(GE_Custom_Form_Field custom_form_field) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_field)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -74,19 +72,17 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<GE_Custom_Form_Field> custom_form_fields, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -114,57 +110,47 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public GE_Custom_Form_Field getByString(String s_query) {
         GE_Custom_Form_Field custom_form_field = null;
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -176,10 +162,9 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return custom_form_field;
     }
@@ -187,11 +172,9 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
     @Override
     public List<GE_Custom_Form_Field> query(String s_query) {
         List<GE_Custom_Form_Field> custom_form_fields = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -204,10 +187,9 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return custom_form_fields;
     }
@@ -215,7 +197,7 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
     @Override
     public List<HMAux> query_HM(String s_query) {
         ArrayList<HMAux> custom_form_fields = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
@@ -223,10 +205,7 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
-
 
             while (cursor.moveToNext()) {
                 custom_form_fields.add(toHMAuxMapper.map(cursor));
@@ -236,10 +215,9 @@ public class GE_Custom_Form_FieldDao implements Dao<GE_Custom_Form_Field> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return custom_form_fields;
     }

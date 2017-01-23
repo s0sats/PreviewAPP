@@ -320,8 +320,8 @@ public class ToolBox_Inf {
 
         mIntent.putExtra(Constant.SW_TYPE, type);
         mIntent.putExtra(Constant.SW_VALUE, value);
-        mIntent.putExtra(Constant.SW_LINK, link);
-        mIntent.putExtra(Constant.SW_REQUIRED, required);
+        mIntent.putExtra(Constant.SW_LINK, link != null ? link : "");
+        mIntent.putExtra(Constant.SW_REQUIRED, required != null ? required : 0);
 
         context.sendBroadcast(mIntent);
     }
@@ -382,7 +382,7 @@ public class ToolBox_Inf {
 
                 case "USER_OTHER_DEVICE":
                     if (iStatus_OD == 0) {
-                        sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+                            sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
 
                         return false;
                     } else {

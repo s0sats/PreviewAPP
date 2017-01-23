@@ -185,7 +185,6 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
 
             cursor.close();
         } catch (Exception e) {
-
         } finally {
         }
 

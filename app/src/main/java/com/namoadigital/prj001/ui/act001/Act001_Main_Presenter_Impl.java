@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.namoadigital.prj001.receiver.WBR_Access;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;

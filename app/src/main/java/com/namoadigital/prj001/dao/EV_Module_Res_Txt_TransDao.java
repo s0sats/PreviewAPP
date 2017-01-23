@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> {
-    private final SQLiteOpenHelper openHelper;
+public class EV_Module_Res_Txt_TransDao extends BaseDao implements Dao<EV_Module_Res_Txt_Trans> {
     private final Mapper<EV_Module_Res_Txt_Trans, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, EV_Module_Res_Txt_Trans> toEV_Module_Res_Txt_TransMapper;
 
@@ -32,8 +32,8 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
     public static final String TXT_VALUE = "txt_value";
     private String[] columns = {MODULE_CODE, RESOURCE_CODE, TXT_CODE, TRANSLATE_CODE, TXT_VALUE};
 
-    public EV_Module_Res_Txt_TransDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public EV_Module_Res_Txt_TransDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new EV_Module_Res_Txt_TransToContentValuesMapper();
         this.toEV_Module_Res_Txt_TransMapper = new CursorEV_Module_Res_Txt_TransMapper();
@@ -41,11 +41,9 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
 
     @Override
     public void addUpdate(EV_Module_Res_Txt_Trans module_res_txt_trans) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(module_res_txt_trans)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -63,19 +61,17 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<EV_Module_Res_Txt_Trans> module_res_txt_transs, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -102,57 +98,47 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public EV_Module_Res_Txt_Trans getByString(String s_query) {
         EV_Module_Res_Txt_Trans module_res_txt_trans = null;
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -164,10 +150,9 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return module_res_txt_trans;
     }
@@ -175,11 +160,9 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
     @Override
     public List<EV_Module_Res_Txt_Trans> query(String s_query) {
         List<EV_Module_Res_Txt_Trans> module_res_txt_transs = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -192,10 +175,9 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return module_res_txt_transs;
     }
@@ -203,7 +185,7 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
     @Override
     public List<HMAux> query_HM(String s_query) {
         List<HMAux> module_res_txt_transs = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
@@ -211,10 +193,7 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
-
 
             while (cursor.moveToNext()) {
                 module_res_txt_transs.add(toHMAuxMapper.map(cursor));
@@ -224,10 +203,9 @@ public class EV_Module_Res_Txt_TransDao implements Dao<EV_Module_Res_Txt_Trans> 
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return module_res_txt_transs;
     }

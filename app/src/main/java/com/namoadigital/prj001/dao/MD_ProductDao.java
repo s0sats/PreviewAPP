@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class MD_ProductDao implements Dao<MD_Product> {
-    private final SQLiteOpenHelper openHelper;
+public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
     private final Mapper<MD_Product, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Product> toMD_ProductMapper;
 
@@ -34,8 +34,8 @@ public class MD_ProductDao implements Dao<MD_Product> {
     public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
     private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, ACTIVE, REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL};
 
-    public MD_ProductDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new MD_ProductToContentValuesMapper();
         this.toMD_ProductMapper = new CursorMD_ProductMapper();
@@ -43,11 +43,9 @@ public class MD_ProductDao implements Dao<MD_Product> {
 
     @Override
     public void addUpdate(MD_Product md_product) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(md_product)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -63,19 +61,17 @@ public class MD_ProductDao implements Dao<MD_Product> {
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<MD_Product> md_products, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -99,57 +95,47 @@ public class MD_ProductDao implements Dao<MD_Product> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public MD_Product getByString(String s_query) {
         MD_Product md_product = null;
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -161,10 +147,9 @@ public class MD_ProductDao implements Dao<MD_Product> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return md_product;
     }
@@ -172,11 +157,9 @@ public class MD_ProductDao implements Dao<MD_Product> {
     @Override
     public List<MD_Product> query(String s_query) {
         List<MD_Product> md_products = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -189,10 +172,9 @@ public class MD_ProductDao implements Dao<MD_Product> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return md_products;
     }
@@ -200,7 +182,7 @@ public class MD_ProductDao implements Dao<MD_Product> {
     @Override
     public List<HMAux> query_HM(String s_query) {
         List<HMAux> md_products = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
@@ -208,10 +190,7 @@ public class MD_ProductDao implements Dao<MD_Product> {
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
-
 
             while (cursor.moveToNext()) {
                 md_products.add(toHMAuxMapper.map(cursor));
@@ -221,10 +200,9 @@ public class MD_ProductDao implements Dao<MD_Product> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return md_products;
     }

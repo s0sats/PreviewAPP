@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_Module;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class EV_ModuleDao implements Dao<EV_Module> {
-    private final SQLiteOpenHelper openHelper;
+public class EV_ModuleDao extends BaseDao implements Dao<EV_Module> {
     private final Mapper<EV_Module, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, EV_Module> toEV_ModuleMapper;
 
@@ -30,20 +30,18 @@ public class EV_ModuleDao implements Dao<EV_Module> {
     private String[] columns = {MODULE_CODE, MODULE_NAME};
 
 
-    public EV_ModuleDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
-        //
+    public EV_ModuleDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
+
         this.toContentValuesMapper = new EV_ModuleToContentValuesMapper();
         this.toEV_ModuleMapper = new CursorEV_ModuleMapper();
     }
 
     @Override
     public void addUpdate(EV_Module module) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(module)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -52,22 +50,19 @@ public class EV_ModuleDao implements Dao<EV_Module> {
                 db.update(TABLE, toContentValuesMapper.map(module), sbWhere.toString(), null);
             }
 
-
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<EV_Module> modules, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -87,57 +82,47 @@ public class EV_ModuleDao implements Dao<EV_Module> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public EV_Module getByString(String s_query) {
         EV_Module module = null;
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -149,10 +134,9 @@ public class EV_ModuleDao implements Dao<EV_Module> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return module;
     }
@@ -160,11 +144,9 @@ public class EV_ModuleDao implements Dao<EV_Module> {
     @Override
     public List<EV_Module> query(String s_query) {
         List<EV_Module> modules = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -177,10 +159,9 @@ public class EV_ModuleDao implements Dao<EV_Module> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return modules;
     }
@@ -188,7 +169,7 @@ public class EV_ModuleDao implements Dao<EV_Module> {
     @Override
     public List<HMAux> query_HM(String s_query) {
         List<HMAux> modules = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
@@ -196,10 +177,7 @@ public class EV_ModuleDao implements Dao<EV_Module> {
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
-
 
             while (cursor.moveToNext()) {
                 modules.add(toHMAuxMapper.map(cursor));
@@ -209,10 +187,9 @@ public class EV_ModuleDao implements Dao<EV_Module> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return modules;
     }

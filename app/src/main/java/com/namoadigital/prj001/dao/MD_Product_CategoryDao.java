@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Category;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
-    private final SQLiteOpenHelper openHelper;
+public class MD_Product_CategoryDao extends BaseDao implements Dao<MD_Product_Category> {
     private final Mapper<MD_Product_Category, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Product_Category> toMD_Product_CategoryMapper;
 
@@ -35,21 +35,18 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
     private String[] columns = {CUSTOMER_CODE, CATEGORY_CODE, CATEGORY_CODE_FATHER, STRUC_TYPE, PRODUCT_CODE, CATEGORY_DESC, ACTIVE};
 
 
-    public MD_Product_CategoryDao(Context context) {
-        this.openHelper = DatabaseHelper.getInstance(context);
+    public MD_Product_CategoryDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new MD_Product_CategoryToContentValuesMapper();
         this.toMD_Product_CategoryMapper = new CursorMD_Product_CategoryMapper();
     }
 
-
     @Override
     public void addUpdate(MD_Product_Category product_category) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(product_category)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
@@ -60,22 +57,19 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
                 db.update(TABLE, toContentValuesMapper.map(product_category), sbWhere.toString(), null);
             }
 
-
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(Iterable<MD_Product_Category> product_categories, boolean status) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
 
-            db = openHelper.getWritableDatabase();
             db.beginTransaction();
 
             if (status) {
@@ -97,57 +91,47 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
         } catch (Exception e) {
         } finally {
             db.endTransaction();
-
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public void remove(String s_query) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getWritableDatabase();
 
             db.execSQL(s_query);
 
         } catch (Exception e) {
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
     }
 
     @Override
     public MD_Product_Category getByString(String s_query) {
         MD_Product_Category product_category = null;
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -159,10 +143,9 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return product_category;
     }
@@ -170,11 +153,9 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
     @Override
     public List<MD_Product_Category> query(String s_query) {
         List<MD_Product_Category> product_categories = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            db = openHelper.getReadableDatabase();
 
             Cursor cursor = db.rawQuery(s_query, null);
 
@@ -187,10 +168,9 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return product_categories;
     }
@@ -198,7 +178,7 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
     @Override
     public List<HMAux> query_HM(String s_query) {
         List<HMAux> product_categories = new ArrayList<>();
-        SQLiteDatabase db = null;
+        openDB();
 
         String s_query_div[] = s_query.split(";");
 
@@ -206,10 +186,7 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
 
         try {
 
-            db = openHelper.getReadableDatabase();
-
             Cursor cursor = db.rawQuery(s_query_div[0], null);
-
 
             while (cursor.moveToNext()) {
                 product_categories.add(toHMAuxMapper.map(cursor));
@@ -219,10 +196,9 @@ public class MD_Product_CategoryDao implements Dao<MD_Product_Category> {
         } catch (Exception e) {
 
         } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
+        closeDB();
 
         return product_categories;
     }

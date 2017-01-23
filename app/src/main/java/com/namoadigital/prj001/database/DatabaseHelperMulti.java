@@ -25,12 +25,10 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
             StringBuilder script = new StringBuilder();
             StringBuilder script_dados = new StringBuilder();
             //
-            script.append("create table if not exists [ev_customer_translates] ([customer_code] int not null, [translate_code] int not null, [date_db_customer_translate] text not null COLLATE NOCASE, constraint pk_list_customers primary key(customer_code,translate_code));");
             script.append("create table if not exists [ev_modules] ([module_code] text not null COLLATE NOCASE, [module_name] text not null COLLATE NOCASE, constraint pk_modules primary key(module_code));");
             script.append("create table if not exists [ev_module_ress] ([module_code] text not null COLLATE NOCASE, [resource_code] int not null, [resource_name] text not null COLLATE NOCASE, constraint pk_module_ress primary key(module_code,resource_code));");
             script.append("create table if not exists [ev_module_res_txts] ([module_code] text not null COLLATE NOCASE, [resource_code] int not null, [txt_code] text not null COLLATE NOCASE, [txt_ref] int not null, constraint pk_module_res_txts primary key(module_code,resource_code,txt_code));");
             script.append("create table if not exists [ev_module_res_txt_transs] ([module_code] text not null COLLATE NOCASE, [resource_code] int not null, [txt_code] text not null COLLATE NOCASE, [translate_code] int not null, [txt_value] text not null COLLATE NOCASE, constraint pk_module_res_txt_transs primary key(module_code,resource_code,txt_code,translate_code));");
-            script.append("create table if not exists [ev_translates] ([translate_code] int not null, [date_db_translate] text not null COLLATE NOCASE, constraint pk_txt_trans_dts primary key(translate_code));");
             script.append("create table if not exists [ge_custom_form_types] ([customer_code] int not null, [custom_form_type] int not null, [active] int not null, constraint pk_form_types primary key(customer_code,custom_form_type));");
             script.append("create table if not exists [ge_custom_forms] ([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [custom_form_status] text not null COLLATE NOCASE, [require_signature] int not null,constraint pk_forms primary key(customer_code,custom_form_type,custom_form_code,custom_form_version));");
             script.append("create table if not exists [ge_custom_form_fields] ([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [custom_form_seq] int not null, [custom_form_data_type] text not null COLLATE NOCASE, [custom_form_data_size] int not null, [custom_form_data_mask] text not null COLLATE NOCASE, [custom_form_data_content] text not null COLLATE NOCASE, [custom_form_local_link] text not null COLLATE NOCASE, [custom_form_order] int not null, [page] int not null, [required] int not null, constraint pk_form_fields primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_seq));");
@@ -65,12 +63,10 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         StringBuilder script = new StringBuilder();
         //
-        script.append("drop table if exists ev_customer_translates;");
         script.append("drop table if exists ev_modules;");
         script.append("drop table if exists ev_module_ress;");
         script.append("drop table if exists ev_module_res_txts;");
         script.append("drop table if exists ev_module_res_txt_transs;");
-        script.append("drop table if exists ev_translates;");
         script.append("drop table if exists ge_custom_form_types;");
         script.append("drop table if exists ge_custom_forms;");
         script.append("drop table if exists ge_custom_form_fields;");
