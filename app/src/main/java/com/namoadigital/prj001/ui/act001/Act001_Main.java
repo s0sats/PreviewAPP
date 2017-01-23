@@ -176,7 +176,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     public void call_Act003_Main(Context context) {
-        Intent mIntent = new Intent(context, Act003_Main.class);
+            Intent mIntent = new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         context.startActivity(mIntent);
@@ -195,7 +195,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void processLogin() {
         super.processLogin();
         //
-        ToolBox_Inf.call_Act001_Main(context);
+        progressDialog.dismiss();
     }
 
     @Override
@@ -212,8 +212,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void processGo() {
         super.processGo();
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
-
-
     }
 
     @Override
