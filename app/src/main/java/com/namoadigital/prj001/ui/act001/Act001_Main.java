@@ -1,12 +1,8 @@
 package com.namoadigital.prj001.ui.act001;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +14,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -98,7 +95,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     "Cancel",
                     "Ok"
             );
-
+            //Salva NFC temp
+            ToolBox_Con.setPreference_User_NFC_TMP(context,sMessage);
             mPresenter.executeLoginProcess(
                     "",
                     "",
@@ -208,6 +206,14 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 "Cancel",
                 "Ok"
         );
+    }
+
+    @Override
+    protected void processGo() {
+        super.processGo();
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
+
+
     }
 
     @Override

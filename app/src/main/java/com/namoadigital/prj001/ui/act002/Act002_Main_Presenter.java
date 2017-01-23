@@ -10,8 +10,6 @@ public interface Act002_Main_Presenter {
 
     void getAllCustomers();
 
-    void getToken(HMAux item);
-
-    void executeSessionProcess(String email, String password, String nfc, long customer_code, int status);
+    void executeSessionProcess(String email, String password, String nfc, HMAux customer,int forced_login, int jump_validation, int jump_od);
 
 }

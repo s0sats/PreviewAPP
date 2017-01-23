@@ -61,7 +61,11 @@ public class WS_GetCustomer extends IntentService {
                 results += "JsonParse - " + sResult.toString();
                 sb.append(results);
 
-            } else {
+            } else if(e.toString().contains("ORA-")) {
+                results += "Oracle - " + sResult.toString();
+                sb.append(results);
+
+            }else{
                 sb.append(results)
                         .append(e.toString());
             }

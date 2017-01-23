@@ -62,12 +62,19 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                ToolBox_Con.setPreference_Customer_Code(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
+                /*ToolBox_Con.setPreference_Customer_Code(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
                 ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
-                ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);
+                ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);*/
 
-                callAct003(context);
-                //mPresenter.executeSessionProcess();
+                mPresenter.executeSessionProcess(
+                        ToolBox_Con.getPreference_User_Email(context),
+                        ToolBox_Con.getPreference_User_Pwd(context),
+                        ToolBox_Con.getPreference_User_NFC(context),
+                        item,
+                        1,
+                        0,
+                        0
+                );
             }
         });
 

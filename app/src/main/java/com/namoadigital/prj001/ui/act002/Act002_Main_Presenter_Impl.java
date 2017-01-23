@@ -40,28 +40,22 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     @Override
-    public void getToken(HMAux item) {
-        /*this.HMCustomer = item;
-        Intent intent =  new Intent(context, WBR_Login.class);
-        Bundle bundle =  new Bundle();
-        bundle.putString();*/
-
-
-    }
-
-    @Override
-    public void executeSessionProcess(String user, String password, String nfc, long customer_code, int status) {
+    public void executeSessionProcess(String email, String password, String nfc, HMAux customer,int forced_login, int jump_validation, int jump_od) {
         Intent mIntent = new Intent(context, WBR_Session.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.GC_USER_CODE, user);
+
+        bundle.putString(Constant.GC_USER_CODE, email);
         bundle.putString(Constant.GC_PWD, password);
         bundle.putString(Constant.GC_NFC, nfc);
-        bundle.putInt(Constant.GC_STATUS, status);
-        bundle.putLong(Constant.USER_CUSTOMER_CODE, customer_code);
-        bundle.putInt(Constant.USER_TYPE, 1);
+        bundle.putString(Constant.USER_CUSTOMER_CODE, customer.get(EV_User_CustomerDao.CUSTOMER_CODE));
+        bundle.putString(Constant.USER_CUSTOMER_TRANSLATE_CODE, customer.get(EV_User_CustomerDao.TRANSLATE_CODE));
+        bundle.putInt(Constant.FORCED_LOGIN, forced_login);
+        bundle.putInt(Constant.GC_STATUS_JUMP, jump_validation);
+        bundle.putInt(Constant.GC_STATUS, jump_od);
         //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
     }
+
 }
