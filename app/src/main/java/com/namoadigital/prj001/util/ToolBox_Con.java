@@ -176,7 +176,6 @@ public class ToolBox_Con {
         );
     }
 
-    // Hugo
     public static String getPreference_Customer_Code_NAME(Context context) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -261,7 +260,15 @@ public class ToolBox_Con {
         ).apply();
     }
 
-    // Hugo Agora
+    public static void setPreference_Customer_Code_Name(Context context, String customer_code_name) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_CUSTOMER_CODE_NAME,
+                customer_code_name
+        ).apply();
+    }
 
     public static void setPreference_User_Code_Nick(Context context, String user_code_nick) {
         SharedPreferences sharedPreferences =
@@ -282,6 +289,8 @@ public class ToolBox_Con {
                 customer_code
         ).apply();
     }
+
+
 
     public static void setPreference_Customer_nls_date_format(Context context, String nls_date_format) {
         SharedPreferences sharedPreferences =
