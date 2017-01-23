@@ -1,9 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.act002.Act002_Main">
+    tools:context=".ui.act003.Act003_Main">
     <item
-        android:id="@+id/act02_action_settings"
+        android:id="@+id/act03_action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />

@@ -8,8 +8,8 @@
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.act003.Act003_Main"
-    tools:showIn="@layout/act003_main">
+    tools:context=".ui.act005.Act005_Main"
+    tools:showIn="@layout/act005_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,12 +17,6 @@
         android:layout_weight="1"
         android:background="@android:color/white"
         android:orientation="vertical">
-
-        <ListView
-            android:id="@+id/act003_lv_customers"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@color/padrao_TRANSPARENT" />
 
 
     </LinearLayout>
