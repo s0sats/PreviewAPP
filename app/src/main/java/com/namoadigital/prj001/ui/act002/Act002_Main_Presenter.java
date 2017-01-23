@@ -12,4 +12,6 @@ public interface Act002_Main_Presenter {
 
     void executeSessionProcess(String email, String password, String nfc, HMAux customer,int forced_login, int jump_validation, int jump_od);
 
+    void executeSyncProcess();
+
 }
