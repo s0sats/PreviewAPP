@@ -13,10 +13,10 @@ import java.util.List;
 public interface Act002_Main_View {
 
     void loadCustomers(List<HMAux> customers);
-    //Chama activity de login
-    void callAct001();
     //Chama activity com lista de operations
     void callAct003(Context context);
+    //Abri progress Dialog
+    void showPD();
 
 
 

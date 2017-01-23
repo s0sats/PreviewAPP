@@ -101,10 +101,13 @@ public class WS_Session extends IntentService {
         env.setCustomer_code(customer_code);
         env.setTranslate_code(Integer.parseInt(translate_code));
 
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Sending data ...", "", "0");
+
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SESSION,
                 gson.toJson(env)
         );
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Receiving data ...", "", "0");
 
         TSession_Rec rec = gson.fromJson(
                 resultado,
@@ -122,6 +125,8 @@ public class WS_Session extends IntentService {
             ) {
             return;
         }
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Saving data ...", "", "0");
+
         EV_User_Customer userCustomer = ev_user_customerDao.getByString(
                     new EV_User_Customer_Sql_002(
                             ToolBox_Con.getPreference_User_Code(getApplicationContext()),
@@ -137,11 +142,10 @@ public class WS_Session extends IntentService {
         ev_user_customerDao.addUpdate(userCustomer);
 
         //Seta preferecia de customer
-        ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), userCustomer.getCustomer_code());
+/*        ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), userCustomer.getCustomer_code());
         ToolBox_Con.setPreference_Customer_Code_Name(getApplicationContext(), userCustomer.getCustomer_name());
         ToolBox_Con.setPreference_Customer_nls_date_format (getApplicationContext(), userCustomer.getNls_date_format());
-
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
-
+*/
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", "Getting Master Data ...", "", "0");
     }
 }

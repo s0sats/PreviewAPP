@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -66,15 +67,19 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
                 ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
                 ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);*/
 
-                mPresenter.executeSessionProcess(
-                        ToolBox_Con.getPreference_User_Email(context),
-                        ToolBox_Con.getPreference_User_Pwd(context),
-                        ToolBox_Con.getPreference_User_NFC(context),
-                        item,
-                        1,
-                        0,
-                        0
-                );
+                if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
+                    mPresenter.executeSessionProcess(
+                            ToolBox_Con.getPreference_User_Email(context),
+                            ToolBox_Con.getPreference_User_Pwd(context),
+                            ToolBox_Con.getPreference_User_NFC(context),
+                            item,
+                            0, //Forced Login
+                            1, //Valida Update Required. 1 = não !!
+                            0  //Valida User_others_device. 1 = não, 0 = sim
+                    );
+                }else{
+                    callAct003(context);
+                }
             }
         });
 
@@ -101,8 +106,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     }
 
     @Override
-    public void callAct001() {
-
+    public void processLogin() {
+        ToolBox_Inf.call_Act001_Main(context);
     }
 
     @Override
@@ -110,6 +115,45 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         Intent mIntent =  new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void showPD() {
+        enableProgressDialog(
+                "Get Session",
+                "Start Processing...",
+                "Cancel",
+                "Ok"
+        );
+    }
+
+    @Override
+    protected void processOtherDevice() {
+        super.processOtherDevice();
+        HMAux item = new HMAux();
+        //
+        item.put(EV_User_CustomerDao.CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code_TMP(context));
+        item.put(EV_User_CustomerDao.TRANSLATE_CODE,ToolBox_Con.getPreference_Translate_Code_TMP(context));
+        //
+        mPresenter.executeSessionProcess(
+                ToolBox_Con.getPreference_User_Email(context),
+                ToolBox_Con.getPreference_User_Pwd(context),
+                ToolBox_Con.getPreference_User_NFC(context),
+                item,
+                1, //Forced Login
+                1, //Valida Update Required. 1 = não !!
+                1  //Valida User_others_device. 1 = não, 0 = sim
+        );
+
+    }
+
+    @Override
+    protected void processSync() {
+        super.processSync();
+
+        disableProgressDialog();
+
     }
 
     @Override

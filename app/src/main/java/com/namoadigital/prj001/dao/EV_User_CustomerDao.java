@@ -212,12 +212,14 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             ev_user_customer.setCustomer_name(cursor.getString(cursor.getColumnIndex(CUSTOMER_NAME)));
             ev_user_customer.setTranslate_code(cursor.getInt(cursor.getColumnIndex(TRANSLATE_CODE)));
+            ev_user_customer.setTranslate_desc(cursor.getString(cursor.getColumnIndex(TRANSLATE_DESC)));
             ev_user_customer.setLanguage_code(cursor.getString(cursor.getColumnIndex(LANGUAGE_CODE)));
             ev_user_customer.setNls_date_format(cursor.getString(cursor.getColumnIndex(NLS_DATE_FORMAT)));
             ev_user_customer.setKeyuser(cursor.getInt(cursor.getColumnIndex(KEYUSER)));
             ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
             ev_user_customer.setSession_app(cursor.getString(cursor.getColumnIndex(SESSION_APP)));
             ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
+
 
             return ev_user_customer;
         }

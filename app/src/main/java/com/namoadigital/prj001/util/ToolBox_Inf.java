@@ -463,7 +463,7 @@ public class ToolBox_Inf {
                 }
 
             case "SESSION_NOT_FOUND":
-                sendBCStatus(context, "SESSION_NOT_FOUND", error_msg, s_Link, "0");
+                sendBCStatus(context, "ERRO_3", error_msg, s_Link, "0");
                 return false;
 
             default:

@@ -14,9 +14,8 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 
