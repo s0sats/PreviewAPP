@@ -77,7 +77,7 @@ public class Constant {
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
-    public static final String USER_CUSTOMER_TRANSLATE_CODE_TEMP = "user_customer_translate_code_temp";
+    public static final String USER_CUSTOMER_TRANSLATE_CODE_TMP = "user_customer_translate_code_temp";
 
     /**
      * WebService

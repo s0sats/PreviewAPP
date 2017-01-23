@@ -245,7 +245,7 @@ public class ToolBox_Con {
                 PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getString(
-                Constant.USER_CUSTOMER_TRANSLATE_CODE_TEMP,
+                Constant.USER_CUSTOMER_TRANSLATE_CODE_TMP,
                 ""
         );
     }
@@ -317,7 +317,7 @@ public class ToolBox_Con {
                 PreferenceManager.getDefaultSharedPreferences(context);
 
         sharedPreferences.edit().putString(
-                Constant.USER_CUSTOMER_TRANSLATE_CODE_TEMP,
+                Constant.USER_CUSTOMER_TRANSLATE_CODE_TMP,
                 translate_code
         ).apply();
     }
@@ -404,6 +404,22 @@ public class ToolBox_Con {
         //
         sharedPreferences.edit().putString(
                 Constant.NLS_DATE_FORMAT,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_CUSTOMER_CODE_TMP,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE_TMP,
+                ""
+        ).apply();
+
+        //
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_USER_NFC_TMP,
                 ""
         ).apply();
 
