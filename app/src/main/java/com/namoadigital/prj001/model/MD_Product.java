@@ -10,7 +10,6 @@ public class MD_Product {
     private long product_code;
     private String product_id;
     private String product_desc;
-    private int active;
     private int require_serial;
     private int allow_new_serial_cl;
 
@@ -45,14 +44,6 @@ public class MD_Product {
 
     public void setProduct_desc(String product_desc) {
         this.product_desc = product_desc;
-    }
-
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
     }
 
     public int getRequire_serial() {

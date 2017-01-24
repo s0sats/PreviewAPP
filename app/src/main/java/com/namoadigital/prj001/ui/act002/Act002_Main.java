@@ -18,7 +18,6 @@ import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -145,7 +144,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         super.processOtherDevice();
         HMAux item = new HMAux();
         //
-        item.put(EV_User_CustomerDao.CUSTOMER_CODE,String.valueOf(ToolBox_Con.getPreference_Customer_Code_TMP(context)));
+        item.put(EV_User_CustomerDao.CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code_TMP(context));
         item.put(EV_User_CustomerDao.TRANSLATE_CODE,ToolBox_Con.getPreference_Translate_Code_TMP(context));
         //
         mPresenter.executeSessionProcess(
@@ -164,7 +163,10 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     protected void processSync() {
         super.processSync();
 
-        disableProgressDialog();
+
+
+
+        //disableProgressDialog();
 
     }
 

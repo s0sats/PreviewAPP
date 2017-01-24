@@ -6,10 +6,16 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_Session;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 13/01/17.
@@ -56,6 +62,35 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSyncProcess() {
+        EV_User_Customer userCustomer;
+
+        userCustomer =  ev_user_customerDao.getByString(
+                            new EV_User_Customer_Sql_003(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                ToolBox_Con.getPreference_User_Code(context)
+                            ).toSqlQuery()
+                        );
+
+        ArrayList<String> data_package = new ArrayList<>();
+        data_package.add("MAIN");
+        //
+        Intent mIntent = new Intent(context, WBR_Sync.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.GS_SESSION_APP,userCustomer.getSession_app());
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        bundle.putInt(Constant.GC_STATUS, 1);
+
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        ToolBox_Inf.sendBCStatus(context, "STATUS", "Starting to sync ...", "", "0");
+
     }
 
 }

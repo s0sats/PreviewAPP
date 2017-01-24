@@ -3,12 +3,9 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.util.Constant;
@@ -20,7 +17,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
+public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduct<MD_Product> {
     private final Mapper<MD_Product, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Product> toMD_ProductMapper;
 
@@ -29,10 +26,9 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
     public static final String PRODUCT_CODE = "product_code";
     public static final String PRODUCT_ID = "product_id";
     public static final String PRODUCT_DESC = "product_desc";
-    public static final String ACTIVE = "active";
     public static final String REQUIRE_SERIAL = "require_serial";
     public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, ACTIVE, REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL};
+    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL};
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -52,8 +48,6 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product.getProduct_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(ACTIVE).append(" = '").append(String.valueOf(1)).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(md_product), sbWhere.toString(), null);
             }
@@ -85,7 +79,6 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
                     sbWhere.append(" and ");
                     sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product.getProduct_code())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(ACTIVE).append(" = '").append(String.valueOf(1)).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(md_product), sbWhere.toString(), null);
                 }
@@ -207,6 +200,32 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
         return md_products;
     }
 
+    @Override
+    public List<Long> query_Custom_Product_Code(String sQuery) {
+        List<Long> products = new ArrayList<>();
+
+        openDB();
+        String s_query_div[] = sQuery.split(";");
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                products.add(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return products;
+    }
+
     private class CursorMD_ProductMapper implements Mapper<Cursor, MD_Product> {
         @Override
         public MD_Product map(Cursor cursor) {
@@ -216,7 +235,6 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
             md_product.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             md_product.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
             md_product.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
-            md_product.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)));
             md_product.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
             md_product.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
 
@@ -241,9 +259,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
             if (md_product.getProduct_desc() != null) {
                 contentValues.put(PRODUCT_DESC, md_product.getProduct_desc());
             }
-            if (md_product.getActive() > -1) {
-                contentValues.put(ACTIVE, md_product.getActive());
-            }
+
             if (md_product.getRequire_serial() > -1) {
                 contentValues.put(REQUIRE_SERIAL, md_product.getRequire_serial());
             }
