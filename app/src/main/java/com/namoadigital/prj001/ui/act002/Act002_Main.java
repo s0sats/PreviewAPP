@@ -18,6 +18,7 @@ import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -63,11 +64,18 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
+
+                ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
+                ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
+
                 /*ToolBox_Con.setPreference_Customer_Code(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
                 ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
                 ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);*/
 
                 if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
+
+                    showPD();
+
                     mPresenter.executeSessionProcess(
                             ToolBox_Con.getPreference_User_Email(context),
                             ToolBox_Con.getPreference_User_Pwd(context),
@@ -107,7 +115,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
 
     @Override
     public void processLogin() {
+        ToolBox_Con.cleanPreferences(context);
+        //
         ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
     }
 
     @Override
@@ -133,7 +145,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         super.processOtherDevice();
         HMAux item = new HMAux();
         //
-        item.put(EV_User_CustomerDao.CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code_TMP(context));
+        item.put(EV_User_CustomerDao.CUSTOMER_CODE,String.valueOf(ToolBox_Con.getPreference_Customer_Code_TMP(context)));
         item.put(EV_User_CustomerDao.TRANSLATE_CODE,ToolBox_Con.getPreference_Translate_Code_TMP(context));
         //
         mPresenter.executeSessionProcess(
@@ -154,6 +166,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
 
         disableProgressDialog();
 
+    }
+
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        //
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
 
     @Override

@@ -32,6 +32,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     private Act001_Main_Presenter mPresenter;
 
+    private String mEmail = "";
+    private String mPassWord = "";
+    private String mNFC = "";
+
+
     //private SWReceiver_Dialog swReceiver_dialog;
 
     @Override
@@ -77,6 +82,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mEmail = mk_login.getText().toString().trim();
+                mPassWord = et_password.getText().toString().trim();
+                mNFC = "";
+
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
                         et_password.getText().toString().trim(),
                         ""
@@ -95,6 +104,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     "Ok"
             );
             //Salva NFC temp
+
+            mEmail = "";
+            mPassWord = "";
+            mNFC = sMessage;
+
             ToolBox_Con.setPreference_User_NFC_TMP(context,sMessage);
             mPresenter.executeLoginProcess(
                     "",
@@ -210,7 +224,15 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     protected void processGo() {
         super.processGo();
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
+
+        mPresenter.executeLoginProcess(
+                mEmail,
+                mPassWord,
+                mNFC,
+                1
+        );
+
+        //ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
     }
 
     @Override

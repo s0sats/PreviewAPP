@@ -56,8 +56,6 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-
-        mView.showPD();
     }
 
 }

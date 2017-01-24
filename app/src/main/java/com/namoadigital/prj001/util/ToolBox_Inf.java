@@ -429,8 +429,8 @@ public class ToolBox_Inf {
 
                 return false;
 
-            case "VERSION_EXPIRED":
-                sendBCStatus(context, "VERSION_EXPIRED", error_msg, s_Link, "1");
+            case "EXPIRED":
+                sendBCStatus(context, "EXPIRED", error_msg, s_Link, "1");
 
                 return false;
 
@@ -445,7 +445,7 @@ public class ToolBox_Inf {
                 return false;
 
             case "USER_BLOCKED":
-                sendBCStatus(context, "USER_BLOCKED", error_msg, s_Link, "0");
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
 
                 return false;
 
@@ -464,6 +464,14 @@ public class ToolBox_Inf {
 
             case "SESSION_NOT_FOUND":
                 sendBCStatus(context, "ERRO_3", error_msg, s_Link, "0");
+                return false;
+
+            case "CREATE_SESSION_ABORT":
+                sendBCStatus(context, "ERRO_1", error_msg, s_Link, "0");
+                return false;
+
+            case "LICENSE_QTY_INVALID":
+                sendBCStatus(context, "ERRO_1", error_msg, s_Link, "0");
                 return false;
 
             default:

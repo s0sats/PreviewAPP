@@ -85,6 +85,8 @@ public class WS_GetCustomer extends IntentService {
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Get Customer...", "", "0");
+
         Gson gson = new Gson();
 
         TGC_Env env = new TGC_Env();

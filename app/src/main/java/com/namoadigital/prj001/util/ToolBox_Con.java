@@ -230,13 +230,13 @@ public class ToolBox_Con {
         );
     }
     //
-    public static String getPreference_Customer_Code_TMP(Context context) {
+    public static Long getPreference_Customer_Code_TMP(Context context) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
-        return sharedPreferences.getString(
+        return sharedPreferences.getLong(
                 Constant.LOGIN_CUSTOMER_CODE_TMP,
-                ""
+                -1L
         );
     }
     //
