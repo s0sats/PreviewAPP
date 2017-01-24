@@ -507,6 +507,7 @@ public class ToolBox_Inf {
 
     public static void call_Act001_Main(Context context) {
         Intent mIntent = new Intent(context, Act001_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         context.startActivity(mIntent);
     }
