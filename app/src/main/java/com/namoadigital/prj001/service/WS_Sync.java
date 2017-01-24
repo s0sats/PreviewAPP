@@ -115,14 +115,14 @@ public class WS_Sync extends IntentService {
         //o envio das informações
 
         //Verifica se existe o "Tipo" e adiciona a proprieda no data_package
-        if(dataPackageType.contains(Constant.GS_DATA_PACKAGE_MAIN)){
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
             //No caso do Main, sempre é vazio
             ArrayList<String> MAIN = new ArrayList<>();
             dataPackage.setMAIN(MAIN);
         }
 
         //Verifica o tipo Checklist e gera lista de codigo de produtos.
-        if(dataPackageType.contains(Constant.GS_DATA_PACKAGE_CHECKLIST)){
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
             List<Long> productList = productDao.query_Custom_Product_Code(
                         new MD_Product_HMAux_ProductCode_List_Sql(
                                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
@@ -141,7 +141,7 @@ public class WS_Sync extends IntentService {
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Receiving data ...", "", "0");
 
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SESSION,
+                Constant.WS_SYNC,
                 gson.toJson(env)
         );
 

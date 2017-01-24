@@ -10,7 +10,7 @@ import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -69,9 +69,9 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         EV_User_Customer userCustomer;
 
         userCustomer =  ev_user_customerDao.getByString(
-                            new EV_User_Customer_Sql_003(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                ToolBox_Con.getPreference_User_Code(context)
+                            new EV_User_Customer_Sql_002(
+                                ToolBox_Con.getPreference_User_Code(context),
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                             ).toSqlQuery()
                         );
 
@@ -84,7 +84,6 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
-
 
         mIntent.putExtras(bundle);
         //
