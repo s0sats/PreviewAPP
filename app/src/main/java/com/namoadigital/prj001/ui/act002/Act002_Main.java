@@ -164,10 +164,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processSync() {
         super.processSync();
 
-
-
-
-        //disableProgressDialog();
+        // Hugo
+        disableProgressDialog();
 
     }
 
