@@ -27,7 +27,7 @@ import java.util.List;
  * Created by neomatrix on 13/01/17.
  */
 
-public class Act002_Main extends Base_Activity implements Act002_Main_View{
+public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
@@ -48,9 +48,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     }
 
     private void initVars() {
-        context =  getBaseContext();
+        context = getBaseContext();
         //
-        mPresenter = new Act002_Main_Presenter_Impl(context,this);
+        mPresenter = new Act002_Main_Presenter_Impl(context, this);
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
         //
@@ -71,7 +71,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
                 ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
                 ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);*/
 
-                if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
+                if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
                     showPD();
 
@@ -84,7 +84,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
                             1, //Valida Update Required. 1 = não !!
                             0  //Valida User_others_device. 1 = não, 0 = sim
                     );
-                }else{
+                } else {
                     callAct003(context);
                 }
             }
@@ -96,7 +96,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     @Override
     public void loadCustomers(List<HMAux> customers) {
 
-        mAdapter =  new Lib_Custom_Cell_Adapter(context,R.layout.lib_custom_cell,customers);
+        mAdapter = new Lib_Custom_Cell_Adapter(context, R.layout.lib_custom_cell, customers);
         lv_customers.setAdapter(mAdapter);
 
         /*String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
@@ -123,7 +123,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
 
     @Override
     public void callAct003(Context context) {
-        Intent mIntent =  new Intent(context, Act003_Main.class);
+        Intent mIntent = new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -144,7 +144,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         super.processOtherDevice();
         HMAux item = new HMAux();
         //
-        item.put(EV_User_CustomerDao.CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code_TMP(context));
+        item.put(EV_User_CustomerDao.CUSTOMER_CODE,String.valueOf(ToolBox_Con.getPreference_Customer_Code_TMP(context)));
         item.put(EV_User_CustomerDao.TRANSLATE_CODE,ToolBox_Con.getPreference_Translate_Code_TMP(context));
         //
         mPresenter.executeSessionProcess(
