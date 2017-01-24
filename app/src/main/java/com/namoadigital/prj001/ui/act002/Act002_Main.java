@@ -119,6 +119,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         ToolBox_Inf.call_Act001_Main(context);
         //
         finish();
+
     }
 
     @Override
