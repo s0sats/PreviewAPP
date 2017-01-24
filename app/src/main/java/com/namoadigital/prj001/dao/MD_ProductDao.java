@@ -17,7 +17,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
+public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduct<MD_Product> {
     private final Mapper<MD_Product, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Product> toMD_ProductMapper;
 
@@ -198,6 +198,32 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product> {
         closeDB();
 
         return md_products;
+    }
+
+    @Override
+    public List<Long> query_Custom_Product_Code(String sQuery) {
+        List<Long> products = new ArrayList<>();
+
+        openDB();
+        String s_query_div[] = sQuery.split(";");
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                products.add(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return products;
     }
 
     private class CursorMD_ProductMapper implements Mapper<Cursor, MD_Product> {

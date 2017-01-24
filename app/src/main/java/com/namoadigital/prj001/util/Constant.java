@@ -61,6 +61,9 @@ public class Constant {
     public static final String FORCED_LOGIN = "forcedlogin";
     public static final String GS_SESSION_APP = "sessionapp";
     public static final String GS_DATA_PACKAGE = "datapackage";
+    public static final String GS_DATA_PACKAGE_MAIN = "datapackagemain";
+    public static final String GS_DATA_PACKAGE_CHECKLIST = "datapackagechecklist";
+    public static final String GS_DATA_PACKAGE_OS = "datapackageos";
 
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";

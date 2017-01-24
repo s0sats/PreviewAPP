@@ -429,7 +429,7 @@ public class ToolBox_Inf {
 
                 return false;
 
-            case "VERSION_EXPIRED":
+            case "EXPIRED":
                 sendBCStatus(context, "VERSION_EXPIRED", error_msg, s_Link, "1");
 
                 return false;

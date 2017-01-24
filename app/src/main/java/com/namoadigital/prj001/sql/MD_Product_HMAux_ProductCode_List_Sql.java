@@ -4,14 +4,17 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
- * Created by neomatrix on 7/13/16.
+ * Created by DANIEL.LUCHE on 24/01/2017.
+ *
+ * Carrega lista dos codigos dos produtos.
+ *
  */
 
-public class MD_Product_HMAux_Lista_SqlSpecification implements Specification {
+public class MD_Product_HMAux_ProductCode_List_Sql implements Specification {
 
     private String s_customer_code;
 
-    public MD_Product_HMAux_Lista_SqlSpecification(String s_customer_code) {
+    public MD_Product_HMAux_ProductCode_List_Sql(String s_customer_code) {
         this.s_customer_code = s_customer_code;
     }
 
@@ -20,14 +23,14 @@ public class MD_Product_HMAux_Lista_SqlSpecification implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append(" select * from ")
+                .append(" select product_code  from ")
                 .append(MD_ProductDao.TABLE)
                 .append(" where  " +
                         MD_ProductDao.CUSTOMER_CODE +" = '" +s_customer_code+"' ")
                 .append(" order by ")
-                .append(" customer_code, product_code ")
+                .append(" product_code ")
                 .append(";")
-                .append("customer_code#product_code#product_id#product_desc")
+                .append("product_code")
                 .toString();
     }
 }

@@ -9,13 +9,10 @@ import java.util.ArrayList;
 public class DataPackage {
 
     private ArrayList<String> MAIN;
-    private ArrayList<Integer> CHECKLIST;
+    private ArrayList<Long> CHECKLIST;
     private ArrayList<String> OS;
 
-    public DataPackage(ArrayList<String> MAIN , ArrayList<Integer> CHECKLIST, ArrayList<String> OS) {
-        this.MAIN = MAIN;
-        this.CHECKLIST = CHECKLIST;
-        this.OS = OS;
+    public DataPackage() {
     }
 
     public ArrayList<String> getMAIN() {
@@ -26,11 +23,11 @@ public class DataPackage {
         this.MAIN = MAIN;
     }
 
-    public ArrayList<Integer> getCHECKLIST() {
+    public ArrayList<Long> getCHECKLIST() {
         return CHECKLIST;
     }
 
-    public void setCHECKLIST(ArrayList<Integer> CHECKLIST) {
+    public void setCHECKLIST(ArrayList<Long> CHECKLIST) {
         this.CHECKLIST = CHECKLIST;
     }
 
