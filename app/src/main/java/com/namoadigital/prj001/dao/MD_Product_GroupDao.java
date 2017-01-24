@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.util.Constant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +23,7 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
     private final Mapper<MD_Product_Group, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Product_Group> toMD_ProductGroupMapper;
 
-    public static final String TABLE = "md_product_group";
+    public static final String TABLE = "md_product_groups";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String GROUP_CODE = "group_code";
     public static final String RECURSIVE_CODE = "recursive_code";
@@ -38,40 +40,171 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
     }
 
     @Override
-    public void addUpdate(MD_Product_Group item) {
+    public void addUpdate(MD_Product_Group md_product_group) {
+        openDB();
+
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_group)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product_group.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(GROUP_CODE).append(" = '").append(String.valueOf(md_product_group.getGroup_code())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(md_product_group), sbWhere.toString(), null);
+            }
+
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
-    public void addUpdate(Iterable<MD_Product_Group> items, boolean status) {
+    public void addUpdate(Iterable<MD_Product_Group> md_product_groups, boolean status) {
+        openDB();
 
+        try {
+
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (MD_Product_Group md_product_group : md_product_groups) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_group)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product_group.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(GROUP_CODE).append(" = '").append(String.valueOf(md_product_group.getGroup_code())).append("'");
+                    sbWhere.append(" and ");
+
+                    db.update(TABLE, toContentValuesMapper.map(md_product_group), sbWhere.toString(), null);
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String sQuery) {
+        openDB();
+
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
     public void remove(String sQuery) {
+        openDB();
+
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
     public MD_Product_Group getByString(String sQuery) {
-        return null;
+
+        MD_Product_Group md_product_group = null;
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                md_product_group = toMD_ProductGroupMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return md_product_group;
     }
 
     @Override
     public List<MD_Product_Group> query(String sQuery) {
-        return null;
+        List<MD_Product_Group> md_product_groups = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                MD_Product_Group uAux = toMD_ProductGroupMapper.map(cursor);
+                md_product_groups.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return md_product_groups;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
-    }
+        List<HMAux> md_product_groups = new ArrayList<>();
+        openDB();
 
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                md_product_groups.add(toHMAuxMapper.map(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return md_product_groups;
+    }
 
     private class CursorMD_Product_GroupMapper implements Mapper<Cursor, MD_Product_Group> {
         @Override
