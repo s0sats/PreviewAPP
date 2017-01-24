@@ -67,10 +67,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
                 ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
                 ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
 
-                /*ToolBox_Con.setPreference_Customer_Code(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
-                ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
-                ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);*/
-
                 if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
                     showPD();
@@ -99,17 +95,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         mAdapter =  new Lib_Custom_Cell_Adapter(context,R.layout.lib_custom_cell,customers);
         lv_customers.setAdapter(mAdapter);
 
-        /*String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
-        int[] to = {R.id.lib_custom_cell_tv_item};
-        lv_customers.setAdapter(
-                new SimpleAdapter(
-                        context,
-                        customers,
-                        R.layout.lib_custom_cell,
-                        from,
-                        to
-                )
-        );*/
     }
 
     @Override
@@ -144,7 +129,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
         super.processOtherDevice();
         HMAux item = new HMAux();
         //
-        item.put(EV_User_CustomerDao.CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code_TMP(context));
+        item.put(EV_User_CustomerDao.CUSTOMER_CODE, String.valueOf(ToolBox_Con.getPreference_Customer_Code_TMP(context)));
         item.put(EV_User_CustomerDao.TRANSLATE_CODE,ToolBox_Con.getPreference_Translate_Code_TMP(context));
         //
         mPresenter.executeSessionProcess(
@@ -163,9 +148,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     protected void processSync() {
         super.processSync();
 
-
-
-
+        mPresenter.executeSyncProcess();
         //disableProgressDialog();
 
     }
