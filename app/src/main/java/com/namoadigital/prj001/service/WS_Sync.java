@@ -384,7 +384,9 @@ public class WS_Sync extends IntentService {
 
         }
 
+        //REMOVER APOS TESTE
         ToolBox_Con.cleanPreferences(getApplicationContext());
+        //REMOVER APOS TESTE
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Teste Finished ...", "", "0");
 
     }
