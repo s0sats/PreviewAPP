@@ -72,8 +72,6 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
         return null;
     }
 
-
-
     private class CursorGE_Custom_Form_BlobMapper implements Mapper<Cursor,GE_Custom_Form_Blob> {
         @Override
         public GE_Custom_Form_Blob map(Cursor cursor) {
@@ -91,7 +89,6 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
             return geCustomFormBlob;
         }
     }
-
 
     private class GE_Custom_Form_BlobToContentValuesMapper implements Mapper<GE_Custom_Form_Blob,ContentValues> {
         @Override

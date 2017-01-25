@@ -14,7 +14,6 @@ public class GE_Custom_Form_Blob {
     private String blob_name;
     private String blob_url;
 
-
     public long getCustomer_code() {
         return customer_code;
     }

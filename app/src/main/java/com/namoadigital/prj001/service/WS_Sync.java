@@ -250,7 +250,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                operationDao.addUpdate(operations, false);
+                operationDao.addUpdate(operations, true);
             }
 
             //
@@ -266,7 +266,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                siteDao.addUpdate(sites, false);
+                siteDao.addUpdate(sites, true);
             }
 
             //
@@ -282,9 +282,8 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                productDao.addUpdate(products, false);
+                productDao.addUpdate(products, true);
             }
-
             //
             // Processamento Product Group
             //
@@ -298,7 +297,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                productGroupDao.addUpdate(productGroups, false);
+                productGroupDao.addUpdate(productGroups, true);
             }
 
             //
@@ -314,7 +313,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                productGroupProductDao.addUpdate(productGroupProducts, false);
+                productGroupProductDao.addUpdate(productGroupProducts, true);
             }
 
         }
@@ -334,7 +333,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormDao.addUpdate(customForms, false);
+                customFormDao.addUpdate(customForms, true);
             }
             //
             // Processamento Custom Form Type
@@ -349,7 +348,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormTypeDao.addUpdate(customFormsTypes, false);
+                customFormTypeDao.addUpdate(customFormsTypes, true);
             }
             //
             // Processamento Custom Form Field
@@ -364,7 +363,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormFieldDao.addUpdate(customFormsFields, false);
+                customFormFieldDao.addUpdate(customFormsFields, true);
             }
             //
             // Processamento Custom Form Product
@@ -379,9 +378,8 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormProductDao.addUpdate(customFormsProduct, false);
+                customFormProductDao.addUpdate(customFormsProduct, true);
             }
-
         }
 
         //REMOVER APOS TESTE
