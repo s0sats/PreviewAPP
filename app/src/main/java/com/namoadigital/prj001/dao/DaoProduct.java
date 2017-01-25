@@ -12,5 +12,4 @@ public interface DaoProduct<T> extends Dao<T> {
 
     List<Long> query_Custom_Product_Code(String sQuery);
 
-
 }
