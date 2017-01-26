@@ -27,7 +27,7 @@ import java.util.List;
  * Created by neomatrix on 13/01/17.
  */
 
-public class Act002_Main extends Base_Activity implements Act002_Main_View {
+public class Act002_Main extends Base_Activity implements Act002_Main_View{
     private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
@@ -48,9 +48,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     private void initVars() {
-        context = getBaseContext();
+        context =  getBaseContext();
         //
-        mPresenter = new Act002_Main_Presenter_Impl(context, this);
+        mPresenter = new Act002_Main_Presenter_Impl(context,this);
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
         //
@@ -64,29 +64,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
 
-                ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
-                ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
+                prepareExecSessionProcess(item,0,1,0);
 
-                /*ToolBox_Con.setPreference_Customer_Code(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
-                ToolBox_Con.setPreference_Customer_Code_Name(context, EV_User_CustomerDao.CUSTOMER_NAME);
-                ToolBox_Con.setPreference_Customer_nls_date_format (context, EV_User_CustomerDao.NLS_DATE_FORMAT);*/
-
-                if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
-
-                    showPD();
-
-                    mPresenter.executeSessionProcess(
-                            ToolBox_Con.getPreference_User_Email(context),
-                            ToolBox_Con.getPreference_User_Pwd(context),
-                            ToolBox_Con.getPreference_User_NFC(context),
-                            item,
-                            0, //Forced Login
-                            1, //Valida Update Required. 1 = não !!
-                            0  //Valida User_others_device. 1 = não, 0 = sim
-                    );
-                } else {
-                    callAct003(context);
-                }
             }
         });
 
@@ -96,20 +75,38 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     public void loadCustomers(List<HMAux> customers) {
 
-        mAdapter = new Lib_Custom_Cell_Adapter(context, R.layout.lib_custom_cell, customers);
-        lv_customers.setAdapter(mAdapter);
+        if(customers.size() == 1){
+            prepareExecSessionProcess(customers.get(0),0,1,0);
 
-        /*String[] from = {EV_User_CustomerDao.CUSTOMER_NAME};
-        int[] to = {R.id.lib_custom_cell_tv_item};
-        lv_customers.setAdapter(
-                new SimpleAdapter(
-                        context,
-                        customers,
-                        R.layout.lib_custom_cell,
-                        from,
-                        to
-                )
-        );*/
+        }else{
+            mAdapter =  new Lib_Custom_Cell_Adapter(context,R.layout.lib_custom_cell,customers);
+            lv_customers.setAdapter(mAdapter);
+
+        }
+    }
+
+    private void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
+
+        ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
+        ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
+
+        if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
+
+            showPD();
+
+            mPresenter.executeSessionProcess(
+                    ToolBox_Con.getPreference_User_Email(context),
+                    ToolBox_Con.getPreference_User_Pwd(context),
+                    ToolBox_Con.getPreference_User_NFC(context),
+                    item,
+                    forced_login, //Forced Login
+                    jump_validation, //Valida Update Required. 1 = não !!
+                    jump_od  //Valida User_others_device. 1 = não, 0 = sim
+            );
+        }else{
+            callAct003(context);
+        }
+
     }
 
     @Override
@@ -122,8 +119,19 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+        //
+        callAct003(context);
+    }
+
+
+
+    @Override
     public void callAct003(Context context) {
-        Intent mIntent = new Intent(context, Act003_Main.class);
+        Intent mIntent =  new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -144,7 +152,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         super.processOtherDevice();
         HMAux item = new HMAux();
         //
-        item.put(EV_User_CustomerDao.CUSTOMER_CODE,String.valueOf(ToolBox_Con.getPreference_Customer_Code_TMP(context)));
+        item.put(EV_User_CustomerDao.CUSTOMER_CODE, String.valueOf(ToolBox_Con.getPreference_Customer_Code_TMP(context)));
         item.put(EV_User_CustomerDao.TRANSLATE_CODE,ToolBox_Con.getPreference_Translate_Code_TMP(context));
         //
         mPresenter.executeSessionProcess(
@@ -163,10 +171,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processSync() {
         super.processSync();
 
-
-
-
-        //disableProgressDialog();
+        mPresenter.executeSyncProcess();
 
     }
 

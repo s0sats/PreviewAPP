@@ -3,12 +3,9 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
-import com.namoadigital.prj001.database.DatabaseHelper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.util.Constant;
@@ -198,6 +195,29 @@ public class EV_Module_ResDao extends BaseDao implements Dao<EV_Module_Res> {
         closeDB();
 
         return module_ress;
+    }
+
+    public boolean deleteModuleTrans(String module_code) {
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            db.delete(EV_Module_ResDao.TABLE,EV_Module_ResDao.MODULE_CODE +" = '"+module_code+"'",null);
+            db.delete(EV_Module_Res_TxtDao.TABLE,EV_Module_Res_TxtDao.MODULE_CODE +" = '"+module_code+"'",null);
+            db.delete(EV_Module_Res_Txt_TransDao.TABLE,EV_Module_Res_Txt_TransDao.MODULE_CODE +" = '"+module_code+"'",null);
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
+
+        return true;
     }
 
     private class CursorEV_Module_ResMapper implements Mapper<Cursor, EV_Module_Res> {
