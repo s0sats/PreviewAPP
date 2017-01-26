@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -32,6 +34,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TSync_Env;
@@ -107,12 +110,11 @@ public class WS_Sync extends IntentService {
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().serializeNulls().create();
 
         DataPackage dataPackage = new DataPackage();
 
-        //Inicia processsamento das informações para
-        //o envio das informações
+        //Inicia processsamento das informações para o envio
 
         //Verifica se existe o "Tipo" e adiciona a proprieda no data_package
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
@@ -293,19 +295,21 @@ public class WS_Sync extends IntentService {
             //
             // Processamento Product Group
             //
-   /*         File[] files_product_group = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
+            File[] files_product_group = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
 
             for (File _file : files_product_group) {
 
                 ArrayList<MD_Product_Group> productGroups = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<MD_Product_Group>>() {
                         }.getType()
                 );
 
                 int i =1 ;
                 productGroupDao.addUpdate(productGroups, true);
-            }*/
+            }
 
             //
             // Processamento Product Group Product

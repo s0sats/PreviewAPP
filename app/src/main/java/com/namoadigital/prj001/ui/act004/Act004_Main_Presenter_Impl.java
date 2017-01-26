@@ -5,7 +5,6 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
-import com.namoadigital.prj001.ui.act003.Act003_Main_View;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -35,5 +34,15 @@ public class Act004_Main_Presenter_Impl implements Act004_Main_Presenter {
                                 ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
                 )
         );
+    }
+
+    @Override
+    public void setOperationCode(HMAux item) {
+        ToolBox_Con.setPreference_Operation_Code(
+                context,
+                Long.parseLong(item.get(MD_OperationDao.OPERATION_CODE))
+        );
+
+        mView.callAct005(context);
     }
 }

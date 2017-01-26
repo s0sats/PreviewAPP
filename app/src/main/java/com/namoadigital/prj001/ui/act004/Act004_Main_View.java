@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act004;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 
 import java.util.List;
@@ -11,5 +13,7 @@ import java.util.List;
 public interface Act004_Main_View {
 
     void loadOperations(List<HMAux> operations);
+
+    void callAct005(Context context);
 
 }
