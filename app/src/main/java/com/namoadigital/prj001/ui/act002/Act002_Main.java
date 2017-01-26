@@ -14,7 +14,7 @@ import android.widget.ListView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
+import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
@@ -31,7 +31,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
-    private Lib_Custom_Cell_Adapter mAdapter;
+    private EV_User_Customer_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             prepareExecSessionProcess(customers.get(0),0,1,0);
 
         }else{
-            mAdapter =  new Lib_Custom_Cell_Adapter(context,R.layout.lib_custom_cell,customers);
+            mAdapter =  new EV_User_Customer_Adapter(context,R.layout.lib_custom_cell,customers);
             lv_customers.setAdapter(mAdapter);
 
         }

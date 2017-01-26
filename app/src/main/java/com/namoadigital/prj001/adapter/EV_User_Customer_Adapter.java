@@ -12,21 +12,21 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 
 import java.util.List;
 
 /**
- * Created by DANIEL.LUCHE on 26/01/2017.
+ * Created by DANIEL.LUCHE on 19/01/2017.
  */
 
-public class Lib_Custom_Cell_Adapter extends BaseAdapter {
+public class EV_User_Customer_Adapter extends BaseAdapter  {
 
     private Context context;
     private int resource;
     private List<HMAux> source;
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source) {
+    public EV_User_Customer_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -71,28 +71,37 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         HMAux item = source.get(position);
 
         //Inicia configuraçõa dos elementos
+        tvItem.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
+
         tvSubItem.setVisibility(View.GONE);
-        iv001.setVisibility(View.GONE);
-        iv002.setVisibility(View.GONE);
 
         //Define layout da celula e baseado no campo blocked
-        if(item.get(MD_SiteDao.SITE_ID).trim().length() > 0){
+        if(item.get(EV_User_CustomerDao.BLOCKED).equals("0")){
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
             llBackground.setBackground(llDrawable);
             tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
             tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-            //
-            String siteDesc = item.get(MD_SiteDao.SITE_ID) +" - " + item.get(MD_SiteDao.SITE_DESC);
-            tvItem.setText(siteDesc);
-
         }else{
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_warning_base);
             llBackground.setBackground(llDrawable);
             tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
             tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
+        }
+        //Se existe itens pendente de envio, exibe icone e seta qtd no tvTop
+        if(!item.get(EV_User_CustomerDao.PENDING).equals("0")){
+            iv001.setVisibility(View.VISIBLE);
+            iv001.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_primary));
             //
-            String siteDesc = item.get(MD_SiteDao.SITE_DESC);
-            tvItem.setText(siteDesc);
+            tvTopQty.setVisibility(View.VISIBLE);
+            tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));
+        }
+        //Configura icone de sessession baseado no valor.
+        if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0){
+            iv002.setVisibility(View.VISIBLE);
+            iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_success));
+        }  else {
+            iv002.setVisibility(View.VISIBLE);
+            iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_danger));
         }
 
         return convertView;

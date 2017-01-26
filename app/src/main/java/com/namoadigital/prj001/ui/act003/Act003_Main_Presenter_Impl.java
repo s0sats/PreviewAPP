@@ -3,10 +3,8 @@ package com.namoadigital.prj001.ui.act003;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -32,8 +30,11 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     public void getSites() {
         mView.loadSites(
                 md_siteDao.query_HM(
-                        new MD_Site_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+                        new MD_Site_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                "Externo"
+
+                        ).toSqlQuery()
                 )
         );
     }

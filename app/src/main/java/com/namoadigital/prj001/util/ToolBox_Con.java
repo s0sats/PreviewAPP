@@ -304,10 +304,6 @@ public class ToolBox_Con {
         ).apply();
     }
 
-
-
-
-
     public static long getPreference_Site_Code(Context context) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -317,8 +313,28 @@ public class ToolBox_Con {
                 -1L
         );
     }
+    //endregion
 
+    //region Operation_Code
+    public static void setPreference_Operation_Code(Context context, long operation_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
 
+        sharedPreferences.edit().putLong(
+                Constant.LOGIN_OPERATION_CODE,
+                operation_code
+        ).apply();
+    }
+
+    public static long getPreference_Operation_Code(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.LOGIN_OPERATION_CODE,
+                -1L
+        );
+    }
 
     //endregion
 
@@ -421,17 +437,12 @@ public class ToolBox_Con {
         ).apply();
         //
         sharedPreferences.edit().putString(
-                Constant.LOGIN_USER_CODE_NICK,
-                String.valueOf("")
-        ).apply();
-        //
-        sharedPreferences.edit().putString(
-                Constant.LOGIN_USER_EMAIL,
+                Constant.LOGIN_USER_PWD,
                 ""
         ).apply();
         //
         sharedPreferences.edit().putString(
-                Constant.LOGIN_USER_PWD,
+                Constant.LOGIN_USER_EMAIL,
                 ""
         ).apply();
         //
@@ -451,8 +462,18 @@ public class ToolBox_Con {
         ).apply();
         //
         sharedPreferences.edit().putString(
-                Constant.NLS_DATE_FORMAT,
-                ""
+                Constant.LOGIN_USER_CODE_NICK,
+                String.valueOf("")
+        ).apply();
+        //
+        sharedPreferences.edit().putLong(
+                Constant.LOGIN_SITE_CODE,
+                -1
+        ).apply();
+        //
+        sharedPreferences.edit().putLong(
+                Constant.LOGIN_OPERATION_CODE,
+                -1
         ).apply();
         //
         sharedPreferences.edit().putString(
@@ -461,16 +482,19 @@ public class ToolBox_Con {
         ).apply();
         //
         sharedPreferences.edit().putString(
-                Constant.USER_CUSTOMER_TRANSLATE_CODE_TMP,
-                ""
-        ).apply();
-
-        //
-        sharedPreferences.edit().putString(
                 Constant.LOGIN_USER_NFC_TMP,
                 ""
         ).apply();
-
+        //
+        sharedPreferences.edit().putString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE_TMP,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.NLS_DATE_FORMAT,
+                ""
+        ).apply();
     }
 
     public static String customDBPath(long customer_code) {

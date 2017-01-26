@@ -21,7 +21,10 @@ public class MD_Site_Sql_002 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append(" SELECT * " +
+                .append(" SELECT " +
+                        "   IFNULL(site_code,'') site_code, " +
+                        "   IFNULL(site_id,'') site_id, " +
+                        "   IFNULL(site_desc,'') site_desc " +
                         " FROM " +
                         " ("+
                         " SELECT " +
@@ -39,9 +42,9 @@ public class MD_Site_Sql_002 implements Specification {
                         "  '" + s_external_translation +"' site_desc" +
                         " ORDER BY " +
                         "      site_id,site_desc" +
-                        ")" +
-                        "ORDER BY" +
-                        "site_id IS NULL,site_id;")
+                        " ) " +
+                        " ORDER BY" +
+                        " site_id IS NULL,site_id;")
                 .append("site_code#site_id#site_desc")
                 .toString();
     }
