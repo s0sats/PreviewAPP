@@ -71,7 +71,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     }
 
-
     @Override
     public void loadCustomers(List<HMAux> customers) {
 
