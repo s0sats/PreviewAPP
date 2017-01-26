@@ -36,7 +36,7 @@ public class CursorToHMAuxMapper implements Mapper<Cursor, HMAux> {
                 //
                 hmAux.put(
                         sAux,
-                        cursor.getString(cursor.getColumnIndex(cFF[i]))
+                        cursor.isNull(cursor.getColumnIndex(cFF[i])) ? "" : cursor.getString(cursor.getColumnIndex(cFF[i]))
                 );
             }
 

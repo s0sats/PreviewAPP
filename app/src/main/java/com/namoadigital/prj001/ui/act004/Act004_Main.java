@@ -8,8 +8,10 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
@@ -33,6 +35,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.ui.act003.Act003_Main_Presenter;
@@ -63,14 +66,15 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        initVars();
-        initActions();
+        //initVars();
+        //initActions();
+        criarBase();
     }
 
     private void initVars() {
         context = getBaseContext();
         //
-        mPresenter =  new Act004_Main_Presenter_Impl(context,this);
+        mPresenter = new Act004_Main_Presenter_Impl(context, this);
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
         //
@@ -111,98 +115,99 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
             MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
             MD_OperationDao operationDao = new MD_OperationDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
 
-            Gson gson = new Gson();
+            //Gson gson = new Gson();
+            Gson gson = new GsonBuilder().serializeNulls().create();
 
-            File[] files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<EV_Module_Res> module_ress = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<EV_Module_Res>>() {
-                        }.getType()
-                );
-                //
-                module_resDao.addUpdate(module_ress, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<EV_Module_Res_Txt> module_res_txts = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<EV_Module_Res_Txt>>() {
-                        }.getType()
-                );
-                //
-                module_res_txtDao.addUpdate(module_res_txts, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<EV_Module_Res_Txt_Trans> module_res_txt_transs = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<EV_Module_Res_Txt_Trans>>() {
-                        }.getType()
-                );
-                //
-                module_res_txt_transDao.addUpdate(module_res_txt_transs, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_type-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<GE_Custom_Form_Type> custom_form_types = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<GE_Custom_Form_Type>>() {
-                        }.getType()
-                );
-                //
-                custom_form_typeDao.addUpdate(custom_form_types, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<GE_Custom_Form> custom_forms = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<GE_Custom_Form>>() {
-                        }.getType()
-                );
-                //
-                custom_formDao.addUpdate(custom_forms, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_field-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<GE_Custom_Form_Field> custom_form_fields = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<GE_Custom_Form_Field>>() {
-                        }.getType()
-                );
-                //
-                custom_form_fieldDao.addUpdate(custom_form_fields, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<GE_Custom_Form_Product> custom_form_products = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<GE_Custom_Form_Product>>() {
-                        }.getType()
-                );
-                //
-                custom_form_productDao.addUpdate(custom_form_products, false);
-            }
+//            File[] files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<EV_Module_Res> module_ress = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<EV_Module_Res>>() {
+//                        }.getType()
+//                );
+//                //
+//                module_resDao.addUpdate(module_ress, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<EV_Module_Res_Txt> module_res_txts = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<EV_Module_Res_Txt>>() {
+//                        }.getType()
+//                );
+//                //
+//                module_res_txtDao.addUpdate(module_res_txts, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<EV_Module_Res_Txt_Trans> module_res_txt_transs = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<EV_Module_Res_Txt_Trans>>() {
+//                        }.getType()
+//                );
+//                //
+//                module_res_txt_transDao.addUpdate(module_res_txt_transs, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_type-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<GE_Custom_Form_Type> custom_form_types = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<GE_Custom_Form_Type>>() {
+//                        }.getType()
+//                );
+//                //
+//                custom_form_typeDao.addUpdate(custom_form_types, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<GE_Custom_Form> custom_forms = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<GE_Custom_Form>>() {
+//                        }.getType()
+//                );
+//                //
+//                custom_formDao.addUpdate(custom_forms, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_field-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<GE_Custom_Form_Field> custom_form_fields = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<GE_Custom_Form_Field>>() {
+//                        }.getType()
+//                );
+//                //
+//                custom_form_fieldDao.addUpdate(custom_form_fields, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<GE_Custom_Form_Product> custom_form_products = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<GE_Custom_Form_Product>>() {
+//                        }.getType()
+//                );
+//                //
+//                custom_form_productDao.addUpdate(custom_form_products, false);
+//            }
 //
 //            files_auxs = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_blob-");
 //
@@ -216,72 +221,77 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
 //                //
 //                custom_form_blobDao.addUpdate(custom_form_blobs, false);
 //            }
-
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<MD_Product> products = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<MD_Product>>() {
-                        }.getType()
-                );
-                //
-                productDao.addUpdate(products, false);
-            }
-
-//            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
+//
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product-");
 //
 //            for (File _file : files_auxs) {
 //
-//                ArrayList<MD_Product_Group> product_groups = gson.fromJson(
+//                ArrayList<MD_Product> products = gson.fromJson(
 //                        ToolBox_Inf.getContents(_file),
-//                        new TypeToken<ArrayList<MD_Product_Group>>() {
+//                        new TypeToken<ArrayList<MD_Product>>() {
 //                        }.getType()
 //                );
 //                //
-//                product_groupDao.addUpdate(product_groups, false);
+//                productDao.addUpdate(products, false);
 //            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product_group_product-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<MD_Product_Group_Product> product_group_products = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<MD_Product_Group_Product>>() {
-                        }.getType()
-                );
-                //
-                product_group_productDao.addUpdate(product_group_products, false);
-            }
-
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_site-");
+//
+            File[] files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
 
             for (File _file : files_auxs) {
 
-                ArrayList<MD_Site> sites = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<MD_Site>>() {
+                ArrayList<MD_Product_Group> product_groups = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Group>>() {
                         }.getType()
                 );
                 //
-                siteDao.addUpdate(sites, false);
+                product_groupDao.addUpdate(product_groups, false);
             }
 
-            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_operation-");
-
-            for (File _file : files_auxs) {
-
-                ArrayList<MD_Operation> operations = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
-                        new TypeToken<ArrayList<MD_Operation>>() {
-                        }.getType()
-                );
-                //
-                operationDao.addUpdate(operations, false);
-            }
+            int i = 10;
+//
+//          files_auxs = ToolBox_Inf.getListOfFiles_v2("md_product_group_product-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<MD_Product_Group_Product> product_group_products = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<MD_Product_Group_Product>>() {
+//                        }.getType()
+//                );
+//                //
+//                product_group_productDao.addUpdate(product_group_products, false);
+//            }
+//
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_site-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<MD_Site> sites = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<MD_Site>>() {
+//                        }.getType()
+//                );
+//                //
+//                siteDao.addUpdate(sites, false);
+//            }
+//
+//            files_auxs = ToolBox_Inf.getListOfFiles_v2("md_operation-");
+//
+//            for (File _file : files_auxs) {
+//
+//                ArrayList<MD_Operation> operations = gson.fromJson(
+//                        ToolBox_Inf.getContents(_file),
+//                        new TypeToken<ArrayList<MD_Operation>>() {
+//                        }.getType()
+//                );
+//                //
+//                operationDao.addUpdate(operations, false);
+//            }
 
         } catch (Exception e) {
 

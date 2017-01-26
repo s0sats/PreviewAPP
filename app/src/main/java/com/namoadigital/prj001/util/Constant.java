@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.util;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
+
 /**
  * Created by neomatrix on 09/01/17.
  */
 
-public class Constant {
+public class Constant extends ConstantBase{
 
     /**
      * PROJECT ID - PRJ001 - SMS

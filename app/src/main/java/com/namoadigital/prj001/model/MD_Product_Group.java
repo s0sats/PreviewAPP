@@ -9,7 +9,7 @@ public class MD_Product_Group {
     private long customer_code;
     private long group_code;
     private long recursive_code;
-    private long recursive_code_father;
+    private Long recursive_code_father;
     private String group_id;
     private String group_desc;
 
@@ -37,11 +37,11 @@ public class MD_Product_Group {
         this.recursive_code = recursive_code;
     }
 
-    public long getRecursive_code_father() {
+    public Long getRecursive_code_father() {
         return recursive_code_father;
     }
 
-    public void setRecursive_code_father(long recursive_code_father) {
+    public void setRecursive_code_father(Long recursive_code_father) {
         this.recursive_code_father = recursive_code_father;
     }
 
