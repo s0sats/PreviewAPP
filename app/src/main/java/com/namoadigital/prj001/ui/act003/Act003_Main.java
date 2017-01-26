@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act003;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +39,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -64,8 +66,17 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
+        callAct004(getBaseContext());
+        //
         initVars();
         initActions();
+    }
+
+    public void callAct004(Context context) {
+        Intent mIntent =  new Intent(context, Act004_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     private void initVars() {

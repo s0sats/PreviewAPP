@@ -214,7 +214,13 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
             md_product_group.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             md_product_group.setGroup_code(cursor.getLong(cursor.getColumnIndex(GROUP_CODE)));
             md_product_group.setRecursive_code(cursor.getLong(cursor.getColumnIndex(RECURSIVE_CODE)));
-            md_product_group.setRecursive_code_father(cursor.getLong(cursor.getColumnIndex(RECURSIVE_CODE_FATHER)));
+
+            if (cursor.isNull(cursor.getColumnIndex(RECURSIVE_CODE_FATHER))) {
+                md_product_group.setRecursive_code_father(null);
+            } else {
+                md_product_group.setRecursive_code_father(cursor.getLong(cursor.getColumnIndex(RECURSIVE_CODE_FATHER)));
+            }
+
             md_product_group.setGroup_id(cursor.getString(cursor.getColumnIndex(GROUP_ID)));
             md_product_group.setGroup_desc(cursor.getString(cursor.getColumnIndex(GROUP_DESC)));
 
@@ -236,9 +242,12 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
             if (md_product_group.getRecursive_code() > -1) {
                 contentValues.put(RECURSIVE_CODE, md_product_group.getRecursive_code());
             }
-            if (md_product_group.getRecursive_code_father() > -1) {
-                contentValues.put(RECURSIVE_CODE_FATHER, md_product_group.getRecursive_code_father());
-            }
+
+            contentValues.put(RECURSIVE_CODE_FATHER, md_product_group.getRecursive_code_father());
+
+            //if (md_product_group.getRecursive_code_father() > -1) {
+            //    contentValues.put(RECURSIVE_CODE_FATHER, md_product_group.getRecursive_code_father());
+            //}
 
             if (md_product_group.getGroup_id() != null) {
                 contentValues.put(GROUP_ID, md_product_group.getGroup_id());
