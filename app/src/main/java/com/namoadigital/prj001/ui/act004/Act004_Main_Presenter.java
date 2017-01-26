@@ -5,4 +5,8 @@ package com.namoadigital.prj001.ui.act004;
  */
 
 public interface Act004_Main_Presenter {
+
+    void getOperations();
+
+
 }

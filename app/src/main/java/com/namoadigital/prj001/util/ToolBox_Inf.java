@@ -309,6 +309,28 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String sFileContent(String sPath, String sFile) {
+
+        StringBuilder text = new StringBuilder();
+
+        File file = new File(sPath, sFile);
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+            }
+
+            br.close();
+        } catch (Exception e) {
+
+        }
+
+        return text.toString();
+    }
+
     public static void sendBCStatus(Context context, String type, String value, String link, String required) {
         Intent mIntent = new Intent(Constant.SW_TYPE_BR);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -377,7 +399,7 @@ public class ToolBox_Inf {
 
                 case "USER_OTHER_DEVICE":
                     if (iStatus_OD == 0) {
-                            sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+                        sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
 
                         return false;
                     } else {
@@ -396,16 +418,15 @@ public class ToolBox_Inf {
     }
 
     /**
-     *
      * @param context
      * @param validation
      * @param error_msg
      * @param s_Link
-     * @param iStatus - Se deve validar update_required.0 valida , 1 não valida
+     * @param iStatus    - Se deve validar update_required.0 valida , 1 não valida
      * @param iStatus_OD - Se deve validar forced_login.0 valida , 1 não valida
      * @return
      */
-    public static boolean processWSCheckValidation(Context context, String validation, String error_msg ,String s_Link, int iStatus, int iStatus_OD) {
+    public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
         switch (validation) {
             case "OK":
                 break;

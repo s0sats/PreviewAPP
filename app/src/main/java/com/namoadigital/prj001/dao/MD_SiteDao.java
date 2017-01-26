@@ -27,7 +27,6 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String SITE_CODE = "site_code";
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
-    public static final String ACTIVE = "active";
 
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -49,8 +48,6 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_site.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site.getSite_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(ACTIVE).append(" = '").append(String.valueOf(1)).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(md_site), sbWhere.toString(), null);
             }
@@ -82,8 +79,6 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
                     sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_site.getCustomer_code())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site.getSite_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(ACTIVE).append(" = '").append(String.valueOf(1)).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(md_site), sbWhere.toString(), null);
                 }

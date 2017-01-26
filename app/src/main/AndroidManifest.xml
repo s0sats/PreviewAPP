@@ -33,21 +33,85 @@
         <activity
             android:name=".ui.act002.Act002_Main"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <!-- Site List -->
         <activity
             android:name=".ui.act003.Act003_Main"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <!-- Operation List -->
         <activity
             android:name=".ui.act004.Act004_Main"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act005.Act005_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act006.Act006_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act007.Act007_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act008.Act008_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act009.Act009_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act010.Act010_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act011.Act011_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act012.Act012_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!--  -->
+        <activity
+            android:name=".ui.act013.Act013_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
 
         <receiver android:name=".receiver.WBR_GetCustomer" />
         <service android:name=".service.WS_GetCustomer" />

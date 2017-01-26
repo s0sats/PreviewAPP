@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <ListView
-            android:id="@+id/act003_lv_customers"
+            android:id="@+id/act003_lv_sites"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@color/padrao_TRANSPARENT" />

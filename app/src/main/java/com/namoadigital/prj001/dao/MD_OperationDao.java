@@ -25,14 +25,13 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String OPERATION_CODE = "operation_code";
     public static final String OPERATION_DESC = "operation_desc";
-    public static final String ACTIVE = "active";
     public static final String ALIAS_SERVICE_OPER = "alias_service_oper";
     public static final String ALIAS_SERVICE_COM = "alias_service_com";
 
-    private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_DESC,ACTIVE, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
+    private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_DESC, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
 
 
-    public MD_OperationDao(Context context,String DB_NAME, int DB_VERSION) {
+    public MD_OperationDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
         this.toContentValuesMapper = new MD_OperationToContentValuesMapper();
@@ -49,8 +48,6 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_operation.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(OPERATION_CODE).append(" = '").append(String.valueOf(md_operation.getOperation_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(ACTIVE).append(" = '").append(String.valueOf(1)).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(md_operation), sbWhere.toString(), null);
             }
@@ -79,8 +76,6 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
                     sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_operation.getCustomer_code())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(OPERATION_CODE).append(" = '").append(String.valueOf(md_operation.getOperation_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(ACTIVE).append(" = '").append(String.valueOf(1)).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(md_operation), sbWhere.toString(), null);
                 }
@@ -200,7 +195,7 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
             md_operation.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
             md_operation.setAlias_service_oper(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_OPER)));
             md_operation.setAlias_service_com(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_COM)));
-            
+
             return md_operation;
         }
     }
@@ -228,6 +223,6 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
 
             return contentValues;
         }
-    }    
-    
+    }
+
 }

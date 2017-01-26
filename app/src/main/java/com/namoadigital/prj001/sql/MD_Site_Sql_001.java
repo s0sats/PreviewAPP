@@ -9,9 +9,9 @@ import com.namoadigital.prj001.database.Specification;
 
 public class MD_Site_Sql_001 implements Specification {
 
-    private String s_customer_code;
+    private long s_customer_code;
 
-    public MD_Site_Sql_001(String s_customer_code) {
+    public MD_Site_Sql_001(long s_customer_code) {
         this.s_customer_code = s_customer_code;
     }
 

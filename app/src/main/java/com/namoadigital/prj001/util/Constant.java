@@ -78,6 +78,7 @@ public class Constant {
     public static final String LOGIN_USER_NFC = "login_user_nfc";
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
+    public static final String LOGIN_SITE_CODE = "login_site_code";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

@@ -12,7 +12,7 @@ import com.namoadigital.prj001.ui.act004.Act004_Main_View;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act011_Main extends Base_Activity implements Act004_Main_View {
+public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
