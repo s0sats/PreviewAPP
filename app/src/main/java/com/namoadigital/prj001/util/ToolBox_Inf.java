@@ -309,6 +309,28 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String sFileContent(String sPath, String sFile) {
+
+        StringBuilder text = new StringBuilder();
+
+        File file = new File(sPath, sFile);
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+            }
+
+            br.close();
+        } catch (Exception e) {
+
+        }
+
+        return text.toString();
+    }
+
     public static void sendBCStatus(Context context, String type, String value, String link, String required) {
         Intent mIntent = new Intent(Constant.SW_TYPE_BR);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -377,7 +399,7 @@ public class ToolBox_Inf {
 
                 case "USER_OTHER_DEVICE":
                     if (iStatus_OD == 0) {
-                            sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+                        sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
 
                         return false;
                     } else {

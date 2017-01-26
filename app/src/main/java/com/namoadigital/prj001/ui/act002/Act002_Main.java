@@ -27,7 +27,7 @@ import java.util.List;
  * Created by neomatrix on 13/01/17.
  */
 
-public class Act002_Main extends Base_Activity implements Act002_Main_View{
+public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
@@ -48,9 +48,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View{
     }
 
     private void initVars() {
-        context =  getBaseContext();
+        context = getBaseContext();
         //
-        mPresenter = new Act002_Main_Presenter_Impl(context,this);
+        mPresenter = new Act002_Main_Presenter_Impl(context, this);
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
         //

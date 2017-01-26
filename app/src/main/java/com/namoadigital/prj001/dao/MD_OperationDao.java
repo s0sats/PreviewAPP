@@ -31,7 +31,7 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
     private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_DESC, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
 
 
-    public MD_OperationDao(Context context,String DB_NAME, int DB_VERSION) {
+    public MD_OperationDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
         this.toContentValuesMapper = new MD_OperationToContentValuesMapper();
@@ -195,7 +195,7 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
             md_operation.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
             md_operation.setAlias_service_oper(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_OPER)));
             md_operation.setAlias_service_com(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_COM)));
-            
+
             return md_operation;
         }
     }
@@ -223,6 +223,6 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
 
             return contentValues;
         }
-    }    
-    
+    }
+
 }

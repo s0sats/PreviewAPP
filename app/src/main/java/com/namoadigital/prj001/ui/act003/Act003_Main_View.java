@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface Act003_Main_View {
 
-    void loadOperations(List<HMAux> operations);
+    void loadSites(List<HMAux> sites);
 }
