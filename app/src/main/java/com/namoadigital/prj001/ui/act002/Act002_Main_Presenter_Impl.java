@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -76,7 +77,8 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                         );
 
         ArrayList<String> data_package = new ArrayList<>();
-        data_package.add("MAIN");
+        data_package.add(DataPackage.DATA_PACKAGE_MAIN);
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();

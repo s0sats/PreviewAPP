@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
@@ -25,25 +26,23 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.sql.MD_Product_HMAux_ProductCode_List_Sql;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -107,19 +106,6 @@ public class WS_Sync extends IntentService {
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        //MAIN
-        MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        MD_OperationDao operationDao = new MD_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        MD_Product_Group_ProductDao productGroupProductDao =  new MD_Product_Group_ProductDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        //MAIN - END
-        //CHECKLIST
-        GE_Custom_FormDao customFormDao =  new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        //CHECKLIST - END
 
         Gson gson = new Gson();
 
@@ -137,12 +123,23 @@ public class WS_Sync extends IntentService {
 
         //Verifica o tipo Checklist e gera lista de codigo de produtos.
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
-            List<Long> productList = productDao.query_Custom_Product_Code(
+
+            ArrayList<Long> CHECKLIST = new ArrayList<>();
+            CHECKLIST.add(20L);
+            CHECKLIST.add(19L);
+            dataPackage.setCHECKLIST(CHECKLIST);
+            /*
+            *
+            * CRIAR TABELA DE DO ANDROID PARA CONTROLE DOS PRODUTOS JA CHAMADOS.
+            * USAR A LOGICA ABAIXO MAS DO DAO DESTA TABEA.
+            *
+            * /
+            /*List<Long> productList = productDao.query_Custom_Product_Code(
                         new MD_Product_HMAux_ProductCode_List_Sql(
                                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
                         ).toSqlQuery()
                     ) ;
-            dataPackage.setCHECKLIST((ArrayList<Long>) productList);
+            dataPackage.setCHECKLIST((ArrayList<Long>) productList);*/
         }
 
         TSync_Env env =  new TSync_Env();
@@ -235,8 +232,17 @@ public class WS_Sync extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Data Step 4...", "", "0");
 
+        //
         //Processamento das tabelas do MAIN
+        //
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+            //Cria Daos usados no processamento do MAIN
+            MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_OperationDao operationDao = new MD_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_Group_ProductDao productGroupProductDao =  new MD_Product_Group_ProductDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+
             //
             // Processamento Operation
             //
@@ -287,7 +293,7 @@ public class WS_Sync extends IntentService {
             //
             // Processamento Product Group
             //
-            File[] files_product_group = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
+   /*         File[] files_product_group = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
 
             for (File _file : files_product_group) {
 
@@ -297,13 +303,14 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
+                int i =1 ;
                 productGroupDao.addUpdate(productGroups, true);
-            }
+            }*/
 
             //
             // Processamento Product Group Product
             //
-            File[] files_product_group_product = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
+            File[] files_product_group_product = ToolBox_Inf.getListOfFiles_v2("md_product_group_product-");
 
             for (File _file : files_product_group_product) {
 
@@ -317,9 +324,19 @@ public class WS_Sync extends IntentService {
             }
 
         }
-
+        //
+        //
         //Processamento das tabelas do Checklist
+        //
+        //
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
+            //Cria Daos usados no processamento do Checklist
+            GE_Custom_FormDao customFormDao =  new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+
             //
             // Processamento Custom Form
             //
@@ -380,6 +397,23 @@ public class WS_Sync extends IntentService {
 
                 customFormProductDao.addUpdate(customFormsProduct, true);
             }
+
+            //
+            // Processamento Custom Form Product
+            //
+            File[] files_cf_blob = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_blob-");
+
+            for (File _file : files_cf_blob) {
+
+                ArrayList<GE_Custom_Form_Blob> geCustomFormBlobs = gson.fromJson(
+                        ToolBox_Inf.getContents(_file),
+                        new TypeToken<ArrayList<GE_Custom_Form_Blob>>() {
+                        }.getType()
+                );
+
+                customFormBlobDao.addUpdate(geCustomFormBlobs, true);
+            }
+
         }
 
         //REMOVER APOS TESTE

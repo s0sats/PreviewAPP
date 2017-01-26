@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
 import com.namoadigital.prj001.util.Constant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,38 +40,183 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
     }
 
     @Override
-    public void addUpdate(GE_Custom_Form_Blob item) {
+    public void addUpdate(GE_Custom_Form_Blob ge_custom_form_blob) {
+        openDB();
 
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(ge_custom_form_blob)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustom_form_type())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustom_form_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(BLOB_CODE).append(" = '").append(String.valueOf(ge_custom_form_blob.getBlob_code())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(ge_custom_form_blob), sbWhere.toString(), null);
+            }
+
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
-    public void addUpdate(Iterable<GE_Custom_Form_Blob> items, boolean status) {
+    public void addUpdate(Iterable<GE_Custom_Form_Blob> ge_custom_form_blobs, boolean status) {
+        openDB();
+        try {
 
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (GE_Custom_Form_Blob ge_custom_form_blob : ge_custom_form_blobs ) {
+
+                if (db.insert(TABLE, null, toContentValuesMapper.map(ge_custom_form_blob)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustom_form_type())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustom_form_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(ge_custom_form_blob.getCustom_form_version())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(BLOB_CODE).append(" = '").append(String.valueOf(ge_custom_form_blob.getBlob_code())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(ge_custom_form_blob), sbWhere.toString(), null);
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String sQuery) {
+
+        openDB();
+
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
     public void remove(String sQuery) {
 
+        openDB();
+
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
+
     }
 
     @Override
     public GE_Custom_Form_Blob getByString(String sQuery) {
-        return null;
+        GE_Custom_Form_Blob  ge_custom_form_blob = null;
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                ge_custom_form_blob = toGE_Custom_Form_BlobMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return ge_custom_form_blob;
     }
 
     @Override
     public List<GE_Custom_Form_Blob> query(String sQuery) {
-        return null;
+
+        List<GE_Custom_Form_Blob> ge_custom_form_blobs =  new ArrayList<>();
+
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                GE_Custom_Form_Blob uAux = toGE_Custom_Form_BlobMapper.map(cursor);
+                ge_custom_form_blobs.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return ge_custom_form_blobs;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
+        List<HMAux> ge_custom_form_blobs = new ArrayList<>();
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                ge_custom_form_blobs.add(toHMAuxMapper.map(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return ge_custom_form_blobs;
     }
 
     private class CursorGE_Custom_Form_BlobMapper implements Mapper<Cursor,GE_Custom_Form_Blob> {
