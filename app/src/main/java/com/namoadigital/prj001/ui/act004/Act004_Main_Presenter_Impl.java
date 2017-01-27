@@ -45,4 +45,12 @@ public class Act004_Main_Presenter_Impl implements Act004_Main_Presenter {
 
         mView.callAct005(context);
     }
+
+    @Override
+    public boolean checkPreferenceIsSet() {
+        if (ToolBox_Con.getPreference_Operation_Code(context) != -1){
+            return true;
+        }
+        return false;
+    }
 }

@@ -54,7 +54,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
         //
-        mPresenter.getAllCustomers();
+        if(mPresenter.checkPreferenceIsSet()){
+            callAct003(context);
+        }else {
+            mPresenter.getAllCustomers();
+        }
         //
     }
 
@@ -125,8 +129,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //
         callAct003(context);
     }
-
-
 
     @Override
     public void callAct003(Context context) {

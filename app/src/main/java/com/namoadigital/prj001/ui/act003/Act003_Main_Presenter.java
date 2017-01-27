@@ -12,5 +12,10 @@ public interface Act003_Main_Presenter {
 
     void setSiteCode(HMAux item);
 
+    /**
+     * Metodo que verifica se as preferencias dessa activity ja estão setadas
+     * @return
+     */
+    boolean checkPreferenceIsSet();
 
 }

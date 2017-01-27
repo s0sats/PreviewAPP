@@ -15,7 +15,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
@@ -48,10 +47,11 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
         //
-        checkPreferenceOperation();
-        //
-        mPresenter.getOperations();
-
+        if(mPresenter.checkPreferenceIsSet()){
+            callAct005(context);
+        }else{
+            mPresenter.getOperations();
+        }
     }
 
     private void initActions() {
@@ -64,12 +64,6 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         });
     }
 
-    private void checkPreferenceOperation() {
-        if (ToolBox_Con.getPreference_Customer_Code(context) != -1){
-            callAct005(context);
-        }
-    }
-
     @Override
     public void loadOperations(List<HMAux> operations) {
         //Se so existe uma operação, seleciona ela e pula para proxima tela
@@ -77,7 +71,6 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
             mPresenter.setOperationCode(operations.get(0));
 
         }else {
-
             String[] from = {MD_OperationDao.OPERATION_DESC};
             int[] to = {R.id.lib_custom_cell_tv_item};
             lv_operations.setAdapter(

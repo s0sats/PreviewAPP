@@ -14,7 +14,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
-import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
@@ -55,9 +54,11 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
         //
-        checkPreferenceSite();
-        //
-        mPresenter.getSites();
+        if(mPresenter.checkPreferenceIsSet()){
+            callAct004(context);
+        }else{
+            mPresenter.getSites();
+        }
     }
 
     private void initActions() {
@@ -69,12 +70,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                 mPresenter.setSiteCode(item);
             }
         });
-    }
-
-    private void checkPreferenceSite() {
-        if (ToolBox_Con.getPreference_Site_Code(context) != -1){
-            callAct004(context);
-        }
     }
 
     @Override

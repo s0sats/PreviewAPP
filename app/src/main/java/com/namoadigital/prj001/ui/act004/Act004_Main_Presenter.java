@@ -12,5 +12,11 @@ public interface Act004_Main_Presenter {
 
     void setOperationCode(HMAux item);
 
+    /**
+     * Metodo que verifica se as preferencias dessa activity ja estão setadas
+     * @return
+     */
+    boolean checkPreferenceIsSet();
+
 
 }

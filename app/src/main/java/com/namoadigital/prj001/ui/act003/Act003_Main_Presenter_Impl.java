@@ -40,6 +40,14 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     }
 
     @Override
+    public boolean checkPreferenceIsSet() {
+        if (ToolBox_Con.getPreference_Site_Code(context) != -1){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void setSiteCode(HMAux item) {
         ToolBox_Con.setPreference_Site_Code(context, Long.parseLong(item.get(MD_SiteDao.SITE_CODE)));
         mView.callAct004(context);

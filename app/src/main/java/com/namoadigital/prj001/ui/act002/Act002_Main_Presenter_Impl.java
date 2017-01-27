@@ -94,4 +94,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     }
 
+    @Override
+    public boolean checkPreferenceIsSet() {
+        if (ToolBox_Con.getPreference_Customer_Code(context) != -1){
+            return true;
+        }
+        return false;
+    }
+
 }
