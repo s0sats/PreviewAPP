@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class Act005_Adapter extends BaseAdapter {
     private Context context;
     private int resource;
-    private List<HashMap<String,String>> source;
+    private List<HMAux> source;
 
     public Act005_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
@@ -61,8 +62,8 @@ public class Act005_Adapter extends BaseAdapter {
 
         HashMap<String,String> item = source.get(position);
 
-        ivIcon.setImageDrawable(context.getResources().getDrawable(Integer.valueOf(item.get("icon"))));
-        tvTitle.setText(item.get("title"));
+        ivIcon.setImageDrawable(context.getResources().getDrawable(Integer.valueOf(item.get(Act005_Main.MENU_ICON))));
+        tvTitle.setText(item.get(Act005_Main.MENU_DESC));
 
         return convertView;
     }

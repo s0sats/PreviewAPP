@@ -52,6 +52,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         context = getBaseContext();
         //
+        mPresenter = new Act005_Main_Presenter_Impl(context,this);
+        //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
         //
         mPresenter.getMenuItens();
