@@ -190,7 +190,9 @@ public class WS_Sync extends IntentService {
         for (File _file : files_module_res) {
 
             ArrayList<EV_Module_Res> moduleRes = gson.fromJson(
-                    ToolBox_Inf.getContents(_file),
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
                     new TypeToken<ArrayList<EV_Module_Res>>() {
                     }.getType()
             );
@@ -209,7 +211,9 @@ public class WS_Sync extends IntentService {
         for (File _file : files_module_res_txt) {
 
             ArrayList<EV_Module_Res_Txt> moduleResTxts = gson.fromJson(
-                    ToolBox_Inf.getContents(_file),
+                    ToolBox.jsonFromOracle(
+                       ToolBox_Inf.getContents(_file)
+                    ),
                     new TypeToken<ArrayList<EV_Module_Res_Txt>>() {
                     }.getType()
             );
@@ -224,7 +228,9 @@ public class WS_Sync extends IntentService {
         for (File _file : files_module_res_txt_trans) {
 
             ArrayList<EV_Module_Res_Txt_Trans> moduleResTxtTrans = gson.fromJson(
-                    ToolBox_Inf.getContents(_file),
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
                     new TypeToken<ArrayList<EV_Module_Res_Txt_Trans>>() {
                     }.getType()
             );
@@ -253,7 +259,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_operation) {
 
                 ArrayList<MD_Operation> operations = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<MD_Operation>>() {
                         }.getType()
                 );
@@ -269,7 +277,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_site) {
 
                 ArrayList<MD_Site> sites = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<MD_Site>>() {
                         }.getType()
                 );
@@ -285,7 +295,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_product) {
 
                 ArrayList<MD_Product> products = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<MD_Product>>() {
                         }.getType()
                 );
@@ -319,7 +331,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_product_group_product) {
 
                 ArrayList<MD_Product_Group_Product> productGroupProducts = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<MD_Product_Group_Product>>() {
                         }.getType()
                 );
@@ -349,7 +363,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_custom_form) {
 
                 ArrayList<GE_Custom_Form> customForms = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<GE_Custom_Form>>() {
                         }.getType()
                 );
@@ -364,7 +380,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_cf_type) {
 
                 ArrayList<GE_Custom_Form_Type> customFormsTypes = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<GE_Custom_Form_Type>>() {
                         }.getType()
                 );
@@ -379,7 +397,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_cf_field) {
 
                 ArrayList<GE_Custom_Form_Field> customFormsFields = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<GE_Custom_Form_Field>>() {
                         }.getType()
                 );
@@ -394,7 +414,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_cf_product) {
 
                 ArrayList<GE_Custom_Form_Product> customFormsProduct = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<GE_Custom_Form_Product>>() {
                         }.getType()
                 );
@@ -410,7 +432,9 @@ public class WS_Sync extends IntentService {
             for (File _file : files_cf_blob) {
 
                 ArrayList<GE_Custom_Form_Blob> geCustomFormBlobs = gson.fromJson(
-                        ToolBox_Inf.getContents(_file),
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
                         new TypeToken<ArrayList<GE_Custom_Form_Blob>>() {
                         }.getType()
                 );

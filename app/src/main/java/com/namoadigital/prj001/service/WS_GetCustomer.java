@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.model.EV_User;
@@ -87,7 +89,7 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Get Customer...", "", "0");
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().serializeNulls().create();
 
         TGC_Env env = new TGC_Env();
         env.setApp_code(Constant.PRJ001_CODE);
@@ -131,7 +133,9 @@ public class WS_GetCustomer extends IntentService {
         for (File _file : files_Users) {
 
             ArrayList<EV_User> users = gson.fromJson(
-                    ToolBox_Inf.getContents(_file),
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
                     new TypeToken<ArrayList<EV_User>>() {
                     }.getType()
             );
@@ -146,7 +150,9 @@ public class WS_GetCustomer extends IntentService {
         for (File _file : files_Customers) {
 
             ArrayList<EV_User_Customer> customers = gson.fromJson(
-                    ToolBox_Inf.getContents(_file),
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
                     new TypeToken<ArrayList<EV_User_Customer>>() {
                     }.getType()
             );
