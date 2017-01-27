@@ -5,4 +5,6 @@ package com.namoadigital.prj001.ui.act005;
  */
 
 public interface Act005_Main_Presenter {
+
+    void getMenuItens();
 }

@@ -7,11 +7,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
+
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -19,8 +27,14 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
-    private Context context;
+    public static final String MENU_ICON = "menu_icon" ;
+    public static final String MENU_DESC = "menu_desc";
 
+    private Context context;
+    private List<HMAux> menu_list;
+    private GridView gv_menu;
+    private Act005_Main_Presenter mPresenter;
+    private Act005_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,11 +51,30 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private void initVars() {
         //
         context = getBaseContext();
+        //
+        gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
+        //
+        mPresenter.getMenuItens();
+
     }
 
     private void initActions() {
+        gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                Toast.makeText(context,item.get(Act005_Main.MENU_DESC),Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
+
+    @Override
+    public void loadMenu(List<HMAux> menus) {
+        mAdapter =  new Act005_Adapter(context,R.layout.act005_item_menu,menus);
+        gv_menu.setAdapter(mAdapter);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,5 +107,4 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

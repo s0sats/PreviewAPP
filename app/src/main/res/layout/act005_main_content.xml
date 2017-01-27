@@ -11,15 +11,17 @@
     tools:context=".ui.act005.Act005_Main"
     tools:showIn="@layout/act005_main">
 
-    <LinearLayout
+    <GridView
+        android:id="@+id/act005_gv_menu"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        android:orientation="vertical">
-
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        />
 
     <include layout="@layout/footer" />
 
