@@ -466,9 +466,9 @@ public class ToolBox_Con {
                 String.valueOf("")
         ).apply();
         //
-        sharedPreferences.edit().putLong(
+        sharedPreferences.edit().putString(
                 Constant.LOGIN_SITE_CODE,
-                -1
+                "-1"
         ).apply();
         //
         sharedPreferences.edit().putLong(

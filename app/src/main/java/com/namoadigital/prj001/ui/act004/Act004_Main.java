@@ -70,13 +70,14 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
 
     @Override
     public void loadOperations(List<HMAux> operations) {
-        //Se so existe uma operação, seleciona ela e pula para proxima tela
+        //Se não existe operação
+        //Exibe msg e fecha aplicação
         if(operations.size() == 0){
             ToolBox.alertMSG(
                     Act004_Main.this,
                     "Criar Title Operation Selection",
                     "Criar Msg No operation Avaliable. The app will be closed!",
-                    new DialogInterface.OnClickListener() {
+                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             ToolBox_Con.cleanPreferences(Act004_Main.this);
@@ -86,7 +87,9 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     }
             );
 
-        }else if(operations.size() == 1){
+        }
+        //Se so existe uma operação, seleciona ela e pula para proxima tela
+        else if(operations.size() == 1){
                 mPresenter.setOperationCode(operations.get(0));
         }else {
             String[] from = {MD_OperationDao.OPERATION_DESC};
