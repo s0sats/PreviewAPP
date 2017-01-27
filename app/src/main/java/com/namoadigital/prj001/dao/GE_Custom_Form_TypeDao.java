@@ -24,8 +24,7 @@ public class GE_Custom_Form_TypeDao extends BaseDao implements Dao<GE_Custom_For
     public static final String TABLE = "ge_custom_form_types";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
-    public static final String ACTIVE = "active";
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, ACTIVE};
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE};
 
     public GE_Custom_Form_TypeDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -202,7 +201,6 @@ public class GE_Custom_Form_TypeDao extends BaseDao implements Dao<GE_Custom_For
 
             custom_form_type.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             custom_form_type.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
-            custom_form_type.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)));
 
             return custom_form_type;
         }
@@ -218,9 +216,6 @@ public class GE_Custom_Form_TypeDao extends BaseDao implements Dao<GE_Custom_For
             }
             if (custom_form_type.getCustom_form_type() > -1) {
                 contentValues.put(CUSTOM_FORM_TYPE, custom_form_type.getCustom_form_type());
-            }
-            if (custom_form_type.getActive() > -1) {
-                contentValues.put(ACTIVE, custom_form_type.getActive());
             }
 
             return contentValues;

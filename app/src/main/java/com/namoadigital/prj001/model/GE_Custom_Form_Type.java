@@ -8,7 +8,6 @@ public class GE_Custom_Form_Type {
 
     private long customer_code;
     private int custom_form_type;
-    private int active;
 
     public long getCustomer_code() {
         return customer_code;
@@ -24,13 +23,5 @@ public class GE_Custom_Form_Type {
 
     public void setCustom_form_type(int custom_form_type) {
         this.custom_form_type = custom_form_type;
-    }
-
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
     }
 }

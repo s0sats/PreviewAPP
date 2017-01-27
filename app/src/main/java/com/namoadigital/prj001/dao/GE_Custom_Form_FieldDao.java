@@ -230,8 +230,14 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_field.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_field.setCustom_form_seq(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_SEQ)));
             custom_form_field.setCustom_form_data_type(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DATA_TYPE)));
-            custom_form_field.setCustom_form_data_size(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_SIZE)));
-            custom_form_field.setCustom_form_mask(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DATA_MASK)));
+
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SIZE))) {
+                custom_form_field.setCustom_form_data_size(null);
+            } else {
+                custom_form_field.setCustom_form_data_size(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_SIZE)));
+            }
+
+            custom_form_field.setCustom_form_data_mask(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DATA_MASK)));
             custom_form_field.setCustom_form_data_content(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DATA_CONTENT)));
             custom_form_field.setCustom_form_local_link(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_LOCAL_LINK)));
             custom_form_field.setCustom_form_order(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_ORDER)));
@@ -265,9 +271,12 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_field.getCustom_form_data_type() != null) {
                 contentValues.put(CUSTOM_FORM_DATA_TYPE, custom_form_field.getCustom_form_data_type());
             }
-            if (custom_form_field.getCustom_form_data_size() > -1) {
-                contentValues.put(CUSTOM_FORM_DATA_SIZE, custom_form_field.getCustom_form_data_size());
-            }
+
+            contentValues.put(CUSTOM_FORM_DATA_SIZE, custom_form_field.getCustom_form_data_size());
+
+//            if (custom_form_field.getCustom_form_data_size() > -1) {
+//                contentValues.put(CUSTOM_FORM_DATA_SIZE, custom_form_field.getCustom_form_data_size());
+//            }
             if (custom_form_field.getCustom_form_data_mask() != null) {
                 contentValues.put(CUSTOM_FORM_DATA_MASK, custom_form_field.getCustom_form_data_mask());
             }
