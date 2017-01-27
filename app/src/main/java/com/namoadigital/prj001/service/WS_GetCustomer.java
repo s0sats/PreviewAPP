@@ -140,7 +140,7 @@ public class WS_GetCustomer extends IntentService {
                     }.getType()
             );
             userInfo = users.get(0);
-            ev_userDao.addUpdate(users, false);
+            ev_userDao.addUpdate(users, true);
         }
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
@@ -156,7 +156,7 @@ public class WS_GetCustomer extends IntentService {
                     new TypeToken<ArrayList<EV_User_Customer>>() {
                     }.getType()
             );
-            ev_user_customerDao.addUpdate(customers, false);
+            ev_user_customerDao.addUpdate(customers, true);
         }
 
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
