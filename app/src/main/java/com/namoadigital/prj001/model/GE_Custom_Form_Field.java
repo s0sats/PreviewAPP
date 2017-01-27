@@ -12,13 +12,15 @@ public class GE_Custom_Form_Field {
     private int custom_form_version;
     private int custom_form_seq;
     private String custom_form_data_type;
-    private int custom_form_data_size;
+    private Integer custom_form_data_size;
     private String custom_form_data_mask;
     private String custom_form_data_content;
     private String custom_form_local_link;
     private int custom_form_order;
     private int page;
     private int required;
+
+
 
     public GE_Custom_Form_Field() {
         this.custom_form_local_link = "";
@@ -72,11 +74,11 @@ public class GE_Custom_Form_Field {
         this.custom_form_data_type = custom_form_data_type;
     }
 
-    public int getCustom_form_data_size() {
+    public Integer getCustom_form_data_size() {
         return custom_form_data_size;
     }
 
-    public void setCustom_form_data_size(int custom_form_data_size) {
+    public void setCustom_form_data_size(Integer custom_form_data_size) {
         this.custom_form_data_size = custom_form_data_size;
     }
 
@@ -84,7 +86,7 @@ public class GE_Custom_Form_Field {
         return custom_form_data_mask;
     }
 
-    public void setCustom_form_mask(String custom_form_data_mask) {
+    public void setCustom_form_data_mask(String custom_form_data_mask) {
         this.custom_form_data_mask = custom_form_data_mask;
     }
 
