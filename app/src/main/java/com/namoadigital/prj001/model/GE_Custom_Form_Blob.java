@@ -13,6 +13,7 @@ public class GE_Custom_Form_Blob {
     private long blob_code;
     private String blob_name;
     private String blob_url;
+    private String blob_url_local;
 
     public long getCustomer_code() {
         return customer_code;
@@ -68,5 +69,13 @@ public class GE_Custom_Form_Blob {
 
     public void setBlob_url(String blob_url) {
         this.blob_url = blob_url;
+    }
+
+    public String getBlob_url_local() {
+        return blob_url_local;
+    }
+
+    public void setBlob_url_local(String blob_url_local) {
+        this.blob_url_local = blob_url_local;
     }
 }

@@ -30,8 +30,9 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
     public static final String BLOB_CODE = "blob_code";
     public static final String BLOB_NAME = "blob_name";
     public static final String BLOB_URL = "blob_url";
+    public static final String BLOB_URL_LOCAL = "blob_url_local";
 
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, BLOB_CODE, BLOB_NAME, BLOB_URL};
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, BLOB_CODE, BLOB_NAME, BLOB_URL, BLOB_URL_LOCAL};
 
     public GE_Custom_Form_BlobDao(Context context,String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -232,6 +233,7 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
             geCustomFormBlob.setBlob_code(cursor.getInt(cursor.getColumnIndex(BLOB_CODE)));
             geCustomFormBlob.setBlob_name(cursor.getString(cursor.getColumnIndex(BLOB_NAME)));
             geCustomFormBlob.setBlob_url(cursor.getString(cursor.getColumnIndex(BLOB_URL)));
+            geCustomFormBlob.setBlob_url_local(cursor.getString(cursor.getColumnIndex(BLOB_URL_LOCAL)));
 
             return geCustomFormBlob;
         }
@@ -268,6 +270,10 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
 
             if (ge_custom_form_blob.getBlob_url() != null) {
                 contentValues.put(BLOB_URL, ge_custom_form_blob.getBlob_url());
+            }
+
+            if (ge_custom_form_blob.getBlob_url_local() != null) {
+                contentValues.put(BLOB_URL_LOCAL, ge_custom_form_blob.getBlob_url_local());
             }
 
             return contentValues;
