@@ -27,8 +27,8 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String PRODUCT_CODE = "product_code";
-    public static final String ACTIVE = "active";
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, PRODUCT_CODE, ACTIVE};
+
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, PRODUCT_CODE};
 
 
     public GE_Custom_Form_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -222,7 +222,6 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
             custom_form_product.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_product.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_product.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
-            custom_form_product.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)));
 
             return custom_form_product;
         }
@@ -247,9 +246,6 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
             }
             if (custom_form_product.getProduct_code() > -1) {
                 contentValues.put(PRODUCT_CODE, custom_form_product.getProduct_code());
-            }
-            if (custom_form_product.getActive() > -1) {
-                contentValues.put(ACTIVE, custom_form_product.getActive());
             }
 
             return contentValues;

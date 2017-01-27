@@ -11,7 +11,6 @@ public class GE_Custom_Form_Product {
     private int custom_form_code;
     private int custom_form_version;
     private long product_code;
-    private int active;
 
     public long getCustomer_code() {
         return customer_code;
@@ -53,11 +52,4 @@ public class GE_Custom_Form_Product {
         this.product_code = product_code;
     }
 
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
-    }
 }
