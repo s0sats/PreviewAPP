@@ -294,23 +294,23 @@ public class ToolBox_Con {
     //endregion
 
     //region Site_Code
-    public static void setPreference_Site_Code(Context context, long site_code) {
+    public static void setPreference_Site_Code(Context context, String site_code) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
-        sharedPreferences.edit().putLong(
+        sharedPreferences.edit().putString(
                 Constant.LOGIN_SITE_CODE,
                 site_code
         ).apply();
     }
 
-    public static long getPreference_Site_Code(Context context) {
+    public static String getPreference_Site_Code(Context context) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
-        return sharedPreferences.getLong(
+        return sharedPreferences.getString(
                 Constant.LOGIN_SITE_CODE,
-                -1L
+                "-1"
         );
     }
     //endregion
