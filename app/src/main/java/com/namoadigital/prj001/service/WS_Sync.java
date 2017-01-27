@@ -40,6 +40,15 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -252,6 +261,16 @@ public class WS_Sync extends IntentService {
             MD_Product_Group_ProductDao productGroupProductDao =  new MD_Product_Group_ProductDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
 
             //
+            //Apaga dados das tabelas
+            //
+
+            operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
+            siteDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
+            productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
+            productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
+            productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
+
+            //
             // Processamento Operation
             //
             File[] files_operation = ToolBox_Inf.getListOfFiles_v2("md_operation-");
@@ -290,6 +309,7 @@ public class WS_Sync extends IntentService {
             //
             // Processamento Product
             //
+
             File[] files_product = ToolBox_Inf.getListOfFiles_v2("md_product-");
 
             for (File _file : files_product) {
@@ -307,6 +327,7 @@ public class WS_Sync extends IntentService {
             //
             // Processamento Product Group
             //
+
             File[] files_product_group = ToolBox_Inf.getListOfFiles_v2("md_product_group-");
 
             for (File _file : files_product_group) {
@@ -356,6 +377,17 @@ public class WS_Sync extends IntentService {
             GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
 
             //
+            //Apaga dados das tabelas
+            //
+            customFormDao.remove(new GE_Custom_Form_Sql_Truncate().toSqlQuery());
+            customFormTypeDao.remove(new GE_Custom_Form_Type_Sql_Truncate().toSqlQuery());
+            customFormFieldDao.remove(new GE_Custom_Form_Field_Sql_Truncate().toSqlQuery());
+            customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
+            customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
+
+
+
+            //
             // Processamento Custom Form
             //
             File[] files_custom_form = ToolBox_Inf.getListOfFiles_v2("ge_custom_form-");
@@ -372,6 +404,7 @@ public class WS_Sync extends IntentService {
 
                 customFormDao.addUpdate(customForms, true);
             }
+
             //
             // Processamento Custom Form Type
             //
@@ -406,6 +439,7 @@ public class WS_Sync extends IntentService {
 
                 customFormFieldDao.addUpdate(customFormsFields, true);
             }
+
             //
             // Processamento Custom Form Product
             //

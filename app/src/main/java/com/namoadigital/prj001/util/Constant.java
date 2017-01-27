@@ -18,6 +18,18 @@ public class Constant extends ConstantBase{
      * UI Module
      */
     public static final String ACT001 = "act001";
+    public static final String ACT002 = "act002";
+    public static final String ACT003 = "act003";
+    public static final String ACT004 = "act004";
+    public static final String ACT005 = "act005";
+    public static final String ACT006 = "act006";
+    public static final String ACT007 = "act007";
+    public static final String ACT008 = "act008";
+    public static final String ACT009 = "act009";
+    public static final String ACT010 = "act010";
+    public static final String ACT011 = "act011";
+    public static final String ACT012 = "act012";
+    public static final String ACT013 = "act013";
 
     /**
      * DataBase Definition

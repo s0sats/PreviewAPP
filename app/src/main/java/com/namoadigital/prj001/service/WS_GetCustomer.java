@@ -8,13 +8,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
+import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -126,6 +128,9 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User...", "", "0");
 
+        //Apaga dados da tabela
+        ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery() );
+
         File[] files_Users = ToolBox_Inf.getListOfFiles_v2("ev_user-");
 
         EV_User userInfo = null;
@@ -144,6 +149,9 @@ public class WS_GetCustomer extends IntentService {
         }
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
+
+        //Apaga dados da tabela
+        ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
 
         File[] files_Customers = ToolBox_Inf.getListOfFiles_v2("ev_user_customer-");
 
