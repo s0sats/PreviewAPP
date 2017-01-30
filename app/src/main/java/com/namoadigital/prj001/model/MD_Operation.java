@@ -8,6 +8,7 @@ public class MD_Operation {
 
     private long customer_code;
     private long operation_code;
+    private String operation_id;
     private String operation_desc;
     private int alias_service_oper;
     private int alias_service_com;
@@ -26,6 +27,14 @@ public class MD_Operation {
 
     public void setOperation_code(long operation_code) {
         this.operation_code = operation_code;
+    }
+
+    public String getOperation_id() {
+        return operation_id;
+    }
+
+    public void setOperation_id(String operation_id) {
+        this.operation_id = operation_id;
     }
 
     public String getOperation_desc() {

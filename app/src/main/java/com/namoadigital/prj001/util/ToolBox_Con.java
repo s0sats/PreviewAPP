@@ -270,6 +270,28 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region Translate_Code
+    public static void setPreference_Translate_Code(Context context, String translate_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE,
+                translate_code
+        ).apply();
+    }
+
+    public static String getPreference_Translate_Code(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE,
+                ""
+        );
+    }
+    //endregion
+
     //region User_Code_Nick
     public static void setPreference_User_Code_Nick(Context context, String user_code_nick) {
         SharedPreferences sharedPreferences =
@@ -458,6 +480,11 @@ public class ToolBox_Con {
         //
         sharedPreferences.edit().putString(
                 Constant.LOGIN_CUSTOMER_CODE_NAME,
+                ""
+        ).apply();
+        //
+        sharedPreferences.edit().putString(
+                Constant.USER_CUSTOMER_TRANSLATE_CODE,
                 ""
         ).apply();
         //

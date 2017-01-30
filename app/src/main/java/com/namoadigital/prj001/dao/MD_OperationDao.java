@@ -23,12 +23,13 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
 
     public static final String TABLE = "md_operations";
     public static final String CUSTOMER_CODE = "customer_code";
+    public static final String OPERATION_ID = "operation_id";
     public static final String OPERATION_CODE = "operation_code";
     public static final String OPERATION_DESC = "operation_desc";
     public static final String ALIAS_SERVICE_OPER = "alias_service_oper";
     public static final String ALIAS_SERVICE_COM = "alias_service_com";
 
-    private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_DESC, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
+    private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_ID, OPERATION_DESC, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
 
 
     public MD_OperationDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -192,6 +193,7 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
 
             md_operation.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             md_operation.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
+            md_operation.setOperation_id(cursor.getString(cursor.getColumnIndex(OPERATION_ID)));
             md_operation.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
             md_operation.setAlias_service_oper(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_OPER)));
             md_operation.setAlias_service_com(cursor.getInt(cursor.getColumnIndex(ALIAS_SERVICE_COM)));
@@ -210,6 +212,9 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
             }
             if (md_operation.getOperation_code() > -1) {
                 contentValues.put(OPERATION_CODE, md_operation.getOperation_code());
+            }
+            if (md_operation.getOperation_id() != null) {
+                contentValues.put(OPERATION_ID, md_operation.getOperation_id());
             }
             if (md_operation.getOperation_desc() != null) {
                 contentValues.put(OPERATION_DESC, md_operation.getOperation_desc());

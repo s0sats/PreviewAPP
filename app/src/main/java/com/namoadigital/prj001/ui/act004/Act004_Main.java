@@ -92,7 +92,8 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         else if(operations.size() == 1){
                 mPresenter.setOperationCode(operations.get(0));
         }else {
-            String[] from = {MD_OperationDao.OPERATION_DESC};
+
+            String[] from = {MD_OperationDao.OPERATION_ID + " - " +MD_OperationDao.OPERATION_DESC};
             int[] to = {R.id.lib_custom_cell_tv_item};
             lv_operations.setAdapter(
                     new SimpleAdapter(
