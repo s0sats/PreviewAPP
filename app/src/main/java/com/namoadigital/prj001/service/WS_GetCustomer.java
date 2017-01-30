@@ -168,7 +168,7 @@ public class WS_GetCustomer extends IntentService {
         }
 
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
-        ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
+        ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));
         ToolBox_Con.setPreference_User_Email(getApplicationContext(), userInfo.getEmail_p());
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), ToolBox_Inf.md5(password).toUpperCase());
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
