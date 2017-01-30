@@ -107,6 +107,12 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                     jump_od  //Valida User_others_device. 1 = não, 0 = sim
             );
         }else{
+            //Seta preferecia de customer
+            ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
+            ToolBox_Con.setPreference_Customer_Code_Name(getApplicationContext(),item.get(EV_User_CustomerDao.CUSTOMER_NAME));
+            ToolBox_Con.setPreference_Customer_nls_date_format (getApplicationContext(),item.get(EV_User_CustomerDao.NLS_DATE_FORMAT));
+            ToolBox_Con.setPreference_Translate_Code(getApplicationContext(), item.get(EV_User_CustomerDao.TRANSLATE_CODE));
+
             callAct003(context);
         }
 
