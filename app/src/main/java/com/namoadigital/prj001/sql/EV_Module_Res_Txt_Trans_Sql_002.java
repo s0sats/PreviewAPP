@@ -30,7 +30,7 @@ public class EV_Module_Res_Txt_Trans_Sql_002 implements Specification {
                         " where " +
                         EV_Module_Res_Txt_TransDao.MODULE_CODE +" ='" + s_module_code +"' " +
                         " and " +EV_Module_Res_Txt_TransDao.RESOURCE_CODE +" ='" +s_resource_code +"'" +
-                        " and" + EV_Module_Res_Txt_TransDao.TRANSLATE_CODE + " ='" + s_translate_code + "'")
+                        " and " + EV_Module_Res_Txt_TransDao.TRANSLATE_CODE + " ='" + s_translate_code + "'")
                 .append(";")
                 .toString();
     }

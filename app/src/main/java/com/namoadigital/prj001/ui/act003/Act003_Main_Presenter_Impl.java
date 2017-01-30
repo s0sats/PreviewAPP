@@ -27,13 +27,12 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     }
 
     @Override
-    public void getSites() {
+    public void getSites(HMAux hmAux_Trans) {
         mView.loadSites(
                 md_siteDao.query_HM(
                         new MD_Site_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                "Externo"
-
+                                hmAux_Trans.get("lbl_external_site")
                         ).toSqlQuery()
                 )
         );

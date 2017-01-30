@@ -541,20 +541,32 @@ public class ToolBox_Inf {
         context.startActivity(mIntent);
     }
 
-    public static HMAux setLanguage(Context context, String module_code, String resouce_name, String translate_code){
+    /**
+     * Metodo que retorna o Resource_code, baseado no Resource_name
+     * @param context
+     * @param module_code
+     * @param resource_name
+     * @return
+     */
+    public static String getResourceCode(Context context,String module_code,String resource_name){
         //Dao para buscar codigo do recurso
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+
         //Usa Sql 002 para selecionar obj com o resource_code
         EV_Module_Res evModuleRes = moduleResDao.getByString(
                 new EV_Module_Res_Txt_Sql_002(
                         module_code,
-                        resouce_name
+                        resource_name
                 ).toSqlQuery()
         );
+
+        return String.valueOf(evModuleRes.getResource_code());
+    }
+    public static HMAux setLanguage(Context context, String module_code, String resource_name, String translate_code){
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
@@ -565,7 +577,7 @@ public class ToolBox_Inf {
         List<EV_Module_Res_Txt_Trans> module_res_txt_transes =  transDao.query(
                 new EV_Module_Res_Txt_Trans_Sql_002(
                         module_code,
-                        String.valueOf(evModuleRes.getResource_code()),
+                        getResourceCode(context, module_code, resource_name),
                         translate_code
                 ).toSqlQuery()
         );

@@ -15,6 +15,9 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -37,8 +40,18 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
+        iniSetup();
         initVars();
         initActions();
+    }
+
+    private void iniSetup() {
+        context = getBaseContext();
+        //
+        mResource_Code = ToolBox_Inf.getResourceCode(context, mModule_Code, Constant.ACT003);
+        //
+        loadTranslation();
+        //
     }
 
     public void callAct004(Context context) {
@@ -49,8 +62,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     private void initVars() {
-        context = getBaseContext();
-        //
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
         //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
@@ -58,7 +69,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         if(mPresenter.checkPreferenceIsSet()){
             callAct004(context);
         }else{
-            mPresenter.getSites();
+            mPresenter.getSites(hmAux_Trans);
         }
     }
 
@@ -91,4 +102,16 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             lv_sites.setAdapter(mAdapter);
         }
     }
+
+    private void loadTranslation(){
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context)
+        );
+
+    }
+
 }

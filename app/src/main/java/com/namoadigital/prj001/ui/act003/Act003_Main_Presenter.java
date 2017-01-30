@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act003_Main_Presenter {
 
-    void getSites();
+    void getSites(HMAux hmAux_Trans);
 
     void setSiteCode(HMAux item);
 

@@ -24,33 +24,33 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void getMenuItens() {
+    public void getMenuItens(HMAux hmAux_Trans) {
         List<HMAux> menuList = new ArrayList<>();
         HMAux Aux = new HMAux();
         String icon = String.valueOf(R.drawable.cloud_upload);
 
         Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,"Checklist");
+        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_checklist"));
         menuList.add(Aux);
 
         Aux = new HMAux();
         Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,"Pending");
+        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_pending_data"));
         menuList.add(Aux);
 
         Aux = new HMAux();
         Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,"Send Data");
+        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_send_data"));
         menuList.add(Aux);
 
         Aux = new HMAux();
         Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,"Sync");
+        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_sync_data"));
         menuList.add(Aux);
 
         Aux = new HMAux();
         Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,"Sair");
+        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_close_app"));
         menuList.add(Aux);
 
         mView.loadMenu(menuList);

@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.ui.act005;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
 
 public interface Act005_Main_Presenter {
 
-    void getMenuItens();
+    void getMenuItens(HMAux hmAux_Trans);
 }

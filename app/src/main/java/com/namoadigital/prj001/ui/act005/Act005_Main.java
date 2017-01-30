@@ -57,11 +57,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         mResource_Code = Constant.ACT005;
         //
+        loadTranslation();
+        //
         mPresenter = new Act005_Main_Presenter_Impl(context,this);
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
         //
-        mPresenter.getMenuItens();
+        mPresenter.getMenuItens(hmAux_Trans);
 
     }
 
@@ -82,9 +84,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         gv_menu.setAdapter(mAdapter);
     }
 
-
-    private void iniUIFooter() {
-        iniFooter();
+    private void loadTranslation(){
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -92,6 +92,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context)
         );
+
+    }
+
+    private void iniUIFooter() {
+        iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT005;
