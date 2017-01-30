@@ -17,7 +17,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -45,12 +47,15 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setSupportActionBar(toolbar);
         //
         initVars();
+        iniUIFooter();
         initActions();
     }
 
     private void initVars() {
         //
         context = getBaseContext();
+        //
+        mResource_Code = Constant.ACT005;
         //
         mPresenter = new Act005_Main_Presenter_Impl(context,this);
         //
@@ -77,6 +82,26 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         gv_menu.setAdapter(mAdapter);
     }
 
+
+    private void iniUIFooter() {
+        iniFooter();
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context)
+        );
+        //
+        mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
+        mAct_Info = Constant.ACT005;
+        mAct_Title = Constant.ACT005 + "_" + "title";
+        //
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage("");
+        setFooter();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

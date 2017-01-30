@@ -9,7 +9,14 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.EV_Module_ResDao;
+import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.model.EV_Module_Res;
+import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
+import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
+import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
 import java.io.BufferedInputStream;
@@ -29,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -532,4 +540,43 @@ public class ToolBox_Inf {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mIntent);
     }
+
+    public static HMAux setLanguage(Context context, String module_code, String resouce_name, String translate_code){
+        //Dao para buscar codigo do recurso
+        EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //Usa Sql 002 para selecionar obj com o resource_code
+        EV_Module_Res evModuleRes = moduleResDao.getByString(
+                new EV_Module_Res_Txt_Sql_002(
+                        module_code,
+                        resouce_name
+                ).toSqlQuery()
+        );
+
+        EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        List<EV_Module_Res_Txt_Trans> module_res_txt_transes =  transDao.query(
+                new EV_Module_Res_Txt_Trans_Sql_002(
+                        module_code,
+                        String.valueOf(evModuleRes.getResource_code()),
+                        translate_code
+                ).toSqlQuery()
+        );
+
+        HMAux item = new HMAux();
+        //
+        for (EV_Module_Res_Txt_Trans module_res_txt_trans : module_res_txt_transes) {
+            item.put(module_res_txt_trans.getTxt_code(), module_res_txt_trans.getTxt_value());
+        }
+        //
+        return item;
+    }
+
 }

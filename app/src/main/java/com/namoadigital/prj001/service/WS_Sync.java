@@ -163,9 +163,9 @@ public class WS_Sync extends IntentService {
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
 
             ArrayList<Long> CHECKLIST = new ArrayList<>();
-            CHECKLIST.add(20L);
-            CHECKLIST.add(19L);
-            dataPackage.setCHECKLIST(CHECKLIST);
+           // CHECKLIST.add(20L);
+           // CHECKLIST.add(19L);
+           // dataPackage.setCHECKLIST(CHECKLIST);
             /*
             *
             * CRIAR TABELA DE DO ANDROID PARA CONTROLE DOS PRODUTOS JA CHAMADOS.
