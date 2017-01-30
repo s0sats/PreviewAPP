@@ -9,12 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,6 +31,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     private Context context;
     private ListView lv_operations;
     private Act004_Main_Presenter mPresenter;
+    private Lib_Custom_Cell_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,17 +93,16 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         else if(operations.size() == 1){
                 mPresenter.setOperationCode(operations.get(0));
         }else {
-
-            String[] from = {MD_OperationDao.OPERATION_ID + " - " +MD_OperationDao.OPERATION_DESC};
-            int[] to = {R.id.lib_custom_cell_tv_item};
-            lv_operations.setAdapter(
-                    new SimpleAdapter(
-                            context,
-                            operations,
-                            R.layout.lib_custom_cell,
-                            from,
-                            to)
+            mAdapter =  new Lib_Custom_Cell_Adapter(
+                    context,
+                    R.layout.lib_custom_cell,
+                    operations,
+                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
+                    MD_OperationDao.OPERATION_DESC,
+                    MD_OperationDao.OPERATION_ID
             );
+
+            lv_operations.setAdapter(mAdapter);
         }
 
     }

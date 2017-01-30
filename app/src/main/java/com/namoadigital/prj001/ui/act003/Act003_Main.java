@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 
 import java.util.List;
@@ -78,7 +79,15 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         if(sites.size() == 1 ){
             mPresenter.setSiteCode(sites.get(0));
         }else {
-            mAdapter = new Lib_Custom_Cell_Adapter(context, R.layout.lib_custom_cell, sites);
+            mAdapter = new Lib_Custom_Cell_Adapter(
+                    context,
+                    R.layout.lib_custom_cell,
+                    sites,
+                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
+                    MD_SiteDao.SITE_DESC,
+                    MD_SiteDao.SITE_ID
+            );
+
             lv_sites.setAdapter(mAdapter);
         }
     }

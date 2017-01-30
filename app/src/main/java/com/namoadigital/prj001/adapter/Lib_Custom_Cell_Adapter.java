@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.MD_SiteDao;
 
 import java.util.List;
 
@@ -22,14 +21,24 @@ import java.util.List;
 
 public class Lib_Custom_Cell_Adapter extends BaseAdapter {
 
+    //CONSTANTES
+    public static final String CFG_ID_DESC = "ID_DESC";
+    public static final String CFG_DESC = "DESC";
+
     private Context context;
     private int resource;
     private List<HMAux> source;
+    private String config;
+    private String key_id;
+    private String key_text;
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config,  String key_text, String key_id) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+        this.config = config;
+        this.key_text = key_text;
+        this.key_id = key_id;
     }
 
     @Override
@@ -76,12 +85,31 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         iv002.setVisibility(View.GONE);
 
         Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
-        llBackground.setBackground(llDrawable);
-        tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-        tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-        //
-        String siteDesc = item.get(MD_SiteDao.SITE_ID) +" - " + item.get(MD_SiteDao.SITE_DESC);
-        tvItem.setText(siteDesc);
+        String itemText = "";
+
+        switch (config){
+            case CFG_ID_DESC:
+                llBackground.setBackground(llDrawable);
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                //
+                if (item.get(key_id).trim().length() > 0){
+                    itemText = item.get(key_id) + " - ";
+                }
+                //
+                itemText += item.get(key_text);
+                tvItem.setText(itemText);
+                break;
+
+            case CFG_DESC:default:
+                llBackground.setBackground(llDrawable);
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                //
+                itemText = item.get(key_text);
+                tvItem.setText(itemText);
+                break;
+        }
 
         return convertView;
     }

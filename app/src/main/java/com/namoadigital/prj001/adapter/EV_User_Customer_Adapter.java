@@ -72,7 +72,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
 
         //Inicia configuraçõa dos elementos
         tvItem.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
-
+        //
         tvSubItem.setVisibility(View.GONE);
 
         //Define layout da celula e baseado no campo blocked
