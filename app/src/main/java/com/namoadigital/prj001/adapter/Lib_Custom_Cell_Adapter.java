@@ -75,25 +75,13 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         iv001.setVisibility(View.GONE);
         iv002.setVisibility(View.GONE);
 
-        //Define layout da celula e baseado no campo blocked
-        if(item.get(MD_SiteDao.SITE_ID).trim().length() > 0){
-            Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
-            llBackground.setBackground(llDrawable);
-            tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-            //
-            String siteDesc = item.get(MD_SiteDao.SITE_ID) +" - " + item.get(MD_SiteDao.SITE_DESC);
-            tvItem.setText(siteDesc);
-
-        }else{
-            Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_warning_base);
-            llBackground.setBackground(llDrawable);
-            tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
-            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
-            //
-            String siteDesc = item.get(MD_SiteDao.SITE_DESC);
-            tvItem.setText(siteDesc);
-        }
+        Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+        llBackground.setBackground(llDrawable);
+        tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+        tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+        //
+        String siteDesc = item.get(MD_SiteDao.SITE_ID) +" - " + item.get(MD_SiteDao.SITE_DESC);
+        tvItem.setText(siteDesc);
 
         return convertView;
     }
