@@ -492,15 +492,15 @@ public class ToolBox_Inf {
                 }
 
             case "SESSION_NOT_FOUND":
-                sendBCStatus(context, "ERRO_3", error_msg, s_Link, "0");
+                sendBCStatus(context, "ERROR_3", error_msg, s_Link, "0");
                 return false;
 
             case "CREATE_SESSION_ABORT":
-                sendBCStatus(context, "ERRO_1", error_msg, s_Link, "0");
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
             case "LICENSE_QTY_INVALID":
-                sendBCStatus(context, "ERRO_1", error_msg, s_Link, "0");
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
             default:
