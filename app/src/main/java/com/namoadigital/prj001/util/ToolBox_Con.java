@@ -360,6 +360,29 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region Session_app
+    public static void setPreference_Session_App(Context context, String session_app) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.SESSION_APP,
+                session_app
+        ).apply();
+    }
+
+    public static String getPreference_Session_App(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.SESSION_APP,
+                ""
+        );
+    }
+
+    //endregion
+
     //region Customer_Code_TMP
     public static void setPreference_Customer_Code_TMP(Context context, long customer_code) {
         SharedPreferences sharedPreferences =
@@ -501,6 +524,12 @@ public class ToolBox_Con {
         sharedPreferences.edit().putLong(
                 Constant.LOGIN_OPERATION_CODE,
                 -1
+        ).apply();
+        //
+        //
+        sharedPreferences.edit().putString(
+                Constant.SESSION_APP,
+                ""
         ).apply();
         //
         sharedPreferences.edit().putString(

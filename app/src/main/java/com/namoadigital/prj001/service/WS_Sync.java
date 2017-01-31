@@ -470,11 +470,6 @@ public class WS_Sync extends IntentService {
 
         }
 
-        //REMOVER APOS TESTE
-            // ToolBox_Con.cleanPreferences(getApplicationContext());
-
-            //ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Teste Finished ...", "", "0");
-        //REMOVER APOS TESTE
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);

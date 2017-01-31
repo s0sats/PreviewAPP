@@ -146,6 +146,7 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Customer_Code_Name(getApplicationContext(), userCustomer.getCustomer_name());
         ToolBox_Con.setPreference_Customer_nls_date_format (getApplicationContext(), userCustomer.getNls_date_format());
         ToolBox_Con.setPreference_Translate_Code(getApplicationContext(), String.valueOf(userCustomer.getTranslate_code()));
+        ToolBox_Con.setPreference_Session_App(getApplicationContext(),rec.getSession_app());
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", "Getting Master Data ...", "", "0");
     }
