@@ -75,7 +75,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
-        //data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
@@ -96,25 +96,23 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
         try {
             switch (menu_id){
-
                 case Act005_Main.MENU_ID_CHECKLIST:
                     mView.callAct006(context);
                     break;
 
                 case Act005_Main.MENU_ID_PENDING_DATA:
-
                     break;
 
                 case Act005_Main.MENU_ID_SEND_DATA:
-
                     break;
 
                 case Act005_Main.MENU_ID_SYNC_DATA:
+                    mView.showPD();
                     executeSyncProcess(jump_validation_UR);
                     break;
 
                 case Act005_Main.MENU_ID_CLOSE:
-
+                    mView.closeApp();
                     break;
                 default:
                     break;

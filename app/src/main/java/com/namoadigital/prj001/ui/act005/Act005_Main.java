@@ -87,7 +87,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 mPresenter.accessMenuItem(item.get(Act005_Main.MENU_ID),0);
-                showPD();
             }
         });
 
@@ -152,11 +151,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
-    protected void processGo() {
-        super.processGo();
-        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA,1);
+    public void closeApp() {
+        finish();
     }
 
+    //TRATA UPDATE_REQUIRED - CANCEL
+    @Override
+    protected void processGo() {
+        super.processGo();
+        mPresenter.executeSyncProcess(1);
+    }
+    //TRATA UPDATE_REQUIRED - OK
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
@@ -168,6 +173,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
         progressDialog.dismiss();
+    }
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+
+
     }
 
     @Override
