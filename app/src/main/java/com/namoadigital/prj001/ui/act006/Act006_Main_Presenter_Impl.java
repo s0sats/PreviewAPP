@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.ui.act002.Act002_Main_View;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             HMAux item = new HMAux();
             //
             item.put(HMAux.ID, String.valueOf(i + 1));
-            item.put(HMAux.TEXTO_01, opcs[i]);
+            item.put(HMAux.TEXTO_01, Constant.ACT006 + "_lbl_" + opcs[i]);
             item.put(HMAux.TEXTO_02, opcs[i]);
             //
             data.add(item);
@@ -41,6 +42,6 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     String[] opcs = {
             "new",
             "barcode",
-            "check_list"
+            "checklist"
     };
 }

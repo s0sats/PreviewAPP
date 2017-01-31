@@ -18,6 +18,10 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act007.Act007_Main;
+import com.namoadigital.prj001.ui.act008.Act008_Main;
+import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -98,7 +102,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage("");
+        setTitleLanguage();
         setFooter();
     }
 
@@ -109,24 +113,15 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                switch (item.get(HMAux.TEXTO_01).toUpperCase()) {
-                    case "BARCODE":
-                        try {
-                            Intent mIntent = new Intent(
-                                    context,
-                                    Class.forName(
-                                            "com.namoa_digital.namoa_library.view.BarCode_Activity"
-                                    )
-                            );
-
-                            mIntent.putExtra(ConstantBase.B_C_O_N_ID, Integer.parseInt(item.get(HMAux.ID)));
-                            mIntent.putExtra(ConstantBase.PREFERENCES_UI_TYPE, 4);
-
-                            context.startActivity(mIntent);
-
-                        } catch (Exception e) {
-                        }
-
+                switch (item.get(HMAux.ID).toUpperCase()) {
+                    case "1":
+                        callAct007(context);
+                        break;
+                    case "2":
+                        callBarCode(item);
+                        break;
+                    case "3":
+                        callAct012(context);
                         break;
                     default:
                         break;
@@ -140,18 +135,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
                 callAct005(context);
             }
         });
-    }
-
-
-    @Override
-    protected void barCodeShortCut(int id, String value) {
-        super.barCodeShortCut(id, value);
-        //
-        Toast.makeText(
-                context,
-                String.valueOf(id) + " - " + value,
-                Toast.LENGTH_SHORT
-        ).show();
     }
 
     @Override
@@ -184,13 +167,53 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
     @Override
     public void callAct007(Context context) {
+        Intent mIntent = new Intent(context, Act007_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 
+    private void callBarCode(HMAux item) {
+        try {
+            Intent mIntent = new Intent(
+                    context,
+                    Class.forName(
+                            "com.namoa_digital.namoa_library.view.BarCode_Activity"
+                    )
+            );
+
+            mIntent.putExtra(ConstantBase.B_C_O_N_ID, Integer.parseInt(item.get(HMAux.ID)));
+            mIntent.putExtra(ConstantBase.PREFERENCES_UI_TYPE, 4);
+
+            context.startActivity(mIntent);
+
+        } catch (Exception e) {
+        }
+    }
+
+
+    @Override
+    protected void barCodeShortCut(int id, String value) {
+        super.barCodeShortCut(id, value);
+        //
+        Toast.makeText(
+                context,
+                String.valueOf(id) + " - " + value,
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    @Override
+    public void callAct012(Context context) {
+        Intent mIntent = new Intent(context, Act008_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
     public void callAct005(Context context) {
-        //Intent mIntent =  new Intent(context, Act005_Main.class);
-        Intent mIntent = new Intent(context, Act002_Main.class);
+        Intent mIntent =  new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

@@ -104,7 +104,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage("");
+        setTitleLanguage();
         setFooter();
     }
 
