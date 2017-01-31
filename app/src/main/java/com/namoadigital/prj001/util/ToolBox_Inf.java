@@ -566,7 +566,7 @@ public class ToolBox_Inf {
 
         return String.valueOf(evModuleRes.getResource_code());
     }
-    public static HMAux setLanguage(Context context, String module_code, String resource_name, String translate_code){
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code){
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
@@ -577,7 +577,7 @@ public class ToolBox_Inf {
         List<EV_Module_Res_Txt_Trans> module_res_txt_transes =  transDao.query(
                 new EV_Module_Res_Txt_Trans_Sql_002(
                         module_code,
-                        getResourceCode(context, module_code, resource_name),
+                        resource_code,
                         translate_code
                 ).toSqlQuery()
         );
