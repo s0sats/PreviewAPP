@@ -1,18 +1,40 @@
 package com.namoadigital.prj001.ui.act006;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.ui.act004.Act004_Main_View;
+import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
  */
 
 public class Act006_Main extends Base_Activity implements Act006_Main_View {
+
+    private Context context;
+
+    private ListView lv_checklist_opcs;
+    private Act006_Main_Presenter mPresenter;
+    private BootstrapButton btn_back;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,16 +44,155 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
+        iniSetup();
+        //
         initVars();
+        //
+        iniUIFooter();
+        //
         initActions();
     }
 
-    private void initVars() {
+    private void iniSetup() {
+        context = getBaseContext();
 
+        loadTranslation();
+    }
+
+    private void loadTranslation(){
+        mResource_Name = Constant.ACT006;
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Name,
+                ToolBox_Con.getPreference_Translate_Code(context)
+        );
+    }
+
+    private void iniUIFooter() {
+        iniFooter();
+        //
+        mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
+        mAct_Info = Constant.ACT006;
+        mAct_Title = Constant.ACT006 + "_" + "title";
+        //
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage("");
+        setFooter();
+    }
+
+    private void initVars() {
+        //context = getBaseContext();
+        //
+        mPresenter = new Act006_Main_Presenter_Impl(
+                context,
+                this
+        );
+        //
+        //loadTranslation();
+        //
+        btn_back = (BootstrapButton) findViewById(R.id.act006_btn_back);
+        btn_back.setTag(Constant.ACT006 + "_" + "btn_back");
+        lv_checklist_opcs = (ListView) findViewById(R.id.act006_lv_checklist_opcs);
+        //
+        views.add(btn_back);
+        //
+        mPresenter.getAllOpcs();
     }
 
     private void initActions() {
 
+        lv_checklist_opcs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                //
+                switch (item.get(HMAux.TEXTO_01).toUpperCase()){
+                    case "BARCODE":
+                        try {
+                            Intent mIntent = new Intent(
+                                    context,
+                                    Class.forName(
+                                            "com.namoa_digital.namoa_library.view.BarCode_Activity"
+                                    )
+                            );
+
+                            mIntent.putExtra(ConstantBase.B_C_O_N_ID, Integer.parseInt(item.get(HMAux.ID)));
+                            mIntent.putExtra(ConstantBase.PREFERENCES_UI_TYPE, 4);
+
+                            context.startActivity(mIntent);
+
+                        } catch (Exception e) {
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callAct005(context);
+            }
+        });
     }
 
+
+    @Override
+    protected void barCodeShortCut(int id, String value) {
+        super.barCodeShortCut(id,value);
+        //
+        Toast.makeText(
+                context,
+                String.valueOf(id) + " - " + value,
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    @Override
+    public void loadCheckListOpcs(List<HMAux> opcs) {
+
+        for (HMAux item : opcs) {
+            if (hmAux_Trans.get(item.get(HMAux.TEXTO_01)) != null) {
+                item.put(HMAux.TEXTO_02, hmAux_Trans.get(item.get(HMAux.TEXTO_01)));
+            } else {
+                item.put(HMAux.TEXTO_02, ToolBox.setNoTrans(mModule_Code, mResource_Name, item.get(HMAux.TEXTO_01)));
+            }
+        }
+
+        String[] from = {HMAux.TEXTO_02};
+        int[] to = {R.id.act006_main_content_cell_01_tv_text};
+
+        lv_checklist_opcs.setAdapter(
+
+                new SimpleAdapter(
+                        context,
+                        opcs,
+                        R.layout.act006_main_content_cell_01,
+                        from,
+                        to
+                )
+
+        );
+
+    }
+
+    @Override
+    public void callAct007(Context context) {
+
+    }
+
+    @Override
+    public void callAct005(Context context) {
+        //Intent mIntent =  new Intent(context, Act005_Main.class);
+        Intent mIntent =  new Intent(context, Act002_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 }

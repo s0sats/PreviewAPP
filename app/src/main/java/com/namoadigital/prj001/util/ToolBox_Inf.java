@@ -10,12 +10,9 @@ import android.telephony.TelephonyManager;
 import android.util.Base64;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
-import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
-import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
@@ -426,16 +423,15 @@ public class ToolBox_Inf {
     }
 
     /**
-     *
      * @param context
      * @param validation
      * @param error_msg
      * @param s_Link
-     * @param iStatus - Se deve validar update_required.0 valida , 1 não valida
+     * @param iStatus    - Se deve validar update_required.0 valida , 1 não valida
      * @param iStatus_OD - Se deve validar forced_login.0 valida , 1 não valida
      * @return
      */
-    public static boolean processWSCheckValidation(Context context, String validation, String error_msg ,String s_Link, int iStatus, int iStatus_OD) {
+    public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
         switch (validation) {
             case "OK":
                 break;

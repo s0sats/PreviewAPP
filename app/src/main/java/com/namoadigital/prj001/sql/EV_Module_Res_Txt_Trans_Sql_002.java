@@ -25,12 +25,31 @@ public class EV_Module_Res_Txt_Trans_Sql_002 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append(" select * from " +
-                        EV_Module_Res_Txt_TransDao.TABLE +
-                        " where " +
-                        EV_Module_Res_Txt_TransDao.MODULE_CODE +" ='" + s_module_code +"' " +
-                        " and " +EV_Module_Res_Txt_TransDao.RESOURCE_CODE +" ='" +s_resource_code +"'" +
-                        " and " + EV_Module_Res_Txt_TransDao.TRANSLATE_CODE + " ='" + s_translate_code + "'")
+                .append(" select * from ")
+                .append(EV_Module_Res_Txt_TransDao.TABLE)
+                .append(" where ")
+                .append(" (")
+                .append(" (")
+                .append(EV_Module_Res_Txt_TransDao.MODULE_CODE)
+                .append(" ='")
+                .append(s_module_code)
+                .append("'")
+                .append(" )")
+                .append(" and")
+                .append(" (")
+                .append(EV_Module_Res_Txt_TransDao.RESOURCE_CODE)
+                .append(" ='")
+                .append(s_resource_code)
+                .append("'")
+                .append(" )")
+                .append(" and")
+                .append(" (")
+                .append(EV_Module_Res_Txt_TransDao.TRANSLATE_CODE)
+                .append(" ='")
+                .append(s_translate_code)
+                .append("'")
+                .append(" )")
+                .append(" )")
                 .append(";")
                 .toString();
     }
