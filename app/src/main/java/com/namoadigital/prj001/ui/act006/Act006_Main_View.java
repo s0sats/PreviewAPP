@@ -14,8 +14,10 @@ public interface Act006_Main_View {
 
     void loadCheckListOpcs(List<HMAux> opcs);
 
+    void callAct005(Context context);
+
     void callAct007(Context context);
 
-    void callAct005(Context context);
+    void callAct012(Context context);
 
 }

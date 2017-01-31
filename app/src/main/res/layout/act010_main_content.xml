@@ -21,6 +21,6 @@
 
     </LinearLayout>
 
-    <include layout="@layout/footer" />
+    <include layout="@layout/footer_base" />
 
 </LinearLayout>
