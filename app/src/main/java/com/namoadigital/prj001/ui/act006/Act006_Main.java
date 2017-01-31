@@ -56,18 +56,37 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     private void iniSetup() {
         context = getBaseContext();
 
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT006
+        );
+
         loadTranslation();
     }
 
-    private void loadTranslation(){
-        mResource_Name = Constant.ACT006;
-
+    private void loadTranslation() {
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
-                mResource_Name,
+                mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context)
         );
+    }
+
+    private void initVars() {
+        mPresenter = new Act006_Main_Presenter_Impl(
+                context,
+                this
+        );
+
+        btn_back = (BootstrapButton) findViewById(R.id.act006_btn_back);
+        btn_back.setTag(Constant.ACT006 + "_" + "btn_back");
+        lv_checklist_opcs = (ListView) findViewById(R.id.act006_lv_checklist_opcs);
+
+        views.add(btn_back);
+
+        mPresenter.getAllOpcs();
     }
 
     private void iniUIFooter() {
@@ -83,25 +102,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         setFooter();
     }
 
-    private void initVars() {
-        //context = getBaseContext();
-        //
-        mPresenter = new Act006_Main_Presenter_Impl(
-                context,
-                this
-        );
-        //
-        //loadTranslation();
-        //
-        btn_back = (BootstrapButton) findViewById(R.id.act006_btn_back);
-        btn_back.setTag(Constant.ACT006 + "_" + "btn_back");
-        lv_checklist_opcs = (ListView) findViewById(R.id.act006_lv_checklist_opcs);
-        //
-        views.add(btn_back);
-        //
-        mPresenter.getAllOpcs();
-    }
-
     private void initActions() {
 
         lv_checklist_opcs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -109,7 +109,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                switch (item.get(HMAux.TEXTO_01).toUpperCase()){
+                switch (item.get(HMAux.TEXTO_01).toUpperCase()) {
                     case "BARCODE":
                         try {
                             Intent mIntent = new Intent(
@@ -145,7 +145,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
     @Override
     protected void barCodeShortCut(int id, String value) {
-        super.barCodeShortCut(id,value);
+        super.barCodeShortCut(id, value);
         //
         Toast.makeText(
                 context,
@@ -161,7 +161,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             if (hmAux_Trans.get(item.get(HMAux.TEXTO_01)) != null) {
                 item.put(HMAux.TEXTO_02, hmAux_Trans.get(item.get(HMAux.TEXTO_01)));
             } else {
-                item.put(HMAux.TEXTO_02, ToolBox.setNoTrans(mModule_Code, mResource_Name, item.get(HMAux.TEXTO_01)));
+                item.put(HMAux.TEXTO_02, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(HMAux.TEXTO_01)));
             }
         }
 
@@ -190,7 +190,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     @Override
     public void callAct005(Context context) {
         //Intent mIntent =  new Intent(context, Act005_Main.class);
-        Intent mIntent =  new Intent(context, Act002_Main.class);
+        Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

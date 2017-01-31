@@ -10,9 +10,12 @@ import android.telephony.TelephonyManager;
 import android.util.Base64;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
+import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
@@ -560,7 +563,11 @@ public class ToolBox_Inf {
                 ).toSqlQuery()
         );
 
-        return String.valueOf(evModuleRes.getResource_code());
+        try {
+            return String.valueOf(evModuleRes.getResource_code());
+        } catch (Exception e) {
+            return "0";
+        }
     }
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code){
 
@@ -585,6 +592,10 @@ public class ToolBox_Inf {
         }
         //
         return item;
+    }
+
+    public static String sVersionDesc(String Build_RELEASE, String Build_SDK_INT) {
+        return Build_RELEASE + " (" + Build_SDK_INT + ")";
     }
 
 }
