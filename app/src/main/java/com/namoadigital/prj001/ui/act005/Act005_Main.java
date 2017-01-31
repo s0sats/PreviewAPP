@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
@@ -46,19 +47,26 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
+        iniSetup();
         initVars();
         iniUIFooter();
         initActions();
     }
 
-    private void initVars() {
-        //
+    private void iniSetup() {
         context = getBaseContext();
         //
-        mResource_Code = Constant.ACT005;
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT005
+        );
         //
         loadTranslation();
         //
+    }
+
+    private void initVars() {
         mPresenter = new Act005_Main_Presenter_Impl(context,this);
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
@@ -80,6 +88,16 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     @Override
     public void loadMenu(List<HMAux> menus) {
+        //Traduz menus
+        for (HMAux item : menus) {
+            if (hmAux_Trans.get(item.get(Act005_Main.MENU_DESC)) != null) {
+                item.put(Act005_Main.MENU_DESC, hmAux_Trans.get(item.get(Act005_Main.MENU_DESC)));
+            } else {
+                item.put(Act005_Main.MENU_DESC, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(Act005_Main.MENU_DESC)));
+            }
+        }
+
+
         mAdapter =  new Act005_Adapter(context,R.layout.act005_item_menu,menus);
         gv_menu.setAdapter(mAdapter);
     }
@@ -104,7 +122,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage("");
+        setTitleLanguage();
         setFooter();
     }
 

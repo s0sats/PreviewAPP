@@ -23,36 +23,36 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.mView = mView;
     }
 
+    String[] menuDesc = {
+            "lbl_checklist",
+            "lbl_pending_data",
+            "lbl_send_data",
+            "lbl_sync_data",
+            "lbl_close_app"
+    };
+
+    String[] icon ={
+            String.valueOf(R.drawable.cloud_upload),
+            String.valueOf(R.drawable.cloud_upload),
+            String.valueOf(R.drawable.cloud_upload),
+            String.valueOf(R.drawable.cloud_upload),
+            String.valueOf(R.drawable.cloud_upload)
+    };
+
     @Override
     public void getMenuItens(HMAux hmAux_Trans) {
         List<HMAux> menuList = new ArrayList<>();
-        HMAux Aux = new HMAux();
-        String icon = String.valueOf(R.drawable.cloud_upload);
 
-        Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_checklist"));
-        menuList.add(Aux);
+        for (int i = 0; i < menuDesc.length;i++ ){
+            HMAux Aux = new HMAux();
+            Aux.put(Act005_Main.MENU_ICON, icon[i]);
+            Aux.put(Act005_Main.MENU_DESC,menuDesc[i]);
+            menuList.add(Aux);
 
-        Aux = new HMAux();
-        Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_pending_data"));
-        menuList.add(Aux);
-
-        Aux = new HMAux();
-        Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_send_data"));
-        menuList.add(Aux);
-
-        Aux = new HMAux();
-        Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_sync_data"));
-        menuList.add(Aux);
-
-        Aux = new HMAux();
-        Aux.put(Act005_Main.MENU_ICON, icon);
-        Aux.put(Act005_Main.MENU_DESC,hmAux_Trans.get("lbl_close_app"));
-        menuList.add(Aux);
-
+        }
         mView.loadMenu(menuList);
     }
+
+
+
 }
