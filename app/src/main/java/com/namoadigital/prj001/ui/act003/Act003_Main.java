@@ -42,6 +42,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         //
         iniSetup();
         initVars();
+        iniUIFooter();
         initActions();
     }
 
@@ -82,6 +83,13 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                 mPresenter.setSiteCode(item);
             }
         });
+    }
+
+    private void iniUIFooter() {
+
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage();
     }
 
     @Override

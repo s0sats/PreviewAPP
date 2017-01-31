@@ -17,6 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -41,13 +42,33 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
+        iniSetup();
         initVars();
+        iniUIFooter();
         initActions();
     }
 
-    private void initVars() {
+    private void iniSetup() {
         context = getBaseContext();
         //
+        mResource_Code = ToolBox_Inf.getResourceCode(context, mModule_Code, Constant.ACT004);
+        //
+        loadTranslation();
+        //
+    }
+
+    private void loadTranslation(){
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context)
+        );
+
+    }
+
+    private void initVars() {
         mPresenter = new Act004_Main_Presenter_Impl(context, this);
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
@@ -57,6 +78,13 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         }else{
             mPresenter.getOperations();
         }
+    }
+
+    private void iniUIFooter() {
+
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage();
     }
 
     private void initActions() {
