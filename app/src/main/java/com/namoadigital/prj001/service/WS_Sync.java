@@ -350,7 +350,6 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                int i =1 ;
                 productGroupDao.addUpdate(productGroups, true);
             }
 

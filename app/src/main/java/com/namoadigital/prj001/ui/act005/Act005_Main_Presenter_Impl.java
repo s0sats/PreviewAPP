@@ -7,9 +7,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,10 +25,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private Act005_Main_View mView;
     private HMAux item;
 
+
     public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView) {
         this.context = context;
         this.mView = mView;
     }
+
+    String[] menuId = {
+            Act005_Main.MENU_ID_CHECKLIST,
+            Act005_Main.MENU_ID_PENDING_DATA,
+            Act005_Main.MENU_ID_SEND_DATA,
+            Act005_Main.MENU_ID_SYNC_DATA,
+            Act005_Main.MENU_ID_CLOSE
+    };
 
     String[] menuDesc = {
             "lbl_checklist",
@@ -52,8 +59,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public void getMenuItens(HMAux hmAux_Trans) {
         List<HMAux> menuList = new ArrayList<>();
 
-        for (int i = 0; i < menuDesc.length;i++ ){
+        for (int i = 0; i < menuId.length;i++ ){
             HMAux Aux = new HMAux();
+            Aux.put(Act005_Main.MENU_ID, menuId[i]);
             Aux.put(Act005_Main.MENU_ICON, icon[i]);
             Aux.put(Act005_Main.MENU_DESC,menuDesc[i]);
             menuList.add(Aux);
@@ -64,14 +72,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void executeSyncProcess() {
-        EV_User_Customer userCustomer;
-
-        userCustomer =  ev_user_customerDao.getByString(
-                new EV_User_Customer_Sql_002(
-                        ToolBox_Con.getPreference_User_Code(context),
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                ).toSqlQuery()
-        );
 
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
@@ -81,14 +81,49 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        bundle.putInt(Constant.GC_STATUS_JUMP, 0);//Valida Update require
         bundle.putInt(Constant.GC_STATUS, 1);
 
         mIntent.putExtras(bundle);
         //
+        mView.showPD();
+        //
         context.sendBroadcast(mIntent);
         ToolBox_Inf.sendBCStatus(context, "STATUS", "Starting to sync ...", "", "0");
 
+    }
+
+    @Override
+    public void accessMenuItem(HMAux item) {
+
+        try {
+            switch (item.get(Act005_Main.MENU_ID)){
+
+                case Act005_Main.MENU_ID_CHECKLIST:
+                    mView.callAct006(context);
+                    break;
+
+                case Act005_Main.MENU_ID_PENDING_DATA:
+
+                    break;
+
+                case Act005_Main.MENU_ID_SEND_DATA:
+
+                    break;
+
+                case Act005_Main.MENU_ID_SYNC_DATA:
+                    executeSyncProcess();
+                    break;
+
+                case Act005_Main.MENU_ID_CLOSE:
+
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

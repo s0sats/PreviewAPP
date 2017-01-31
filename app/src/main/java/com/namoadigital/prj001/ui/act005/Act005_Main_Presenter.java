@@ -11,4 +11,6 @@ public interface Act005_Main_Presenter {
     void getMenuItens(HMAux hmAux_Trans);
 
     void executeSyncProcess();
+
+    void accessMenuItem(HMAux item);
 }

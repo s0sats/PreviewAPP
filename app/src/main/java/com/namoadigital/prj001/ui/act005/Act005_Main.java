@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -18,6 +17,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
+import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -30,8 +30,14 @@ import java.util.List;
 
 public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
+    public static final String MENU_ID = "menu_id" ;
     public static final String MENU_ICON = "menu_icon" ;
     public static final String MENU_DESC = "menu_desc";
+    public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
+    public static final String MENU_ID_SEND_DATA = "menu_send_data";
+    public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
+    public static final String MENU_ID_CLOSE = "menu_close_app";
 
     private Context context;
     private List<HMAux> menu_list;
@@ -80,7 +86,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                Toast.makeText(context,item.get(Act005_Main.MENU_DESC),Toast.LENGTH_LONG).show();
+                mPresenter.accessMenuItem(item);
             }
         });
 
@@ -124,6 +130,31 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    @Override
+    public void showPD() {
+        enableProgressDialog(
+                "Get Sync",
+                "Start Processing...",
+                "Cancel",
+                "Ok"
+        );
+    }
+
+    @Override
+    public void callAct006(Context context) {
+        Intent mIntent =  new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        //
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
 
     @Override
