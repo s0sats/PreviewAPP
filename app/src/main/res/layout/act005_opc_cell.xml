@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:id="@+id/lib_custom_cell_ll_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/lib_custom_cell_bg_base"
+        android:padding="15dp">
+        <ImageView
+            android:id="@+id/lib_custom_cell_iv_001"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cloud_upload"
+            />
+        <view
+            android:layout_width="15dp"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/lib_custom_cell_tv_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="20dp"
+            android:text="Texto"
+            android:textColor="@color/lib_custom_cell_font_color"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>
