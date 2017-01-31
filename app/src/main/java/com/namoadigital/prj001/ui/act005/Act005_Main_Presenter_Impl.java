@@ -71,7 +71,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void executeSyncProcess() {
+    public void executeSyncProcess(int jump_validation_UR) {
 
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
@@ -81,12 +81,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
-        bundle.putInt(Constant.GC_STATUS_JUMP, 0);//Valida Update require
+        bundle.putInt(Constant.GC_STATUS_JUMP, jump_validation_UR);//Valida Update require
         bundle.putInt(Constant.GC_STATUS, 1);
 
         mIntent.putExtras(bundle);
-        //
-        mView.showPD();
         //
         context.sendBroadcast(mIntent);
         ToolBox_Inf.sendBCStatus(context, "STATUS", "Starting to sync ...", "", "0");
@@ -94,10 +92,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void accessMenuItem(HMAux item) {
+    public void accessMenuItem(String menu_id, int jump_validation_UR) {
 
         try {
-            switch (item.get(Act005_Main.MENU_ID)){
+            switch (menu_id){
 
                 case Act005_Main.MENU_ID_CHECKLIST:
                     mView.callAct006(context);
@@ -112,7 +110,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_SYNC_DATA:
-                    executeSyncProcess();
+                    executeSyncProcess(jump_validation_UR);
                     break;
 
                 case Act005_Main.MENU_ID_CLOSE:

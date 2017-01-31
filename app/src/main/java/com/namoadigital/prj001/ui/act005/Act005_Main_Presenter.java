@@ -10,7 +10,7 @@ public interface Act005_Main_Presenter {
 
     void getMenuItens(HMAux hmAux_Trans);
 
-    void executeSyncProcess();
+    void executeSyncProcess(int jump_validation_UR);
 
-    void accessMenuItem(HMAux item);
+    void accessMenuItem(String menu_id, int jump_validation_UR);
 }

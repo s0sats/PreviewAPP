@@ -86,7 +86,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                mPresenter.accessMenuItem(item);
+                mPresenter.accessMenuItem(item.get(Act005_Main.MENU_ID),0);
+                showPD();
             }
         });
 
@@ -151,10 +152,22 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    protected void processGo() {
+        super.processGo();
+        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA,1);
+    }
+
+    @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
         //
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        progressDialog.dismiss();
     }
 
     @Override
