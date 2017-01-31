@@ -18,10 +18,10 @@ public class Act005_Opc extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.act007_main,container,false);
+
+        View view = inflater.inflate(R.layout.act005_opc_content,container,false);
         //
-
-
+        //view.findViewById()
         //
         return view;
 

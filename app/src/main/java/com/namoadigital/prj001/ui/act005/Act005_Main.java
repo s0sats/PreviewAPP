@@ -4,10 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -30,8 +35,8 @@ import java.util.List;
 
 public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
-    public static final String MENU_ID = "menu_id" ;
-    public static final String MENU_ICON = "menu_icon" ;
+    public static final String MENU_ID = "menu_id";
+    public static final String MENU_ICON = "menu_icon";
     public static final String MENU_DESC = "menu_desc";
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
@@ -44,6 +49,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private GridView gv_menu;
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
+
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +72,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private void iniSetup() {
         context = getBaseContext();
         //
+        fm = getSupportFragmentManager();
+
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -73,11 +85,44 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     private void initVars() {
-        mPresenter = new Act005_Main_Presenter_Impl(context,this);
+        mDrawerLayout = (DrawerLayout)
+                findViewById(R.id.act005_drawer);
+
+        mPresenter = new Act005_Main_Presenter_Impl(context, this);
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
         //
         mPresenter.getMenuItens(hmAux_Trans);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                Act005_Main.this,
+                mDrawerLayout,
+                R.string.act005_drawer_opened,
+                R.string.act005_drawer_closed
+        ) {
+
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                //
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                //
+                invalidateOptionsMenu();
+            }
+        };
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+        mDrawerToggle.syncState();
 
     }
 
@@ -86,7 +131,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                mPresenter.accessMenuItem(item.get(Act005_Main.MENU_ID),0);
+                mPresenter.accessMenuItem(item.get(Act005_Main.MENU_ID), 0);
             }
         });
 
@@ -104,11 +149,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         }
 
 
-        mAdapter =  new Act005_Adapter(context,R.layout.act005_item_menu,menus);
+        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu, menus);
         gv_menu.setAdapter(mAdapter);
     }
 
-    private void loadTranslation(){
+    private void loadTranslation() {
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -144,7 +189,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     @Override
     public void callAct006(Context context) {
-        Intent mIntent =  new Intent(context, Act006_Main.class);
+        Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -161,6 +206,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         super.processGo();
         mPresenter.executeSyncProcess(1);
     }
+
     //TRATA UPDATE_REQUIRED - OK
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
@@ -174,6 +220,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         super.processCloseACT(mLink, mRequired);
         progressDialog.dismiss();
     }
+
     //TRATA SESSION_NOT_FOUND
     @Override
     protected void processLogin() {
@@ -203,6 +250,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.act05_action_settings) {
 
@@ -219,4 +270,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
+
+    //mDrawerLayout.closeDrawer(GravityCompat.START);
 }
