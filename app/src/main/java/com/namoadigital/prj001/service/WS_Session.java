@@ -96,7 +96,7 @@ public class WS_Session extends IntentService {
         env.setManufacturer(Build.MANUFACTURER);
         env.setModel(Build.MODEL);
         env.setOs("ANDROID");
-        env.setVersion_os(String.valueOf(Build.VERSION.SDK_INT));
+        env.setVersion_os(ToolBox_Inf.sVersionDesc(Build.VERSION.RELEASE, String.valueOf(Build.VERSION.SDK_INT)));
         env.setForce_login(String.valueOf(forced_login));
         env.setCustomer_code(customer_code);
         env.setTranslate_code(Integer.parseInt(translate_code));

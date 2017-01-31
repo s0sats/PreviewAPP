@@ -9,7 +9,11 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
+import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
 import java.io.BufferedInputStream;
@@ -29,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -418,16 +423,15 @@ public class ToolBox_Inf {
     }
 
     /**
-     *
      * @param context
      * @param validation
      * @param error_msg
      * @param s_Link
-     * @param iStatus - Se deve validar update_required.0 valida , 1 não valida
+     * @param iStatus    - Se deve validar update_required.0 valida , 1 não valida
      * @param iStatus_OD - Se deve validar forced_login.0 valida , 1 não valida
      * @return
      */
-    public static boolean processWSCheckValidation(Context context, String validation, String error_msg ,String s_Link, int iStatus, int iStatus_OD) {
+    public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
         switch (validation) {
             case "OK":
                 break;
@@ -531,5 +535,34 @@ public class ToolBox_Inf {
         Intent mIntent = new Intent(context, Act001_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mIntent);
+    }
+
+    public static HMAux setLanguage(Context context, String module_code, String resouce_code, String translate_code) {
+
+        EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
+                context,
+                Constant.DB_FULL_CUSTOM,
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        List<EV_Module_Res_Txt_Trans> module_res_txt_transes = transDao.query(
+                new EV_Module_Res_Txt_Trans_Sql_002(
+                        module_code,
+                        resouce_code,
+                        translate_code
+                ).toSqlQuery()
+        );
+
+        HMAux item = new HMAux();
+        //
+        for (EV_Module_Res_Txt_Trans module_res_txt_trans : module_res_txt_transes) {
+            item.put(module_res_txt_trans.getTxt_code(), module_res_txt_trans.getTxt_value());
+        }
+        //
+        return item;
+    }
+
+    public static String sVersionDesc(String Build_RELEASE, String Build_SDK_INT) {
+        return Build_RELEASE + " (" + Build_SDK_INT + ")";
     }
 }
