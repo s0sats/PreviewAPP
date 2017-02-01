@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -23,6 +22,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
+import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -56,6 +58,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
 
     private FragmentManager fm;
     private Act005_Opc fragOpc;
+
+    private String alertTitle = "";
+    private String alertMsg = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,55 +137,104 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
         fragOpc.setOnOpcItemClicked(new Act005_Opc.IAct005_Opc() {
             @Override
             public void itemClicked(String index) {
+                DialogInterface.OnClickListener listener = null;
+
                 switch (index){
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
-                        Toast.makeText(context,index,Toast.LENGTH_SHORT).show();
+                        //
+                        setDrawerAlertTranslation("drawer_change_customer_alert_ttl", "drawer_change_customer_alert_msg");
+                        //
+                        listener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Reseta preferencias do Customer e volta para
+                                //Act002 - lista de customer
+                                ToolBox_Con.setPreference_Customer_Code(context,-1);
+                                ToolBox_Con.setPreference_Translate_Code(context,"");
+                                ToolBox_Con.setPreference_Site_Code(context,"-1");
+                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+
+                                callAct002(context);
+                            }
+                        };
+
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
-                        Toast.makeText(context,index,Toast.LENGTH_SHORT).show();
+                        //
+                        setDrawerAlertTranslation("drawer_change_site_alert_ttl", "drawer_change_site_alert_msg");
+                        //Apaga preferencia de Site, Operatione volta a lista de site
+                        listener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Reseta preferencias do Customer e volta para
+                                ToolBox_Con.setPreference_Site_Code(context,"-1");
+                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+                                //
+                                callAct003(context);
+                            }
+                        };
                         break;
                     case Act005_Opc.DRAWER_OPC_OPERATION:
-                        Toast.makeText(context,index,Toast.LENGTH_SHORT).show();
+                        //
+                        setDrawerAlertTranslation("drawer_change_operation_alert_ttl", "drawer_change_operation_alert_msg");
+                        //
+                        listener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Apaga preferencia de Operatione volta a ista de operation
+                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+                                //
+                                callAct004(context);
+                            }
+                        };
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
-                        String alertTitle = "";
-                        String alertMsg = "";
-                        /*drawer_logout_alert_ttl
-                         drawer_logout_alert_msg*/
-                        if (hmAux_Trans.get("drawer_logout_alert_ttl") != null) {
-                            alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
-                        } else {
-                            alertTitle = ToolBox.setNoTrans(mModule_Code, mResource_Code, "drawer_logout_alert_ttl");
-                        }
-
-                        if (hmAux_Trans.get("drawer_logout_alert_msg") != null) {
-                            alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
-                        } else {
-                            alertMsg = ToolBox.setNoTrans(mModule_Code, mResource_Code, "drawer_logout_alert_msg");
-                        }
-
-                        ToolBox.alertMSG(
-                                Act005_Main.this,
-                                alertTitle,
-                                alertMsg,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        ToolBox_Con.cleanPreferences(Act005_Main.this);
-                                        ToolBox_Inf.call_Act001_Main(Act005_Main.this);
-                                        finish();
-                                    }
-                                });
+                        //
+                        setDrawerAlertTranslation("drawer_logout_alert_ttl", "drawer_logout_alert_msg");
+                        //
+                        listener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ToolBox_Con.cleanPreferences(Act005_Main.this);
+                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
+                                finish();
+                            }
+                        };
                         break;
                     default:
                         break;
                 }
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                //Verifica se listner foi setado,
+                //se foi, exibe Dialog.
+                if (listener != null){
+                    ToolBox.alertMSG(
+                            Act005_Main.this,
+                            alertTitle,
+                            alertMsg,
+                            listener
+                    );
 
+                }
+                //Fecha Drawer
+                mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });
 
 
+    }
+
+    private void setDrawerAlertTranslation(String title_txt_code,String msg_txt_code) {
+        if (hmAux_Trans.get(title_txt_code) != null) {
+            alertTitle = hmAux_Trans.get(title_txt_code);
+        } else {
+            alertTitle = ToolBox.setNoTrans(mModule_Code, mResource_Code, title_txt_code);
+        }
+
+        if (hmAux_Trans.get(msg_txt_code) != null) {
+            alertMsg = hmAux_Trans.get(msg_txt_code);
+        } else {
+            alertMsg = ToolBox.setNoTrans(mModule_Code, mResource_Code, msg_txt_code);
+        }
     }
 
     private void initActions() {
@@ -251,6 +305,27 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
         finish();
     }
 
+    public void callAct002(Context context) {
+        Intent mIntent = new Intent(context, Act002_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    public void callAct003(Context context) {
+        Intent mIntent = new Intent(context, Act003_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    public void callAct004(Context context) {
+        Intent mIntent = new Intent(context, Act004_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     public void closeApp() {
         finish();
@@ -287,8 +362,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
         ToolBox_Inf.call_Act001_Main(context);
         //
         finish();
-
-
     }
 
     @Override
