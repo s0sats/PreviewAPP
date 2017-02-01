@@ -22,6 +22,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -35,9 +36,9 @@ import java.util.List;
 public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
     private Context context;
+    private Act006_Main_Presenter mPresenter;
 
     private ListView lv_checklist_opcs;
-    private Act006_Main_Presenter mPresenter;
     private BootstrapButton btn_back;
 
     @Override
@@ -205,7 +206,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
     @Override
     public void callAct012(Context context) {
-        Intent mIntent = new Intent(context, Act008_Main.class);
+        Intent mIntent = new Intent(context, Act012_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

@@ -15,8 +15,29 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/white"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <ListView
+            android:id="@+id/act009_lv_form_types"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_back"
+            android:padding="5dp" />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/act009_btn_back"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:bootstrapBrand="primary"
+            app:bootstrapSize="lg"
+            app:bootstrapText="Back"
+            app:roundedCorners="true" />
 
 
     </LinearLayout>

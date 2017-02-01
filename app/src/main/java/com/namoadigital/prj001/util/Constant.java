@@ -31,6 +31,13 @@ public class Constant extends ConstantBase{
     public static final String ACT012 = "act012";
     public static final String ACT013 = "act013";
 
+
+    public static final String ACT007_PRODUCT_CODE = "product_code";
+    public static final String ACT007_PRODUCT_SEARCH = "product_search";
+    public static final String ACT007_CURRENTINDEX = "currentIndex";
+    public static final String ACT007_MSTACKVALUES = "mstackvalues";
+
+
     /**
      * DataBase Definition
      */

@@ -16,7 +16,65 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@android:color/white"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product"
+            android:textColor="@color/bootstrap_brand_secondary_text"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act007_mket_product_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:hint="Product Search"
+            app:mNFC="false"
+            app:mOCR="false" />
+
+        <ListView
+            android:id="@+id/act007_lv_products"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_back"
+            android:padding="5dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/act007_btn_back"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:bootstrapBrand="primary"
+                app:bootstrapSize="lg"
+                app:bootstrapText="Back"
+                app:roundedCorners="true" />
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/act007_btn_home"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:bootstrapBrand="primary"
+                app:bootstrapSize="lg"
+                app:bootstrapText="Home"
+                app:roundedCorners="true" />
+
+        </LinearLayout>
 
 
     </LinearLayout>
