@@ -11,6 +11,10 @@
     <color name="lib_cc_bg_info_light">#555bc0de</color>
     <color name="lib_cc_bg_warning_light">#55f0ad4e</color>
 
+    <color name="namoa_dark_blue">#0E4B60</color>
+    <color name="namoa_lime_green">#A2C854</color>
+    <color name="namoa_light_blue">#4192A8</color>
+
 
 
 </resources>

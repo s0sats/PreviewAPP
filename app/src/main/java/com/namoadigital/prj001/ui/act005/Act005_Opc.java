@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
@@ -34,6 +35,8 @@ public class Act005_Opc extends Fragment {
         this.delegate = delegate;
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,13 +44,36 @@ public class Act005_Opc extends Fragment {
         View view = inflater.inflate(R.layout.act005_opc_content,container,false);
         //
         iniVar(view);
-        iniAction(view);
+        iniAction();
         //
         return view;
 
     }
 
-    private void iniAction(View view) {
+    private void iniVar(View view) {
+        iv_logo = (ImageView) view.findViewById(R.id.act005_opc_iv_logo);
+        //
+        lv_opc = (ListView) view.findViewById(R.id.act005_opc_lv_opt);
+        //
+        lvSetup();
+    }
+
+    private void lvSetup() {
+        String[] from = {"desc"};
+        int[] to ={R.id.act005_opc_cell_tv_desc};
+        lv_opc.setAdapter(
+                new SimpleAdapter(
+                        getActivity(),
+                        loadOptions(),
+                        R.layout.act005_opc_cell,
+                        from,
+                        to
+                )
+        );
+
+    }
+
+    private void iniAction() {
 
         lv_opc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -60,15 +86,7 @@ public class Act005_Opc extends Fragment {
         });
     }
 
-    private void iniVar(View view) {
-        iv_logo = (ImageView) view.findViewById(R.id.act005_opc_iv_logo);
-        //
-        lv_opc = (ListView) view.findViewById(R.id.act005_opc_lv_opt);
-
-        loadOptions();
-    }
-
-    private void loadOptions() {
+    private List<HMAux> loadOptions() {
         String[] id = {"1"};
         int[] icon = {R.drawable.cloud_upload};
         String[] desc = {"Site"};
@@ -81,6 +99,6 @@ public class Act005_Opc extends Fragment {
             hmAux.put("desc",desc[i]);
             drawerItemList.add(hmAux);
         }
-
+        return drawerItemList;
     }
 }
