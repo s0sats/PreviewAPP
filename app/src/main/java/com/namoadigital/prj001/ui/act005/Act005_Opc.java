@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 
 import java.util.ArrayList;
@@ -23,18 +24,46 @@ import java.util.List;
 
 public class Act005_Opc extends Fragment {
 
+    public static final String DRAWER_KEY_OPC_ID = "drawer_opc_id" ;
+    public static final String DRAWER_KEY_OPC_ICON = "drawer_opc_icon";
+    public static final String DRAWER_KEY_OPC_DESC = "drawer_opc_desc" ;
+    //
+    public static final String DRAWER_OPC_CUSTOMER = "drawer_opc_customer" ;
+    public static final String DRAWER_OPC_SITE = "drawer_opc_site" ;
+    public static final String DRAWER_OPC_OPERATION = "drawer_opc_operation" ;
+    public static final String DRAWER_OPC_LOGOUT = "drawer_opc_logout" ;
+    //
     private ImageView iv_logo;
     private ListView lv_opc;
     private IAct005_Opc delegate;
+    private List<HMAux> drawerItemList;
+    private HMAux hmAux_Trans;
+    private SimpleAdapter sAdapter;
 
     public interface IAct005_Opc{
-        void itemClicked(int index);
+        void itemClicked(String index);
     }
 
     public void setOnOpcItemClicked(IAct005_Opc delegate) {
         this.delegate = delegate;
     }
+    //
 
+    public void setHmAux_Trans(HMAux hmAux_Trans,String mModule_Code , String mResource_Code) {
+        this.hmAux_Trans = hmAux_Trans;
+        translateItens(mModule_Code, mResource_Code);
+        sAdapter.notifyDataSetChanged();
+    }
+
+    private void translateItens(String mModule_Code, String mResource_Code) {
+        for (HMAux item : drawerItemList) {
+            if (hmAux_Trans.get(item.get(Act005_Opc.DRAWER_KEY_OPC_DESC)) != null) {
+                item.put(Act005_Opc.DRAWER_KEY_OPC_DESC, hmAux_Trans.get(item.get(Act005_Opc.DRAWER_KEY_OPC_DESC)));
+            } else {
+                item.put(Act005_Opc.DRAWER_KEY_OPC_DESC, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(Act005_Opc.DRAWER_KEY_OPC_DESC)));
+            }
+        }
+    }
 
 
     @Nullable
@@ -59,46 +88,61 @@ public class Act005_Opc extends Fragment {
     }
 
     private void lvSetup() {
-        String[] from = {"desc"};
-        int[] to ={R.id.act005_opc_cell_tv_desc};
-        lv_opc.setAdapter(
-                new SimpleAdapter(
-                        getActivity(),
-                        loadOptions(),
-                        R.layout.act005_opc_cell,
-                        from,
-                        to
-                )
+        String[] from = {DRAWER_KEY_OPC_ICON, DRAWER_KEY_OPC_DESC};
+        int[] to ={R.id.act005_opc_cell_iv_icon, R.id.act005_opc_cell_tv_desc};
+        sAdapter = new SimpleAdapter(
+                getActivity(),
+                loadOptions(),
+                R.layout.act005_opc_cell,
+                from,
+                to
         );
+
+        lv_opc.setAdapter(sAdapter);
 
     }
 
     private void iniAction() {
-
         lv_opc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(delegate != null){
                     HMAux item = (HMAux) parent.getItemAtPosition(position);
-                    delegate.itemClicked(Integer.parseInt(item.get("id")));
+                    delegate.itemClicked(item.get(DRAWER_KEY_OPC_ID));
                 }
             }
         });
     }
 
     private List<HMAux> loadOptions() {
-        String[] id = {"1"};
-        int[] icon = {R.drawable.cloud_upload};
-        String[] desc = {"Site"};
-        List<HMAux> drawerItemList =  new ArrayList<>();
+        String[] id = {
+                DRAWER_OPC_CUSTOMER,
+                DRAWER_OPC_SITE,
+                DRAWER_OPC_OPERATION,
+                DRAWER_OPC_LOGOUT
+        };
+        String[] icon = {
+                "",
+                "",
+                "",
+                String.valueOf(R.drawable.ic_settings_power_red_24dp)
+        };
 
+        String[] desc = {
+                "lbl_change_customer",
+                "lbl_change_site",
+                "lbl_change_operation",
+                "lbl_logout",
+        };
+        drawerItemList = new ArrayList<>();
         for (int i = 0; i < id.length;i++){
             HMAux hmAux =  new HMAux();
-            hmAux.put("id",id[i]);
-            hmAux.put("icon", String.valueOf(icon[i]));
-            hmAux.put("desc",desc[i]);
+            hmAux.put(DRAWER_KEY_OPC_ID,id[i]);
+            hmAux.put(DRAWER_KEY_OPC_ICON, icon[i]);
+            hmAux.put(DRAWER_KEY_OPC_DESC,desc[i]);
             drawerItemList.add(hmAux);
         }
+
         return drawerItemList;
     }
 }

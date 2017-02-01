@@ -5,7 +5,7 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/namoa_dark_blue"
+    android:background="@color/padrao_WHITE"
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -19,18 +19,23 @@
         android:layout_weight="1"
         android:src="@drawable/namoa_logo"
         android:background="@color/padrao_WHITE"
+        android:layout_margin="10dp"
+        android:padding="10dp"
         />
 
     <ListView
         android:id="@+id/act005_opc_lv_opt"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5">
+        android:layout_weight="5"
+        android:dividerHeight="0dp"
+        android:divider="@color/padrao_TRANSPARENT">
 
     </ListView>
     <LinearLayout
         android:id="@+id/act005_opc_ll_footer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 </LinearLayout>
 

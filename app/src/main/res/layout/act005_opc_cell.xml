@@ -20,7 +20,7 @@
             android:id="@+id/act005_opc_cell_iv_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/cloud_upload" />
+             />
 
         <View
             android:layout_width="15dp"

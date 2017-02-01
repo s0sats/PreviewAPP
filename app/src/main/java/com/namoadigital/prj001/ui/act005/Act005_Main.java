@@ -1,20 +1,21 @@
 package com.namoadigital.prj001.ui.act005;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -33,7 +34,7 @@ import java.util.List;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity implements Act005_Main_View {
+public class Act005_Main extends Base_Activity implements Act005_Main_View{
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -54,6 +55,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private ActionBarDrawerToggle mDrawerToggle;
 
     private FragmentManager fm;
+    private Act005_Opc fragOpc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,13 +69,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         initVars();
         iniUIFooter();
         initActions();
+
     }
 
     private void iniSetup() {
         context = getBaseContext();
         //
         fm = getSupportFragmentManager();
-
+        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -121,8 +124,62 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-
+        //
         mDrawerToggle.syncState();
+        //
+        fragOpc = (Act005_Opc) fm.findFragmentById(R.id.act005_frag_opc);
+        fragOpc.setHmAux_Trans(hmAux_Trans,mModule_Code,mResource_Code);
+        fragOpc.setOnOpcItemClicked(new Act005_Opc.IAct005_Opc() {
+            @Override
+            public void itemClicked(String index) {
+                switch (index){
+                    case Act005_Opc.DRAWER_OPC_CUSTOMER:
+                        Toast.makeText(context,index,Toast.LENGTH_SHORT).show();
+                        break;
+                    case Act005_Opc.DRAWER_OPC_SITE:
+                        Toast.makeText(context,index,Toast.LENGTH_SHORT).show();
+                        break;
+                    case Act005_Opc.DRAWER_OPC_OPERATION:
+                        Toast.makeText(context,index,Toast.LENGTH_SHORT).show();
+                        break;
+                    case Act005_Opc.DRAWER_OPC_LOGOUT:
+                        String alertTitle = "";
+                        String alertMsg = "";
+                        /*drawer_logout_alert_ttl
+                         drawer_logout_alert_msg*/
+                        if (hmAux_Trans.get("drawer_logout_alert_ttl") != null) {
+                            alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
+                        } else {
+                            alertTitle = ToolBox.setNoTrans(mModule_Code, mResource_Code, "drawer_logout_alert_ttl");
+                        }
+
+                        if (hmAux_Trans.get("drawer_logout_alert_msg") != null) {
+                            alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
+                        } else {
+                            alertMsg = ToolBox.setNoTrans(mModule_Code, mResource_Code, "drawer_logout_alert_msg");
+                        }
+
+                        ToolBox.alertMSG(
+                                Act005_Main.this,
+                                alertTitle,
+                                alertMsg,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ToolBox_Con.cleanPreferences(Act005_Main.this);
+                                        ToolBox_Inf.call_Act001_Main(Act005_Main.this);
+                                        finish();
+                                    }
+                                });
+                        break;
+                    default:
+                        break;
+                }
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+            }
+        });
+
 
     }
 
@@ -147,7 +204,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 item.put(Act005_Main.MENU_DESC, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(Act005_Main.MENU_DESC)));
             }
         }
-
 
         mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu, menus);
         gv_menu.setAdapter(mAdapter);
@@ -270,6 +326,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     //mDrawerLayout.closeDrawer(GravityCompat.START);
 }
