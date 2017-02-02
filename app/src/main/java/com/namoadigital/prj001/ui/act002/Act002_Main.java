@@ -29,10 +29,15 @@ import java.util.List;
  */
 
 public class Act002_Main extends Base_Activity implements Act002_Main_View {
+
+    private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
+    private final String PROCESS_WS_GET_SESSION = "get_session";
+
     private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
     private EV_User_Customer_Adapter mAdapter;
+    private String wsProcess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,18 +65,16 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //Se for != null, verifica se precisa chamar o WS de customer ou não
         if(bundle != null){
             if(bundle.get(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
-
+                wsProcess = PROCESS_WS_GET_CUSTOMER;
             }else{
-
+                wsProcess = PROCESS_WS_GET_SESSION;
+                if(mPresenter.checkPreferenceIsSet()){
+                    callAct003(context);
+                }else {
+                    mPresenter.getAllCustomers();
+                }
             }
         }
-        //
-        if(mPresenter.checkPreferenceIsSet()){
-            callAct003(context);
-        }else {
-            mPresenter.getAllCustomers();
-        }
-        //
     }
 
     private void initActions() {
@@ -107,7 +110,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
         if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
-            showPD();
+            showPD("Get Session","Start Processing...","Cancel","Ok");
 
             mPresenter.executeSessionProcess(
                     ToolBox_Con.getPreference_User_Email(context),
@@ -144,8 +147,17 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         super.processCloseACT(mLink, mRequired);
         //
         progressDialog.dismiss();
+        //Existem dois processo que chama esse metodo
+        //Os IFs abaixa tratam qual a proxima ação
         //
-        callAct003(context);
+        if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER)){
+            mPresenter.getAllCustomers();
+        }
+        //
+        if(wsProcess.equals(PROCESS_WS_GET_SESSION)){
+            callAct003(context);
+        }
+
     }
 
     @Override
@@ -157,12 +169,12 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     @Override
-    public void showPD() {
+    public void showPD(String title, String msg, String labelCancel, String labelOk) {
         enableProgressDialog(
-                "Get Session",
-                "Start Processing...",
-                "Cancel",
-                "Ok"
+                title,//"Get Session",
+                msg,//"Start Processing...",
+                labelCancel,//"Cancel",
+                labelOk//"Ok"
         );
     }
 

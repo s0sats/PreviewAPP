@@ -4,4 +4,8 @@
 
     <string name="act005_drawer_opened">Drawer Opened</string>
     <string name="act005_drawer_closed">Drawer Closed</string>
+    <string name="get_customer_alert_title">Get Customer</string>
+    <string name="generic_start_processing_msg">Start Processing...</string>
+    <string name="generic_cancel_msg">Cancel</string>
+    <string name="generic_ok_msg">OK</string>
 </resources>

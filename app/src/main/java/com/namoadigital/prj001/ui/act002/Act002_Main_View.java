@@ -16,7 +16,7 @@ public interface Act002_Main_View {
     //Chama activity com lista de operations
     void callAct003(Context context);
     //Abri progress Dialog
-    void showPD();
+    void showPD(String title,String msg,String labelCancel, String labelOk);
 
 
 

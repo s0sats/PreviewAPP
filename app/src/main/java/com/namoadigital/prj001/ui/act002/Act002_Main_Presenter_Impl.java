@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
@@ -91,6 +93,29 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         //
         context.sendBroadcast(mIntent);
         ToolBox_Inf.sendBCStatus(context, "STATUS", "Starting to sync ...", "", "0");
+
+    }
+
+    @Override
+    public void executeGetCustomerProcess() {
+
+        Intent mIntent = new Intent(context, WBR_GetCustomer.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.GC_USER_CODE, ToolBox_Con.getPreference_User_Code(context));
+        bundle.putString(Constant.GC_PWD, ToolBox_Con.getPreference_User_Pwd(context));
+        bundle.putString(Constant.GC_NFC, ToolBox_Con.getPreference_User_NFC(context));
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        mView.showPD(
+                context.getString(R.string.get_customer_alert_title),
+                context.getString(R.string.generic_start_processing_msg),
+                context.getString(R.string.generic_cancel_msg),
+                context.getString(R.string.generic_ok_msg)
+        );
+        //
+        context.sendBroadcast(mIntent);
 
     }
 

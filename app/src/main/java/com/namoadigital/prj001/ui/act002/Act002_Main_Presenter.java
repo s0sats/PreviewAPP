@@ -14,6 +14,7 @@ public interface Act002_Main_Presenter {
 
     void executeSyncProcess();
 
+    void executeGetCustomerProcess();
     /**
      * Metodo que verifica se as preferencias dessa activity ja estão setadas
      * @return
