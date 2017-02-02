@@ -367,24 +367,19 @@ public class ToolBox_Inf {
             switch (sVersion) {
                 case "VERSION_INVALID":
                     sendBCStatus(context, "VERSION_INVALID", "VERSION INVALID", s_Link, "1");
-
                     return false;
 
                 case "EXPIRED":
                     sendBCStatus(context, "EXPIRED", "VERSION EXPIRED", s_Link, "1");
-
                     return false;
 
                 case "UPDATE_REQUIRED":
                     if (iStatus == 0) {
                         sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE_REQUIRED", s_Link, "0");
-
                         return false;
                     } else {
-                        return true;
+                        break;
                     }
-
-
                 case "STABLE":
                     break;
 
@@ -397,23 +392,19 @@ public class ToolBox_Inf {
             switch (sLogin) {
                 case "USER_INVALID":
                     sendBCStatus(context, "USER_INVALID", "USER INVALID", s_Link, "0");
-
                     return false;
 
                 case "USER_CANCELLED":
                     sendBCStatus(context, "USER_CANCELLED", "USER CANCELLED", s_Link, "0");
-
                     return false;
 
                 case "USER_OTHER_DEVICE":
                     if (iStatus_OD == 0) {
                         sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
-
                         return false;
                     } else {
                         return true;
                     }
-
                 case "OK":
                     break;
 
