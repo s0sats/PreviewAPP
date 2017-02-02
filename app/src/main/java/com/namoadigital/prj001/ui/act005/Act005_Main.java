@@ -36,7 +36,7 @@ import java.util.List;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity implements Act005_Main_View{
+public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -133,30 +133,37 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
         mDrawerToggle.syncState();
         //
         fragOpc = (Act005_Opc) fm.findFragmentById(R.id.act005_frag_opc);
-        fragOpc.setHmAux_Trans(hmAux_Trans,mModule_Code,mResource_Code);
+        fragOpc.setHmAux_Trans(hmAux_Trans, mModule_Code, mResource_Code);
         fragOpc.setOnOpcItemClicked(new Act005_Opc.IAct005_Opc() {
             @Override
             public void itemClicked(String index) {
                 DialogInterface.OnClickListener listener = null;
 
-                switch (index){
+                switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
                         //
                         setDrawerAlertTranslation("drawer_change_customer_alert_ttl", "drawer_change_customer_alert_msg");
                         //
-                        listener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Reseta preferencias do Customer e volta para
-                                //Act002 - lista de customer
-                                ToolBox_Con.setPreference_Customer_Code(context,-1);
-                                ToolBox_Con.setPreference_Translate_Code(context,"");
-                                ToolBox_Con.setPreference_Site_Code(context,"-1");
-                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+//                        listener = new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                //Reseta preferencias do Customer e volta para
+//                                //Act002 - lista de customer
+//                                ToolBox_Con.setPreference_Customer_Code(context,-1);
+//                                ToolBox_Con.setPreference_Translate_Code(context,"");
+//                                ToolBox_Con.setPreference_Site_Code(context,"-1");
+//                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+//
+//                                callAct002(context);
+//                            }
+//                        };
 
-                                callAct002(context);
-                            }
-                        };
+                        ToolBox_Con.setPreference_Customer_Code(context, -1);
+                        ToolBox_Con.setPreference_Translate_Code(context, "");
+                        ToolBox_Con.setPreference_Site_Code(context, "-1");
+                        ToolBox_Con.setPreference_Operation_Code(context, -1);
+
+                        callAct002(getApplicationContext());
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
@@ -167,8 +174,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Reseta preferencias do Customer e volta para
-                                ToolBox_Con.setPreference_Site_Code(context,"-1");
-                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+                                ToolBox_Con.setPreference_Site_Code(context, "-1");
+                                ToolBox_Con.setPreference_Operation_Code(context, -1);
                                 //
                                 callAct003(context);
                             }
@@ -182,7 +189,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Apaga preferencia de Operatione volta a ista de operation
-                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+                                ToolBox_Con.setPreference_Operation_Code(context, -1);
                                 //
                                 callAct004(context);
                             }
@@ -206,7 +213,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
                 }
                 //Verifica se listner foi setado,
                 //se foi, exibe Dialog.
-                if (listener != null){
+                if (listener != null) {
                     ToolBox.alertMSG(
                             Act005_Main.this,
                             alertTitle,
@@ -223,7 +230,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
 
     }
 
-    private void setDrawerAlertTranslation(String title_txt_code,String msg_txt_code) {
+    private void setDrawerAlertTranslation(String title_txt_code, String msg_txt_code) {
         if (hmAux_Trans.get(title_txt_code) != null) {
             alertTitle = hmAux_Trans.get(title_txt_code);
         } else {
@@ -310,9 +317,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER,1);
+        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER, 1);
+        //
+        mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
+        //
         finish();
     }
 

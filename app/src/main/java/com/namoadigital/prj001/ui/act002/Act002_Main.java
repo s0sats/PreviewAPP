@@ -64,8 +64,16 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         Bundle bundle = getIntent().getExtras();
         //Se for != null, verifica se precisa chamar o WS de customer ou não
         if(bundle != null){
-            if(bundle.get(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
+            if(bundle.getInt(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
                 wsProcess = PROCESS_WS_GET_CUSTOMER;
+                showPD(
+              /*  context.getString(R.string.get_customer_alert_title),
+                context.getString(R.string.generic_start_processing_msg),
+                context.getString(R.string.generic_cancel_msg),
+                context.getString(R.string.generic_ok_msg)*/
+                        "Get teste huehue","Start Processing...","Cancel","Ok"
+                );
+                mPresenter.executeGetCustomerProcess();
             }else{
                 wsProcess = PROCESS_WS_GET_SESSION;
                 if(mPresenter.checkPreferenceIsSet()){

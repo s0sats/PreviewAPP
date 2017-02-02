@@ -185,6 +185,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER,0);
+        mIntent.putExtras(bundle);
         //
         context.startActivity(mIntent);
 

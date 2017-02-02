@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -28,7 +29,7 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         Intent mIntent = new Intent(context, WBR_GetCustomer.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GC_USER_CODE, user);
-        bundle.putString(Constant.GC_PWD, password);
+        bundle.putString(Constant.GC_PWD, ToolBox_Inf.md5(password).toUpperCase());
         bundle.putString(Constant.GC_NFC, nfc);
         bundle.putInt(Constant.GC_STATUS_JUMP, status_jump);
         //
