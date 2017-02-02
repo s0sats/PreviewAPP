@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -181,7 +182,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     public void call_Act002_Main(Context context) {
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER,0);
+        //
         context.startActivity(mIntent);
 
         finish();

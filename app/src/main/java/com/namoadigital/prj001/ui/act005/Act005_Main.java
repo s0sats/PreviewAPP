@@ -308,6 +308,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View{
     public void callAct002(Context context) {
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER,1);
+        //
         startActivity(mIntent);
         finish();
     }

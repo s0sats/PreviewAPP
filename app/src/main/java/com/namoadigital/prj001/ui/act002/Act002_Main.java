@@ -18,6 +18,7 @@ import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -53,6 +54,17 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         mPresenter = new Act002_Main_Presenter_Impl(context, this);
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
+
+        //Tenta pegar bundle - Enviado pela Act001 ou Act005
+        Bundle bundle = getIntent().getExtras();
+        //Se for != null, verifica se precisa chamar o WS de customer ou não
+        if(bundle != null){
+            if(bundle.get(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
+
+            }else{
+
+            }
+        }
         //
         if(mPresenter.checkPreferenceIsSet()){
             callAct003(context);

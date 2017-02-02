@@ -101,6 +101,8 @@ public class Constant extends ConstantBase{
     public static final String LOGIN_OPERATION_CODE = "login_operation_code";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
     public static final String SESSION_APP = "session_app";
+    public static final String EXECUTE_WS_GET_CUSTOMER = "session_app";
+
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
