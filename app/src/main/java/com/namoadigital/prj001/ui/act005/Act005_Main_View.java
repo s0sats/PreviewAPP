@@ -19,4 +19,5 @@ public interface Act005_Main_View {
     void callAct006(Context context);
     //
     void closeApp();
+
 }
