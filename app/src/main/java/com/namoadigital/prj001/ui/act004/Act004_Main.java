@@ -81,7 +81,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     }
 
     private void iniUIFooter() {
-
+        mAct_Title = Constant.ACT004 + "_" + "title";
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

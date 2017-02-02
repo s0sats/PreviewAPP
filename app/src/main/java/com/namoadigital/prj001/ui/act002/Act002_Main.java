@@ -31,7 +31,7 @@ import java.util.List;
 public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
-    private final String PROCESS_WS_GET_SESSION = "get_session";
+    private final String PROCESS_WS_SYNC = "ws_sync";
 
     private Context context;
     private ListView lv_customers;
@@ -65,17 +65,17 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //Se for != null, verifica se precisa chamar o WS de customer ou não
         if(bundle != null){
             if(bundle.getInt(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
+                //Seta variavel que define ação do metodo processCloseACT
                 wsProcess = PROCESS_WS_GET_CUSTOMER;
                 showPD(
-              /*  context.getString(R.string.get_customer_alert_title),
+                context.getString(R.string.get_customer_alert_title),
                 context.getString(R.string.generic_start_processing_msg),
                 context.getString(R.string.generic_cancel_msg),
-                context.getString(R.string.generic_ok_msg)*/
-                        "Get teste huehue","Start Processing...","Cancel","Ok"
+                context.getString(R.string.generic_ok_msg)
+                        //"Get teste huehue","Start Processing...","Cancel","Ok"
                 );
                 mPresenter.executeGetCustomerProcess();
             }else{
-                wsProcess = PROCESS_WS_GET_SESSION;
                 if(mPresenter.checkPreferenceIsSet()){
                     callAct003(context);
                 }else {
@@ -100,7 +100,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     @Override
     public void loadCustomers(List<HMAux> customers) {
-
         if(customers.size() == 1){
             prepareExecSessionProcess(customers.get(0),0,1,0);
 
@@ -151,24 +150,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     @Override
-    protected void processCloseACT(String mLink, String mRequired) {
-        super.processCloseACT(mLink, mRequired);
-        //
-        progressDialog.dismiss();
-        //Existem dois processo que chama esse metodo
-        //Os IFs abaixa tratam qual a proxima ação
-        //
-        if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER)){
-            mPresenter.getAllCustomers();
-        }
-        //
-        if(wsProcess.equals(PROCESS_WS_GET_SESSION)){
-            callAct003(context);
-        }
-
-    }
-
-    @Override
     public void callAct003(Context context) {
         Intent mIntent =  new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -209,7 +190,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     protected void processSync() {
         super.processSync();
-
+        //Seta variavel que define ação do metodo processCloseACT.
+        wsProcess = PROCESS_WS_SYNC;
         mPresenter.executeSyncProcess();
 
     }
@@ -219,6 +201,24 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         super.processUpdateSoftware(mLink, mRequired);
         //
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+        //Existem dois processo que chama esse metodo
+        //Se processo for get_customer, chama lista de customer
+        //Se não, chama Act seleção de site.
+        if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER)){
+            mPresenter.getAllCustomers();
+        }
+        //
+        if(wsProcess.equals(PROCESS_WS_SYNC)){
+            callAct003(context);
+        }
+
     }
 
     @Override

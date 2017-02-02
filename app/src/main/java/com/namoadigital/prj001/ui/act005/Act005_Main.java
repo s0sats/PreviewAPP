@@ -144,26 +144,26 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         //
                         setDrawerAlertTranslation("drawer_change_customer_alert_ttl", "drawer_change_customer_alert_msg");
                         //
-//                        listener = new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                //Reseta preferencias do Customer e volta para
-//                                //Act002 - lista de customer
-//                                ToolBox_Con.setPreference_Customer_Code(context,-1);
-//                                ToolBox_Con.setPreference_Translate_Code(context,"");
-//                                ToolBox_Con.setPreference_Site_Code(context,"-1");
-//                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+                        listener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Reseta preferencias do Customer e volta para
+                                //Act002 - lista de customer
+                                ToolBox_Con.setPreference_Customer_Code(context,-1);
+                                ToolBox_Con.setPreference_Translate_Code(context,"");
+                                ToolBox_Con.setPreference_Site_Code(context,"-1");
+                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+
+                                callAct002(context);
+                            }
+                        };
+
+//                        ToolBox_Con.setPreference_Customer_Code(context, -1);
+//                        ToolBox_Con.setPreference_Translate_Code(context, "");
+//                        ToolBox_Con.setPreference_Site_Code(context, "-1");
+//                        ToolBox_Con.setPreference_Operation_Code(context, -1);
 //
-//                                callAct002(context);
-//                            }
-//                        };
-
-                        ToolBox_Con.setPreference_Customer_Code(context, -1);
-                        ToolBox_Con.setPreference_Translate_Code(context, "");
-                        ToolBox_Con.setPreference_Site_Code(context, "-1");
-                        ToolBox_Con.setPreference_Operation_Code(context, -1);
-
-                        callAct002(getApplicationContext());
+//                        callAct002(getApplicationContext());
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
