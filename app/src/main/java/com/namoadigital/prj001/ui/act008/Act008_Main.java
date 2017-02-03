@@ -105,7 +105,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private void initActions() {
 
-        mPresenter.validadeSerial(14L,"s001");
+        mPresenter.validadeSerial(14L,"s001huehue");
 
     }
 

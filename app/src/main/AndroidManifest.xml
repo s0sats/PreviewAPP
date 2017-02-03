@@ -125,6 +125,9 @@
         <receiver android:name=".receiver.WBR_UpdateSoftware" />
         <service android:name=".service.WS_UpdateSoftware" />
 
+        <receiver android:name=".receiver.WBR_Serial" />
+        <service android:name=".service.WS_Serial" />
+
     </application>
 
 </manifest>

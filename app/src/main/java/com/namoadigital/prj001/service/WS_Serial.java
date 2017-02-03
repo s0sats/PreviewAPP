@@ -33,8 +33,8 @@ public class WS_Serial extends IntentService {
 
         try {
 
-            Long product_code = 1L;
-            String serial_id ="";
+            Long product_code = bundle.getLong(Constant.GS_SERIAL_PRODUCT_CODE);
+            String serial_id = bundle.getString(Constant.GS_SERIAL_ID);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
             sResult = new StringBuilder();
