@@ -71,7 +71,6 @@ public class WS_Sync extends IntentService {
 
     private StringBuilder sResult;
 
-
     public WS_Sync() {
         super("WS_Sync");
     }
