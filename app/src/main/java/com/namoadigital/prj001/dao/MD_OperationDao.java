@@ -31,7 +31,6 @@ public class MD_OperationDao extends BaseDao implements Dao<MD_Operation> {
 
     private String[] columns = {CUSTOMER_CODE, OPERATION_CODE, OPERATION_ID, OPERATION_DESC, ALIAS_SERVICE_OPER, ALIAS_SERVICE_COM};
 
-
     public MD_OperationDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 

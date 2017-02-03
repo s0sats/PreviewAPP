@@ -28,6 +28,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
 
+    private String[] columns = {CUSTOMER_CODE, SITE_CODE, SITE_ID, SITE_DESC};
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
