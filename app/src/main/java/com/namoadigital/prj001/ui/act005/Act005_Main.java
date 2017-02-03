@@ -69,6 +69,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         //
         iniSetup();
         initVars();
@@ -157,13 +158,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                                 callAct002(context);
                             }
                         };
-
-//                        ToolBox_Con.setPreference_Customer_Code(context, -1);
-//                        ToolBox_Con.setPreference_Translate_Code(context, "");
-//                        ToolBox_Con.setPreference_Site_Code(context, "-1");
-//                        ToolBox_Con.setPreference_Operation_Code(context, -1);
-//
-//                        callAct002(getApplicationContext());
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:

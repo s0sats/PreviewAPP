@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt;
@@ -37,6 +38,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -49,12 +51,14 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -161,23 +165,32 @@ public class WS_Sync extends IntentService {
 
         //Verifica o tipo Checklist e gera lista de codigo de produtos.
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
-
             ArrayList<Long> CHECKLIST = new ArrayList<>();
-            CHECKLIST.add(20L);
-            CHECKLIST.add(19L);
+            Sync_ChecklistDao syncChecklistDao =
+                    new Sync_ChecklistDao(
+                            getApplicationContext(),
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+            //Pega lista de Sync_Checklist
+            List<Sync_Checklist> syncChecklists = syncChecklistDao.query(
+                new Sync_Checklist_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ).toSqlQuery()
+            );
+
+            //Monta lista de produtos a serem enviados
+            for (Sync_Checklist syncChecklist:syncChecklists) {
+                CHECKLIST.add(syncChecklist.getProduct_code());
+            }
+
             dataPackage.setCHECKLIST(CHECKLIST);
+
             /*
             *
-            * CRIAR TABELA DE DO ANDROID PARA CONTROLE DOS PRODUTOS JA CHAMADOS.
-            * USAR A LOGICA ABAIXO MAS DO DAO DESTA TABEA.
+            * LEMBRAR DE ATUALIZAR A DATA NA TELA QUE CHAMA ESSE WS E DEPOIS DO DE SERIAL
             *
-            * /
-            /*List<Long> productList = productDao.query_Custom_Product_Code(
-                        new MD_Product_HMAux_ProductCode_List_Sql(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
-                        ).toSqlQuery()
-                    ) ;
-            dataPackage.setCHECKLIST((ArrayList<Long>) productList);*/
+            * */
         }
 
         TSync_Env env =  new TSync_Env();

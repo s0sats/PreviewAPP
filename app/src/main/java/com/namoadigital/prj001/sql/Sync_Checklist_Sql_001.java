@@ -10,11 +10,11 @@ import com.namoadigital.prj001.database.Specification;
 public class Sync_Checklist_Sql_001 implements Specification {
 
     private long customer_code;
-    private long product_code;
+    //private long product_code;
 
-    public Sync_Checklist_Sql_001(long customer_code, long product_code) {
+    public Sync_Checklist_Sql_001(long customer_code) {
         this.customer_code = customer_code;
-        this.product_code = product_code;
+        //this.product_code = product_code;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class Sync_Checklist_Sql_001 implements Specification {
                     + Sync_ChecklistDao.TABLE +
                     " WHERE " +
                             Sync_ChecklistDao.CUSTOMER_CODE + " = '"+customer_code+"' " +
-                    "     and "+ Sync_ChecklistDao.PRODUCT_CODE  +" = '"+product_code+"' " +
+                    //"     and "+ Sync_ChecklistDao.PRODUCT_CODE  +" = '"+product_code+"' " +
                     " ORDER BY " +
                     "   product_code");
 
