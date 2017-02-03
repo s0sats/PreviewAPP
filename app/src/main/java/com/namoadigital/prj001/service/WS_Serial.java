@@ -111,7 +111,7 @@ public class WS_Serial extends IntentService {
     private boolean checkSerialReturn(String serial, String error_msg) {
 
         switch (serial){
-            case "OK": //SERIAL_OK
+            case "OK":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", error_msg, "", "0");
             return true;
 
