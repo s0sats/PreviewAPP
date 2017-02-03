@@ -9,18 +9,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
-import com.namoadigital.prj001.ui.act006.Act006_Main_Presenter;
-import com.namoadigital.prj001.ui.act006.Act006_Main_Presenter_Impl;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
-import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -40,7 +39,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private MKEditTextNM mket_product_search;
 
-    private ListView lv_products;
+    private ListView lv_groups_products;
 
     private BootstrapButton btn_back;
     private BootstrapButton btn_home;
@@ -92,18 +91,23 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     private void initVars() {
         mPresenter = new Act007_Main_Presenter_Impl(
                 context,
-                this
+                this,
+                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         mket_product_search = (MKEditTextNM) findViewById(R.id.act007_mket_product_search);
 
-        lv_products = (ListView) findViewById(R.id.act007_lv_products);
+        lv_groups_products = (ListView) findViewById(R.id.act007_lv_groups_products);
 
         btn_back = (BootstrapButton) findViewById(R.id.act007_btn_back);
         btn_home = (BootstrapButton) findViewById(R.id.act007_btn_home);
 
         controls_sta.add(mket_product_search);
 
+        recuperaGetIntents();
+
+        mPresenter.setAdapterData(currentIndex, mket_product_search.getText().toString().trim());
 
     }
 
@@ -195,26 +199,39 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             }
         });
 
-        lv_products.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_groups_products.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                if (item.get(HMAux.TEXTO_02).equalsIgnoreCase("NODE")) {
+                if (item.get("type").equalsIgnoreCase("group")) {
                     mStack.push(currentIndex);
                     //
-                    currentIndex = Long.parseLong(item.get(HMAux.TEXTO_01));
+                    currentIndex = Long.parseLong(item.get("code"));
                     //
                     mPresenter.setAdapterData(
                             currentIndex,
                             mket_product_search.getText().toString()
                     );
                 } else {
-                    mPresenter.onCategoryProductClicked(item.get(HMAux.TEXTO_01));
+                    mPresenter.onCategoryProductClicked(item.get("code"));
                 }
             }
         });
+    }
+
+    @Override
+    public void loadGroups_Products(List<HMAux> groups_products) {
+
+        lv_groups_products.setAdapter(
+                new Act007_Adapter_Groups_Products(
+                        context,
+                        R.layout.act007_main_content_cell_01,
+                        groups_products
+                )
+        );
+
     }
 
     @Override

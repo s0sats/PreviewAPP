@@ -192,6 +192,8 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             cursor.close();
         } catch (Exception e) {
 
+            String results = e.toString();
+
         } finally {
         }
 

@@ -198,6 +198,8 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
             cursor.close();
         } catch (Exception e) {
 
+            String results = e.toString();
+
         } finally {
         }
 

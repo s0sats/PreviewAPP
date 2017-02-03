@@ -38,7 +38,7 @@
             app:mOCR="false" />
 
         <ListView
-            android:id="@+id/act007_lv_products"
+            android:id="@+id/act007_lv_groups_products"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
