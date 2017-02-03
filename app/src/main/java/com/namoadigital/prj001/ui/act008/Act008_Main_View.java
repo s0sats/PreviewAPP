@@ -5,4 +5,10 @@ package com.namoadigital.prj001.ui.act008;
  */
 
 public interface Act008_Main_View {
+
+    void fieldFocus();
+
+    void showPD(String wsProcess);
+
+
 }

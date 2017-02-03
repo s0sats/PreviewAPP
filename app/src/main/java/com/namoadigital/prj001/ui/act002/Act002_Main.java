@@ -70,8 +70,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 showPD(
                 context.getString(R.string.get_customer_alert_title),
                 context.getString(R.string.generic_start_processing_msg),
-                context.getString(R.string.generic_cancel_msg),
-                context.getString(R.string.generic_ok_msg)
+                context.getString(R.string.generic_msg_cancel),
+                context.getString(R.string.generic_msg_ok)
                         //"Get teste huehue","Start Processing...","Cancel","Ok"
                 );
                 mPresenter.executeGetCustomerProcess();

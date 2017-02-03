@@ -82,6 +82,8 @@ public class Constant extends ConstantBase{
     public static final String FORCED_LOGIN = "forcedlogin";
     public static final String GS_SESSION_APP = "sessionapp";
     public static final String GS_DATA_PACKAGE = "datapackage";
+    public static final String GS_SERIAL_PRODUCT_CODE = "serialproductcode";
+    public static final String GS_SERIAL_ID = "serialserialid";
 
 
     public static final String SW_TYPE_BR = "sw_type_br";

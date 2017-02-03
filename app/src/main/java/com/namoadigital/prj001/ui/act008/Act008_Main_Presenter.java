@@ -5,4 +5,6 @@ package com.namoadigital.prj001.ui.act008;
  */
 
 public interface Act008_Main_Presenter {
+
+    void validadeSerial(Long product_code, String serial);
 }

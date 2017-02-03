@@ -11,138 +11,144 @@
     tools:context=".ui.act008.Act008_Main"
     tools:showIn="@layout/act008_main">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="15dp">
-
-            <TextView
-                android:id="@+id/act008_tv_product_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:text="Product"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/act008_tv_product_code_value"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/border_back"
-                android:padding="10dp"
-                android:text="C2530A"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-
-            <TextView
-                android:id="@+id/act008_tv_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="10dp"
-                android:text="Description"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/act008_tv_description_value"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:background="@drawable/border_back"
-                android:padding="10dp"
-                android:text="Product Description"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/act008_chk_require_serial"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:enabled="false"
-                    android:text="Require Serial" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
-
-                <CheckBox
-                    android:id="@+id/act008_chk_allow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:enabled="false"
-                    android:text="Allow Creation" />
-
-
-            </LinearLayout>
-
-
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act007_mket_product_search"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/border_back"
-                android:backgroundTint="@android:color/holo_blue_light"
-                android:hint="Product Search"
-                android:padding="10dp"
-                app:mNFC="false"
-                app:mOCR="false" />
-
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:orientation="vertical"
+                android:padding="15dp">
 
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/act007_btn_back"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/act008_tv_product_code"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    app:bootstrapBrand="primary"
-                    app:bootstrapSize="lg"
-                    app:bootstrapText="Back"
-                    app:roundedCorners="true" />
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Product"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/act007_btn_home"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/act008_tv_product_code_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/border_back"
+                    android:padding="10dp"
+                    android:text="C2530A"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/act008_tv_description"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Description"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act008_tv_description_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:background="@drawable/border_back"
+                    android:padding="10dp"
+                    android:text="Product Description"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/act008_chk_require_serial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:enabled="false"
+                        android:text="Require Serial" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <CheckBox
+                        android:id="@+id/act008_chk_allow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:enabled="false"
+                        android:text="Allow Creation" />
+
+
+                </LinearLayout>
+
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act008_mket_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_back"
+                    android:backgroundTint="@android:color/holo_blue_light"
+                    android:hint="Product Search"
+                    android:padding="10dp"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    app:bootstrapBrand="primary"
-                    app:bootstrapSize="lg"
-                    app:bootstrapText="Home"
-                    app:roundedCorners="true" />
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <com.beardedhen.androidbootstrap.BootstrapButton
+                        android:id="@+id/act007_btn_back"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        app:bootstrapBrand="primary"
+                        app:bootstrapSize="lg"
+                        app:bootstrapText="Back"
+                        app:roundedCorners="true" />
+
+                    <com.beardedhen.androidbootstrap.BootstrapButton
+                        android:id="@+id/act007_btn_home"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        app:bootstrapBrand="primary"
+                        app:bootstrapSize="lg"
+                        app:bootstrapText="Home"
+                        app:roundedCorners="true" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
     <include layout="@layout/footer_base" />
 

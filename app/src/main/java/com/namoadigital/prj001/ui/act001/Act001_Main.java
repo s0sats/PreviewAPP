@@ -221,8 +221,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         enableProgressDialog(
                 context.getString(R.string.get_customer_alert_title),
                 context.getString(R.string.generic_start_processing_msg),
-                context.getString(R.string.generic_cancel_msg),
-                context.getString(R.string.generic_ok_msg)
+                context.getString(R.string.generic_msg_cancel),
+                context.getString(R.string.generic_msg_ok)
         );
     }
 
