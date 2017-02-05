@@ -5,4 +5,10 @@ package com.namoadigital.prj001.ui.act009;
  */
 
 public interface Act009_Main_Presenter {
+
+    void setAdapterData(long product_code, String filter);
+
+    void onFormTypeClicked(String product_code);
+
+    void onBackPressedClicked();
 }
