@@ -150,7 +150,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         super.processSerialNExist();
 
         Toast.makeText(context,"Not Exists",Toast.LENGTH_SHORT).show();
+        disableProgressDialog();
     }
 
+    @Override
+    protected void processSerialOk() {
+        super.processSerialOk();
 
+        Toast.makeText(context,"Exists",Toast.LENGTH_SHORT).show();
+        disableProgressDialog();
+
+    }
 }
