@@ -5,4 +5,7 @@ package com.namoadigital.prj001.ui.act011;
  */
 
 public interface Act011_Main_View {
+
+
+
 }
