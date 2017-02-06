@@ -35,8 +35,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_ORDER = "custom_form_order";
     public static final String PAGE = "page";
     public static final String REQUIRED = "required";
-    public static final String ACTIVE = "active";
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_SEQ, CUSTOM_FORM_DATA_TYPE, CUSTOM_FORM_DATA_SIZE, CUSTOM_FORM_DATA_MASK, CUSTOM_FORM_DATA_CONTENT, CUSTOM_FORM_LOCAL_LINK, CUSTOM_FORM_ORDER, PAGE, REQUIRED, ACTIVE};
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_SEQ, CUSTOM_FORM_DATA_TYPE, CUSTOM_FORM_DATA_SIZE, CUSTOM_FORM_DATA_MASK, CUSTOM_FORM_DATA_CONTENT, CUSTOM_FORM_LOCAL_LINK, CUSTOM_FORM_ORDER, PAGE, REQUIRED};
 
     public GE_Custom_Form_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
