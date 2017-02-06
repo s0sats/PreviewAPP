@@ -17,6 +17,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -146,14 +147,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void initActions() {
-
+        //
+        mPresenter.getProductInfo();
+        //
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 callAct007(context);
             }
         });
-
+        //
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,9 +168,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
-    public void setCheckboxValues(int required, int allow_new) {
-        chk_required.setChecked( required == 1 ? true : false );
-        chk_allow_new.setChecked( allow_new == 1 ? true : false);
+    public void setProductValues(MD_Product md_product) {
+        //
+        tv_product_code_value.setText(String.valueOf(md_product.getProduct_code()));
+        tv_product_desc_value.setText(md_product.getProduct_id()+ " - " + md_product.getProduct_desc());
+        //
+        chk_required.setChecked( md_product.getRequire_serial() == 1 ? true : false );
+        chk_allow_new.setChecked( md_product.getAllow_new_serial_cl() == 1 ? true : false);
     }
 
     private void callAct007(Context context) {
@@ -248,7 +255,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-
+        mPresenter.updateSyncChecklist(mket_serial_id.getText().toString().trim(),1);
 
 
     }

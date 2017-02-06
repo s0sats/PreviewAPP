@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.ui.act008;
 
+import com.namoadigital.prj001.model.MD_Product;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
 
 public interface Act008_Main_View {
 
-    void setCheckboxValues(int required, int allow_new);
+    void setProductValues(MD_Product md_product);
 
     void fieldFocus();
 

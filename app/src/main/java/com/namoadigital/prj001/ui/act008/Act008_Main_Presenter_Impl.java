@@ -44,7 +44,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void getCheckboxsSetup() {
+    public void getProductInfo() {
         MD_Product md_product =
                 mdProductDao.getByString(
                         new MD_Product_Sql_001(
@@ -56,10 +56,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if(md_product.getProduct_code() < 1){
             mView.showAlertDialog("Product Info","Product not found!");
         }else{
-           mView.setCheckboxValues(
-                   md_product.getRequire_serial(),
-                   md_product.getAllow_new_serial_cl()
-                   );
+           mView.setProductValues(md_product);
         }
     }
 
@@ -67,14 +64,13 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     public void validadeSerial(String serial) {
         serial = serial.trim();
 
-        if(serial.length() == 0 || product_code < 1){
+        if(serial.length() == 0 || product_code == 0L){
             mView.fieldFocus();
             mView.showAlertDialog("Serial","Please, type a serial.");
             return;
         }
         //Chama metodo que verifica se produto ja existe na tabela.
         checkSyncChecklist(serial);
-
     }
 
     @Override
@@ -92,24 +88,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         }else{
             executeSerialProcess(serial);
         }
-    }
-
-    @Override
-    public void updateSyncChecklist(String serial) {
-        //Pega data atual
-        Calendar cDate =  Calendar.getInstance();
-        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
-        String last_update = dateFormat.format(cDate.getTime());
-
-        Sync_Checklist syncChecklist =  new Sync_Checklist();
-
-        syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-        syncChecklist.setProduct_code(product_code);
-        syncChecklist.setLast_update(last_update);
-
-        syncChecklistDao.addUpdate(syncChecklist);
-
-        executeSerialProcess(serial);
     }
 
     private void executeSyncProcess() {
@@ -145,5 +123,26 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         context.sendBroadcast(mIntent);
         //
         mView.showPD(Act008_Main.WS_PROCESS_SERIAL);
+    }
+
+    @Override
+    public void updateSyncChecklist(String serial,int executeSerial ) {
+        //Pega data atual
+        Calendar cDate =  Calendar.getInstance();
+        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+        String last_update = dateFormat.format(cDate.getTime());
+
+        Sync_Checklist syncChecklist =  new Sync_Checklist();
+
+        syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+        syncChecklist.setProduct_code(product_code);
+        syncChecklist.setLast_update(last_update);
+
+        syncChecklistDao.addUpdate(syncChecklist);
+
+        if(executeSerial == 1){
+            executeSerialProcess(serial);
+        }
+
     }
 }

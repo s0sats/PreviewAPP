@@ -65,7 +65,6 @@ public class WS_Serial extends IntentService {
             WBR_Serial.completeWakefulIntent(intent);
         }
 
-
     }
 
     private void processWS_Serial(Long product_code, String serial_id, int jumpValidation, int jumpOD) {

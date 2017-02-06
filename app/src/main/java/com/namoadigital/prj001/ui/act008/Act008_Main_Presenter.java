@@ -6,13 +6,13 @@ package com.namoadigital.prj001.ui.act008;
 
 public interface Act008_Main_Presenter {
 
-    void getCheckboxsSetup();
+    void getProductInfo();
 
     void validadeSerial(String serial);
 
     void checkSyncChecklist(String serial);
 
-    void updateSyncChecklist(String serial);
+    void updateSyncChecklist(String serial, int executeSerial);
 
 
 }
