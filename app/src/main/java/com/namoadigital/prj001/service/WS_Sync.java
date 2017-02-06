@@ -87,9 +87,12 @@ public class WS_Sync extends IntentService {
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
+            //Essa chave só é passada pela Act008, tela de criação se formulario.
+            Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE,-1L);
+
             sResult = new StringBuilder();
 
-            processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD);
+            processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD,product_code );
 
         }catch (Exception e) {
 
@@ -117,7 +120,7 @@ public class WS_Sync extends IntentService {
 
     }
 
-    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od) throws Exception {
+    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code) throws Exception {
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -182,6 +185,11 @@ public class WS_Sync extends IntentService {
             for (Sync_Checklist syncChecklist:syncChecklists) {
                 CHECKLIST.add(syncChecklist.getProduct_code());
             }
+            //Se é chamada da Act008, inclui o itenm na lista
+            //para receber os forms do produto.
+            if(product_code != -1L){
+                CHECKLIST.add(product_code);
+            }
 
             dataPackage.setCHECKLIST(CHECKLIST);
 
@@ -189,7 +197,8 @@ public class WS_Sync extends IntentService {
             *
             * LEMBRAR DE ATUALIZAR A DATA NA TELA QUE CHAMA ESSE WS E DEPOIS DO DE SERIAL
             *
-            * */
+            *
+            */
         }
 
         TSync_Env env =  new TSync_Env();
@@ -484,8 +493,6 @@ public class WS_Sync extends IntentService {
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
-
-
     }
 
 }

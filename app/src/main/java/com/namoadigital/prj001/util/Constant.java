@@ -37,7 +37,6 @@ public class Constant extends ConstantBase{
     public static final String ACT007_CURRENTINDEX = "currentIndex";
     public static final String ACT007_MSTACKVALUES = "mstackvalues";
 
-
     /**
      * DataBase Definition
      */
@@ -80,8 +79,15 @@ public class Constant extends ConstantBase{
     public static final String USER_TYPE = "usertype";
     public static final String USER_CUSTOMER_TRANSLATE_CODE = "usercustomertranslatecode";
     public static final String FORCED_LOGIN = "forcedlogin";
+    /**
+     * Sync WS
+     */
     public static final String GS_SESSION_APP = "sessionapp";
     public static final String GS_DATA_PACKAGE = "datapackage";
+    public static final String GS_PRODUCT_CODE = "product_code" ;
+    /**
+     * Serial WS
+     */
     public static final String GS_SERIAL_PRODUCT_CODE = "serialproductcode";
     public static final String GS_SERIAL_ID = "serialserialid";
 
