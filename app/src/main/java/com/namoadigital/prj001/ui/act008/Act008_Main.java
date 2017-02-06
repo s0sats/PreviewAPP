@@ -160,7 +160,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         }
     }
 
-
     @Override
     protected void processSerialNExist() {
         super.processSerialNExist();
