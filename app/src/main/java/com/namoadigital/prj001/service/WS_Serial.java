@@ -111,11 +111,11 @@ public class WS_Serial extends IntentService {
 
         switch (serial){
             case "OK":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", error_msg, "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", "SERIAL OK", "", "0");
             return true;
 
             case "NOT_EXISTS":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", error_msg, "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", "SERIAL NOT EXISTS", "", "0");
                 return true;
 
             case "ERROR_SERIAL_NULL":

@@ -125,7 +125,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            product_code = bundle.getLong(Constant.ACT007_PRODUCT_CODE);
+            product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
         } else {
             product_code = 0L;
         }
@@ -255,8 +255,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        mPresenter.updateSyncChecklist(mket_serial_id.getText().toString().trim(),1);
 
+        disableProgressDialog();
+
+        mPresenter.updateSyncChecklist(mket_serial_id.getText().toString().trim(),1);
 
     }
 }
