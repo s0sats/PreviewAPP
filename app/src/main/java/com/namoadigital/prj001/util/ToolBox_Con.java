@@ -2,6 +2,8 @@ package com.namoadigital.prj001.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 import java.io.BufferedReader;
@@ -555,6 +557,22 @@ public class ToolBox_Con {
 
     public static String customDBPath(long customer_code) {
         return (Constant.DB_PATH + "/C_" + customer_code + ".db3");
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        int netType = 0;
+        if (netInfo != null) {
+            netType = netInfo.getType();
+            if (netInfo.isAvailable() && netInfo.isConnected()) {
+                if (netType == ConnectivityManager.TYPE_WIFI || netType == ConnectivityManager.TYPE_MOBILE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
     }
 
 

@@ -61,20 +61,26 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void validadeSerial(String serial) {
+    public void validateSerial(String serial, int required, int allow_new) {
         serial = serial.trim();
 
-        if(serial.length() == 0 || product_code == 0L){
+        if(serial.length() == 0 && required == 1 ){
             mView.fieldFocus();
             mView.showAlertDialog("Serial","Please, type a serial.");
-            return;
+        }else{
+            if(ToolBox_Con.isOnline(context)){
+                //Chama metodo que verifica se produto ja existe na tabela.
+                checkSyncChecklist(serial , allow_new);
+            }else{
+                mView.continueOffline();
+            }
+
         }
-        //Chama metodo que verifica se produto ja existe na tabela.
-        checkSyncChecklist(serial);
+
     }
 
     @Override
-    public void checkSyncChecklist(String serial) {
+    public void checkSyncChecklist(String serial, int allow_new) {
         List<HMAux> hmAuxList =
                 syncChecklistDao.query_HM(
                         new Sync_Checklist_Sql_002(
@@ -86,7 +92,15 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if(hmAuxList.size() == 0){
             executeSyncProcess();
         }else{
-            executeSerialProcess(serial);
+            if( serial.length() > 0 ) {
+                executeSerialProcess(serial);
+            }else{
+                if (allow_new == 1) {
+                    mView.callAct009(context);
+                }else{
+                    mView.showAlertDialog("Serial","This product doesn't allow create new serial id");
+                }
+            }
         }
     }
 
@@ -111,9 +125,20 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     private void executeSerialProcess(String serial) {
+
+        MD_Product md_product =
+                mdProductDao.getByString(
+                        new MD_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code
+                        ).toSqlQuery()
+                );
+
         Intent mIntent = new Intent(context, WBR_Serial.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.GS_SERIAL_PRODUCT_CODE, product_code);
+        bundle.putInt(Constant.GS_SERIAL_REQUIRED, md_product.getRequire_serial());
+        bundle.putInt(Constant.GS_SERIAL_ALLOW_NEW, md_product.getAllow_new_serial_cl());
         bundle.putString(Constant.GS_SERIAL_ID,serial);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);

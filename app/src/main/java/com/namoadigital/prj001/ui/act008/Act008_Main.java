@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act008;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
+import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -47,6 +48,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private Bundle bundle;
     private long product_code;
+    private int serial_required;
+    private int serial_allow_new;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,7 +122,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         btn_back = (BootstrapButton) findViewById(R.id.act008_btn_back);
         btn_create = (BootstrapButton) findViewById(R.id.act008_btn_create);
 
-
     }
 
     private void recoverIntentsInfo() {
@@ -129,8 +131,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         } else {
             product_code = 0L;
         }
-
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
     }
 
     private void iniUIFooter() {
@@ -161,7 +161,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             @Override
             public void onClick(View view) {
                 //
-                mPresenter.validadeSerial(mket_serial_id.getText().toString());
+                mPresenter.validateSerial(
+                        mket_serial_id.getText().toString(),
+                        serial_required,
+                        serial_allow_new
+                );
             }
         });
 
@@ -173,14 +177,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         tv_product_code_value.setText(String.valueOf(md_product.getProduct_code()));
         tv_product_desc_value.setText(md_product.getProduct_id()+ " - " + md_product.getProduct_desc());
         //
+        serial_required = md_product.getRequire_serial();
+        serial_allow_new = md_product.getAllow_new_serial_cl();
+        //
         chk_required.setChecked( md_product.getRequire_serial() == 1 ? true : false );
         chk_allow_new.setChecked( md_product.getAllow_new_serial_cl() == 1 ? true : false);
     }
 
     private void callAct007(Context context) {
-
         Intent mIntent =  new Intent(context, Act007_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Remove produto do bundle
+        bundle.remove(Constant.ACT007_PRODUCT_CODE);
 
         mIntent.putExtras(bundle);
 
@@ -202,6 +210,34 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 title,
                 msg,
                 null
+        );
+    }
+
+    @Override
+    public void continueOffline() {
+        String title = "";
+        String msg = "";
+        DialogInterface.OnClickListener listener = null;
+
+        if(serial_allow_new == 0){
+            title = "Connection";
+            msg = "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+        }else{
+            title = "Continue in offline mode?";
+            msg = "No connection has been found!\nDo you want continue without check the Serial id ?! ";
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                   callAct009(context);
+                }
+            };
+        }
+
+        ToolBox.alertMSG(
+                Act008_Main.this,
+                title,
+                msg,
+                listener
         );
     }
 
@@ -235,21 +271,36 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         }
     }
 
-
     @Override
     protected void processSerialNExist() {
         super.processSerialNExist();
 
-        Toast.makeText(context,"Not Exists",Toast.LENGTH_SHORT).show();
         disableProgressDialog();
+
+        callAct009(context);
+
     }
 
     @Override
     protected void processSerialOk() {
         super.processSerialOk();
 
-        Toast.makeText(context,"Exists",Toast.LENGTH_SHORT).show();
         disableProgressDialog();
+
+        callAct009(context);
+    }
+
+    @Override
+    public void callAct009(Context context) {
+        Intent mIntent =  new Intent(context, Act009_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Remove produto do bundle
+        bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

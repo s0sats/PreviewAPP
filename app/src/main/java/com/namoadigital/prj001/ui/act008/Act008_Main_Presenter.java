@@ -8,9 +8,9 @@ public interface Act008_Main_Presenter {
 
     void getProductInfo();
 
-    void validadeSerial(String serial);
+    void validateSerial(String serial , int required , int allow_new);
 
-    void checkSyncChecklist(String serial);
+    void checkSyncChecklist(String serial, int required);
 
     void updateSyncChecklist(String serial, int executeSerial);
 

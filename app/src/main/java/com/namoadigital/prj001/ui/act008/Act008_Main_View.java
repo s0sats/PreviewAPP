@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act008;
 
+import android.content.Context;
+
 import com.namoadigital.prj001.model.MD_Product;
 
 /**
@@ -15,5 +17,9 @@ public interface Act008_Main_View {
     void showPD(String wsProcess);
 
     void showAlertDialog(String title, String msg);
+
+    void continueOffline();
+
+    void callAct009(Context context);
 
 }

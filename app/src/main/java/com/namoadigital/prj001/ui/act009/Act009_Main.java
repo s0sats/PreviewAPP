@@ -12,13 +12,8 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_GroupDao;
-import com.namoadigital.prj001.ui.act004.Act004_Main_View;
-import com.namoadigital.prj001.ui.act007.Act007_Main_Presenter_Impl;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -37,6 +32,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private ListView lv_form_types;
 
     private BootstrapButton btn_back;
+
+    private long product_code;
+    private String serial_id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +84,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
 
-        btn_back = (BootstrapButton) findViewById(R.id.act007_btn_back);
+        btn_back = (BootstrapButton) findViewById(R.id.act009_btn_back);
 
         recuperaGetIntents();
 
@@ -97,6 +95,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private void recuperaGetIntents() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+            product_code = bundle.getLong(Constant.ACT007_PRODUCT_CODE);
+            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
+
+            int i = 1;
+
 //            currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
 //            mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
 //            //

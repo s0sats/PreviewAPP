@@ -37,6 +37,10 @@ public class Constant extends ConstantBase{
     public static final String ACT007_CURRENTINDEX = "currentIndex";
     public static final String ACT007_MSTACKVALUES = "mstackvalues";
 
+    public static final String ACT008_SERIAL_ID = "serial_id";
+
+
+
     /**
      * DataBase Definition
      */
@@ -89,6 +93,8 @@ public class Constant extends ConstantBase{
      * Serial WS
      */
     public static final String GS_SERIAL_PRODUCT_CODE = "serialproductcode";
+    public static final String GS_SERIAL_REQUIRED = "serialrequired";
+    public static final String GS_SERIAL_ALLOW_NEW = "serialallownew";
     public static final String GS_SERIAL_ID = "serialserialid";
 
 
