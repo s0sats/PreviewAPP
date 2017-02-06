@@ -125,32 +125,24 @@ public class WS_Sync extends IntentService {
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         //MAIN
-        MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+/*        MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         MD_OperationDao operationDao = new MD_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         MD_Product_Group_ProductDao productGroupProductDao =  new MD_Product_Group_ProductDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+*/
         //CHECKLIST
-        GE_Custom_FormDao customFormDao =  new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-
-        //
-        //Apaga dados das tabelas
-        //
-        operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
-        siteDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
-        productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
-        productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
-        productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
-
-        customFormDao.remove(new GE_Custom_Form_Sql_Truncate().toSqlQuery());
-        customFormTypeDao.remove(new GE_Custom_Form_Type_Sql_Truncate().toSqlQuery());
-        customFormFieldDao.remove(new GE_Custom_Form_Field_Sql_Truncate().toSqlQuery());
-        customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
-        customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
+//        GE_Custom_FormDao customFormDao =  new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+//        GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+//        GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+//        GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+//        GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+//
+//        customFormDao.remove(new GE_Custom_Form_Sql_Truncate().toSqlQuery());
+//        customFormTypeDao.remove(new GE_Custom_Form_Type_Sql_Truncate().toSqlQuery());
+//        customFormFieldDao.remove(new GE_Custom_Form_Field_Sql_Truncate().toSqlQuery());
+//        customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
+//        customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -243,7 +235,7 @@ public class WS_Sync extends IntentService {
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Data Step 1...", "", "0");
 
         File[] files_module_res = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
-        boolean retDel;
+
         for (File _file : files_module_res) {
 
             ArrayList<EV_Module_Res> moduleRes = gson.fromJson(
@@ -255,7 +247,7 @@ public class WS_Sync extends IntentService {
             );
 
             for (EV_Module_Res item : moduleRes){
-                retDel =  moduleResDao.deleteModuleTrans(item.getModule_code());
+               moduleResDao.deleteModuleTrans(item.getModule_code());
             }
 
             moduleResDao.addUpdate(moduleRes, false);
@@ -301,6 +293,19 @@ public class WS_Sync extends IntentService {
         //Processamento das tabelas do MAIN
         //
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+            //Cria DAOs das tabelas MAIN
+            MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_OperationDao operationDao = new MD_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_Group_ProductDao productGroupProductDao =  new MD_Product_Group_ProductDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            //
+            //Apaga dados das tabelas
+            operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
+            siteDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
+            productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
+            productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
+            productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -393,15 +398,30 @@ public class WS_Sync extends IntentService {
             }
 
         }
-        //
+
         //
         //Processamento das tabelas do Checklist
         //
-        //
+
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
+            //Cria DAOs das tabelas do Checklist
+            GE_Custom_FormDao customFormDao =  new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            //
+            //Apaga dados das tabelas
+            customFormDao.remove(new GE_Custom_Form_Sql_Truncate().toSqlQuery());
+            customFormTypeDao.remove(new GE_Custom_Form_Type_Sql_Truncate().toSqlQuery());
+            customFormFieldDao.remove(new GE_Custom_Form_Field_Sql_Truncate().toSqlQuery());
+            customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
+            customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
+
             //
             // Processamento Custom Form
             //
+
             File[] files_custom_form = ToolBox_Inf.getListOfFiles_v2("ge_custom_form-");
 
             for (File _file : files_custom_form) {
