@@ -19,6 +19,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private Context context;
+    private Bundle bundle;
+
+    private long product_code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +63,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private void initVars() {
 
+        recuperaGetIntents();
+
+    }
+
+    private void recuperaGetIntents() {
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            product_code = bundle.getLong(Constant.ACT007_PRODUCT_CODE);
+        } else {
+            product_code = 0L;
+        }
+
+        bundle.remove(Constant.ACT007_PRODUCT_CODE);
     }
 
     private void iniUIFooter() {
