@@ -63,18 +63,25 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     @Override
     public void validateSerial(String serial, int required, int allow_new) {
         serial = serial.trim();
-
-        if(serial.length() == 0 && required == 1 ){
-            mView.fieldFocus();
-            mView.showAlertDialog("Serial","Please, type a serial.");
+        //Verifica se Serial foi preenchido
+        if (serial.length() == 0){
+            //Se não foi e serial requerido, dispara alert de erro.
+           if(required == 1){
+               mView.fieldFocus();
+               mView.showAlertDialog("Serial","Please, type a serial.");
+           }else{
+               //Se não segue para proxima tela.
+               mView.callAct009(context);
+           }
         }else{
+            //Se Serial preenchido, verifica se tem conexão.
             if(ToolBox_Con.isOnline(context)){
-                //Chama metodo que verifica se produto ja existe na tabela.
+                //Se tem, chama metodo que verifica se produto ja existe na tabela.
                 checkSyncChecklist(serial , allow_new);
             }else{
+                //Se não tiver conexão, chama metodo para tratativa do offline.
                 mView.continueOffline();
             }
-
         }
 
     }
