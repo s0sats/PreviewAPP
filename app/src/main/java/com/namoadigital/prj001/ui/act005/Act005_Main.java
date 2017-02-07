@@ -221,7 +221,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             }
         });
 
-
     }
 
     private void setDrawerAlertTranslation(String title_txt_code, String msg_txt_code) {
