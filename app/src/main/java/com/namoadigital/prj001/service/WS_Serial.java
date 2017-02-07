@@ -35,11 +35,13 @@ public class WS_Serial extends IntentService {
 
             Long product_code = bundle.getLong(Constant.GS_SERIAL_PRODUCT_CODE);
             String serial_id = bundle.getString(Constant.GS_SERIAL_ID);
+            int serial_required = bundle.getInt(Constant.GS_SERIAL_REQUIRED);
+            int serial_allow_new = bundle.getInt(Constant.GS_SERIAL_ALLOW_NEW);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
             sResult = new StringBuilder();
 
-            processWS_Serial(product_code,serial_id,jumpValidation,jumpOD);
+            processWS_Serial(product_code, serial_id, serial_required, serial_allow_new, jumpValidation,jumpOD);
 
         }catch (Exception e) {
 
@@ -65,10 +67,9 @@ public class WS_Serial extends IntentService {
             WBR_Serial.completeWakefulIntent(intent);
         }
 
-
     }
 
-    private void processWS_Serial(Long product_code, String serial_id, int jumpValidation, int jumpOD) {
+    private void processWS_Serial(Long product_code, String serial_id, int serial_required, int serial_allow_new, int jumpValidation, int jumpOD) {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -104,19 +105,32 @@ public class WS_Serial extends IntentService {
             return;
         }
 
-        checkSerialReturn(rec.getSerial(),rec.getError_msg());
+        checkSerialReturn(rec.getSerial(),rec.getError_msg(), serial_required, serial_allow_new);
 
     }
 
-    private boolean checkSerialReturn(String serial, String error_msg) {
+    private boolean checkSerialReturn(String serial, String error_msg, int serial_required, int serial_allow_new) {
 
         switch (serial){
             case "OK":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", error_msg, "", "0");
-            return true;
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", "SERIAL OK", "", "0");
+                return true;
 
             case "NOT_EXISTS":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", error_msg, "", "0");
+                //Se serial não existe
+                //E é required, dispara mensagem de erro.
+                if(serial_required == 1){
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "SERIAL IS REQUIRED", "", "0");
+
+                }else if (serial_allow_new == 0){
+                    //Se serial não existe, não é requerido,
+                    // porem não permite criar novo serial, dispara msg de erro.
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "new serial is not supported", "", "0");
+                }else{
+                    //Se serial não existe, não é requerido, e permite criar novo
+                    //pergunta para o USR o que fazer.
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", "SERIAL NOT FIND , CREATE A NEW ONE?", "", "0");
+                }
                 return true;
 
             case "ERROR_SERIAL_NULL":

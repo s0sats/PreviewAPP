@@ -4,8 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.receiver.WBR_Serial;
+import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -15,30 +30,115 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     private Context context;
     private Act008_Main_View mView;
+    private Sync_ChecklistDao syncChecklistDao;
+    private MD_ProductDao mdProductDao;
+    private Long product_code;
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView) {
+
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code) {
         this.context = context;
         this.mView = mView;
+        this.syncChecklistDao = syncChecklistDao;
+        this.mdProductDao = mdProductDao;
+        this.product_code = product_code;
     }
-
 
     @Override
-    public void validadeSerial(Long product_code, String serial) {
+    public void getProductInfo() {
+        MD_Product md_product =
+                mdProductDao.getByString(
+                        new MD_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code
+                        ).toSqlQuery()
+                );
+        //Erro, produto não encontrado
+        if(md_product.getProduct_code() < 1){
+            mView.showAlertDialog("Product Info","Product not found!");
+        }else{
+           mView.setProductValues(md_product);
+        }
+    }
+
+    @Override
+    public void validateSerial(String serial, int required, int allow_new) {
         serial = serial.trim();
 
-        if(serial.length() == 0){
+        if(serial.length() == 0 && required == 1 ){
             mView.fieldFocus();
+            mView.showAlertDialog("Serial","Please, type a serial.");
+        }else{
+            if(ToolBox_Con.isOnline(context)){
+                //Chama metodo que verifica se produto ja existe na tabela.
+                checkSyncChecklist(serial , allow_new);
+            }else{
+                mView.continueOffline();
+            }
+
         }
-        mView.showPD(Act008_Main.WS_PROCESS_SERIAL);
-        //
-        executeSerialProcess(product_code,serial);
 
     }
 
-    private void executeSerialProcess(Long product_code, String serial) {
+    @Override
+    public void checkSyncChecklist(String serial, int allow_new) {
+        List<HMAux> hmAuxList =
+                syncChecklistDao.query_HM(
+                        new Sync_Checklist_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code
+                        ).toSqlQuery()
+                );
+
+        if(hmAuxList.size() == 0){
+            executeSyncProcess();
+        }else{
+            if( serial.length() > 0 ) {
+                executeSerialProcess(serial);
+            }else{
+                if (allow_new == 1) {
+                    mView.callAct009(context);
+                }else{
+                    mView.showAlertDialog("Serial","This product doesn't allow create new serial id");
+                }
+            }
+        }
+    }
+
+    private void executeSyncProcess() {
+
+        ArrayList<String> data_package = new ArrayList<>();
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+        //
+        Intent mIntent = new Intent(context, WBR_Sync.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
+        bundle.putLong(Constant.GS_PRODUCT_CODE, product_code);
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        bundle.putInt(Constant.GC_STATUS, 1);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        mView.showPD(Act008_Main.WS_PROCESS_SYNC);
+
+    }
+
+    private void executeSerialProcess(String serial) {
+
+        MD_Product md_product =
+                mdProductDao.getByString(
+                        new MD_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_code
+                        ).toSqlQuery()
+                );
+
         Intent mIntent = new Intent(context, WBR_Serial.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.GS_SERIAL_PRODUCT_CODE, product_code);
+        bundle.putInt(Constant.GS_SERIAL_REQUIRED, md_product.getRequire_serial());
+        bundle.putInt(Constant.GS_SERIAL_ALLOW_NEW, md_product.getAllow_new_serial_cl());
         bundle.putString(Constant.GS_SERIAL_ID,serial);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
@@ -46,6 +146,28 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+        //
+        mView.showPD(Act008_Main.WS_PROCESS_SERIAL);
+    }
+
+    @Override
+    public void updateSyncChecklist(String serial,int executeSerial ) {
+        //Pega data atual
+        Calendar cDate =  Calendar.getInstance();
+        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+        String last_update = dateFormat.format(cDate.getTime());
+
+        Sync_Checklist syncChecklist =  new Sync_Checklist();
+
+        syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+        syncChecklist.setProduct_code(product_code);
+        syncChecklist.setLast_update(last_update);
+
+        syncChecklistDao.addUpdate(syncChecklist);
+
+        if(executeSerial == 1){
+            executeSerialProcess(serial);
+        }
 
     }
 }

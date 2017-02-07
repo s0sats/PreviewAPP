@@ -6,5 +6,13 @@ package com.namoadigital.prj001.ui.act008;
 
 public interface Act008_Main_Presenter {
 
-    void validadeSerial(Long product_code, String serial);
+    void getProductInfo();
+
+    void validateSerial(String serial , int required , int allow_new);
+
+    void checkSyncChecklist(String serial, int required);
+
+    void updateSyncChecklist(String serial, int executeSerial);
+
+
 }

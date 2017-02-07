@@ -64,7 +64,7 @@
                 <TextView
                     android:id="@+id/act008_tv_description_value"
                     android:layout_width="match_parent"
-                    android:layout_height="130dp"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/border_back"
                     android:padding="10dp"
                     android:text="Product Description"
@@ -119,10 +119,11 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:padding="5dp"
+                    android:layout_marginTop="10dp">
 
                     <com.beardedhen.androidbootstrap.BootstrapButton
-                        android:id="@+id/act007_btn_back"
+                        android:id="@+id/act008_btn_back"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
@@ -133,14 +134,14 @@
                         app:roundedCorners="true" />
 
                     <com.beardedhen.androidbootstrap.BootstrapButton
-                        android:id="@+id/act007_btn_home"
+                        android:id="@+id/act008_btn_create"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         app:bootstrapBrand="primary"
                         app:bootstrapSize="lg"
-                        app:bootstrapText="Home"
+                        app:bootstrapText="Create"
                         app:roundedCorners="true" />
 
                 </LinearLayout>
