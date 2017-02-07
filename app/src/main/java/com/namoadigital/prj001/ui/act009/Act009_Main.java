@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.ui.act009;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -14,6 +16,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_001;
+import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -35,6 +39,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     private long product_code;
     private String serial_id;
+
+    private Bundle bundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,14 +94,14 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         recuperaGetIntents();
 
-        mPresenter.setAdapterData(0L, "");
+        mPresenter.setAdapterData(product_code, "");
 
     }
 
     private void recuperaGetIntents() {
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
-            product_code = bundle.getLong(Constant.ACT007_PRODUCT_CODE);
+            product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
 
             int i = 1;
@@ -148,19 +154,33 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     @Override
     public void loadForm_Types(List<HMAux> form_types) {
+        String[] from = {GE_Custom_Form_Type_Sql_001.CUSTOM_FORM_TYPE_DESC_FULL};
+        int[] to = {R.id.lib_custom_cell_tv_item};
 
-//        lv_form_types.setAdapter(
-//                new Act007_Adapter_Groups_Products(
-//                        context,
-//                        R.layout.act007_main_content_cell_01,
-//                        form_types
-//                )
-//        );
+        lv_form_types.setAdapter(
+                new SimpleAdapter(
+                        context,
+                        form_types,
+                        R.layout.lib_custom_cell,
+                        from,
+                        to
+                )
+        );
 
     }
 
     @Override
     public void onBackPressed() {
         mPresenter.onBackPressedClicked();
+        callAct008(context);
+    }
+
+    private void callAct008(Context context) {
+        Intent mIntent = new Intent(context, Act008_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.remove(Constant.ACT008_SERIAL_ID);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 }

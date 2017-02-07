@@ -101,8 +101,13 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         lv_groups_products = (ListView) findViewById(R.id.act007_lv_groups_products);
 
         btn_back = (BootstrapButton) findViewById(R.id.act007_btn_back);
+        btn_back.setTag("btn_back");
         btn_home = (BootstrapButton) findViewById(R.id.act007_btn_home);
-
+        btn_home.setTag("btn_home");
+        //
+        views.add(btn_back);
+        views.add(btn_home);
+        //
         controls_sta.add(mket_product_search);
 
         recuperaGetIntents();
