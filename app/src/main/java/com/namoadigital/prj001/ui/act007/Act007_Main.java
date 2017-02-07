@@ -128,9 +128,12 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private void reloadStack(String pilha_values) {
         String[] p_values = pilha_values.split("#");
-        //
-        for (int i = 0; i < p_values.length; i++) {
-            mStack.push(Long.parseLong(p_values[i]));
+        //'
+        try {
+            for (int i = 0; i < p_values.length; i++) {
+                mStack.push(Long.parseLong(p_values[i]));
+            }
+        } catch (Exception e) {
         }
     }
 
