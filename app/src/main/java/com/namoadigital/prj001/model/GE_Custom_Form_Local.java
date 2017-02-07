@@ -10,7 +10,10 @@ public class GE_Custom_Form_Local {
     private int custom_form_type;
     private int custom_form_code;
     private int custom_form_version;
+    private long custom_form_data;
+    private String custom_form_pre;
     private String custom_form_status;
+    private String custom_form_src;
     private int require_signature;
     private String custom_product_desc;
     private String custom_form_type_desc;
@@ -48,12 +51,36 @@ public class GE_Custom_Form_Local {
         this.custom_form_version = custom_form_version;
     }
 
+    public long getCustom_form_data() {
+        return custom_form_data;
+    }
+
+    public void setCustom_form_data(long custom_form_data) {
+        this.custom_form_data = custom_form_data;
+    }
+
+    public String getCustom_form_pre() {
+        return custom_form_pre;
+    }
+
+    public void setCustom_form_pre(String custom_form_pre) {
+        this.custom_form_pre = custom_form_pre;
+    }
+
     public String getCustom_form_status() {
         return custom_form_status;
     }
 
     public void setCustom_form_status(String custom_form_status) {
         this.custom_form_status = custom_form_status;
+    }
+
+    public String getCustom_form_src() {
+        return custom_form_src;
+    }
+
+    public void setCustom_form_src(String custom_form_src) {
+        this.custom_form_src = custom_form_src;
     }
 
     public int getRequire_signature() {

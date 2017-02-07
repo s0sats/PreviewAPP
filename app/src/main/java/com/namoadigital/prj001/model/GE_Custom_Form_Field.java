@@ -19,8 +19,7 @@ public class GE_Custom_Form_Field {
     private int custom_form_order;
     private int page;
     private int required;
-
-
+    private String comment;
 
     public GE_Custom_Form_Field() {
         this.custom_form_local_link = "";
@@ -130,4 +129,11 @@ public class GE_Custom_Form_Field {
         this.required = required;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

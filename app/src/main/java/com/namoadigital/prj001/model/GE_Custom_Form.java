@@ -10,7 +10,6 @@ public class GE_Custom_Form {
     private int custom_form_type;
     private int custom_form_code;
     private int custom_form_version;
-    private String custom_form_status;
     private int require_signature;
 
     public long getCustomer_code() {
@@ -43,14 +42,6 @@ public class GE_Custom_Form {
 
     public void setCustom_form_version(int custom_form_version) {
         this.custom_form_version = custom_form_version;
-    }
-
-    public String getCustom_form_status() {
-        return custom_form_status;
-    }
-
-    public void setCustom_form_status(String custom_form_status) {
-        this.custom_form_status = custom_form_status;
     }
 
     public int getRequire_signature() {

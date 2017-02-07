@@ -26,9 +26,8 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
-    public static final String CUSTOM_FORM_STATUS = "custom_form_status";
     public static final String REQUIRE_SIGNATURE = "require_signature";
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_STATUS, REQUIRE_SIGNATURE};
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, REQUIRE_SIGNATURE};
 
     public GE_Custom_FormDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -216,7 +215,6 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
             custom_form.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
-            custom_form.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
             custom_form.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
 
             return custom_form;
@@ -239,9 +237,6 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             }
             if (custom_form.getCustom_form_version() > -1) {
                 contentValues.put(CUSTOM_FORM_VERSION, custom_form.getCustom_form_version());
-            }
-            if (custom_form.getCustom_form_status() != null) {
-                contentValues.put(CUSTOM_FORM_STATUS, custom_form.getCustom_form_status());
             }
             if (custom_form.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form.getRequire_signature());

@@ -30,22 +30,47 @@ public class Sql_Act011_002 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("select * from ge_custom_form_fields ge inner join ( \n" +
-                        "\n" +
-                        "select resource_code, txt_code, txt_value from (\n" +
-                        "select * from ev_module_res_txt_transs as tr where tr.resource_code in (\n" +
-                        " \n" +
-                        "select mr.resource_code from ev_module_ress as mr where mr.resource_name = '")
+                .append("SELECT *\n" +
+                        "  FROM GE_CUSTOM_FORM_FIELDS GE\n" +
+                        "INNER JOIN (SELECT RESOURCE_CODE,\n" +
+                        "                    TXT_CODE,\n" +
+                        "                    TXT_VALUE,\n" +
+                        "                    IFNULL(COMMENT, '') COMMENT\n" +
+                        "               FROM (SELECT *,\n" +
+                        "                            (SELECT TXT_VALUE\n" +
+                        "                               FROM EV_MODULE_RES_TXT_TRANSS TS\n" +
+                        "                              WHERE TR.MODULE_CODE = TS.MODULE_CODE\n" +
+                        "                                AND TR.RESOURCE_CODE = TS.RESOURCE_CODE\n" +
+                        "                                   --AND TR.TXT_CODE = TS.TXT_CODE\n" +
+                        "                                AND TR.TRANSLATE_CODE = TS.TRANSLATE_CODE\n" +
+                        "                                AND TS.TXT_CODE = TR.TXT_CODE || '_COMMENT') COMMENT\n" +
+                        "                    \n" +
+                        "                       FROM EV_MODULE_RES_TXT_TRANSS AS TR\n" +
+                        "                      WHERE TR.RESOURCE_CODE IN\n" +
+                        "                            (\n" +
+                        "                            \n" +
+                        "                             SELECT MR.RESOURCE_CODE\n" +
+                        "                               FROM EV_MODULE_RESS AS MR\n" +
+                        "                              WHERE MR.RESOURCE_NAME = '")
                 .append(opc)
-                .append("' and mr.module_code = 'cust_form'\n" +
-                        "\n" +
-                        ") and tr.translate_code = '")
+                .append("'\n" +
+                        "                                AND MR.MODULE_CODE = 'CUST_FORM'\n" +
+                        "                            \n" +
+                        "                             )\n" +
+                        "                        AND TR.TRANSLATE_CODE = '")
                 .append(s_translate_code)
-                .append("' and tr.module_code = 'cust_form' ) as resultado ) on ge.custom_form_seq = txt_code and ge.customer_code  || '|' || ge.custom_form_type  || '|' || ge.custom_form_code  || '|' || ge.custom_form_version = '")
+                .append("'\n" +
+                        "                        AND TR.MODULE_CODE = 'CUST_FORM'\n" +
+                        "                        AND TR.TXT_CODE NOT LIKE '%_COMMENT'\n" +
+                        "                        AND TR.TXT_CODE <> 'TITLE') AS RESULTADO)\n" +
+                        "    ON GE.CUSTOM_FORM_SEQ = TXT_CODE\n" +
+                        "   AND GE.CUSTOMER_CODE || '|' || GE.CUSTOM_FORM_TYPE || '|' ||\n" +
+                        "       GE.CUSTOM_FORM_CODE || '|' || GE.CUSTOM_FORM_VERSION = '")
                 .append(opc)
-                .append("' order by ge.custom_form_order ")
+                .append("'\n" +
+                        "ORDER BY GE.CUSTOM_FORM_ORDER")
                 .append(";")
-                .append("customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_size#custom_form_data_mask#custom_form_data_content#custom_form_order#page#required#resource_code#txt_code#txt_value#custom_form_local_link")
+                .append("CUSTOMER_CODE#CUSTOM_FORM_TYPE#CUSTOM_FORM_CODE#CUSTOM_FORM_VERSION#CUSTOM_FORM_SEQ#CUSTOM_FORM_DATA_TYPE#CUSTOM_FORM_DATA_SIZE#CUSTOM_FORM_DATA_MASK#CUSTOM_FORM_DATA_CONTENT#CUSTOM_FORM_LOCAL_LINK#CUSTOM_FORM_ORDER#PAGE#REQUIRED#COMMENT#TXT_VALUE;")
                 .toString();
     }
 }

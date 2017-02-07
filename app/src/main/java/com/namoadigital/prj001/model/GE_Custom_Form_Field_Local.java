@@ -10,6 +10,7 @@ public class GE_Custom_Form_Field_Local {
     private int custom_form_type;
     private int custom_form_code;
     private int custom_form_version;
+    private long custom_form_data;
     private int custom_form_seq;
     private String custom_form_data_type;
     private Integer custom_form_data_size;
@@ -19,12 +20,8 @@ public class GE_Custom_Form_Field_Local {
     private int custom_form_order;
     private int page;
     private int required;
+    private String comment;
     private String custom_form_field_desc;
-
-
-    public GE_Custom_Form_Field_Local() {
-        this.custom_form_local_link = "";
-    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -56,6 +53,14 @@ public class GE_Custom_Form_Field_Local {
 
     public void setCustom_form_version(int custom_form_version) {
         this.custom_form_version = custom_form_version;
+    }
+
+    public long getCustom_form_data() {
+        return custom_form_data;
+    }
+
+    public void setCustom_form_data(long custom_form_data) {
+        this.custom_form_data = custom_form_data;
     }
 
     public int getCustom_form_seq() {
@@ -128,6 +133,14 @@ public class GE_Custom_Form_Field_Local {
 
     public void setRequired(int required) {
         this.required = required;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getCustom_form_field_desc() {

@@ -27,14 +27,14 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
+    public static final String CUSTOM_FORM_DATA = "custom_form_data";
+    public static final String CUSTOM_FORM_PRE = "custom_form_pre";
     public static final String CUSTOM_FORM_STATUS = "custom_form_status";
+    public static final String CUSTOM_FORM_SRC = "custom_form_src";
     public static final String REQUIRE_SIGNATURE = "require_signature";
     public static final String CUSTOM_PRODUCT_DESC = "custom_product_desc";
     public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
-
-
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_STATUS, REQUIRE_SIGNATURE, CUSTOM_PRODUCT_DESC, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_DESC};
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -58,6 +58,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                 sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+
 
                 db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
             }
@@ -92,6 +95,8 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                     sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
                 }
@@ -222,9 +227,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
             custom_form_local.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_local.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
+            custom_form_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
+            custom_form_local.setCustom_form_pre(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_PRE)));
             custom_form_local.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
+            custom_form_local.setCustom_form_src(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_SRC)));
             custom_form_local.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
-
             custom_form_local.setCustom_product_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_DESC)));
             custom_form_local.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_local.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
@@ -250,8 +257,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_local.getCustom_form_version() > -1) {
                 contentValues.put(CUSTOM_FORM_VERSION, custom_form_local.getCustom_form_version());
             }
+            if (custom_form_local.getCustom_form_data() > -1){
+                contentValues.put(CUSTOM_FORM_DATA, custom_form_local.getCustom_form_data());
+            }
+            if (custom_form_local.getCustom_form_pre() != null) {
+                contentValues.put(CUSTOM_FORM_PRE, custom_form_local.getCustom_form_pre());
+            }
             if (custom_form_local.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_local.getCustom_form_status());
+            }
+            if (custom_form_local.getCustom_form_src() != null) {
+                contentValues.put(CUSTOM_FORM_SRC, custom_form_local.getCustom_form_src());
             }
             if (custom_form_local.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form_local.getRequire_signature());
