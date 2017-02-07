@@ -111,17 +111,32 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
         //
         tv_product_code_label = (TextView) findViewById(R.id.act008_tv_product_code);
+        tv_product_code_label.setTag("product_label");
+        //
         tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_value);
         //
         tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_description);
+        tv_product_desc_label.setTag("product_desc_label");
         tv_product_desc_value = (TextView) findViewById(R.id.act008_tv_description_value);
         //
         chk_required = (CheckBox) findViewById(R.id.act008_chk_require_serial);
+        chk_required.setTag("chk_required");
         chk_allow_new = (CheckBox) findViewById(R.id.act008_chk_allow);
+        chk_allow_new.setTag("chk_allow_new");
         //
         btn_back = (BootstrapButton) findViewById(R.id.act008_btn_back);
+        btn_back.setTag("btn_back");
         btn_create = (BootstrapButton) findViewById(R.id.act008_btn_create);
+        btn_create.setTag("btn_create");
 
+        //Adiciona Views na lista de tradução
+
+        views.add(tv_product_code_label);
+        views.add(tv_product_desc_label);
+        views.add(chk_required);
+        views.add(chk_allow_new);
+        views.add(btn_back);
+        views.add(btn_create);
     }
 
     private void recoverIntentsInfo() {
