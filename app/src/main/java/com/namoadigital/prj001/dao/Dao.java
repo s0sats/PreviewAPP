@@ -21,6 +21,8 @@ public interface Dao<T> {
 
     T getByString(String sQuery);
 
+    //HMAux getByStringHM(String sQuery);
+
     List<T> query(String sQuery);
 
     List<HMAux> query_HM(String sQuery);

@@ -72,30 +72,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        // Lixo Jogar Fora
-        String resultado = new Sql_Act011_002(
-                "5",
-                "1",
-                "1",
-                "6",
-                "2"
-        ).toSqlQuery();
-        String resultado_1 = new Sql_Act011_001(
-                "5",
-                "1",
-                "2"
-        ).toSqlQuery();
-
-        String resultado_2 = new Sql_Act011_001(
-                "5",
-                "1",
-                "2"
-        ).toSqlQuery();
-
-
-
-
-        //
         iniSetup();
         initVars();
         iniUIFooter();
