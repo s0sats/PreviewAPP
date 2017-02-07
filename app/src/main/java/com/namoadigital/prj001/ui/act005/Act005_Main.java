@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.sql.Sql_Act011_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -79,6 +80,21 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 "6",
                 "2"
         ).toSqlQuery();
+        String resultado_1 = new Sql_Act011_001(
+                "5",
+                "1",
+                "2"
+        ).toSqlQuery();
+
+        String resultado_2 = new Sql_Act011_001(
+                "5",
+                "1",
+                "2"
+        ).toSqlQuery();
+
+
+
+
         //
         iniSetup();
         initVars();
