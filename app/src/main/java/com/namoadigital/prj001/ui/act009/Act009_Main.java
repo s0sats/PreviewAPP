@@ -13,11 +13,17 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.model.GE_Custom_Form_Field;
+import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
+import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -96,7 +102,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = bundle.getLong(Constant.ACT007_PRODUCT_CODE);
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
+            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
 
             int i = 1;
 

@@ -17,8 +17,8 @@ public class GE_Custom_Form_Local_Sql_002 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("select ifnull(max(CFL.CUSTOM_FORM_DATA), 0) + 1 data_id from GE_Custom_Forms_Local CFL")
-                .append(";data_id")
+                .append("select ifnull(max(CFL.CUSTOM_FORM_DATA), 0) + 1 id from GE_Custom_Forms_Local CFL")
+                .append(";id")
                 .toString();
     }
 }

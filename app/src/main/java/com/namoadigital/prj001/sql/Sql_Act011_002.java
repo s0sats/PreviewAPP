@@ -13,13 +13,15 @@ public class Sql_Act011_002 implements Specification {
     private String s_form_code;
     private String s_formversion_code;
     private String s_translate_code;
+    private String s_form_data;
 
-    public Sql_Act011_002(String s_customer_code, String s_formtype_code, String s_form_code, String s_formversion_code, String s_translate_code) {
+    public Sql_Act011_002(String s_customer_code, String s_formtype_code, String s_form_code, String s_formversion_code, String s_translate_code, String s_form_data) {
         this.s_customer_code = s_customer_code;
         this.s_formtype_code = s_formtype_code;
         this.s_form_code = s_form_code;
         this.s_formversion_code = s_formversion_code;
         this.s_translate_code = s_translate_code;
+        this.s_form_data = s_form_data;
     }
 
     @Override
@@ -30,8 +32,10 @@ public class Sql_Act011_002 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("SELECT *\n" +
-                        "  FROM GE_CUSTOM_FORM_FIELDS GE\n" +
+                .append("SELECT *, ")
+                .append(s_form_data)
+                .append("  CUSTOM_FORM_DATA ")
+                .append("  FROM GE_CUSTOM_FORM_FIELDS GE\n" +
                         "INNER JOIN (SELECT RESOURCE_CODE,\n" +
                         "                    TXT_CODE,\n" +
                         "                    TXT_VALUE,\n" +
@@ -70,7 +74,7 @@ public class Sql_Act011_002 implements Specification {
                 .append("'\n" +
                         "ORDER BY GE.CUSTOM_FORM_ORDER")
                 .append(";")
-                .append("CUSTOMER_CODE#CUSTOM_FORM_TYPE#CUSTOM_FORM_CODE#CUSTOM_FORM_VERSION#CUSTOM_FORM_SEQ#CUSTOM_FORM_DATA_TYPE#CUSTOM_FORM_DATA_SIZE#CUSTOM_FORM_DATA_MASK#CUSTOM_FORM_DATA_CONTENT#CUSTOM_FORM_LOCAL_LINK#CUSTOM_FORM_ORDER#PAGE#REQUIRED#COMMENT#TXT_VALUE;")
+                .append("CUSTOMER_CODE#CUSTOM_FORM_TYPE#CUSTOM_FORM_CODE#CUSTOM_FORM_VERSION#CUSTOM_FORM_DATA#CUSTOM_FORM_SEQ#CUSTOM_FORM_DATA_TYPE#CUSTOM_FORM_DATA_SIZE#CUSTOM_FORM_DATA_MASK#CUSTOM_FORM_DATA_CONTENT#CUSTOM_FORM_LOCAL_LINK#CUSTOM_FORM_ORDER#PAGE#REQUIRED#COMMENT#TXT_VALUE;")
                 .toString();
     }
 }

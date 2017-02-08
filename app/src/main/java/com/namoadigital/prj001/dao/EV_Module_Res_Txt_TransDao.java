@@ -155,6 +155,34 @@ public class EV_Module_Res_Txt_TransDao extends BaseDao implements Dao<EV_Module
     }
 
     @Override
+    public HMAux getByStringHM(String sQuery) {
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
+    }
+
+    @Override
     public List<EV_Module_Res_Txt_Trans> query(String s_query) {
         List<EV_Module_Res_Txt_Trans> module_res_txt_transs = new ArrayList<>();
         openDB();

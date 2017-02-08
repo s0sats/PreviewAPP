@@ -21,6 +21,15 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.Sql_Act011_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
@@ -32,6 +41,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -92,6 +102,89 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         loadTranslation();
         //
+//        // Lixo
+//        GE_Custom_FormDao formDao = new GE_Custom_FormDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        GE_Custom_Form_Local formLocal = formLocalDao.getByString(
+//            new GE_Custom_Form_Local_Sql_003(
+//                    "1",
+//                    "22",
+//                    "2",
+//                    "1"
+//            )  .toSqlQuery().toString().toLowerCase()
+//        );
+//
+//        int ii = 10;
+//
+//        HMAux ii = formDao.getByStringHM(
+//                new GE_Custom_Form_Local_Sql_002().toSqlQuery().toLowerCase()
+//        );
+//
+//        GE_Custom_Form customForm = formDao.getByString(
+//
+//                new GE_Custom_Form_Sql_001_TT(
+//                        "1",
+//                        "22",
+//                        "2",
+//                        "1"
+//                ).toSqlQuery().toString().toLowerCase()
+//
+//        );
+//
+//        GE_Custom_Form_Local customFormLocal = new GE_Custom_Form_Local();
+//
+//        customFormLocal.setCustomer_code(customForm.getCustomer_code());
+//        customFormLocal.setCustom_form_type(customForm.getCustom_form_type());
+//        customFormLocal.setCustom_form_code(customForm.getCustom_form_code());
+//        customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
+//        customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
+//        customFormLocal.setCustom_form_pre("pre");
+//        customFormLocal.setCustom_form_status("0");
+//        customFormLocal.setCustom_form_src("0");
+//        customFormLocal.setCustom_product_desc("product description");
+//        customFormLocal.setCustom_form_type_desc("form type descrition");
+//        customFormLocal.setCustom_form_desc("form description");
+//        customFormLocal.setRequire_signature(customForm.getRequire_signature());
+//
+//        formLocalDao.addUpdate(customFormLocal);
+//
+//        GE_Custom_Form_FieldDao fieldDao = new GE_Custom_Form_FieldDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        GE_Custom_Form_Field_LocalDao fieldLocalDao = new GE_Custom_Form_Field_LocalDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//
+//        ArrayList<HMAux> items = (ArrayList<HMAux>) fieldDao.query_HM(
+//                new Sql_Act011_002(
+//                        "1",
+//                        "22",
+//                        "2",
+//                        "1",
+//                        "1",
+//                        ii.get("id")
+//                ).toSqlQuery().toString().toLowerCase()
+//        );
+//
+//        fieldLocalDao.addUpdate(items);
+//
+//        String tt = "10";
     }
 
     private void initVars() {
