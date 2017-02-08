@@ -224,7 +224,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void showAlertDialog(String title, String msg) {
 
         ToolBox.alertMSG(
-                context,
+                Act008_Main.this,
                 title,
                 msg,
                 null

@@ -5,4 +5,6 @@ package com.namoadigital.prj001.ui.act012;
  */
 
 public interface Act012_Main_Presenter {
+
+    void getPendencies();
 }

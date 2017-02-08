@@ -4,10 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.widget.ListView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.ui.act004.Act004_Main_View;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -19,6 +20,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     private Context context;
+    private ListView lv_pendencies;
+    private BootstrapButton btn_back;
+
+    private Act012_Main_Presenter mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +65,17 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     private void initVars() {
+        context = getBaseContext();
+
+        mPresenter = new Act012_Main_Presenter_Impl();
+
+        lv_pendencies = (ListView) findViewById(R.id.act012_lv_pendencies);
+
+        btn_back = (BootstrapButton) findViewById(R.id.act012_btn_back);
+        btn_back.setTag("btn_back");
+        views.add(btn_back);
+
+
 
     }
 

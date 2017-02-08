@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -16,6 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -33,11 +35,15 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private Act010_Main_Presenter mPresenter;
     private ListView lv_forms;
     private BootstrapButton btn_back;
+    private TextView tv_form_type_label;
+    private TextView tv_form_type_desc;
+
+    private Lib_Custom_Cell_Adapter mAdapter;
+    private Bundle bundle;
     private long product_code;
     private String serial_id;
     private int custom_form_type;
-    private Lib_Custom_Cell_Adapter mAdapter;
-    private Bundle bundle;
+    private String custom_form_type_desc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,8 +94,14 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
+        tv_form_type_label = (TextView) findViewById(R.id.act010_tv_form_label);
+        tv_form_type_label.setTag("lbl_form_type_label");
+        views.add(tv_form_type_label);
+        //
+        tv_form_type_desc = (TextView) findViewById(R.id.act010_tv_form_desc);
+        //
         lv_forms = (ListView) findViewById(R.id.act010_lv_form);
-
+        //
         btn_back = (BootstrapButton) findViewById(R.id.act010_btn_back);
         btn_back.setTag("btn_back");
         views.add(btn_back);
@@ -104,6 +116,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
             custom_form_type = Integer.parseInt(bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE));
+            custom_form_type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
 
         } else {
 //
@@ -129,13 +142,15 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
     private void initActions() {
 
+        tv_form_type_desc.setText(custom_form_type + " - " + custom_form_type_desc);
+        //
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPresenter.onBackPressedClicked();
             }
         });
-
+        //
         lv_forms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,7 +166,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
     @Override
     public void callAct009(Context context) {
-        Intent mIntent = new Intent(context, Act011_Main.class);
+        Intent mIntent = new Intent(context, Act009_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
         bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
