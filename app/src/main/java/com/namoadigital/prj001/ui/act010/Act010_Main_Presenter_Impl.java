@@ -5,8 +5,10 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_002;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -29,21 +31,22 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter{
     }
 
     @Override
-    public void setAdapterData(long product_code, String filter) {
+    public void setAdapterData(long product_code, int custom_form_type, String filter) {
 
-        ArrayList<HMAux> data = new ArrayList<>();
+        List<HMAux> data =
+                custom_formDao.query_HM(
+                        new GE_Custom_Form_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                custom_form_type,
+                                ToolBox_Con.getPreference_Translate_Code(context)
+                        ).toSqlQuery()
+                );
 
         mView.loadForms(data);
-
-    }
-
-    @Override
-    public void onFormClicked(String product_code) {
-        //mView.callAct008(context, product_code);
     }
 
     @Override
     public void onBackPressedClicked() {
-
+        mView.callAct009(context);
     }
 }

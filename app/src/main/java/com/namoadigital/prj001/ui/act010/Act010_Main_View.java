@@ -14,8 +14,8 @@ public interface Act010_Main_View {
 
     public void loadForms(List<HMAux> forms);
 
-    //void callAct009(Context context);
+    void callAct009(Context context);
 
-    //void callAct011(Context context, String product_code);
+    void callAct011(Context context);
 
 }

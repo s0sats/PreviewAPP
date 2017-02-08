@@ -11,9 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ListView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -26,12 +24,6 @@ import com.namoa_digital.namoa_library.ctls.RatingImageFF;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
-import com.namoadigital.prj001.ui.act003.Act003_Main;
-import com.namoadigital.prj001.ui.act004.Act004_Main_View;
-import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter;
-import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter_Impl;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -104,6 +96,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     private void initVars() {
+        //LIXO
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+          Long   product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
+          String serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
+          String type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE,"");
+          String type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC,"");
+          String form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE,"");
+          String form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION,"");
+          String form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,"");
+
+          String lixo = "";
+
+        }
 
         fm = getSupportFragmentManager();
 

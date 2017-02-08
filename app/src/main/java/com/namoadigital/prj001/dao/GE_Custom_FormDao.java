@@ -27,6 +27,8 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String REQUIRE_SIGNATURE = "require_signature";
+    //Não é campo da tabela, descrição vem da tradução
+    public static final String CUSTOM_FORM_DESC = "custom_form_desc";
     private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, REQUIRE_SIGNATURE};
 
     public GE_Custom_FormDao(Context context, String DB_NAME, int DB_VERSION) {

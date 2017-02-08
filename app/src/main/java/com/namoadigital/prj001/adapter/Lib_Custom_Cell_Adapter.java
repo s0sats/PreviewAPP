@@ -23,6 +23,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
 
     //CONSTANTES
     public static final String CFG_ID_DESC = "ID_DESC";
+    public static final String CFG_ID_DESC_DESC2 = "ID_DESC1_DESC2";
     public static final String CFG_DESC = "DESC";
 
     private Context context;
@@ -31,6 +32,15 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
     private String config;
     private String key_id;
     private String key_text;
+    private String key_text2;
+
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config,  String key_text) {
+        this.context = context;
+        this.resource = resource;
+        this.source = source;
+        this.config = config;
+        this.key_text = key_text;
+    }
 
     public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config,  String key_text, String key_id) {
         this.context = context;
@@ -39,6 +49,16 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         this.config = config;
         this.key_text = key_text;
         this.key_id = key_id;
+    }
+
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config, String key_text, String key_id, String key_text2) {
+        this.context = context;
+        this.resource = resource;
+        this.source = source;
+        this.config = config;
+        this.key_id = key_id;
+        this.key_text = key_text;
+        this.key_text2 = key_text2;
     }
 
     @Override
@@ -103,7 +123,30 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 itemText += item.get(key_text);
                 tvItem.setText(itemText);
                 break;
+            case CFG_ID_DESC_DESC2:
+                llBackground.setBackground(llDrawable);
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                //
+                try {
+                    if (item.get(key_id).trim().length() > 0){
+                        itemText = item.get(key_id) + " - ";
+                    }
+                } catch (Exception e) {
+                }
+                //
+                try {
+                    itemText += item.get(key_text);
+                } catch (Exception e) {
+                }
+                //
+                try {
+                    itemText += " - " + item.get(key_text2);
+                } catch (Exception e) {
+                }
+                tvItem.setText(itemText);
 
+                break;
             case CFG_DESC:default:
                 llBackground.setBackground(llDrawable);
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
