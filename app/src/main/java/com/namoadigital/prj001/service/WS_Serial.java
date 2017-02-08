@@ -119,10 +119,10 @@ public class WS_Serial extends IntentService {
             case "NOT_EXISTS":
                 //Se serial não existe
                 //E é required, dispara mensagem de erro.
-                if(serial_required == 1){
+                /*if(serial_required == 1){
                     ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "SERIAL IS REQUIRED", "", "0");
 
-                }else if (serial_allow_new == 0){
+                }else*/ if (serial_allow_new == 0){
                     //Se serial não existe, não é requerido,
                     // porem não permite criar novo serial, dispara msg de erro.
                     ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "new serial is not supported", "", "0");

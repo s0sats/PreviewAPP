@@ -46,11 +46,6 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     }
 
     @Override
-    public void onFormTypeClicked(String product_code) {
-        //mView.callAct008(context, product_code);
-    }
-
-    @Override
     public void onBackPressedClicked() {
 
     }

@@ -176,7 +176,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
                         //
-                        setDrawerAlertTranslation("drawer_change_customer_alert_ttl", "drawer_change_customer_alert_msg");
+                        setAlertTranslation("drawer_change_customer_alert_ttl", "drawer_change_customer_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -195,7 +195,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
                         //
-                        setDrawerAlertTranslation("drawer_change_site_alert_ttl", "drawer_change_site_alert_msg");
+                        setAlertTranslation("drawer_change_site_alert_ttl", "drawer_change_site_alert_msg");
                         //Apaga preferencia de Site, Operatione volta a lista de site
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -210,7 +210,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_OPERATION:
                         //
-                        setDrawerAlertTranslation("drawer_change_operation_alert_ttl", "drawer_change_operation_alert_msg");
+                        setAlertTranslation("drawer_change_operation_alert_ttl", "drawer_change_operation_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -224,7 +224,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
                         //
-                        setDrawerAlertTranslation("drawer_logout_alert_ttl", "drawer_logout_alert_msg");
+                        setAlertTranslation("drawer_logout_alert_ttl", "drawer_logout_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -256,7 +256,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     }
 
-    private void setDrawerAlertTranslation(String title_txt_code, String msg_txt_code) {
+    private void setAlertTranslation(String title_txt_code, String msg_txt_code) {
         if (hmAux_Trans.get(title_txt_code) != null) {
             alertTitle = hmAux_Trans.get(title_txt_code);
         } else {

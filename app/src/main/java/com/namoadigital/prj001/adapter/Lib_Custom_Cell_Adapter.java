@@ -93,8 +93,11 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
                 tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
                 //
-                if (item.get(key_id).trim().length() > 0){
-                    itemText = item.get(key_id) + " - ";
+                try {
+                    if (item.get(key_id).trim().length() > 0){
+                        itemText = item.get(key_id) + " - ";
+                    }
+                } catch (Exception e) {
                 }
                 //
                 itemText += item.get(key_text);

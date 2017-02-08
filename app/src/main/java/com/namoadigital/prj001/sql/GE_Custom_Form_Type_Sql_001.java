@@ -2,6 +2,8 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -30,48 +32,34 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "    T.*, " +
+                        "    T."+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+", " +
                         "    ( " +
                         "     SELECT " +
-                        "        ts.txt_value " +
+                        "        ts."+EV_Module_Res_Txt_TransDao.TXT_VALUE +
                         "     FROM " +
                                 EV_Module_ResDao.TABLE +" mr, " +
                                 EV_Module_Res_Txt_TransDao.TABLE +" ts " +
                         "     WHERE " +
-                        "          ts.module_code = mr.module_code " +
-                        "          and ts.resource_code = mr.resource_code " +
-                        "          and ts.txt_code = t.customer_code || '|' || t.custom_form_type     " +
+                        "          ts."+EV_Module_Res_Txt_TransDao.MODULE_CODE+" = mr."+EV_Module_ResDao.MODULE_CODE+" " +
+                        "          and ts."+EV_Module_Res_Txt_TransDao.RESOURCE_CODE+" = mr."+EV_Module_ResDao.RESOURCE_CODE+" " +
+                        "          and ts."+EV_Module_Res_Txt_TransDao.TXT_CODE+" = t.customer_code || '|' || t.custom_form_type     " +
                         "           " +
-                        "          and ts.module_code = 'CUST_FORM'       " +
-                        "          and ts.translate_code = '"+s_translate_code+"' " +
-                        "    ) custom_form_type_desc, " +
-                        "    ( " +
-                        "     SELECT " +
-                        "       t.custom_form_type || ' - ' || ts.txt_value " +
-                        "     FROM " +
-                        EV_Module_ResDao.TABLE +" mr, " +
-                        EV_Module_Res_Txt_TransDao.TABLE +" ts " +
-                        "     WHERE " +
-                        "          ts.module_code = mr.module_code " +
-                        "          and ts.resource_code = mr.resource_code " +
-                        "          and ts.txt_code = t.customer_code || '|' || t.custom_form_type     " +
-                        "           " +
-                        "          and ts.module_code = 'CUST_FORM'       " +
-                        "          and ts.translate_code = '"+s_translate_code+"' " +
-                        "    ) custom_form_type_desc_full " +
+                        "          and ts."+EV_Module_Res_Txt_TransDao.MODULE_CODE+" = 'CUST_FORM'       " +
+                        "          and ts."+EV_Module_Res_Txt_TransDao.TRANSLATE_CODE+" = '"+s_translate_code+"' " +
+                        "    ) "+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+" "+
                         "     " +
                         " FROM " +
-                        "   ge_custom_form_types t, " +
-                        "   ge_custom_form_products p " +
+                        GE_Custom_Form_TypeDao.TABLE + " t, " +
+                        GE_Custom_Form_ProductDao.TABLE + " p " +
                         " WHERE " +
-                        "   t.customer_code = p.customer_code " +
-                        "   AND t.custom_form_type = p.custom_form_type " +
+                        "   t."+GE_Custom_Form_TypeDao.CUSTOMER_CODE+" = p."+GE_Custom_Form_ProductDao.CUSTOMER_CODE+" " +
+                        "   AND t."+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+" = p."+GE_Custom_Form_ProductDao.CUSTOM_FORM_TYPE+" " +
                         "   " +
-                        "   AND p.customer_code = '" + s_customer_code + "' " +
-                        "   AND p.product_code = '" + s_product_code + "' " +
+                        "   AND p."+GE_Custom_Form_ProductDao.CUSTOMER_CODE+" = '" + s_customer_code + "' " +
+                        "   AND p."+GE_Custom_Form_ProductDao.PRODUCT_CODE +" = '" + s_product_code + "' " +
                         " order by " +
-                        "   t.custom_form_type;" +
-                        "custom_form_type#custom_form_type_desc#custom_form_type_desc_full")
+                        "   t."+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+" ;" +
+                        GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
                 .toString();
 
     }
