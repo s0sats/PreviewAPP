@@ -151,6 +151,35 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     }
 
     @Override
+    public HMAux getByStringHM(String sQuery) {
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
+    }
+
+
+    @Override
     public List<MD_Site> query(String s_query) {
         List<MD_Site> md_sites = new ArrayList<>();
         openDB();

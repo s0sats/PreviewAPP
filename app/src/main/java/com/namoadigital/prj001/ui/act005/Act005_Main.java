@@ -21,7 +21,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
@@ -72,37 +71,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //
-        // Lixo Jogar Fora
-        String resultado = new Sql_Act011_002(
-                "5",
-                "1",
-                "1",
-                "6",
-                "2"
-        ).toSqlQuery();
-        String resultado_1 = new Sql_Act011_001(
-                "5",
-                "1",
-                "2"
-        ).toSqlQuery();
-
-        String resultado_2 = new Sql_Act011_001(
-                "5",
-                "1",
-                "2"
-        ).toSqlQuery();
-
-        String resultado_3 = new GE_Custom_Form_Sql_001(
-                "1",
-                "22",
-                "8",
-                "7"
-        ).toSqlQuery();
-
-
-
-
         //
         iniSetup();
         initVars();
@@ -253,6 +221,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+
 
     }
 

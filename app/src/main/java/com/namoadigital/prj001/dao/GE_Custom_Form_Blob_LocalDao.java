@@ -23,7 +23,7 @@ public class GE_Custom_Form_Blob_LocalDao extends BaseDao implements Dao<GE_Cust
     private final Mapper<GE_Custom_Form_Blob_Local, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Blob_Local> toGE_Custom_Form_Blob_LocalMapper;
 
-    public static final String TABLE = "ge_custom_form_blobs";
+    public static final String TABLE = "ge_custom_form_blobs_local";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
@@ -165,6 +165,35 @@ public class GE_Custom_Form_Blob_LocalDao extends BaseDao implements Dao<GE_Cust
 
         return ge_custom_form_blob_local;
     }
+
+    @Override
+    public HMAux getByStringHM(String sQuery) {
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
+    }
+
 
     @Override
     public List<GE_Custom_Form_Blob_Local> query(String sQuery) {

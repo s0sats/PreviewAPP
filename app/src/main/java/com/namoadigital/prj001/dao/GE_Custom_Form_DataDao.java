@@ -167,6 +167,35 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     }
 
     @Override
+    public HMAux getByStringHM(String sQuery) {
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
+    }
+
+
+    @Override
     public List<GE_Custom_Form_Data> query(String s_query) {
         List<GE_Custom_Form_Data> custom_form_datas = new ArrayList<>();
         openDB();

@@ -11,7 +11,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -24,6 +26,12 @@ import com.namoa_digital.namoa_library.ctls.RatingImageFF;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.ui.act004.Act004_Main_View;
+import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter;
+import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter_Impl;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -56,6 +64,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private Toolbar toolbar;
 
     private String dtCustomer_Format;
+
+    private String customer_code;
+    private String custom_form_type;
+    private String custom_form_code;
+    private String custom_form_version;
+
+    private Bundle bundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,8 +172,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     private void recoverGetIntents() {
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
+
 //            currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
 //            mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
 //            //
@@ -263,7 +279,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         LabelFF labelFF = new LabelFF(Act011_Main.this);
 
         labelFF.setId(View.generateViewId());
-        labelFF.setmLabel(cf.get("txt_value"));
+        labelFF.setmLabel(cf.get("custom_form_field_desc"));
         labelFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         labelFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         labelFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -276,7 +292,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         MKEditTextNMFF mkEditTextNMFF = new MKEditTextNMFF(Act011_Main.this);
 
         mkEditTextNMFF.setId(View.generateViewId());
-        mkEditTextNMFF.setmLabel(cf.get("txt_value"));
+        mkEditTextNMFF.setmLabel(cf.get("custom_form_field_desc"));
         mkEditTextNMFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         mkEditTextNMFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         mkEditTextNMFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -293,7 +309,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ComboBoxFF comboBoxFF = new ComboBoxFF(Act011_Main.this);
 
         comboBoxFF.setId(View.generateViewId());
-        comboBoxFF.setmLabel(cf.get("txt_value"));
+        comboBoxFF.setmLabel(cf.get("custom_form_field_desc"));
         comboBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         comboBoxFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         comboBoxFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -320,7 +336,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         CheckBoxFF checkBoxFF = new CheckBoxFF(Act011_Main.this);
 
         checkBoxFF.setId(View.generateViewId());
-        checkBoxFF.setmLabel(cf.get("txt_value"));
+        checkBoxFF.setmLabel(cf.get("custom_form_field_desc"));
         checkBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         checkBoxFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         checkBoxFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -335,7 +351,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         RatingImageFF ratingImageFF = new RatingImageFF(Act011_Main.this);
 
         ratingImageFF.setId(View.generateViewId());
-        ratingImageFF.setmLabel(cf.get("txt_value"));
+        ratingImageFF.setmLabel(cf.get("custom_form_field_desc"));
         ratingImageFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         ratingImageFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         ratingImageFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -350,7 +366,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         RatingBarFF ratingBarFF = new RatingBarFF(Act011_Main.this);
 
         ratingBarFF.setId(View.generateViewId());
-        ratingBarFF.setmLabel(cf.get("txt_value"));
+        ratingBarFF.setmLabel(cf.get("custom_form_field_desc"));
         ratingBarFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         ratingBarFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         ratingBarFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -365,7 +381,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         PictureFF pictureFF = new PictureFF(Act011_Main.this);
 
         pictureFF.setId(View.generateViewId());
-        pictureFF.setmLabel(cf.get("txt_value"));
+        pictureFF.setmLabel(cf.get("custom_form_field_desc"));
         pictureFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         pictureFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         pictureFF.setmPage(Integer.parseInt(cf.get("page")));
@@ -381,7 +397,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         PhotoFF photoFF = new PhotoFF(Act011_Main.this);
 
         photoFF.setId(View.generateViewId());
-        photoFF.setmLabel(cf.get("txt_value"));
+        photoFF.setmLabel(cf.get("custom_form_field_desc"));
         photoFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
         photoFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         photoFF.setmPage(Integer.parseInt(cf.get("page")));

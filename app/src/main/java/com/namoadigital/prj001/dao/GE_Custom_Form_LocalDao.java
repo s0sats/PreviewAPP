@@ -7,7 +7,6 @@ import android.database.Cursor;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
-import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.util.Constant;
 
@@ -22,7 +21,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     private final Mapper<GE_Custom_Form_Local, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Local> toGE_Custom_Form_LocalMapper;
 
-    public static final String TABLE = "ge_custom_forms";
+    public static final String TABLE = "ge_custom_forms_local";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
@@ -164,6 +163,35 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
         return custom_form_local;
     }
+
+    @Override
+    public HMAux getByStringHM(String sQuery) {
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
+    }
+
 
     @Override
     public List<GE_Custom_Form_Local> query(String s_query) {
