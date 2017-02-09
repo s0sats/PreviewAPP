@@ -288,7 +288,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         }
     }
-
+    //Trata retorno de serial não existente
     @Override
     protected void processSerialNExist() {
         super.processSerialNExist();
@@ -298,7 +298,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         callAct009(context);
 
     }
-
+    //Trata retorno de serial OK
     @Override
     protected void processSerialOk() {
         super.processSerialOk();
@@ -320,6 +320,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         finish();
     }
 
+    //Trata retorno do Serial
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
@@ -328,5 +329,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         mPresenter.updateSyncChecklist(mket_serial_id.getText().toString().trim(),1);
 
+    }
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
     }
 }
