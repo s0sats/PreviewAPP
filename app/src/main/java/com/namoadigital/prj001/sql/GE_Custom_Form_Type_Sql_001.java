@@ -32,7 +32,7 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "    T."+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+", " +
+                        "    DISTINCT T."+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+", " +
                         "    ( " +
                         "     SELECT " +
                         "        ts."+EV_Module_Res_Txt_TransDao.TXT_VALUE +

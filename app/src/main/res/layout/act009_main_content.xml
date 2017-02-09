@@ -17,7 +17,7 @@
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="20dp">
+        >
 
         <ListView
             android:id="@+id/act009_lv_form_types"
@@ -26,8 +26,9 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:background="@drawable/border_back"
-            android:padding="5dp" />
+            android:padding="5dp"
+            android:divider="@color/padrao_TRANSPARENT"/>
+        <!--android:background="@drawable/border_back"-->
 
         <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/act009_btn_back"

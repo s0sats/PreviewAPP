@@ -21,13 +21,12 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
-import com.namoadigital.prj001.sql.Sql_Act011_001;
-import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -302,6 +301,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct012(Context context) {
+        Intent mIntent = new Intent(context, Act012_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
