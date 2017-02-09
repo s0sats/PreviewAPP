@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act011;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -10,15 +11,16 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
-import com.namoadigital.prj001.ui.act009.Act009_Main_View;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -58,7 +60,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code) {
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
@@ -144,8 +146,65 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         }
 
-        mView.loadFragment_CF_Fields(cf_fields);
+        GE_Custom_Form_Data formData = loadAnswer(
+                customFormLocal.getCustomer_code(),
+                Long.parseLong(product_code),
+                customFormLocal.getCustom_form_type(),
+                customFormLocal.getCustom_form_code(),
+                customFormLocal.getCustom_form_version(),
+                customFormLocal.getCustom_form_data()
+        );
+
+        mView.loadFragment_CF_Fields(cf_fields, formData);
     }
+
+    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {
+
+        GE_Custom_Form_Data form_data = custom_form_dataDao
+
+                .getByString(
+
+                        new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                                String.valueOf(customer_code),
+                                String.valueOf(custom_form_type),
+                                String.valueOf(custom_form_code),
+                                String.valueOf(custom_form_version),
+                                String.valueOf(custom_form_data)
+                        ).toSqlQuery().toLowerCase()
+
+                );
+
+        if (form_data != null) {
+            form_data.setDataFields(
+
+                    custom_form_data_fieldDao.query(
+                            new GE_Custom_Form_Data_Field_MULTI_SqlSpecification(
+                                    String.valueOf(customer_code),
+                                    String.valueOf(custom_form_type),
+                                    String.valueOf(custom_form_code),
+                                    String.valueOf(custom_form_version),
+                                    String.valueOf(form_data.getCustom_form_data())
+                            ).toSqlQuery().toLowerCase()
+                    )
+            );
+        } else {
+            form_data = new GE_Custom_Form_Data();
+            //
+            form_data.setCustomer_code(customer_code);
+            form_data.setCustom_form_type((int) custom_form_type);
+            form_data.setCustom_form_code((int) custom_form_code);
+            form_data.setCustom_form_version((int) custom_form_version);
+            form_data.setCustom_form_data(custom_form_data);
+            form_data.setProduct_code(product_code);
+            form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            form_data.setUser_code_start(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
+            form_data.setUser_code_end(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
+
+        }
+
+        return form_data;
+    }
+
 
     @Override
     public void onBackPressedClicked() {

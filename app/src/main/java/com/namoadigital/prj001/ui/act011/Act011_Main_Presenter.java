@@ -6,7 +6,7 @@ package com.namoadigital.prj001.ui.act011;
 
 public interface Act011_Main_Presenter {
 
-    void setData(String customer_code, String formtype_code, String form_code, String formversion_code);
+    void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code);
 
     void onBackPressedClicked();
 
