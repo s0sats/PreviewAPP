@@ -153,16 +153,18 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
                 tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
                 //
-                tvItem.setText(itemText);
+                itemText = item.get(key_text);
                 //
                 try {
                     if (item.get(key_id).trim().length() > 0){
-                        itemText += " (" + item.get(key_id) + " )";
+                        itemText += " ( " + item.get(key_id) + " )";
                     }
                 } catch (Exception e) {
                     itemText += " ( - )";
                 }
                 //
+                //
+                tvItem.setText(itemText);
                 break;
 
             case CFG_DESC:default:

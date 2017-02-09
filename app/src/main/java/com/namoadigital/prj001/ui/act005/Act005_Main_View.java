@@ -17,6 +17,8 @@ public interface Act005_Main_View {
     void showPD();
 
     void callAct006(Context context);
+
+    void callAct012(Context context);
     //
     void closeApp();
 

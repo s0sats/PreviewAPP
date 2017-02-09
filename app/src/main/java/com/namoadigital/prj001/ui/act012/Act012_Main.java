@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act012;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Act012_Sql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -94,6 +96,8 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         btn_back.setTag("btn_back");
         views.add(btn_back);
 
+        mPresenter.getPendencies();
+
     }
 
     private void iniUIFooter() {
@@ -145,8 +149,16 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     @Override
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
 }

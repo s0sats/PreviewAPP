@@ -36,6 +36,6 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-
+        mView.callAct005(context);
     }
 }
