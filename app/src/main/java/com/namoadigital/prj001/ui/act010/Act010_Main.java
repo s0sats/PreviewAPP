@@ -186,6 +186,9 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void addFormInfoToBundle(HMAux item) {
+
+        String sHugo = item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE);
+
         bundle.putString(
                 Constant.ACT010_CUSTOM_FORM_CODE,
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)
@@ -197,7 +200,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         );
         //
         bundle.putString(
-                Constant.ACT010_CUSTOM_FORM_CODE_DESC,
+                 Constant.ACT010_CUSTOM_FORM_CODE_DESC,
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_DESC)
         );
     }

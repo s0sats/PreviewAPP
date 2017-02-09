@@ -1,15 +1,19 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
@@ -27,7 +31,14 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main_View;
 import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter;
@@ -65,12 +76,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private String dtCustomer_Format;
 
-    private String customer_code;
-    private String custom_form_type;
-    private String custom_form_code;
-    private String custom_form_version;
-
     private Bundle bundle;
+
+    private String product_code;
+    private String serial_id;
+    private String type;
+    private String type_desc;
+    private String form;
+    private String form_version;
+    private String form_desc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,21 +125,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     private void initVars() {
-        //LIXO
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-          Long   product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-          String serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
-          String type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE,"");
-          String type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC,"");
-          String form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE,"");
-          String form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION,"");
-          String form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,"");
-
-          String lixo = "";
-
-        }
-
         fm = getSupportFragmentManager();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -153,37 +152,49 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         act011_ff_options = (Act011_FF_Options)
                 fm.findFragmentById(R.id.act011_ff_options);
 
+        act011_ff_options.setOnTabSelectedListener(new Act011_FF_Options.ICustom_Form_FF_Options() {
+            @Override
+            public void tabSelected(int idtab) {
+                pager.setCurrentItem(idtab - 1);
+                //
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
 
-//        mPresenter = new Act009_Main_Presenter_Impl(
-//                context,
-//                this,
-//                new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-//                new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-//        );
-
-//        lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
-
-//        btn_back = (BootstrapButton) findViewById(R.id.act007_btn_back);
+        mPresenter = new Act011_Main_Presenter_Impl(
+                context,
+                this,
+                new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_FieldDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_Data_FieldDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_Field_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        );
 
         recoverGetIntents();
 
-//        mPresenter.setAdapterData(0L, "");
+        mPresenter.setData(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                type,
+                form,
+                form_version
+        );
 
     }
 
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-
-//            currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
-//            mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
-//            //
-//            reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
+            product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
+            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+            type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
+            type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
+            form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE, "");
+            form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
+            form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
         } else {
-//            currentIndex = 0;
-//            mket_product_search.setText("");
-//            //
-//            mStack.clear();
         }
     }
 
@@ -206,6 +217,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     public void loadFragment_CF_Fields(List<HMAux> cf_fields) {
+
+        act011_ff_options.loadCF_Fields(cf_fields);
+
         int pages = 0;
 
         if (cf_fields != null && cf_fields.size() > 0) {
@@ -272,6 +286,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             screens
                     )
             );
+
+            pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    act011_ff_options.setFOpc(position + 1);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
         }
     }
 
@@ -427,6 +458,42 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         public int getCount() {
             return data.size();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.act11_action_settings) {
+
+            ToolBox_Con.cleanPreferences(context);
+
+            Intent mIntent = new Intent(context, Act001_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(mIntent);
+
+            finish();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

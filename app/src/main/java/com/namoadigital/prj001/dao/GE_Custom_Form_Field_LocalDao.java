@@ -65,6 +65,8 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
                 sbWhere.append(" and ");
                 sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_field_local.getCustom_form_version())).append("'");
                 sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_field_local.getCustom_form_data())).append("'");
+                sbWhere.append(" and ");
                 sbWhere.append(CUSTOM_FORM_SEQ).append(" = '").append(String.valueOf(custom_form_field_local.getCustom_form_seq())).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(custom_form_field_local), sbWhere.toString(), null);
@@ -101,6 +103,8 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
                     sbWhere.append(" and ");
                     sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_field_local.getCustom_form_version())).append("'");
                     sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_field_local.getCustom_form_data())).append("'");
+                    sbWhere.append(" and ");
                     sbWhere.append(CUSTOM_FORM_SEQ).append(" = '").append(String.valueOf(custom_form_field_local.getCustom_form_seq())).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(custom_form_field_local), sbWhere.toString(), null);
@@ -134,6 +138,8 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
                     sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(item.get(CUSTOM_FORM_CODE)).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(item.get(CUSTOM_FORM_VERSION)).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(item.get(CUSTOM_FORM_DATA)).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(CUSTOM_FORM_SEQ).append(" = '").append(item.get(CUSTOM_FORM_SEQ)).append("'");
 

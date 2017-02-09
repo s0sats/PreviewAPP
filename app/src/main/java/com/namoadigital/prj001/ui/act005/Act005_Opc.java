@@ -24,14 +24,14 @@ import java.util.List;
 
 public class Act005_Opc extends Fragment {
 
-    public static final String DRAWER_KEY_OPC_ID = "drawer_opc_id" ;
+    public static final String DRAWER_KEY_OPC_ID = "drawer_opc_id";
     public static final String DRAWER_KEY_OPC_ICON = "drawer_opc_icon";
-    public static final String DRAWER_KEY_OPC_DESC = "drawer_opc_desc" ;
+    public static final String DRAWER_KEY_OPC_DESC = "drawer_opc_desc";
     //
-    public static final String DRAWER_OPC_CUSTOMER = "drawer_opc_customer" ;
-    public static final String DRAWER_OPC_SITE = "drawer_opc_site" ;
-    public static final String DRAWER_OPC_OPERATION = "drawer_opc_operation" ;
-    public static final String DRAWER_OPC_LOGOUT = "drawer_opc_logout" ;
+    public static final String DRAWER_OPC_CUSTOMER = "drawer_opc_customer";
+    public static final String DRAWER_OPC_SITE = "drawer_opc_site";
+    public static final String DRAWER_OPC_OPERATION = "drawer_opc_operation";
+    public static final String DRAWER_OPC_LOGOUT = "drawer_opc_logout";
     //
     private ImageView iv_logo;
     private ListView lv_opc;
@@ -40,7 +40,7 @@ public class Act005_Opc extends Fragment {
     private HMAux hmAux_Trans;
     private SimpleAdapter sAdapter;
 
-    public interface IAct005_Opc{
+    public interface IAct005_Opc {
         void itemClicked(String index);
     }
 
@@ -49,7 +49,7 @@ public class Act005_Opc extends Fragment {
     }
     //
 
-    public void setHmAux_Trans(HMAux hmAux_Trans,String mModule_Code , String mResource_Code) {
+    public void setHmAux_Trans(HMAux hmAux_Trans, String mModule_Code, String mResource_Code) {
         this.hmAux_Trans = hmAux_Trans;
         translateItens(mModule_Code, mResource_Code);
         sAdapter.notifyDataSetChanged();
@@ -70,7 +70,7 @@ public class Act005_Opc extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.act005_opc_content,container,false);
+        View view = inflater.inflate(R.layout.act005_opc_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -89,7 +89,7 @@ public class Act005_Opc extends Fragment {
 
     private void lvSetup() {
         String[] from = {DRAWER_KEY_OPC_ICON, DRAWER_KEY_OPC_DESC};
-        int[] to ={R.id.act005_opc_cell_iv_icon, R.id.act005_opc_cell_tv_desc};
+        int[] to = {R.id.act005_opc_cell_iv_icon, R.id.act005_opc_cell_tv_desc};
         sAdapter = new SimpleAdapter(
                 getActivity(),
                 loadOptions(),
@@ -106,7 +106,7 @@ public class Act005_Opc extends Fragment {
         lv_opc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(delegate != null){
+                if (delegate != null) {
                     HMAux item = (HMAux) parent.getItemAtPosition(position);
                     delegate.itemClicked(item.get(DRAWER_KEY_OPC_ID));
                 }
@@ -135,11 +135,11 @@ public class Act005_Opc extends Fragment {
                 "lbl_logout",
         };
         drawerItemList = new ArrayList<>();
-        for (int i = 0; i < id.length;i++){
-            HMAux hmAux =  new HMAux();
-            hmAux.put(DRAWER_KEY_OPC_ID,id[i]);
+        for (int i = 0; i < id.length; i++) {
+            HMAux hmAux = new HMAux();
+            hmAux.put(DRAWER_KEY_OPC_ID, id[i]);
             hmAux.put(DRAWER_KEY_OPC_ICON, icon[i]);
-            hmAux.put(DRAWER_KEY_OPC_DESC,desc[i]);
+            hmAux.put(DRAWER_KEY_OPC_DESC, desc[i]);
             drawerItemList.add(hmAux);
         }
 

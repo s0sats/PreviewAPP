@@ -5,6 +5,12 @@
     android:background="#FFFFFFFF"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:scaleType="center"
+        android:background="@color/namoa_light_blue"/>
+
     <ListView
         android:id="@+id/act011_ff_options_lv_tabs"
         android:layout_width="match_parent"

@@ -43,7 +43,7 @@ public class Constant extends ConstantBase{
     public static final String ACT009_CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
 
     public static final String ACT010_CUSTOM_FORM_CODE = "custom_form_code";
-    public static final String ACT010_CUSTOM_FORM_VERSION = "custom_form_code";
+    public static final String ACT010_CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String ACT010_CUSTOM_FORM_CODE_DESC = "custom_form_code_desc";
 
 
