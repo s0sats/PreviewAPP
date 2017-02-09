@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.sql.Act012_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act012_001;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
     public void getPendencies() {
         List<HMAux> pendencies =
         customFormLocalDao.query_HM(
-                new Act012_Sql_001().toSqlQuery()
+                new Sql_Act012_001().toSqlQuery()
         );
 
         mView.loadPendencies(pendencies);

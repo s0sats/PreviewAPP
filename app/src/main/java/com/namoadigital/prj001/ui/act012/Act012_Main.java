@@ -16,7 +16,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.sql.Act012_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -127,7 +127,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                Toast.makeText(context,item.get(Act012_Sql_001.TYPE),Toast.LENGTH_LONG).show();
+                Toast.makeText(context,item.get(Sql_Act012_001.TYPE),Toast.LENGTH_LONG).show();
             }
         });
 
@@ -140,8 +140,8 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
                 R.layout.lib_custom_cell,
                 pendencies,
                 Lib_Custom_Cell_Adapter.CFG_DESC_QTY,
-                Act012_Sql_001.TYPE,
-                Act012_Sql_001.PENDING_QTY
+                Sql_Act012_001.TYPE,
+                Sql_Act012_001.PENDING_QTY
         );
 
         lv_pendencies.setAdapter(mAdapter);

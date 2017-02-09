@@ -13,7 +13,7 @@ import com.namoadigital.prj001.database.Specification;
  *
  */
 
-public class Act012_Sql_001 implements Specification {
+public class Sql_Act012_001 implements Specification {
 
     public static final String PENDING_QTY = "pending_qty";
     public static final String TYPE = "type";
