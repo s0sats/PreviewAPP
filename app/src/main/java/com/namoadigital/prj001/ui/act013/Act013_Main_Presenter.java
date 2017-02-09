@@ -5,4 +5,8 @@ package com.namoadigital.prj001.ui.act013;
  */
 
 public interface Act013_Main_Presenter {
+
+    void getPendencies();
+
+    void onBackPressedClicked();
 }

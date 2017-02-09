@@ -17,6 +17,11 @@ public class Sql_Act012_001 implements Specification {
 
     public static final String PENDING_QTY = "pending_qty";
     public static final String TYPE = "type";
+    private long s_customer_code;
+
+    public Sql_Act012_001(long s_customer_code) {
+        this.s_customer_code = s_customer_code;
+    }
 
     @Override
     public String toSqlQuery() {
@@ -29,7 +34,10 @@ public class Sql_Act012_001 implements Specification {
                         " FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+" l\n " +
                         " WHERE\n" +
-                        "   l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+" = '"+ GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_IN_PROCESSING+"';")
+                        "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
+                        "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
+                        "    in('"+ GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
+                        " '"+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_FINALIZED+"');")
                 .append(PENDING_QTY+"#"+TYPE)
                 .toString();
     }

@@ -1,0 +1,43 @@
+package com.namoadigital.prj001.sql;
+
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.database.Specification;
+
+/**
+ * Created by DANIEL.LUCHE on 09/02/2017.
+ */
+
+public class Sql_Act013_001 implements Specification {
+
+    private long s_customer_code;
+
+    public Sql_Act013_001(long s_customer_code) {
+        this.s_customer_code = s_customer_code;
+    }
+
+    @Override
+    public String toSqlQuery() {
+        StringBuilder sb = new StringBuilder();
+        return sb
+                .append(" SELECT\n" +
+                        "  l.custom_form_type,\n" +
+                        "  l.custom_form_type_desc,\n" +
+                        "  l.custom_form_code,\n" +
+                        "  l.custom_form_version,\n" +
+                        "  l.custom_form_desc,\n" +
+                        "  l.custom_product_desc,\n" +
+                        "  l.custom_form_data,\n" +
+                        "  l.custom_form_status\n" +
+                        " \n" +
+                        "  FROM\n" +
+                        GE_Custom_Form_LocalDao.TABLE+ " l\n" +
+                        "  WHERE\n" +
+                        "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
+                        " AND l.custom_form_status in('"+ GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
+                        " '"+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_FINALIZED+"');")
+                .append("custom_form_type#custom_form_type_desc#" +
+                        "custom_form_code#custom_form_version#custom_form_desc#" +
+                        "custom_product_desc#custom_form_data#custom_form_status")
+                .toString();
+    }
+}

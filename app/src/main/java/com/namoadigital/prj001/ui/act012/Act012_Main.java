@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -18,6 +17,7 @@ import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -78,7 +78,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     private void initVars() {
-        context = getBaseContext();
 
         mPresenter = new Act012_Main_Presenter_Impl(
                 context,
@@ -95,7 +94,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         btn_back = (BootstrapButton) findViewById(R.id.act012_btn_back);
         btn_back.setTag("btn_back");
         views.add(btn_back);
-
+        //
         mPresenter.getPendencies();
 
     }
@@ -127,10 +126,18 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                Toast.makeText(context,item.get(Sql_Act012_001.TYPE),Toast.LENGTH_LONG).show();
+                // Toast.makeText(context,item.get(Sql_Act012_001.TYPE),Toast.LENGTH_LONG).show();
+                callAct013(context);
             }
         });
 
+    }
+
+    private void callAct013(Context context) {
+        Intent mIntent = new Intent(context, Act013_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

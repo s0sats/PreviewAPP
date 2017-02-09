@@ -157,7 +157,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 //
                 try {
                     if (item.get(key_id).trim().length() > 0){
-                        itemText += " ( " + item.get(key_id) + " )";
+                        itemText += " (" + item.get(key_id) + ")";
                     }
                 } catch (Exception e) {
                     itemText += " ( - )";
