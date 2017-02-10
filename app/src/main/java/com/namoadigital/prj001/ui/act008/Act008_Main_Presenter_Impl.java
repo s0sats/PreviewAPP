@@ -62,32 +62,34 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void validateSerial(String serial, int required, int allow_new) {
-        serial = serial.trim();
+        /*serial = serial.trim();
         //Verifica se Serial foi preenchido
-        if (serial.length() == 0){
+        if (serial.length() == 0 && required == 1) {
             //Se não foi e serial requerido, dispara alert de erro.
-           if(required == 1){
-               mView.fieldFocus();
-               mView.showAlertDialog("Serial","Please, type a serial.");
-           }else{
-               //Se não segue para proxima tela.
-               mView.callAct009(context);
-           }
+            mView.fieldFocus();
+            mView.showAlertDialog("Serial","Please, type a serial.");
         }else{
-            //Se Serial preenchido, verifica se tem conexão.
-            if(ToolBox_Con.isOnline(context)){
-                //Se tem, chama metodo que verifica se produto ja existe na tabela.
-                checkSyncChecklist(serial , allow_new);
-            }else{
-                //Se não tiver conexão, chama metodo para tratativa do offline.
-                mView.continueOffline();
-            }
-        }
+            checkConnection(serial, required, allow_new);
+        }*/
+
+        checkConnection(serial, required, allow_new);
 
     }
 
+    private void checkConnection(String serial, int required, int allow_new) {
+        //verifica se tem conexão.
+        if(ToolBox_Con.isOnline(context)){
+            //Se tem, chama metodo que verifica se produto ja existe na tabela.
+            checkSyncChecklist(serial, required, allow_new);
+        }else{
+            //Se não tiver conexão, chama metodo para tratativa do offline.
+            mView.continueOffline();
+        }
+    }
+
+
     @Override
-    public void checkSyncChecklist(String serial, int allow_new) {
+    public void checkSyncChecklist(String serial, int required, int allow_new) {
         List<HMAux> hmAuxList =
                 syncChecklistDao.query_HM(
                         new Sync_Checklist_Sql_002(
@@ -102,10 +104,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             if( serial.length() > 0 ) {
                 executeSerialProcess(serial);
             }else{
-                if (allow_new == 1) {
+                if (required == 0){
                     mView.callAct009(context);
                 }else{
-                    mView.showAlertDialog("Serial","This product doesn't allow create new serial id");
+                    alertSerialEmpty();
                 }
             }
         }
@@ -131,7 +133,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     }
 
-    private void executeSerialProcess(String serial) {
+    @Override
+    public void executeSerialProcess(String serial) {
 
         MD_Product md_product =
                 mdProductDao.getByString(
@@ -158,7 +161,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void updateSyncChecklist(String serial,int executeSerial ) {
+    public void updateSyncChecklist() {
         //Pega data atual
         Calendar cDate =  Calendar.getInstance();
         SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
@@ -172,9 +175,26 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         syncChecklistDao.addUpdate(syncChecklist);
 
-        if(executeSerial == 1){
+    }
+
+    @Override
+    public void proceedToSerialProcess(String serial, int serial_required) {
+
+        if (serial.length() > 0 ){
             executeSerialProcess(serial);
+        }else{
+            if (serial.length() == 0 && serial_required == 0 ){
+                mView.callAct009(context);
+            }else{
+              alertSerialEmpty();
+            }
         }
+    }
+
+    private void alertSerialEmpty() {
+        //Se não foi e serial requerido, dispara alert de erro.
+        mView.fieldFocus();
+        mView.showAlertDialog("Serial","Please, type a serial.");
 
     }
 }

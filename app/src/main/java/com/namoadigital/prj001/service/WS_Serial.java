@@ -117,29 +117,21 @@ public class WS_Serial extends IntentService {
                 return true;
 
             case "NOT_EXISTS":
-                //Se serial não existe
-                //E é required, dispara mensagem de erro.
-                /*if(serial_required == 1){
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "SERIAL IS REQUIRED", "", "0");
-
-                }else*/ if (serial_allow_new == 0){
-                    //Se serial não existe, não é requerido,
-                    // porem não permite criar novo serial, dispara msg de erro.
+                //Serial não existe
+                //Se produto não permite novo serial , dispara msg de erro.
+                if (serial_allow_new == 0){
                     ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "new serial is not supported", "", "0");
+
                 }else{
-                    //Se serial não existe, não é requerido, e permite criar novo
+                    //Se produto não permite novo serial
                     //pergunta para o USR o que fazer.
                     ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", "SERIAL NOT FIND , CREATE A NEW ONE?", "", "0");
                 }
                 return true;
 
-            case "ERROR_SERIAL_NULL":
+            case "ERROR_SERIAL_NULL":default:
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "ERROR_SERIAL_NULL", "", "0");
-                return false;
-            default:
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Internal Error: Serial property is null", "", "0");
                 return false;
         }
     }
-
 }

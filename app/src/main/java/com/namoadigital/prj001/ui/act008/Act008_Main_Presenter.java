@@ -10,9 +10,14 @@ public interface Act008_Main_Presenter {
 
     void validateSerial(String serial , int required , int allow_new);
 
-    void checkSyncChecklist(String serial, int required);
+    void checkSyncChecklist(String serial, int required, int allow_new);
 
-    void updateSyncChecklist(String serial, int executeSerial);
+    void updateSyncChecklist();
+
+    void proceedToSerialProcess(String serial, int serial_required);
+
+    void executeSerialProcess(String serial);
+
 
 
 }

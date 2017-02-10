@@ -237,18 +237,24 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String msg = "";
         DialogInterface.OnClickListener listener = null;
 
-        if(serial_allow_new == 0){
+        if (serial_required == 1){
             title = "Connection";
             msg = "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
         }else{
-            title = "Continue in offline mode?";
-            msg = "No connection has been found!\nDo you want continue without check the Serial id ?! ";
-            listener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                   callAct009(context);
-                }
-            };
+
+            if(serial_allow_new == 0){
+                title = "Connection";
+                msg = "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+            }else{
+                title = "Continue in offline mode?";
+                msg = "No connection has been found!\nDo you want continue without check the Serial id ?! ";
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        callAct009(context);
+                    }
+                };
+            }
         }
 
         ToolBox.alertMSG(
@@ -326,8 +332,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         super.processCloseACT(mLink, mRequired);
 
         disableProgressDialog();
-
-        mPresenter.updateSyncChecklist(mket_serial_id.getText().toString().trim(),1);
+        //Atualiza data na tabela de produtos loca
+        mPresenter.updateSyncChecklist();
+        mPresenter.proceedToSerialProcess(mket_serial_id.getText().toString().trim() , serial_required);
 
     }
     //TRATA MSG SESSION NOT FOUND
