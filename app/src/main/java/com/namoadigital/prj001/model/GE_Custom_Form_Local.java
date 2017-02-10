@@ -15,6 +15,7 @@ public class GE_Custom_Form_Local {
     private String custom_form_status;
     private String custom_form_src;
     private int require_signature;
+    private int custom_product_code;
     private String custom_product_desc;
     private String custom_form_type_desc;
     private String custom_form_desc;
@@ -89,6 +90,14 @@ public class GE_Custom_Form_Local {
 
     public void setRequire_signature(int require_signature) {
         this.require_signature = require_signature;
+    }
+
+    public int getCustom_product_code() {
+        return custom_product_code;
+    }
+
+    public void setCustom_product_code(int custom_product_code) {
+        this.custom_product_code = custom_product_code;
     }
 
     public String getCustom_product_desc() {

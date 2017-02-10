@@ -68,13 +68,19 @@ public class Act013_Adapter_Pendencies extends BaseAdapter {
 
         Drawable llDrawable = null;
 
-        tvItem.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
-        tvItem2.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE) + " - " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-        tvItem3.setText(
+        tvItem.setText(
+                item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE) +
+                " - " + item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
+        tvItem2.setText(
                 item.get(
-                        GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE) +
+                        GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE) +
+                        " - " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC) +
+                        " - " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE) +
                         " - " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION) +
                         " - " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC)
+        );
+        tvItem3.setText("# " +
+                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
         );
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){

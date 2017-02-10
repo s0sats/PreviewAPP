@@ -31,6 +31,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_STATUS = "custom_form_status";
     public static final String CUSTOM_FORM_SRC = "custom_form_src";
     public static final String REQUIRE_SIGNATURE = "require_signature";
+    public static final String CUSTOM_PRODUCT_CODE = "custom_product_code";
     public static final String CUSTOM_PRODUCT_DESC = "custom_product_desc";
     public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
@@ -268,6 +269,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
             custom_form_local.setCustom_form_src(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_SRC)));
             custom_form_local.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
+            custom_form_local.setCustom_product_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_PRODUCT_CODE)));
             custom_form_local.setCustom_product_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_DESC)));
             custom_form_local.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_local.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
@@ -307,6 +309,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if (custom_form_local.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form_local.getRequire_signature());
+            }
+            if (custom_form_local.getCustom_product_code() > -1){
+                contentValues.put(CUSTOM_PRODUCT_CODE, custom_form_local.getCustom_product_code());
             }
             if (custom_form_local.getCustom_product_desc() != null) {
                 contentValues.put(CUSTOM_PRODUCT_DESC, custom_form_local.getCustom_product_desc());

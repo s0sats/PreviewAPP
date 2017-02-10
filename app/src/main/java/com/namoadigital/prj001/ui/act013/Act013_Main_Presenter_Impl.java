@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act013;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -40,7 +41,19 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
     }
 
     @Override
-    public void onBackPressedClicked() {
+    public void addFormInfoToBundle(HMAux item) {
+        Bundle bundle = new Bundle();
+        bundle.putString(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE),"");
+        bundle.putString(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC),"");
+        bundle.putString(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE),"");
+        bundle.putString(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION),"");
+        bundle.putString(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC),"");
+        bundle.putString(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA),"");
 
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct012(context);
     }
 }

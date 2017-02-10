@@ -10,7 +10,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
@@ -18,7 +17,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
-import com.namoadigital.prj001.ui.act009.Act009_Main_View;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -112,6 +110,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_pre("pre");
             customFormLocal.setCustom_form_status("0");
             customFormLocal.setCustom_form_src("0");
+            customFormLocal.setCustom_product_code(1);
             customFormLocal.setCustom_product_desc("product description");
             customFormLocal.setCustom_form_type_desc("form type descrition");
             customFormLocal.setCustom_form_desc("form description");
