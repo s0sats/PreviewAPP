@@ -31,6 +31,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -140,10 +141,23 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             public void itemClicked(String index) {
                 DialogInterface.OnClickListener listener = null;
 
+                List<String> transList = new ArrayList<String>();
+                transList.add("drawer_change_customer_alert_ttl");
+                transList.add("drawer_change_customer_alert_msg");
+                transList.add("drawer_change_site_alert_ttl");
+                transList.add("drawer_change_site_alert_msg");
+                transList.add("drawer_change_operation_alert_ttl");
+                transList.add("drawer_change_operation_alert_msg");
+                transList.add("drawer_logout_alert_ttl");
+                transList.add("drawer_logout_alert_msg");
+
+                HMAux alertTrans = getTranslationList(transList);
+
                 switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
                         //
-                        setAlertTranslation("drawer_change_customer_alert_ttl", "drawer_change_customer_alert_msg");
+                        alertTitle = alertTrans.get("drawer_change_customer_alert_ttl");
+                        alertMsg = alertTrans.get("drawer_change_customer_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -162,7 +176,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
                         //
-                        setAlertTranslation("drawer_change_site_alert_ttl", "drawer_change_site_alert_msg");
+                        alertTitle = alertTrans.get("drawer_change_site_alert_ttl");
+                        alertMsg = alertTrans.get("drawer_change_site_alert_msg");
+                        //
                         //Apaga preferencia de Site, Operatione volta a lista de site
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -177,7 +193,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_OPERATION:
                         //
-                        setAlertTranslation("drawer_change_operation_alert_ttl", "drawer_change_operation_alert_msg");
+                        alertTitle = alertTrans.get("drawer_change_operation_alert_ttl");
+                        alertMsg = alertTrans.get("drawer_change_operation_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -191,7 +208,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
                         //
-                        setAlertTranslation("drawer_logout_alert_ttl", "drawer_logout_alert_msg");
+                        alertTitle = alertTrans.get("drawer_logout_alert_ttl");
+                        alertMsg = alertTrans.get("drawer_logout_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -224,18 +242,31 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     }
 
-    private void setAlertTranslation(String title_txt_code, String msg_txt_code) {
-        if (hmAux_Trans.get(title_txt_code) != null) {
-            alertTitle = hmAux_Trans.get(title_txt_code);
-        } else {
-            alertTitle = ToolBox.setNoTrans(mModule_Code, mResource_Code, title_txt_code);
-        }
+//    private void setAlertTranslation(String title_txt_code, String msg_txt_code) {
+//        if (hmAux_Trans.get(title_txt_code) != null) {
+//            alertTitle = hmAux_Trans.get(title_txt_code);
+//        } else {
+//            alertTitle = ToolBox.setNoTrans(mModule_Code, mResource_Code, title_txt_code);
+//        }
+//
+//        if (hmAux_Trans.get(msg_txt_code) != null) {
+//            alertMsg = hmAux_Trans.get(msg_txt_code);
+//        } else {
+//            alertMsg = ToolBox.setNoTrans(mModule_Code, mResource_Code, msg_txt_code);
+//        }
+//    }
 
-        if (hmAux_Trans.get(msg_txt_code) != null) {
-            alertMsg = hmAux_Trans.get(msg_txt_code);
-        } else {
-            alertMsg = ToolBox.setNoTrans(mModule_Code, mResource_Code, msg_txt_code);
+    private HMAux getTranslationList(List<String> translate_list) {
+        HMAux hmAux = new HMAux();
+        for (String txt:translate_list) {
+
+            if (hmAux_Trans.get(txt) != null) {
+                hmAux.put(txt,hmAux_Trans.get(txt));
+            } else {
+                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+            }
         }
+        return hmAux;
     }
 
     private void initActions() {

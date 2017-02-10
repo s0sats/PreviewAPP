@@ -26,11 +26,12 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
     }
 
     @Override
-    public void getPendencies() {
+    public void getPendencies(HMAux label_translation) {
         List<HMAux> pendencies =
         customFormLocalDao.query_HM(
                 new Sql_Act012_001(
-                        ToolBox_Con.getPreference_Customer_Code(context)
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        label_translation
                 ).toSqlQuery()
         );
 

@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
@@ -22,6 +23,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +31,9 @@ import java.util.List;
  */
 
 public class Act012_Main extends Base_Activity implements Act012_Main_View {
+
+    public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
+    public static final String LABEL_TRANS_OS= "lbl_type_service_order";
 
     private Context context;
     private ListView lv_pendencies;
@@ -95,7 +100,11 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         btn_back.setTag("btn_back");
         views.add(btn_back);
         //
-        mPresenter.getPendencies();
+        List<String> translateList = new ArrayList<>();
+        translateList.add(LABEL_TRANS_CHECKLIST);
+        translateList.add(LABEL_TRANS_OS);
+        //
+        mPresenter.getPendencies(getTranslationList(translateList));
 
     }
 
@@ -133,13 +142,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     }
 
-    private void callAct013(Context context) {
-        Intent mIntent = new Intent(context, Act013_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
-    }
-
     @Override
     public void loadPendencies(List<HMAux> pendencies) {
         mAdapter = new Lib_Custom_Cell_Adapter(
@@ -155,9 +157,35 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     }
 
+   /*
+   INCLUIR NA TOOLBOX?
+   Metodo que recebe uma lista de itens a serem traduzidos
+   Se item itver tradução pega a a tradução,
+   se não traz Modulo/0/txt_code*/
+
+   private HMAux getTranslationList(List<String> translate_list) {
+        HMAux hmAux = new HMAux();
+        for (String txt:translate_list) {
+
+            if (hmAux_Trans.get(txt) != null) {
+                hmAux.put(txt,hmAux_Trans.get(txt));
+            } else {
+                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+            }
+        }
+        return hmAux;
+    }
+
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void callAct013(Context context) {
+        Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

@@ -24,6 +24,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -179,8 +180,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         }else{
             //Se lista vazia exibe alert e volta pra tela anterior
+            List<String> transList = new ArrayList<>();
+            transList.add("alert_ttl_no_form_found");
+            transList.add("alert_msg_no_form_found");
 
-            HMAux alertTrans = setAlertTranslation("alert_ttl_no_form_found","alert_msg_no_form_found");
+            HMAux alertTrans = getTranslationList(transList);
             ToolBox.alertMSG(
                     Act009_Main.this,
                     alertTrans.get("alert_ttl_no_form_found"),
@@ -195,7 +199,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         }
     }
 
-    private HMAux setAlertTranslation(String title_txt_code, String msg_txt_code) {
+  /*  private HMAux setAlertTranslation(String title_txt_code, String msg_txt_code) {
         HMAux hmAux = new HMAux();
         if (hmAux_Trans.get(title_txt_code) != null) {
             hmAux.put(title_txt_code,hmAux_Trans.get(title_txt_code));
@@ -209,6 +213,19 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             hmAux.put(msg_txt_code,ToolBox.setNoTrans(mModule_Code, mResource_Code, msg_txt_code));
         }
 
+        return hmAux;
+    }*/
+
+    private HMAux getTranslationList(List<String> translate_list) {
+        HMAux hmAux = new HMAux();
+        for (String txt:translate_list) {
+
+            if (hmAux_Trans.get(txt) != null) {
+                hmAux.put(txt,hmAux_Trans.get(txt));
+            } else {
+                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+            }
+        }
         return hmAux;
     }
 
