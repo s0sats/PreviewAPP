@@ -128,6 +128,10 @@
         <receiver android:name=".receiver.WBR_Serial" />
         <service android:name=".service.WS_Serial" />
 
+        <receiver android:name=".receiver.WBR_Save" />
+        <service android:name=".service.WS_Save" />
+
+
     </application>
 
 </manifest>
