@@ -180,6 +180,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
+            //TESTE
+            String form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "nao veio");
             product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
             type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");

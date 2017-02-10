@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -123,10 +122,10 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                Toast.makeText(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),Toast.LENGTH_LONG).show();
+                //Toast.makeText(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),Toast.LENGTH_LONG).show();
+                mPresenter.addFormInfoToBundle(item);
             }
         });
-
     }
 
     @Override
@@ -142,9 +141,10 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     @Override
-    public void callAct011(Context context) {
+    public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
