@@ -6,7 +6,7 @@ import com.namoadigital.prj001.database.Specification;
  * Created by neomatrix on 7/13/16.
  */
 
-public class GE_Custom_Form_Data_Field_MULTI_Download_Update_SqlSpecification implements Specification {
+public class GE_Custom_Form_Field_Local_Sql_002 implements Specification {
 
     private String l_customer_code;
     private String l_custom_form_type;
@@ -15,7 +15,7 @@ public class GE_Custom_Form_Data_Field_MULTI_Download_Update_SqlSpecification im
     private String l_custom_form_seq;
     private String s_nome;
 
-    public GE_Custom_Form_Data_Field_MULTI_Download_Update_SqlSpecification(String l_customer_code, String l_custom_form_type, String l_custom_form_code, String l_custom_form_version, String l_custom_form_seq, String s_nome) {
+    public GE_Custom_Form_Field_Local_Sql_002(String l_customer_code, String l_custom_form_type, String l_custom_form_code, String l_custom_form_version, String l_custom_form_seq, String s_nome) {
         this.l_customer_code = l_customer_code;
         this.l_custom_form_type = l_custom_form_type;
         this.l_custom_form_code = l_custom_form_code;
@@ -31,7 +31,7 @@ public class GE_Custom_Form_Data_Field_MULTI_Download_Update_SqlSpecification im
         return sb
                 .append("update \n" +
                         "\n" +
-                        "ge_custom_form_fields \n" +
+                        "ge_custom_form_fields_local \n" +
                         "\n" +
                         "set\n" +
                         "\n")

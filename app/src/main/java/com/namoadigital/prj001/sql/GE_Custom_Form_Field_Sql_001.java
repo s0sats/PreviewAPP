@@ -6,9 +6,9 @@ import com.namoadigital.prj001.database.Specification;
  * Created by neomatrix on 7/13/16.
  */
 
-public class GE_Custom_Form_Data_Field_MULTI_Download_SqlSpecification implements Specification {
+public class GE_Custom_Form_Field_Sql_001 implements Specification {
 
-    public GE_Custom_Form_Data_Field_MULTI_Download_SqlSpecification() {
+    public GE_Custom_Form_Field_Sql_001() {
     }
 
     @Override
@@ -19,7 +19,7 @@ public class GE_Custom_Form_Data_Field_MULTI_Download_SqlSpecification implement
                 .append("select \n" +
                         "\n" +
                         "customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_seq, custom_form_data_type, custom_form_data_content, \n" +
-                        "(custom_form_data_type || \"_\" || customer_code || \"_\" || custom_form_type || \"_\" || custom_form_code || \"_\" || custom_form_version || \"_\" || custom_form_seq) as custom_nome\n" +
+                        "(custom_form_data_type || \"_\" || customer_code || \"_\" || custom_form_type || \"_\" || custom_form_code || \"_\" || custom_form_version || \"_\" || custom_form_seq) as custom_name\n" +
                         "\n" +
                         "from \n" +
                         "\n" +
@@ -36,7 +36,7 @@ public class GE_Custom_Form_Data_Field_MULTI_Download_SqlSpecification implement
                         "order by \n" +
                         "\n" +
                         "customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_seq")
-                .append(";customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_content#custom_nome")
+                .append(";customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_seq#custom_form_data_type#custom_form_data_content#custom_name")
 
                 .toString();
     }

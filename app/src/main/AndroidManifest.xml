@@ -132,6 +132,12 @@
         <service android:name=".service.WS_Save" />
 
 
+        <receiver android:name=".receiver.WBR_DownLoad_Picture" />
+        <service android:name=".service.WS_DownLoad_Picture" />
+
+        <receiver android:name=".receiver.WBR_DownLoad_PDF" />
+        <service android:name=".service.WS_DownLoad_PDF" />
+
     </application>
 
 </manifest>

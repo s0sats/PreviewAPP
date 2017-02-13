@@ -21,6 +21,8 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
@@ -76,7 +78,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         initVars();
         iniUIFooter();
         initActions();
-
+        //
+        // Lixo Download Picture
+        Intent mIntent = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        mIntent.putExtras(bundle);
+        context.sendBroadcast(mIntent);
+        //
+        // Lixo Download PDF
+        Intent mIntent2 = new Intent(context, WBR_DownLoad_PDF.class);
+        Bundle bundle2 = new Bundle();
+        mIntent2.putExtras(bundle2);
+        //
+        context.sendBroadcast(mIntent2);
     }
 
     private void iniSetup() {
@@ -164,10 +178,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Reseta preferencias do Customer e volta para
                                 //Act002 - lista de customer
-                                ToolBox_Con.setPreference_Customer_Code(context,-1);
-                                ToolBox_Con.setPreference_Translate_Code(context,"");
-                                ToolBox_Con.setPreference_Site_Code(context,"-1");
-                                ToolBox_Con.setPreference_Operation_Code(context,-1);
+                                ToolBox_Con.setPreference_Customer_Code(context, -1);
+                                ToolBox_Con.setPreference_Translate_Code(context, "");
+                                ToolBox_Con.setPreference_Site_Code(context, "-1");
+                                ToolBox_Con.setPreference_Operation_Code(context, -1);
 
                                 callAct002(context);
                             }
@@ -447,6 +461,4 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         return super.onOptionsItemSelected(item);
     }
 
-
-    //mDrawerLayout.closeDrawer(GravityCompat.START);
 }

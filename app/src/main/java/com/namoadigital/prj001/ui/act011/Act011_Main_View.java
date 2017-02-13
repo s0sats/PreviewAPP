@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface Act011_Main_View {
 
 
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields);
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix);
 
 
 }
