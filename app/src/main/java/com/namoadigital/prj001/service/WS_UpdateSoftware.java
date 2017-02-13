@@ -89,7 +89,7 @@ public class WS_UpdateSoftware extends IntentService {
 
         String local_link = "/sdcard/download" + "/" + "namoa.apk";
 
-        ToolBox_Inf.deletarDownloadFile(local_link);
+        ToolBox_Inf.deleteDownloadFile(local_link);
 
         ToolBox_Inf.downloadNewVersion(
                 l_version_link,

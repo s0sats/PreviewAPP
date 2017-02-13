@@ -6,6 +6,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
@@ -14,6 +16,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
@@ -22,6 +25,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +50,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private GE_Custom_Form_LocalDao custom_form_LocalDao;
     private GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao;
 
+    private GE_Custom_Form_BlobDao custom_form_blobDao;
+    private GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao) {
+
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -57,6 +64,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.custom_form_data_fieldDao = custom_form_data_fieldDao;
         this.custom_form_LocalDao = custom_form_LocalDao;
         this.custom_form_field_LocalDao = custom_form_field_LocalDao;
+        this.custom_form_blobDao = custom_form_blobDao;
+        this.custom_form_blob_localDao = custom_form_blob_localDao;
     }
 
     @Override
@@ -111,7 +120,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_code(customForm.getCustom_form_code());
             customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
-            customFormLocal.setCustom_form_pre("pre");
+            customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status("0");
             customFormLocal.setCustom_form_src("0");
             customFormLocal.setCustom_product_desc("product description");
@@ -144,6 +153,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     ).toSqlQuery().toString().toLowerCase()
             );
 
+            custom_form_blob_localDao.addUpdate(
+                    custom_form_blob_localDao.query(
+                            new GE_Custom_Form_Blob_Sql_001(
+                                    String.valueOf(customFormLocal.getCustomer_code()),
+                                    String.valueOf(customFormLocal.getCustom_form_type()),
+                                    String.valueOf(customFormLocal.getCustom_form_code()),
+                                    String.valueOf(customFormLocal.getCustom_form_version())
+                            ).toSqlQuery().toString().toLowerCase()
+                    )
+                    ,
+                    false
+            );
         }
 
         GE_Custom_Form_Data formData = loadAnswer(
@@ -155,7 +176,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getCustom_form_data()
         );
 
-        mView.loadFragment_CF_Fields(cf_fields, formData);
+        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre());
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {

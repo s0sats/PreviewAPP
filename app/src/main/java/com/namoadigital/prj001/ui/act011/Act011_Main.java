@@ -32,6 +32,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
@@ -87,6 +89,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String form;
     private String form_version;
     private String form_desc;
+    private String prefix;
 
     private GE_Custom_Form_Data formData;
 
@@ -176,7 +179,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_Data_FieldDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GE_Custom_Form_Field_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GE_Custom_Form_Field_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_BlobDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -223,8 +228,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix) {
 
+        this.prefix = prefix;
         this.formData = formData;
 
         act011_ff_options.loadCF_Fields(cf_fields);
@@ -466,6 +472,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pictureFF.setmOption(cf.get("custom_form_data_content"));
         pictureFF.setmFName(cf.get("custom_form_local_link"));
 
+        pictureFF.setmPre(prefix);
+
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
@@ -484,6 +492,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         photoFF.setmType(cf.get("custom_form_data_type"));
 
         photoFF.setmOption(cf.get("custom_form_data_content"));
+        photoFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 

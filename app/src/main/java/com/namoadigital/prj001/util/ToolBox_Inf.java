@@ -148,6 +148,10 @@ public class ToolBox_Inf {
         return key;
     }
 
+    public static String getPrefix(Context context) {
+        return getToken(context) + "_";
+    }
+
     public static void downloadZip(String urlPath, String localPath) throws Exception {
 
         URL url = new URL(urlPath);
@@ -179,6 +183,37 @@ public class ToolBox_Inf {
     }
 
     public static void downloadNewVersion(String urlPath, String localPath) throws Exception {
+
+        URL url = new URL(urlPath);
+        //
+        URLConnection connection = url.openConnection();
+        //
+        File file = new File(localPath);
+        if (file.exists()) {
+            file.delete();
+        }
+        //
+        connection.setReadTimeout(60000);
+        connection.setConnectTimeout(60000);
+        //
+        FileOutputStream outputStream = new FileOutputStream(localPath, true);
+        //
+        InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+        byte[] data = new byte[1024];
+        //
+        int n;
+        //
+        while ((n = inputStream.read(data)) != -1) {
+            outputStream.write(data, 0, n);
+        }
+        //
+        outputStream.flush();
+        outputStream.close();
+        //
+        inputStream.close();
+    }
+
+    public static void downloadImagePDF(String urlPath, String localPath) throws Exception {
 
         URL url = new URL(urlPath);
         //
@@ -309,12 +344,33 @@ public class ToolBox_Inf {
         }
     }
 
-    public static void deletarDownloadFile(String sName) {
+    public static void deleteDownloadFile(String sName) {
         File file = new File(sName);
 
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    public static void deleteDownloadFileInf(String sName) {
+        File file = new File(Constant.CACHE_PATH + "/" + sName);
+
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    public static void renameDownloadFileInf(String sName, String ext) {
+        File from = new File(Constant.CACHE_PATH + "/", sName + ".tmp");
+        File to = new File(Constant.CACHE_PATH + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
+
+    public static boolean verifyDownloadFileInf(String sName) {
+        File file = new File(Constant.CACHE_PATH + "/", sName);
+
+        return file.exists();
     }
 
     public static String sFileContent(String sPath, String sFile) {
@@ -533,12 +589,13 @@ public class ToolBox_Inf {
 
     /**
      * Metodo que retorna o Resource_code, baseado no Resource_name
+     *
      * @param context
      * @param module_code
      * @param resource_name
      * @return
      */
-    public static String getResourceCode(Context context,String module_code,String resource_name){
+    public static String getResourceCode(Context context, String module_code, String resource_name) {
         //Dao para buscar codigo do recurso
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(
                 context,
@@ -560,7 +617,8 @@ public class ToolBox_Inf {
             return "0";
         }
     }
-    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code){
+
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
@@ -568,7 +626,7 @@ public class ToolBox_Inf {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        List<EV_Module_Res_Txt_Trans> module_res_txt_transes =  transDao.query(
+        List<EV_Module_Res_Txt_Trans> module_res_txt_transes = transDao.query(
                 new EV_Module_Res_Txt_Trans_Sql_002(
                         module_code,
                         resource_code,
