@@ -110,7 +110,7 @@ public class GE_Custom_Form_Data_Field {
     public void setValue(String value) {
         this.value = value;
         //
-        if (this.value.startsWith("{\"CONTENT\":[{")){
+        if (this.value.startsWith("{\"CONTENT\":[{")) {
             this.value_json = this.value;
         } else {
             try {
@@ -124,13 +124,7 @@ public class GE_Custom_Form_Data_Field {
                 } else {
                     JSONObject jsonObject = new JSONObject();
                     JSONObject jsonObjectAux = new JSONObject();
-                    //
-                    if (this.value.startsWith("/sdcard/")){
-                        jsonObjectAux.put("VALUE", ToolBox_Inf.BitMapToBase64(BitmapFactory.decodeFile(value)));
-                    } else {
-                        jsonObjectAux.put("VALUE", value);
-                    }
-
+                    jsonObjectAux.put("VALUE", value);
                     JSONArray ja = new JSONArray();
                     ja.put(jsonObjectAux);
                     //
@@ -151,7 +145,7 @@ public class GE_Custom_Form_Data_Field {
     public void setValue_extra(String value_extra) {
         this.value_extra = value_extra;
         //
-        if (this.value_extra.startsWith("{\"CONTENT\":[{")){
+        if (this.value_extra.startsWith("{\"CONTENT\":[{")) {
             this.value_extra_json = this.value_extra;
         } else {
             try {
