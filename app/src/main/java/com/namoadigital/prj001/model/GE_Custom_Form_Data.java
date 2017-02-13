@@ -42,10 +42,16 @@ public class GE_Custom_Form_Data {
     private String date_end;
 
     @Expose
-    private long user_code_start;
+    private long user_code;
 
     @Expose
-    private long user_code_end;
+    private long site_code;
+
+    @Expose
+    private long operation_code;
+
+    @Expose
+    private String signature;
 
     @Expose
     private String token;
@@ -63,8 +69,10 @@ public class GE_Custom_Form_Data {
         this.serial_id = "";
         this.date_start = "1900-01-01";
         this.date_end = "1900-01-01";
-        this.user_code_start = -1;
-        this.user_code_end = -1;
+        this.user_code = -1;
+        this.site_code = -1;
+        this.operation_code = -1;
+        this.signature = "";
         this.token = "";
         this.dataFields = new ArrayList<>();
     }
@@ -149,20 +157,36 @@ public class GE_Custom_Form_Data {
         this.date_end = date_end;
     }
 
-    public long getUser_code_start() {
-        return user_code_start;
+    public long getUser_code() {
+        return user_code;
     }
 
-    public void setUser_code_start(long user_code_start) {
-        this.user_code_start = user_code_start;
+    public void setUser_code(long user_code) {
+        this.user_code = user_code;
     }
 
-    public long getUser_code_end() {
-        return user_code_end;
+    public long getSite_code() {
+        return site_code;
     }
 
-    public void setUser_code_end(long user_code_end) {
-        this.user_code_end = user_code_end;
+    public void setSite_code(long site_code) {
+        this.site_code = site_code;
+    }
+
+    public long getOperation_code() {
+        return operation_code;
+    }
+
+    public void setOperation_code(long operation_code) {
+        this.operation_code = operation_code;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public String getToken() {

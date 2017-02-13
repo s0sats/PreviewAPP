@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -104,6 +105,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_SEND_DATA:
+                    mView.showPD();
+                    executeSaveProcess();
                     break;
 
                 case Act005_Main.MENU_ID_SYNC_DATA:
@@ -120,6 +123,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void executeSaveProcess() {
+
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        ToolBox_Inf.sendBCStatus(context, "STATUS", "Prepering to send form data ...", "", "0");
+
     }
 
 

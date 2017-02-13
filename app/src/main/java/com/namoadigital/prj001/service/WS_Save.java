@@ -11,6 +11,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.TSave_Env;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
@@ -28,23 +29,13 @@ import java.util.List;
 public class WS_Save extends IntentService {
 
     private StringBuilder sResult;
-
-    private GE_Custom_Form_DataDao formDataDao =
-            new GE_Custom_Form_DataDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                    Constant.DB_VERSION_CUSTOM
-            );
-
-    private GE_Custom_Form_Data_FieldDao formDataFieldDao =
-            new GE_Custom_Form_Data_FieldDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                    Constant.DB_VERSION_CUSTOM
-            );
-    String token = ToolBox_Inf.getToken(getApplicationContext());
-    List<GE_Custom_Form_Data> form_datas = new ArrayList<>();
-    List<GE_Custom_Form_Data_Field> form_data_fields = new ArrayList<>();
+    //
+    private GE_Custom_Form_DataDao formDataDao;
+    private GE_Custom_Form_Data_FieldDao formDataFieldDao;
+    //
+    private String token;
+    private List<GE_Custom_Form_Data> form_datas;
+    private List<GE_Custom_Form_Data_Field> form_data_fields;
 
 
     public WS_Save() {
@@ -58,12 +49,28 @@ public class WS_Save extends IntentService {
 
         try {
 
-            int statusjump = bundle.getInt(Constant.GC_STATUS_JUMP);
+            formDataDao = new GE_Custom_Form_DataDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            formDataFieldDao = new GE_Custom_Form_Data_FieldDao(
+                            getApplicationContext(),
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+            //
+            token = ToolBox_Inf.getToken(getApplicationContext());
+            form_datas = new ArrayList<>() ;
+            form_data_fields = new ArrayList<>();
+            //
+            int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
 
             sResult = new StringBuilder();
 
-            processWS_Save(statusjump, jumpOD);
+            processWS_Save(jumpValidation, jumpOD);
 
         } catch (Exception e) {
 
@@ -92,16 +99,18 @@ public class WS_Save extends IntentService {
 
     }
 
-    private void processWS_Save(int statusjump, int jumpOD) {
-
+    private void processWS_Save(int jumpValidation, int jumpOD) {
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Getting pending form data ...", "", "0");
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         if(processPendingToken(1) == 0){
             processNewToken(0);
         }
-
+        //
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Sending form data...", "", "0");
+        //
         TSave_Env env =  new TSave_Env();
-
+        //
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
@@ -109,12 +118,32 @@ public class WS_Save extends IntentService {
         env.setOperation_code(ToolBox_Con.getPreference_Operation_Code(getApplicationContext()));
         env.setForm_datas(form_datas);
         env.setForm_data_fields(form_data_fields);
+        env.setToken(token);
 
+        String resultado = ToolBox_Con.connWebService(
+                Constant.WS_SAVE,
+                gson.toJson(env)
+        );
 
+        TSave_Rec rec = gson.fromJson(
+                resultado,
+                TSave_Rec.class
+        );
 
-        if(checkSaveReturn()){
-
+        if (!ToolBox_Inf.processWSCheckValidation(
+                getApplicationContext(),
+                rec.getValidation(),
+                rec.getError_msg(),
+                rec.getLink_url(),
+                jumpValidation,
+                jumpOD
+                )
+            ) {
+            return;
         }
+        //Apos processar validation, processa o retorno do SAve
+        checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url());
+
     }
 
     private int processPendingToken(int pending) {
@@ -172,10 +201,23 @@ public class WS_Save extends IntentService {
 
     }
 
-    private boolean checkSaveReturn() {
+    private boolean checkSaveReturn(String save, String error_msg, String link_url) {
 
+        switch (save){
+            case "OK":
+            case"OK_DUP":
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Data Sent!", "", "0");
+                return true;
 
+            case "ERROR_TOKEN_EXCEPTION":
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "ERROR TOKEN EXCEPTION", "", "0");
+                return false;
+            default:
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "SAVE ERROR \n" + error_msg ,"" , "0");
+                return false;
 
-        return false;
+        }
+
     }
+
 }

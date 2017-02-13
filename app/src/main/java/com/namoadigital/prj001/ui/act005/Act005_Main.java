@@ -256,19 +256,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 //        }
 //    }
 
-    private HMAux getTranslationList(List<String> translate_list) {
-        HMAux hmAux = new HMAux();
-        for (String txt:translate_list) {
-
-            if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
-            } else {
-                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
-            }
-        }
-        return hmAux;
-    }
-
     private void initActions() {
         gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -317,6 +304,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    private HMAux getTranslationList(List<String> translate_list) {
+        HMAux hmAux = new HMAux();
+        for (String txt:translate_list) {
+
+            if (hmAux_Trans.get(txt) != null) {
+                hmAux.put(txt,hmAux_Trans.get(txt));
+            } else {
+                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+            }
+        }
+        return hmAux;
     }
 
     @Override

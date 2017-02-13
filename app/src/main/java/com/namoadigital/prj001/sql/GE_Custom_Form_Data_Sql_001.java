@@ -45,6 +45,7 @@ public class GE_Custom_Form_Data_Sql_001 implements Specification {
                                 "  = '"
                                 + Constant.CUSTOM_FORM_STATUS_FINALIZED+"' " +
                                 tokenFilter +
+                        "  ORDER BY " +
                         "      F.customer_code,  " +
                         "      F.custom_form_type,  " +
                         "      F.custom_form_code,  " +

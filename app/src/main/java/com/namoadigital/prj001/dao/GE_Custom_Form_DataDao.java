@@ -32,12 +32,15 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String SERIAL_ID = "serial_id";
     public static final String DATE_START = "date_start";
     public static final String DATE_END = "date_end";
-    public static final String USER_CODE_START = "user_code_start";
+    public static final String USER_CODE = "user_code";
+    public static final String SITE_CODE = "site_code";
+    public static final String OPERATION_CODE = "operation_code";
+    public static final String SIGNAURE = "signaure";
     public static final String TOKEN = "token";
     public static final String USER_CODE_END = "user_code_end";
 
 
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE_START, USER_CODE_END, TOKEN};
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
     public GE_Custom_Form_DataDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -263,8 +266,16 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
             custom_form_data.setDate_start(cursor.getString(cursor.getColumnIndex(DATE_START)));
             custom_form_data.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
-            custom_form_data.setUser_code_start(cursor.getLong(cursor.getColumnIndex(USER_CODE_START)));
-            custom_form_data.setUser_code_end(cursor.getLong(cursor.getColumnIndex(USER_CODE_END)));
+            custom_form_data.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
+            custom_form_data.setSite_code(cursor.getLong(cursor.getColumnIndex(SITE_CODE)));
+            custom_form_data.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
+
+            if(cursor.isNull(cursor.getColumnIndex(SIGNAURE))){
+                custom_form_data.setSignature("");
+            }else{
+                custom_form_data.setSignature(cursor.getString(cursor.getColumnIndex(SIGNAURE)));
+            }
+
             custom_form_data.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
             return custom_form_data;
@@ -306,11 +317,17 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getDate_end() != null) {
                 contentValues.put(DATE_END, custom_form_data.getDate_end());
             }
-            if (custom_form_data.getUser_code_start() > -1) {
-                contentValues.put(USER_CODE_START, custom_form_data.getUser_code_start());
+            if (custom_form_data.getUser_code() > -1) {
+                contentValues.put(USER_CODE, custom_form_data.getUser_code());
             }
-            if (custom_form_data.getUser_code_end() > -1) {
-                contentValues.put(USER_CODE_END, custom_form_data.getUser_code_end());
+            if (custom_form_data.getSite_code() > -1) {
+                contentValues.put(SITE_CODE, custom_form_data.getSite_code());
+            }
+            if (custom_form_data.getOperation_code() > -1) {
+                contentValues.put(OPERATION_CODE, custom_form_data.getOperation_code());
+            }
+            if(custom_form_data.getSignature() != null){
+                contentValues.put(SIGNAURE, custom_form_data.getSignature());
             }
             if(custom_form_data.getToken() != null){
                 contentValues.put(TOKEN, custom_form_data.getToken());
