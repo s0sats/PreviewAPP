@@ -4,6 +4,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by DANIEL.LUCHE on 09/02/2017.
@@ -40,8 +41,8 @@ public class Sql_Act012_001 implements Specification {
                         " WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    in('"+ GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
-                        " '"+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_FINALIZED+"');")
+                        "    in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
+                        " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"');")
                 .append(PENDING_QTY+"#"+TYPE)
                 .toString();
     }

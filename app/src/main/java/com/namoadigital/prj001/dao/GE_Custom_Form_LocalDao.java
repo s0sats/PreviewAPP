@@ -36,14 +36,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
 
-    //Constantes do Status do Cabeçalho
-    public static final String CUSTOM_FORM_STATUS_RECEIVED = "RECEIVED";
-    public static final String CUSTOM_FORM_STATUS_IN_PROCESSING = "IN_PROCESSING";
-    public static final String CUSTOM_FORM_STATUS_FINALIZED = "FINALIZED";
-    public static final String CUSTOM_FORM_STATUS_SENT = "SENT";
-
-
-
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //

@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by DANIEL.LUCHE on 10/02/2017.
@@ -13,8 +13,8 @@ public class TSave_Env {
     private long site_code;
     private long operation_code;
     private String token;
-    private ArrayList<GE_Custom_Form_Data>  form_datas;
-    private ArrayList<GE_Custom_Form_Data_Field> form_data_fields;
+    private List<GE_Custom_Form_Data> form_datas;
+    private List<GE_Custom_Form_Data_Field> form_data_fields;
 
     public String getApp_code() {
         return app_code;
@@ -64,19 +64,19 @@ public class TSave_Env {
         this.token = token;
     }
 
-    public ArrayList<GE_Custom_Form_Data> getForm_datas() {
+    public List<GE_Custom_Form_Data> getForm_datas() {
         return form_datas;
     }
 
-    public void setForm_datas(ArrayList<GE_Custom_Form_Data> form_datas) {
+    public void setForm_datas(List<GE_Custom_Form_Data> form_datas) {
         this.form_datas = form_datas;
     }
 
-    public ArrayList<GE_Custom_Form_Data_Field> getForm_data_fields() {
+    public List<GE_Custom_Form_Data_Field> getForm_data_fields() {
         return form_data_fields;
     }
 
-    public void setForm_data_fields(ArrayList<GE_Custom_Form_Data_Field> form_data_fields) {
+    public void setForm_data_fields(List<GE_Custom_Form_Data_Field> form_data_fields) {
         this.form_data_fields = form_data_fields;
     }
 }

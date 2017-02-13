@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class Act013_Adapter_Pendencies extends BaseAdapter {
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
-            case GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_IN_PROCESSING:
+            case Constant.CUSTOM_FORM_STATUS_IN_PROCESSING:
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_states);
                 llBackground.setBackground(llDrawable);
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.custom_yellow_dark));
@@ -94,7 +95,7 @@ public class Act013_Adapter_Pendencies extends BaseAdapter {
 
                 break;
             //
-            case GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_FINALIZED:
+            case Constant.CUSTOM_FORM_STATUS_FINALIZED:
                 llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_states);
                 llBackground.setBackground(llDrawable);
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_font_color));

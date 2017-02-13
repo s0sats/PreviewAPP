@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by DANIEL.LUCHE on 09/02/2017.
@@ -34,8 +35,8 @@ public class Sql_Act013_001 implements Specification {
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
                         "  WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        " AND l.custom_form_status in('"+ GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
-                        " '"+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS_FINALIZED+"');")
+                        " AND l.custom_form_status in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
+                        " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"');")
                 .append("custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_form_data#custom_form_status")
