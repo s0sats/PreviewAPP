@@ -200,15 +200,15 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     @Override
     public void alertFormNotReady() {
         List<String> translist = new ArrayList<>();
-        translist.add("alert_form_title");
-        translist.add("alert_form_msg");
+        translist.add("alert_form_not_ready_title");
+        translist.add("alert_form_not_ready_msg");
 
         HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translist);
 
         ToolBox.alertMSG(
                 Act010_Main.this,
-                alertTrans.get("alert_form_title"),
-                alertTrans.get("alert_form_msg"),
+                alertTrans.get("alert_form_not_ready_title"),
+                alertTrans.get("alert_form_not_ready_msg"),
                 null,
                 0
         );

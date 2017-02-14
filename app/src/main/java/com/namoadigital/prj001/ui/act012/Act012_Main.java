@@ -156,25 +156,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     }
 
-   /*
-   INCLUIR NA TOOLBOX?
-   Metodo que recebe uma lista de itens a serem traduzidos
-   Se item itver tradução pega a a tradução,
-   se não traz Modulo/0/txt_code*/
-
-//   private HMAux getTranslationList(List<String> translate_list) {
-//        HMAux hmAux = new HMAux();
-//        for (String txt:translate_list) {
-//
-//            if (hmAux_Trans.get(txt) != null) {
-//                hmAux.put(txt,hmAux_Trans.get(txt));
-//            } else {
-//                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
-//            }
-//        }
-//        return hmAux;
-//    }
-
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);

@@ -63,7 +63,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter{
             mView.callAct011(context);
 
         }else{
-
+            mView.alertFormNotReady();
         }
     }
 

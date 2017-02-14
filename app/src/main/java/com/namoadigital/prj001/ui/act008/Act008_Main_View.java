@@ -22,4 +22,6 @@ public interface Act008_Main_View {
 
     void callAct009(Context context);
 
+    void callAct007(Context context);
+
 }

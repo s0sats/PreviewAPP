@@ -231,7 +231,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             alertTitle,
                             alertMsg,
                             listener,
-                            0
+                            1
                     );
 
                 }

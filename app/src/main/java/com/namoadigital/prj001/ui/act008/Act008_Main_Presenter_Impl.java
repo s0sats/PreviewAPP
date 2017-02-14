@@ -10,6 +10,8 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -33,6 +35,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private Sync_ChecklistDao syncChecklistDao;
     private MD_ProductDao mdProductDao;
     private Long product_code;
+    private boolean downloadStarted = false;
 
 
     public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code) {
@@ -106,6 +109,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             }else{
                 if (required == 0){
                     mView.callAct009(context);
+                    //Atualiza data na tabela de produtos local
+                    updateSyncChecklist();
                 }else{
                     alertSerialEmpty();
                 }
@@ -174,7 +179,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         syncChecklist.setLast_update(last_update);
 
         syncChecklistDao.addUpdate(syncChecklist);
-
+        //
+        startDownloadServices();
     }
 
     @Override
@@ -185,6 +191,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         }else{
             if (serial.length() == 0 && serial_required == 0 ){
                 mView.callAct009(context);
+                //Atualiza data na tabela de produtos local
+                updateSyncChecklist();
             }else{
               alertSerialEmpty();
             }
@@ -192,9 +200,29 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     private void alertSerialEmpty() {
-        //Se não foi e serial requerido, dispara alert de erro.
+        //Se serial requerido, dispara alert de erro.
         mView.fieldFocus();
         mView.showAlertDialog("Serial","Please, type a serial.");
+    }
+    @Override
+    public void startDownloadServices(){
 
+        if(!downloadStarted) {
+            Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+            Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+            Bundle bundle = new Bundle();
+            mIntentPDF.putExtras(bundle);
+            mIntentPIC.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntentPDF);
+            context.sendBroadcast(mIntentPIC);
+            //Atualiza var e impede que os serviços sejam chamados 2 vezes seguidas
+            downloadStarted = true;
+        }
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct007(context);
     }
 }

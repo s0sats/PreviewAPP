@@ -15,9 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -39,14 +37,9 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
-import com.namoadigital.prj001.ui.act001.Act001_Main;
-import com.namoadigital.prj001.ui.act003.Act003_Main;
-import com.namoadigital.prj001.ui.act004.Act004_Main_View;
-import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter;
-import com.namoadigital.prj001.ui.act009.Act009_Main_Presenter_Impl;
+import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -609,4 +602,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void callAct010(Context context) {
+        Intent mIntent =  new Intent(context, Act010_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Remove produto do bundle
+        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE);
+        bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
+        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
 }

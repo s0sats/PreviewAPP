@@ -12,8 +12,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_003;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -82,25 +80,26 @@ public class WS_DownLoad_PDF extends IntentService {
                     ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name"), ".pdf");
                 }
                 //
+                String nome_parte[] = hmAux.get("custom_name").split("_");
                 form_blobDao.addUpdate(
                         new GE_Custom_Form_Blob_Sql_003(
-                                hmAux.get("customer_code"),
-                                hmAux.get("custom_form_type"),
-                                hmAux.get("custom_form_code"),
-                                hmAux.get("custom_form_version"),
-                                hmAux.get("blob_code"),
-                                hmAux.get("custom_name")
+                                nome_parte[1],
+                                nome_parte[2],
+                                nome_parte[3],
+                                nome_parte[4],
+                                nome_parte[5],
+                                hmAux.get("custom_name") + ".pdf"
                         ).toSqlQuery().toLowerCase()
                 );
 
                 form_blob_localDao.addUpdate(
                         new GE_Custom_Form_Blob_Local_Sql_003(
-                                hmAux.get("customer_code"),
-                                hmAux.get("custom_form_type"),
-                                hmAux.get("custom_form_code"),
-                                hmAux.get("custom_form_version"),
-                                hmAux.get("blob_code"),
-                                hmAux.get("custom_name")
+                                nome_parte[1],
+                                nome_parte[2],
+                                nome_parte[3],
+                                nome_parte[4],
+                                nome_parte[5],
+                                hmAux.get("custom_name") + ".pdf"
                         ).toSqlQuery().toLowerCase()
                 );
 

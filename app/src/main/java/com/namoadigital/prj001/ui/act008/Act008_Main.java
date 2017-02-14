@@ -202,7 +202,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         chk_allow_new.setChecked( md_product.getAllow_new_serial_cl() == 1 ? true : false);
     }
 
-    private void callAct007(Context context) {
+    @Override
+    public void callAct007(Context context) {
         Intent mIntent =  new Intent(context, Act007_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Remove produto do bundle
@@ -349,5 +350,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         ToolBox_Inf.call_Act001_Main(context);
         //
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 }

@@ -144,5 +144,9 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         finish();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
 }

@@ -47,6 +47,11 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     }
 
     @Override
+    public void onBackPressedClicked() {
+
+    }
+
+    @Override
     public void setSiteCode(HMAux item) {
         ToolBox_Con.setPreference_Site_Code(context, item.get(MD_SiteDao.SITE_CODE));
         mView.callAct004(context);

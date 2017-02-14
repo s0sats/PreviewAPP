@@ -18,5 +18,6 @@ public interface Act004_Main_Presenter {
      */
     boolean checkPreferenceIsSet();
 
+    void onBackPressedClicked();
 
 }

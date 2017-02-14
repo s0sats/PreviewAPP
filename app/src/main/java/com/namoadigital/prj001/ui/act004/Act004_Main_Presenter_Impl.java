@@ -53,4 +53,9 @@ public class Act004_Main_Presenter_Impl implements Act004_Main_Presenter {
         }
         return false;
     }
+
+    @Override
+    public void onBackPressedClicked() {
+
+    }
 }
