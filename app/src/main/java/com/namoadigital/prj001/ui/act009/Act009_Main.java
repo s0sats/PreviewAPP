@@ -184,7 +184,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             transList.add("alert_ttl_no_form_found");
             transList.add("alert_msg_no_form_found");
 
-            HMAux alertTrans = getTranslationList(transList);
+            HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code, transList);
             ToolBox.alertMSG(
                     Act009_Main.this,
                     alertTrans.get("alert_ttl_no_form_found"),
@@ -194,40 +194,25 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             callAct008(context);
                         }
-                    }
+                    },
+                    0
             );
         }
     }
 
-  /*  private HMAux setAlertTranslation(String title_txt_code, String msg_txt_code) {
-        HMAux hmAux = new HMAux();
-        if (hmAux_Trans.get(title_txt_code) != null) {
-            hmAux.put(title_txt_code,hmAux_Trans.get(title_txt_code));
-        } else {
-            hmAux.put(title_txt_code,ToolBox.setNoTrans(mModule_Code, mResource_Code, title_txt_code));
-        }
 
-        if (hmAux_Trans.get(msg_txt_code) != null) {
-            hmAux.put(msg_txt_code,hmAux_Trans.get(msg_txt_code));
-        } else {
-            hmAux.put(msg_txt_code,ToolBox.setNoTrans(mModule_Code, mResource_Code, msg_txt_code));
-        }
-
-        return hmAux;
-    }*/
-
-    private HMAux getTranslationList(List<String> translate_list) {
-        HMAux hmAux = new HMAux();
-        for (String txt:translate_list) {
-
-            if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
-            } else {
-                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
-            }
-        }
-        return hmAux;
-    }
+//    private HMAux getTranslationList(List<String> translate_list) {
+//        HMAux hmAux = new HMAux();
+//        for (String txt:translate_list) {
+//
+//            if (hmAux_Trans.get(txt) != null) {
+//                hmAux.put(txt,hmAux_Trans.get(txt));
+//            } else {
+//                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+//            }
+//        }
+//        return hmAux;
+//    }
 
     public void callAct008(Context context) {
         Intent mIntent = new Intent(context, Act008_Main.class);

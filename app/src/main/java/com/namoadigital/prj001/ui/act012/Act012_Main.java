@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
@@ -104,7 +103,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         translateList.add(LABEL_TRANS_CHECKLIST);
         translateList.add(LABEL_TRANS_OS);
         //
-        mPresenter.getPendencies(getTranslationList(translateList));
+        mPresenter.getPendencies(ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translateList));
 
     }
 
@@ -163,18 +162,18 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
    Se item itver tradução pega a a tradução,
    se não traz Modulo/0/txt_code*/
 
-   private HMAux getTranslationList(List<String> translate_list) {
-        HMAux hmAux = new HMAux();
-        for (String txt:translate_list) {
-
-            if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
-            } else {
-                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
-            }
-        }
-        return hmAux;
-    }
+//   private HMAux getTranslationList(List<String> translate_list) {
+//        HMAux hmAux = new HMAux();
+//        for (String txt:translate_list) {
+//
+//            if (hmAux_Trans.get(txt) != null) {
+//                hmAux.put(txt,hmAux_Trans.get(txt));
+//            } else {
+//                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+//            }
+//        }
+//        return hmAux;
+//    }
 
     @Override
     public void callAct005(Context context) {

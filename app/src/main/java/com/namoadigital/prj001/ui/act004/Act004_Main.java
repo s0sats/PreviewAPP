@@ -113,7 +113,8 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                             ToolBox_Inf.call_Act001_Main(Act004_Main.this);
                             finish();
                         }
-                    }
+                    },
+                    0
             );
 
         }

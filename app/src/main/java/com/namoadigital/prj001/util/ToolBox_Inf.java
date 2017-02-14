@@ -10,13 +10,20 @@ import android.telephony.TelephonyManager;
 import android.util.Base64;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
+import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
 import java.io.BufferedInputStream;
@@ -645,6 +652,61 @@ public class ToolBox_Inf {
 
     public static String sVersionDesc(String Build_RELEASE, String Build_SDK_INT) {
         return Build_RELEASE + " (" + Build_SDK_INT + ")";
+    }
+
+    public static HMAux getTranslationList(HMAux hmAux_Trans, String mModule_Code,String mResource_Code, List<String> translate_list) {
+        HMAux hmAux = new HMAux();
+        for (String txt:translate_list) {
+
+            if (hmAux_Trans.get(txt) != null) {
+                hmAux.put(txt,hmAux_Trans.get(txt));
+            } else {
+                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+            }
+        }
+        return hmAux;
+    }
+
+    public static boolean checkFormIsReady(Context context ,long customer_code , int custom_form_type, int custom_form_code, int custom_form_version){
+        GE_Custom_Form_Blob_LocalDao blobLocalDao =
+                new GE_Custom_Form_Blob_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(customer_code),
+                        Constant.DB_VERSION_CUSTOM
+                        );
+        List<GE_Custom_Form_Blob_Local> pendingBlobs = blobLocalDao.query(
+                new GE_Custom_Form_Blob_Local_Sql_004(
+                        customer_code,
+                        custom_form_type,
+                        custom_form_code,
+                        custom_form_version
+                ).toSqlQuery()
+        );
+        //Se exitem blobs pendentes, retorna false
+        if(pendingBlobs.size() > 0){
+            return false;
+        }else {
+            GE_Custom_Form_Field_LocalDao fieldLocalDao =
+                    new GE_Custom_Form_Field_LocalDao(
+                            context,
+                            ToolBox_Con.customDBPath(customer_code),
+                            Constant.DB_VERSION_CUSTOM
+                            );
+            List<GE_Custom_Form_Field_Local> pendingPictures = fieldLocalDao.query(
+                    new GE_Custom_Form_Field_Local_Sql_003(
+                            customer_code,
+                            custom_form_type,
+                            custom_form_code,
+                            custom_form_version
+                    ).toSqlQuery()
+            );
+
+            if (pendingPictures.size() > 0){
+                return false;
+            }else{
+                return true;
+            }
+        }
     }
 
 }

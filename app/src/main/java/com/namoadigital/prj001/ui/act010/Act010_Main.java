@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
@@ -23,6 +24,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,7 +107,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         btn_back = (BootstrapButton) findViewById(R.id.act010_btn_back);
         btn_back.setTag("btn_back");
         views.add(btn_back);
-
+        //
         mPresenter.setAdapterData(product_code, custom_form_type, "");
 
     }
@@ -154,14 +156,62 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         lv_forms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                addFormInfoToBundle(item);
-                //
-                callAct011(context);
+            HMAux item = (HMAux) parent.getItemAtPosition(position);
+            //
+            mPresenter.validateOpenForm(item);
             }
         });
 
+    }
+
+    @Override
+    public void loadForms(List<HMAux> forms) {
+        mAdapter =
+                new Lib_Custom_Cell_Adapter(
+                        context,
+                        R.layout.lib_custom_cell,
+                        forms,
+                        Lib_Custom_Cell_Adapter.CFG_ID_DESC_DESC2,
+                        GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+                        GE_Custom_FormDao.CUSTOM_FORM_CODE,
+                        GE_Custom_FormDao.CUSTOM_FORM_DESC
+                        );
+        lv_forms.setAdapter(mAdapter);
+
+    }
+    @Override
+    public void addFormInfoToBundle(HMAux item) {
+        bundle.putString(
+                Constant.ACT010_CUSTOM_FORM_CODE,
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)
+        );
+        //
+        bundle.putString(
+                Constant.ACT010_CUSTOM_FORM_VERSION,
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+        );
+        //
+        bundle.putString(
+                 Constant.ACT010_CUSTOM_FORM_CODE_DESC,
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_DESC)
+        );
+    }
+
+    @Override
+    public void alertFormNotReady() {
+        List<String> translist = new ArrayList<>();
+        translist.add("alert_form_title");
+        translist.add("alert_form_msg");
+
+        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translist);
+
+        ToolBox.alertMSG(
+                Act010_Main.this,
+                alertTrans.get("alert_form_title"),
+                alertTrans.get("alert_form_msg"),
+                null,
+                0
+        );
     }
 
     @Override
@@ -182,42 +232,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
-    }
-
-    @Override
-    public void loadForms(List<HMAux> forms) {
-        mAdapter =
-                new Lib_Custom_Cell_Adapter(
-                        context,
-                        R.layout.lib_custom_cell,
-                        forms,
-                        Lib_Custom_Cell_Adapter.CFG_ID_DESC_DESC2,
-                        GE_Custom_FormDao.CUSTOM_FORM_VERSION,
-                        GE_Custom_FormDao.CUSTOM_FORM_CODE,
-                        GE_Custom_FormDao.CUSTOM_FORM_DESC
-                        );
-        lv_forms.setAdapter(mAdapter);
-
-    }
-
-    private void addFormInfoToBundle(HMAux item) {
-
-        String sHugo = item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE);
-
-        bundle.putString(
-                Constant.ACT010_CUSTOM_FORM_CODE,
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)
-        );
-        //
-        bundle.putString(
-                Constant.ACT010_CUSTOM_FORM_VERSION,
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
-        );
-        //
-        bundle.putString(
-                 Constant.ACT010_CUSTOM_FORM_CODE_DESC,
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_DESC)
-        );
     }
 
     @Override

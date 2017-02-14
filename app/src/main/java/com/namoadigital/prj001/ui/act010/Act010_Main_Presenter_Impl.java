@@ -7,6 +7,7 @@ import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -43,6 +44,27 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter{
                 );
 
         mView.loadForms(data);
+    }
+
+    @Override
+    public void validateOpenForm(HMAux item) {
+        //
+        if(ToolBox_Inf.checkFormIsReady(
+                    context,
+                    Long.parseLong(item.get(GE_Custom_FormDao.CUSTOMER_CODE)),
+                    Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE)),
+                    Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)),
+                    Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION))
+            )
+        ){
+            //
+            mView.addFormInfoToBundle(item);
+            //
+            mView.callAct011(context);
+
+        }else{
+
+        }
     }
 
     @Override

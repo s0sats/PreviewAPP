@@ -151,7 +151,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 transList.add("drawer_logout_alert_ttl");
                 transList.add("drawer_logout_alert_msg");
 
-                HMAux alertTrans = getTranslationList(transList);
+                HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code,transList);
 
                 switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
@@ -230,7 +230,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             Act005_Main.this,
                             alertTitle,
                             alertMsg,
-                            listener
+                            listener,
+                            0
                     );
 
                 }
@@ -306,7 +307,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setFooter();
     }
 
-    private HMAux getTranslationList(List<String> translate_list) {
+    /*private HMAux getTranslationList(HMAux hmAux_Trans, String mModule_Code,String mResource_Code, List<String> translate_list) {
         HMAux hmAux = new HMAux();
         for (String txt:translate_list) {
 
@@ -317,7 +318,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             }
         }
         return hmAux;
-    }
+    }*/
 
     @Override
     public void showPD() {
