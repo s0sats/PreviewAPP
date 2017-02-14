@@ -94,8 +94,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     ).toSqlQuery().toString().toLowerCase()
             );
 
-            int i = 10;
-
         } else {
 
             HMAux ii = custom_formDao.getByStringHM(

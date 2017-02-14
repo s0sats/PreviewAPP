@@ -259,7 +259,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     formData.getDataFields().add(form_data_field);
                 }
 
-
                 switch (cf.get("custom_form_data_type").toLowerCase()) {
                     case "char":
                         customFFs.add(cfg_Char(cf));
@@ -367,6 +366,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         mkEditTextNMFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return mkEditTextNMFF;
     }
@@ -386,6 +386,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         comboBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return comboBoxFF;
     }
@@ -417,6 +418,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return checkBoxFF;
     }
@@ -436,6 +438,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return ratingImageFF;
     }
@@ -455,6 +458,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return ratingBarFF;
     }
@@ -477,6 +481,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return pictureFF;
     }
@@ -497,6 +502,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
         return photoFF;
     }
@@ -516,12 +522,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         return hmAux;
     }
 
-    private String returnFieldValue(int seq) {
+    private String returnFieldValue(int seq, int type) {
         String result = "";
         //
         for (int i = 0; i < customFFs.size(); i++) {
             if (customFFs.get(i).getmSequence() == seq) {
-                result = customFFs.get(i).getmValue();
+                if (type == 0) {
+                    result = customFFs.get(i).getmValue();
+                } else {
+                    result = customFFs.get(i).getmValue_Extra();
+                }
                 //
                 break;
             }
@@ -533,7 +543,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private void prepareFormSave() {
 
         for (GE_Custom_Form_Data_Field form_data_field : formData.getDataFields()) {
-            form_data_field.setValue(returnFieldValue(form_data_field.getCustom_form_seq()));
+            form_data_field.setValue(returnFieldValue(form_data_field.getCustom_form_seq(), 0));
+            form_data_field.setValue_extra(returnFieldValue(form_data_field.getCustom_form_seq(), 1));
         }
 
         String tt = formData.getSerial_id();
