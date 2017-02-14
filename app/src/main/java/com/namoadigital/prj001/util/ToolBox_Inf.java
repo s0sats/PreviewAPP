@@ -556,6 +556,9 @@ public class ToolBox_Inf {
             case "LICENSE_QTY_INVALID":
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
+            case "PARAMETERS_ERROR":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
 
             default:
                 break;
