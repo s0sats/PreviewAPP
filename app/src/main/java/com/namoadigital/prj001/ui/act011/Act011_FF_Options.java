@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
@@ -35,7 +36,11 @@ public class Act011_FF_Options extends Fragment {
 
     private Act011_FF_Options_Adapter adapter_tabs;
 
-    //private transient LinearLayout ff_options_ll_ct;
+    private transient LinearLayout ff_options_ll_s;
+    private transient TextView ff_options_ll_st;
+
+    private transient LinearLayout ff_options_ll_f;
+    private transient TextView ff_options_ll_ft;
 
     public void setTabsAndFields(List<HMAux> tabsAndFields) {
         this.tabsAndFields = tabsAndFields;
@@ -54,12 +59,13 @@ public class Act011_FF_Options extends Fragment {
     }
 
     public interface ICustom_Form_FF_Options_ll {
+        public void save();
         public void check();
     }
 
     private ICustom_Form_FF_Options_ll delegate_ll;
 
-    public void setOnCheckListener(ICustom_Form_FF_Options_ll delegate_ll) {
+    public void setOnSaveCheckListener(ICustom_Form_FF_Options_ll delegate_ll) {
         this.delegate_ll = delegate_ll;
     }
 
@@ -79,7 +85,11 @@ public class Act011_FF_Options extends Fragment {
 
         lv_tabs = (ListView) view.findViewById(R.id.act011_ff_options_lv_tabs);
 
-        //ff_options_ll_ct = (LinearLayout) view.findViewById(R.id.act011_ff_options_cell_ll_ct);
+        ff_options_ll_s = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_s);
+        ff_options_ll_st = (TextView) view.findViewById(R.id.act011_ff_options_ll_st);
+
+        ff_options_ll_f = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_f);
+        ff_options_ll_ft = (TextView) view.findViewById(R.id.act011_ff_options_ll_ft);
     }
 
     public void setFOpc(int indice) {
@@ -93,10 +103,26 @@ public class Act011_FF_Options extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux iAux = (HMAux) parent.getItemAtPosition(position);
 
-//                adapter_tabs.setIdselected(Integer.parseInt(iAux.get(HMAux.TEXTO_11)));
-//
                 if (delegate != null) {
                     delegate.tabSelected(Integer.parseInt(iAux.get("page")));
+                }
+            }
+        });
+
+        ff_options_ll_s.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null){
+                    delegate_ll.save();
+                }
+            }
+        });
+
+        ff_options_ll_f.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null){
+                    delegate_ll.check();
                 }
             }
         });
