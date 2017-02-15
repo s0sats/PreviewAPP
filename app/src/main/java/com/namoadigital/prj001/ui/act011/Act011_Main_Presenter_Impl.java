@@ -217,10 +217,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_data(custom_form_data);
             form_data.setProduct_code(product_code);
             form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            form_data.setDate_end("1900-01-01 00:00:00 +00:00");
             form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
             form_data.setSite_code(Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)));
             form_data.setOperation_code(ToolBox_Con.getPreference_Operation_Code(context));
-
         }
 
         return form_data;

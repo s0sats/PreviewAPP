@@ -303,6 +303,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 screens.add(custom_form_ff);
             }
 
+            pager.setOffscreenPageLimit(screens.size());
             pager.setAdapter(
                     new ScreenAdapter(
                             getSupportFragmentManager(),
@@ -345,6 +346,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_Char(HMAux cf) {
         MKEditTextNMFF mkEditTextNMFF = new MKEditTextNMFF(Act011_Main.this);
 
+        mkEditTextNMFF.setmDots_txt_app(cf.get("comment"));
+
         mkEditTextNMFF.setId(View.generateViewId());
         mkEditTextNMFF.setmLabel(cf.get("custom_form_field_desc"));
         mkEditTextNMFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -352,9 +355,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmPage(Integer.parseInt(cf.get("page")));
         mkEditTextNMFF.setmType(cf.get("custom_form_data_type"));
 
-        mkEditTextNMFF.setmMask(cf.get("custom_form_data_mask"));
+        if (cf.get("custom_form_data_type").equalsIgnoreCase("DATE")) {
+            //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"DATE\",\"VALUE\":\"$$/$$/$$$$\"}]}");
+        } else if (cf.get("custom_form_data_type").equalsIgnoreCase("HOUR")) {
+            //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"HOUR\",\"VALUE\":\"$$:$$\"}]}");
+        } else {
+            mkEditTextNMFF.setmMask(cf.get("custom_form_data_mask"));
+            //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"CPF\",\"VALUE\":\"$$$.$$$.$$$-$$\"}]}");
+        }
+
         mkEditTextNMFF.setmOption(cf.get("custom_form_data_content"));
         mkEditTextNMFF.setmMaxSize(Integer.parseInt(cf.get("custom_form_data_size")));
+
+        mkEditTextNMFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        mkEditTextNMFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
@@ -367,6 +381,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_ComboBox(HMAux cf) {
         ComboBoxFF comboBoxFF = new ComboBoxFF(Act011_Main.this);
 
+        comboBoxFF.setmDots_txt_app(cf.get("comment"));
+
         comboBoxFF.setId(View.generateViewId());
         comboBoxFF.setmLabel(cf.get("custom_form_field_desc"));
         comboBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -375,6 +391,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         comboBoxFF.setmType(cf.get("custom_form_data_type"));
 
         comboBoxFF.setmOption(cf.get("custom_form_data_content"));
+
+        comboBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        comboBoxFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
@@ -399,6 +418,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_CheckBox(HMAux cf) {
         CheckBoxFF checkBoxFF = new CheckBoxFF(Act011_Main.this);
 
+        checkBoxFF.setmDots_txt_app(cf.get("comment"));
+
         checkBoxFF.setId(View.generateViewId());
         checkBoxFF.setmLabel(cf.get("custom_form_field_desc"));
         checkBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -407,6 +428,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         checkBoxFF.setmType(cf.get("custom_form_data_type"));
 
         checkBoxFF.setmOption(cf.get("custom_form_data_content"));
+
+        checkBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        checkBoxFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
@@ -419,6 +443,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_RatingImage(HMAux cf) {
         RatingImageFF ratingImageFF = new RatingImageFF(Act011_Main.this);
 
+        ratingImageFF.setmDots_txt_app(cf.get("comment"));
+
         ratingImageFF.setId(View.generateViewId());
         ratingImageFF.setmLabel(cf.get("custom_form_field_desc"));
         ratingImageFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -427,6 +453,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingImageFF.setmType(cf.get("custom_form_data_type"));
 
         ratingImageFF.setmOption(cf.get("custom_form_data_content"));
+
+        ratingImageFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        ratingImageFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
@@ -439,6 +468,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_RatingBar(HMAux cf) {
         RatingBarFF ratingBarFF = new RatingBarFF(Act011_Main.this);
 
+        ratingBarFF.setmDots_txt_app(cf.get("comment"));
+
         ratingBarFF.setId(View.generateViewId());
         ratingBarFF.setmLabel(cf.get("custom_form_field_desc"));
         ratingBarFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -447,6 +478,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingBarFF.setmType(cf.get("custom_form_data_type"));
 
         ratingBarFF.setmOption(cf.get("custom_form_data_content"));
+
+        ratingBarFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        ratingBarFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
@@ -459,6 +493,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_Picture(HMAux cf) {
         PictureFF pictureFF = new PictureFF(Act011_Main.this);
 
+        pictureFF.setmDots_txt_app(cf.get("comment"));
+
         pictureFF.setId(View.generateViewId());
         pictureFF.setmLabel(cf.get("custom_form_field_desc"));
         pictureFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -469,6 +505,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pictureFF.setmOption(cf.get("custom_form_data_content"));
         pictureFF.setmFName(cf.get("custom_form_local_link"));
 
+        pictureFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
         pictureFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
@@ -482,6 +519,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private CustomFF cfg_Photo(HMAux cf) {
         PhotoFF photoFF = new PhotoFF(Act011_Main.this);
 
+        photoFF.setmDots_txt_app(cf.get("comment"));
+
         photoFF.setId(View.generateViewId());
         photoFF.setmLabel(cf.get("custom_form_field_desc"));
         photoFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
@@ -490,6 +529,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         photoFF.setmType(cf.get("custom_form_data_type"));
 
         photoFF.setmOption(cf.get("custom_form_data_content"));
+
+        photoFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
         photoFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
@@ -533,6 +574,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         return result;
     }
 
+
+    private int returnValidCheck() {
+        int numberOfErrors = 0;
+        //
+        for (int i = 0; i < customFFs.size(); i++) {
+            if (!customFFs.get(i).isValid()) {
+                numberOfErrors += 1;
+            }
+
+            customFFs.get(i).setValidationBackGround();
+        }
+        //
+        return numberOfErrors;
+    }
+
+
     private void prepareFormSave() {
 
         for (GE_Custom_Form_Data_Field form_data_field : formData.getDataFields()) {
@@ -540,8 +597,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             form_data_field.setValue_extra(returnFieldValue(form_data_field.getCustom_form_seq(), 1));
         }
 
-        String tt = formData.getSerial_id();
+        int quantidade = returnValidCheck();
 
+
+        int iii = 10;
     }
 
     private class ScreenAdapter extends FragmentPagerAdapter {

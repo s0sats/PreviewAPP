@@ -57,7 +57,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         //
     }
 
-    private void loadTranslation(){
+    private void loadTranslation() {
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -73,9 +73,9 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
         //
-        if(mPresenter.checkPreferenceIsSet()){
+        if (mPresenter.checkPreferenceIsSet()) {
             callAct005(context);
-        }else{
+        } else {
             mPresenter.getOperations();
         }
     }
@@ -101,12 +101,12 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     public void loadOperations(List<HMAux> operations) {
         //Se não existe operação
         //Exibe msg e fecha aplicação
-        if(operations.size() == 0){
+        if (operations.size() == 0) {
             ToolBox.alertMSG(
                     Act004_Main.this,
                     "Criar Title Operation Selection",
                     "Criar Msg No operation Avaliable. The app will be closed!",
-                     new DialogInterface.OnClickListener() {
+                    new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             ToolBox_Con.cleanPreferences(Act004_Main.this);
@@ -119,10 +119,10 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
 
         }
         //Se so existe uma operação, seleciona ela e pula para proxima tela
-        else if(operations.size() == 1){
-                mPresenter.setOperationCode(operations.get(0));
-        }else {
-            mAdapter =  new Lib_Custom_Cell_Adapter(
+        else if (operations.size() == 1) {
+            mPresenter.setOperationCode(operations.get(0));
+        } else {
+            mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
                     R.layout.lib_custom_cell,
                     operations,
@@ -138,7 +138,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
 
     @Override
     public void callAct005(Context context) {
-        Intent mIntent =  new Intent(context, Act005_Main.class);
+        Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
