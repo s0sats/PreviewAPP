@@ -29,7 +29,8 @@ public class Sql_Act013_001 implements Specification {
                         "  l.custom_product_code,\n" +
                         "  l.custom_product_desc,\n" +
                         "  l.custom_form_data,\n" +
-                        "  l.custom_form_status\n" +
+                        "  l.custom_form_status,\n" +
+                        "  l.serial_id\n" +
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
@@ -39,7 +40,8 @@ public class Sql_Act013_001 implements Specification {
                         " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"');")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
-                        "custom_product_code#custom_product_desc#custom_form_data#custom_form_status")
+                        "custom_product_code#custom_product_desc#custom_form_data#" +
+                        "custom_form_status#serial_id")
                 .toString();
     }
 }

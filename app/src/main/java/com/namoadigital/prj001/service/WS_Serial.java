@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TSerial_Env;
 import com.namoadigital.prj001.model.TSerial_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial;
@@ -20,6 +21,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class WS_Serial extends IntentService {
 
     private StringBuilder sResult;
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "WS_Serial";
 
     public WS_Serial() {
         super("WS_Serial");
@@ -70,6 +75,9 @@ public class WS_Serial extends IntentService {
     }
 
     private void processWS_Serial(Long product_code, String serial_id, int serial_required, int serial_allow_new, int jumpValidation, int jumpOD) {
+        //Seleciona traduções
+
+        loadTranslation();
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -106,6 +114,24 @@ public class WS_Serial extends IntentService {
         }
 
         checkSerialReturn(rec.getSerial(),rec.getError_msg(), serial_required, serial_allow_new);
+
+    }
+
+    private void loadTranslation() {
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()));
+
+
 
     }
 

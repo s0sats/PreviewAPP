@@ -48,7 +48,6 @@ public class Constant extends ConstantBase{
 
     public static final String ACT013_CUSTOM_FORM_DATA = "custom_form_data";
 
-
     /**
      * DataBase Definition
      */
@@ -91,6 +90,11 @@ public class Constant extends ConstantBase{
     public static final String USER_TYPE = "usertype";
     public static final String USER_CUSTOMER_TRANSLATE_CODE = "usercustomertranslatecode";
     public static final String FORCED_LOGIN = "forcedlogin";
+    /**
+     * Translation params
+     */
+    public static final String APP_MODULE = "APP_PRJ001";
+
     /**
      * Sync WS
      */
@@ -135,8 +139,6 @@ public class Constant extends ConstantBase{
      */
     public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
     public static final String WS_GETSESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
-
-
 
     public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
     public static final String WS_SESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
