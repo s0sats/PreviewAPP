@@ -21,6 +21,7 @@ public class Sql_Act013_001 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
+                        "  l.customer_code,\n" +
                         "  l.custom_form_type,\n" +
                         "  l.custom_form_type_desc,\n" +
                         "  l.custom_form_code,\n" +
@@ -29,8 +30,7 @@ public class Sql_Act013_001 implements Specification {
                         "  l.custom_product_code,\n" +
                         "  l.custom_product_desc,\n" +
                         "  l.custom_form_data,\n" +
-                        "  l.custom_form_status,\n" +
-                        "  l.serial_id\n" +
+                        "  l.custom_form_status "+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
