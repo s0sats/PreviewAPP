@@ -37,7 +37,7 @@ public class Sql_Act013_001 implements Specification {
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         " AND l.custom_form_status in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
                         " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"');")
-                .append("custom_form_type#custom_form_type_desc#" +
+                .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_form_data#custom_form_status")
                 .toString();
