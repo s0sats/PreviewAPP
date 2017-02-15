@@ -26,6 +26,7 @@ import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
 import com.namoa_digital.namoa_library.ctls.RatingImageFF;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -39,6 +40,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -83,6 +85,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String form_version;
     private String form_desc;
     private String prefix;
+    private String form_data;
 
     private GE_Custom_Form_Data formData;
 
@@ -163,6 +166,51 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             }
         });
 
+        act011_ff_options.setOnSaveCheckListener(new Act011_FF_Options.ICustom_Form_FF_Options_ll() {
+            @Override
+            public void save() {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+                    df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+                    df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+                }
+
+                returnValidCheck();
+
+                mPresenter.saveData(formData);
+
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+
+            @Override
+            public void check() {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+                    df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+                    df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+                }
+
+                int sum = returnValidCheck();
+
+                if (sum == 0) {
+
+                    mPresenter.checkData(formData);
+
+                } else {
+
+                    ToolBox.alertMSG(
+                            context,
+                            "Check Record",
+                            "Error. You Cant' Check!!!",
+                            null,
+                            0
+                    );
+                }
+            }
+        });
+
         mPresenter = new Act011_Main_Presenter_Impl(
                 context,
                 this,
@@ -184,7 +232,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 type,
                 form,
                 form_version,
-                product_code
+                product_code,
+                form_data
         );
 
     }
@@ -199,6 +248,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE, "");
             form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
             form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+            form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
         } else {
         }
     }
@@ -578,6 +628,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private int returnValidCheck() {
         int numberOfErrors = 0;
         //
+        int iiiii = customFFs.size();
+
         for (int i = 0; i < customFFs.size(); i++) {
             if (!customFFs.get(i).isValid()) {
                 numberOfErrors += 1;
@@ -592,15 +644,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private void prepareFormSave() {
 
-        for (GE_Custom_Form_Data_Field form_data_field : formData.getDataFields()) {
-            form_data_field.setValue(returnFieldValue(form_data_field.getCustom_form_seq(), 0));
-            form_data_field.setValue_extra(returnFieldValue(form_data_field.getCustom_form_seq(), 1));
+        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
         }
+
 
         int quantidade = returnValidCheck();
 
 
-        int iii = 10;
+        String sF = formData.getToken();
     }
 
     private class ScreenAdapter extends FragmentPagerAdapter {
@@ -645,7 +698,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //noinspection SimplifiableIfStatement
         if (id == R.id.act11_action_settings) {
 
-            prepareFormSave();
+//            prepareFormSave();
 
 //            ToolBox_Con.cleanPreferences(context);
 //
@@ -662,8 +715,19 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
+    public void showMsg(String title, String msg) {
+        ToolBox.alertMSG(
+                Act011_Main.this,
+                title,
+                msg,
+                null,
+                0
+        );
+    }
+
+    @Override
     public void callAct005(Context context) {
-        Intent mIntent =  new Intent(context, Act010_Main.class);
+        Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

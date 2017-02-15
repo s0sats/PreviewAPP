@@ -35,12 +35,11 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String USER_CODE = "user_code";
     public static final String SITE_CODE = "site_code";
     public static final String OPERATION_CODE = "operation_code";
-    public static final String SIGNAURE = "signaure";
+    public static final String SIGNATURE = "signature";
     public static final String TOKEN = "token";
     public static final String USER_CODE_END = "user_code_end";
 
-
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
+    //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
     public GE_Custom_Form_DataDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -270,10 +269,10 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setSite_code(cursor.getLong(cursor.getColumnIndex(SITE_CODE)));
             custom_form_data.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
 
-            if(cursor.isNull(cursor.getColumnIndex(SIGNAURE))){
+            if(cursor.isNull(cursor.getColumnIndex(SIGNATURE))){
                 custom_form_data.setSignature("");
             }else{
-                custom_form_data.setSignature(cursor.getString(cursor.getColumnIndex(SIGNAURE)));
+                custom_form_data.setSignature(cursor.getString(cursor.getColumnIndex(SIGNATURE)));
             }
 
             custom_form_data.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
@@ -327,7 +326,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 contentValues.put(OPERATION_CODE, custom_form_data.getOperation_code());
             }
             if(custom_form_data.getSignature() != null){
-                contentValues.put(SIGNAURE, custom_form_data.getSignature());
+                contentValues.put(SIGNATURE, custom_form_data.getSignature());
             }
             if(custom_form_data.getToken() != null){
                 contentValues.put(TOKEN, custom_form_data.getToken());

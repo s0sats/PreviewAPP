@@ -22,8 +22,10 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecifica
 import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -69,14 +71,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data) {
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
                         customer_code,
                         formtype_code,
                         form_code,
-                        formversion_code
+                        formversion_code,
+                        s_form_data
                 ).toSqlQuery().toString().toLowerCase()
         );
 
@@ -119,7 +122,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
-            customFormLocal.setCustom_form_status("0");
+            customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
             customFormLocal.setCustom_form_src("0");
             customFormLocal.setCustom_product_code(1);
             customFormLocal.setCustom_product_desc("product description");
@@ -215,17 +218,47 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_code((int) custom_form_code);
             form_data.setCustom_form_version((int) custom_form_version);
             form_data.setCustom_form_data(custom_form_data);
+            form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
             form_data.setProduct_code(product_code);
+            form_data.setSerial_id("");
             form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             form_data.setDate_end("1900-01-01 00:00:00 +00:00");
             form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
             form_data.setSite_code(Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)));
             form_data.setOperation_code(ToolBox_Con.getPreference_Operation_Code(context));
+            form_data.setSignature("");
+            form_data.setToken("");
         }
 
         return form_data;
     }
 
+    @Override
+    public void saveData(GE_Custom_Form_Data formData) {
+        custom_form_dataDao.addUpdate(formData);
+        custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
+
+        mView.showMsg("Salvando Registro", "Registro Salvo Partialmente!!!");
+    }
+
+    @Override
+    public void checkData(GE_Custom_Form_Data formData) {
+        custom_form_LocalDao.addUpdate(
+                new GE_Custom_Form_Local_Sql_004(
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data()),
+                        Constant.CUSTOM_FORM_STATUS_FINALIZED
+                ).toSqlQuery().toString()
+        );
+        //
+        custom_form_dataDao.addUpdate(formData);
+        custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
+
+        mView.showMsg("Finalizando Registro", "Registro Finalizado!!!");
+    }
 
     @Override
     public void onBackPressedClicked() {
