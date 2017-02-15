@@ -603,15 +603,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void callAct010(Context context) {
+    public void callAct005(Context context) {
         Intent mIntent =  new Intent(context, Act010_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //Remove produto do bundle
-        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE);
-        bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
-        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
-        mIntent.putExtras(bundle);
-
         startActivity(mIntent);
         finish();
     }
