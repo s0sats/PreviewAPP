@@ -39,7 +39,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
-import com.namoadigital.prj001.ui.act010.Act010_Main;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -663,7 +663,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     public void callAct005(Context context) {
-        Intent mIntent =  new Intent(context, Act010_Main.class);
+        Intent mIntent =  new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
