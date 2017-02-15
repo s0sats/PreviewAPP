@@ -104,7 +104,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
+            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
         } else {
 //
 //
@@ -165,7 +165,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public void loadForm_Types(List<HMAux> form_types) {
 
-        if(form_types.size() > 0) {
+        if (form_types.size() > 0) {
             //
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
@@ -178,7 +178,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             //
             lv_form_types.setAdapter(mAdapter);
 
-        }else{
+        } else {
             //Se lista vazia exibe alert e volta pra tela anterior
             List<String> transList = new ArrayList<>();
             transList.add("alert_ttl_no_form_found");
@@ -194,7 +194,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             callAct008(context);
                         }
-                    }
+                    },
+                    0
             );
         }
     }
@@ -218,10 +219,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     private HMAux getTranslationList(List<String> translate_list) {
         HMAux hmAux = new HMAux();
-        for (String txt:translate_list) {
+        for (String txt : translate_list) {
 
             if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
+                hmAux.put(txt, hmAux_Trans.get(txt));
             } else {
                 hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
             }

@@ -10,6 +10,8 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -160,6 +162,17 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         mView.showPD(Act008_Main.WS_PROCESS_SERIAL);
     }
 
+    private void sendDW(){
+        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        mIntentPDF.putExtras(bundle);
+        mIntentPIC.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentPDF);
+        context.sendBroadcast(mIntentPIC);
+    }
+
     @Override
     public void updateSyncChecklist() {
         //Pega data atual
@@ -175,6 +188,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         syncChecklistDao.addUpdate(syncChecklist);
 
+        // Hugo Ativa o Servico Ativa Download de Arquivos
+        sendDW();
     }
 
     @Override

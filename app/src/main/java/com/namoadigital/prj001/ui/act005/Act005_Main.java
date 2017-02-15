@@ -230,7 +230,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             Act005_Main.this,
                             alertTitle,
                             alertMsg,
-                            listener
+                            listener,
+                            0
                     );
 
                 }
@@ -308,10 +309,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private HMAux getTranslationList(List<String> translate_list) {
         HMAux hmAux = new HMAux();
-        for (String txt:translate_list) {
+        for (String txt : translate_list) {
 
             if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
+                hmAux.put(txt, hmAux_Trans.get(txt));
             } else {
                 hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
             }
