@@ -161,6 +161,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void tabSelected(int idtab) {
                 pager.setCurrentItem(idtab - 1);
                 //
+                returnValidCheck();
+                //
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });
@@ -369,6 +371,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 @Override
                 public void onPageSelected(int position) {
                     act011_ff_options.setFOpc(position + 1);
+                    //
+                    returnValidCheck();
                 }
 
                 @Override
