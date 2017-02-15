@@ -12,5 +12,7 @@ public interface Act013_Main_Presenter {
 
     void addFormInfoToBundle(HMAux item);
 
+    void validateOpenForm(HMAux item);
+
     void onBackPressedClicked();
 }

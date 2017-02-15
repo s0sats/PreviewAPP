@@ -4,10 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -52,6 +54,24 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
 
         mView.callAct011(context,bundle);
+    }
+
+    @Override
+    public void validateOpenForm(HMAux item) {
+        //
+        if(ToolBox_Inf.checkFormIsReady(
+                context,
+                Long.parseLong(item.get(GE_Custom_FormDao.CUSTOMER_CODE)),
+                Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE)),
+                Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)),
+                Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION))
+        )
+                ){
+
+            addFormInfoToBundle(item);
+        }else{
+            mView.alertFormNotReady();
+        }
     }
 
     @Override

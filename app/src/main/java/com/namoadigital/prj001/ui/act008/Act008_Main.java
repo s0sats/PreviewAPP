@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
@@ -24,6 +25,9 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -238,18 +242,28 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String title = "";
         String msg = "";
         DialogInterface.OnClickListener listener = null;
+        List<String> transList = new ArrayList<>();
+        transList.add("alert_no_connection_title");
+        transList.add("alert_no_connection_msg");
+        transList.add("alert_offine_mode_title");
+        transList.add("alert_offine_mode_msg");
+
+        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,transList);
 
         if (serial_required == 1){
-            title = "Connection";
-            msg = "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+            title = alertTrans.get("alert_no_connection_title"); //"Connection";
+            msg = alertTrans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
         }else{
 
-            if(serial_allow_new == 0){
-                title = "Connection";
-                msg = "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+            if(serial_allow_new == 0 &&
+               mket_serial_id.getText().toString().trim().length() > 0
+            ){
+                title = alertTrans.get("alert_no_connection_title"); //"Connection";
+                msg = alertTrans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
             }else{
-                title = "Continue in offline mode?";
-                msg = "No connection has been found!\nDo you want continue without check the Serial id ?! ";
+                title = alertTrans.get("alert_offine_mode_title"); //"Continue in offline mode?";
+                msg = alertTrans.get("alert_offine_mode_msg"); //"No connection has been found!\nDo you want continue without check the Serial id ?! ";
+
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -264,7 +278,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 title,
                 msg,
                 listener,
-                0
+                1
         );
     }
 

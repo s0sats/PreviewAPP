@@ -243,20 +243,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     }
 
-//    private void setAlertTranslation(String title_txt_code, String msg_txt_code) {
-//        if (hmAux_Trans.get(title_txt_code) != null) {
-//            alertTitle = hmAux_Trans.get(title_txt_code);
-//        } else {
-//            alertTitle = ToolBox.setNoTrans(mModule_Code, mResource_Code, title_txt_code);
-//        }
-//
-//        if (hmAux_Trans.get(msg_txt_code) != null) {
-//            alertMsg = hmAux_Trans.get(msg_txt_code);
-//        } else {
-//            alertMsg = ToolBox.setNoTrans(mModule_Code, mResource_Code, msg_txt_code);
-//        }
-//    }
-
     private void initActions() {
         gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -306,19 +292,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setTitleLanguage();
         setFooter();
     }
-
-    /*private HMAux getTranslationList(HMAux hmAux_Trans, String mModule_Code,String mResource_Code, List<String> translate_list) {
-        HMAux hmAux = new HMAux();
-        for (String txt:translate_list) {
-
-            if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
-            } else {
-                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
-            }
-        }
-        return hmAux;
-    }*/
 
     @Override
     public void showPD() {

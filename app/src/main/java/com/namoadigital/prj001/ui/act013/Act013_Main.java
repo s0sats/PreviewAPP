@@ -11,16 +11,19 @@ import android.widget.ListView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act013_Adapter_Pendencies;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -121,9 +124,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                //Toast.makeText(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),Toast.LENGTH_LONG).show();
-                mPresenter.addFormInfoToBundle(item);
+                mPresenter.validateOpenForm(item);
             }
         });
     }
@@ -156,6 +157,23 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         startActivity(mIntent);
         finish();
 
+    }
+
+    @Override
+    public void alertFormNotReady() {
+        List<String> translist = new ArrayList<>();
+        translist.add("alert_form_not_ready_title");
+        translist.add("alert_form_not_ready_msg");
+
+        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translist);
+
+        ToolBox.alertMSG(
+                Act013_Main.this,
+                alertTrans.get("alert_form_not_ready_title"),
+                alertTrans.get("alert_form_not_ready_msg"),
+                null,
+                0
+        );
     }
 
     @Override
