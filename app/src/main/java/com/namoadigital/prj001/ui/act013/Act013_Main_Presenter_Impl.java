@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
@@ -61,10 +60,10 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         //
         if(ToolBox_Inf.checkFormIsReady(
                 context,
-                Long.parseLong(item.get(GE_Custom_FormDao.CUSTOMER_CODE)),
-                Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE)),
-                Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)),
-                Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION))
+                Long.parseLong(item.get(GE_Custom_Form_LocalDao.CUSTOMER_CODE)),
+                Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE)),
+                Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE)),
+                Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION))
         )
                 ){
 
