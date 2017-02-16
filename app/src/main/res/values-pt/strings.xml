@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PRJ001</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="act005_drawer_opened">Drawer Opened</string>
+    <string name="act005_drawer_closed">Drawer Closed</string>
+    <string name="get_customer_alert_title">Get Customer</string>
+    <string name="generic_start_processing_msg">Start Processing...</string>
+    <string name="generic_msg_cancel">Cancel</string>
+    <string name="generic_msg_ok">OK</string>
+
+    <string name="act011_label_drawer_opened">Drawer Opened</string>
+    <string name="act011_label_drawer_close">Drawer Closed</string>
+</resources>

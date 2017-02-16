@@ -39,12 +39,9 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
     public void setTabsColors(HMAux aux) {
         for (HMAux auxTT : dados_final) {
 
-
-            auxTT.put("link",
-                    aux.get(auxTT.get("page")) == null ? auxTT.get("link") : aux.get(auxTT.get("page"))
-            );
-
-
+            if (aux.get(auxTT.get("page")) != null){
+                auxTT.put("link", aux.get(auxTT.get("page")));
+            }
         }
         //
         notifyDataSetChanged();
@@ -66,7 +63,7 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
 
             item.put("name", aux.get("custom_form_field_desc"));
             item.put("page", aux.get("page"));
-            item.put("link", restabs.get(aux.get("page")));
+            item.put("link", restabs.get(aux.get("page")) == null ? "PENDING" : restabs.get(aux.get("page")));
 
             dados_final.add(item);
         }
@@ -121,24 +118,23 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
 
         tv_name.setText(item.get("name"));
 
-        if (item.get("page").equalsIgnoreCase(String.valueOf(idselected))) {
-            tv_name.setTextColor(context.getResources().getColor(R.color.text_red));
-            //
-            //ll_back.setBackground(context.getResources().getDrawable(R.drawable.btn_primary_layout));
-        } else {
-            tv_name.setTextColor(context.getResources().getColor(R.color.text_black));
-            //
-            //ll_back.setBackground(null);
-        }
-        //
-        if (item.get("link").equals("EXEC")) {
-            ll_back.setBackgroundColor(0xff0099cc);
-        } else if (item.get("link").equals("OK")) {
+        if (item.get("link").equals("OK")) {
             ll_back.setBackgroundColor(0xff7DC24B);
         } else if (item.get("link").equals("ERROR")) {
             ll_back.setBackgroundColor(0xffff9900);
         } else {
             ll_back.setBackgroundColor(0x00000000);
+        }
+
+        if (item.get("page").equalsIgnoreCase(String.valueOf(idselected))) {
+            //tv_name.setTextColor(context.getResources().getColor(R.color.text_red));
+            ll_back.setBackgroundColor(0xff0099cc);
+            //
+            //ll_back.setBackground(context.getResources().getDrawable(R.drawable.btn_primary_layout));
+        } else {
+            //tv_name.setTextColor(context.getResources().getColor(R.color.text_black));
+            //
+            //ll_back.setBackground(null);
         }
         //
         return convertView;
