@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act006;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.ui.act002.Act002_Main_View;
 import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 
     String[] opcs = {
             "new",
-            "barcode",
+          //  "barcode",
             "checklist"
     };
 }
