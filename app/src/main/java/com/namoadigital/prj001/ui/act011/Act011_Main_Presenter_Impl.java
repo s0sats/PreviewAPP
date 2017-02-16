@@ -14,8 +14,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
@@ -178,7 +180,17 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getCustom_form_data()
         );
 
-        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre());
+        ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
+
+                new GE_Custom_Form_Blob_Local_Sql_005(
+                        String.valueOf(customFormLocal.getCustomer_code()),
+                        String.valueOf(customFormLocal.getCustom_form_type()),
+                        String.valueOf(customFormLocal.getCustom_form_code()),
+                        String.valueOf(customFormLocal.getCustom_form_version())
+                ).toSqlQuery().toString()
+        );
+
+        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre(), pdfs);
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {

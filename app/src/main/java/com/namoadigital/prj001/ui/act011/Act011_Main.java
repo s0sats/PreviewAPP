@@ -2,7 +2,9 @@ package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -46,6 +48,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +73,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private List<HMAux> tabsAndFields;
     private ArrayList<Fragment> screens;
     private ArrayList<CustomFF> customFFs;
+
+    private HMAux resTabs;
 
     private Toolbar toolbar;
 
@@ -159,10 +164,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         act011_ff_options.setOnTabSelectedListener(new Act011_FF_Options.ICustom_Form_FF_Options() {
             @Override
-            public void tabSelected(int idtab) {
-                pager.setCurrentItem(idtab - 1);
-                //
-                returnValidCheck();
+            public void tabSelected(int idtab, String link) {
+
+                if (!link.contains(".pdf")) {
+
+                    pager.setCurrentItem(idtab - 1);
+                    //
+                    returnValidCheck();
+
+                } else {
+
+                    File file = new File(Constant.CACHE_PATH + "/" + link);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                    startActivity(intent);
+                }
                 //
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -203,7 +221,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 } else {
 
                     ToolBox.alertMSG(
-                            context,
+                            Act011_Main.this,
                             "Check Record",
                             "Error. You Cant' Check!!!",
                             null,
@@ -273,12 +291,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs) {
 
         this.prefix = prefix;
         this.formData = formData;
 
-        act011_ff_options.loadCF_Fields(cf_fields);
+        //Hugo
+        //act011_ff_options.loadCF_Fields(cf_fields);
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
@@ -381,6 +400,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 }
             });
+
+            resTabs = returnValidCheckTabs();
+
+            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs);
         }
     }
 
@@ -628,12 +651,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         return result;
     }
 
-
     private int returnValidCheck() {
+
+        HMAux item = new HMAux();
+
         int numberOfErrors = 0;
         //
-        int iiiii = customFFs.size();
-
         for (int i = 0; i < customFFs.size(); i++) {
             if (!customFFs.get(i).isValid()) {
                 numberOfErrors += 1;
@@ -642,9 +665,99 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             customFFs.get(i).setValidationBackGround();
         }
         //
+        int ii = item.size();
+        //
+        resTabs = returnValidCheckTabs();
+        //
+        act011_ff_options.tabsS(resTabs);
+        //
         return numberOfErrors;
     }
 
+    private HMAux returnValidCheckTabs() {
+
+        ArrayList<HMAux> itens = new ArrayList<>();
+
+        HMAux item = new HMAux();
+
+        int ipages = 0;
+        int ipageindex = 0;
+        //
+        for (int i = 0; i < customFFs.size(); i++) {
+            HMAux aux = new HMAux();
+
+            if (!customFFs.get(i).isValid()) {
+                if (customFFs.get(i).getmValue().equals("")) {
+                    aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                    aux.put("value", "PENDING");
+                } else {
+                    aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                    aux.put("value", "ERROR");
+
+                }
+
+            } else {
+                aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                aux.put("value", "OK");
+
+            }
+
+            if (customFFs.get(i).getmPage() != ipageindex) {
+                ipages++;
+                ipageindex = customFFs.get(i).getmPage();
+            }
+
+            itens.add(aux);
+        }
+
+        for (int i = 0; i < ipages; i++) {
+            item.put(String.valueOf(i + 1), pageStatus(String.valueOf(i + 1), itens));
+        }
+
+        return item;
+    }
+
+    private String pageStatus(String page, ArrayList<HMAux> itens) {
+        int total = 0;
+        int ok = 0;
+        int error = 0;
+        int pending = 0;
+
+        for (HMAux aux : itens) {
+
+            if (aux.get("page").equals(page)) {
+                switch (aux.get("value").toUpperCase()) {
+                    case "PENDING":
+                        pending++;
+                        break;
+                    case "ERROR":
+                        error++;
+                        break;
+                    case "OK":
+                        ok++;
+                        break;
+                    default:
+                        break;
+                }
+
+                total++;
+            }
+        }
+
+        if (error != 0) {
+            return "ERROR";
+        }
+
+        if (total == pending) {
+            return "PENDING";
+        }
+
+        if (total == ok) {
+            return "OK";
+        }
+
+        return "EXEC";
+    }
 
     private void prepareFormSave() {
 
@@ -653,9 +766,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
         }
 
-
         int quantidade = returnValidCheck();
-
 
         String sF = formData.getToken();
     }
