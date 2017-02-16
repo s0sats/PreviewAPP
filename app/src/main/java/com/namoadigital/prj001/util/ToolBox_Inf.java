@@ -11,6 +11,7 @@ import android.util.Base64;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
@@ -429,16 +430,16 @@ public class ToolBox_Inf {
         if (sVersion != null) {
             switch (sVersion) {
                 case "VERSION_INVALID":
-                    sendBCStatus(context, "VERSION_INVALID", "VERSION INVALID", s_Link, "1");
+                    sendBCStatus(context, "VERSION_INVALID", context.getString(R.string.msg_version_invalid), s_Link, "1");
                     return false;
 
                 case "EXPIRED":
-                    sendBCStatus(context, "EXPIRED", "VERSION EXPIRED", s_Link, "1");
+                    sendBCStatus(context, "EXPIRED", context.getString(R.string.msg_version_expired), s_Link, "1");
                     return false;
 
                 case "UPDATE_REQUIRED":
                     if (iStatus == 0) {
-                        sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE_REQUIRED", s_Link, "0");
+                        sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
                         return false;
                     } else {
                         break;
@@ -454,16 +455,16 @@ public class ToolBox_Inf {
         if (sLogin != null) {
             switch (sLogin) {
                 case "USER_INVALID":
-                    sendBCStatus(context, "USER_INVALID", "USER INVALID", s_Link, "0");
+                    sendBCStatus(context, "USER_INVALID", context.getString(R.string.msg_user_invalid), s_Link, "0");
                     return false;
 
                 case "USER_CANCELLED":
-                    sendBCStatus(context, "USER_CANCELLED", "USER CANCELLED", s_Link, "0");
+                    sendBCStatus(context, "USER_CANCELLED", context.getString(R.string.msg_user_canceled), s_Link, "0");
                     return false;
 
                 case "USER_OTHER_DEVICE":
                     if (iStatus_OD == 0) {
-                        sendBCStatus(context, "USER_OTHER_DEVICE", "USER_OTHER_DEVICE", s_Link, "0");
+                        sendBCStatus(context, "USER_OTHER_DEVICE", context.getString(R.string.msg_user_other_device), s_Link, "0");
                         return false;
                     } else {
                         return true;
@@ -495,7 +496,7 @@ public class ToolBox_Inf {
 
             case "UPDATE_REQUIRED":
                 if (iStatus == 0) {
-                    sendBCStatus(context, "UPDATE_REQUIRED", "UPDATE REQUIRED", s_Link, "0");
+                    sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
 
                     return false;
                 } else {
@@ -628,6 +629,18 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * Melhoria do metodo setLanguage sem translation_list
+     * Quando houver tempo, fazer taskforce para substituir esse
+     * metodo nas acts que usam o antigo.
+     *
+     * @param context
+     * @param module_code
+     * @param resource_code
+     * @param translate_code
+     * @param translation_list
+     * @return
+     */
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code,List<String> translation_list) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
@@ -651,11 +664,12 @@ public class ToolBox_Inf {
         }
 
         item = ToolBox_Inf.getTranslationList(item,module_code,resource_code,translation_list);
-        
+
         //
         return item;
     }
 
+    @Deprecated
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
@@ -686,16 +700,16 @@ public class ToolBox_Inf {
     }
 
     public static HMAux getTranslationList(HMAux hmAux_Trans, String mModule_Code,String mResource_Code, List<String> translate_list) {
-        HMAux hmAux = new HMAux();
+
         for (String txt:translate_list) {
 
             if (hmAux_Trans.get(txt) != null) {
-                hmAux.put(txt,hmAux_Trans.get(txt));
+                hmAux_Trans.put(txt,hmAux_Trans.get(txt));
             } else {
-                hmAux.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
+                hmAux_Trans.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
             }
         }
-        return hmAux;
+        return hmAux_Trans;
     }
 
     public static boolean checkFormIsReady(Context context ,long customer_code , int custom_form_type, int custom_form_code, int custom_form_version){

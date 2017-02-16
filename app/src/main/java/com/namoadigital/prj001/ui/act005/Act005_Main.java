@@ -94,6 +94,28 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
     }
 
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("drawer_change_customer_alert_ttl");
+        transList.add("drawer_change_customer_alert_msg");
+        transList.add("drawer_change_site_alert_ttl");
+        transList.add("drawer_change_site_alert_msg");
+        transList.add("drawer_change_operation_alert_ttl");
+        transList.add("drawer_change_operation_alert_msg");
+        transList.add("drawer_logout_alert_ttl");
+        transList.add("drawer_logout_alert_msg");
+        transList.add("alert_sync_ttl");
+        transList.add("alert_sync_msg");
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+    }
+
     private void initVars() {
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
@@ -141,23 +163,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             public void itemClicked(String index) {
                 DialogInterface.OnClickListener listener = null;
 
-                List<String> transList = new ArrayList<String>();
-                transList.add("drawer_change_customer_alert_ttl");
-                transList.add("drawer_change_customer_alert_msg");
-                transList.add("drawer_change_site_alert_ttl");
-                transList.add("drawer_change_site_alert_msg");
-                transList.add("drawer_change_operation_alert_ttl");
-                transList.add("drawer_change_operation_alert_msg");
-                transList.add("drawer_logout_alert_ttl");
-                transList.add("drawer_logout_alert_msg");
-
-                HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code,transList);
-
                 switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
                         //
-                        alertTitle = alertTrans.get("drawer_change_customer_alert_ttl");
-                        alertMsg = alertTrans.get("drawer_change_customer_alert_msg");
+                        alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
+                        alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -176,8 +186,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
                         //
-                        alertTitle = alertTrans.get("drawer_change_site_alert_ttl");
-                        alertMsg = alertTrans.get("drawer_change_site_alert_msg");
+                        alertTitle = hmAux_Trans.get("drawer_change_site_alert_ttl");
+                        alertMsg = hmAux_Trans.get("drawer_change_site_alert_msg");
                         //
                         //Apaga preferencia de Site, Operatione volta a lista de site
                         listener = new DialogInterface.OnClickListener() {
@@ -193,8 +203,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_OPERATION:
                         //
-                        alertTitle = alertTrans.get("drawer_change_operation_alert_ttl");
-                        alertMsg = alertTrans.get("drawer_change_operation_alert_msg");
+                        alertTitle = hmAux_Trans.get("drawer_change_operation_alert_ttl");
+                        alertMsg = hmAux_Trans.get("drawer_change_operation_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -208,8 +218,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
                         //
-                        alertTitle = alertTrans.get("drawer_logout_alert_ttl");
-                        alertMsg = alertTrans.get("drawer_logout_alert_msg");
+                        alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
+                        alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
                         //
                         listener = new DialogInterface.OnClickListener() {
                             @Override
@@ -269,17 +279,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         gv_menu.setAdapter(mAdapter);
     }
 
-    private void loadTranslation() {
-        //
-        hmAux_Trans = ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
-        );
-
-    }
-
     private void iniUIFooter() {
         iniFooter();
         //
@@ -296,10 +295,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void showPD() {
         enableProgressDialog(
-                "Get Sync",
-                "Start Processing...",
-                "Cancel",
-                "Ok"
+                hmAux_Trans.get("alert_sync_ttl"),//"Get Sync",
+                hmAux_Trans.get("alert_sync_msg"),//"Start Processing...",
+                context.getString(R.string.generic_msg_cancel),
+                context.getString(R.string.generic_msg_ok)
         );
     }
 

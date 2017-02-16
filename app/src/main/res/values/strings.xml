@@ -29,4 +29,10 @@
     <string name="msg_processing_data_step2">Processing Data Step 2 of 4</string>
     <string name="msg_processing_data_step3">Processing Data Step 3 of 4</string>
     <string name="msg_processing_data_step4">Processing Data Step 4 of 4.\r\nThis step could take awhile.</string>
+    <string name="msg_version_invalid">VERSION INVALID</string>
+    <string name="msg_version_expired">VERSION EXPIRED</string>
+    <string name="msg_update_required">UPDATE_REQUIRED</string>
+    <string name="msg_user_invalid">USER INVALID</string>
+    <string name="msg_user_canceled">USER CANCELLED</string>
+    <string name="msg_user_other_device">USER_OTHER_DEVICE</string>
 </resources>

@@ -29,4 +29,10 @@
     <string name="msg_processing_data_step2">Processando dados etapa 2 de 4</string>
     <string name="msg_processing_data_step3">Processando dados etapa 3 de 4</string>
     <string name="msg_processing_data_step4">Processando dados etapa 3 de 4.\r\nEssa etapa pode demorar um pouco.</string>
+    <string name="msg_version_invalid">Versão do app invalida.</string>
+    <string name="msg_version_expired">Versão do app expirada</string>
+    <string name="msg_update_required">Nova versão identificada!\r\nDeseja atualizar ?</string>
+    <string name="msg_user_invalid">Usuário inválido.</string>
+    <string name="msg_user_canceled">Usuário cancelado.</string>
+    <string name="msg_user_other_device">Usuário logado em outro aparelho.</string>
 </resources>
