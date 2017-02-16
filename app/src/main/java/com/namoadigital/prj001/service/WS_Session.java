@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
@@ -101,13 +102,13 @@ public class WS_Session extends IntentService {
         env.setCustomer_code(customer_code);
         env.setTranslate_code(Integer.parseInt(translate_code));
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Sending data ...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_sending_data_msg), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SESSION,
                 gson.toJson(env)
         );
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Receiving data ...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
 
         TSession_Rec rec = gson.fromJson(
                 resultado,
@@ -125,7 +126,7 @@ public class WS_Session extends IntentService {
             ) {
             return;
         }
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Saving data ...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_saving_data_msg), "", "0");
 
         EV_User_Customer userCustomer = ev_user_customerDao.getByString(
                     new EV_User_Customer_Sql_002(
@@ -148,6 +149,6 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Translate_Code(getApplicationContext(), String.valueOf(userCustomer.getTranslate_code()));
         ToolBox_Con.setPreference_Session_App(getApplicationContext(),rec.getSession_app());
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", "Getting Master Data ...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
     }
 }

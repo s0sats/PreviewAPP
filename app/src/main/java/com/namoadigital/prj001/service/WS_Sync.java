@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -181,7 +182,7 @@ public class WS_Sync extends IntentService {
         env.setSession_app(session_app);
         env.setData_package(dataPackage);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Receiving data ...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SYNC,
@@ -207,13 +208,13 @@ public class WS_Sync extends IntentService {
 
         //Inicia o processamento dos arquivos zip e atualiza tabelas.
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Unzipping Data...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");
 
         ToolBox_Inf.downloadZip(rec.getZip(), Constant.ZIP_NAME_FULL);
 
         ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Data Step 1...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step1), "", "0");
 
         File[] files_module_res = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
 
@@ -234,7 +235,7 @@ public class WS_Sync extends IntentService {
             moduleResDao.addUpdate(moduleRes, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Data Step 2...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step2), "", "0");
 
         File[] files_module_res_txt = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
 
@@ -251,7 +252,7 @@ public class WS_Sync extends IntentService {
             moduleResTxtDao.addUpdate(moduleResTxts, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Data Step 3...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step3), "", "0");
 
         File[] files_module_res_txt_trans = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
 
@@ -268,7 +269,7 @@ public class WS_Sync extends IntentService {
             moduleResTxtTransDao.addUpdate(moduleResTxtTrans, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Data Step 4...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
 
         //
         //Processamento das tabelas do MAIN

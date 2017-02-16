@@ -4,11 +4,29 @@
 
     <string name="act005_drawer_opened">Drawer Opened</string>
     <string name="act005_drawer_closed">Drawer Closed</string>
-    <string name="get_customer_alert_title">Get Customer</string>
+    <string name="get_customer_alert_title">Getting Customer</string>
     <string name="generic_start_processing_msg">Start Processing...</string>
     <string name="generic_msg_cancel">Cancel</string>
     <string name="generic_msg_ok">OK</string>
 
     <string name="act011_label_drawer_opened">Drawer Opened</string>
     <string name="act011_label_drawer_close">Drawer Closed</string>
+    <string name="alert_title_get_session">Getting Session</string>
+    <string name="msg_start_to_sync">Starting to sync ...</string>
+    <string name="alert_title_login_fill_field">Form</string>
+    <string name="msg_login_required">Error: Email is Required!!!</string>
+    <string name="msg_pwd_required">Error: PassWord is Required!!!</string>
+    <string name="generic_sending_data_msg">Sending data ...</string>
+    <string name="generic_receiving_data_msg">Receiving data ...</string>
+    <string name="generic_saving_data_msg">Saving data ...</string>
+    <string name="msg_getting_master_data">Getting Master Data ...</string>
+    <string name="msg_processing_customer">Processing Get Customer...</string>
+    <string name="msg_processing_ev_user">Processing EV_User...</string>
+    <string name="msg_processing_ev_user_customer">Processing EV_User_Customer...</string>
+    <string name="msg_finishing_processsing">Ending Processing...</string>
+    <string name="generic_unzipping_data_msg">Unzipping Data...</string>
+    <string name="msg_processing_data_step1">Processing Data Step 1 of 4</string>
+    <string name="msg_processing_data_step2">Processing Data Step 2 of 4</string>
+    <string name="msg_processing_data_step3">Processing Data Step 3 of 4</string>
+    <string name="msg_processing_data_step4">Processing Data Step 4 of 4.\r\nThis step could take awhile.</string>
 </resources>

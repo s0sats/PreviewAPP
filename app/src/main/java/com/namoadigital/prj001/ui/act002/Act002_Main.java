@@ -29,7 +29,7 @@ import java.util.List;
  */
 
 public class Act002_Main extends Base_Activity implements Act002_Main_View {
-
+    //Variaivis que identificam qual WS esta rodando
     private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
     private final String PROCESS_WS_SYNC = "ws_sync";
 
@@ -72,7 +72,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 context.getString(R.string.generic_start_processing_msg),
                 context.getString(R.string.generic_msg_cancel),
                 context.getString(R.string.generic_msg_ok)
-                        //"Get teste huehue","Start Processing...","Cancel","Ok"
+
                 );
                 mPresenter.executeGetCustomerProcess();
             }else{
@@ -117,7 +117,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
         if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
-            showPD("Get Session","Start Processing...","Cancel","Ok");
+            showPD(
+                    getString(R.string.alert_title_get_session),
+                    getString(R.string.generic_start_processing_msg),
+                    getString(R.string.generic_msg_cancel),
+                    getString(R.string.generic_msg_ok));
 
             mPresenter.executeSessionProcess(
                     ToolBox_Con.getPreference_User_Email(context),
@@ -160,10 +164,10 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     public void showPD(String title, String msg, String labelCancel, String labelOk) {
         enableProgressDialog(
-                title,//"Get Session",
-                msg,//"Start Processing...",
-                labelCancel,//"Cancel",
-                labelOk//"Ok"
+                title,
+                msg,
+                labelCancel,
+                labelOk
         );
     }
 

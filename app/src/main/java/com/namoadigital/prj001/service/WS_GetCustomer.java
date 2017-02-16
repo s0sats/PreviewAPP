@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User;
@@ -89,7 +90,7 @@ public class WS_GetCustomer extends IntentService {
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing Get Customer...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_customer), "", "0");
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -126,7 +127,7 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user), "", "0");
 
         //Apaga dados da tabela
         ev_userDao.remove(new EV_User_Sql_Truncate().toSqlQuery() );
@@ -148,7 +149,7 @@ public class WS_GetCustomer extends IntentService {
             ev_userDao.addUpdate(users, true);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Processing EV_User_Customer...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
         //Apaga dados da tabela
         ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
@@ -173,7 +174,7 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), password);
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", getString(R.string.msg_finishing_processsing), "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 

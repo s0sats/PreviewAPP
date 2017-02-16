@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
@@ -90,7 +91,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", "Starting to sync ...", "", "0");
+        ToolBox_Inf.sendBCStatus(context, "STATUS", context.getString(R.string.msg_start_to_sync), "", "0");
 
     }
 

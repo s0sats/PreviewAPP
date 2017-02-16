@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -44,13 +45,19 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         if (nfc_code.trim().length() == 0) {
 
             if (login.trim().length() == 0) {
-                mView.showAlertMsg("Form", "Error: Email is Required!!!");
+                mView.showAlertMsg(
+                        context.getString(R.string.alert_title_login_fill_field),
+                        context.getString(R.string.msg_login_required)
+                );
                 mView.fieldFocus(Act001_Main.ET_LOGIN);
                 return;
             }
             //
             if (password.trim().length() == 0) {
-                mView.showAlertMsg("Form", "Error: PassWord is Required!!!");
+                mView.showAlertMsg(
+                        context.getString(R.string.alert_title_login_fill_field),
+                        context.getString(R.string.msg_pwd_required)
+                );
                 mView.fieldFocus(Act001_Main.ET_PASSWORD);
                 return;
             }

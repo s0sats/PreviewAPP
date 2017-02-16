@@ -99,10 +99,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void nfcData(boolean bStatus, String sMessage) {
         if (bStatus) {
             enableProgressDialog(
-                    "Get Cusmoters",
-                    "Start Processing...",
-                    "Cancel",
-                    "Ok"
+                    context.getString(R.string.get_customer_alert_title),
+                    context.getString(R.string.generic_start_processing_msg),
+                    context.getString(R.string.generic_msg_cancel),
+                    context.getString(R.string.generic_msg_ok)
             );
             //Salva NFC temp
 
@@ -119,10 +119,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             );
         } else {
             enableProgressDialog(
-                    "Get Customers",
+                    context.getString(R.string.get_customer_alert_title),
                     sMessage,
-                    "Cancel",
-                    "Ok"
+                    context.getString(R.string.generic_msg_cancel),
+                    context.getString(R.string.generic_msg_ok)
             );
 
             updatePD("ERROR_1", sMessage);
@@ -140,7 +140,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         alertD
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton("Ok", null);
+                .setPositiveButton(
+                        context.getString(R.string.generic_msg_ok),
+                        null);
 
         alertD.show();
     }
