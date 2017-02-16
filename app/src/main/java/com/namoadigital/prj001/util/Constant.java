@@ -121,6 +121,7 @@ public class Constant extends ConstantBase{
     public static final String LOGIN_USER_EMAIL = "login_user_email";
     public static final String LOGIN_USER_PWD = "login_user_pwd";
     public static final String LOGIN_USER_NFC = "login_user_nfc";
+    public static final String LOGIN_LAST_USER_CODE_LOGGED = "last_user_logged";
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
     public static final String LOGIN_SITE_CODE = "login_site_code";

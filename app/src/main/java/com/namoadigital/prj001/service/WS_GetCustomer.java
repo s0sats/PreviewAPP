@@ -23,7 +23,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -168,15 +170,46 @@ public class WS_GetCustomer extends IntentService {
             ev_user_customerDao.addUpdate(customers, true);
         }
 
+        //Verifica se novo usr igual ao ultimo logado
+        //Se for diferente apaga os bancos mult
+        if(userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
+            boolean del;
+            File[] files_db = getListDB("C_");
+
+            for (File _file : files_db) {
+               del = _file.delete();
+            }
+        }
+
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
         ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));
         ToolBox_Con.setPreference_User_Email(getApplicationContext(), userInfo.getEmail_p());
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), password);
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
+        ToolBox_Con.setPreference_Last_User_Logged(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", getString(R.string.msg_finishing_processsing), "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
+    }
+
+    public static File[] getListDB(final String prefix) {
+        File fileList = new File(Constant.DB_PATH);
+        File[] files = fileList.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                if (filename.startsWith(prefix)) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        //
+        if (files != null) {
+            Arrays.sort(files);
+        }
+        //
+        return files;
     }
 }
