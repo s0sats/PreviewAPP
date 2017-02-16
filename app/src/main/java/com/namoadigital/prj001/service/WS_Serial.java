@@ -14,6 +14,9 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by DANIEL.LUCHE on 03/02/2017.
  */
@@ -89,7 +92,7 @@ public class WS_Serial extends IntentService {
         env.setProduct_code(product_code);
         env.setSerial_id(serial_id);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Checking Serial Number ...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_checking_serial"), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SERIAL,
@@ -131,6 +134,19 @@ public class WS_Serial extends IntentService {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()));
 
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_checking_serial");
+        translist.add("msg_serial_ok");
+        translist.add("msg_new_serial_not_allow");
+        translist.add("msg_create_new_serial");
+        translist.add("msg_error_serial_null");
+
+        HMAux translate = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translist);
+
+        for (String trans : translist) {
+            hmAux_Trans.put(trans,translate.get(trans));
+        }
 
 
     }
@@ -139,24 +155,24 @@ public class WS_Serial extends IntentService {
 
         switch (serial){
             case "OK":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", "SERIAL OK", "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_OK", hmAux_Trans.get("msg_serial_ok"), "", "0");
                 return true;
 
             case "NOT_EXISTS":
                 //Serial não existe
                 //Se produto não permite novo serial , dispara msg de erro.
                 if (serial_allow_new == 0){
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "new serial is not supported", "", "0");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_new_serial_not_allow"), "", "0");
 
                 }else{
                     //Se produto não permite novo serial
                     //pergunta para o USR o que fazer.
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", "SERIAL NOT FIND , CREATE A NEW ONE?", "", "0");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "SERIAL_NOT_EXISTS", hmAux_Trans.get("msg_create_new_serial"), "", "0");
                 }
                 return true;
 
             case "ERROR_SERIAL_NULL":default:
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "ERROR_SERIAL_NULL", "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_serial_null"), "", "0");
                 return false;
         }
     }
