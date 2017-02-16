@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -36,6 +37,12 @@ public class WS_Save extends IntentService {
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
     private List<GE_Custom_Form_Data_Field> form_data_fields;
+    //
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "WS_Save";
+
 
 
     public WS_Save() {
@@ -100,7 +107,10 @@ public class WS_Save extends IntentService {
     }
 
     private void processWS_Save(int jumpValidation, int jumpOD) {
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Getting pending form data ...", "", "0");
+        //Seleciona traduções
+        loadTranslation();
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_getting_finalized_forms"), "", "0");
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         if(processPendingToken(1) == 0){
@@ -109,11 +119,11 @@ public class WS_Save extends IntentService {
         //Verifica se existem dados a serem enviado
         //Se não existir, cancela a chamada do WS
         if(form_datas.size() == 0){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Não há dados a serem enviados", "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_finalized_forms_found"), "", "0");
             return;
         }
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Sending form data...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_forms"), "", "0");
         //
         TSave_Env env =  new TSave_Env();
         //
@@ -149,6 +159,31 @@ public class WS_Save extends IntentService {
         }
         //Apos processar validation, processa o retorno do SAve
         checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url());
+
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_getting_finalized_forms");
+        translist.add("msg_no_finalized_forms_found");
+        translist.add("msg_sending_forms");
+        translist.add("msg_forms_sent");
+        translist.add("msg_error_token_excep");
+        translist.add("msg_error_save");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
 
     }
 
@@ -219,16 +254,15 @@ public class WS_Save extends IntentService {
                 //Atualiza dados na tabela.
                 formDataDao.addUpdate(form_datas,false);
                 //Dispara msg para fechar dialog
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Data Sent!", "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
                 return true;
 
             case "ERROR_TOKEN_EXCEPTION":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "ERROR TOKEN EXCEPTION", "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1",  hmAux_Trans.get("msg_error_token_excep"), "", "0");
                 return false;
             default:
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "SAVE ERROR \n" + error_msg ,"" , "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_save") + " \n" + error_msg ,"" , "0");
                 return false;
-
         }
 
     }

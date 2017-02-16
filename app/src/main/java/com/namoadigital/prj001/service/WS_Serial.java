@@ -79,7 +79,6 @@ public class WS_Serial extends IntentService {
 
     private void processWS_Serial(Long product_code, String serial_id, int serial_required, int serial_allow_new, int jumpValidation, int jumpOD) {
         //Seleciona traduções
-
         loadTranslation();
 
         Gson gson = new GsonBuilder().serializeNulls().create();
