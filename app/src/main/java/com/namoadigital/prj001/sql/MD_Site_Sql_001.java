@@ -23,7 +23,7 @@ public class MD_Site_Sql_001 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      ifnull(s.customer_code,"+s_customer_code+"),\n" +
+                        "      s.customer_code,\n" +
                         "      s.site_code,\n" +
                         "      s.site_id,\n" +
                         "      s.site_id||' - '||s.site_desc site_desc\n" +
