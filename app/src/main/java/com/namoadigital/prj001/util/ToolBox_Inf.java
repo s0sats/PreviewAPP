@@ -628,6 +628,34 @@ public class ToolBox_Inf {
         }
     }
 
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code,List<String> translation_list) {
+
+        EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        List<EV_Module_Res_Txt_Trans> module_res_txt_transes = transDao.query(
+                new EV_Module_Res_Txt_Trans_Sql_002(
+                        module_code,
+                        resource_code,
+                        translate_code
+                ).toSqlQuery()
+        );
+
+        HMAux item = new HMAux();
+        //
+        for (EV_Module_Res_Txt_Trans module_res_txt_trans : module_res_txt_transes) {
+            item.put(module_res_txt_trans.getTxt_code(), module_res_txt_trans.getTxt_value());
+        }
+
+        item = ToolBox_Inf.getTranslationList(item,module_code,resource_code,translation_list);
+        
+        //
+        return item;
+    }
+
     public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(

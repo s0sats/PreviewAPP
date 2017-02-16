@@ -121,6 +121,13 @@ public class WS_Serial extends IntentService {
     }
 
     private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_checking_serial");
+        translist.add("msg_serial_ok");
+        translist.add("msg_new_serial_not_allow");
+        translist.add("msg_create_new_serial");
+        translist.add("msg_error_serial_null");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
@@ -132,22 +139,8 @@ public class WS_Serial extends IntentService {
                 getApplicationContext(),
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()));
-
-        List<String> translist = new ArrayList<>();
-
-        translist.add("msg_checking_serial");
-        translist.add("msg_serial_ok");
-        translist.add("msg_new_serial_not_allow");
-        translist.add("msg_create_new_serial");
-        translist.add("msg_error_serial_null");
-
-        HMAux translate = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translist);
-
-        for (String trans : translist) {
-            hmAux_Trans.put(trans,translate.get(trans));
-        }
-
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
 
     }
 
