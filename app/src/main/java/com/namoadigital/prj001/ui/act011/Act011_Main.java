@@ -93,6 +93,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String prefix;
     private String form_data;
 
+    private boolean ignoreUpdate = false;
+
     private GE_Custom_Form_Data formData;
 
     private boolean includeField;
@@ -100,7 +102,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private int oldPageIndex = 0;
     private int currentPageIndex = 1;
 
-    private int index = -1;
+    private int index_old = 0;
+    private int index = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -168,7 +171,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 //returnValidCheck(String.valueOf(index));
                 //
-                resTabs = returnValidCheckTabs(String.valueOf(index));
+                resTabs = returnValidCheckTabs(String.valueOf(index_old));
                 //
                 act011_ff_options.tabsS(resTabs);
             }
@@ -190,16 +193,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 if (!link.contains(".pdf")) {
 
+                    ignoreUpdate = true;
+
+                    index_old = index;
+                    index = idtab;
+
+                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
+                    //
+                    act011_ff_options.tabsS(resTabs);
+                    //
+                    returnValidCheck(String.valueOf(index_old));
+                    //
                     pager.setCurrentItem(idtab - 1);
-                    // Hugo
-                    // returnValidCheck();
-                    //
-                    //oldPageIndex = currentPageIndex;
-                    //currentPageIndex = idtab;
-                    //
-                    //resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
-                    //
-                    //act011_ff_options.tabsS(resTabs);
 
                 } else {
 
@@ -421,19 +426,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 public void onPageSelected(int position) {
                     act011_ff_options.setFOpc(position + 1);
                     //
-                    //returnValidCheck();
-
-                    //oldPageIndex = currentPageIndex;
-                    //currentPageIndex = position + 1;
-                    //
-                    //resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
-                    //
-                    //act011_ff_options.tabsS(resTabs);
-
+                    index_old = index;
                     index = position + 1;
 
-                    returnValidCheck(String.valueOf(index));
-
+                    if (!ignoreUpdate) {
+                        resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
+                        //
+                        act011_ff_options.tabsS(resTabs);
+                        //
+                        returnValidCheck(String.valueOf(index_old));
+                    } else {
+                        ignoreUpdate = false;
+                    }
                 }
 
                 @Override
@@ -442,11 +446,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 }
             });
 
-            resTabs = returnValidCheckTabs(String.valueOf(index));
+            resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs);
 
-            returnValidCheck(String.valueOf(index));
+            returnValidCheck(String.valueOf(index_old));
         }
     }
 
@@ -700,7 +704,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         return result;
     }
-
 
 
     private int returnValidCheck(String sPage) {
