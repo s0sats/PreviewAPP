@@ -10,9 +10,11 @@ import com.namoadigital.prj001.database.Specification;
 public class MD_Site_Sql_001 implements Specification {
 
     private long s_customer_code;
+    private String s_site_code;
 
-    public MD_Site_Sql_001(long s_customer_code) {
+    public MD_Site_Sql_001(long s_customer_code, String s_site_code) {
         this.s_customer_code = s_customer_code;
+        this.s_site_code = s_site_code;
     }
 
     @Override
@@ -20,18 +22,17 @@ public class MD_Site_Sql_001 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("SELECT " +
-                        "   site_code, " +
-                        "   site_id, " +
-                        "   site_desc    " +
-                        "FROM ")
-                .append(MD_SiteDao.TABLE)
-                .append(" WHERE " +
-                        MD_SiteDao.CUSTOMER_CODE +" = '"+s_customer_code+"' " +
-                        " ORDER BY " +
-                        "      site_id,site_desc;")
-                .append("site_code#site_id#site_desc")
-                .toString();
+                .append(" SELECT\n" +
+                        "      ifnull(s.customer_code,"+s_customer_code+"),\n" +
+                        "      s.site_code,\n" +
+                        "      s.site_id,\n" +
+                        "      s.site_id||' - '||s.site_desc site_desc\n" +
+                        " FROM "  +
+                        MD_SiteDao.TABLE + " s" +
+                        " WHERE " +
+                        MD_SiteDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
+                        "AND " +MD_SiteDao.SITE_CODE +" = '"+s_site_code+"' ")
+                        .toString();
     }
 
 }
