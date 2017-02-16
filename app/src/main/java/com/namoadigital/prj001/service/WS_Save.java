@@ -106,6 +106,12 @@ public class WS_Save extends IntentService {
         if(processPendingToken(1) == 0){
             processNewToken(0);
         }
+        //Verifica se existem dados a serem enviado
+        //Se não existir, cancela a chamada do WS
+        if(form_datas.size() == 0){
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Não há dados a serem enviados", "", "0");
+            return;
+        }
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Sending form data...", "", "0");
         //
@@ -206,6 +212,13 @@ public class WS_Save extends IntentService {
         switch (save){
             case "OK":
             case"OK_DUP":
+                //Se enviado com sucesso, atualiza Status para SENT
+                for (GE_Custom_Form_Data form_data : form_datas){
+                    form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_SENT);
+                }
+                //Atualiza dados na tabela.
+                formDataDao.addUpdate(form_datas,false);
+                //Dispara msg para fechar dialog
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Data Sent!", "", "0");
                 return true;
 
