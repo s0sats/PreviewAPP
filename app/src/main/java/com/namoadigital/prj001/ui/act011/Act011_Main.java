@@ -2,7 +2,9 @@ package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -45,8 +47,11 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -70,6 +75,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private ArrayList<Fragment> screens;
     private ArrayList<CustomFF> customFFs;
 
+    private HMAux resTabs;
+
     private Toolbar toolbar;
 
     private String dtCustomer_Format;
@@ -86,9 +93,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String prefix;
     private String form_data;
 
+    private boolean ignoreUpdate = false;
+
     private GE_Custom_Form_Data formData;
 
     private boolean includeField;
+
+    private int oldPageIndex = 0;
+    private int currentPageIndex = 1;
+
+    private int index_old = 0;
+    private int index = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,6 +130,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 mModule_Code,
                 Constant.ACT011
         );
+
+        mCustomer_Info = ToolBox_Con.getPreference_Customer_Code_NAME(context);
+        mSite_Info = ToolBox_Con.getPreference_Site_Code(context);
+        mOperation_Info = String.valueOf(ToolBox_Con.getPreference_Operation_Code(context));
 
         loadTranslation();
     }
@@ -144,7 +163,19 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 mDrawerLayout,
                 R.string.act005_drawer_opened,
                 R.string.act005_drawer_closed
-        );
+        ) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+                //returnValidCheck(String.valueOf(index));
+                //
+                resTabs = returnValidCheckTabs(String.valueOf(index_old));
+                //
+                act011_ff_options.tabsS(resTabs);
+            }
+        };
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -158,10 +189,32 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         act011_ff_options.setOnTabSelectedListener(new Act011_FF_Options.ICustom_Form_FF_Options() {
             @Override
-            public void tabSelected(int idtab) {
-                pager.setCurrentItem(idtab - 1);
-                //
-                returnValidCheck();
+            public void tabSelected(int idtab, String link) {
+
+                if (!link.contains(".pdf")) {
+
+                    ignoreUpdate = true;
+
+                    index_old = index;
+                    index = idtab;
+
+                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
+                    //
+                    act011_ff_options.tabsS(resTabs);
+                    //
+                    returnValidCheck(String.valueOf(index_old));
+                    //
+                    pager.setCurrentItem(idtab - 1);
+
+                } else {
+
+                    File file = new File(Constant.CACHE_PATH + "/" + link);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                    startActivity(intent);
+                }
                 //
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -177,7 +230,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
                 }
 
-                returnValidCheck();
+                returnValidCheck(String.valueOf(-1));
 
                 mPresenter.saveData(formData);
 
@@ -193,7 +246,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
                 }
 
-                int sum = returnValidCheck();
+                int sum = returnValidCheck(String.valueOf(-1));
 
                 if (sum == 0) {
 
@@ -202,7 +255,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 } else {
 
                     ToolBox.alertMSG(
-                            context,
+                            Act011_Main.this,
                             "Check Record",
                             "Error. You Cant' Check!!!",
                             null,
@@ -272,12 +325,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF) {
 
         this.prefix = prefix;
         this.formData = formData;
-
-        act011_ff_options.loadCF_Fields(cf_fields);
+        this.index_old = indexF;
+        this.index = 1;
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
@@ -372,7 +425,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 public void onPageSelected(int position) {
                     act011_ff_options.setFOpc(position + 1);
                     //
-                    returnValidCheck();
+                    index_old = index;
+                    index = position + 1;
+
+                    if (!ignoreUpdate) {
+                        resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
+                        //
+                        act011_ff_options.tabsS(resTabs);
+                        //
+                        returnValidCheck(String.valueOf(index_old));
+                    } else {
+                        ignoreUpdate = false;
+                    }
                 }
 
                 @Override
@@ -380,6 +444,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 }
             });
+
+            resTabs = returnValidCheckTabs(String.valueOf(index_old));
+
+            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs);
+
+            returnValidCheck(String.valueOf(index_old));
         }
     }
 
@@ -409,8 +479,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmType(cf.get("custom_form_data_type"));
 
         if (cf.get("custom_form_data_type").equalsIgnoreCase("DATE")) {
+            mkEditTextNMFF.setmBARCODE(false);
+            mkEditTextNMFF.setmNFC(false);
+            mkEditTextNMFF.setmOCR(false);
             //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"DATE\",\"VALUE\":\"$$/$$/$$$$\"}]}");
         } else if (cf.get("custom_form_data_type").equalsIgnoreCase("HOUR")) {
+            mkEditTextNMFF.setmBARCODE(false);
+            mkEditTextNMFF.setmNFC(false);
+            mkEditTextNMFF.setmOCR(false);
             //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"HOUR\",\"VALUE\":\"$$:$$\"}]}");
         } else {
             mkEditTextNMFF.setmMask(cf.get("custom_form_data_mask"));
@@ -447,6 +523,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         comboBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
         comboBoxFF.setmPre(prefix);
+
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
@@ -628,33 +705,144 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
 
-    private int returnValidCheck() {
+    private int returnValidCheck(String sPage) {
+
         int numberOfErrors = 0;
+        int ipage = Integer.parseInt(sPage);
         //
         for (int i = 0; i < customFFs.size(); i++) {
-            if (!customFFs.get(i).isValid()) {
-                numberOfErrors += 1;
-            }
 
-            customFFs.get(i).setValidationBackGround();
+            if (ipage == -1) {
+                if (!customFFs.get(i).isValid()) {
+                    numberOfErrors += 1;
+                }
+
+                customFFs.get(i).setValidationBackGround();
+            } else {
+                if (customFFs.get(i).getmPage() == ipage) {
+                    if (!customFFs.get(i).isValid()) {
+                        numberOfErrors += 1;
+                    }
+
+                    customFFs.get(i).setValidationBackGround();
+                } else {
+                }
+            }
         }
-        //
+
         return numberOfErrors;
     }
 
+    private HMAux returnValidCheckTabs(String sPage) {
 
-    private void prepareFormSave() {
+        ArrayList<HMAux> itens = new ArrayList<>();
 
-        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+        HMAux item = new HMAux();
+
+        HMAux ipages = new HMAux();
+        int ipage = Integer.parseInt(sPage);
+        //
+        for (int i = 0; i < customFFs.size(); i++) {
+            HMAux aux = new HMAux();
+
+            if (ipage == -1) {
+
+                if (!customFFs.get(i).isValid()) {
+                    aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                    aux.put("value", "ERROR");
+                } else {
+                    aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                    aux.put("value", "OK");
+                }
+
+                ipages.put(String.valueOf(customFFs.get(i).getmPage()), "");
+
+                itens.add(aux);
+
+
+            } else {
+                if (ipage == customFFs.get(i).getmPage()) {
+                    if (!customFFs.get(i).isValid()) {
+                        aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                        aux.put("value", "ERROR");
+                    } else {
+                        aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
+                        aux.put("value", "OK");
+                    }
+
+                    ipages.put(String.valueOf(customFFs.get(i).getmPage()), "");
+
+                    itens.add(aux);
+                }
+            }
+
         }
 
+        Set keys = ipages.keySet();
 
-        int quantidade = returnValidCheck();
+        for (Iterator i = keys.iterator(); i.hasNext(); ) {
+            String key = (String) i.next();
+            String value = (String) ipages.get(key);
 
+            item.put(key, pageStatus(key, itens));
 
-        String sF = formData.getToken();
+        }
+
+        return item;
+    }
+
+    private String pageStatus(String page, ArrayList<HMAux> itens) {
+        int total = 0;
+        int ok = 0;
+        int error = 0;
+        int pending = 0;
+
+        for (HMAux aux : itens) {
+
+            if (aux.get("page").equals(page)) {
+                switch (aux.get("value").toUpperCase()) {
+                    case "PENDING":
+                        pending++;
+                        break;
+                    case "ERROR":
+                        error++;
+                        break;
+                    case "OK":
+                        ok++;
+                        break;
+                    default:
+                        break;
+                }
+
+                total++;
+            }
+        }
+
+        if (error != 0) {
+            return "ERROR";
+        }
+
+        if (total == pending) {
+            return "PENDING";
+        }
+
+        if (total == ok) {
+            return "OK";
+        }
+
+        return "EXEC";
+    }
+
+    private void prepareFormSave() {
+//
+//        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+//            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+//            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+//        }
+//
+//        int quantidade = returnValidCheck();
+//
+//        String sF = formData.getToken();
     }
 
     private class ScreenAdapter extends FragmentPagerAdapter {
@@ -728,7 +916,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     public void callAct005(Context context) {
-        Intent mIntent =  new Intent(context,Act005_Main.class);
+        Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

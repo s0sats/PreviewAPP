@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface Act011_Main_View {
 
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix);
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF);
 
     public void showMsg(String title, String msg);
 

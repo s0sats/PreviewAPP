@@ -42,14 +42,14 @@ public class Act011_FF_Options extends Fragment {
     private transient LinearLayout ff_options_ll_f;
     private transient TextView ff_options_ll_ft;
 
-    public void setTabsAndFields(List<HMAux> tabsAndFields) {
+    public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs) {
         this.tabsAndFields = tabsAndFields;
         //
-        loadCF_Fields(tabsAndFields);
+        loadCF_Fields(tabsAndFields, resTabs, pdfs);
     }
 
     public interface ICustom_Form_FF_Options {
-        public void tabSelected(int idtab);
+        public void tabSelected(int idtab, String link);
     }
 
     private ICustom_Form_FF_Options delegate;
@@ -60,6 +60,7 @@ public class Act011_FF_Options extends Fragment {
 
     public interface ICustom_Form_FF_Options_ll {
         public void save();
+
         public void check();
     }
 
@@ -104,7 +105,7 @@ public class Act011_FF_Options extends Fragment {
                 HMAux iAux = (HMAux) parent.getItemAtPosition(position);
 
                 if (delegate != null) {
-                    delegate.tabSelected(Integer.parseInt(iAux.get("page")));
+                    delegate.tabSelected(Integer.parseInt(iAux.get("page")), iAux.get("link"));
                 }
             }
         });
@@ -112,7 +113,7 @@ public class Act011_FF_Options extends Fragment {
         ff_options_ll_s.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (delegate_ll != null){
+                if (delegate_ll != null) {
                     delegate_ll.save();
                 }
             }
@@ -121,7 +122,7 @@ public class Act011_FF_Options extends Fragment {
         ff_options_ll_f.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (delegate_ll != null){
+                if (delegate_ll != null) {
                     delegate_ll.check();
                 }
             }
@@ -129,7 +130,7 @@ public class Act011_FF_Options extends Fragment {
 
     }
 
-    public void loadCF_Fields(List<HMAux> cf_fields) {
+    public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs) {
         ArrayList<HMAux> tabs = new ArrayList<>();
 
         if (cf_fields != null) {
@@ -143,12 +144,18 @@ public class Act011_FF_Options extends Fragment {
         adapter_tabs = new Act011_FF_Options_Adapter(
                 context,
                 R.layout.act011_ff_options_cell,
-                tabs
+                tabs,
+                resTabs,
+                pdfs
         );
 
         adapter_tabs.setIdselected(1);
 
         lv_tabs.setAdapter(adapter_tabs);
+    }
+
+    public void tabsS(HMAux resTabs) {
+        adapter_tabs.setTabsColors(resTabs);
     }
 
 }
