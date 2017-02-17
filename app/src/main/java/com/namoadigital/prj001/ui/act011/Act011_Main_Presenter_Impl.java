@@ -86,8 +86,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
 
         List<HMAux> cf_fields = null;
+        int index = -1;
 
         if (customFormLocal != null) {
+
+            index = -1;
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
                     new GE_Custom_Form_Fields_Local_Sql_001(
@@ -100,6 +103,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
 
         } else {
+
+            index = 0;
 
             HMAux ii = custom_formDao.getByStringHM(
                     new GE_Custom_Form_Local_Sql_002().toSqlQuery().toLowerCase()
@@ -190,7 +195,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString()
         );
 
-        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre(), pdfs);
+        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre(), pdfs, index);
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {

@@ -325,13 +325,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF) {
 
         this.prefix = prefix;
         this.formData = formData;
-
-        //Hugo
-        //act011_ff_options.loadCF_Fields(cf_fields);
+        this.index_old = indexF;
+        this.index = 1;
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
