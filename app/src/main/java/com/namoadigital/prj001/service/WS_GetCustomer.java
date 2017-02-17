@@ -167,6 +167,16 @@ public class WS_GetCustomer extends IntentService {
                     new TypeToken<ArrayList<EV_User_Customer>>() {
                     }.getType()
             );
+            //Verifica se o db do customer se já existe
+            //Se não existir seta chave para vazia.
+            for (EV_User_Customer customer : customers) {
+                if(!ToolBox_Inf.checkCustomerDBExists(customer.getCustomer_code()) &&
+                    customer.getSession_app() != null
+                ){
+                    customer.setSession_app(null);
+                }
+            }
+            //
             ev_user_customerDao.addUpdate(customers, true);
         }
 

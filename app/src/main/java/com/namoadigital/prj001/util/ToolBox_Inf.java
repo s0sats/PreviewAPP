@@ -754,4 +754,15 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * Verifica se existe o arquivo de banco de dados daquele customer
+     * @param customer_code
+     * @return True or false
+     */
+    public static boolean checkCustomerDBExists(final long customer_code) {
+        File customerDB = new File(Constant.DB_PATH +"/C_"+customer_code+".db3");
+        //
+        return customerDB.exists();
+    }
+
 }
