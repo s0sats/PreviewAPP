@@ -116,6 +116,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 );
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
+        controls_sta.add(mket_serial_id);
         //
         tv_product_code_label = (TextView) findViewById(R.id.act008_tv_product_code);
         tv_product_code_label.setTag("product_label");
@@ -144,6 +145,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         views.add(chk_allow_new);
         views.add(btn_back);
         views.add(btn_create);
+
     }
 
     private void recoverIntentsInfo() {

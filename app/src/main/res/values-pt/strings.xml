@@ -4,7 +4,7 @@
 
     <string name="act005_drawer_opened">Drawer Opened</string>
     <string name="act005_drawer_closed">Drawer Closed</string>
-    <string name="get_customer_alert_title">Customer</string>
+    <string name="get_customer_alert_title">Cliente</string>
     <string name="generic_start_processing_msg">Iniciando processamento...</string>
     <string name="generic_msg_cancel">Cancel</string>
     <string name="generic_msg_ok">OK</string>
@@ -20,9 +20,9 @@
     <string name="generic_receiving_data_msg">Recebendo dados...</string>
     <string name="generic_saving_data_msg">Salvando dados...</string>
     <string name="msg_getting_master_data">Obtendo Master data...</string>
-    <string name="msg_processing_customer">Obtendo Customers...</string>
+    <string name="msg_processing_customer">Obtendo Clientes...</string>
     <string name="msg_processing_ev_user">Processando lista de usuários...</string>
-    <string name="msg_processing_ev_user_customer">Processando lista de customer...</string>
+    <string name="msg_processing_ev_user_customer">Processando lista de clientes...</string>
     <string name="msg_finishing_processsing">Finalizando o processamento...</string>
     <string name="generic_unzipping_data_msg">Descompactando dados...</string>
     <string name="msg_processing_data_step1">Processando dados etapa 1 de 4</string>
