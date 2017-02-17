@@ -60,7 +60,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void initVars() {
-        context = getBaseContext();
+        context = Act001_Main.this;  //getBaseContext();
         //
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
@@ -97,35 +97,40 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     protected void nfcData(boolean bStatus, String sMessage) {
-        if (bStatus) {
-            enableProgressDialog(
-                    context.getString(R.string.get_customer_alert_title),
-                    context.getString(R.string.generic_start_processing_msg),
-                    context.getString(R.string.generic_msg_cancel),
-                    context.getString(R.string.generic_msg_ok)
-            );
-            //Salva NFC temp
+        if(ToolBox_Con.isOnline(context)) {
 
-            mEmail = "";
-            mPassWord = "";
-            mNFC = sMessage;
+            if (bStatus) {
+                enableProgressDialog(
+                        context.getString(R.string.get_customer_alert_title),
+                        context.getString(R.string.generic_start_processing_msg),
+                        context.getString(R.string.generic_msg_cancel),
+                        context.getString(R.string.generic_msg_ok)
+                );
+                //Salva NFC temp
 
-            ToolBox_Con.setPreference_User_NFC_TMP(context,sMessage);
-            mPresenter.executeLoginProcess(
-                    "",
-                    "",
-                    sMessage,
-                    0
-            );
-        } else {
-            enableProgressDialog(
-                    context.getString(R.string.get_customer_alert_title),
-                    sMessage,
-                    context.getString(R.string.generic_msg_cancel),
-                    context.getString(R.string.generic_msg_ok)
-            );
+                mEmail = "";
+                mPassWord = "";
+                mNFC = sMessage;
 
-            updatePD("ERROR_1", sMessage);
+                ToolBox_Con.setPreference_User_NFC_TMP(context, sMessage);
+                mPresenter.executeLoginProcess(
+                        "",
+                        "",
+                        sMessage,
+                        0
+                );
+            } else {
+                enableProgressDialog(
+                        context.getString(R.string.get_customer_alert_title),
+                        sMessage,
+                        context.getString(R.string.generic_msg_cancel),
+                        context.getString(R.string.generic_msg_ok)
+                );
+
+                updatePD("ERROR_1", sMessage);
+            }
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
@@ -196,7 +201,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     public void call_Act003_Main(Context context) {
-            Intent mIntent = new Intent(context, Act003_Main.class);
+        Intent mIntent = new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         context.startActivity(mIntent);

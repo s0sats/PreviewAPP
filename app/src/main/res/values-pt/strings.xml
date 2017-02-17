@@ -35,4 +35,6 @@
     <string name="msg_user_invalid">Usuário inválido.</string>
     <string name="msg_user_canceled">Usuário cancelado.</string>
     <string name="msg_user_other_device">Usuário logado em outro aparelho.</string>
+    <string name="generic_no_connection_ttl">Connection not found!</string>
+    <string name="generic_no_connection_msg">No connection has been found!\nTry again later!</string>
 </resources>
