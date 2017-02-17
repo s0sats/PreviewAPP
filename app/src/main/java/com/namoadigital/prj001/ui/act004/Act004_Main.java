@@ -21,6 +21,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,12 +59,17 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("act004_title");
+        transList.add("alert_no_operation_title");
+        transList.add("alert_no_operation_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
 
     }
@@ -104,8 +110,8 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         if (operations.size() == 0) {
             ToolBox.alertMSG(
                     Act004_Main.this,
-                    "Criar Title Operation Selection",
-                    "Criar Msg No operation Avaliable. The app will be closed!",
+                    hmAux_Trans.get("alert_no_operation_title"),
+                    hmAux_Trans.get("alert_no_operation_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

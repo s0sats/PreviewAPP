@@ -48,7 +48,7 @@ public class WS_UpdateSoftware extends IntentService {
 
                 processUpdate();
 
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Update Process...", "", "0");
+                //ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Update Process...", "", "0");
 
             } else {
 
