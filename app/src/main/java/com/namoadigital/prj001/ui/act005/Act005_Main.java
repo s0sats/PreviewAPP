@@ -21,8 +21,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
-import com.namoadigital.prj001.dao.Sync_ChecklistDao;
-import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
@@ -85,7 +83,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         context = getBaseContext();
 
-        Sync_ChecklistDao syncDao =
+      /*  Sync_ChecklistDao syncDao =
                 new Sync_ChecklistDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -97,7 +95,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context))
 
                 ).toSqlQuery()
-        );
+        );*/
         //
         fm = getSupportFragmentManager();
         //

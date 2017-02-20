@@ -35,6 +35,8 @@
     <string name="msg_user_invalid">Usuário inválido.</string>
     <string name="msg_user_canceled">Usuário cancelado.</string>
     <string name="msg_user_other_device">Usuário logado em outro aparelho.</string>
-    <string name="generic_no_connection_ttl">Connection not found!</string>
-    <string name="generic_no_connection_msg">No connection has been found!\nTry again later!</string>
+    <string name="generic_no_connection_ttl">Conexão não encontrada</string>
+    <string name="generic_no_connection_msg">Nenhuma conexão encontrada!\nTenta novamente quando houver conexão</string>
+    <string name="generic_zip_not_found_msg">Arquivo zip não encontrado!\nPor favor tente novamente!</string>
+    <string name="generic_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
 </resources>
