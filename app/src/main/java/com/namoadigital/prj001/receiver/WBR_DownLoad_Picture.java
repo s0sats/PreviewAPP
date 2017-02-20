@@ -9,7 +9,7 @@ import com.namoadigital.prj001.service.WS_DownLoad_Picture;
 import com.namoadigital.prj001.service.WS_Serial;
 
 /**
- * Created by DANIEL.LUCHE on 03/02/2017.
+ * Created by neomatrix on 01/02/17.
  */
 
 public class WBR_DownLoad_Picture extends WakefulBroadcastReceiver {

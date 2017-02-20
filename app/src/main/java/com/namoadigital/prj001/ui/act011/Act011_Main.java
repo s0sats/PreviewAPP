@@ -1,10 +1,10 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,9 +27,12 @@ import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
 import com.namoa_digital.namoa_library.ctls.RatingImageFF;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Camera_Activity;
+import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
@@ -49,9 +52,12 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -83,6 +89,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private Bundle bundle;
 
+    private HMAux hmPages = new HMAux();
+
     private String product_code;
     private String serial_id;
     private String type;
@@ -92,6 +100,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String form_desc;
     private String prefix;
     private String form_data;
+    private String mSignature;
+    private int signature;
 
     private boolean ignoreUpdate = false;
 
@@ -139,11 +149,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("act011_exit_alert_ttl");
+        transList.add("act011_exit_alert_msg");
+        transList.add("act011_exit_ok");
+        transList.add("act011_exit_no");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -171,9 +188,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 //returnValidCheck(String.valueOf(index));
                 //
-                resTabs = returnValidCheckTabs(String.valueOf(index_old));
+
+                if (index_old == -1 || index_old == 0) {
+                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
+
+                    act011_ff_options.tabsS(resTabs);
+                } else {
+                    act011_ff_options.tabsS(hmPages);
+                }
                 //
-                act011_ff_options.tabsS(resTabs);
+                //act011_ff_options.tabsS(resTabs);
             }
         };
 
@@ -250,7 +274,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 if (sum == 0) {
 
-                    mPresenter.checkData(formData);
+                    formData.setSignature(mSignature);
+
+                    mPresenter.checkSignature(formData, signature);
 
                 } else {
 
@@ -325,12 +351,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature) {
 
         this.prefix = prefix;
         this.formData = formData;
         this.index_old = indexF;
         this.index = 1;
+        this.signature = signature;
+        this.mSignature = "s_" + prefix + ".png";
+
+        if (!formData.getSerial_id().equalsIgnoreCase(serial_id)) {
+            formData.setSerial_id(serial_id);
+        }
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
@@ -428,14 +460,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     index_old = index;
                     index = position + 1;
 
-                    if (!ignoreUpdate) {
-                        resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
-                        //
-                        act011_ff_options.tabsS(resTabs);
+                    if (ignoreUpdate) {
+                        ignoreUpdate = false;
+                    } else {
                         //
                         returnValidCheck(String.valueOf(index_old));
-                    } else {
-                        ignoreUpdate = false;
+                        //
+                        //resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
+                        // Hugo
+                        resTabs = returnValidCheckTabs(String.valueOf(index_old));
+                        //
+                        Set keys = resTabs.keySet();
+
+                        for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                            String key = (String) i.next();
+                            String value = (String) resTabs.get(key);
+
+                            hmPages.put(key, value);
+                        }
+                        //
+                        //act011_ff_options.tabsS(resTabs);
+                        act011_ff_options.tabsS(hmPages);
                     }
                 }
 
@@ -884,18 +929,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             return true;
         }
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.act11_action_settings) {
 
-//            prepareFormSave();
-
-//            ToolBox_Con.cleanPreferences(context);
-//
-//            Intent mIntent = new Intent(context, Act001_Main.class);
-//            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(mIntent);
-//
-//            finish();
 
             return true;
         }
@@ -904,13 +939,71 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void showMsg(String title, String msg) {
+    public void showMsg(String title, String msg, int type) {
+        switch (type) {
+            case 0:
+
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        title,
+                        msg,
+                        null,
+                        0
+                );
+
+                break;
+            case 1:
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callSignature();
+                            }
+                        },
+                        0
+                );
+
+                break;
+            case 2:
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callAct005(context);
+                            }
+                        },
+                        0
+                );
+
+                break;
+
+        }
+    }
+
+    public void exitAlert() {
+
+        String alertTitle = hmAux_Trans.get("act011_exit_alert_ttl");
+        String alertMsg = hmAux_Trans.get("act011_exit_alert_msg");
+        //
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                callAct005(Act011_Main.this);
+            }
+        };
+
         ToolBox.alertMSG(
                 Act011_Main.this,
-                title,
-                msg,
-                null,
-                0
+                alertTitle,
+                alertMsg,
+                listener,
+                1
         );
     }
 
@@ -925,6 +1018,42 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        //mPresenter.onBackPressedClicked();
+
+        exitAlert();
     }
+
+    @Override
+    public void showSignature() {
+
+    }
+
+    @Override
+    protected void getSignatueF(String mValue) {
+        mSignature = mValue.replace(CACHE_PATH + "/", "");
+
+        if (!mSignature.equals("")) {
+            formData.setSignature(mSignature);
+            mPresenter.checkData(formData);
+        }
+    }
+
+    @Override
+    public void callSignature() {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putInt(ConstantBase.PID, -1);
+            bundle.putInt(ConstantBase.PTYPE, 0);
+            bundle.putString(ConstantBase.PPATH, CACHE_PATH + "/" + mSignature);
+
+            Intent mIntent = new Intent(context, SignaTure_Activity.class);
+            mIntent.putExtras(bundle);
+
+            context.startActivity(mIntent);
+        } catch (Exception e) {
+        }
+
+    }
+
+
 }

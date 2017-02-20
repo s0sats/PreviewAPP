@@ -1,0 +1,45 @@
+package com.namoadigital.prj001.model;
+
+/**
+ * Created by DANIEL.LUCHE on 16/01/2017.
+ */
+
+public class GE_File {
+
+    private long file_code;
+    private String file_path;
+    private String file_status;
+    private String file_date;
+
+    public long getFile_code() {
+        return file_code;
+    }
+
+    public void setFile_code(long file_code) {
+        this.file_code = file_code;
+    }
+
+    public String getFile_path() {
+        return file_path;
+    }
+
+    public void setFile_path(String file_path) {
+        this.file_path = file_path;
+    }
+
+    public String getFile_status() {
+        return file_status;
+    }
+
+    public void setFile_status(String file_status) {
+        this.file_status = file_status;
+    }
+
+    public String getFile_date() {
+        return file_date;
+    }
+
+    public void setFile_date(String file_date) {
+        this.file_date = file_date;
+    }
+}

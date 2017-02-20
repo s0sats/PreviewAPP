@@ -6,18 +6,18 @@ import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.namoadigital.prj001.service.WS_DownLoad_PDF;
-import com.namoadigital.prj001.service.WS_DownLoad_Picture;
+import com.namoadigital.prj001.service.WS_Upload_Img;
 
 /**
  * Created by neomatrix on 01/02/17.
  */
 
-public class WBR_DownLoad_PDF extends WakefulBroadcastReceiver {
+public class WBR_Upload_Img extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
 
-        Intent mService = new Intent(context, WS_DownLoad_PDF.class);
+        Intent mService = new Intent(context, WS_Upload_Img.class);
 
         if (bundle != null) {
             mService.putExtras(bundle);

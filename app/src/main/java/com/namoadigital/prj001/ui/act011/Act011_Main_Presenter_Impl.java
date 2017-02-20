@@ -195,7 +195,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString()
         );
 
-        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre(), pdfs, index);
+        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {
@@ -255,7 +255,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
-        mView.showMsg("Salvando Registro", "Registro Salvo Partialmente!!!");
+        mView.showMsg(
+                "Salvando Registro",
+                "Registro Salvo Partialmente!!!",
+                0);
     }
 
     @Override
@@ -271,10 +274,39 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString()
         );
         //
+        formData.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_FINALIZED);
+        formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
-        mView.showMsg("Finalizando Registro", "Registro Finalizado!!!");
+        mView.showMsg(
+                "Finalizando Registro",
+                "Registro Finalizado!!!",
+                2);
+    }
+
+    @Override
+    public void checkSignature(GE_Custom_Form_Data formData, int signature) {
+
+        switch (signature) {
+            case 1:
+                if (signature != 0 && (ToolBox.validationCheckFile(Constant.CACHE_PATH + "/" + formData.getSignature()))) {
+                    checkData(formData);
+                } else {
+                    mView.showMsg(
+                            "Finalizar Registro",
+                            "Para Finalizar o Registro é preciso uma assinatura!!!",
+                            1);
+                }
+
+                break;
+            default:
+
+                break;
+        }
+
+
     }
 
     @Override

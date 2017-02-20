@@ -25,6 +25,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 /**
  * Created by neomatrix on 09/01/17.
  */
@@ -582,7 +584,7 @@ public class ToolBox_Con {
     }
 
     public static boolean isOnline(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         int netType = 0;
         if (netInfo != null) {
@@ -597,5 +599,23 @@ public class ToolBox_Con {
 
     }
 
+    public static String checkConStatus(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(CONNECTIVITY_SERVICE);
+
+        NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        //
+        if ( wifi.isAvailable() && wifi.isConnected()){
+            return "WIFI";
+        }
+        //
+        if ( mobile.isAvailable() && mobile.isConnected()){
+            return "MOBILE";
+        }
+        //
+        return "NO_SERVICE";
+    }
 
 }

@@ -139,6 +139,16 @@
         <receiver android:name=".receiver.WBR_DownLoad_PDF" />
         <service android:name=".service.WS_DownLoad_PDF" />
 
+        <receiver android:name=".receiver.WBR_Upload_Img" />
+        <service android:name=".service.WS_Upload_Img" />
+
+        <receiver android:name=".receiver.WBR_Connections_Change">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>
