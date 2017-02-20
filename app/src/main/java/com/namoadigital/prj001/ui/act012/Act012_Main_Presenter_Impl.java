@@ -38,6 +38,17 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
         mView.loadPendencies(pendencies);
     }
 
+
+    @Override
+    public void checkPendenciesFlow(HMAux item) {
+
+        if(!item.get(Sql_Act012_001.PENDING_QTY).equalsIgnoreCase("0")){
+            mView.callAct013(context);
+        }else{
+            mView.showMsg();
+        }
+    }
+
     @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);

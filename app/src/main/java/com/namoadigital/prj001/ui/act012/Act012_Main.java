@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
@@ -73,11 +74,19 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     private void loadTranslation() {
+        //
+        List<String> translateList = new ArrayList<>();
+        translateList.add(LABEL_TRANS_CHECKLIST);
+        translateList.add(LABEL_TRANS_OS);
+        translateList.add("alert_no_pendencies_title");
+        translateList.add("alert_no_pendencies_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
         );
     }
 
@@ -99,11 +108,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         btn_back.setTag("btn_back");
         views.add(btn_back);
         //
-        List<String> translateList = new ArrayList<>();
-        translateList.add(LABEL_TRANS_CHECKLIST);
-        translateList.add(LABEL_TRANS_OS);
-        //
-        mPresenter.getPendencies(ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translateList));
+        mPresenter.getPendencies(hmAux_Trans);
 
     }
 
@@ -133,9 +138,9 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                // Toast.makeText(context,item.get(Sql_Act012_001.TYPE),Toast.LENGTH_LONG).show();
-                callAct013(context);
+
+                mPresenter.checkPendenciesFlow(item);
+
             }
         });
 
@@ -157,6 +162,19 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     @Override
+    public void showMsg() {
+
+        ToolBox.alertMSG(
+                Act012_Main.this,
+                hmAux_Trans.get("alert_no_pendencies_title"),
+                hmAux_Trans.get("alert_no_pendencies_msg"),
+                null,
+                0
+                );
+
+    }
+
+    @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -164,7 +182,8 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         finish();
     }
 
-    private void callAct013(Context context) {
+    @Override
+    public void callAct013(Context context) {
         Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);

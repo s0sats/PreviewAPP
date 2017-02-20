@@ -10,5 +10,7 @@ public interface Act012_Main_Presenter {
 
     void getPendencies(HMAux label_translation);
 
+    void checkPendenciesFlow(HMAux item);
+
     void onBackPressedClicked();
 }

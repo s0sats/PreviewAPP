@@ -15,4 +15,9 @@ public interface Act012_Main_View {
     void loadPendencies(List<HMAux> pendencies);
 
     void callAct005(Context context);
+
+    void callAct013(Context context);
+
+    void showMsg();
+
 }
