@@ -6,13 +6,13 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.MD_Product_Group;
+import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act007_001;
 import com.namoadigital.prj001.sql.Sql_Act007_002;
-import com.namoadigital.prj001.ui.act006.Act006_Main_View;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -36,47 +36,66 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
 
     @Override
     public void setAdapterData(long product_code, String filter) {
+        List<MD_Product> listProducts = getProductList();
 
-        ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
-                new Sql_Act007_001(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        String.valueOf(product_code),
-                        (filter.trim().equals("") ? "null" : filter)
-                ).toSqlQuery()
-        );
+        if( listProducts.size() == 1 ){
+            mView.callAct008(context, String.valueOf(listProducts.get(0).getProduct_code()));
+        }else {
 
-        ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
-                new Sql_Act007_002(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        String.valueOf(product_code),
-                        (filter.trim().equals("") ? "null" : filter),
-                        (int) product_code
-                ).toSqlQuery()
-        );
+            ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
+                    new Sql_Act007_001(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            String.valueOf(product_code),
+                            (filter.trim().equals("") ? "null" : filter)
+                    ).toSqlQuery()
+            );
 
-        ArrayList<HMAux> data = new ArrayList<>();
+            ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
+                    new Sql_Act007_002(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            String.valueOf(product_code),
+                            (filter.trim().equals("") ? "null" : filter),
+                            (int) product_code
+                    ).toSqlQuery()
+            );
 
-        for (HMAux aux : groups) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("group_code"));
-            item.put("desc", aux.get("group_desc"));
-            item.put("full_desc", aux.get("full_group_desc"));
-            item.put("type", aux.get("type"));
-            //
-            data.add(item);
+
+            ArrayList<HMAux> data = new ArrayList<>();
+
+            for (HMAux aux : groups) {
+                HMAux item = new HMAux();
+                item.put("code", aux.get("group_code"));
+                item.put("desc", aux.get("group_desc"));
+                item.put("full_desc", aux.get("full_group_desc"));
+                item.put("type", aux.get("type"));
+                //
+                data.add(item);
+            }
+
+            for (HMAux aux : products) {
+                HMAux item = new HMAux();
+                item.put("code", aux.get("product_code"));
+                item.put("desc", aux.get("product_desc"));
+                item.put("full_desc", aux.get("full_product_desc"));
+                item.put("type", aux.get("type"));
+                //
+                data.add(item);
+            }
+
+            mView.loadGroups_Products(data);
         }
+    }
 
-        for (HMAux aux : products) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("product_code"));
-            item.put("desc", aux.get("product_desc"));
-            item.put("full_desc", aux.get("full_product_desc"));
-            item.put("type", aux.get("type"));
-            //
-            data.add(item);
-        }
+    @Override
+    public List<MD_Product> getProductList() {
 
-        mView.loadGroups_Products(data);
+        List<MD_Product> listProducts =
+                productDao.query(new MD_Product_Sql_002(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        ).toSqlQuery()
+                );
+
+        return listProducts;
     }
 
     @Override

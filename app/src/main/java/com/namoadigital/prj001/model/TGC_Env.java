@@ -7,6 +7,7 @@ public class TGC_Env {
 
     private String app_code;
     private String app_version;
+    private String device_code;
 
     private String email_p;
     private String password;
@@ -26,6 +27,14 @@ public class TGC_Env {
 
     public void setApp_version(String app_version) {
         this.app_version = app_version;
+    }
+
+    public String getDevice_code() {
+        return device_code;
+    }
+
+    public void setDevice_code(String device_code) {
+        this.device_code = device_code;
     }
 
     public String getEmail_p() {

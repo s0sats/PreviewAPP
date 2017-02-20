@@ -99,6 +99,7 @@ public class WS_GetCustomer extends IntentService {
         TGC_Env env = new TGC_Env();
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
+        env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
         //
         env.setEmail_p(user);
         env.setPassword(password);

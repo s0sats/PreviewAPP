@@ -9,13 +9,16 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -247,12 +250,34 @@ public class WS_Save extends IntentService {
         switch (save){
             case "OK":
             case"OK_DUP":
+                List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
+                GE_Custom_Form_LocalDao formLocalDao =
+                        new GE_Custom_Form_LocalDao(
+                                getApplicationContext(),
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+
                 //Se enviado com sucesso, atualiza Status para SENT
                 for (GE_Custom_Form_Data form_data : form_datas){
                     form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_SENT);
+                    GE_Custom_Form_Local aux =
+                            formLocalDao.getByString(
+                            new GE_Custom_Form_Local_Sql_003(
+                                    String.valueOf(form_data.getCustomer_code()),
+                                    String.valueOf(form_data.getCustom_form_type()),
+                                    String.valueOf(form_data.getCustom_form_code()),
+                                    String.valueOf(form_data.getCustom_form_version()),
+                                    String.valueOf(form_data.getCustom_form_data())
+                            ).toSqlQuery()
+                    );
+                    aux.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_SENT);
+                    formLocals.add(aux);
                 }
                 //Atualiza dados na tabela.
+                formLocalDao.addUpdate(formLocals,false);
                 formDataDao.addUpdate(form_datas,false);
+
                 //Dispara msg para fechar dialog
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
                 return true;
