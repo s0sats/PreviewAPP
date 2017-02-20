@@ -63,11 +63,13 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             }
         }
         //Verifica se exite conexao antes de chamar WS
-        //if(ToolBox_Inf.isOnline){
-        mView.showPD();
-        //
-        executeLoginProcess(login, password, nfc_code, 0);
-        //}
+        if(ToolBox_Con.isOnline(context)){
+            mView.showPD();
+            //
+            executeLoginProcess(login, password, nfc_code, 0);
+        } else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
 
     }
 

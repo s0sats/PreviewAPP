@@ -48,6 +48,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private long currentIndex = 0L;
 
+    private int stopPropagation = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,17 +114,26 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
         recuperaGetIntents();
 
-        mPresenter.setAdapterData(currentIndex, mket_product_search.getText().toString().trim());
-
+        if(stopPropagation == 0) {
+            mPresenter.setAdapterData(currentIndex, mket_product_search.getText().toString().trim());
+        }
     }
 
     private void recuperaGetIntents() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
-            mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
-            //
-            reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
+            //Se tem bundle e só 1 produto,
+            //significa que o usr clicou em voltar na act008
+            if(mPresenter.getProductList().size() == 1) {
+                stopPropagation = 1;
+                callAct006(context);
+            }else{
+                currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
+                mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
+                //
+                reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
+            }
+
         } else {
             currentIndex = 0;
             mket_product_search.setText("");

@@ -164,9 +164,11 @@ public class WS_Sync extends IntentService {
             if(product_code != -1L){
                 CHECKLIST.add(product_code);
             }
-
-            dataPackage.setCHECKLIST(CHECKLIST);
-
+            //Se não existe produtos a serem enviados,
+            //Nem adiciona tag na chamada do WS
+            if(CHECKLIST.size() > 0) {
+                dataPackage.setCHECKLIST(CHECKLIST);
+            }
             /*
             *
             * LEMBRAR DE ATUALIZAR A DATA NA TELA QUE CHAMA ESSE WS E DEPOIS DO DE SERIAL
@@ -203,6 +205,11 @@ public class WS_Sync extends IntentService {
                 jump_od
         )
                 ) {
+            return;
+        }
+
+        if(rec.getZip() == null){
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.generic_zip_not_found_msg), rec.getLink_url(), "0");
             return;
         }
 
@@ -384,6 +391,18 @@ public class WS_Sync extends IntentService {
         //
         //Processamento das tabelas do Checklist
         //
+        /**
+         * A variavel productExist
+         * Serve para validar se o produto selecionado para criar form
+         * teve formulário retornado na tabea enviada.
+         *
+         * Como essa validação só serve para o sync da Act008,
+         * so nesse caso é setada para false.
+         * (a identificação que o sync veio da Act008, vem da combinação
+         * datapackage CHECKLIST preenchido e product_code != de -1L
+         *
+         */
+        boolean productExist = true;
 
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
             //Cria DAOs das tabelas do Checklist
@@ -399,6 +418,39 @@ public class WS_Sync extends IntentService {
             customFormFieldDao.remove(new GE_Custom_Form_Field_Sql_Truncate().toSqlQuery());
             customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
             customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
+
+            //
+            // Processamento Custom Form Product
+            //
+
+            //Se existe product_code, seta controle para false, se não true.
+            productExist = product_code == -1L ? true : false;
+            File[] files_cf_product = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
+
+            for (File _file : files_cf_product) {
+
+                ArrayList<GE_Custom_Form_Product> customFormsProduct = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<GE_Custom_Form_Product>>() {
+                        }.getType()
+                );
+                //Se controle de produto existe for false,
+                //Verifica se o produto buscado  esta na lista de forms enviados
+                if(!productExist){
+                    //Busca em todos os registros o produto buscado.
+                    for (GE_Custom_Form_Product formProduct : customFormsProduct) {
+                        if(formProduct.getProduct_code() == product_code){
+                            //Se encontrou o produto, seta variavel pra true
+                            //e finaliza o loop
+                            productExist = true;
+                            break;
+                        }
+                    }
+                }
+                customFormProductDao.addUpdate(customFormsProduct, true);
+            }
 
             //
             // Processamento Custom Form
@@ -454,26 +506,9 @@ public class WS_Sync extends IntentService {
                 customFormFieldDao.addUpdate(customFormsFields, true);
             }
 
-            //
-            // Processamento Custom Form Product
-            //
-            File[] files_cf_product = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
-
-            for (File _file : files_cf_product) {
-
-                ArrayList<GE_Custom_Form_Product> customFormsProduct = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<GE_Custom_Form_Product>>() {
-                        }.getType()
-                );
-
-                customFormProductDao.addUpdate(customFormsProduct, true);
-            }
 
             //
-            // Processamento Custom Form Product
+            // Processamento Custom Form Blob
             //
             File[] files_cf_blob = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_blob-");
 
@@ -492,7 +527,11 @@ public class WS_Sync extends IntentService {
 
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist ){
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.generic_no_forms_found), rec.getLink_url(), "0");
+        }else{
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+        }
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
     }

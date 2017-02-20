@@ -80,7 +80,22 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     private void iniSetup() {
+
         context = getBaseContext();
+
+      /*  Sync_ChecklistDao syncDao =
+                new Sync_ChecklistDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+
+                );
+        syncDao.remove(
+                new Sync_Checklist_Sql_003(
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context))
+
+                ).toSqlQuery()
+        );*/
         //
         fm = getSupportFragmentManager();
         //

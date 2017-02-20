@@ -17,11 +17,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
-import com.namoadigital.prj001.ui.act008.Act008_Main;
-import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -118,10 +115,10 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
                     case "1":
                         callAct007(context);
                         break;
-                    case "2":
+                    /*case "2":
                         callBarCode(item);
-                        break;
-                    case "3":
+                        break;*/
+                    case "2":case "3":
                         callAct012(context);
                         break;
                     default:

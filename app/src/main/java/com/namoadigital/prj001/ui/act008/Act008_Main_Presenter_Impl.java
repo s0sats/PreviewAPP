@@ -65,7 +65,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void validateSerial(String serial, int required, int allow_new) {
-        /*serial = serial.trim();
+        serial = serial.trim();
         //Verifica se Serial foi preenchido
         if (serial.length() == 0 && required == 1) {
             //Se não foi e serial requerido, dispara alert de erro.
@@ -73,9 +73,9 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             mView.showAlertDialog("Serial","Please, type a serial.");
         }else{
             checkConnection(serial, required, allow_new);
-        }*/
+        }
 
-        checkConnection(serial, required, allow_new);
+       // checkConnection(serial, required, allow_new);
 
     }
 

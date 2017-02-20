@@ -14,7 +14,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
-import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
@@ -107,7 +106,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             index = 0;
 
             HMAux ii = custom_formDao.getByStringHM(
-                    new GE_Custom_Form_Local_Sql_002().toSqlQuery().toLowerCase()
+                    new GE_Custom_Form_Local_Sql_002(
+                            customer_code,
+                            formtype_code,
+                            form_code,
+                            formversion_code
+                    )
+                    .toSqlQuery()
+                    .toLowerCase()
             );
 
             GE_Custom_Form customForm = custom_formDao.getByString(
