@@ -33,7 +33,7 @@ public class GE_Custom_Form_Field_Local_Sql_002 implements Specification {
                         "\n" +
                         "ge_custom_form_fields_local \n" +
                         "\n" +
-                        "set\n" +
+                        "set \n" +
                         "\n")
                 .append("custom_form_local_link = '").append(s_nome).append("' \n" +
                         "\n" +

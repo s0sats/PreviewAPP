@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
@@ -32,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -250,6 +252,22 @@ public class ToolBox_Inf {
         outputStream.close();
         //
         inputStream.close();
+    }
+
+    public static String uploadFile(String json, String sFile) {
+        try {
+            // Set your file path here
+            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH + "/" + sFile);
+
+            // Set your server page url (and the file title/description)
+            HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD, json);
+
+            return hfu.Send_Now(fstrm, sFile);
+
+        } catch (Exception e) {
+            String error = e.toString();
+            return "Error: " + e.toString();
+        }
     }
 
     public static boolean unpackZip(String path, String zipname) {
@@ -641,7 +659,7 @@ public class ToolBox_Inf {
      * @param translation_list
      * @return
      */
-    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code,List<String> translation_list) {
+    public static HMAux setLanguage(Context context, String module_code, String resource_code, String translate_code, List<String> translation_list) {
 
         EV_Module_Res_Txt_TransDao transDao = new EV_Module_Res_Txt_TransDao(
                 context,
@@ -663,7 +681,7 @@ public class ToolBox_Inf {
             item.put(module_res_txt_trans.getTxt_code(), module_res_txt_trans.getTxt_value());
         }
 
-        item = ToolBox_Inf.getTranslationList(item,module_code,resource_code,translation_list);
+        item = ToolBox_Inf.getTranslationList(item, module_code, resource_code, translation_list);
 
         //
         return item;
@@ -699,12 +717,12 @@ public class ToolBox_Inf {
         return Build_RELEASE + " (" + Build_SDK_INT + ")";
     }
 
-    public static HMAux getTranslationList(HMAux hmAux_Trans, String mModule_Code,String mResource_Code, List<String> translate_list) {
+    public static HMAux getTranslationList(HMAux hmAux_Trans, String mModule_Code, String mResource_Code, List<String> translate_list) {
 
-        for (String txt:translate_list) {
+        for (String txt : translate_list) {
 
             if (hmAux_Trans.get(txt) != null) {
-                hmAux_Trans.put(txt,hmAux_Trans.get(txt));
+                hmAux_Trans.put(txt, hmAux_Trans.get(txt));
             } else {
                 hmAux_Trans.put(txt, ToolBox.setNoTrans(mModule_Code, mResource_Code, txt));
             }
@@ -712,13 +730,13 @@ public class ToolBox_Inf {
         return hmAux_Trans;
     }
 
-    public static boolean checkFormIsReady(Context context ,long customer_code , int custom_form_type, int custom_form_code, int custom_form_version){
+    public static boolean checkFormIsReady(Context context, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version) {
         GE_Custom_Form_Blob_LocalDao blobLocalDao =
                 new GE_Custom_Form_Blob_LocalDao(
                         context,
                         ToolBox_Con.customDBPath(customer_code),
                         Constant.DB_VERSION_CUSTOM
-                        );
+                );
         List<GE_Custom_Form_Blob_Local> pendingBlobs = blobLocalDao.query(
                 new GE_Custom_Form_Blob_Local_Sql_004(
                         customer_code,
@@ -728,15 +746,15 @@ public class ToolBox_Inf {
                 ).toSqlQuery()
         );
         //Se exitem blobs pendentes, retorna false
-        if(pendingBlobs.size() > 0){
+        if (pendingBlobs.size() > 0) {
             return false;
-        }else {
+        } else {
             GE_Custom_Form_Field_LocalDao fieldLocalDao =
                     new GE_Custom_Form_Field_LocalDao(
                             context,
                             ToolBox_Con.customDBPath(customer_code),
                             Constant.DB_VERSION_CUSTOM
-                            );
+                    );
             List<GE_Custom_Form_Field_Local> pendingPictures = fieldLocalDao.query(
                     new GE_Custom_Form_Field_Local_Sql_003(
                             customer_code,
@@ -746,9 +764,9 @@ public class ToolBox_Inf {
                     ).toSqlQuery()
             );
 
-            if (pendingPictures.size() > 0){
+            if (pendingPictures.size() > 0) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }

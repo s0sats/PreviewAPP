@@ -495,6 +495,28 @@ public class ToolBox_Con {
                 "dd/MM/yyyy"
         );
     }
+
+    public static void setPreference_Service(Context context, String service) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                "SERVICE",
+                service
+        ).apply();
+    }
+
+
+    public static String getPreference_Service(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                "SERVICE",
+                "NO_SERVICE"
+        );
+    }
+
     //endregion
 
 

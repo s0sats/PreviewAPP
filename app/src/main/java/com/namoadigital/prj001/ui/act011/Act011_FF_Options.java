@@ -36,6 +36,12 @@ public class Act011_FF_Options extends Fragment {
 
     private Act011_FF_Options_Adapter adapter_tabs;
 
+    private transient LinearLayout ff_options_ll_i;
+    private transient TextView ff_options_ll_it;
+
+    private transient LinearLayout ff_options_ll_e;
+    private transient TextView ff_options_ll_et;
+
     private transient LinearLayout ff_options_ll_s;
     private transient TextView ff_options_ll_st;
 
@@ -59,6 +65,10 @@ public class Act011_FF_Options extends Fragment {
     }
 
     public interface ICustom_Form_FF_Options_ll {
+        public void info();
+
+        public void delete();
+
         public void save();
 
         public void check();
@@ -86,6 +96,12 @@ public class Act011_FF_Options extends Fragment {
 
         lv_tabs = (ListView) view.findViewById(R.id.act011_ff_options_lv_tabs);
 
+        ff_options_ll_i = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_i);
+        ff_options_ll_it = (TextView) view.findViewById(R.id.act011_ff_options_ll_it);
+
+        ff_options_ll_e = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_e);
+        ff_options_ll_et = (TextView) view.findViewById(R.id.act011_ff_options_ll_et);
+
         ff_options_ll_s = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_s);
         ff_options_ll_st = (TextView) view.findViewById(R.id.act011_ff_options_ll_st);
 
@@ -106,6 +122,24 @@ public class Act011_FF_Options extends Fragment {
 
                 if (delegate != null) {
                     delegate.tabSelected(Integer.parseInt(iAux.get("page")), iAux.get("link"));
+                }
+            }
+        });
+
+        ff_options_ll_i.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null) {
+                    delegate_ll.info();
+                }
+            }
+        });
+
+        ff_options_ll_e.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null) {
+                    delegate_ll.delete();
                 }
             }
         });

@@ -2,7 +2,22 @@ package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+
+import com.google.gson.Gson;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.TUploadImg_Env;
+import com.namoadigital.prj001.model.TUploadImg_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.sql.GE_File_Sql_001;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 20/01/17.
@@ -17,81 +32,55 @@ public class WS_Upload_Img extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-//            Bundle bundle = intent.getExtras();
-//            //
-//            ArrayList<HMAux> dados = new ArrayList<>();
-//            ArrayList<HMAux> dados_geral;
-//            //
-//            GE_Custom_Form_BlobDao form_blobDao = new GE_Custom_Form_BlobDao(
-//                    getApplicationContext(),
-//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-//                    Constant.DB_VERSION_CUSTOM
-//            );
-//            //
-//            GE_Custom_Form_Blob_LocalDao form_blob_localDao = new GE_Custom_Form_Blob_LocalDao(
-//                    getApplicationContext(),
-//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-//                    Constant.DB_VERSION_CUSTOM
-//            );
-//            //
-//            dados_geral = (ArrayList<HMAux>) form_blobDao.query_HM(
-//                    new GE_Custom_Form_Blob_Sql_002().toSqlQuery().toLowerCase()
-//            );
-//            //
-//            dados_geral.addAll(
-//                    (ArrayList<HMAux>) form_blob_localDao.query_HM(
-//                            new GE_Custom_Form_Blob_Local_Sql_002().toSqlQuery().toLowerCase()
-//                    )
-//            );
-//            //
-//            for (HMAux hmAux : dados_geral) {
-//                HMAux item = new HMAux();
-//                item.put("custom_name", hmAux.get("custom_name"));
-//                item.put("blob_url", hmAux.get("blob_url"));
-//                //
-//                dados.add(item);
-//            }
-//            //
-//            for (HMAux hmAux : dados) {
-//                //
-//                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name") + ".pdf")) {
-//
-//                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name") + ".tmp");
-//                    //
-//                    ToolBox_Inf.downloadImagePDF(
-//                            hmAux.get("blob_url"),
-//                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name") + ".tmp"
-//                    );
-//                    //
-//                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name"), ".pdf");
-//                }
-//                //
-//                String nome_parte[] = hmAux.get("custom_name").split("_");
-//                form_blobDao.addUpdate(
-//                        new GE_Custom_Form_Blob_Sql_003(
-//                                nome_parte[1],
-//                                nome_parte[2],
-//                                nome_parte[3],
-//                                nome_parte[4],
-//                                nome_parte[5],
-//                                hmAux.get("custom_name") + ".pdf"
-//                        ).toSqlQuery().toLowerCase()
-//                );
-//
-//                form_blob_localDao.addUpdate(
-//                        new GE_Custom_Form_Blob_Local_Sql_003(
-//                                nome_parte[1],
-//                                nome_parte[2],
-//                                nome_parte[3],
-//                                nome_parte[4],
-//                                nome_parte[5],
-//                                hmAux.get("custom_name") + ".pdf"
-//                        ).toSqlQuery().toLowerCase()
-//                );
-//
-//            }
+            // Hugo
+            // Hugo
 
-            int i = 10;
+            Gson gson = new Gson();
+            TUploadImg_Env env = new TUploadImg_Env();
+            env.setApp_code(Constant.PRJ001_CODE);
+            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
+
+            Bundle bundle = intent.getExtras();
+            //
+            ArrayList<GE_File> geFiles;
+            //
+            GE_FileDao geFileDao = new GE_FileDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            //GE_File aux = new GE_File();
+            //aux.setFile_code(1L);
+            //aux.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //aux.setFile_status("OPENED");
+            //aux.setFile_path("PICTURE_1_31_1_1_13.jpg");
+            //
+            //geFileDao.addUpdate(aux);
+            //
+            geFiles = (ArrayList<GE_File>) geFileDao.query(
+                    new GE_File_Sql_001().toSqlQuery()
+            );
+            //
+            for (GE_File geFile : geFiles) {
+                env.setFile_path(geFile.getFile_path());
+                //
+                String sResults = ToolBox_Inf.uploadFile(
+                        gson.toJson(env),
+                        geFile.getFile_path()
+                );
+
+                TUploadImg_Rec rec = gson.fromJson(
+                        sResults,
+                        TUploadImg_Rec.class
+                );
+
+                if (rec.getSave().equalsIgnoreCase("OK")) {
+                    geFile.setFile_status("SENT");
+                    geFileDao.addUpdate(geFile);
+                }
+            }
 
         } catch (Exception e) {
             String results = e.toString();

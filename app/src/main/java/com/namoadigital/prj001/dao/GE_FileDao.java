@@ -39,20 +39,20 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
     @Override
     public void addUpdate(GE_File ge_file) {
-        SQLiteDatabase db = null;
-
         try {
 
             openDB();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(ge_file)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(FILE_CODE).append(" = '").append(String.valueOf(ge_file.getFile_code())).append("'");
+                sbWhere.append(FILE_CODE).append(" = '").append(ge_file.getFile_code()).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(ge_file), sbWhere.toString(), null);
             }
 
         } catch (Exception e) {
+            String resultado = e.toString();
+            int i = 10;
         } finally {
         }
 
@@ -76,7 +76,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
             for (GE_File ge_file : ge_files) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(ge_file)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(FILE_CODE).append(" = '").append(String.valueOf(ge_file.getFile_code())).append("'");
+                    sbWhere.append(FILE_CODE).append(" = '").append(ge_file.getFile_code()).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(ge_file), sbWhere.toString(), null);
                 }

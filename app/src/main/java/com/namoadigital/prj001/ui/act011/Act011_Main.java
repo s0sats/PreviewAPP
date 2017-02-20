@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
@@ -245,6 +246,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         });
 
         act011_ff_options.setOnSaveCheckListener(new Act011_FF_Options.ICustom_Form_FF_Options_ll() {
+
+            @Override
+            public void info() {
+                Toast.makeText(
+                        context,
+                        "Info",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+
+            @Override
+            public void delete() {
+                Toast.makeText(
+                        context,
+                        "Delete",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+
             @Override
             public void save() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);

@@ -145,6 +145,8 @@ public class Constant extends ConstantBase{
     public static final String WS_SESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
     public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";
     public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
+    public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
+
 
     //Constantes do Status do Cabeçalho
     public static final String CUSTOM_FORM_STATUS_RECEIVED = "RECEIVED";

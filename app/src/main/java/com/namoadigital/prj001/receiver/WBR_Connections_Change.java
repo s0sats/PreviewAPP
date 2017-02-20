@@ -22,8 +22,10 @@ public class WBR_Connections_Change extends BroadcastReceiver {
 
         String status = ToolBox_Con.checkConStatus(context);
 
-        if (!status.equalsIgnoreCase("NO_SERVICE")){
-            activateUpload(context);
+        if (!status.equalsIgnoreCase("NO_SERVICE")) {
+            if (!ToolBox_Con.getPreference_Service(context).equals("NO_SERVICE")) {
+                activateUpload(context);
+            }
         }
 
         Toast.makeText(

@@ -38,11 +38,9 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
     @Override
     public void addUpdate(MD_Site md_site) {
-        SQLiteDatabase db = null;
+        openDB();
 
         try {
-
-            openDB();
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(md_site)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();

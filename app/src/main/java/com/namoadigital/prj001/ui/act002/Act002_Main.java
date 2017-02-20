@@ -221,6 +221,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //
         if(wsProcess.equals(PROCESS_WS_SYNC)){
             callAct003(context);
+            //
+            ToolBox_Con.setPreference_Service(context, "SERVICE");
         }
 
     }
