@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
@@ -31,6 +32,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 
 import java.io.BufferedInputStream;
@@ -831,12 +833,25 @@ public class ToolBox_Inf {
         );
     }
 
-    public static HMAux loadFooterInfo(Context context){
+    public static HMAux loadFooterDialogInfo(Context context){
         HMAux hmAux =  new HMAux();
         String customerDesc ="";
         String siteDesc ="";
         String operationDesc ="";
-
+        List<String> transList = new ArrayList<>();
+        transList.add("lbl_external_site");
+        transList.add("footer_dialog_customer_lbl");
+        transList.add("footer_dialog_site_lbl");
+        transList.add("footer_dialog_operation_lbl");
+        transList.add("footer_dialog_btn_ok");
+        //
+        HMAux HmTrans = setLanguage(
+                context,
+                Constant.APP_MODULE,
+                getResourceCode(context, Constant.APP_MODULE, Constant.ACT003),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
 
         MD_Site site =
                 new MD_SiteDao(
@@ -867,26 +882,36 @@ public class ToolBox_Inf {
         operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
 
         if(site == null){
-            List<String> transList = new ArrayList<>();
-            transList.add("lbl_external_site");
-            HMAux HmTrans = setLanguage(
-                                context,
-                                Constant.APP_MODULE,
-                                getResourceCode(context, Constant.APP_MODULE, Constant.ACT003),
-                                ToolBox_Con.getPreference_Translate_Code(context),
-                                transList
-                            );
-
             siteDesc = HmTrans.get("lbl_external_site");
         }else{
             siteDesc = site.getSite_code() + " - " + site.getSite_desc();
         }
 
+        hmAux.put(Constant.FOOTER_CUSTOMER_LBL,HmTrans.get("footer_dialog_customer_lbl"));
         hmAux.put(Constant.FOOTER_CUSTOMER,customerDesc);
+        hmAux.put(Constant.FOOTER_SITE_LBL,HmTrans.get("footer_dialog_site_lbl"));
         hmAux.put(Constant.FOOTER_SITE,siteDesc);
+        hmAux.put(Constant.FOOTER_OPERATION_LBL,HmTrans.get("footer_dialog_operation_lbl"));
         hmAux.put(Constant.FOOTER_OPERATION,operationDesc);
+        hmAux.put(Constant.FOOTER_BTN_OK,HmTrans.get("footer_dialog_btn_ok"));
 
         return hmAux;
+
+    }
+
+    public static void cleanOldSyncChecklistData(Context context){
+        Sync_ChecklistDao syncChecklistDao =
+                new Sync_ChecklistDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                        );
+        //
+        syncChecklistDao.remove(
+                new Sync_Checklist_Sql_003(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
 
     }
 

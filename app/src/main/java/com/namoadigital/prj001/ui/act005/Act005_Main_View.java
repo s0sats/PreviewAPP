@@ -19,6 +19,9 @@ public interface Act005_Main_View {
     void callAct006(Context context);
 
     void callAct012(Context context);
+
+    void showNoConnectionDialog();
+
     //
     void closeApp();
 

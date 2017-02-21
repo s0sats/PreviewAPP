@@ -266,7 +266,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setDate_start(cursor.getString(cursor.getColumnIndex(DATE_START)));
             custom_form_data.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
             custom_form_data.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
-            custom_form_data.setSite_code(cursor.getLong(cursor.getColumnIndex(SITE_CODE)));
+            custom_form_data.setSite_code(cursor.getString(cursor.getColumnIndex(SITE_CODE)));
             custom_form_data.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
 
             if(cursor.isNull(cursor.getColumnIndex(SIGNATURE))){
@@ -319,7 +319,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getUser_code() > -1) {
                 contentValues.put(USER_CODE, custom_form_data.getUser_code());
             }
-            if (custom_form_data.getSite_code() > -1) {
+            if (custom_form_data.getSite_code() != null) {
                 contentValues.put(SITE_CODE, custom_form_data.getSite_code());
             }
             if (custom_form_data.getOperation_code() > -1) {

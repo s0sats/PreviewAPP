@@ -105,13 +105,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_SEND_DATA:
-                    mView.showPD();
-                    executeSaveProcess();
+                    if(ToolBox_Con.isOnline(context)){
+                        mView.showPD();
+                        executeSaveProcess();
+                    }else{
+                        mView.showNoConnectionDialog();
+                    }
+
                     break;
 
                 case Act005_Main.MENU_ID_SYNC_DATA:
-                    mView.showPD();
-                    executeSyncProcess(jump_validation_UR);
+                    if(ToolBox_Con.isOnline(context)) {
+                        mView.showPD();
+                        executeSyncProcess(jump_validation_UR);
+                    }else{
+                        mView.showNoConnectionDialog();
+                    }
                     break;
 
                 case Act005_Main.MENU_ID_CLOSE:

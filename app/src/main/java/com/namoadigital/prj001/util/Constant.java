@@ -98,9 +98,13 @@ public class Constant extends ConstantBase{
     /**
      * Footer info constants
      */
+    public static final String FOOTER_CUSTOMER_LBL = "footer_customer_lbl";
     public static final String FOOTER_CUSTOMER = "footer_customer";
+    public static final String FOOTER_SITE_LBL = "footer_site_lbl";
     public static final String FOOTER_SITE = "footer_site";
+    public static final String FOOTER_OPERATION_LBL = "footer_operation_lbl";
     public static final String FOOTER_OPERATION = "footer_operation";
+    public static final String FOOTER_BTN_OK = "footer_btn_ok";
 
     /**
      * Sync WS

@@ -140,10 +140,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 Constant.ACT011
         );
 
-        mCustomer_Info = ToolBox_Con.getPreference_Customer_Code_NAME(context);
+       /* mCustomer_Info = ToolBox_Con.getPreference_Customer_Code_NAME(context);
         mSite_Info = ToolBox_Con.getPreference_Site_Code(context);
         mOperation_Info = String.valueOf(ToolBox_Con.getPreference_Operation_Code(context));
-
+        */
         loadTranslation();
     }
 
