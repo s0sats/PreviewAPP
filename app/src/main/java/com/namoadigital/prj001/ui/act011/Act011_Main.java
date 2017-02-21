@@ -162,10 +162,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("act011_exit_alert_ttl");
-        transList.add("act011_exit_alert_msg");
-        transList.add("act011_exit_ok");
-        transList.add("act011_exit_no");
+        transList.add("exit_alert_ttl");
+        transList.add("exit_alert_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1121,8 +1119,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     public void exitAlert() {
 
-        String alertTitle = hmAux_Trans.get("act011_exit_alert_ttl");
-        String alertMsg = hmAux_Trans.get("act011_exit_alert_msg");
+        String alertTitle = hmAux_Trans.get("exit_alert_ttl");
+        String alertMsg = hmAux_Trans.get("exit_alert_msg");
         //
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override

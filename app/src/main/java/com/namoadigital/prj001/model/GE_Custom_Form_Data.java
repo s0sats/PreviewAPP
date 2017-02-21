@@ -45,7 +45,7 @@ public class GE_Custom_Form_Data {
     private long user_code;
 
     @Expose
-    private long site_code;
+    private String site_code;
 
     @Expose
     private long operation_code;
@@ -70,7 +70,7 @@ public class GE_Custom_Form_Data {
         this.date_start = "1900-01-01";
         this.date_end = "1900-01-01";
         this.user_code = -1;
-        this.site_code = -1;
+        this.site_code = "-1";
         this.operation_code = -1;
         this.signature = "";
         this.token = "";
@@ -165,11 +165,11 @@ public class GE_Custom_Form_Data {
         this.user_code = user_code;
     }
 
-    public long getSite_code() {
+    public String getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(long site_code) {
+    public void setSite_code(String site_code) {
         this.site_code = site_code;
     }
 

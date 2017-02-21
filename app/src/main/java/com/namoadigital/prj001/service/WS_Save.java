@@ -134,7 +134,7 @@ public class WS_Save extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-        env.setSite_code(Long.parseLong(ToolBox_Con.getPreference_Site_Code(getApplicationContext())));
+        env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
         env.setOperation_code(ToolBox_Con.getPreference_Operation_Code(getApplicationContext()));
         env.setForm_datas(form_datas);
         env.setForm_data_fields(form_data_fields);

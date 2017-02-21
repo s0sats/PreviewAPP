@@ -10,7 +10,7 @@ public class TSave_Env {
     private String app_code;
     private String app_version;
     private String session_app;
-    private long site_code;
+    private String site_code;
     private long operation_code;
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
@@ -40,11 +40,11 @@ public class TSave_Env {
         this.session_app = session_app;
     }
 
-    public long getSite_code() {
+    public String getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(long site_code) {
+    public void setSite_code(String site_code) {
         this.site_code = site_code;
     }
 

@@ -187,14 +187,18 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         listener = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //Reseta preferencias do Customer e volta para
-                                //Act002 - lista de customer
-                                ToolBox_Con.setPreference_Customer_Code(context, -1);
-                                ToolBox_Con.setPreference_Translate_Code(context, "");
-                                ToolBox_Con.setPreference_Site_Code(context, "-1");
-                                ToolBox_Con.setPreference_Operation_Code(context, -1);
+                                if(ToolBox_Con.isOnline(context)) {
+                                    //Reseta preferencias do Customer e volta para
+                                    //Act002 - lista de customer
+                                    ToolBox_Con.setPreference_Customer_Code(context, -1);
+                                    ToolBox_Con.setPreference_Translate_Code(context, "");
+                                    ToolBox_Con.setPreference_Site_Code(context, "-1");
+                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
 
-                                callAct002(context);
+                                    callAct002(context);
+                                }else{
+                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
+                                }
                             }
                         };
 
@@ -305,6 +309,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+
+     /*   //Aplica informações do rodapé
+        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+
+        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
+        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
+        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+*/
     }
 
     @Override
@@ -315,6 +332,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 context.getString(R.string.generic_msg_cancel),
                 context.getString(R.string.generic_msg_ok)
         );
+    }
+
+    @Override
+    public void showNoConnectionDialog() {
+        ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
     }
 
     @Override

@@ -599,6 +599,11 @@ public class ToolBox_Con {
                 Constant.NLS_DATE_FORMAT,
                 ""
         ).apply();
+        //
+        sharedPreferences.edit().putString(
+                "SERVICE",
+                "NO_SERVICE"
+        ).apply();
     }
 
     public static String customDBPath(long customer_code) {
