@@ -10,8 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -21,7 +19,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
-import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -83,19 +80,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         context = getBaseContext();
 
-      /*  Sync_ChecklistDao syncDao =
-                new Sync_ChecklistDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-
-                );
-        syncDao.remove(
-                new Sync_Checklist_Sql_003(
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context))
-
-                ).toSqlQuery()
-        );*/
         //
         fm = getSupportFragmentManager();
         //
@@ -310,7 +294,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setTitleLanguage();
         setFooter();
 
-     /*   //Aplica informações do rodapé
+        //Aplica informações do rodapé
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
@@ -319,9 +303,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-*/
+        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+
     }
 
     @Override
@@ -421,7 +404,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         finish();
     }
 
-    @Override
+ /*   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.act005_main_menu, menu);
@@ -456,5 +439,5 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
-
+*/
 }
