@@ -310,7 +310,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setTitleLanguage();
         setFooter();
 
-        //Aplica informações do rodapé
+     /*   //Aplica informações do rodapé
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
@@ -321,7 +321,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-
+*/
     }
 
     @Override

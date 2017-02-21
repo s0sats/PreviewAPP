@@ -193,10 +193,16 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     @Override
     protected void processSync() {
-        super.processSync();
-        //Seta variavel que define ação do metodo processCloseACT.
-        wsProcess = PROCESS_WS_SYNC;
-        mPresenter.executeSyncProcess();
+        //super.processSync();
+
+        if(ToolBox_Con.isOnline(context)){
+            //Seta variavel que define ação do metodo processCloseACT.
+            wsProcess = PROCESS_WS_SYNC;
+            mPresenter.executeSyncProcess();
+        }else{
+            progressDialog.dismiss();
+            ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
+        }
 
     }
 
