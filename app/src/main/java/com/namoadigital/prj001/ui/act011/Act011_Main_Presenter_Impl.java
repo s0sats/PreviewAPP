@@ -290,6 +290,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 "Finalizando Registro",
                 "Registro Finalizado!!!",
                 2);
+
+
     }
 
     @Override
@@ -297,7 +299,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         switch (signature) {
             case 1:
-                if (signature != 0 && (ToolBox.validationCheckFile(Constant.CACHE_PATH + "/" + formData.getSignature()))) {
+                if (signature != 0 && (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()))) {
                     checkData(formData);
                 } else {
                     mView.showMsg(

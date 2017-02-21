@@ -75,8 +75,8 @@ public class Constant extends ConstantBase{
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
 
-    public static String CACHE_PATH;
-    public static String CACHE_PATH_PHOTO;
+//    public static String CACHE_PATH;
+//    public static String CACHE_PATH_PHOTO;
 
     /**
      * Service Login Parameter

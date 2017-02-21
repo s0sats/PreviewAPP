@@ -258,7 +258,7 @@ public class ToolBox_Inf {
     public static String uploadFile(String json, String sFile) {
         try {
             // Set your file path here
-            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH + "/" + sFile);
+            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sFile);
 
             // Set your server page url (and the file title/description)
             HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD, json);

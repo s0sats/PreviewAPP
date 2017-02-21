@@ -44,8 +44,12 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -58,6 +62,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 
 /**
@@ -81,6 +86,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private List<HMAux> tabsAndFields;
     private ArrayList<Fragment> screens;
     private ArrayList<CustomFF> customFFs;
+    private ArrayList<GE_File> geFiles;
+
+    private String sDate;
+
 
     private HMAux resTabs;
 
@@ -142,9 +151,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 Constant.ACT011
         );
 
-        mCustomer_Info = ToolBox_Con.getPreference_Customer_Code_NAME(context);
-        mSite_Info = ToolBox_Con.getPreference_Site_Code(context);
-        mOperation_Info = String.valueOf(ToolBox_Con.getPreference_Operation_Code(context));
+        geFiles = new ArrayList<>();
+
+        //mCustomer_Info = ToolBox_Con.getPreference_Customer_Code_NAME(context);
+        //mSite_Info = ToolBox_Con.getPreference_Site_Code(context);
+        //mOperation_Info = String.valueOf(ToolBox_Con.getPreference_Operation_Code(context));
 
         loadTranslation();
     }
@@ -269,12 +280,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void save() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
+                returnValidCheck(String.valueOf(-1));
+
                 for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
                     df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
                     df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
                 }
 
-                returnValidCheck(String.valueOf(-1));
+                //returnValidCheck(String.valueOf(-1));
 
                 mPresenter.saveData(formData);
 
@@ -285,14 +298,75 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void check() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-                    df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-                    df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-                }
+//                for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+//                    df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+//                    df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+//                }
 
                 int sum = returnValidCheck(String.valueOf(-1));
 
                 if (sum == 0) {
+
+                    for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+                        df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+                        df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+                    }
+
+                    sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+
+                    GE_FileDao geFileDao = new GE_FileDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+                    );
+
+                    HMAux aux = geFileDao.getByStringHM(
+                            new GE_File_Sql_003().toSqlQuery()
+                    );
+
+                    int index = Integer.parseInt(aux.get("next_code"));
+
+                    geFiles.clear();
+
+                    for (int i = 0; i < customFFs.size(); i++) {
+                        String sFile_v = customFFs.get(i).getmValue();
+                        String sFile_e = customFFs.get(i).getmDots_photo();
+
+                        if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
+                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
+                            if (sFile.exists()) {
+                                GE_File geFile = new GE_File();
+                                geFile.setFile_code(index++);
+                                geFile.setFile_path(sFile_v);
+                                geFile.setFile_status("OPENED");
+                                geFile.setFile_date(sDate);
+
+                                geFiles.add(geFile);
+                            }
+                        }
+                        //
+                        if (sFile_e.endsWith(".png") || sFile_e.endsWith(".jpg")) {
+                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
+                            if (sFile.exists()) {
+                                GE_File geFile = new GE_File();
+                                geFile.setFile_code(index++);
+                                geFile.setFile_path(sFile_e);
+                                geFile.setFile_status("OPENED");
+                                geFile.setFile_date(sDate);
+
+                                geFiles.add(geFile);
+                            }
+                        }
+                    }
+
+                    if (signature == 1) {
+                        GE_File geFile = new GE_File();
+                        geFile.setFile_code(index);
+                        geFile.setFile_path(mSignature);
+                        geFile.setFile_status("OPENED");
+                        geFile.setFile_date(sDate);
+                        //
+                        geFiles.add(geFile);
+                    }
 
                     formData.setSignature(mSignature);
 
@@ -513,6 +587,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs);
+            act011_ff_options.enableTab(formData.getCustom_form_status());
 
             returnValidCheck(String.valueOf(index_old));
         }
@@ -778,6 +853,34 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         for (int i = 0; i < customFFs.size(); i++) {
 
             if (ipage == -1) {
+                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                    numberOfErrors += 1;
+                }
+
+                customFFs.get(i).setValidationBackGroundDots();
+            } else {
+                if (customFFs.get(i).getmPage() == ipage) {
+                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                        numberOfErrors += 1;
+                    }
+
+                    customFFs.get(i).setValidationBackGround();
+                } else {
+                }
+            }
+        }
+
+        return numberOfErrors;
+    }
+
+    private int returnValidCheck2(String sPage) {
+
+        int numberOfErrors = 0;
+        int ipage = Integer.parseInt(sPage);
+        //
+        for (int i = 0; i < customFFs.size(); i++) {
+
+            if (ipage == -1) {
                 if (!customFFs.get(i).isValid()) {
                     numberOfErrors += 1;
                 }
@@ -995,6 +1098,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
+                                GE_FileDao geFileDao = new GE_FileDao(
+                                        context,
+                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+                                );
+
+                                geFileDao.addUpdate(geFiles, false);
+
+                                activateUpload(context);
+
                                 callAct005(context);
                             }
                         },
@@ -1050,11 +1163,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     protected void getSignatueF(String mValue) {
-        mSignature = mValue.replace(CACHE_PATH + "/", "");
+        //mSignature = mValue;
 
-        if (!mSignature.equals("")) {
+        File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
+        if (sFile.exists()) {
             formData.setSignature(mSignature);
             mPresenter.checkData(formData);
+        } else {
+            int i = 10;
         }
     }
 
@@ -1064,7 +1180,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             Bundle bundle = new Bundle();
             bundle.putInt(ConstantBase.PID, -1);
             bundle.putInt(ConstantBase.PTYPE, 0);
-            bundle.putString(ConstantBase.PPATH, CACHE_PATH + "/" + mSignature);
+            bundle.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + mSignature);
 
             Intent mIntent = new Intent(context, SignaTure_Activity.class);
             mIntent.putExtras(bundle);
@@ -1073,6 +1189,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         } catch (Exception e) {
         }
 
+    }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
 

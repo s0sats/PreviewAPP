@@ -4,11 +4,14 @@ import android.graphics.BitmapFactory;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 
 /**
  * Created by neomatrix on 7/22/16.
@@ -114,6 +117,18 @@ public class GE_Custom_Form_Data_Field {
             this.value_json = this.value;
         } else {
             try {
+
+                String jValue = value;
+
+                if (value.endsWith(".png") || value.endsWith(".jpg")) {
+                    File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + value);
+                    if (sFile.exists()) {
+                        jValue = value;
+                    } else {
+                        jValue = "";
+                    }
+                }
+
                 if (value.trim().length() == 0) {
                     JSONObject jsonObject = new JSONObject();
                     JSONArray ja = new JSONArray();
@@ -124,7 +139,7 @@ public class GE_Custom_Form_Data_Field {
                 } else {
                     JSONObject jsonObject = new JSONObject();
                     JSONObject jsonObjectAux = new JSONObject();
-                    jsonObjectAux.put("VALUE", value);
+                    jsonObjectAux.put("VALUE", jValue);
                     JSONArray ja = new JSONArray();
                     ja.put(jsonObjectAux);
                     //
@@ -146,7 +161,41 @@ public class GE_Custom_Form_Data_Field {
         this.value_extra = value_extra;
         //
         if (this.value_extra.startsWith("{\"CONTENT\":[{")) {
-            this.value_extra_json = this.value_extra;
+
+            try {
+
+                JSONObject rz = new JSONObject(value_extra);
+                JSONArray ja = rz.getJSONArray("CONTENT");
+
+                String sComment = ja.getJSONObject(0).getString("COMMENT");
+                String sAP = ja.getJSONObject(0).getString("AP");
+                String sPhoto = ja.getJSONObject(0).getString("PHOTO");
+
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sPhoto);
+                if (sFile.exists()) {
+                    this.value_extra_json = this.value_extra;
+                } else {
+
+                    JSONObject jsonObject = new JSONObject();
+                    JSONObject jsonObjectAux = new JSONObject();
+
+                    jsonObjectAux.put("COMMENT", sComment);
+                    jsonObjectAux.put("AP", sAP);
+                    jsonObjectAux.put("PHOTO", "");
+
+                    JSONArray jar = new JSONArray();
+                    jar.put(jsonObjectAux);
+                    //
+                    jsonObject.put("CONTENT", jar);
+
+                    this.value_extra_json = jsonObject.toString();
+                }
+
+            } catch (JSONException e) {
+            }
+
+            //this.value_extra_json = this.value_extra;
+
         } else {
             try {
                 if (value_extra.trim().length() == 0) {

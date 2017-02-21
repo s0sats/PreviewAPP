@@ -51,14 +51,6 @@ public class WS_Upload_Img extends IntentService {
                     Constant.DB_VERSION_CUSTOM
             );
             //
-            //GE_File aux = new GE_File();
-            //aux.setFile_code(1L);
-            //aux.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            //aux.setFile_status("OPENED");
-            //aux.setFile_path("PICTURE_1_31_1_1_13.jpg");
-            //
-            //geFileDao.addUpdate(aux);
-            //
             geFiles = (ArrayList<GE_File>) geFileDao.query(
                     new GE_File_Sql_001().toSqlQuery()
             );

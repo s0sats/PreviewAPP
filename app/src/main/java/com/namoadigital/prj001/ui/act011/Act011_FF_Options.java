@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act011_FF_Options_Adapter;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +163,29 @@ public class Act011_FF_Options extends Fragment {
             }
         });
 
+    }
+
+    public void enableTab(String status) {
+        switch (status.toUpperCase()) {
+            case Constant.CUSTOM_FORM_STATUS_SENT:
+                ff_options_ll_e.setVisibility(View.GONE);
+                ff_options_ll_s.setVisibility(View.GONE);
+                ff_options_ll_f.setVisibility(View.GONE);
+
+                break;
+            case Constant.CUSTOM_FORM_STATUS_FINALIZED:
+                ff_options_ll_e.setVisibility(View.VISIBLE);
+                ff_options_ll_s.setVisibility(View.GONE);
+                ff_options_ll_f.setVisibility(View.GONE);
+
+                break;
+            default:
+                ff_options_ll_e.setVisibility(View.VISIBLE);
+                ff_options_ll_s.setVisibility(View.VISIBLE);
+                ff_options_ll_f.setVisibility(View.VISIBLE);
+
+                break;
+        }
     }
 
     public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs) {
