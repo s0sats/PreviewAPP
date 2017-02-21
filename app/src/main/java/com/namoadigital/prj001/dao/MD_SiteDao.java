@@ -3,7 +3,6 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
@@ -236,7 +235,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             MD_Site md_site = new MD_Site();
 
             md_site.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
-            md_site.setSite_code(cursor.getLong(cursor.getColumnIndex(SITE_CODE)));
+            md_site.setSite_code(cursor.getString(cursor.getColumnIndex(SITE_CODE)));
             md_site.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
             md_site.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
             return md_site;
@@ -252,7 +251,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             if (md_site.getCustomer_code() > -1) {
                 contentValues.put(CUSTOMER_CODE, md_site.getCustomer_code());
             }
-            if (md_site.getSite_code() > -1) {
+            if (md_site.getSite_code() != null) {
                 contentValues.put(SITE_CODE, md_site.getSite_code());
             }
             if (md_site.getSite_id() != null) {

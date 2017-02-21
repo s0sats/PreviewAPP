@@ -7,7 +7,7 @@ package com.namoadigital.prj001.model;
 public class MD_Site {
 
     private long customer_code;
-    private long site_code;
+    private String site_code;
     private String site_id;
     private String site_desc;
 
@@ -19,11 +19,11 @@ public class MD_Site {
         this.customer_code = customer_code;
     }
 
-    public long getSite_code() {
+    public String getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(long site_code) {
+    public void setSite_code(String site_code) {
         this.site_code = site_code;
     }
 

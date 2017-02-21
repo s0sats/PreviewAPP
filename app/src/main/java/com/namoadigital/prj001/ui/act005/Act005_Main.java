@@ -305,6 +305,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+
+        HMAux hmAuxFooter = ToolBox_Inf.loadFooterInfo(context);
+
+        mCustomer_Info =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Info =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mOperation_Info = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+
     }
 
     @Override
