@@ -407,6 +407,15 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //return super.onPrepareOptionsMenu(menu);
+        //Pega os settings do menu e esconde
+        MenuItem item = menu.findItem(R.id.act05_action_settings);
+        item.setVisible(false);
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.act005_main_menu, menu);
