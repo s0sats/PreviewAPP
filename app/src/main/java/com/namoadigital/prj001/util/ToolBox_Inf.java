@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.util;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -25,6 +28,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.receiver.WBR_Cleanning;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
@@ -914,6 +918,31 @@ public class ToolBox_Inf {
                 ).toSqlQuery()
         );
 
+    }
+
+
+    public static void reprogramAlarms(Context context){
+
+        AlarmManager am = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent mIntent = new Intent(context,
+                WBR_Cleanning.class
+        );
+        //
+        PendingIntent pi = PendingIntent.getBroadcast(
+                context,
+                0,
+                mIntent,
+                0
+        );
+        //
+        am.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + ( 60 * 1000),
+                ( 1 * 60 * 1000),
+                pi
+        );
     }
 
 
