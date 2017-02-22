@@ -87,7 +87,7 @@ public class Act013_Adapter_Pendencies extends BaseAdapter {
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
             case Constant.CUSTOM_FORM_STATUS_IN_PROCESSING:
-                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_states);
+                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
                 llBackground.setBackground(llDrawable);
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.custom_yellow_dark));
                 tvItem2.setTextColor(context.getResources().getColorStateList(R.color.custom_yellow_dark));
@@ -101,6 +101,15 @@ public class Act013_Adapter_Pendencies extends BaseAdapter {
                 tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_font_color));
                 tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_font_color));
                 tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_font_color));
+
+                break;
+            case Constant.CUSTOM_FORM_STATUS_SENT:
+                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
+                llBackground.setBackground(llDrawable);
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_dark_blue));
+                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_dark_blue));
+                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_dark_blue));
+
                 break;
 
             default:

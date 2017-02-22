@@ -42,7 +42,9 @@ public class Sql_Act012_001 implements Specification {
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
                         "    in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
-                        " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"');")
+                        " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' ," +
+                        " '"+Constant.CUSTOM_FORM_STATUS_SENT+"'" +
+                        ");")
                 .append(PENDING_QTY+"#"+TYPE)
                 .toString();
     }
