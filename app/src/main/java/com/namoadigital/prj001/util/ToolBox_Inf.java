@@ -838,6 +838,7 @@ public class ToolBox_Inf {
         String customerDesc ="";
         String siteDesc ="";
         String operationDesc ="";
+
         List<String> transList = new ArrayList<>();
         transList.add("lbl_external_site");
         transList.add("footer_dialog_customer_lbl");

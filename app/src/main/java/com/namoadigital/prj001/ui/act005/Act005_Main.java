@@ -10,6 +10,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -404,7 +406,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         finish();
     }
 
- /*   @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.act005_main_menu, menu);
@@ -424,7 +426,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         }
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.act05_action_settings) {
+       /* if (id == R.id.act05_action_settings) {
 
             ToolBox_Con.cleanPreferences(context);
 
@@ -435,9 +437,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             finish();
 
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
-*/
+
 }

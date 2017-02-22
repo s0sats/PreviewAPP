@@ -187,6 +187,19 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+
+        //Aplica informações do rodapé
+        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+
+        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
+        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
+        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+
+        //Aplica informações do rodapé -fim
     }
 
     private void initActions() {

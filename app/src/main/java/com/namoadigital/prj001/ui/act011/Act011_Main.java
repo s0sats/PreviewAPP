@@ -32,7 +32,6 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
-import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -57,13 +56,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
-import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -436,6 +433,19 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+
+        //Aplica informações do rodapé
+        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+
+        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
+        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
+        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+
+        //Aplica informações do rodapé - fim
     }
 
     private void initActions() {
