@@ -79,6 +79,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private void iniSetup() {
 
         context = getBaseContext();
+        //
+        // Lixo Hugo
+        ToolBox_Inf.reprogramAlarms(context);
 
         //
         fm = getSupportFragmentManager();
