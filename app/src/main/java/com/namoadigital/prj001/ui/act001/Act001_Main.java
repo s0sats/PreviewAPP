@@ -42,6 +42,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        context = Act001_Main.this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act001_main);
 
@@ -60,8 +62,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void initVars() {
-        context = Act001_Main.this;  //getBaseContext();
-        //
+        //context = Act001_Main.this;  //getBaseContext();
+
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (BootstrapButton) findViewById(R.id.act001_btn_login);
@@ -120,14 +122,14 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                         0
                 );
             } else {
-                enableProgressDialog(
-                        context.getString(R.string.get_customer_alert_title),
-                        sMessage,
-                        context.getString(R.string.generic_msg_cancel),
-                        context.getString(R.string.generic_msg_ok)
-                );
-
-                updatePD("ERROR_1", sMessage);
+//                enableProgressDialog(
+//                        getString(R.string.get_customer_alert_title),
+//                        sMessage,
+//                        context.getString(R.string.generic_msg_cancel),
+//                        context.getString(R.string.generic_msg_ok)
+//                );
+//
+//                updatePD("ERROR_1", sMessage);
             }
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);

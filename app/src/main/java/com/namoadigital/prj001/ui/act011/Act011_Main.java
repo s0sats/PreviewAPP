@@ -460,7 +460,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.index_old = indexF;
         this.index = 1;
         this.signature = signature;
-        this.mSignature = "s_" + prefix + ".png";
+        this.mSignature = "s_" + prefix + "1.png";
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id)) {
             formData.setSerial_id(serial_id);
@@ -1185,13 +1185,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     @Override
     public void callSignature() {
         try {
-            Bundle bundle = new Bundle();
-            bundle.putInt(ConstantBase.PID, -1);
-            bundle.putInt(ConstantBase.PTYPE, 0);
-            bundle.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + mSignature);
+            Bundle bundleN = new Bundle();
+            bundleN.putInt(ConstantBase.PID, -1);
+            bundleN.putInt(ConstantBase.PTYPE, 0);
+            bundleN.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + mSignature);
 
             Intent mIntent = new Intent(context, SignaTure_Activity.class);
-            mIntent.putExtras(bundle);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundleN);
 
             context.startActivity(mIntent);
         } catch (Exception e) {
