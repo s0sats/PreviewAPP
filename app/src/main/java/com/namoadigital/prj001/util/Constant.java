@@ -38,6 +38,7 @@ public class Constant extends ConstantBase{
     public static final String ACT007_MSTACKVALUES = "mstackvalues";
 
     public static final String ACT008_SERIAL_ID = "serial_id";
+    public static final String ACT008_PRODUCT_DESC = "product_desc";
 
     public static final String ACT009_CUSTOM_FORM_TYPE = "custom_form_type";
     public static final String ACT009_CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";

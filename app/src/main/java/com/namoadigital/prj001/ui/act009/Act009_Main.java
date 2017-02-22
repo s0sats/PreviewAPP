@@ -231,6 +231,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(Constant.ACT008_PRODUCT_DESC);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

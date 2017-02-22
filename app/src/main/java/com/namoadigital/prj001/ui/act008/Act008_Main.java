@@ -351,6 +351,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent =  new Intent(context, Act009_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+        bundle.putString(Constant.ACT008_PRODUCT_DESC,tv_product_desc_value.getText().toString().trim());
 
         mIntent.putExtras(bundle);
 

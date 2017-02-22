@@ -72,7 +72,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String formtype_desc, String formcode_desc) {
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
@@ -137,10 +137,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
             customFormLocal.setCustom_form_src("0");
-            customFormLocal.setCustom_product_code(1);
-            customFormLocal.setCustom_product_desc("product description");
-            customFormLocal.setCustom_form_type_desc("form type descrition");
-            customFormLocal.setCustom_form_desc("form description");
+            customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
+            customFormLocal.setCustom_product_desc(product_desc);
+            customFormLocal.setCustom_form_type_desc(formtype_desc);
+            customFormLocal.setCustom_form_desc(formcode_desc);
             customFormLocal.setRequire_signature(customForm.getRequire_signature());
 
             custom_form_LocalDao.addUpdate(customFormLocal);

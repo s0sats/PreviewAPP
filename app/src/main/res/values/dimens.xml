@@ -6,7 +6,7 @@
 
     <dimen name="font_size_title">20sp</dimen>
     <dimen name="font_size_item">18sp</dimen>
-
+    <dimen name="btn_width_default">200dp</dimen>
 
 
 </resources>

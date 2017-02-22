@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,11 +16,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -48,6 +53,9 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -87,7 +95,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private String sDate;
 
-
     private HMAux resTabs;
 
     private Toolbar toolbar;
@@ -99,6 +106,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private HMAux hmPages = new HMAux();
 
     private String product_code;
+    private String product_desc;
     private String serial_id;
     private String type;
     private String type_desc;
@@ -121,6 +129,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private int index_old = 0;
     private int index = 1;
+
+    private transient Dialog infoDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,6 +171,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         List<String> transList = new ArrayList<String>();
         transList.add("exit_alert_ttl");
         transList.add("exit_alert_msg");
+        transList.add("dialog_info_title_lbl");
+        transList.add("dialog_info_product_lbl");
+        transList.add("dialog_info_serial_lbl");
+        transList.add("dialog_info_form_type_lbl");
+        transList.add("dialog_info_form_code_lbl");
+        transList.add("dialog_info_form_version_lbl");
+        transList.add("dialog_info_btn_ok");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -255,20 +272,34 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             @Override
             public void info() {
-                Toast.makeText(
-                        context,
-                        "Info",
-                        Toast.LENGTH_SHORT
-                ).show();
+                showCustomDialog();
             }
 
             @Override
             public void delete() {
-                Toast.makeText(
+                //
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        deleteFormLocal();
+                    }
+                };
+                //
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        hmAux_Trans.get("dialog_delete_title"),
+                        hmAux_Trans.get("dialog_delete_msg"),
+                        listener,
+                        1
+                );
+
+
+
+             /*   Toast.makeText(
                         context,
                         "Delete",
                         Toast.LENGTH_SHORT
-                ).show();
+                ).show();*/
             }
 
             @Override
@@ -402,7 +433,86 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 form,
                 form_version,
                 product_code,
-                form_data
+                form_data,
+                product_desc,
+                type_desc,
+                form_desc
+        );
+
+    }
+
+    private void deleteFormLocal() {
+
+        GE_Custom_Form_LocalDao formLocalDao =
+                new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+        GE_Custom_Form_Field_LocalDao formFieldLocalDao =
+                new GE_Custom_Form_Field_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+        GE_Custom_Form_DataDao formDataDao =
+                new GE_Custom_Form_DataDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        GE_Custom_Form_Data_FieldDao formDataFieldDao =
+                new GE_Custom_Form_Data_FieldDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        //
+        //
+        formLocalDao.remove(
+                new GE_Custom_Form_Data_Sql_002(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        type,
+                        form,
+                        form_version,
+                        form_data
+                ).toSqlQuery()
+        );
+        //
+        formFieldLocalDao.remove(
+                new GE_Custom_Form_Field_Local_Sql_004(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        type,
+                        form,
+                        form_version,
+                        form_data
+                ).toSqlQuery()
+        );
+        //
+        //
+        formDataDao.remove(
+                new GE_Custom_Form_Data_Sql_002(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        type,
+                        form,
+                        form_version,
+                        form_data
+                ).toSqlQuery()
+        );
+        //
+        //
+        formDataFieldDao.remove(
+                new GE_Custom_Form_Data_Field_Sql_002(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        type,
+                        form,
+                        form_version,
+                        form_data
+                ).toSqlQuery()
         );
 
     }
@@ -411,6 +521,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
+            product_desc = bundle.getString(Constant.ACT008_PRODUCT_DESC, "");
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
             type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
             type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
@@ -1218,5 +1329,80 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         context.sendBroadcast(mIntent);
     }
 
+    private void showCustomDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        infoDialog = new Dialog(Act011_Main.this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.act011_dialog_form_info,null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_title);
+
+        TextView tv_product_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_lbl);
+        TextView tv_product_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_val);
+        TextView tv_product_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_desc);
+        //
+        TextView tv_serial_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
+        TextView tv_serial_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
+        TextView tv_serial_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_id);
+        //
+        TextView tv_form_type_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_lbl);
+        TextView tv_form_type_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_val);
+        TextView tv_form_type_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_desc);
+        //
+        TextView tv_form_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_lbl);
+        TextView tv_form_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_val);
+        TextView tv_form_code_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_desc);
+        //
+        TextView tv_form_version_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_lbl);
+        TextView tv_form_version_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_val);
+        //
+        BootstrapButton btn_ok = (BootstrapButton) view.findViewById(R.id.act011_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
+        tv_product_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
+        tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
+        tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
+        tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
+        tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
+        btn_ok.setText(hmAux_Trans.get("dialog_info_btn_ok"));
+
+        tv_product_val.setText(product_code);
+        tv_product_desc.setText(product_desc);
+
+        tv_serial_val.setText(serial_id);
+
+        tv_form_type_val.setText(type);
+        tv_form_type_desc.setText(type_desc);
+
+        tv_form_code_val.setText(form);
+        tv_form_code_desc.setText(form_desc);
+
+        tv_form_version_val.setText(form_version);
+
+        tv_form_code_val.setText(form);
+        tv_form_code_desc.setText(form_desc);
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                infoDialog.dismiss();
+            }
+        });
+
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float)dm.widthPixels * 0.98F;
+        float dmH = (float)dm.heightPixels * 0.98F;
+
+        infoDialog.setTitle(hmAux_Trans.get("dialog_info_title_lbl"));
+        infoDialog.setContentView(view);
+        infoDialog.setCancelable(true);
+        infoDialog.getWindow().setLayout((int)dmW, (int)dmH);
+
+        infoDialog.show();
+
+    }
 
 }
