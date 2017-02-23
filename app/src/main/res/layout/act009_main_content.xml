@@ -30,17 +30,6 @@
             android:divider="@color/padrao_TRANSPARENT"/>
         <!--android:background="@drawable/border_back"-->
 
-        <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/act009_btn_back"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            app:bootstrapBrand="primary"
-            app:bootstrapSize="lg"
-            app:bootstrapText="Back"
-            app:roundedCorners="true" />
-
-
     </LinearLayout>
 
     <include layout="@layout/footer_base" />

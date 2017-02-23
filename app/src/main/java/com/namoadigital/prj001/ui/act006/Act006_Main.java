@@ -9,9 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -36,7 +34,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     private Act006_Main_Presenter mPresenter;
 
     private ListView lv_checklist_opcs;
-    private BootstrapButton btn_back;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,12 +79,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
                 this
         );
 
-        btn_back = (BootstrapButton) findViewById(R.id.act006_btn_back);
-        btn_back.setTag(Constant.ACT006 + "_" + "btn_back");
         lv_checklist_opcs = (ListView) findViewById(R.id.act006_lv_checklist_opcs);
-
-        views.add(btn_back);
-
         mPresenter.getAllOpcs();
     }
 
@@ -137,13 +129,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
                     default:
                         break;
                 }
-            }
-        });
-
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callAct005(context);
             }
         });
     }
@@ -228,5 +213,11 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 }

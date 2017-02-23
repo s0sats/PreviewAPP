@@ -35,6 +35,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     String[] menuId = {
             Act005_Main.MENU_ID_CHECKLIST,
             Act005_Main.MENU_ID_PENDING_DATA,
+            Act005_Main.MENU_ID_HISTORIC_DATA,
             Act005_Main.MENU_ID_SEND_DATA,
             Act005_Main.MENU_ID_SYNC_DATA,
             Act005_Main.MENU_ID_CLOSE
@@ -43,12 +44,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     String[] menuDesc = {
             "lbl_checklist",
             "lbl_pending_data",
+            "lbl_historic_data",
             "lbl_send_data",
             "lbl_sync_data",
             "lbl_close_app"
     };
 
     String[] icon ={
+            String.valueOf(R.drawable.cloud_upload),
             String.valueOf(R.drawable.cloud_upload),
             String.valueOf(R.drawable.cloud_upload),
             String.valueOf(R.drawable.cloud_upload),
@@ -102,6 +105,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                 case Act005_Main.MENU_ID_PENDING_DATA:
                     mView.callAct012(context);
+                    break;
+
+                case Act005_Main.MENU_ID_HISTORIC_DATA:
+                   // mView.callAct012(context);
                     break;
 
                 case Act005_Main.MENU_ID_SEND_DATA:

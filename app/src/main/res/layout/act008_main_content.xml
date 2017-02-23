@@ -124,17 +124,6 @@
                     android:layout_marginTop="10dp">
 
                     <com.beardedhen.androidbootstrap.BootstrapButton
-                        android:id="@+id/act008_btn_back"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_weight="1"
-                        app:bootstrapBrand="primary"
-                        app:bootstrapSize="lg"
-                        app:bootstrapText="Back"
-                        app:roundedCorners="true" />
-
-                    <com.beardedhen.androidbootstrap.BootstrapButton
                         android:id="@+id/act008_btn_create"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

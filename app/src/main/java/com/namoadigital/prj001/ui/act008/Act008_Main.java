@@ -46,7 +46,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private MKEditTextNM mket_serial_id;
     private CheckBox chk_required;
     private CheckBox chk_allow_new;
-    private BootstrapButton btn_back;
     private BootstrapButton btn_create;
 
     private Act008_Main_Presenter mPresenter;
@@ -149,9 +148,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         chk_required.setTag("chk_required");
         chk_allow_new = (CheckBox) findViewById(R.id.act008_chk_allow);
         chk_allow_new.setTag("chk_allow_new");
-        //
-        btn_back = (BootstrapButton) findViewById(R.id.act008_btn_back);
-        btn_back.setTag("btn_back");
+
         btn_create = (BootstrapButton) findViewById(R.id.act008_btn_create);
         btn_create.setTag("btn_create");
 
@@ -161,7 +158,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         views.add(tv_product_desc_label);
         views.add(chk_required);
         views.add(chk_allow_new);
-        views.add(btn_back);
         views.add(btn_create);
 
     }
@@ -204,13 +200,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void initActions() {
         //
         mPresenter.getProductInfo();
-        //
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callAct007(context);
-            }
-        });
         //
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -45,6 +45,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_DESC = "menu_desc";
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
+    public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
     public static final String MENU_ID_CLOSE = "menu_close_app";
@@ -116,6 +117,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("drawer_logout_alert_msg");
         transList.add("alert_sync_ttl");
         transList.add("alert_sync_msg");
+        transList.add("alert_exit_confirm_ttl");
+        transList.add("alert_exit_confirm_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -377,9 +380,24 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         finish();
     }
 
+
+
     @Override
     public void closeApp() {
-        finish();
+
+        ToolBox.alertMSG(
+                Act005_Main.this,
+                hmAux_Trans.get("alert_exit_confirm_ttl"),
+                hmAux_Trans.get("alert_exit_confirm_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                },
+                1
+        );
+
     }
 
     //TRATA UPDATE_REQUIRED - CANCEL
@@ -414,6 +432,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        closeApp();
+
+    }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -459,5 +485,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 }

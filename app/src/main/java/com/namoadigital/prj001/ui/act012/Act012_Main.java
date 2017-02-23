@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -37,8 +36,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     private Context context;
     private ListView lv_pendencies;
-    private BootstrapButton btn_back;
-
     private Act012_Main_Presenter mPresenter;
 
     private Lib_Custom_Cell_Adapter mAdapter;
@@ -104,10 +101,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
         lv_pendencies = (ListView) findViewById(R.id.act012_lv_pendencies);
         //
-        btn_back = (BootstrapButton) findViewById(R.id.act012_btn_back);
-        btn_back.setTag("btn_back");
-        views.add(btn_back);
-        //
         mPresenter.getPendencies(hmAux_Trans);
 
     }
@@ -140,13 +133,6 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     private void initActions() {
-
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.onBackPressedClicked();
-            }
-        });
 
         lv_pendencies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

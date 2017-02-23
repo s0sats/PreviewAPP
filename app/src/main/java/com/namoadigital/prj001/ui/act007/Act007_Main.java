@@ -219,7 +219,19 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.onBackPressedClicked();
+                try {
+                    // Ordem inversao para recuperar os dados
+                    currentIndex2 = mStack.pop();
+                    currentIndex = mStack.pop();
+                    //
+                    mPresenter.setAdapterData(
+                            currentIndex,
+                            currentIndex2,
+                            mket_product_search.getText().toString()
+                    );
+                } catch (Exception e) {
+                    mPresenter.onBackPressedClicked();
+                }
             }
         });
 
@@ -301,18 +313,6 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     @Override
     public void onBackPressed() {
-        try {
-            // Ordem inversao para recuperar os dados
-            currentIndex2 = mStack.pop();
-            currentIndex = mStack.pop();
-            //
-            mPresenter.setAdapterData(
-                    currentIndex,
-                    currentIndex2,
-                    mket_product_search.getText().toString()
-            );
-        } catch (Exception e) {
-            mPresenter.onBackPressedClicked();
-        }
+        mPresenter.onBackPressedClicked();
     }
 }

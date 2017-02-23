@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -36,7 +35,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private Context context;
     private Act010_Main_Presenter mPresenter;
     private ListView lv_forms;
-    private BootstrapButton btn_back;
     private TextView tv_form_type_label;
     private TextView tv_form_type_desc;
 
@@ -104,10 +102,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //
         lv_forms = (ListView) findViewById(R.id.act010_lv_form);
         //
-        btn_back = (BootstrapButton) findViewById(R.id.act010_btn_back);
-        btn_back.setTag("btn_back");
-        views.add(btn_back);
-        //
         mPresenter.setAdapterData(product_code, custom_form_type, "");
 
     }
@@ -158,13 +152,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private void initActions() {
 
         tv_form_type_desc.setText(custom_form_type + " - " + custom_form_type_desc);
-        //
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.onBackPressedClicked();
-            }
-        });
         //
         lv_forms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
