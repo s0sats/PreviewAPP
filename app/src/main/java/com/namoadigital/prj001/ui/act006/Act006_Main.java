@@ -207,11 +207,11 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     protected void barCodeShortCut(int id, String value) {
         super.barCodeShortCut(id, value);
         //
-        Toast.makeText(
+        /*Toast.makeText(
                 context,
                 String.valueOf(id) + " - " + value,
                 Toast.LENGTH_SHORT
-        ).show();
+        ).show();        */
     }
 
     @Override

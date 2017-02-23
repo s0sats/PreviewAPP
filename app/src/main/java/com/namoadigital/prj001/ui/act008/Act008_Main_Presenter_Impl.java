@@ -36,14 +36,15 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private MD_ProductDao mdProductDao;
     private Long product_code;
     private boolean downloadStarted = false;
+    private HMAux hmAux_Trans;
 
-
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
         this.mdProductDao = mdProductDao;
         this.product_code = product_code;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
@@ -57,7 +58,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 );
         //Erro, produto não encontrado
         if(md_product.getProduct_code() < 1){
-            mView.showAlertDialog("Product Info","Product not found!");
+            mView.showAlertDialog(
+                    hmAux_Trans.get("alert_product_not_found_title"),
+                    hmAux_Trans.get("alert_product_not_found_msg")
+                    );
         }else{
            mView.setProductValues(md_product);
         }
@@ -70,7 +74,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (serial.length() == 0 && required == 1) {
             //Se não foi e serial requerido, dispara alert de erro.
             mView.fieldFocus();
-            mView.showAlertDialog("Serial","Please, type a serial.");
+            mView.showAlertDialog(
+                    hmAux_Trans.get("alert_no_serial_typed_title"),
+                    hmAux_Trans.get("alert_no_serial_typed_msg")
+                    );
         }else{
             checkConnection(serial, required, allow_new);
         }
@@ -202,7 +209,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private void alertSerialEmpty() {
         //Se serial requerido, dispara alert de erro.
         mView.fieldFocus();
-        mView.showAlertDialog("Serial","Please, type a serial.");
+        mView.showAlertDialog(
+                hmAux_Trans.get("alert_no_serial_typed_title"),
+                hmAux_Trans.get("alert_no_serial_typed_msg")
+        );
     }
     @Override
     public void startDownloadServices(){

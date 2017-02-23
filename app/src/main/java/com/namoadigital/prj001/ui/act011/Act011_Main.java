@@ -178,6 +178,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_info_form_code_lbl");
         transList.add("dialog_info_form_version_lbl");
         transList.add("dialog_info_btn_ok");
+        transList.add("alert_error_on_finalize_title");
+        transList.add("alert_error_on_finalize_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -402,8 +404,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     ToolBox.alertMSG(
                             Act011_Main.this,
-                            "Check Record",
-                            "Error. You Cant' Check!!!",
+                            hmAux_Trans.get("alert_error_on_finalize_title"),
+                            hmAux_Trans.get("alert_error_on_finalize_msg"),
                             null,
                             0
                     );
@@ -1396,7 +1398,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         float dmW = (float)dm.widthPixels * 0.98F;
         float dmH = (float)dm.heightPixels * 0.98F;
 
-        infoDialog.setTitle(hmAux_Trans.get("dialog_info_title_lbl"));
+        //infoDialog.setTitle(hmAux_Trans.get("dialog_info_title_lbl"));
         infoDialog.setContentView(view);
         infoDialog.setCancelable(true);
         infoDialog.getWindow().setLayout((int)dmW, (int)dmH);

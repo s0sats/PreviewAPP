@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,11 +26,11 @@ public class WBR_Connections_Change extends BroadcastReceiver {
             }
         }
 
-        Toast.makeText(
+        /*Toast.makeText(
                 context,
                 status,
                 Toast.LENGTH_SHORT
-        ).show();
+        ).show();*/
 
 
     }

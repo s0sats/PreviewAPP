@@ -88,11 +88,28 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> transList = new ArrayList<>();
+        transList.add("alert_no_connection_title");
+        transList.add("alert_no_connection_msg");
+        transList.add("alert_offine_mode_title");
+        transList.add("alert_offine_mode_msg");
+        transList.add("alert_start_sync_title");
+        transList.add("alert_start_sync_msg");
+        transList.add("alert_start_serial_title");
+        transList.add("alert_start_serial_msg");
+        transList.add("alert_product_not_found_title");
+        transList.add("alert_product_not_found_msg");
+        transList.add("alert_no_serial_typed_title");
+        transList.add("alert_no_serial_typed_msg");
+        transList.add("sys_alert_btn_cancel");
+        transList.add("sys_alert_btn_ok");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -112,7 +129,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
-                product_code
+                product_code,
+                hmAux_Trans
                 );
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
@@ -257,27 +275,20 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String title = "";
         String msg = "";
         DialogInterface.OnClickListener listener = null;
-        List<String> transList = new ArrayList<>();
-        transList.add("alert_no_connection_title");
-        transList.add("alert_no_connection_msg");
-        transList.add("alert_offine_mode_title");
-        transList.add("alert_offine_mode_msg");
-
-        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,transList);
 
         if (serial_required == 1){
-            title = alertTrans.get("alert_no_connection_title"); //"Connection";
-            msg = alertTrans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+            title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
+            msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
         }else{
 
             if(serial_allow_new == 0 &&
                mket_serial_id.getText().toString().trim().length() > 0
             ){
-                title = alertTrans.get("alert_no_connection_title"); //"Connection";
-                msg = alertTrans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+                title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
+                msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
             }else{
-                title = alertTrans.get("alert_offine_mode_title"); //"Continue in offline mode?";
-                msg = alertTrans.get("alert_offine_mode_msg"); //"No connection has been found!\nDo you want continue without check the Serial id ?! ";
+                title = hmAux_Trans.get("alert_offine_mode_title"); //"Continue in offline mode?";
+                msg = hmAux_Trans.get("alert_offine_mode_msg"); //"No connection has been found!\nDo you want continue without check the Serial id ?! ";
 
                 listener = new DialogInterface.OnClickListener() {
                     @Override
@@ -305,12 +316,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         switch (wsProcess){
             case WS_PROCESS_SYNC:
-                alertTitle = "Sync";
-                alertMsg = "Sync Start...";
+                alertTitle = hmAux_Trans.get("alert_start_sync_title");
+                alertMsg = hmAux_Trans.get("alert_start_sync_msg");
                 break;
             case WS_PROCESS_SERIAL:
-                alertTitle = "Serial";
-                alertMsg = "Serial Start... ";
+                alertTitle = hmAux_Trans.get("alert_start_serial_title");
+                alertMsg = hmAux_Trans.get("alert_start_serial_msg");
                 break;
             default:
                 break;
@@ -320,8 +331,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
            enableProgressDialog(
                    alertTitle,
                    alertMsg,
-                   getResources().getString(R.string.generic_msg_cancel),
-                   getResources().getString(R.string.generic_msg_ok)
+                   hmAux_Trans.get("sys_alert_btn_cancel"),
+                   hmAux_Trans.get("sys_alert_btn_ok")
                    );
 
         }

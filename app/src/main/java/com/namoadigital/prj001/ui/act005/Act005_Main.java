@@ -313,8 +313,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         enableProgressDialog(
                 hmAux_Trans.get("alert_sync_ttl"),//"Get Sync",
                 hmAux_Trans.get("alert_sync_msg"),//"Start Processing...",
-                context.getString(R.string.generic_msg_cancel),
-                context.getString(R.string.generic_msg_ok)
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
 
