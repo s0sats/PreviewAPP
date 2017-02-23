@@ -39,4 +39,5 @@
     <string name="generic_no_connection_msg">Nenhuma conexão encontrada!\nTenta novamente quando houver conexão</string>
     <string name="generic_zip_not_found_msg">Arquivo zip não encontrado!\nPor favor tente novamente!</string>
     <string name="generic_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
+    <string name="act002_title_">Lista de Clientes</string>
 </resources>
