@@ -29,12 +29,12 @@ public class GE_Custom_Form_Local_Sql_002 implements Specification {
                         " select " +
                         "   ifnull(max(CFL.CUSTOM_FORM_DATA), 0) + 1 id " +
                         " from  " +
-                        "     GE_Custom_Forms_Local CFL " +
-                        " where " +
-                        " cfl.customer_code = '"+s_customer_code+"' " +
-                        " and cfl.custom_form_type = '"+s_formtype_code+"' " +
-                        " and cfl.custom_form_code = '"+s_form_code+"' " +
-                        " and cfl.custom_form_version = '"+s_formversion_code+"' ")
+                        "     GE_Custom_Forms_Local CFL ")
+//                        " where " +
+//                        " cfl.customer_code = '"+s_customer_code+"' " +
+//                        " and cfl.custom_form_type = '"+s_formtype_code+"' " +
+//                        " and cfl.custom_form_code = '"+s_form_code+"' " +
+//                        " and cfl.custom_form_version = '"+s_formversion_code+"' ")
                 .append(";id")
                 .toString();
     }

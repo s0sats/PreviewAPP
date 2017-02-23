@@ -55,12 +55,18 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -281,7 +287,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+
                         deleteFormLocal();
+
+
                     }
                 };
                 //
@@ -402,8 +413,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     ToolBox.alertMSG(
                             Act011_Main.this,
-                            "Check Record",
-                            "Error. You Cant' Check!!!",
+                            "Finalizar Registro",
+                            "Erro: Não foi possível finalizar o Registro. Campos obrigatórios não preenchidos!!!",
                             null,
                             0
                     );
@@ -443,7 +454,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private void deleteFormLocal() {
 
-        GE_Custom_Form_LocalDao formLocalDao =
+        GE_Custom_Form_LocalDao formLocalTTDao =
                 new GE_Custom_Form_LocalDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -473,47 +484,50 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         //
         //
-        formLocalDao.remove(
-                new GE_Custom_Form_Data_Sql_002(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        type,
-                        form,
-                        form_version,
-                        form_data
+        // Monstrar para o Batatinha
+        formLocalTTDao.remove(
+                new GE_Custom_Form_Local_Sql_007(
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data())
                 ).toSqlQuery()
         );
         //
         formFieldLocalDao.remove(
                 new GE_Custom_Form_Field_Local_Sql_004(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        type,
-                        form,
-                        form_version,
-                        form_data
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data())
                 ).toSqlQuery()
         );
         //
         //
         formDataDao.remove(
                 new GE_Custom_Form_Data_Sql_002(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        type,
-                        form,
-                        form_version,
-                        form_data
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data())
                 ).toSqlQuery()
         );
         //
         //
         formDataFieldDao.remove(
                 new GE_Custom_Form_Data_Field_Sql_002(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        type,
-                        form,
-                        form_version,
-                        form_data
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data())
                 ).toSqlQuery()
         );
+
+        callAct005(context);
 
     }
 
@@ -531,6 +545,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
         } else {
         }
+
+        int i = 10;
     }
 
     private void iniUIFooter() {
@@ -754,6 +770,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         mkEditTextNMFF.setmOption(cf.get("custom_form_data_content"));
         mkEditTextNMFF.setmMaxSize(Integer.parseInt(cf.get("custom_form_data_size")));
+
+        if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get("custom_form_data_type").equalsIgnoreCase("NUMBER")){
+
+            String[] opcs = null;
+
+            try {
+                JSONObject jsonObject = new JSONObject(cf.get("custom_form_data_content"));
+                JSONArray jsonArray = jsonObject.getJSONArray("CONTENT");
+                //
+                opcs = new String[jsonArray.length()];
+                //
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jo = jsonArray.getJSONObject(i);
+                    opcs[i] = jo.getString("DECIMAL");
+                }
+                //
+                mkEditTextNMFF.setmMaxSize(Integer.parseInt(opcs[0]));
+            } catch (JSONException e) {
+                mkEditTextNMFF.setmMaxSize(0);
+            }
+        }
 
         mkEditTextNMFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
         mkEditTextNMFF.setmPre(prefix);
@@ -1118,18 +1155,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
 
         return "EXEC";
-    }
-
-    private void prepareFormSave() {
-//
-//        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-//            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-//            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-//        }
-//
-//        int quantidade = returnValidCheck();
-//
-//        String sF = formData.getToken();
     }
 
     private class ScreenAdapter extends FragmentPagerAdapter {

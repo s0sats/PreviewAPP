@@ -112,8 +112,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             form_code,
                             formversion_code
                     )
-                    .toSqlQuery()
-                    .toLowerCase()
+                            .toSqlQuery()
+                            .toLowerCase()
             );
 
             GE_Custom_Form customForm = custom_formDao.getByString(
@@ -299,7 +299,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         switch (signature) {
             case 1:
-                if (signature != 0 && (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()))) {
+                if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
                     checkData(formData);
                 } else {
                     mView.showMsg(
@@ -310,7 +310,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
                 break;
             default:
-
+                checkData(formData);
                 break;
         }
 
