@@ -127,7 +127,7 @@ public class WS_Cleanning extends IntentService {
     public String sDTFormat_5_Days(String sDTFormatS) {
         String sResults = "";
         Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) + 10);
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 6);
 
         SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
             public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
