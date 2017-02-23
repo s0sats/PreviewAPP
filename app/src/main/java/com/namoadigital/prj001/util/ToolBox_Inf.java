@@ -939,8 +939,8 @@ public class ToolBox_Inf {
         //
         am.setRepeating(
                 AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + ( 60 * 1000),
-                ( 1 * 60 * 1000),
+                System.currentTimeMillis() + ( 5 * 60 * 1000),
+                (43200000),
                 pi
         );
     }

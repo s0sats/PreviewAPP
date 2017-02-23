@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.service.WS_Cleanning;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -92,6 +93,15 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         loadTranslation();
         //
+
+        // Lixo Hugo
+        Intent mIntent = new Intent(context, WS_Cleanning.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.startService(mIntent);
+
     }
 
     private void loadTranslation() {

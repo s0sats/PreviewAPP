@@ -138,6 +138,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             db.execSQL(s_query);
 
         } catch (Exception e) {
+            String res = e.toString();
         } finally {
         }
 
