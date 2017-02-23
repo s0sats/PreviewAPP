@@ -47,6 +47,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     private Stack<Long> mStack = new Stack<Long>();
 
     private long currentIndex = 0L;
+    private Long currentIndex2 = 0L;
 
     private int stopPropagation = 0;
 
@@ -114,8 +115,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
         recuperaGetIntents();
 
-        if(stopPropagation == 0) {
-            mPresenter.setAdapterData(currentIndex, mket_product_search.getText().toString().trim());
+        if (stopPropagation == 0) {
+            mPresenter.setAdapterData(currentIndex, currentIndex2, mket_product_search.getText().toString().trim());
         }
     }
 
@@ -124,10 +125,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         if (bundle != null) {
             //Se tem bundle e só 1 produto,
             //significa que o usr clicou em voltar na act008
-            if(mPresenter.getProductList().size() == 1) {
+            if (mPresenter.getProductList().size() == 1) {
                 stopPropagation = 1;
                 callAct006(context);
-            }else{
+            } else {
                 currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
                 mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
                 //
@@ -192,9 +193,9 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -209,6 +210,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             public void reportTextChange(String s) {
                 mPresenter.setAdapterData(
                         currentIndex,
+                        currentIndex2,
                         s
                 );
             }
@@ -225,6 +227,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             @Override
             public void onClick(View view) {
                 currentIndex = 0;
+                currentIndex2 = 0L;
+
                 mStack.clear();
                 //
                 mPresenter.onBtnHomeClicked();
@@ -239,11 +243,14 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 //
                 if (item.get("type").equalsIgnoreCase("group")) {
                     mStack.push(currentIndex);
+                    mStack.push(currentIndex2);
                     //
                     currentIndex = Long.parseLong(item.get("code"));
+                    currentIndex2 = Long.parseLong(item.get("recursive"));
                     //
                     mPresenter.setAdapterData(
                             currentIndex,
+                            currentIndex2,
                             mket_product_search.getText().toString()
                     );
                 } else {
@@ -295,10 +302,13 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     @Override
     public void onBackPressed() {
         try {
+            // Ordem inversao para recuperar os dados
+            currentIndex2 = mStack.pop();
             currentIndex = mStack.pop();
             //
             mPresenter.setAdapterData(
                     currentIndex,
+                    currentIndex2,
                     mket_product_search.getText().toString()
             );
         } catch (Exception e) {

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface Act007_Main_Presenter {
 
-    void setAdapterData(long product_code, String filter);
+    void setAdapterData(long group_code, Long recursive_code, String filter);
 
     void onCategoryProductClicked(String product_code);
 

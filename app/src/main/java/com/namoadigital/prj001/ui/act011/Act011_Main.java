@@ -484,10 +484,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         Constant.DB_VERSION_CUSTOM
                 );
         //
-        //
-        //
-        // Monstrar para o Batatinha
-        formLocalTTDao.remove(
+        formLocalDao.remove(
                 new GE_Custom_Form_Local_Sql_007(
                         String.valueOf(formData.getCustomer_code()),
                         String.valueOf(formData.getCustom_form_type()),
