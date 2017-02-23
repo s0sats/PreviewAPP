@@ -92,16 +92,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         );
         //
         loadTranslation();
-        //
-
-        // Lixo Hugo
-        Intent mIntent = new Intent(context, WS_Cleanning.class);
-        Bundle bundle = new Bundle();
-
-        mIntent.putExtras(bundle);
-        //
-        context.startService(mIntent);
-
     }
 
     private void loadTranslation() {

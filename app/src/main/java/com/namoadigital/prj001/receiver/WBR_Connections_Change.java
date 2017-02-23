@@ -22,17 +22,11 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         if (!status.equalsIgnoreCase("NO_SERVICE")) {
             if (!ToolBox_Con.getPreference_Service(context).equals("NO_SERVICE")) {
                 activateUpload(context);
+                activateCleanning(context);
+                //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
         }
-
-        /*Toast.makeText(
-                context,
-                status,
-                Toast.LENGTH_SHORT
-        ).show();*/
-
-
     }
 
     private void activateUpload(Context context) {
@@ -43,4 +37,15 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         //
         context.sendBroadcast(mIntent);
     }
+
+    private void activateCleanning(Context context) {
+        Intent mIntent = new Intent(context, WBR_Cleanning.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+
 }
