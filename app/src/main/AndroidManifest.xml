@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -37,125 +36,140 @@
             android:name=".ui.act002.Act002_Main"
             android:label="@string/act002_title_"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <!-- Site List -->
         <activity
             android:name=".ui.act003.Act003_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Operation List -->
         <activity
             android:name=".ui.act004.Act004_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act005.Act005_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act006.Act006_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act007.Act007_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act008.Act008_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act009.Act009_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act010.Act010_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act011.Act011_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act012.Act012_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--  -->
         <activity
             android:name=".ui.act013.Act013_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act014.Act014_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver android:name=".receiver.WBR_GetCustomer" />
+
         <service android:name=".service.WS_GetCustomer" />
 
         <receiver android:name=".receiver.WBR_Session" />
+
         <service android:name=".service.WS_Session" />
 
         <receiver android:name=".receiver.WBR_Sync" />
+
         <service android:name=".service.WS_Sync" />
 
         <receiver android:name=".receiver.WBR_UpdateSoftware" />
+
         <service android:name=".service.WS_UpdateSoftware" />
 
         <receiver android:name=".receiver.WBR_Serial" />
+
         <service android:name=".service.WS_Serial" />
 
         <receiver android:name=".receiver.WBR_Save" />
+
         <service android:name=".service.WS_Save" />
 
-
         <receiver android:name=".receiver.WBR_DownLoad_Picture" />
+
         <service android:name=".service.WS_DownLoad_Picture" />
 
         <receiver android:name=".receiver.WBR_DownLoad_PDF" />
+
         <service android:name=".service.WS_DownLoad_PDF" />
 
         <receiver android:name=".receiver.WBR_Upload_Img" />
+
         <service android:name=".service.WS_Upload_Img" />
 
         <receiver android:name=".receiver.WBR_Cleanning" />
-        <service android:enabled="true" android:name=".service.WS_Cleanning" />
+
+        <service
+            android:name=".service.WS_Cleanning"
+            android:enabled="true" />
 
         <receiver android:name=".receiver.WBR_Connections_Change">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receiver.WBR_BootCompleted">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>

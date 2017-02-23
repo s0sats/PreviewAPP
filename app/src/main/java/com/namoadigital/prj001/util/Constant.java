@@ -30,6 +30,8 @@ public class Constant extends ConstantBase{
     public static final String ACT011 = "act011";
     public static final String ACT012 = "act012";
     public static final String ACT013 = "act013";
+    public static final String ACT014 = "act014";
+    public static final String ACT015 = "act015";
 
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
