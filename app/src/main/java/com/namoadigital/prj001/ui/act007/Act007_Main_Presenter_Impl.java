@@ -35,17 +35,17 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
     }
 
     @Override
-    public void setAdapterData(long product_code, String filter) {
+    public void setAdapterData(long group_code, Long recursive_code, String filter) {
         List<MD_Product> listProducts = getProductList();
 
-        if( listProducts.size() == 1 ){
+        if (listProducts.size() == 1) {
             mView.callAct008(context, String.valueOf(listProducts.get(0).getProduct_code()));
-        }else {
+        } else {
 
             ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
                     new Sql_Act007_001(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(product_code),
+                            String.valueOf(recursive_code),
                             (filter.trim().equals("") ? "null" : filter)
                     ).toSqlQuery()
             );
@@ -53,12 +53,11 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
             ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
                     new Sql_Act007_002(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(product_code),
+                            String.valueOf(group_code),
                             (filter.trim().equals("") ? "null" : filter),
-                            (int) product_code
+                            (int) group_code
                     ).toSqlQuery()
             );
-
 
             ArrayList<HMAux> data = new ArrayList<>();
 
@@ -68,6 +67,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 item.put("desc", aux.get("group_desc"));
                 item.put("full_desc", aux.get("full_group_desc"));
                 item.put("type", aux.get("type"));
+                // Hugo
                 item.put("recursive", aux.get("recursive_code"));
                 //
                 data.add(item);
@@ -107,7 +107,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
 
     @Override
     public void onBtnHomeClicked() {
-        setAdapterData(0, "");
+        setAdapterData(0, 0L, "");
     }
 
     @Override
