@@ -80,7 +80,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         formtype_code,
                         form_code,
                         formversion_code,
-                        s_form_data
+                        s_form_data,
+                        product_code
                 ).toSqlQuery().toString().toLowerCase()
         );
 
