@@ -68,6 +68,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 item.put("desc", aux.get("group_desc"));
                 item.put("full_desc", aux.get("full_group_desc"));
                 item.put("type", aux.get("type"));
+                item.put("recursive", aux.get("recursive_code"));
                 //
                 data.add(item);
             }
@@ -78,6 +79,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 item.put("desc", aux.get("product_desc"));
                 item.put("full_desc", aux.get("full_product_desc"));
                 item.put("type", aux.get("type"));
+                item.put("recursive", aux.get(""));
                 //
                 data.add(item);
             }

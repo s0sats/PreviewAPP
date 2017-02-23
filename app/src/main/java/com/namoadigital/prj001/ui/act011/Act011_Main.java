@@ -55,7 +55,6 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
@@ -186,6 +185,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_info_btn_ok");
         transList.add("alert_error_on_finalize_title");
         transList.add("alert_error_on_finalize_msg");
+        transList.add("alert_save_title");
+        transList.add("alert_save_msg");
+        transList.add("alert_finalize_title");
+        transList.add("alert_finalize_msg");
+        transList.add("alert_require_signature_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -435,7 +439,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 new GE_Custom_Form_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_Field_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_BlobDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                hmAux_Trans
         );
 
         recoverGetIntents();
@@ -487,7 +492,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         //
         // Monstrar para o Batatinha
-        formLocalTTDao.remove(
+        formLocalDao.remove(
                 new GE_Custom_Form_Local_Sql_007(
                         String.valueOf(formData.getCustomer_code()),
                         String.valueOf(formData.getCustom_form_type()),

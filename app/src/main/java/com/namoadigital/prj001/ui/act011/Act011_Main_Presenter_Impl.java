@@ -56,8 +56,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private GE_Custom_Form_BlobDao custom_form_blobDao;
     private GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao;
 
+    private HMAux hmAux_Trans;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao) {
+
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao ,HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -69,6 +71,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.custom_form_field_LocalDao = custom_form_field_LocalDao;
         this.custom_form_blobDao = custom_form_blobDao;
         this.custom_form_blob_localDao = custom_form_blob_localDao;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
@@ -263,8 +266,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
         mView.showMsg(
-                "Salvando Registro",
-                "Registro Salvo Partialmente!!!",
+                hmAux_Trans.get("alert_save_title"),//"Salvando Registro",
+                hmAux_Trans.get("alert_save_msg"),//"Registro Salvo Partialmente!!!",
                 0);
     }
 
@@ -288,8 +291,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
         mView.showMsg(
-                "Finalizando Registro",
-                "Registro Finalizado!!!",
+                hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
+                hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
                 2);
 
 
@@ -304,8 +307,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     checkData(formData);
                 } else {
                     mView.showMsg(
-                            "Finalizar Registro",
-                            "Para Finalizar o Registro é preciso uma assinatura!!!",
+                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
+                            hmAux_Trans.get("alert_require_signature_msg"),//"Para Finalizar o Registro é preciso uma assinatura!!!",
                             1);
                 }
 

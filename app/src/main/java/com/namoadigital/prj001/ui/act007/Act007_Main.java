@@ -241,6 +241,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                     mStack.push(currentIndex);
                     //
                     currentIndex = Long.parseLong(item.get("code"));
+                    currentIndex = Long.parseLong(item.get("recursive"));
                     //
                     mPresenter.setAdapterData(
                             currentIndex,
