@@ -151,4 +151,10 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         finish();
 
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
 }

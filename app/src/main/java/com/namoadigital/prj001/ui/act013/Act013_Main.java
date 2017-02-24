@@ -1,13 +1,18 @@
 package com.namoadigital.prj001.ui.act013;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -31,9 +36,15 @@ import java.util.List;
 public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     private Context context;
-    private ListView lv_pendencies;
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
+
+    private ListView lv_pendencies;
+    private TextView tv_filter;
+    private CheckBox chk_processing;
+    private CheckBox chk_scheduled;
+    private CheckBox chk_finalized;
+    private ImageView iv_help;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,11 +76,21 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> translateList = new ArrayList<>();
+        translateList.add("alert_form_not_ready_title");
+        translateList.add("alert_form_not_ready_msg");
+        translateList.add("alert_helper_dialog_ttl");
+        translateList.add("alert_helper_dialog_msg");
+        translateList.add("lbl_chk_in_processing");
+        translateList.add("lbl_chk_scheduled");
+        translateList.add("lbl_chk_finalized");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
         );
     }
 
@@ -86,6 +107,17 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 );
         //
         lv_pendencies = (ListView) findViewById(R.id.act013_lv_pendencies);
+        //
+        tv_filter = (TextView) findViewById(R.id.act013_tv_filter);
+        tv_filter.setTag("lbl_filter");
+        views.add(tv_filter);
+        //
+        chk_processing = (CheckBox) findViewById(R.id.act013_chk_in_process);
+        chk_scheduled = (CheckBox) findViewById(R.id.act013_chk_scheduled);
+        chk_scheduled.setVisibility(View.GONE);
+        chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
+        //
+        iv_help = (ImageView) findViewById(R.id.act013_iv_help);
         //
         mPresenter.getPendencies();
     }
@@ -126,6 +158,43 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 mPresenter.validateOpenForm(item);
             }
         });
+
+        iv_help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showHelperDialog();
+            }
+        });
+    }
+
+    private void showHelperDialog() {
+        AlertDialog.Builder alert =  new AlertDialog.Builder(Act013_Main.this);
+
+        LayoutInflater inflater =  this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.act013_helper_dialog,null);
+        //
+        TextView tv_title = (TextView) view.findViewById(R.id.act013_helper_dialog_tv_title);
+        tv_title.setText(hmAux_Trans.get("alert_helper_dialog_msg"));
+
+        CheckBox chk_processing = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_processing);
+        chk_processing.setText(hmAux_Trans.get("lbl_chk_in_processing"));
+        //
+        CheckBox chk_scheduled = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_scheduled);
+        chk_scheduled.setText(hmAux_Trans.get("lbl_chk_scheduled"));
+        chk_scheduled.setVisibility(View.GONE);
+        //
+        CheckBox chk_finalized = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_finalized);
+        chk_finalized.setText(hmAux_Trans.get("lbl_chk_finalized"));
+
+        alert
+            .setView(view)
+            .setCancelable(true)
+            /*.setPositiveButton(
+                    hmAux_Trans.get("sys_alert_btn_ok"),null
+            )*/
+            ;
+
+        alert.show();
     }
 
     @Override
@@ -160,16 +229,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     @Override
     public void alertFormNotReady() {
-        List<String> translist = new ArrayList<>();
-        translist.add("alert_form_not_ready_title");
-        translist.add("alert_form_not_ready_msg");
-
-        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code,translist);
 
         ToolBox.alertMSG(
                 Act013_Main.this,
-                alertTrans.get("alert_form_not_ready_title"),
-                alertTrans.get("alert_form_not_ready_msg"),
+                hmAux_Trans.get("alert_form_not_ready_title"),
+                hmAux_Trans.get("alert_form_not_ready_msg"),
                 null,
                 0
         );

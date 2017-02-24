@@ -11,14 +11,64 @@
     tools:context=".ui.act013.Act013_Main"
     tools:showIn="@layout/act013_main">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act013_tv_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:paddingLeft="10dp"
+                android:text="Filtros"
+                android:textSize="@dimen/font_size_item" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="top|right">
+
+                <CheckBox
+                    android:id="@+id/act013_chk_in_process"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/custom_yellow" />
+
+                <CheckBox
+                    android:id="@+id/act013_chk_scheduled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@color/namoa_lime_green"
+                    android:visibility="visible" />
+
+                <CheckBox
+                    android:id="@+id/act013_chk_finalized"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@color/namoa_light_blue" />
+
+                <ImageView
+                    android:id="@+id/act013_iv_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_help_outline_black_24dp" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
 
         <ListView
             android:id="@+id/act013_lv_pendencies"
@@ -27,10 +77,11 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:padding="5dp"
-            android:divider="@color/padrao_TRANSPARENT"/>
+            android:divider="@color/padrao_TRANSPARENT"
+            android:padding="5dp" />
 
     </LinearLayout>
+
     <include layout="@layout/footer_base" />
 
 </LinearLayout>

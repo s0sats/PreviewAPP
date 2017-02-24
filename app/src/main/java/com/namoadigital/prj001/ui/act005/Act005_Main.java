@@ -409,6 +409,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
         //
+        ToolBox_Con.cleanPreferences(context);
+        //
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/act013_helper_dialog_tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/font_size_title"
+        android:text="Legenda"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"
+        />
+
+    <CheckBox
+        android:id="@+id/act013_helper_dialog_chk_processing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/custom_yellow"
+        android:layout_marginBottom="20dp"
+        android:checked="true"
+        android:clickable="false"
+        />
+
+    <CheckBox
+        android:id="@+id/act013_helper_dialog_chk_scheduled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/namoa_lime_green"
+        android:visibility="visible"
+        android:layout_marginBottom="20dp"
+        android:checked="true"
+        android:clickable="false"/>
+
+    <CheckBox
+        android:id="@+id/act013_helper_dialog_chk_finalized"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/namoa_light_blue"
+        android:layout_marginBottom="20dp"
+        android:checked="true"
+        android:clickable="false"/>
+
+</LinearLayout>

@@ -40,5 +40,4 @@
     <string name="generic_zip_not_found_msg">Zip data not found!\nPlease try again!</string>
     <string name="generic_no_forms_found">No forms found for this product!</string>
     <string name="act002_title_">Customer</string>
-    <string name="title_activity_act015__main">Act015_Main</string>
 </resources>

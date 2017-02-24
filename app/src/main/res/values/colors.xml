@@ -19,8 +19,8 @@
     <color name="text_red">#FFFF0000</color>
     <color name="text_black">#FF000000</color>
 
-    <color name="custom_yellow">#FFFAFF8C</color>
-    <color name="custom_yellow_light">#FFFCFFB3</color>
+    <color name="custom_yellow_light">#FFFD42</color>
+    <color name="custom_yellow">#FFED42</color>
     <color name="custom_yellow_dark">#FF574500</color>
 
 
