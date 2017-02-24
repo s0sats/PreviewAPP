@@ -1,0 +1,22 @@
+package com.namoadigital.prj001.ui.act014;
+
+import android.content.Context;
+
+import com.namoa_digital.namoa_library.util.HMAux;
+
+import java.util.List;
+
+/**
+ * Created by DANIEL.LUCHE on 24/02/2017.
+ */
+
+public interface Act014_Main_View {
+
+    void loadSentData(List<HMAux> sent_datas);
+
+    void callAct005(Context context);
+
+    void callAct015(Context context);
+
+    void showMsg();
+}

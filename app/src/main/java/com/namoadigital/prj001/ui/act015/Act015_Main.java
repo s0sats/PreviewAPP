@@ -1,22 +1,18 @@
-package com.namoadigital.prj001.ui.act014;
+package com.namoadigital.prj001.ui.act015;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
+import com.namoadigital.prj001.adapter.Form_Data_List_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.sql.Sql_Act014_001;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act015.Act015_Main;
+import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -24,21 +20,17 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class Act014_Main extends Base_Activity implements Act014_Main_View {
-
-    public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
-    public static final String LABEL_TRANS_OS= "lbl_type_service_order";
+public class Act015_Main extends Base_Activity implements Act015_Main_View {
 
     private Context context;
+    private Act015_Main_Presenter mPresenter;
     private ListView lv_sent;
-    private Act014_Main_Presenter mPresenter;
-    private Lib_Custom_Cell_Adapter mAdapter;
+    private Form_Data_List_Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act014_main);
+        setContentView(R.layout.act015_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -50,6 +42,8 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         iniUIFooter();
         //
         initActions();
+
+
     }
 
     private void iniSetup() {
@@ -58,20 +52,17 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT014
+                Constant.ACT015
         );
 
         loadTranslation();
+
     }
 
     private void loadTranslation() {
         //
         List<String> translateList = new ArrayList<>();
-        translateList.add(LABEL_TRANS_CHECKLIST);
-        translateList.add(LABEL_TRANS_OS);
-        translateList.add("alert_no_sent_data_title");
-        translateList.add("alert_no_sent_data_msg");
-
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -82,18 +73,20 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     }
 
     private void initVars() {
-        mPresenter = new Act014_Main_Presenter_Impl(
-                context,
-                this,
-                new GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                hmAux_Trans
-            );
 
-        lv_sent = (ListView) findViewById(R.id.act014_lv_sent_data);
+        mPresenter =
+                new Act015_Main_Presenter_Impl(
+                        context,
+                        this,
+                        new GE_Custom_Form_LocalDao(
+                                context,
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                Constant.DB_VERSION_CUSTOM
+                        ),
+                        hmAux_Trans
+                );
+
+        lv_sent = (ListView) findViewById(R.id.act015_lv_sent_data);
 
         mPresenter.getSentData();
 
@@ -123,64 +116,39 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
 
         //Aplica informações do rodapé - fim
-
     }
 
     private void initActions() {
-        lv_sent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                mPresenter.checkSentFlow(item);
-            }
-        });
 
     }
 
     @Override
-    public void loadSentData(List<HMAux> sent_datas) {
-        mAdapter =  new Lib_Custom_Cell_Adapter(
-                            context,
-                            R.layout.lib_custom_cell,
-                            sent_datas,
-                            Lib_Custom_Cell_Adapter.CFG_DESC_QTY,
-                            Sql_Act014_001.TYPE,
-                            Sql_Act014_001.SENT_QTY
-                    );
-        //
-        lv_sent.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void callAct005(Context context) {
-        Intent mIntent = new Intent(context, Act005_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
-    public void callAct015(Context context) {
-        Intent mIntent = new Intent(context, Act015_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
-    public void showMsg() {
-        ToolBox.alertMSG(
-                Act014_Main.this,
-                hmAux_Trans.get("alert_no_sent_data_title"),
-                hmAux_Trans.get("alert_no_sent_data_msg"),
-                null,
-                0
+    public void loadSentData(List<HMAux> sentData) {
+        mAdapter = new Form_Data_List_Adapter(
+                context,
+                R.layout.form_data_list_cell,
+                sentData
         );
+
+        lv_sent.setAdapter(mAdapter);
+
     }
 
     @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+    public void callAct011(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act011_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct014(Context context) {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+
     }
 }

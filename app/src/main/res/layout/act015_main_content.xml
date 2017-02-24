@@ -8,8 +8,8 @@
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.act014.Act014_Main"
-    tools:showIn="@layout/act014_main">
+    tools:context=".ui.act015.Act015_Main"
+    tools:showIn="@layout/act015_main">
 
 
     <LinearLayout
@@ -21,7 +21,7 @@
         android:padding="5dp">
 
         <ListView
-            android:id="@+id/act014_lv_sent_data"
+            android:id="@+id/act015_lv_sent_data"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"

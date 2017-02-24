@@ -113,11 +113,20 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!--  -->
         <activity
             android:name=".ui.act014.Act014_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!--  -->
+        <activity
+            android:name=".ui.act015.Act015_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
@@ -173,7 +182,6 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-
 
     </application>
 

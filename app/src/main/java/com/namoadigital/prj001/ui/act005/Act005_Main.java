@@ -21,12 +21,12 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
-import com.namoadigital.prj001.service.WS_Cleanning;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -93,15 +93,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         );
         //
         loadTranslation();
-        //
-
-        // Lixo Hugo
-        Intent mIntent = new Intent(context, WS_Cleanning.class);
-        Bundle bundle = new Bundle();
-
-        mIntent.putExtras(bundle);
-        //
-        context.startService(mIntent);
 
     }
 
@@ -380,7 +371,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         finish();
     }
 
-
+    @Override
+    public void callAct014(Context context) {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 
     @Override
     public void closeApp() {

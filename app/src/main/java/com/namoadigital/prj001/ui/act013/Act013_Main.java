@@ -13,7 +13,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act013_Adapter_Pendencies;
+import com.namoadigital.prj001.adapter.Form_Data_List_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
@@ -33,7 +33,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private Context context;
     private ListView lv_pendencies;
     private Act013_Main_Presenter mPresenter;
-    private Act013_Adapter_Pendencies mAdapter;
+    private Form_Data_List_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,9 +131,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     @Override
     public void loadPendencies(List<HMAux> pendencies) {
         mAdapter =
-                new Act013_Adapter_Pendencies(
+                new Form_Data_List_Adapter(
                         context,
-                        R.layout.act013_main_content_cell_01,
+                        R.layout.form_data_list_cell,
                         pendencies
                 );
 

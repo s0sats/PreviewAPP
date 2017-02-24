@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/act013_main_content_cell_01_ll_bg"
+    android:id="@+id/form_data_list_cell_01_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="15dp">
 
     <TextView
-        android:id="@+id/act013_main_content_cell_01_tv_01"
+        android:id="@+id/form_data_list_cell_01_tv_01"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Teste"
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/act013_main_content_cell_01_tv_02"
+        android:id="@+id/form_data_list_cell_01_tv_02"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
@@ -22,7 +22,7 @@
         android:text="02020"
         android:textSize="15sp" />
     <TextView
-        android:id="@+id/act013_main_content_cell_01_tv_03"
+        android:id="@+id/form_data_list_cell_01_tv_03"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
