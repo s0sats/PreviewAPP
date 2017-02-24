@@ -20,13 +20,13 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 09/02/2017.
  */
 
-public class Form_Data_List_Adapter extends BaseAdapter {
+public class Local_Data_List_Adapter extends BaseAdapter {
 
     private Context context;
     private int resource;
     private List<HMAux> source;
 
-    public Form_Data_List_Adapter(Context context, int resource, List<HMAux> source) {
+    public Local_Data_List_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -57,13 +57,13 @@ public class Form_Data_List_Adapter extends BaseAdapter {
 
         }
         //Inicializa variaveis do layout da celula
-        LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.form_data_list_cell_01_ll_bg);
+        LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.local_data_list_cell_01_ll_bg);
         //
-        TextView tvItem = (TextView) convertView.findViewById(R.id.form_data_list_cell_01_tv_01);
+        TextView tvItem = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_01);
         //
-        TextView tvItem2 = (TextView) convertView.findViewById(R.id.form_data_list_cell_01_tv_02);
+        TextView tvItem2 = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_02);
         //
-        TextView tvItem3 = (TextView) convertView.findViewById(R.id.form_data_list_cell_01_tv_03);
+        TextView tvItem3 = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_03);
         //Resgata HmAux com as informações
         HMAux item = source.get(position);
 

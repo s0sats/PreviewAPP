@@ -9,7 +9,7 @@ import android.widget.ListView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Form_Data_List_Adapter;
+import com.namoadigital.prj001.adapter.Local_Data_List_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
@@ -25,7 +25,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     private Context context;
     private Act015_Main_Presenter mPresenter;
     private ListView lv_sent;
-    private Form_Data_List_Adapter mAdapter;
+    private Local_Data_List_Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +96,8 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT014;
-        mAct_Title = Constant.ACT014 + "_" + "title";
+        mAct_Info = Constant.ACT015;
+        mAct_Title = Constant.ACT015 + "_" + "title";
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
@@ -124,9 +124,9 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
 
     @Override
     public void loadSentData(List<HMAux> sentData) {
-        mAdapter = new Form_Data_List_Adapter(
+        mAdapter = new Local_Data_List_Adapter(
                 context,
-                R.layout.form_data_list_cell,
+                R.layout.local_data_list_cell,
                 sentData
         );
 
