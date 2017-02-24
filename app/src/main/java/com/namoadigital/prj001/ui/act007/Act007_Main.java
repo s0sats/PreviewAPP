@@ -51,6 +51,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private int stopPropagation = 0;
 
+    private boolean mkUpdate = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +131,11 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 stopPropagation = 1;
                 callAct006(context);
             } else {
-                currentIndex = Long.parseLong(bundle.getString(Constant.ACT007_CURRENTINDEX));
+                String[] parts = bundle.getString(Constant.ACT007_CURRENTINDEX).split(":");
+
+                currentIndex = Long.parseLong(parts[0]);
+                currentIndex2 = Long.parseLong(parts[1]);
+
                 mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
                 //
                 reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
@@ -208,11 +214,14 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
-                mPresenter.setAdapterData(
-                        currentIndex,
-                        currentIndex2,
-                        s
-                );
+
+                if (mkUpdate) {
+                    mPresenter.setAdapterData(
+                            currentIndex,
+                            currentIndex2,
+                            s
+                    );
+                }
             }
         });
 
@@ -243,6 +252,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
                 mStack.clear();
                 //
+                mkUpdate = false;
+                mket_product_search.setText("");
+                mkUpdate = true;
+                //
                 mPresenter.onBtnHomeClicked();
             }
         });
@@ -259,6 +272,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                     //
                     currentIndex = Long.parseLong(item.get("code"));
                     currentIndex2 = Long.parseLong(item.get("recursive"));
+                    //
+                    mkUpdate = false;
+                    mket_product_search.setText("");
+                    mkUpdate = true;
                     //
                     mPresenter.setAdapterData(
                             currentIndex,
@@ -299,7 +316,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.ACT007_CURRENTINDEX, String.valueOf(currentIndex));
+        bundle.putString(Constant.ACT007_CURRENTINDEX, String.valueOf(currentIndex) + ":" + String.valueOf(currentIndex2));
         bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
         bundle.putString(Constant.ACT007_MSTACKVALUES, getStackValues());
         bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
