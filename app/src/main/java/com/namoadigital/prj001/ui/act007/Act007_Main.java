@@ -233,6 +233,10 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                     currentIndex2 = mStack.pop();
                     currentIndex = mStack.pop();
                     //
+                    mkUpdate = false;
+                    mket_product_search.setText("");
+                    mkUpdate = true;
+                    //
                     mPresenter.setAdapterData(
                             currentIndex,
                             currentIndex2,
