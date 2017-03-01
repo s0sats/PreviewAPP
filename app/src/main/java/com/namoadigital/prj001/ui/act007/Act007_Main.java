@@ -107,6 +107,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
         btn_back = (BootstrapButton) findViewById(R.id.act007_btn_back);
         btn_back.setTag("btn_back");
+        btn_back.setVisibility(View.INVISIBLE);
+
         btn_home = (BootstrapButton) findViewById(R.id.act007_btn_home);
         btn_home.setTag("btn_home");
         //
@@ -146,12 +148,19 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             mket_product_search.setText("");
             //
             mStack.clear();
+            btn_back.setVisibility(View.INVISIBLE);
         }
     }
 
     private void reloadStack(String pilha_values) {
         String[] p_values = pilha_values.split("#");
-        //'
+        //
+        //Modifica visibilidade do botão
+        if(p_values.length >= 2){
+            btn_back.setVisibility(View.VISIBLE);
+        }else{
+            btn_back.setVisibility(View.INVISIBLE);
+        }
         try {
             for (int i = 0; i < p_values.length; i++) {
                 mStack.push(Long.parseLong(p_values[i]));
@@ -237,6 +246,11 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                     mket_product_search.setText("");
                     mkUpdate = true;
                     //
+                    if(currentIndex == 0){
+                        btn_back.setVisibility(View.INVISIBLE);
+
+                    }
+                    //
                     mPresenter.setAdapterData(
                             currentIndex,
                             currentIndex2,
@@ -260,6 +274,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 mket_product_search.setText("");
                 mkUpdate = true;
                 //
+                btn_back.setVisibility(View.VISIBLE);
+                //
                 mPresenter.onBtnHomeClicked();
             }
         });
@@ -280,6 +296,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                     mkUpdate = false;
                     mket_product_search.setText("");
                     mkUpdate = true;
+                    //
+                    btn_back.setVisibility(View.VISIBLE);
                     //
                     mPresenter.setAdapterData(
                             currentIndex,

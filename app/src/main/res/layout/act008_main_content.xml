@@ -107,7 +107,6 @@
                     android:layout_height="50dp"
                     android:background="@drawable/border_back"
                     android:backgroundTint="@android:color/holo_blue_light"
-                    android:hint="Product Search"
                     android:padding="10dp"
                     android:inputType="text"
                     app:mNFC="false"
