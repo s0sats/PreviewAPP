@@ -34,15 +34,15 @@ public class Sql_Act012_001 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "     count(1) pending_qty,\n " +
+                        "     count(1) "+PENDING_QTY+",\n " +
                         "    '"+label_translation.get(Act012_Main.LABEL_TRANS_CHECKLIST)+"' type\n " +
                         " FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+" l\n " +
                         " WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
-                        " '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' " +
+                        "    in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'" +
+                        //" ,'"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' " +
                         ");")
                 .append(PENDING_QTY+"#"+TYPE)
                 .toString();
