@@ -4,9 +4,9 @@
     <solid
         android:color="@color/colortickmark"
         />
-    <size
+    <!--<size
         android:height="20dp"
-        android:width="20dp"/>
+        android:width="20dp"/>-->
     <stroke
         android:color="@color/padrao_WHITE"
         android:width="1dp"/>

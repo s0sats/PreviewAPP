@@ -59,11 +59,23 @@ public class Act005_Adapter extends BaseAdapter {
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.menu_llChecklist);
         ImageView ivIcon = (ImageView) convertView.findViewById(R.id.menu_ivChecklist);
         TextView tvTitle = (TextView) convertView.findViewById(R.id.menu_tvChecklist);
+        TextView tvBadge = (TextView) convertView.findViewById(R.id.menu_tvBadge);
 
         HashMap<String,String> item = source.get(position);
 
         ivIcon.setImageDrawable(context.getResources().getDrawable(Integer.valueOf(item.get(Act005_Main.MENU_ICON))));
         tvTitle.setText(item.get(Act005_Main.MENU_DESC));
+
+        //Se chave Badge tiver preenchida exibe no menu
+        if(item.get(Act005_Main.MENU_BADGE).length() > 0){
+            tvBadge.setVisibility(View.VISIBLE);
+            String qty = item.get(Act005_Main.MENU_BADGE);
+
+            if( item.get(Act005_Main.MENU_BADGE).length() == 1 ){
+                qty = " " + qty + " ";
+            }
+            tvBadge.setText(qty);
+        }
 
         return convertView;
     }

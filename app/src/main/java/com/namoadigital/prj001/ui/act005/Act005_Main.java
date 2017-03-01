@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -43,6 +44,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
     public static final String MENU_DESC = "menu_desc";
+    public static final String MENU_BADGE = "menu_badge";
+
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
@@ -124,7 +127,16 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
 
-        mPresenter = new Act005_Main_Presenter_Impl(context, this);
+        mPresenter = new Act005_Main_Presenter_Impl(
+                context,
+                this,
+                new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
+
+        );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
         //
@@ -283,7 +295,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             }
         }
 
-        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu, menus);
+        mAdapter = new Act005_Adapter(context, R.layout.act005_item_menu_badge, menus);
         gv_menu.setAdapter(mAdapter);
     }
 

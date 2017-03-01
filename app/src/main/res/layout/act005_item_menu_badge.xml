@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/menu_llChecklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:background="@drawable/item_menu_states"
+        android:focusable="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/menu_ivChecklist"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center_horizontal"
+            android:tint="@color/item_menu_title_color" />
+
+        <TextView
+            android:id="@+id/menu_tvChecklist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/item_menu_title_normal"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/menu_tvBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:gravity="center"
+        android:background="@drawable/badge"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:text=""
+        android:textColor="@color/padrao_WHITE"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+</FrameLayout>

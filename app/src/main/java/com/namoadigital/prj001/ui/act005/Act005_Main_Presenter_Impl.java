@@ -6,9 +6,12 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.sql.Sql_Act005_001;
+import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -24,12 +27,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     private Context context;
     private Act005_Main_View mView;
-    private HMAux item;
+    private GE_Custom_Form_LocalDao customFormLocalDao;
 
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView) {
+
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView ,GE_Custom_Form_LocalDao customFormLocalDao) {
         this.context = context;
         this.mView = mView;
+        this.customFormLocalDao = customFormLocalDao;
     }
 
     String[] menuId = {
@@ -59,15 +64,45 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.cloud_upload)
     };
 
+
+
     @Override
     public void getMenuItens(HMAux hmAux_Trans) {
         List<HMAux> menuList = new ArrayList<>();
 
         for (int i = 0; i < menuId.length;i++ ){
             HMAux Aux = new HMAux();
+            String qty = "";
             Aux.put(Act005_Main.MENU_ID, menuId[i]);
             Aux.put(Act005_Main.MENU_ICON, icon[i]);
             Aux.put(Act005_Main.MENU_DESC,menuDesc[i]);
+
+            switch (menuId[i]){
+                case Act005_Main.MENU_ID_PENDING_DATA:
+                    qty = customFormLocalDao.getByStringHM(
+                            new Sql_Act005_001(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                            ).toSqlQuery()
+                    ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
+
+                    Aux.put(Act005_Main.MENU_BADGE,qty);
+                    break;
+
+                case Act005_Main.MENU_ID_SEND_DATA:
+                    qty = customFormLocalDao.getByStringHM(
+                            new Sql_Act005_002(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                            ).toSqlQuery()
+                    ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
+
+                    Aux.put(Act005_Main.MENU_BADGE,qty);
+                    break;
+
+                default:
+                    Aux.put(Act005_Main.MENU_BADGE,qty);
+                    break;
+            }
+
             menuList.add(Aux);
 
         }
