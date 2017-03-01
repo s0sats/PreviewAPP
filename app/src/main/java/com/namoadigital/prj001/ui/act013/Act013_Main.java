@@ -45,6 +45,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private CheckBox chk_scheduled;
     private CheckBox chk_finalized;
     private ImageView iv_help;
+    private List<CheckBox> checkBoxList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,14 +113,24 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         tv_filter.setTag("lbl_filter");
         views.add(tv_filter);
         //
+        checkBoxList = new ArrayList<>();
+        //
         chk_processing = (CheckBox) findViewById(R.id.act013_chk_in_process);
+        chk_processing.setChecked(true);
+        //
         chk_scheduled = (CheckBox) findViewById(R.id.act013_chk_scheduled);
         chk_scheduled.setVisibility(View.GONE);
+        //
         chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
+        //Add checkbox na lista
+        checkBoxList.add(chk_processing);
+        checkBoxList.add(chk_scheduled);
+        checkBoxList.add(chk_finalized);
         //
         iv_help = (ImageView) findViewById(R.id.act013_iv_help);
         //
-        mPresenter.getPendencies();
+        //mPresenter.getPendencies(true,false);
+        filterApply();
     }
 
     private void iniUIFooter() {
@@ -165,6 +176,72 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 showHelperDialog();
             }
         });
+
+        chk_processing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterApply();
+            }
+        });
+
+        chk_finalized.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterApply();
+            }
+        });
+
+        chk_scheduled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterApply();
+            }
+        });
+
+
+
+    }
+
+    /**
+     *   Analisa todos checklist
+     * e chama função que monsta lista ja passando os
+     * filtros selecionados.
+     */
+    private void filterApply() {
+        boolean filterInProcessing = false;
+        boolean filterFinalized = false;
+        boolean filterScheduled = false;
+
+        for ( CheckBox checkBox :checkBoxList ) {
+            switch (checkBox.getId() ){
+                case R.id.act013_chk_in_process:
+
+                    if( chk_processing.getVisibility() == View.VISIBLE
+                        && chk_processing.isChecked() ){
+                        filterInProcessing = true;
+                    }
+                    break;
+                case R.id.act013_chk_finalized:
+
+                    if( chk_finalized.getVisibility() == View.VISIBLE
+                        && chk_finalized.isChecked() ){
+                        filterFinalized = true;
+                    }
+
+                    break;
+                case R.id.act013_chk_scheduled:
+                    if( chk_scheduled.getVisibility() == View.VISIBLE
+                        && chk_scheduled.isChecked() ){
+                        filterScheduled = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        mPresenter.getPendencies(filterInProcessing,filterFinalized,filterScheduled);
+
     }
 
     private void showHelperDialog() {
@@ -189,9 +266,6 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         alert
             .setView(view)
             .setCancelable(true)
-            /*.setPositiveButton(
-                    hmAux_Trans.get("sys_alert_btn_ok"),null
-            )*/
             ;
 
         alert.show();
@@ -199,14 +273,15 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     @Override
     public void loadPendencies(List<HMAux> pendencies) {
+
         mAdapter =
                 new Local_Data_List_Adapter(
                         context,
                         R.layout.local_data_list_cell,
                         pendencies
                 );
-
         lv_pendencies.setAdapter(mAdapter);
+
     }
 
     @Override

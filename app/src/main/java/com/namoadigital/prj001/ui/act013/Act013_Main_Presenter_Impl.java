@@ -29,12 +29,15 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
     }
 
     @Override
-    public void getPendencies() {
+    public void getPendencies(boolean filter_in_processing ,boolean filter_finalized,boolean filter_scheduled) {
 
         List<HMAux> pendencies =
                 customFormLocalDao.query_HM(
                         new Sql_Act013_001(
-                                ToolBox_Con.getPreference_Customer_Code(context)
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                filter_in_processing,
+                                filter_finalized,
+                                filter_scheduled
                         ).toSqlQuery()
                 );
 

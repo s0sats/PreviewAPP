@@ -167,6 +167,7 @@ public class Constant extends ConstantBase{
     public static final String CUSTOM_FORM_STATUS_IN_PROCESSING = "IN_PROCESSING";
     public static final String CUSTOM_FORM_STATUS_FINALIZED = "FINALIZED";
     public static final String CUSTOM_FORM_STATUS_SENT = "SENT";
+    public static final String CUSTOM_FORM_STATUS_SCHEDULED = "SCHEDULED";
 
 
 

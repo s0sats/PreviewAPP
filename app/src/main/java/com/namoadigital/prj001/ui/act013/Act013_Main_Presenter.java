@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act013_Main_Presenter {
 
-    void getPendencies();
+    void getPendencies(boolean filter_in_processing ,boolean filter_finalized ,boolean filterScheduled);
 
     void addFormInfoToBundle(HMAux item);
 
