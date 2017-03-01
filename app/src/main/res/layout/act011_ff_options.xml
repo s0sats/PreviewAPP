@@ -5,12 +5,6 @@
     android:background="#FFFFFFFF"
     android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/namoa_light_blue"
-        android:scaleType="center" />
-
     <LinearLayout
         android:id="@+id/act011_ff_options_ll_i"
         android:layout_width="match_parent"

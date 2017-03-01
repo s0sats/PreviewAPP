@@ -1014,14 +1014,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         for (int i = 0; i < customFFs.size(); i++) {
 
             if (ipage == -1) {
-                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                if (!customFFs.get(i).isValid()) {
                     numberOfErrors += 1;
                 }
 
                 customFFs.get(i).setValidationBackGroundDots();
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
-                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                    if (!customFFs.get(i).isValid()) {
                         numberOfErrors += 1;
                     }
 
