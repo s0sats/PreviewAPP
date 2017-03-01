@@ -53,8 +53,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
     public static final String MENU_ID_CLOSE = "menu_close_app";
 
+    public static final String WS_PROCESS_SYNC = "ws_process_sync";
+    public static final String WS_PROCESS_SEND = "ws_process_send";
+
+
     private Context context;
-    private List<HMAux> menu_list;
     private GridView gv_menu;
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
@@ -67,6 +70,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private String alertTitle = "";
     private String alertMsg = "";
+
+    private String wsProcess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,6 +118,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_sync_msg");
         transList.add("alert_exit_confirm_ttl");
         transList.add("alert_exit_confirm_msg");
+        transList.add("alert_sync_finish_ttl");
+        transList.add("alert_sync_finish_msg");
+        transList.add("alert_send_finish_ttl");
+        transList.add("alert_send_finish_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -124,6 +133,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     private void initVars() {
+        wsProcess = "";
+
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
 
@@ -326,9 +337,25 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     @Override
     public void showPD() {
+
+        switch (wsProcess){
+            case Act005_Main.WS_PROCESS_SEND:
+                alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
+                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
+
+                break;
+            case Act005_Main.WS_PROCESS_SYNC:
+                alertTitle = hmAux_Trans.get("alert_sync_msg");
+                alertMsg =  hmAux_Trans.get("alert_sync_msg");
+                break;
+            default:
+                break;
+
+        }
+        //
         enableProgressDialog(
-                hmAux_Trans.get("alert_sync_ttl"),//"Get Sync",
-                hmAux_Trans.get("alert_sync_msg"),//"Start Processing...",
+                alertTitle,
+                alertMsg,
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
@@ -337,6 +364,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void showNoConnectionDialog() {
         ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
+    }
+
+    @Override
+    public void setWsProcess(String ws_called) {
+        wsProcess = ws_called;
     }
 
     @Override
@@ -430,6 +462,41 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
         progressDialog.dismiss();
+
+        if(!wsProcess.equals("")){
+            showSuccessDialog();
+        }
+    }
+
+    private void showSuccessDialog() {
+        switch (wsProcess){
+            case Act005_Main.WS_PROCESS_SEND:
+                alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
+                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
+                break;
+
+            case Act005_Main.WS_PROCESS_SYNC:
+                alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
+                alertMsg =  hmAux_Trans.get("alert_sync_finish_msg");
+                break;
+
+            default:
+                break;
+
+        }
+        //Reseta variavel.
+        wsProcess = "";
+
+        ToolBox.alertMSG(
+                Act005_Main.this,
+                alertTitle,
+                alertMsg,
+                null,
+                0
+        );
+        //Atualiza menu e os badges
+        mPresenter.getMenuItens(hmAux_Trans);
+
     }
 
     //TRATA SESSION_NOT_FOUND

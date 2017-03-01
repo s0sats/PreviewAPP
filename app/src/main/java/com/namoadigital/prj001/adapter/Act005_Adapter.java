@@ -67,7 +67,7 @@ public class Act005_Adapter extends BaseAdapter {
         tvTitle.setText(item.get(Act005_Main.MENU_DESC));
 
         //Se chave Badge tiver preenchida exibe no menu
-        if(item.get(Act005_Main.MENU_BADGE).length() > 0){
+        if(item.get(Act005_Main.MENU_BADGE).length() > 0 && !item.get(Act005_Main.MENU_BADGE).equals("0")){
             tvBadge.setVisibility(View.VISIBLE);
             String qty = item.get(Act005_Main.MENU_BADGE);
 

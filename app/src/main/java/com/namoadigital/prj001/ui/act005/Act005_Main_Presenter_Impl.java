@@ -148,6 +148,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                 case Act005_Main.MENU_ID_SEND_DATA:
                     if(ToolBox_Con.isOnline(context)){
+                        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
                         mView.showPD();
                         executeSaveProcess();
                     }else{
@@ -158,6 +159,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                 case Act005_Main.MENU_ID_SYNC_DATA:
                     if(ToolBox_Con.isOnline(context)) {
+                        mView.setWsProcess(Act005_Main.WS_PROCESS_SYNC);
                         mView.showPD();
                         executeSyncProcess(jump_validation_UR);
                     }else{

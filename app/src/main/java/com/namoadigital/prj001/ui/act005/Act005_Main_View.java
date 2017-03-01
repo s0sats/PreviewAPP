@@ -24,7 +24,8 @@ public interface Act005_Main_View {
 
     void showNoConnectionDialog();
 
-    //
     void closeApp();
+
+    void setWsProcess(String ws_called);
 
 }
