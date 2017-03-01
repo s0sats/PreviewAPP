@@ -465,6 +465,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         if(!wsProcess.equals("")){
             showSuccessDialog();
+            //Atualiza menu e os badges
+            mPresenter.getMenuItens(hmAux_Trans);
         }
     }
 
@@ -494,8 +496,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 null,
                 0
         );
-        //Atualiza menu e os badges
-        mPresenter.getMenuItens(hmAux_Trans);
 
     }
 
