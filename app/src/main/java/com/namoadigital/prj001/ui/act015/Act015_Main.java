@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -119,6 +121,13 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     }
 
     private void initActions() {
+        lv_sent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                mPresenter.addFormInfoToBundle(item);
+            }
+        });
 
     }
 
