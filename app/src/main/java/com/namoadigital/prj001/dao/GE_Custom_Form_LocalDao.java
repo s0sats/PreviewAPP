@@ -35,6 +35,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_PRODUCT_DESC = "custom_product_desc";
     public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
+    public static final String SERIAL_ID = "serial_id";
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -265,6 +266,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setCustom_product_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_PRODUCT_DESC)));
             custom_form_local.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_local.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
+            custom_form_local.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
 
             return custom_form_local;
         }
@@ -313,6 +315,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if (custom_form_local.getCustom_form_desc() != null) {
                 contentValues.put(CUSTOM_FORM_DESC, custom_form_local.getCustom_form_desc());
+            }
+            if (custom_form_local.getSerial_id() != null) {
+                contentValues.put(SERIAL_ID, custom_form_local.getSerial_id());
             }
 
             return contentValues;

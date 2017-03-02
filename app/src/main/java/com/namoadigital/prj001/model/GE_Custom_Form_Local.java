@@ -19,6 +19,7 @@ public class GE_Custom_Form_Local {
     private String custom_product_desc;
     private String custom_form_type_desc;
     private String custom_form_desc;
+    private String serial_id;
 
     public long getCustomer_code() {
         return customer_code;
@@ -122,5 +123,13 @@ public class GE_Custom_Form_Local {
 
     public void setCustom_form_desc(String custom_form_desc) {
         this.custom_form_desc = custom_form_desc;
+    }
+
+    public String getSerial_id() {
+        return serial_id;
+    }
+
+    public void setSerial_id(String serial_id) {
+        this.serial_id = serial_id;
     }
 }

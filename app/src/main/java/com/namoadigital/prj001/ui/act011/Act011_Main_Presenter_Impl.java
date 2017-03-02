@@ -75,7 +75,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String formtype_desc, String formcode_desc) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String formtype_desc, String formcode_desc, String serial_id) {
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
@@ -84,7 +84,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         form_code,
                         formversion_code,
                         s_form_data,
-                        product_code
+                        product_code,
+                        serial_id
                 ).toSqlQuery().toString().toLowerCase()
         );
 
@@ -145,6 +146,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_form_type_desc(formtype_desc);
             customFormLocal.setCustom_form_desc(formcode_desc);
+            customFormLocal.setSerial_id(serial_id);
             customFormLocal.setRequire_signature(customForm.getRequire_signature());
 
             custom_form_LocalDao.addUpdate(customFormLocal);

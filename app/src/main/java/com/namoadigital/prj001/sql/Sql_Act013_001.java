@@ -52,7 +52,8 @@ public class Sql_Act013_001 implements Specification {
                         "  l.custom_product_code,\n" +
                         "  l.custom_product_desc,\n" +
                         "  l.custom_form_data,\n" +
-                        "  l.custom_form_status "+
+                        "  l.custom_form_status,\n" +
+                        "  l.serial_id "+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
@@ -65,7 +66,10 @@ public class Sql_Act013_001 implements Specification {
                         "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' THEN 1\n" +
                         "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' THEN 2\n" +
                         "           ELSE 3\n" +
-                        "      END    " +
+                        "      END , \n" +
+                        "      l.custom_form_type, \n" +
+                        "      l.custom_product_code, \n" +
+                        "      l.serial_id " +
                         ";")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +

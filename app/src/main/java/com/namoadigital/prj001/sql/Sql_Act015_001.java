@@ -30,13 +30,19 @@ public class Sql_Act015_001 implements Specification {
                         "  l.custom_product_code,\n" +
                         "  l.custom_product_desc,\n" +
                         "  l.custom_form_data,\n" +
-                        "  l.custom_form_status "+
+                        "  l.custom_form_status," +
+                        "  l.serial_id "+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
                         "  WHERE\n" +
-                        "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        " AND l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SENT+"';")
+                        "    l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
+                        "    AND l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SENT+"'" +
+                        "  ORDER BY" +
+                        "    l.custom_form_type, " +
+                        "    l.custom_product_code, " +
+                        "    l.serial_id" +
+                        ";")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_form_data#" +
