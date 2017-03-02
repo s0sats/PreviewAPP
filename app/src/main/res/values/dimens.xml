@@ -4,8 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="font_size_title">20sp</dimen>
-    <dimen name="font_size_item">18sp</dimen>
+    <dimen name="font_size_title">15sp</dimen>
+    <dimen name="font_size_item">12sp</dimen>
     <dimen name="btn_width_default">200dp</dimen>
 
 

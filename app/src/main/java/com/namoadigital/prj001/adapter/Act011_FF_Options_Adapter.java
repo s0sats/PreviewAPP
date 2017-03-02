@@ -64,21 +64,22 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
             item.put("name", aux.get("custom_form_field_desc"));
             item.put("page", aux.get("page"));
             item.put("link", restabs.get(aux.get("page")) == null ? "PENDING" : restabs.get(aux.get("page")));
+            item.put("count", aux.get("pagecount"));
 
             dados_final.add(item);
         }
 
-        for (HMAux aux : pdfs) {
-            HMAux item = new HMAux();
+//        for (HMAux aux : pdfs) {
+//            HMAux item = new HMAux();
+//
+//            item.put("name", aux.get("blob_name"));
+//            item.put("page", aux.get("page"));
+//            item.put("link", aux.get("blob_url_local"));
+//            item.put("count", "");
+//
+//            dados_final.add(item);
+//        }
 
-            item.put("name", aux.get("blob_name"));
-            item.put("page", aux.get("page"));
-            item.put("link", aux.get("blob_url_local"));
-
-            dados_final.add(item);
-        }
-
-        int ii = dados_final.size();
     }
 
     @Override
@@ -114,9 +115,14 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
         TextView tv_name = (TextView)
                 convertView.findViewById(R.id.act011_ff_options_cell_tv_name);
 
+        TextView tv_count = (TextView)
+                convertView.findViewById(R.id.act011_ff_options_cell_tv_count);
+
+
         HMAux item = dados_final.get(position);
 
         tv_name.setText(item.get("name"));
+        tv_count.setText(item.get("count"));
 
         if (item.get("link").equals("OK")) {
             ll_back.setBackgroundColor(0xff7DC24B);

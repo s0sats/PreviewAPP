@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act011;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -21,6 +22,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -98,6 +104,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private ArrayList<CustomFF> customFFs;
     private ArrayList<GE_File> geFiles;
 
+    private ArrayList<HMAux> pdfs_local;
+
     private String sDate;
 
     private HMAux resTabs;
@@ -165,9 +173,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         geFiles = new ArrayList<>();
 
-        //mCustomer_Info = ToolBox_Con.getPreference_Customer_Code_NAME(context);
-        //mSite_Info = ToolBox_Con.getPreference_Site_Code(context);
-        //mOperation_Info = String.valueOf(ToolBox_Con.getPreference_Operation_Code(context));
+        hideKeyBoard();
 
         loadTranslation();
     }
@@ -182,7 +188,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_info_form_type_lbl");
         transList.add("dialog_info_form_code_lbl");
         transList.add("dialog_info_form_version_lbl");
-        transList.add("dialog_info_btn_ok");
+        transList.add("dialog_info_title_pdf_lbl");
         transList.add("alert_error_on_finalize_title");
         transList.add("alert_error_on_finalize_msg");
         transList.add("alert_save_title");
@@ -222,8 +228,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                //returnValidCheck(String.valueOf(index));
-                //
+                hideSoftKeyboard(Act011_Main.this);
 
                 if (index_old == -1 || index_old == 0) {
                     resTabs = returnValidCheckTabs(String.valueOf(index_old));
@@ -284,21 +289,19 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             @Override
             public void info() {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
                 showCustomDialog();
             }
 
             @Override
             public void delete() {
-                //
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mDrawerLayout.closeDrawer(GravityCompat.START);
 
-
                         deleteFormLocal();
-
-
                     }
                 };
                 //
@@ -309,14 +312,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         listener,
                         1
                 );
-
-
-
-             /*   Toast.makeText(
-                        context,
-                        "Delete",
-                        Toast.LENGTH_SHORT
-                ).show();*/
             }
 
             @Override
@@ -330,8 +325,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
                 }
 
-                //returnValidCheck(String.valueOf(-1));
-
                 mPresenter.saveData(formData);
 
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -340,11 +333,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             @Override
             public void check() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-
-//                for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-//                    df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-//                    df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-//                }
 
                 int sum = returnValidCheck(String.valueOf(-1));
 
@@ -426,6 +414,19 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     );
                 }
             }
+
+            @Override
+            public void autograph() {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        "Assinatura",
+                        "Em desenvolvimento",
+                        null,
+                        0
+                );
+            }
         });
 
         mPresenter = new Act011_Main_Presenter_Impl(
@@ -489,10 +490,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 );
-        //
-        //
-        //
-        // Monstrar para o Batatinha
+
         formLocalDao.remove(
                 new GE_Custom_Form_Local_Sql_007(
                         String.valueOf(formData.getCustomer_code()),
@@ -564,16 +562,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
         setFooter();
 
         //Aplica informações do rodapé
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -594,6 +592,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.index = 1;
         this.signature = signature;
         this.mSignature = "s_" + prefix + "1.png";
+        this.pdfs_local = (ArrayList<HMAux>) pdfs;
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id)) {
             formData.setSerial_id(serial_id);
@@ -694,6 +693,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     //
                     index_old = index;
                     index = position + 1;
+                    //
+                    setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
+                    //
 
                     if (ignoreUpdate) {
                         ignoreUpdate = false;
@@ -701,8 +703,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         //
                         returnValidCheck(String.valueOf(index_old));
                         //
-                        //resTabs = returnValidCheckTabs(String.valueOf(oldPageIndex));
-                        // Hugo
                         resTabs = returnValidCheckTabs(String.valueOf(index_old));
                         //
                         Set keys = resTabs.keySet();
@@ -714,7 +714,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             hmPages.put(key, value);
                         }
                         //
-                        //act011_ff_options.tabsS(resTabs);
                         act011_ff_options.tabsS(hmPages);
                     }
                 }
@@ -727,7 +726,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
-            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs);
+            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature);
             act011_ff_options.enableTab(formData.getCustom_form_status());
 
             returnValidCheck(String.valueOf(index_old));
@@ -777,7 +776,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmOption(cf.get("custom_form_data_content"));
         mkEditTextNMFF.setmMaxSize(Integer.parseInt(cf.get("custom_form_data_size")));
 
-        if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get("custom_form_data_type").equalsIgnoreCase("NUMBER")){
+        if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get("custom_form_data_type").equalsIgnoreCase("NUMBER")) {
 
             String[] opcs = null;
 
@@ -1015,14 +1014,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         for (int i = 0; i < customFFs.size(); i++) {
 
             if (ipage == -1) {
-                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                if (!customFFs.get(i).isValid()) {
                     numberOfErrors += 1;
                 }
 
                 customFFs.get(i).setValidationBackGroundDots();
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
-                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                    if (!customFFs.get(i).isValid()) {
                         numberOfErrors += 1;
                     }
 
@@ -1372,14 +1371,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         context.sendBroadcast(mIntent);
     }
 
-    private void showCustomDialog(){
+    private void showCustomDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         infoDialog = new Dialog(Act011_Main.this);
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.act011_dialog_form_info,null);
+        View view = inflater.inflate(R.layout.act011_dialog_form_info, null);
 
         TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_title);
 
@@ -1401,8 +1400,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         TextView tv_form_version_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_lbl);
         TextView tv_form_version_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_val);
-        //
-        BootstrapButton btn_ok = (BootstrapButton) view.findViewById(R.id.act011_btn_ok);
+
+        TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
+        ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
         tv_product_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
@@ -1410,7 +1410,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
         tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
-        btn_ok.setText(hmAux_Trans.get("dialog_info_btn_ok"));
 
         tv_product_val.setText(product_code);
         tv_product_desc.setText(product_desc);
@@ -1428,24 +1427,56 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
 
-        btn_ok.setOnClickListener(new View.OnClickListener() {
+        tv_title_pdf.setText(hmAux_Trans.get("dialog_info_title_pdf_lbl"));
+
+        String[] from = {"blob_name"};
+        int[] to = {R.id.act011_dialog_form_info_cell_tv_name};
+        lv_pdfs.setAdapter(
+                new SimpleAdapter(
+                        Act011_Main.this,
+                        pdfs_local,
+                        R.layout.act011_dialog_form_info_cell,
+                        from,
+                        to
+                )
+        );
+
+        lv_pdfs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                infoDialog.dismiss();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux aux = (HMAux) parent.getItemAtPosition(position);
+
+                File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                startActivity(intent);
             }
         });
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        float dmW = (float)dm.widthPixels * 0.98F;
-        float dmH = (float)dm.heightPixels * 0.98F;
+        float dmW = (float) dm.widthPixels * 0.98F;
+        float dmH = (float) dm.heightPixels * 0.98F;
 
         //infoDialog.setTitle(hmAux_Trans.get("dialog_info_title_lbl"));
         infoDialog.setContentView(view);
         infoDialog.setCancelable(true);
-        infoDialog.getWindow().setLayout((int)dmW, (int)dmH);
+        infoDialog.getWindow().setLayout((int) dmW, (int) dmH);
 
         infoDialog.show();
 
+    }
+
+    private void hideKeyBoard() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        if (activity.getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
 }
