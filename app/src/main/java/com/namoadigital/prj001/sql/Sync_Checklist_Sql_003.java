@@ -18,7 +18,7 @@ public class Sync_Checklist_Sql_003 implements Specification {
         this.customer_code = customer_code;
 
         Calendar cDate =  Calendar.getInstance();
-        cDate.add(Calendar.DATE,-5);
+        cDate.add(Calendar.DATE,-31);
         SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
         this.date_now = dateFormat.format(cDate.getTime());
 
