@@ -16,9 +16,11 @@
         android:textStyle="bold" />
 
     <ScrollView
+        android:background="@drawable/border_back"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5">
+        android:padding="10dp"
+        android:layout_weight="3">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,7 +54,7 @@
                 android:id="@+id/act_011_dialog_tv_product_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:padding="5dp"
                 android:text="Product desc"
                 android:textSize="@dimen/font_size_item" />
@@ -84,7 +86,7 @@
                 android:id="@+id/act_011_dialog_tv_serial_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:padding="5dp"
                 android:text=""
                 android:textSize="@dimen/font_size_item" />
@@ -117,7 +119,7 @@
                 android:id="@+id/act_011_dialog_tv_form_type_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:padding="5dp"
                 android:text="Form Type desc"
                 android:textSize="@dimen/font_size_item" />
@@ -172,29 +174,30 @@
                 android:id="@+id/act_011_dialog_tv_form_code_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:padding="5dp"
                 android:text="Form code desc"
                 android:textSize="@dimen/font_size_item" />
         </LinearLayout>
 
     </ScrollView>
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/act_011_dialog_tv_title_pdf"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="PDFs"
+        android:textSize="@dimen/font_size_title"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/act_011_dialog_lv_pdfs"
+        android:background="@drawable/border_back"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/act011_btn_ok"
-            android:layout_width="@dimen/btn_width_default"
-            android:layout_height="wrap_content"
-            app:bootstrapBrand="primary"
-            app:bootstrapSize="lg"
-            app:bootstrapText="OK"
-            app:roundedCorners="true" />
-    </LinearLayout>
-
+        android:padding="10dp"
+        android:layout_weight="2"/>
 
 </LinearLayout>

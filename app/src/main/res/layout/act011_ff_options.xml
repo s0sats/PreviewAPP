@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/act011_ff_options_ll_i"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="5dp">
@@ -38,69 +38,150 @@
         android:background="#4D000000" />
 
     <LinearLayout
-        android:id="@+id/act011_ff_options_ll_e"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="5dp">
+        android:layout_height="50dp"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/act011_ff_options_ll_et"
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_e"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:focusable="false"
-            android:paddingLeft="16dp"
-            android:text="Excluir"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/act011_ff_options_ll_iv_e"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:src="@drawable/ic_delete_black_24px" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_s"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/act011_ff_options_ll_iv_s"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:src="@drawable/ic_save_black_24px" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_f"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/act011_ff_options_ll_iv_f"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:src="@drawable/ic_check_circle_black_24px" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_a"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/act011_ff_options_ll_iv_a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:src="@drawable/autograph_24" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
+    <!--    <LinearLayout
+            android:id="@+id/act011_ff_options_ll_e"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-    <LinearLayout
-        android:id="@+id/act011_ff_options_ll_s"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="5dp">
+            <TextView
+                android:id="@+id/act011_ff_options_ll_et"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:focusable="false"
+                android:paddingLeft="16dp"
+                android:text="Excluir"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/act011_ff_options_ll_st"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:focusable="false"
-            android:paddingLeft="16dp"
-            android:text="Salvar"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
+        </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/act011_ff_options_ll_f"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="5dp">
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_s"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-        <TextView
-            android:id="@+id/act011_ff_options_ll_ft"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:focusable="false"
-            android:paddingLeft="16dp"
-            android:text="Finalizar"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/act011_ff_options_ll_st"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:focusable="false"
+                android:paddingLeft="16dp"
+                android:text="Salvar"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_f"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/act011_ff_options_ll_ft"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:focusable="false"
+                android:paddingLeft="16dp"
+                android:text="Finalizar"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>-->
 
 
 </LinearLayout>

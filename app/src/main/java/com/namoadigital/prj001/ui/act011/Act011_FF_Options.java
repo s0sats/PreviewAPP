@@ -8,16 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act011_FF_Options_Adapter;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +38,8 @@ public class Act011_FF_Options extends Fragment {
 
     private transient List<HMAux> tabsAndFields;
 
+    private String signature;
+
     //private SimpleAdapter adapter_tabs;
 
     private Act011_FF_Options_Adapter adapter_tabs;
@@ -41,18 +48,22 @@ public class Act011_FF_Options extends Fragment {
     private transient TextView ff_options_ll_it;
 
     private transient LinearLayout ff_options_ll_e;
-    private transient TextView ff_options_ll_et;
+    private transient ImageView ff_options_ll_iv_e;
 
     private transient LinearLayout ff_options_ll_s;
-    private transient TextView ff_options_ll_st;
+    private transient ImageView ff_options_ll_iv_s;
 
     private transient LinearLayout ff_options_ll_f;
-    private transient TextView ff_options_ll_ft;
+    private transient ImageView ff_options_ll_iv_f;
 
-    public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs) {
+    private transient LinearLayout ff_options_ll_a;
+    private transient ImageView ff_options_ll_iv_a;
+
+
+    public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs, String signature) {
         this.tabsAndFields = tabsAndFields;
         //
-        loadCF_Fields(tabsAndFields, resTabs, pdfs);
+        loadCF_Fields(tabsAndFields, resTabs, pdfs, signature);
     }
 
     public interface ICustom_Form_FF_Options {
@@ -73,6 +84,8 @@ public class Act011_FF_Options extends Fragment {
         public void save();
 
         public void check();
+
+        public void autograph();
     }
 
     private ICustom_Form_FF_Options_ll delegate_ll;
@@ -101,13 +114,17 @@ public class Act011_FF_Options extends Fragment {
         ff_options_ll_it = (TextView) view.findViewById(R.id.act011_ff_options_ll_it);
 
         ff_options_ll_e = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_e);
-        ff_options_ll_et = (TextView) view.findViewById(R.id.act011_ff_options_ll_et);
+        ff_options_ll_iv_e = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_e);
 
         ff_options_ll_s = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_s);
-        ff_options_ll_st = (TextView) view.findViewById(R.id.act011_ff_options_ll_st);
+        ff_options_ll_iv_s = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_s);
 
         ff_options_ll_f = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_f);
-        ff_options_ll_ft = (TextView) view.findViewById(R.id.act011_ff_options_ll_ft);
+        ff_options_ll_iv_f = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_f);
+
+        ff_options_ll_a = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_a);
+        ff_options_ll_iv_a = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_a);
+
     }
 
     public void setFOpc(int indice) {
@@ -163,6 +180,15 @@ public class Act011_FF_Options extends Fragment {
             }
         });
 
+        ff_options_ll_a.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null) {
+                    delegate_ll.autograph();
+                }
+            }
+        });
+
     }
 
     public void enableTab(String status) {
@@ -186,10 +212,19 @@ public class Act011_FF_Options extends Fragment {
 
                 break;
         }
+
+        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + signature);
+        if (sFile.exists()) {
+            ff_options_ll_a.setVisibility(View.VISIBLE);
+        } else {
+            ff_options_ll_a.setVisibility(View.INVISIBLE);
+        }
+
     }
 
-    public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs) {
+    public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs, String signature) {
         ArrayList<HMAux> tabs = new ArrayList<>();
+        this.signature = signature;
 
         if (cf_fields != null) {
             for (int i = 0; i < cf_fields.size(); i++) {
@@ -197,6 +232,22 @@ public class Act011_FF_Options extends Fragment {
                     tabs.add(cf_fields.get(i));
                 }
             }
+        }
+
+        int pagecount = 0;
+
+        for (int i = 0; i < tabs.size(); i++) {
+            for (int j = 0; j < cf_fields.size(); j++) {
+                if (!cf_fields.get(j).get("custom_form_data_type").equalsIgnoreCase("tab") &&
+                        !cf_fields.get(j).get("custom_form_data_type").equalsIgnoreCase("label")) {
+                    if (cf_fields.get(j).get("page").equalsIgnoreCase(tabs.get(i).get("page"))) {
+                        pagecount++;
+                    }
+                }
+            }
+
+            tabs.get(i).put("pagecount", String.valueOf(pagecount));
+            pagecount = 0;
         }
 
         adapter_tabs = new Act011_FF_Options_Adapter(

@@ -8,14 +8,14 @@
     android:padding="15dp">
 
     <ImageView
-        android:id="@+id/act011_ff_options_cell_iv_logo"
+        android:id="@+id/act011_dialog_form_info_cell_iv_logo"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_info_black_18dp" />
+        android:src="@drawable/ic_picture_as_pdf_black_24px" />
 
     <TextView
-        android:id="@+id/act011_ff_options_cell_tv_name"
+        android:id="@+id/act011_dialog_form_info_cell_tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -23,11 +23,5 @@
         android:text="About"
         android:textSize="14sp"
         android:textStyle="normal" />
-
-    <TextView
-        android:id="@+id/act011_ff_options_cell_tv_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"/>
 
 </LinearLayout>

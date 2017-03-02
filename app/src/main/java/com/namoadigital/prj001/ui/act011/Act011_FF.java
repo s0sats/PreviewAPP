@@ -59,8 +59,18 @@ public class Act011_FF extends Fragment {
 
     private void loadControls(LinearLayout ll_controls) {
         if (customFFs != null) {
+
+            int count = 0;
+
             for (CustomFF fAux : customFFs) {
                 if (fAux.getmPage() == tabIndex) {
+
+                    if (fAux.getmInclude() == 1){
+                        count++;
+
+                        fAux.setmLabel(String.valueOf(count) + ". " + fAux.getmLabel());
+
+                    }
 
                     try {
                         ((ViewGroup) fAux.getParent()).removeView(fAux);
