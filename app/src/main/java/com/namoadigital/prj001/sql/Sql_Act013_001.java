@@ -69,7 +69,8 @@ public class Sql_Act013_001 implements Specification {
                         "      END , \n" +
                         "      l.custom_form_type, \n" +
                         "      l.custom_product_code, \n" +
-                        "      l.serial_id " +
+                        "      l.serial_id, \n" +
+                        "      l.custom_form_data " +
                         ";")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +

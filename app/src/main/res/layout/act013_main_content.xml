@@ -64,7 +64,8 @@
                     android:id="@+id/act013_iv_help"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_help_outline_black_24dp" />
+                    android:src="@drawable/ic_help_outline_black_24dp"
+                    android:tint="@color/namoa_dark_blue"/>
 
             </LinearLayout>
 

@@ -41,7 +41,8 @@ public class Sql_Act015_001 implements Specification {
                         "  ORDER BY" +
                         "    l.custom_form_type, " +
                         "    l.custom_product_code, " +
-                        "    l.serial_id" +
+                        "    l.serial_id, \n" +
+                        "    l.custom_form_data \n" +
                         ";")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
