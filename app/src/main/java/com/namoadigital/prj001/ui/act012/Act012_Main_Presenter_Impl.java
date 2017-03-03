@@ -5,6 +5,7 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
+import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
@@ -45,7 +46,23 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
         if(!item.get(Sql_Act012_001.PENDING_QTY).equalsIgnoreCase("0")){
             mView.callAct013(context);
         }else{
-            mView.showMsg();
+            //Se qt de in_processing é 0 , veriica se existem finalizado
+            List<HMAux> finalizeds =
+                    customFormLocalDao.query_HM(
+                            new Sql_Act013_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    false, //filter_in_processing
+                                    true, //filter_finalized
+                                    false //filter_scheduled
+                            ).toSqlQuery()
+                    );
+            //Se não existir, exibe msg de bloqueio
+            if(finalizeds.size() == 0){
+                mView.showMsg();
+            }else{
+                //se não avança para proxima tela.
+                mView.callAct013(context);
+            }
         }
     }
 

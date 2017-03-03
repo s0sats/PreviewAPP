@@ -30,12 +30,20 @@ public class Sql_Act013_001 implements Specification {
             if(filter_scheduled){
                 status += "'"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"',";
             }
-
             status = status.substring(0,status.length() -1);
-
             s_filter += "AND l.custom_form_status in(" +status+")";
+        }else{
+            //Se todos os filtros falsos, não filtra nada.
+            s_filter += "AND l.custom_form_status NOT in(" +
+                    "'"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"',"+
+                    "'"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"'," +
+                    "'"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' "+
+                    ")";
 
         }
+
+
+
     }
 
     @Override
