@@ -14,7 +14,7 @@ public interface Act011_Main_Presenter {
 
     void checkData(GE_Custom_Form_Data formData);
 
-    void checkSignature(GE_Custom_Form_Data formData, int signature);
+    void checkSignature(GE_Custom_Form_Data formData, int signature, int opc);
 
     void onBackPressedClicked();
 

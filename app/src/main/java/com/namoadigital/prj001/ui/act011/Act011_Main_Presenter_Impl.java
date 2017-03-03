@@ -59,7 +59,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private HMAux hmAux_Trans;
 
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao ,HMAux hmAux_Trans) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -301,7 +301,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature) {
+    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc) {
 
         switch (signature) {
             case 1:
@@ -316,7 +316,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
                 break;
             default:
-                checkData(formData);
+                if (opc == 1) {
+                    checkData(formData);
+                } else {
+                    mView.showMsg(
+                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
+                            hmAux_Trans.get("alert_optional_signature_msg"),//"Para Finalizar o Registro é preciso uma assinatura!!!",
+                            3);
+
+                }
                 break;
         }
 

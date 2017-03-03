@@ -196,6 +196,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_finalize_title");
         transList.add("alert_finalize_msg");
         transList.add("alert_require_signature_msg");
+        transList.add("alert_optional_signature_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -401,7 +402,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     formData.setSignature(mSignature);
 
-                    mPresenter.checkSignature(formData, signature);
+                    mPresenter.checkSignature(formData, signature, 0);
 
                 } else {
 
@@ -1286,6 +1287,28 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 break;
 
+            case 3:
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callSignature();
+                            }
+                        },
+                        2,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mPresenter.checkData(formData);
+                            }
+                        }
+                );
+
+                break;
+
         }
     }
 
@@ -1323,7 +1346,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
 
-        exitAlert();
+        if (formData != null && formData.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING)) {
+            exitAlert();
+        } else {
+            callAct005(Act011_Main.this);
+        }
     }
 
     @Override
@@ -1340,7 +1367,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             formData.setSignature(mSignature);
             mPresenter.checkData(formData);
         } else {
-            int i = 10;
+            if (signature == 0) {
+                mPresenter.checkData(formData);
+            }
         }
     }
 
