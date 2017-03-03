@@ -112,6 +112,9 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
         LinearLayout ll_back = (LinearLayout)
                 convertView.findViewById(R.id.act011_ff_options_cell_ll_a);
 
+        TextView tv_page = (TextView)
+                convertView.findViewById(R.id.act011_ff_options_cell_tv_number);
+
         TextView tv_name = (TextView)
                 convertView.findViewById(R.id.act011_ff_options_cell_tv_name);
 
@@ -121,6 +124,7 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
 
         HMAux item = dados_final.get(position);
 
+        tv_page.setText(item.get("page") + "." );
         tv_name.setText(item.get("name"));
         tv_count.setText(item.get("count"));
 

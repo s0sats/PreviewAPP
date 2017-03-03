@@ -7,13 +7,11 @@
     android:orientation="horizontal"
     android:padding="15dp">
 
-    <ImageView
-        android:id="@+id/act011_ff_options_cell_iv_logo"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_info_black_18dp" />
-
+    <TextView
+        android:id="@+id/act011_ff_options_cell_tv_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1."/>
     <TextView
         android:id="@+id/act011_ff_options_cell_tv_name"
         android:layout_width="0dp"
