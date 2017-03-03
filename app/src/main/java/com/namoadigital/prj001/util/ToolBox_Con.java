@@ -607,7 +607,7 @@ public class ToolBox_Con {
     }
 
     public static String customDBPath(long customer_code) {
-        return (Constant.DB_PATH + "/C_" + customer_code + ".db3");
+        return (Constant.DB_PATH + "/C_" + customer_code + "_" +Constant.DB_VERSION_CUSTOM+ ".db3");
     }
 
     public static boolean isOnline(Context context) {

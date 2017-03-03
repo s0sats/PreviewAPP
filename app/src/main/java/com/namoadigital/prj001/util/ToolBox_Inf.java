@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -789,7 +788,7 @@ public class ToolBox_Inf {
      * @return True or false
      */
     public static boolean checkCustomerDBExists(final long customer_code) {
-        File customerDB = new File(Constant.DB_PATH +"/C_"+customer_code+".db3");
+        File customerDB = new File(Constant.DB_PATH +"/C_"+customer_code+ "_" +Constant.DB_VERSION_CUSTOM + ".db3");
         //
         return customerDB.exists();
     }
