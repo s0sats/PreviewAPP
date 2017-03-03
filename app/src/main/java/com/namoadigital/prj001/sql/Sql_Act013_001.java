@@ -42,8 +42,6 @@ public class Sql_Act013_001 implements Specification {
 
         }
 
-
-
     }
 
     @Override

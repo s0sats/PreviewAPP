@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.TGC_Env;
@@ -18,6 +19,7 @@ import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
+import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -35,6 +37,7 @@ public class WS_GetCustomer extends IntentService {
 
     private EV_UserDao ev_userDao;
     private EV_User_CustomerDao ev_user_customerDao;
+    private GE_Custom_Form_LocalDao customFormLocalDao;
 
     private StringBuilder sResult;
 
@@ -91,7 +94,6 @@ public class WS_GetCustomer extends IntentService {
 
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_customer), "", "0");
 
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -171,10 +173,28 @@ public class WS_GetCustomer extends IntentService {
             //Verifica se o db do customer se já existe
             //Se não existir seta chave para vazia.
             for (EV_User_Customer customer : customers) {
-                if(!ToolBox_Inf.checkCustomerDBExists(customer.getCustomer_code()) &&
-                    customer.getSession_app() != null
-                ){
-                    customer.setSession_app(null);
+                if( !ToolBox_Inf.checkCustomerDBExists(customer.getCustomer_code()) ){
+                    if(customer.getSession_app() != null){
+                        customer.setSession_app(null);
+                    }
+                }else{
+                    //Se existe o banco
+                    //Verifica se existe pendencia e seta propriedade
+                    customFormLocalDao =  new GE_Custom_Form_LocalDao(
+                            getApplicationContext(),
+                            ToolBox_Con.customDBPath(customer.getCustomer_code()),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    String pendencies =
+                            customFormLocalDao.getByStringHM(
+                                    new Sql_Act002_001(
+                                        String.valueOf(customer.getCustomer_code())
+                                    ).toSqlQuery()
+                            ).get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES);
+
+                    customer.setPending(Integer.parseInt(pendencies));
+
                 }
             }
             //
