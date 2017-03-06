@@ -848,6 +848,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_site_lbl");
         transList.add("footer_dialog_operation_lbl");
         transList.add("footer_dialog_btn_ok");
+        transList.add("footer_dialog_btn_ok");
         //
         HMAux HmTrans = setLanguage(
                 context,
@@ -898,6 +899,7 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_OPERATION_LBL,HmTrans.get("footer_dialog_operation_lbl"));
         hmAux.put(Constant.FOOTER_OPERATION,operationDesc);
         hmAux.put(Constant.FOOTER_BTN_OK,HmTrans.get("footer_dialog_btn_ok"));
+        hmAux.put(Constant.FOOTER_VERSION_LBL,HmTrans.get("footer_version_lbl"));
 
         return hmAux;
 

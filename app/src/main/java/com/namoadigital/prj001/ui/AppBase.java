@@ -34,7 +34,7 @@ public class AppBase extends Application {
 
         //DB_PATH = getFilesDir().getPath();
 
-        ZIP_PATH = DB_PATH + "/zips";;
+        ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
 
