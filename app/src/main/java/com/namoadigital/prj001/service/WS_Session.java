@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -83,7 +84,7 @@ public class WS_Session extends IntentService {
     private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od) {
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         //
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().serializeNulls().create();
         //
         TSession_Env env =  new TSession_Env();
         //

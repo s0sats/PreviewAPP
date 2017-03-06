@@ -90,7 +90,7 @@ public class WS_Upload_Img extends IntentService {
 
         HMAux hmAux_Trans = loadTranslation();
 
-        final NotificationCompat.Builder  mBuilder =
+        NotificationCompat.Builder  mBuilder =
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.drawable.upload_animation)
                         .setContentTitle(hmAux_Trans.get("notification_ttl_upload"))
@@ -99,7 +99,7 @@ public class WS_Upload_Img extends IntentService {
 
         mBuilder.setAutoCancel(true);
 
-        final NotificationManager mNotifyManager =
+        NotificationManager mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotifyManager.notify(Constant.NOTIFICATION_UPLOAD, mBuilder.build());
