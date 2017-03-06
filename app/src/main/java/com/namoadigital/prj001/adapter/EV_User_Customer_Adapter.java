@@ -90,7 +90,8 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
         //Se existe itens pendente de envio, exibe icone e seta qtd no tvTop
         if(!item.get(EV_User_CustomerDao.PENDING).equals("0")){
             iv001.setVisibility(View.VISIBLE);
-            iv001.setColorFilter(context.getResources().getColor(R.color.namoa_light_blue));
+           // iv001.setColorFilter(context.getResources().getColor(R.color.namoa_light_blue));
+            iv001.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_warning));
             //03/03/2017  -  Comentado a exibição da qtd
            /* tvTopQty.setVisibility(View.VISIBLE);
             tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));*/

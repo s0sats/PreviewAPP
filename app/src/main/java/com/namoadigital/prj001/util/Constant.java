@@ -169,6 +169,10 @@ public class Constant extends ConstantBase{
     public static final String CUSTOM_FORM_STATUS_SENT = "SENT";
     public static final String CUSTOM_FORM_STATUS_SCHEDULED = "SCHEDULED";
 
+    //ID de Notificações
+    public static final int NOTIFICATION_UPLOAD = 666;
+
+
 
 
 }

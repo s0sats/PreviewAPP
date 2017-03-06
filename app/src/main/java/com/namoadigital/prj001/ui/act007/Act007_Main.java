@@ -274,7 +274,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 mket_product_search.setText("");
                 mkUpdate = true;
                 //
-                btn_back.setVisibility(View.VISIBLE);
+                btn_back.setVisibility(View.INVISIBLE);
                 //
                 mPresenter.onBtnHomeClicked();
             }
