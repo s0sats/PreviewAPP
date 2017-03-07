@@ -138,6 +138,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //Aplica informações do rodapé
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
+        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
+
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
         mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
         mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
@@ -145,6 +147,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
+        mVersion_Value = Constant.PRJ001_VERSION;
 
         //Aplica informações do rodapé - fim
     }

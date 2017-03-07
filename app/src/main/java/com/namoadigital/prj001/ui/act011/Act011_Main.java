@@ -29,7 +29,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -569,13 +568,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //Aplica informações do rodapé
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
+        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
+
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
+        mVersion_Value = Constant.PRJ001_VERSION;
 
         //Aplica informações do rodapé - fim
     }
