@@ -33,8 +33,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String BLOCKED = "blocked";
     public static final String SESSION_APP = "session_app";
     public static final String PENDING = "pending";
+    public static final String LOGO_URL = "logo_url";
 
-    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP,PENDING};
+    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP, PENDING, LOGO_URL};
 
     public EV_User_CustomerDao(Context context,String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
@@ -248,6 +249,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setBlocked(cursor.getInt(cursor.getColumnIndex(BLOCKED)));
             ev_user_customer.setSession_app(cursor.getString(cursor.getColumnIndex(SESSION_APP)));
             ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
+            ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
 
 
             return ev_user_customer;
@@ -292,7 +294,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             if (ev_user_customer.getPending() > -1) {
                 contentValues.put(PENDING, ev_user_customer.getPending());
             }
-
+            if (ev_user_customer.getLogo_url() != null) {
+                contentValues.put(LOGO_URL, ev_user_customer.getLogo_url());
+            }
 
             return contentValues;
         }

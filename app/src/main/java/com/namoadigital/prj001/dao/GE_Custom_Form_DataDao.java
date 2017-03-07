@@ -36,6 +36,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String SITE_CODE = "site_code";
     public static final String OPERATION_CODE = "operation_code";
     public static final String SIGNATURE = "signature";
+    public static final String SIGNATURE_NAME = "signature_name";
     public static final String TOKEN = "token";
     public static final String USER_CODE_END = "user_code_end";
 
@@ -276,6 +277,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setSignature(cursor.getString(cursor.getColumnIndex(SIGNATURE)));
             }
 
+            if(cursor.isNull(cursor.getColumnIndex(SIGNATURE_NAME))){
+                custom_form_data.setSignature_name("");
+            }else{
+                custom_form_data.setSignature_name(cursor.getString(cursor.getColumnIndex(SIGNATURE_NAME)));
+            }
+
             custom_form_data.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
             return custom_form_data;
@@ -328,6 +335,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }
             if(custom_form_data.getSignature() != null){
                 contentValues.put(SIGNATURE, custom_form_data.getSignature());
+            }
+            if(custom_form_data.getSignature_name() != null){
+                contentValues.put(SIGNATURE_NAME, custom_form_data.getSignature_name());
             }
             if(custom_form_data.getToken() != null){
                 contentValues.put(TOKEN, custom_form_data.getToken());

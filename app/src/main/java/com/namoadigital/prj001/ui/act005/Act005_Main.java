@@ -325,7 +325,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //Aplica informações do rodapé
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
-        mCustomer_Img_Path = Constant.IMG_PATH + "/5.png";
+        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
         mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);

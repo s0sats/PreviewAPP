@@ -54,6 +54,9 @@ public class GE_Custom_Form_Data {
     private String signature;
 
     @Expose
+    private String signature_name;
+
+    @Expose
     private String token;
 
     private List<GE_Custom_Form_Data_Field> dataFields;
@@ -73,6 +76,7 @@ public class GE_Custom_Form_Data {
         this.site_code = "-1";
         this.operation_code = -1;
         this.signature = "";
+        this.signature_name = "";
         this.token = "";
         this.dataFields = new ArrayList<>();
     }
@@ -187,6 +191,14 @@ public class GE_Custom_Form_Data {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public String getSignature_name() {
+        return signature_name;
+    }
+
+    public void setSignature_name(String signature_name) {
+        this.signature_name = signature_name;
     }
 
     public String getToken() {

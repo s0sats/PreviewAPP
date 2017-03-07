@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.TSession_Env;
 import com.namoadigital.prj001.model.TSession_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -150,6 +151,15 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Translate_Code(getApplicationContext(), String.valueOf(userCustomer.getTranslate_code()));
         ToolBox_Con.setPreference_Session_App(getApplicationContext(),rec.getSession_app());
 
+        //Inicia Download do logo do customer
+        startLogoDownload();
+
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
+    }
+
+
+    private void startLogoDownload() {
+        Intent mIntent =  new Intent(getApplicationContext(),WBR_DownLoad_Customer_Logo.class);
+        getApplicationContext().sendBroadcast(mIntent);
     }
 }

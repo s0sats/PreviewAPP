@@ -16,6 +16,7 @@ public class EV_User_Customer {
     private int blocked;
     private String session_app;
     private int pending;
+    private String logo_url;
 
     public long getUser_code() {
         return user_code;
@@ -103,5 +104,13 @@ public class EV_User_Customer {
 
     public void setPending(int pending) {
         this.pending = pending;
+    }
+
+    public String getLogo_url() {
+        return logo_url;
+    }
+
+    public void setLogo_url(String logo_url) {
+        this.logo_url = logo_url;
     }
 }

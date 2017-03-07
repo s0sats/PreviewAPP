@@ -164,6 +164,10 @@
 
         <service android:name=".service.WS_Upload_Img" />
 
+        <receiver android:name=".receiver.WBR_DownLoad_Customer_Logo" />
+
+        <service android:name=".service.WS_DownLoad_Customer_Logo" />
+
         <receiver android:name=".receiver.WBR_Cleanning" />
 
         <service

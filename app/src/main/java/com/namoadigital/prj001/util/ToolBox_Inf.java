@@ -905,6 +905,12 @@ public class ToolBox_Inf {
 
     }
 
+    public static String getCustomerLogoPath(Context context){
+
+        return Constant.CACHE_PATH + "/logo_c_" + ToolBox_Con.getPreference_Customer_Code(context) +".png";
+
+    }
+
     public static void cleanOldSyncChecklistData(Context context){
         Sync_ChecklistDao syncChecklistDao =
                 new Sync_ChecklistDao(
