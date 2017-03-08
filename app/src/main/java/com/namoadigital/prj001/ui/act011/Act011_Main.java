@@ -1364,14 +1364,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     @Override
     protected void getSignatueF(String mValue) {
         //mSignature = mValue;
+        String[] sValues = mValue.split("#");
 
-        File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
-        if (sFile.exists()) {
-            formData.setSignature(mSignature);
-            mPresenter.checkData(formData);
-        } else {
-            if (signature == 0) {
+        if (sValues.length == 2) {
+            mSignature = sValues[0];
+            // Set Signature Name = sValues[1];
+
+            File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
+            if (sFile.exists()) {
+                formData.setSignature(mSignature);
+                //formData.set Signature Name
                 mPresenter.checkData(formData);
+            } else {
+                if (signature == 0) {
+                    mPresenter.checkData(formData);
+                }
             }
         }
     }
