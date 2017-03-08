@@ -169,12 +169,6 @@ public class WS_Sync extends IntentService {
             if(CHECKLIST.size() > 0) {
                 dataPackage.setCHECKLIST(CHECKLIST);
             }
-            /*
-            *
-            * LEMBRAR DE ATUALIZAR A DATA NA TELA QUE CHAMA ESSE WS E DEPOIS DO DE SERIAL
-            *
-            *
-            */
         }
 
         TSync_Env env =  new TSync_Env();
