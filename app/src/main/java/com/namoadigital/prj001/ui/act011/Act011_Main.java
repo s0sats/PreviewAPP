@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -196,6 +198,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_finalize_msg");
         transList.add("alert_require_signature_msg");
         transList.add("alert_optional_signature_msg");
+        transList.add("dialog_signature_title_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -419,13 +422,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void autograph() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                ToolBox.alertMSG(
-                        Act011_Main.this,
-                        "Assinatura",
-                        "Em desenvolvimento",
-                        null,
-                        0
-                );
+                showCustomDialogSignature();
             }
         });
 
@@ -571,9 +568,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -1363,23 +1360,24 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     protected void getSignatueF(String mValue) {
-        //mSignature = mValue;
-        String[] sValues = mValue.split("#");
+        String sName = mValue;
 
-        if (sValues.length == 2) {
-            mSignature = sValues[0];
-            // Set Signature Name = sValues[1];
+        if (sName.trim().length() != 0) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
                 formData.setSignature(mSignature);
-                //formData.set Signature Name
+                formData.setSignature_name(sName);
+                //
                 mPresenter.checkData(formData);
             } else {
+                formData.setSignature_name("");
                 if (signature == 0) {
                     mPresenter.checkData(formData);
                 }
             }
+        } else {
+            String sRes = "";
         }
     }
 
@@ -1499,6 +1497,41 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         float dmH = (float) dm.heightPixels * 0.98F;
 
         //infoDialog.setTitle(hmAux_Trans.get("dialog_info_title_lbl"));
+        infoDialog.setContentView(view);
+        infoDialog.setCancelable(true);
+        infoDialog.getWindow().setLayout((int) dmW, (int) dmH);
+
+        infoDialog.show();
+
+    }
+
+    private void showCustomDialogSignature() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        infoDialog = new Dialog(Act011_Main.this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.act011_dialog_form_signature, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_siganture_title);
+        TextView tv_name = (TextView) view.findViewById(R.id.act_011_dialog_tv_siganture_name);
+        ImageView iv_signature = (ImageView) view.findViewById(R.id.act_011_dialog_iv_siganture);
+
+        tv_title.setText(hmAux_Trans.get("dialog_signature_title_lbl"));
+        tv_name.setText(formData.getSignature_name());
+
+        iv_signature.setImageBitmap(
+                BitmapFactory.decodeFile(
+                        CACHE_PATH_PHOTO + "/" + mSignature
+                )
+        );
+
+
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.95F;
+        float dmH = (float) dm.heightPixels * 0.60F;
+
         infoDialog.setContentView(view);
         infoDialog.setCancelable(true);
         infoDialog.getWindow().setLayout((int) dmW, (int) dmH);
