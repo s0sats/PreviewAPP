@@ -58,14 +58,14 @@
                     android:id="@+id/act013_chk_finalized"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:buttonTint="@color/namoa_light_blue" />
+                    android:buttonTint="@color/namoa_color_light_blue" />
 
                 <ImageView
                     android:id="@+id/act013_iv_help"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_help_outline_black_24dp"
-                    android:tint="@color/namoa_dark_blue"/>
+                    android:tint="@color/namoa_color_dark_blue"/>
 
             </LinearLayout>
 

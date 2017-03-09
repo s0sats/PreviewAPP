@@ -8,10 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -46,7 +46,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private MKEditTextNM mket_serial_id;
     private CheckBox chk_required;
     private CheckBox chk_allow_new;
-    private BootstrapButton btn_create;
+    private Button btn_create;
 
     private Act008_Main_Presenter mPresenter;
 
@@ -149,7 +149,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         chk_allow_new = (CheckBox) findViewById(R.id.act008_chk_allow);
         chk_allow_new.setTag("chk_allow_new");
 
-        btn_create = (BootstrapButton) findViewById(R.id.act008_btn_create);
+        btn_create = (Button) findViewById(R.id.act008_btn_create);
         btn_create.setTag("btn_create");
 
         //Adiciona Views na lista de tradução

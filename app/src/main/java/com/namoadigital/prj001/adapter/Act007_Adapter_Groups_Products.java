@@ -66,13 +66,16 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
 
         if (item.get("type").equalsIgnoreCase("group")) {
             tv_texto_01.setText(item.get("full_desc"));
-            tv_texto_01.setTextColor(context.getResources().getColor(R.color.padrao_WHITE));
+            tv_texto_01.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
             tv_texto_02.setVisibility(View.GONE);
             //
-            ll_fundo.setBackground(context.getResources().getDrawable(R.drawable.btn_primary_layout));
+            ll_fundo.setBackground(context.getResources().getDrawable(R.drawable.namoa_cell_4_states));
+
         } else {
             tv_texto_01.setText(item.get("full_desc"));
-            tv_texto_01.setTextColor(context.getResources().getColor(R.color.padrao_BACK));
+            tv_texto_01.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+
+            tv_texto_02.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue));
             tv_texto_02.setText(item.get("desc"));
             tv_texto_02.setVisibility(View.VISIBLE);
             //

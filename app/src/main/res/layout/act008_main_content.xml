@@ -16,17 +16,9 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="15dp">
 
@@ -35,7 +27,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="20dp"
                     android:text="Product"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -48,7 +40,9 @@
                     android:padding="10dp"
                     android:text="C2530A"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    />
 
 
                 <TextView
@@ -56,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Description"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -82,7 +76,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
                         android:enabled="false"
-                        android:text="Require Serial" />
+                        android:text="Require Serial"
+                        />
 
                     <View
                         android:layout_width="0dp"
@@ -105,8 +100,7 @@
                     android:id="@+id/act008_mket_serial"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="@drawable/border_back"
-                    android:backgroundTint="@android:color/holo_blue_light"
+                    android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
                     android:inputType="text"
                     app:mNFC="false"
@@ -122,20 +116,20 @@
                     android:padding="5dp"
                     android:layout_marginTop="10dp">
 
-                    <com.beardedhen.androidbootstrap.BootstrapButton
+                    <Button
                         android:id="@+id/act008_btn_create"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
-                        app:bootstrapBrand="primary"
-                        app:bootstrapSize="lg"
-                        app:bootstrapText="Create"
-                        app:roundedCorners="true" />
+                        android:background="@drawable/btn_namoa_main_states"
+                        android:textColor="@color/padrao_WHITE"
+                        android:text="NEW"
+                     />
 
                 </LinearLayout>
 
-            </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

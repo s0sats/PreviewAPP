@@ -32,9 +32,10 @@
             android:id="@+id/act007_mket_product_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/holo_blue_light"
             app:mNFC="false"
-            app:mOCR="false" />
+            app:mOCR="false"
+            android:background="@drawable/namoa_bg_1"
+            />
 
         <ListView
             android:id="@+id/act007_lv_groups_products"
@@ -42,36 +43,36 @@
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
+            android:padding="5dp"
             android:background="@drawable/border_back"
-            android:padding="5dp" />
+            android:dividerHeight="2dp"
+            android:divider="@color/padrao_TRANSPARENT"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.beardedhen.androidbootstrap.BootstrapButton
+            <Button
                 android:id="@+id/act007_btn_back"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                app:bootstrapBrand="primary"
-                app:bootstrapSize="lg"
-                app:bootstrapText="Back"
-                app:roundedCorners="true" />
+                android:background="@drawable/btn_namoa_main_states"
+                android:textColor="@color/padrao_WHITE"
+                />
 
-            <com.beardedhen.androidbootstrap.BootstrapButton
+            <Button
                 android:id="@+id/act007_btn_home"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                app:bootstrapBrand="primary"
-                app:bootstrapSize="lg"
-                app:bootstrapText="Home"
-                app:roundedCorners="true" />
+                android:background="@drawable/btn_namoa_main_states"
+                android:textColor="@color/padrao_WHITE"
+             />
 
         </LinearLayout>
 

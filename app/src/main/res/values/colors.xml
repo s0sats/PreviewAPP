@@ -23,5 +23,52 @@
     <color name="custom_yellow">#FFED42</color>
     <color name="custom_yellow_dark">#FF574500</color>
 
+    
+    <!-- Cores oficiais -->
+    <!-- Cores WEB -->
+    <color name="namoa_color_dark_blue">#0F4D61</color>
+    <color name="namoa_color_dark_blue_alpha">#550F4D61</color>
+    <color name="namoa_color_dark_blue2">#FF176780</color>
+    <color name="namoa_color_light_blue">#3C93A9</color>
+    <color name="namoa_color_light_blue_alpha">#553C93A9</color>
+    <color name="namoa_color_light_blue2">#FF007b93</color>
+    <color name="namoa_color_light_blue3">#FF9fc7d3</color>
+    <color name="namoa_color_light_blue4">#FFced6da</color>
+    <color name="namoa_color_light_blue5">#FFeaf2f5</color>
+    <color name="namoa_color_light_blue6">#FFc4dde4</color>
+    <color name="namoa_color_light_green">#FF6ab54b</color>
+    <color name="namoa_color_light_green2">#FF6eb965</color>
+    <color name="namoa_color_light_green3">#FFa3ca55</color>
+    <color name="namoa_color_light_green4">#FFe2edcb</color>
+    <color name="namoa_color_orange">#FFFFA500</color>
+    <color name="namoa_color_gray">#FFEDEDEE</color>
+
+    <color name="namoa_color_success_green">#5CB85C</color>
+    <color name="namoa_color_warning_yellow">#FFFF00</color>
+    <color name="namoa_color_danger_red">#D9534F</color>
+    <color name="namoa_color_disabled_gray">#ADADAD</color>
+
+
+
+    <color name="main_bar_background"> #a3ca55 </color>
+    <color name="logo_bar_background"> #ffffff </color>
+   <!-- <color name="object_background_normal"> #0f4d61 </color>-->
+    <color name="object_background_highlight"> #6ab54b </color>
+    <color name="fieldset_background"> #ededee </color>
+    <color name="field_enable_background"> #ced6da </color>
+    <color name="field_disable_background"> #dee3e6 </color>
+    <color name="field_font"> #ffffff </color>
+    <color name="font_normal"> #0f4d61 </color>
+  <!-- <color name="font_highlight"> #3c93a9 </color>-->
+    <color name="font_header"> #ffffff </color>
+    <color name="grid_header_normal"> #3c93a9 </color>
+    <color name="grid_header_pk"> #176780 </color>
+    <color name="grid_header_highlight"> #6eb965 </color>
+    <color name="grid_line_normal"> #9fc7d3 </color>
+    <color name="grid_line_over"> #4192a8 </color>
+    <color name="grid_line_selected"> #e2edcb </color>
+    <color name="font_required"> #ffa500 </color>
+
+
 
 </resources>

@@ -75,12 +75,43 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
         //
         tvSubItem.setVisibility(View.GONE);
 
-        //Define layout da celula e baseado no campo blocked
-        if(item.get(EV_User_CustomerDao.BLOCKED).equals("0")){
+
+        //Configura icone de sessession baseado no valor.
+        if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0){
+            Drawable llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_1_states);
+            llBackground.setBackground(llDrawable);
+            tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+
+            iv002.setVisibility(View.VISIBLE);
+            iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_success));
+        }  else {
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
             llBackground.setBackground(llDrawable);
             tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
             tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+
+            iv002.setVisibility(View.VISIBLE);
+            //  iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_danger));
+            iv002.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+
+        }
+
+        if(!item.get(EV_User_CustomerDao.BLOCKED).equals("0")) {
+            Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_warning_base);
+            llBackground.setBackground(llDrawable);
+            tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
+            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color_warning));
+
+        }
+
+/*
+        //Define layout da celula e baseado no campo blocked
+        if(item.get(EV_User_CustomerDao.BLOCKED).equals("0")){
+            Drawable llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_1_states);
+            llBackground.setBackground(llDrawable);
+            tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+            tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
         }else{
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_warning_base);
             llBackground.setBackground(llDrawable);
@@ -93,9 +124,10 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
            // iv001.setColorFilter(context.getResources().getColor(R.color.namoa_light_blue));
             iv001.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_warning));
             //03/03/2017  -  Comentado a exibição da qtd
-           /* tvTopQty.setVisibility(View.VISIBLE);
-            tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));*/
+           // tvTopQty.setVisibility(View.VISIBLE);
+           // tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));
         }
+
         //Configura icone de sessession baseado no valor.
         if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0){
             iv002.setVisibility(View.VISIBLE);
@@ -104,7 +136,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
             iv002.setVisibility(View.VISIBLE);
             iv002.setColorFilter(context.getResources().getColor(R.color.bootstrap_brand_danger));
         }
-
+*/
         return convertView;
     }
 }

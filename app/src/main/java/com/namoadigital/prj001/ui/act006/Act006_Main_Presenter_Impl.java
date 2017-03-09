@@ -28,9 +28,9 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         for (int i = 0; i < opcs.length; i++) {
             HMAux item = new HMAux();
             //
-            item.put(HMAux.ID, String.valueOf(i + 1));
-            item.put(HMAux.TEXTO_01, Constant.ACT006 + "_lbl_" + opcs[i]);
-            item.put(HMAux.TEXTO_02, opcs[i]);
+            item.put(Act006_Main.LIST_ID, String.valueOf(i + 1));
+            item.put(Act006_Main.LIST_LABEL, Constant.ACT006 + "_lbl_" + opcs[i]);
+            item.put(Act006_Main.LIST_OPT, opcs[i]);
             //
             data.add(item);
         }

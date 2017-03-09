@@ -11,24 +11,28 @@
         android:background="@drawable/item_menu_states"
         android:focusable="false"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:minHeight="100dp"
+        android:minWidth="100dp"
+
+        >
 
         <ImageView
             android:id="@+id/menu_ivChecklist"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:gravity="center_horizontal"
-            android:tint="@color/item_menu_title_color" />
+            android:layout_gravity="center"/>
 
         <TextView
             android:id="@+id/menu_tvChecklist"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:background="@drawable/item_menu_title_normal"
+            android:textColor="@color/item_menu_title_color"
             android:gravity="center" />
 
     </LinearLayout>
