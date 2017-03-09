@@ -3,5 +3,4 @@
     <!--Background -->
     <solid
         android:color="@color/namoa_color_dark_blue"/>
-
 </shape>

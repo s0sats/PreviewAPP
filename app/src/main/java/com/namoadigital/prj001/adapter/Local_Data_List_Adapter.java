@@ -106,9 +106,9 @@ public class Local_Data_List_Adapter extends BaseAdapter {
             case Constant.CUSTOM_FORM_STATUS_SENT:
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
                 llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_dark_blue));
-                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_dark_blue));
-                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_dark_blue));
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
+                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
+                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
 
                 break;
 

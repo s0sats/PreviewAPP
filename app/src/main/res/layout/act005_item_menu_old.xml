@@ -21,11 +21,8 @@
 
     <TextView
         android:id="@+id/menu_tvChecklist"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textColor="@color/item_menu_title_color"
-        android:text="test"
-         />
+        android:background="@drawable/item_menu_title_normal"         />
 
 </LinearLayout>

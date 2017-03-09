@@ -7,8 +7,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item> -->
 
-        <item name="colorPrimary">@color/namoa_light_blue</item>
-        <item name="colorPrimaryDark">@color/namoa_dark_blue</item>
+        <item name="colorPrimary">@color/namoa_color_light_blue</item>
+        <item name="colorPrimaryDark">@color/namoa_color_dark_blue</item>
         <item name="colorAccent">@color/namoa_lime_green</item>
     </style>
 

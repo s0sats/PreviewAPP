@@ -40,8 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="E-mail / nickname"
-            android:textColorHint="@color/namoa_color_light_blue"
-            android:backgroundTint="@android:color/holo_blue_light"
+            android:textColorHint="@color/namoa_color_dark_blue"
+            android:backgroundTint="@color/namoa_color_dark_blue"
             android:inputType="text" />
 
         <View
@@ -53,10 +53,9 @@
             android:id="@+id/act001_et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/holo_blue_light"
+            android:backgroundTint="@color/namoa_color_dark_blue"
             android:hint="Password"
-            android:textColorHint="@color/namoa_color_light_blue"
-
+            android:textColorHint="@color/namoa_color_dark_blue"
             android:inputType="textPassword" />
 
         <View
@@ -76,6 +75,7 @@
                 android:background="@drawable/btn_namoa_main_states"
                 android:text="Login"
                 android:textColor="@color/padrao_WHITE"
+                android:layout_margin="5dp"
                 />
 
         </LinearLayout>
