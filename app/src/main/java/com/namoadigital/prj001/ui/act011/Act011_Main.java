@@ -806,6 +806,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            mkEditTextNMFF.setmEnabled(false);
+        } else {
+            mkEditTextNMFF.setmEnabled(true);
+        }
+
         return mkEditTextNMFF;
     }
 
@@ -831,6 +839,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         comboBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            comboBoxFF.setmEnabled(false);
+        } else {
+            comboBoxFF.setmEnabled(true);
+        }
 
         return comboBoxFF;
     }
@@ -869,6 +885,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            checkBoxFF.setmEnabled(false);
+        } else {
+            checkBoxFF.setmEnabled(true);
+        }
+
         return checkBoxFF;
     }
 
@@ -894,6 +918,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            ratingImageFF.setmEnabled(false);
+        } else {
+            ratingImageFF.setmEnabled(true);
+        }
+
         return ratingImageFF;
     }
 
@@ -918,6 +950,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            ratingBarFF.setmEnabled(false);
+        } else {
+            ratingBarFF.setmEnabled(true);
+        }
 
         return ratingBarFF;
     }
@@ -945,6 +985,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            pictureFF.setmEnabled(false);
+        } else {
+            pictureFF.setmEnabled(true);
+        }
+
         return pictureFF;
     }
 
@@ -969,6 +1017,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+                ) {
+            photoFF.setmEnabled(false);
+        } else {
+            photoFF.setmEnabled(true);
+        }
 
         return photoFF;
     }
