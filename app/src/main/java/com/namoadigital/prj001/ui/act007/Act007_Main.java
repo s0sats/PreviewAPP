@@ -8,9 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -41,8 +41,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
     private ListView lv_groups_products;
 
-    private BootstrapButton btn_back;
-    private BootstrapButton btn_home;
+    private Button btn_back;
+    private Button btn_home;
 
     private Stack<Long> mStack = new Stack<Long>();
 
@@ -105,11 +105,11 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
 
         lv_groups_products = (ListView) findViewById(R.id.act007_lv_groups_products);
 
-        btn_back = (BootstrapButton) findViewById(R.id.act007_btn_back);
+        btn_back = (Button) findViewById(R.id.act007_btn_back);
         btn_back.setTag("btn_back");
         btn_back.setVisibility(View.INVISIBLE);
 
-        btn_home = (BootstrapButton) findViewById(R.id.act007_btn_home);
+        btn_home = (Button) findViewById(R.id.act007_btn_home);
         btn_home.setTag("btn_home");
         //
         views.add(btn_back);

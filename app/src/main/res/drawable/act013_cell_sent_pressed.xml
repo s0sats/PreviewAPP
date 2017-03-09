@@ -7,5 +7,5 @@
           android:color="#ffbe42"/>-->
     <!--Background -->
     <solid
-        android:color="@color/namoa_lime_green_2"/>
+        android:color="@color/namoa_color_light_green2"/>
 </shape>

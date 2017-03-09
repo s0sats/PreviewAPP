@@ -32,9 +32,16 @@
     <color name="namoa_color_light_blue">#3C93A9</color>
     <color name="namoa_color_light_blue_alpha">#553C93A9</color>
     <color name="namoa_color_light_blue2">#FF007b93</color>
+    <color name="namoa_color_light_blue3">#FF9fc7d3</color>
+    <color name="namoa_color_light_blue4">#FFced6da</color>
+    <color name="namoa_color_light_blue5">#FFeaf2f5</color>
+    <color name="namoa_color_light_blue6">#FFc4dde4</color>
     <color name="namoa_color_light_green">#FF6ab54b</color>
     <color name="namoa_color_light_green2">#FF6eb965</color>
     <color name="namoa_color_light_green3">#FFa3ca55</color>
+    <color name="namoa_color_light_green4">#FFe2edcb</color>
+    <color name="namoa_color_orange">#FFFFA500</color>
+    <color name="namoa_color_gray">#FFEDEDEE</color>
 
     <color name="namoa_color_success_green">#5CB85C</color>
     <color name="namoa_color_warning_yellow">#FFFF00</color>
