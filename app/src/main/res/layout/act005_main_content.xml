@@ -28,8 +28,8 @@
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
             android:verticalSpacing="2dp"
-            android:minWidth="100dp"
-            android:minHeight="100dp"/>
+
+/>
 
         <include layout="@layout/footer_base" />
 
