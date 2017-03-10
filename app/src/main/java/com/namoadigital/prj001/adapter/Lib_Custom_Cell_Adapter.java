@@ -105,14 +105,14 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         iv001.setVisibility(View.GONE);
         iv002.setVisibility(View.GONE);
 
-        Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+        Drawable llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_1_states);
         String itemText = "";
 
         switch (config){
             case CFG_ID_DESC:
                 llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
                 //
                 try {
                     if (item.get(key_id).trim().length() > 0){
@@ -126,8 +126,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 break;
             case CFG_ID_DESC_DESC2:
                 llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
                 //
                 try {
                     if (item.get(key_id).trim().length() > 0){
@@ -150,8 +150,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
                 break;
             case CFG_DESC_QTY:
                 llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
                 //
                 itemText = item.get(key_text);
                 //
@@ -169,8 +169,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
 
             case CFG_DESC:default:
                 llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
+                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
                 //
                 itemText = item.get(key_text);
                 tvItem.setText(itemText);

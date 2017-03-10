@@ -12,20 +12,21 @@
         android:focusable="false"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:minHeight="100dp"
-        android:minWidth="100dp"
 
         >
 
         <ImageView
             android:id="@+id/menu_ivChecklist"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:gravity="center_horizontal"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:src="@drawable/teste_svg"
+            android:scaleType="fitXY"
+            />
 
         <TextView
             android:id="@+id/menu_tvChecklist"
@@ -33,7 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:textColor="@color/item_menu_title_color"
-            android:gravity="center" />
+            android:gravity="center"
+            android:paddingBottom="4dp"/>
 
     </LinearLayout>
 
