@@ -29,11 +29,13 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
+            android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:background="@android:color/white"
             android:padding="10dp"
-            android:src="@drawable/namoa_logo" />
+            android:src="@drawable/logo_namoa_oficial"
+            />
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act001_mk_login"

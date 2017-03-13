@@ -25,7 +25,6 @@
 
     
     <!-- Cores oficiais -->
-    <!-- Cores WEB -->
     <color name="namoa_color_dark_blue">#0F4D61</color>
     <color name="namoa_color_dark_blue_alpha">#550F4D61</color>
     <color name="namoa_color_dark_blue2">#FF176780</color>
@@ -49,7 +48,7 @@
     <color name="namoa_color_disabled_gray">#ADADAD</color>
 
 
-
+    <!-- Cores WEB -->
     <color name="main_bar_background"> #a3ca55 </color>
     <color name="logo_bar_background"> #ffffff </color>
    <!-- <color name="object_background_normal"> #0f4d61 </color>-->

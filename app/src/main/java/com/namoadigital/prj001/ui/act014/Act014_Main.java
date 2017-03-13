@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
+import com.namoadigital.prj001.adapter.Namoa_Custom_Cell_2_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act014_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -33,7 +34,7 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     private Context context;
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
-    private Lib_Custom_Cell_Adapter mAdapter;
+    private Namoa_Custom_Cell_2_Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,9 +144,9 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
 
     @Override
     public void loadSentData(List<HMAux> sent_datas) {
-        mAdapter =  new Lib_Custom_Cell_Adapter(
+        mAdapter =  new Namoa_Custom_Cell_2_Adapter(
                             context,
-                            R.layout.lib_custom_cell,
+                            R.layout.namoa_custom_cell_2,
                             sent_datas,
                             Lib_Custom_Cell_Adapter.CFG_DESC_QTY,
                             Sql_Act014_001.TYPE,

@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
+import com.namoadigital.prj001.adapter.Namoa_Custom_Cell_2_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -32,13 +33,13 @@ import java.util.List;
 public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
-    public static final String LABEL_TRANS_OS= "lbl_type_service_order";
+    public static final String LABEL_TRANS_OS = "lbl_type_service_order";
 
     private Context context;
     private ListView lv_pendencies;
     private Act012_Main_Presenter mPresenter;
 
-    private Lib_Custom_Cell_Adapter mAdapter;
+    private Namoa_Custom_Cell_2_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -151,9 +152,9 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     @Override
     public void loadPendencies(List<HMAux> pendencies) {
-        mAdapter = new Lib_Custom_Cell_Adapter(
+        mAdapter = new Namoa_Custom_Cell_2_Adapter(
                 context,
-                R.layout.lib_custom_cell,
+                R.layout.namoa_custom_cell_2,
                 pendencies,
                 Lib_Custom_Cell_Adapter.CFG_DESC_QTY,
                 Sql_Act012_001.TYPE,

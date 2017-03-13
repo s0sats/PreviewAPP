@@ -10,6 +10,9 @@
         <item name="colorPrimary">@color/namoa_color_light_blue</item>
         <item name="colorPrimaryDark">@color/namoa_color_dark_blue</item>
         <item name="colorAccent">@color/namoa_lime_green</item>
+        <item name="android:textColor">@color/namoa_color_dark_blue</item>
+        <item name="android:textColorPrimary">@color/namoa_color_dark_blue</item>
+     <!--   <item name="android:textColorPrimary">@color/namoa_color_light_blue</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">
