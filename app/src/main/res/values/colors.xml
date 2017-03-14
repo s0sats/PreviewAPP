@@ -40,6 +40,8 @@
     <color name="namoa_color_light_green3">#FFa3ca55</color>
     <color name="namoa_color_light_green4">#FFe2edcb</color>
     <color name="namoa_color_orange">#FFFFA500</color>
+    <color name="namoa_color_orange_light">#FFFFE4B2</color>
+    <color name="namoa_color_orange_light2">#FFFFD27F</color>
     <color name="namoa_color_gray">#FFEDEDEE</color>
 
     <color name="namoa_color_success_green">#5CB85C</color>
