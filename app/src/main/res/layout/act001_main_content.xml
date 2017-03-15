@@ -42,7 +42,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="E-mail / nickname"
-            android:textColorHint="@color/namoa_color_dark_blue"
             android:backgroundTint="@color/namoa_color_dark_blue"
             android:inputType="text" />
 
@@ -57,7 +56,6 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/namoa_color_dark_blue"
             android:hint="Password"
-            android:textColorHint="@color/namoa_color_dark_blue"
             android:inputType="textPassword" />
 
         <View

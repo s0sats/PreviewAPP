@@ -11,13 +11,14 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_gravity="center">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_date_label"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Data"
@@ -25,7 +26,7 @@
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_date"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="22/01/1988"/>
@@ -36,20 +37,21 @@
 
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_hour_label"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Hora"/>
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_hour"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="12:58"/>
@@ -71,13 +73,13 @@
         android:layout_marginLeft="15dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_code_label"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="int.code"
@@ -85,9 +87,9 @@
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_code_val"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:text="15"/>
         </LinearLayout>
         <View
@@ -96,22 +98,22 @@
 
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_id_label"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Ext.cod"/>
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_id_val"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:text="ND0015"/>
         </LinearLayout>
 
@@ -124,13 +126,13 @@
         android:layout_marginLeft="15dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_prod_desc_lbl"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Desc"
@@ -138,9 +140,9 @@
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_prod_desc_val"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:text="15"/>
         </LinearLayout>
         <View
@@ -149,20 +151,20 @@
 
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_serial_label"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="S/N"/>
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_serial_val"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="GTH25DE3"/>
@@ -184,14 +186,14 @@
         android:layout_marginLeft="15dp">
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_type_label"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Tipo:"/>
 
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_type_val"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:text="Teste"/>
@@ -204,14 +206,14 @@
         android:layout_marginLeft="15dp">
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_form_label"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Form:"/>
 
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_form_val"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:text="Inspec. Bug"/>

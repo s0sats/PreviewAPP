@@ -53,7 +53,8 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
                                     ToolBox_Con.getPreference_Customer_Code(context),
                                     false, //filter_in_processing
                                     true, //filter_finalized
-                                    false //filter_scheduled
+                                    false, //filter_scheduled
+                                    context
                             ).toSqlQuery()
                     );
             //Se não existir, exibe msg de bloqueio

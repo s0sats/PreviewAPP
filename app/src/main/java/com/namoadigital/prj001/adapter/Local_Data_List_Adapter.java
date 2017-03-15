@@ -11,8 +11,11 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +29,19 @@ public class Local_Data_List_Adapter extends BaseAdapter {
     private Context context;
     private int resource;
     private List<HMAux> source;
+    private String mResource_Code;
+    private HMAux hmAux_Trans;
 
     public Local_Data_List_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                                        context,
+                                        Constant.APP_MODULE,
+                                        "local_data_list_adapter"
+                                );
+        loadTranslation();
     }
 
     @Override
@@ -66,44 +77,92 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         //
         ArrayList<TextView> tv_list = new ArrayList<>();
         //
-        TextView tv_date_lvl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_label);
+        TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_label);
         TextView tv_date_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date);
-        tv_list.add(tv_date_lvl);
+
+        tv_date_lbl.setText(hmAux_Trans.get("lbl_date"));
+        tv_date_val.setText(item.get(GE_Custom_Form_DataDao.DATE_START));
+
+        tv_list.add(tv_date_lbl);
         tv_list.add(tv_date_val);
         //
-        TextView tv_hour_lvl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_hour_label);
+        TextView tv_hour_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_hour_label);
         TextView tv_hour_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_hour);
-        tv_list.add(tv_hour_lvl);
+
+        tv_hour_lbl.setVisibility(View.GONE);
+        tv_hour_val.setVisibility(View.GONE);
+
+        tv_hour_lbl.setText(hmAux_Trans.get("lbl_hour"));
+        tv_hour_val.setText(item.get(GE_Custom_Form_DataDao.DATE_START));
+
+        tv_list.add(tv_hour_lbl);
         tv_list.add(tv_hour_val);
         //
         TextView tv_product_ttl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_prod_ttl);
+
+        tv_product_ttl.setText(hmAux_Trans.get("ttl_product"));
+
         tv_list.add(tv_product_ttl);
         //
-        TextView tv_code_lvl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_code_label);
+        TextView tv_code_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_code_label);
         TextView tv_code_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_code_val);
-        tv_list.add(tv_code_lvl);
+
+        tv_code_lbl.setText(hmAux_Trans.get("lbl_product_code"));
+        tv_code_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
+
+        tv_list.add(tv_code_lbl);
         tv_list.add(tv_code_val);
         //
-        TextView tv_id_lvl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_label);
+        TextView tv_id_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_label);
         TextView tv_id_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_val);
-        tv_list.add(tv_id_lvl);
+
+        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id"));
+        String[] id = item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC).split("-");
+        tv_id_val.setText(id[0].trim());
+
+        tv_list.add(tv_id_lbl);
         tv_list.add(tv_id_val);
         //
         TextView tv_product_desc_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_prod_desc_lbl);
         TextView tv_product_desc_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_prod_desc_val);
+
+        tv_product_desc_lbl.setText(hmAux_Trans.get("lbl_product_desc"));
+        tv_product_desc_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
+
         tv_list.add(tv_product_desc_lbl);
         tv_list.add(tv_product_desc_val);
         //
+        //
+        TextView tv_serial_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_serial_label);
+        TextView tv_serial_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_serial_val);
+
+        tv_serial_lbl.setText(hmAux_Trans.get("lbl_serial_id"));
+        tv_serial_val.setText(item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
+
+        tv_list.add(tv_code_lbl);
+        tv_list.add(tv_code_val);
+        //
         TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_form_ttl);
+
+        tv_form_ttl.setText(hmAux_Trans.get("ttl_form"));
+
         tv_list.add(tv_form_ttl);
         //
         TextView tv_type_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_type_label);
         TextView tv_type_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_type_val);
+
+        tv_type_lbl.setText(hmAux_Trans.get("lbl_type"));
+        tv_type_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+
         tv_list.add(tv_type_lbl);
         tv_list.add(tv_type_val);
         //
         TextView tv_form_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_form_label);
         TextView tv_form_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_form_val);
+
+        tv_form_lbl.setText(hmAux_Trans.get("lbl_form"));
+        tv_form_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+
         tv_list.add(tv_form_lbl);
         tv_list.add(tv_form_val);
         //
@@ -159,5 +218,27 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+
+    private void loadTranslation() {
+        List<String> translateList = new ArrayList<>();
+        translateList.add("lbl_date");
+        translateList.add("lbl_hour");
+        translateList.add("ttl_product");
+        translateList.add("lbl_product_code");
+        translateList.add("lbl_product_id");
+        translateList.add("lbl_product_desc");
+        translateList.add("ttl_form");
+        translateList.add("lbl_type");
+        translateList.add("lbl_form");
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
     }
 }

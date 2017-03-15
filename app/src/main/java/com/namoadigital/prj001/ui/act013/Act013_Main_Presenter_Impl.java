@@ -37,7 +37,8 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 filter_in_processing,
                                 filter_finalized,
-                                filter_scheduled
+                                filter_scheduled,
+                                context
                         ).toSqlQuery()
                 );
 

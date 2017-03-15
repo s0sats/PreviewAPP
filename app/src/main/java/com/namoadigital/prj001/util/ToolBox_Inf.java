@@ -952,5 +952,13 @@ public class ToolBox_Inf {
         );
     }
 
+    public static String nlsDate2SqliteDate(Context context){
+        String sqlite_format = ToolBox_Con.getPreference_Customer_nls_date_format(context);
+        return sqlite_format
+                .replace("DD","%d")
+                .replace("MM","%m")
+                .replace("RRRR","%Y");
+    }
+
 
 }
