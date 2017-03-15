@@ -43,7 +43,7 @@
                     android:id="@+id/act013_chk_in_process"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/custom_yellow"
+                    android:buttonTint="@color/namoa_color_orange_light2"
                     android:checked="true"
                     />
 
@@ -58,7 +58,7 @@
                     android:id="@+id/act013_chk_finalized"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:buttonTint="@color/namoa_color_light_blue" />
+                    android:buttonTint="@color/namoa_color_light_blue3" />
 
                 <ImageView
                     android:id="@+id/act013_iv_help"
