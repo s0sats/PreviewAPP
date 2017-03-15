@@ -80,8 +80,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_label);
         TextView tv_date_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date);
 
-        tv_date_lbl.setText(hmAux_Trans.get("lbl_date"));
-        tv_date_val.setText(item.get(GE_Custom_Form_DataDao.DATE_START));
+        tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
 
         tv_list.add(tv_date_lbl);
         tv_list.add(tv_date_val);
@@ -92,8 +91,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         tv_hour_lbl.setVisibility(View.GONE);
         tv_hour_val.setVisibility(View.GONE);
 
-        tv_hour_lbl.setText(hmAux_Trans.get("lbl_hour"));
-        tv_hour_val.setText(item.get(GE_Custom_Form_DataDao.DATE_START));
+        tv_hour_lbl.setText(hmAux_Trans.get("lbl_hour")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
 
         tv_list.add(tv_hour_lbl);
         tv_list.add(tv_hour_val);
@@ -107,8 +105,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_code_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_code_label);
         TextView tv_code_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_code_val);
 
-        tv_code_lbl.setText(hmAux_Trans.get("lbl_product_code"));
-        tv_code_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
+        tv_code_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
 
         tv_list.add(tv_code_lbl);
         tv_list.add(tv_code_val);
@@ -116,9 +113,8 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_id_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_label);
         TextView tv_id_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_val);
 
-        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id"));
         String[] id = item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC).split("-");
-        tv_id_val.setText(id[0].trim());
+        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+id[0].trim());
 
         tv_list.add(tv_id_lbl);
         tv_list.add(tv_id_val);
@@ -126,8 +122,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_product_desc_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_prod_desc_lbl);
         TextView tv_product_desc_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_prod_desc_val);
 
-        tv_product_desc_lbl.setText(hmAux_Trans.get("lbl_product_desc"));
-        tv_product_desc_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
+        tv_product_desc_lbl.setText(hmAux_Trans.get("lbl_product_desc")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
 
         tv_list.add(tv_product_desc_lbl);
         tv_list.add(tv_product_desc_val);
@@ -136,8 +131,12 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_serial_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_serial_label);
         TextView tv_serial_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_serial_val);
 
-        tv_serial_lbl.setText(hmAux_Trans.get("lbl_serial_id"));
-        tv_serial_val.setText(item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
+        tv_serial_lbl.setText(hmAux_Trans.get("lbl_serial_id")+" "+item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
+
+        if(item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0){
+            tv_serial_lbl.setVisibility(View.GONE);
+            tv_serial_val.setVisibility(View.GONE);
+        }
 
         tv_list.add(tv_code_lbl);
         tv_list.add(tv_code_val);
@@ -151,8 +150,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_type_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_type_label);
         TextView tv_type_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_type_val);
 
-        tv_type_lbl.setText(hmAux_Trans.get("lbl_type"));
-        tv_type_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+        tv_type_lbl.setText(hmAux_Trans.get("lbl_type")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
 
         tv_list.add(tv_type_lbl);
         tv_list.add(tv_type_val);
@@ -160,8 +158,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_form_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_form_label);
         TextView tv_form_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_form_val);
 
-        tv_form_lbl.setText(hmAux_Trans.get("lbl_form"));
-        tv_form_val.setText(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+        tv_form_lbl.setText(hmAux_Trans.get("lbl_form")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
 
         tv_list.add(tv_form_lbl);
         tv_list.add(tv_form_val);

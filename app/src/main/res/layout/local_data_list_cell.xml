@@ -12,16 +12,17 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:layout_gravity="center">
+            android:gravity="center">
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_date_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Data"
+                android:gravity="center"
                 />
 
             <TextView
@@ -29,12 +30,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="22/01/1988"/>
+                android:text="22/01/1988"
+                android:visibility="gone"
+                />
         </LinearLayout>
-        <View
-            android:layout_width="20dp"
-            android:layout_height="0dp"/>
-
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -83,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="int.code"
+                android:gravity="left"
                 />
 
             <TextView
@@ -90,13 +90,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="15"/>
+                android:text="15"
+                android:visibility="gone"/>
         </LinearLayout>
         <View
             android:layout_width="20dp"
             android:layout_height="0dp"/>
-
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,14 +106,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Ext.cod"/>
+                android:text="Ext.cod"
+                android:gravity="right"/>
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_id_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="ND0015"/>
+                android:text="ND0015"
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -136,6 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Desc"
+                android:gravity="left"
                 />
 
             <TextView
@@ -143,7 +145,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="15"/>
+                android:text="15"
+                android:visibility="gone"/>
         </LinearLayout>
         <View
             android:layout_width="20dp"
@@ -160,14 +163,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="S/N"/>
+                android:text="S/N"
+                android:gravity="right"/>
 
             <TextView
                 android:id="@+id/local_data_list_cell_01_tv_serial_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="GTH25DE3"/>
+                android:text="GTH25DE3"
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -196,7 +201,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:text="Teste"/>
+            android:text="Teste"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -216,7 +222,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:text="Inspec. Bug"/>
+            android:text="Inspec. Bug"
+            android:visibility="gone"/>
     </LinearLayout>
 
 
