@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nome"
-                android:textColor="@color/lib_custom_cell_font_color"
+                android:textColor="@color/namoa_color_light_blue"
                 android:textSize="17sp"/>
 
             <TextView
@@ -35,7 +35,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:text="Inglês"
-                android:textColor="@color/bootstrap_brand_info"
+                android:textColor="@color/namoa_color_light_blue"
                 android:textSize="15sp"
                 android:visibility="gone"
                 />
@@ -45,7 +45,7 @@
                 android:id="@+id/lib_custom_cell_iv_001"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/cloud_upload"
+                android:src="@drawable/ic_cloud_upload"
                 android:visibility="gone"
                 />
             <TextView
