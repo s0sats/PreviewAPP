@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,11 +23,13 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
     private Context context;
     private int resource;
     private List<HMAux> data;
+    private HMAux hmAux_Trans;
 
-    public Act007_Adapter_Groups_Products(Context context, int resource, List<HMAux> data) {
+    public Act007_Adapter_Groups_Products(Context context, int resource, List<HMAux> data ,HMAux hmAux_Trans) {
         this.context = context;
         this.resource = resource;
         this.data = data;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
@@ -53,33 +56,60 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
             convertView = mInflater.inflate(resource, parent, false);
         }
 
-        TextView tv_texto_01 = (TextView)
-                convertView.findViewById(R.id.act007_main_content_cell_01_tv_texto_01);
-
-        TextView tv_texto_02 = (TextView)
-                convertView.findViewById(R.id.act007_main_content_cell_01_tv_texto_02);
-
-        LinearLayout ll_fundo = (LinearLayout)
-                convertView.findViewById(R.id.act007_main_content_cell_01_ll_fundo);
-
         HMAux item = data.get(position);
 
+        LinearLayout ll_fundo = (LinearLayout)
+                convertView.findViewById(R.id.act007_main_content_cell_ll_background);
+
+        ImageView iv_001 = (ImageView)
+                convertView.findViewById(R.id.act007_main_content_cell_iv_001);
+
+        TextView tv_code = (TextView)
+                convertView.findViewById(R.id.act007_main_content_cell_tv_code);
+
+        TextView tv_id = (TextView)
+                convertView.findViewById(R.id.act007_main_content_cell_tv_id);
+
+        TextView tv_desc = (TextView)
+                convertView.findViewById(R.id.act007_main_content_cell_tv_desc);
+
+        String codeText = hmAux_Trans.get("lbl_code") + " " ;
+        String idText =  hmAux_Trans.get("lbl_id") + " " ;
+        String descText =  /*hmAux_Trans.get("lbl_desc") +*/ " " ;
+
+        tv_code.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+        tv_id.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+        tv_desc.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+
         if (item.get("type").equalsIgnoreCase("group")) {
-            tv_texto_01.setText(item.get("full_desc"));
-            tv_texto_01.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
-            tv_texto_02.setVisibility(View.GONE);
-            //
             ll_fundo.setBackground(context.getResources().getDrawable(R.drawable.namoa_cell_4_states));
+            //
+            iv_001.setVisibility(View.VISIBLE);
+            iv_001.setImageResource(R.drawable.ic_folder_black_24dp);
+            iv_001.setColorFilter(context.getResources().getColor(R.color.namoa_color_dark_blue2));
+            //
+            codeText += item.get("code");
+            idText += item.get("id");
+            descText += item.get("desc");
+            //
+            tv_code.setText(codeText);
+            tv_id.setText(idText);
+            tv_desc.setText(descText);
 
         } else {
-            tv_texto_01.setText(item.get("full_desc"));
-            tv_texto_01.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
-
-            tv_texto_02.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue));
-            tv_texto_02.setText(item.get("desc"));
-            tv_texto_02.setVisibility(View.VISIBLE);
-            //
             ll_fundo.setBackground(null);
+            //
+            iv_001.setVisibility(View.INVISIBLE);
+            //
+            codeText += item.get("code");
+            idText += item.get("id");
+            descText += item.get("desc");
+            //
+            tv_code.setText(codeText);
+            tv_id.setText(idText);
+            tv_desc.setText(descText);
+
+            tv_desc.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue));
         }
 
         return convertView;

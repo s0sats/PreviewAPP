@@ -61,26 +61,26 @@ public class EV_User_Customer_Adapter extends BaseAdapter  {
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.lib_custom_cell_ll_background);
         //
-        TextView tvItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_item);
+        TextView tvItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_code);
         //
-        TextView tvSubItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_sub_item);
+        TextView tvSubItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_id);
         //
         ImageView iv001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
         //
         ImageView iv002 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_002);
         //
-        TextView  tvTopQty = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_top);
+        TextView  tvTopQty = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_desc);
 
         //Inicia configuraçõa dos elementos
         tvItem.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
         //
         tvSubItem.setVisibility(View.GONE);
 
-        Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+        Drawable llDrawable = context.getResources().getDrawable(R.drawable.ev_user_customer_bg_states);
         llBackground.setBackground(llDrawable);
         //
-        tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-        tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
+        tvItem.setTextColor(context.getResources().getColorStateList(R.color.ev_user_customer_font_color));
+        tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.ev_user_customer_font_color));
 
         iv002.setVisibility(View.VISIBLE);
         iv002.setColorFilter(context.getResources().getColor(R.color.namoa_color_light_blue));

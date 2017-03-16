@@ -175,9 +175,10 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     context,
                     R.layout.lib_custom_cell,
                     operations,
-                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
-                    MD_OperationDao.OPERATION_DESC,
-                    MD_OperationDao.OPERATION_ID
+                    Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
+                    MD_OperationDao.OPERATION_CODE,
+                    MD_OperationDao.OPERATION_ID,
+                    MD_OperationDao.OPERATION_DESC
             );
 
             lv_operations.setAdapter(mAdapter);

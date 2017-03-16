@@ -162,7 +162,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             }
         }
 
-        mAdapter = new Act006_Adapter(context,R.layout.lib_custom_cell,opcs);
+        mAdapter = new Act006_Adapter(context,R.layout.namoa_custom_cell_2,opcs);
 
         lv_checklist_opcs.setAdapter(mAdapter);
 

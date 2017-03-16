@@ -112,9 +112,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                     context,
                     R.layout.lib_custom_cell,
                     sites,
-                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
-                    MD_SiteDao.SITE_DESC,
-                    MD_SiteDao.SITE_ID
+                    Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
+                    MD_SiteDao.SITE_CODE,
+                    MD_SiteDao.SITE_ID,
+                    MD_SiteDao.SITE_DESC
             );
 
             lv_sites.setAdapter(mAdapter);

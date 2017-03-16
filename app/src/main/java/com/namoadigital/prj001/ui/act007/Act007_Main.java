@@ -85,11 +85,17 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("lbl_code");
+        transList.add("lbl_id");
+        transList.add("lbl_desc");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -322,7 +328,8 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 new Act007_Adapter_Groups_Products(
                         context,
                         R.layout.act007_main_content_cell_01,
-                        groups_products
+                        groups_products,
+                        hmAux_Trans
                 )
         );
 

@@ -75,6 +75,9 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("lbl_version");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -175,10 +178,13 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                         context,
                         R.layout.lib_custom_cell,
                         forms,
-                        Lib_Custom_Cell_Adapter.CFG_ID_DESC_DESC2,
-                        GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+                        Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
                         GE_Custom_FormDao.CUSTOM_FORM_CODE,
-                        GE_Custom_FormDao.CUSTOM_FORM_DESC
+                        GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+                        GE_Custom_FormDao.CUSTOM_FORM_DESC,
+                        "",
+                        hmAux_Trans.get("lbl_version"),
+                        ""
                         );
         lv_forms.setAdapter(mAdapter);
 
