@@ -146,6 +146,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private transient Dialog infoDialog;
 
+    private boolean hasNFCSupport = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,6 +167,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private void iniSetup() {
         context = getBaseContext();
+
+        hasNFCSupport = ToolBox_Inf.hasNFC(context);
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -727,7 +731,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
-            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature);
+            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
             act011_ff_options.enableTab(formData.getCustom_form_status());
 
             returnValidCheck(String.valueOf(index_old));
@@ -758,6 +762,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
         mkEditTextNMFF.setmPage(Integer.parseInt(cf.get("page")));
         mkEditTextNMFF.setmType(cf.get("custom_form_data_type"));
+
+        if (hasNFCSupport){
+            mkEditTextNMFF.setmNFC(true);
+        } else {
+            mkEditTextNMFF.setmNFC(false);
+        }
 
         if (cf.get("custom_form_data_type").equalsIgnoreCase("DATE")) {
             mkEditTextNMFF.setmBARCODE(false);

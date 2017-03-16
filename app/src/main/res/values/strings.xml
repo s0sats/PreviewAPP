@@ -54,6 +54,7 @@
     <string name="mdots_server_title">Server Comment Title</string>
     <string name="mdots_user_title">User Title"</string>
     <string name="mdots_non_compliance">Non Compliance"</string>
+    <string name="footer_label">Screen</string>
 
 
 </resources>

@@ -6,6 +6,38 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/act011_ff_options_ll_h"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/act011_ff_options_ll_ih"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:paddingLeft="16dp"
+            android:text="Header"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/act011_ff_options_lv_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#4D000000" />
+
+    <LinearLayout
         android:id="@+id/act011_ff_options_ll_i"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -25,12 +57,6 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
-    <ListView
-        android:id="@+id/act011_ff_options_lv_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
     <View
         android:layout_width="match_parent"

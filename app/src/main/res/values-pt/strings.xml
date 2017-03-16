@@ -54,4 +54,5 @@
     <string name="mdots_server_title">Titulo do Comentário do Servidor</string>
     <string name="mdots_user_title">Titulo do Comentário do Usuário"</string>
     <string name="mdots_non_compliance">Não Conformidade"</string>
+    <string name="footer_label">Screen</string>
 </resources>

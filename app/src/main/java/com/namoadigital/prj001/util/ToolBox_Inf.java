@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -928,7 +929,6 @@ public class ToolBox_Inf {
 
     }
 
-
     public static void reprogramAlarms(Context context) {
 
         AlarmManager am = (AlarmManager)
@@ -968,7 +968,17 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("mdots_user_title", context.getResources().getString(R.string.mdots_user_title));
         Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance", context.getResources().getString(R.string.mdots_non_compliance));
         Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", context.getResources().getString(R.string.sys_alert_btn_ok));
+        Constant.HMAUX_TRANS_LIB.put("footer_label", context.getResources().getString(R.string.footer_label));
 
     }
+
+    public static boolean hasNFC(Context context) {
+        if (NfcAdapter.getDefaultAdapter(context) != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }
