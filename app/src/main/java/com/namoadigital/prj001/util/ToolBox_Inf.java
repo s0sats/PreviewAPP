@@ -784,21 +784,22 @@ public class ToolBox_Inf {
 
     /**
      * Verifica se existe o arquivo de banco de dados daquele customer
+     *
      * @param customer_code
      * @return True or false
      */
     public static boolean checkCustomerDBExists(final long customer_code) {
-        File customerDB = new File(Constant.DB_PATH +"/C_"+customer_code+ "_" +Constant.DB_VERSION_CUSTOM + ".db3");
+        File customerDB = new File(Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");
         //
         return customerDB.exists();
     }
 
-    public static void showNoConnectionDialog(Context act_context){
-        String title="";
-        String msg="";
+    public static void showNoConnectionDialog(Context act_context) {
+        String title = "";
+        String msg = "";
 
         //Se possui variavel translate code, busca tradução
-        if(!ToolBox_Con.getPreference_Translate_Code(act_context).equals("")){
+        if (!ToolBox_Con.getPreference_Translate_Code(act_context).equals("")) {
             String mModule = "SYS";
             String mResource_name = "SYS_APP";
             //
@@ -820,7 +821,7 @@ public class ToolBox_Inf {
 
             title = hmTrans.get("alert_no_conection_ttl");
             msg = hmTrans.get("alert_no_conection_msg");
-        }else{
+        } else {
             //Se não busca do arquivo de Strings
             title = act_context.getString(R.string.generic_no_connection_ttl);
             msg = act_context.getString(R.string.generic_no_connection_msg);
@@ -836,11 +837,11 @@ public class ToolBox_Inf {
         );
     }
 
-    public static HMAux loadFooterDialogInfo(Context context){
-        HMAux hmAux =  new HMAux();
-        String customerDesc ="";
-        String siteDesc ="";
-        String operationDesc ="";
+    public static HMAux loadFooterDialogInfo(Context context) {
+        HMAux hmAux = new HMAux();
+        String customerDesc = "";
+        String siteDesc = "";
+        String operationDesc = "";
 
         List<String> transList = new ArrayList<>();
         transList.add("lbl_external_site");
@@ -860,15 +861,15 @@ public class ToolBox_Inf {
 
         MD_Site site =
                 new MD_SiteDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                    ).getByString(
-                            new MD_Site_Sql_001(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ).getByString(
+                        new MD_Site_Sql_001(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ToolBox_Con.getPreference_Site_Code(context)
-                            ).toSqlQuery()
-                    );
+                        ).toSqlQuery()
+                );
 
         MD_Operation operation =
                 new MD_OperationDao(
@@ -886,38 +887,38 @@ public class ToolBox_Inf {
         customerDesc = ToolBox_Con.getPreference_Customer_Code(context) + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context);
         operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
 
-        if(site == null){
+        if (site == null) {
             siteDesc = HmTrans.get("lbl_external_site");
-        }else{
+        } else {
             siteDesc = site.getSite_code() + " - " + site.getSite_desc();
         }
 
-        hmAux.put(Constant.FOOTER_CUSTOMER_LBL,HmTrans.get("footer_dialog_customer_lbl"));
-        hmAux.put(Constant.FOOTER_CUSTOMER,customerDesc);
-        hmAux.put(Constant.FOOTER_SITE_LBL,HmTrans.get("footer_dialog_site_lbl"));
-        hmAux.put(Constant.FOOTER_SITE,siteDesc);
-        hmAux.put(Constant.FOOTER_OPERATION_LBL,HmTrans.get("footer_dialog_operation_lbl"));
-        hmAux.put(Constant.FOOTER_OPERATION,operationDesc);
-        hmAux.put(Constant.FOOTER_BTN_OK,HmTrans.get("footer_dialog_btn_ok"));
-        hmAux.put(Constant.FOOTER_VERSION_LBL,HmTrans.get("footer_version_lbl"));
+        hmAux.put(Constant.FOOTER_CUSTOMER_LBL, HmTrans.get("footer_dialog_customer_lbl"));
+        hmAux.put(Constant.FOOTER_CUSTOMER, customerDesc);
+        hmAux.put(Constant.FOOTER_SITE_LBL, HmTrans.get("footer_dialog_site_lbl"));
+        hmAux.put(Constant.FOOTER_SITE, siteDesc);
+        hmAux.put(Constant.FOOTER_OPERATION_LBL, HmTrans.get("footer_dialog_operation_lbl"));
+        hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
+        hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));
+        hmAux.put(Constant.FOOTER_VERSION_LBL, HmTrans.get("footer_version_lbl"));
 
         return hmAux;
 
     }
 
-    public static String getCustomerLogoPath(Context context){
+    public static String getCustomerLogoPath(Context context) {
 
-        return Constant.CACHE_PATH + "/logo_c_" + ToolBox_Con.getPreference_Customer_Code(context) +".png";
+        return Constant.CACHE_PATH + "/logo_c_" + ToolBox_Con.getPreference_Customer_Code(context) + ".png";
 
     }
 
-    public static void cleanOldSyncChecklistData(Context context){
+    public static void cleanOldSyncChecklistData(Context context) {
         Sync_ChecklistDao syncChecklistDao =
                 new Sync_ChecklistDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                        );
+                );
         //
         syncChecklistDao.remove(
                 new Sync_Checklist_Sql_003(
@@ -928,7 +929,7 @@ public class ToolBox_Inf {
     }
 
 
-    public static void reprogramAlarms(Context context){
+    public static void reprogramAlarms(Context context) {
 
         AlarmManager am = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);
@@ -946,11 +947,28 @@ public class ToolBox_Inf {
         //
         am.setRepeating(
                 AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + ( 5 * 60 * 1000),
+                System.currentTimeMillis() + (5 * 60 * 1000),
                 (43200000),
                 pi
         );
     }
 
+    public static void libTranslation(Context context) {
+        Constant.HMAUX_TRANS_LIB = new HMAux();
+        Constant.HMAUX_TRANS_LIB.put("nfc_no_support", context.getResources().getString(R.string.nfc_no_support));
+        Constant.HMAUX_TRANS_LIB.put("nfc_no_data", context.getResources().getString(R.string.nfc_no_data));
+        Constant.HMAUX_TRANS_LIB.put("nfc_invalid_tag", context.getResources().getString(R.string.nfc_invalid_tag));
+        Constant.HMAUX_TRANS_LIB.put("nfc_invalid_type", context.getResources().getString(R.string.nfc_invalid_type));
+        Constant.HMAUX_TRANS_LIB.put("nfc_security_violation", context.getResources().getString(R.string.nfc_security_violation));
+        Constant.HMAUX_TRANS_LIB.put("nfc_security_crypto_no_support", context.getResources().getString(R.string.nfc_security_crypto_no_support));
+        Constant.HMAUX_TRANS_LIB.put("nfc_security_geral", context.getResources().getString(R.string.nfc_security_geral));
+        Constant.HMAUX_TRANS_LIB.put("alert_title_signature_validation", context.getResources().getString(R.string.alert_title_signature_validation));
+        Constant.HMAUX_TRANS_LIB.put("alert_msg_signature_validation", context.getResources().getString(R.string.alert_msg_signature_validation));
+        Constant.HMAUX_TRANS_LIB.put("mdots_server_title", context.getResources().getString(R.string.mdots_server_title));
+        Constant.HMAUX_TRANS_LIB.put("mdots_user_title", context.getResources().getString(R.string.mdots_user_title));
+        Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance", context.getResources().getString(R.string.mdots_non_compliance));
+        Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", context.getResources().getString(R.string.sys_alert_btn_ok));
+
+    }
 
 }
