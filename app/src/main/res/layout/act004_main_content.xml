@@ -13,6 +13,44 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+    <TextView
+        android:id="@+id/act004_tv_customer_lbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Customer"
+        android:textSize="@dimen/font_size_title"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/act004_tv_customer_val"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mosolf"
+        android:textSize="@dimen/font_size_item"
+        android:paddingLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/act004_tv_site_lbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Site"
+        android:textSize="@dimen/font_size_title"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/act004_tv_site_val"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Externo"
+        android:textSize="@dimen/font_size_item"
+        android:paddingLeft="10dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@android:color/white"
