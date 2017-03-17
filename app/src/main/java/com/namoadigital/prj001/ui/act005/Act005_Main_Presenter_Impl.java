@@ -42,7 +42,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             Act005_Main.MENU_ID_PENDING_DATA,
             Act005_Main.MENU_ID_HISTORIC_DATA,
             Act005_Main.MENU_ID_SEND_DATA,
-            Act005_Main.MENU_ID_SYNC_DATA,
+     //       Act005_Main.MENU_ID_SYNC_DATA,
             Act005_Main.MENU_ID_CLOSE
     };
 
@@ -51,7 +51,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             "lbl_pending_data",
             "lbl_historic_data",
             "lbl_send_data",
-            "lbl_sync_data",
+    //        "lbl_sync_data",
             "lbl_close_app"
     };
 
@@ -60,7 +60,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_lancamento),
             String.valueOf(R.drawable.ic_historico),
             String.valueOf(R.drawable.ic_enviar),
-            String.valueOf(R.drawable.ic_sincronizar),
+     //       String.valueOf(R.drawable.ic_sincronizar),
             String.valueOf(R.drawable.ic_sair)
     };
 

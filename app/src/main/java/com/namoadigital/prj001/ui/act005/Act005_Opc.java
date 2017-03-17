@@ -119,20 +119,20 @@ public class Act005_Opc extends Fragment {
                 DRAWER_OPC_CUSTOMER,
                 DRAWER_OPC_SITE,
                 DRAWER_OPC_OPERATION,
-                DRAWER_OPC_LOGOUT
+             //   DRAWER_OPC_LOGOUT
         };
         String[] icon = {
                 "",
                 "",
                 "",
-                String.valueOf(R.drawable.ic_settings_power_red_24dp)
+               // String.valueOf(R.drawable.ic_settings_power_red_24dp)
         };
 
         String[] desc = {
                 "lbl_change_customer",
                 "lbl_change_site",
                 "lbl_change_operation",
-                "lbl_logout",
+              //  "lbl_logout",
         };
         drawerItemList = new ArrayList<>();
         for (int i = 0; i < id.length; i++) {
