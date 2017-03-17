@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -35,6 +37,10 @@ public class Act005_Opc extends Fragment {
     //
     private ImageView iv_logo;
     private ListView lv_opc;
+    private LinearLayout ll_sync;
+    private LinearLayout ll_logout;
+    private TextView tv_sync_label;
+    private TextView tv_logout_label;
     private IAct005_Opc delegate;
     private List<HMAux> drawerItemList;
     private HMAux hmAux_Trans;
@@ -42,6 +48,10 @@ public class Act005_Opc extends Fragment {
 
     public interface IAct005_Opc {
         void itemClicked(String index);
+
+        void syncClicked();
+
+        void logoutClicked();
     }
 
     public void setOnOpcItemClicked(IAct005_Opc delegate) {
@@ -53,6 +63,9 @@ public class Act005_Opc extends Fragment {
         this.hmAux_Trans = hmAux_Trans;
         translateItens(mModule_Code, mResource_Code);
         sAdapter.notifyDataSetChanged();
+        //
+        tv_sync_label.setText(hmAux_Trans.get("lbl_sync_data"));
+        tv_logout_label.setText(hmAux_Trans.get("lbl_logout"));
     }
 
     private void translateItens(String mModule_Code, String mResource_Code) {
@@ -82,6 +95,12 @@ public class Act005_Opc extends Fragment {
     private void iniVar(View view) {
         iv_logo = (ImageView) view.findViewById(R.id.act005_opc_iv_logo);
         //
+        ll_sync = (LinearLayout) view.findViewById(R.id.act005_opc_ll_sync);
+        ll_logout = (LinearLayout) view.findViewById(R.id.act005_opc_ll_logout);
+        //
+        tv_sync_label = (TextView) view.findViewById(R.id.act005_opc_tv_sync);
+        tv_logout_label = (TextView) view.findViewById(R.id.act005_opc_tv_logout);
+        //
         lv_opc = (ListView) view.findViewById(R.id.act005_opc_lv_opt);
         //
         lvSetup();
@@ -110,6 +129,20 @@ public class Act005_Opc extends Fragment {
                     HMAux item = (HMAux) parent.getItemAtPosition(position);
                     delegate.itemClicked(item.get(DRAWER_KEY_OPC_ID));
                 }
+            }
+        });
+
+        ll_sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delegate.syncClicked();
+            }
+        });
+
+        ll_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delegate.logoutClicked();
             }
         });
     }

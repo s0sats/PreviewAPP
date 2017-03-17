@@ -122,6 +122,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_sync_finish_msg");
         transList.add("alert_send_finish_ttl");
         transList.add("alert_send_finish_msg");
+        transList.add("drawer_sync_alert_ttl");
+        transList.add("drawer_sync_alert_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -278,6 +280,44 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 }
                 //Fecha Drawer
                 mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+
+            @Override
+            public void syncClicked() {
+
+                ToolBox.alertMSG(
+                        Act005_Main.this,
+                        hmAux_Trans.get("drawer_sync_alert_ttl"),
+                        hmAux_Trans.get("drawer_sync_alert_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                            }
+                        },
+                        1
+                );
+
+            }
+
+            @Override
+            public void logoutClicked() {
+
+                ToolBox.alertMSG(
+                        Act005_Main.this,
+                        hmAux_Trans.get("drawer_logout_alert_ttl"),
+                        hmAux_Trans.get("drawer_logout_alert_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ToolBox_Con.cleanPreferences(Act005_Main.this);
+                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
+                                finish();
+                            }
+                        },
+                        1
+                );
+
             }
         });
 
@@ -471,6 +511,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             showSuccessDialog();
             //Atualiza menu e os badges
             mPresenter.getMenuItens(hmAux_Trans);
+            //Fecha Drawer
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+
         }
     }
 
