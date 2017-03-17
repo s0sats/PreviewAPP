@@ -38,7 +38,7 @@
                 android:id="@+id/act_011_dialog_iv_siganture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/padrao_MI20"
+                android:background="#FFFFFFFF"
                 android:src="@mipmap/ic_launcher" />
 
         </LinearLayout>

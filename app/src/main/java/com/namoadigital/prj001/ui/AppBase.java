@@ -3,6 +3,16 @@ package com.namoadigital.prj001.ui;
 import android.app.Application;
 import android.os.Environment;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.namoadigital.prj001.util.Constant.APP_MODULE;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
@@ -54,5 +64,6 @@ public class AppBase extends Application {
         DB_VERSION_CUSTOM = 4;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
+        ToolBox_Inf.libTranslation(getApplicationContext());
     }
 }

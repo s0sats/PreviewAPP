@@ -44,6 +44,9 @@ public class Act011_FF_Options extends Fragment {
 
     private Act011_FF_Options_Adapter adapter_tabs;
 
+    private transient LinearLayout ff_options_ll_h;
+    private transient TextView ff_options_ll_ih;
+
     private transient LinearLayout ff_options_ll_i;
     private transient TextView ff_options_ll_it;
 
@@ -60,10 +63,10 @@ public class Act011_FF_Options extends Fragment {
     private transient ImageView ff_options_ll_iv_a;
 
 
-    public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs, String signature) {
+    public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs, String signature, String desc) {
         this.tabsAndFields = tabsAndFields;
         //
-        loadCF_Fields(tabsAndFields, resTabs, pdfs, signature);
+        loadCF_Fields(tabsAndFields, resTabs, pdfs, signature, desc);
     }
 
     public interface ICustom_Form_FF_Options {
@@ -109,6 +112,9 @@ public class Act011_FF_Options extends Fragment {
         context = getActivity();
 
         lv_tabs = (ListView) view.findViewById(R.id.act011_ff_options_lv_tabs);
+
+        ff_options_ll_h  = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_h);
+        ff_options_ll_ih = (TextView) view.findViewById(R.id.act011_ff_options_ll_ih);
 
         ff_options_ll_i = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_i);
         ff_options_ll_it = (TextView) view.findViewById(R.id.act011_ff_options_ll_it);
@@ -217,12 +223,15 @@ public class Act011_FF_Options extends Fragment {
         if (sFile.exists()) {
             ff_options_ll_a.setVisibility(View.VISIBLE);
         } else {
-            ff_options_ll_a.setVisibility(View.INVISIBLE);
+            ff_options_ll_a.setVisibility(View.GONE);
         }
 
     }
 
-    public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs, String signature) {
+    public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs, String signature, String description) {
+
+        ff_options_ll_ih.setText(description);
+
         ArrayList<HMAux> tabs = new ArrayList<>();
         this.signature = signature;
 

@@ -6,7 +6,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
  * Created by neomatrix on 09/01/17.
  */
 
-public class Constant extends ConstantBase{
+public class Constant extends ConstantBase {
 
     /**
      * PROJECT ID - PRJ001 - SMS
@@ -115,7 +115,7 @@ public class Constant extends ConstantBase{
      */
     public static final String GS_SESSION_APP = "sessionapp";
     public static final String GS_DATA_PACKAGE = "datapackage";
-    public static final String GS_PRODUCT_CODE = "product_code" ;
+    public static final String GS_PRODUCT_CODE = "product_code";
     /**
      * Serial WS
      */
@@ -172,8 +172,6 @@ public class Constant extends ConstantBase{
 
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
-
-
 
 
 }

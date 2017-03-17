@@ -40,4 +40,21 @@
     <string name="generic_zip_not_found_msg">Zip data not found!\nPlease try again!</string>
     <string name="generic_no_forms_found">No forms found for this product!</string>
     <string name="act002_title_">Customer</string>
+    <!-- Lib -->
+    <string name="nfc_no_support">Error: This device doesn\'t support NFC.</string>
+    <string name="nfc_no_data">Error: No Info avalilable.</string>
+    <string name="nfc_invalid_tag">Error: Invalid Tag.</string>
+    <string name="nfc_invalid_type">Error: Invalid Tag Type: (Serial or Location). Tag Allowed: (Login).</string>
+    <string name="nfc_security_violation">Error: Tag Violation Detected. Invalid Serial.</string>
+    <string name="nfc_security_crypto_no_support">Error: UnsupportedEncoding\n".</string>
+    <string name="nfc_security_geral">Error:\n"</string>
+    <string name="alert_title_signature_validation">Signature Validation</string>
+    <string name="alert_msg_signature_validation">Error: No Signature Especifyied!!!</string>
+    <string name="sys_alert_btn_ok">Ok</string>
+    <string name="mdots_server_title">Server Comment Title</string>
+    <string name="mdots_user_title">User Title"</string>
+    <string name="mdots_non_compliance">Non Compliance"</string>
+    <string name="footer_label">Screen</string>
+
+
 </resources>

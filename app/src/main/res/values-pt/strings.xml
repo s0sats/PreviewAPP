@@ -40,4 +40,19 @@
     <string name="generic_zip_not_found_msg">Arquivo zip não encontrado!\nPor favor tente novamente!</string>
     <string name="generic_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
     <string name="act002_title_">Lista de Clientes</string>
+    <!-- Lib -->
+    <string name="nfc_no_support">Erro: Esse aparelho não suporta NFC.</string>
+    <string name="nfc_no_data">Erro: Informação não disponível.</string>
+    <string name="nfc_invalid_tag">Erro: Tag Inválida.</string>
+    <string name="nfc_invalid_type">Erro: Tipo de Tag Inválida: (Serial ou Localização). Tag permitida: (Login).</string>
+    <string name="nfc_security_violation">Erro: Detectada Violação de Tag. Serial Inválido.</string>
+    <string name="nfc_security_crypto_no_support">Erro: Codificação não suportada\n".</string>
+    <string name="nfc_security_geral">Erro:\n"</string>
+    <string name="alert_title_signature_validation">Validação de Assinatura</string>
+    <string name="alert_msg_signature_validation">Erro: Assinatura na informada!!!</string>
+    <string name="sys_alert_btn_ok">Ok</string>
+    <string name="mdots_server_title">Titulo do Comentário do Servidor</string>
+    <string name="mdots_user_title">Titulo do Comentário do Usuário"</string>
+    <string name="mdots_non_compliance">Não Conformidade"</string>
+    <string name="footer_label">Screen</string>
 </resources>
