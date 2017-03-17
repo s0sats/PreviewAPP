@@ -35,8 +35,11 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private Context context;
     private Act010_Main_Presenter mPresenter;
     private ListView lv_forms;
+    private TextView tv_form_ttl;
     private TextView tv_form_type_label;
-    private TextView tv_form_type_desc;
+    private TextView tv_form_type_val;
+    private TextView tv_form_type_desc_label;
+    private TextView tv_form_type_desc_val;
 
     private Lib_Custom_Cell_Adapter mAdapter;
     private Bundle bundle;
@@ -97,11 +100,21 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
-        tv_form_type_label = (TextView) findViewById(R.id.act010_tv_form_label);
+        tv_form_ttl = (TextView) findViewById(R.id.act010_tv_form_lbl);
+        tv_form_ttl.setTag("lbl_form_ttl");
+        views.add(tv_form_ttl);
+        //
+        tv_form_type_label = (TextView) findViewById(R.id.act010_tv_form_type_lbl);
         tv_form_type_label.setTag("lbl_form_type_label");
         views.add(tv_form_type_label);
         //
-        tv_form_type_desc = (TextView) findViewById(R.id.act010_tv_form_desc);
+        tv_form_type_val = (TextView) findViewById(R.id.act010_tv_form_type_val);
+        //
+        tv_form_type_desc_label = (TextView) findViewById(R.id.act010_tv_form_desc_lbl);
+        tv_form_type_desc_label.setTag("lbl_form_type_desc_label");
+        views.add(tv_form_type_desc_label);
+        //
+        tv_form_type_desc_val = (TextView) findViewById(R.id.act010_tv_form_desc_val);
         //
         lv_forms = (ListView) findViewById(R.id.act010_lv_form);
         //
@@ -157,8 +170,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void initActions() {
-
-        tv_form_type_desc.setText(custom_form_type + " - " + custom_form_type_desc);
+        tv_form_type_val.setText(String.valueOf(custom_form_type));
+        tv_form_type_desc_val.setText(custom_form_type_desc);
         //
         lv_forms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

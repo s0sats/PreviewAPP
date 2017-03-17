@@ -16,119 +16,188 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <TextView
+                android:id="@+id/act008_tv_product_ttl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="Product"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="15dp">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act008_tv_product_code"
+                    android:id="@+id/act008_tv_product_code_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:padding="2dp"
+                    android:text="Code"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/act008_tv_product_id_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:padding="2dp"
+                    android:text="Id"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="5dp">
+
+                <TextView
+                    android:id="@+id/act008_tv_product_code_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:padding="2dp"
+                    android:paddingLeft="5dp"
+                    android:text="Code"
+                    android:textColor="@color/namoa_color_light_blue"
+                    android:textSize="@dimen/font_size_item_md" />
+
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/act008_tv_product_id_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:padding="2dp"
+                    android:text="Id"
+                    android:textColor="@color/namoa_color_light_blue"
+                    android:textSize="@dimen/font_size_item_md" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/act008_tv_product_desc_ttl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="left"
+                android:padding="2dp"
+                android:text="Description"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act008_tv_product_desc_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="2dp"
+                android:paddingTop="2dp"
+                android:text="Product Description"
+                android:textColor="@color/namoa_color_light_blue"
+                android:textSize="@dimen/font_size_item_md" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act008_tv_require_serial_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Product"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:text="Require Serial" />
 
                 <TextView
-                    android:id="@+id/act008_tv_product_code_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/border_back"
-                    android:padding="10dp"
-                    android:text="C2530A"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
-                    />
-
-
-                <TextView
-                    android:id="@+id/act008_tv_description"
+                    android:id="@+id/act008_tv_require_serial_val"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Description"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_marginLeft="5dp"
+                    android:text="Sim"
+                    android:textColor="@color/namoa_color_disabled_gray" />
+
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/act008_tv_description_value"
-                    android:layout_width="match_parent"
+                    android:id="@+id/act008_tv_allow_lbl"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/border_back"
-                    android:padding="10dp"
-                    android:text="Product Description"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:text="Allow Creation" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/act008_tv_allow_val"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/act008_chk_require_serial"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:enabled="false"
-                        android:text="Require Serial"
-                        />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
-                    <CheckBox
-                        android:id="@+id/act008_chk_allow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:enabled="false"
-                        android:text="Allow Creation" />
+                    android:layout_marginLeft="5dp"
+                    android:text="Não"
+                    android:textColor="@color/namoa_color_disabled_gray" />
 
 
-                </LinearLayout>
+            </LinearLayout>
 
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act008_mket_serial"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/namoa_bg_1"
-                    android:padding="10dp"
                     android:inputType="text"
+                    android:padding="10dp"
                     app:mNFC="false"
                     app:mOCR="false" />
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <Button
+                    android:id="@+id/act008_btn_create"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="5dp"
-                    android:layout_marginTop="10dp">
+                    android:background="@drawable/btn_namoa_main_states"
+                    android:text="NEW"
+                    android:textColor="@color/padrao_WHITE" />
 
-                    <Button
-                        android:id="@+id/act008_btn_create"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_namoa_main_states"
-                        android:textColor="@color/padrao_WHITE"
-                        android:text="NEW"
-                     />
-
-                </LinearLayout>
-
+            </LinearLayout>
 
 
         </LinearLayout>

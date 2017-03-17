@@ -15,20 +15,48 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp">
+
         <TextView
-            android:id="@+id/act010_tv_form_label"
+            android:id="@+id/act010_tv_form_lbl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Form Type:"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_size_title_md"
             android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/act010_tv_form_type_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Type:"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"/>
         <TextView
-            android:id="@+id/act010_tv_form_desc"
+            android:id="@+id/act010_tv_form_type_val"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="22 - huehue br"
-            android:textSize="16sp"
+            android:text="22"
+            android:textSize="@dimen/font_size_item"
             android:paddingLeft="10dp"
+            android:textColor="@color/namoa_color_light_blue"
+            />
+
+            <TextView
+                android:id="@+id/act010_tv_form_desc_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Desc:"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/act010_tv_form_desc_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="huehue br"
+            android:textSize="@dimen/font_size_item"
+            android:paddingLeft="10dp"
+            android:textColor="@color/namoa_color_light_blue"
             />
 
     </LinearLayout>

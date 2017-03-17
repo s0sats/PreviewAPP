@@ -30,7 +30,8 @@
         android:layout_height="wrap_content"
         android:text="Mosolf"
         android:textSize="@dimen/font_size_item"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:textColor="@color/namoa_color_light_blue"/>
 
     <TextView
         android:id="@+id/act004_tv_site_lbl"
@@ -46,7 +47,8 @@
         android:layout_height="wrap_content"
         android:text="Externo"
         android:textSize="@dimen/font_size_item"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:textColor="@color/namoa_color_light_blue"/>
     </LinearLayout>
 
     <LinearLayout

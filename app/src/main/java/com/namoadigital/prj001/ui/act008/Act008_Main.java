@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -39,13 +38,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public static final String WS_PROCESS_SERIAL = "ws_process_serial";
 
     private Context context;
+    private TextView tv_product_ttl;
     private TextView tv_product_code_label;
     private TextView tv_product_code_value;
+    private TextView tv_product_id_label;
+    private TextView tv_product_id_value;
     private TextView tv_product_desc_label;
     private TextView tv_product_desc_value;
     private MKEditTextNM mket_serial_id;
-    private CheckBox chk_required;
-    private CheckBox chk_allow_new;
+    private TextView tv_required_lbl;
+    private TextView tv_required_val;
+    private TextView tv_allow_new_lbl;
+    private TextView tv_allow_new_val;
     private Button btn_create;
 
     private Act008_Main_Presenter mPresenter;
@@ -102,6 +106,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("alert_no_serial_typed_msg");
         transList.add("sys_alert_btn_cancel");
         transList.add("sys_alert_btn_ok");
+        transList.add("product_ttl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -135,29 +140,43 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
         controls_sta.add(mket_serial_id);
         //
-        tv_product_code_label = (TextView) findViewById(R.id.act008_tv_product_code);
+        tv_product_ttl = (TextView) findViewById(R.id.act008_tv_product_ttl);
+        tv_product_ttl.setTag("product_ttl");
+        //
+        tv_product_code_label = (TextView) findViewById(R.id.act008_tv_product_code_lbl);
         tv_product_code_label.setTag("product_label");
         //
-        tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_value);
+        tv_product_id_label = (TextView) findViewById(R.id.act008_tv_product_id_lbl);
+        tv_product_id_label.setTag("product_id_label");
         //
-        tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_description);
+        tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_val);
+        tv_product_id_value = (TextView) findViewById(R.id.act008_tv_product_id_val);
+        //
+        tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_product_desc_ttl);
         tv_product_desc_label.setTag("product_desc_label");
-        tv_product_desc_value = (TextView) findViewById(R.id.act008_tv_description_value);
+        tv_product_desc_value = (TextView) findViewById(R.id.act008_tv_product_desc_value);
         //
-        chk_required = (CheckBox) findViewById(R.id.act008_chk_require_serial);
-        chk_required.setTag("chk_required");
-        chk_allow_new = (CheckBox) findViewById(R.id.act008_chk_allow);
-        chk_allow_new.setTag("chk_allow_new");
+        tv_required_lbl = (TextView) findViewById(R.id.act008_tv_require_serial_lbl);
+        tv_required_lbl.setTag("chk_required");
+
+        tv_required_val = (TextView) findViewById(R.id.act008_tv_require_serial_val);
+
+        tv_allow_new_lbl = (TextView) findViewById(R.id.act008_tv_allow_lbl);
+        tv_allow_new_lbl.setTag("chk_allow_new");
+
+        tv_allow_new_val = (TextView) findViewById(R.id.act008_tv_allow_val);
 
         btn_create = (Button) findViewById(R.id.act008_btn_create);
         btn_create.setTag("btn_create");
 
         //Adiciona Views na lista de tradução
 
+        views.add(tv_product_ttl);
         views.add(tv_product_code_label);
+        views.add(tv_product_id_label);
         views.add(tv_product_desc_label);
-        views.add(chk_required);
-        views.add(chk_allow_new);
+        views.add(tv_required_lbl);
+        views.add(tv_allow_new_lbl);
         views.add(btn_create);
 
     }
@@ -223,13 +242,24 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void setProductValues(MD_Product md_product) {
         //
         tv_product_code_value.setText(String.valueOf(md_product.getProduct_code()));
-        tv_product_desc_value.setText(md_product.getProduct_id()+ " - " + md_product.getProduct_desc());
+        tv_product_id_value.setText(md_product.getProduct_id());
+        tv_product_desc_value.setText(md_product.getProduct_desc());
         //
         serial_required = md_product.getRequire_serial();
         serial_allow_new = md_product.getAllow_new_serial_cl();
         //
-        chk_required.setChecked( md_product.getRequire_serial() == 1 ? true : false );
-        chk_allow_new.setChecked( md_product.getAllow_new_serial_cl() == 1 ? true : false);
+        tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
+        if( md_product.getRequire_serial() == 1){
+            tv_required_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+            tv_required_val.setTextColor(getResources().getColor(R.color.namoa_color_orange));
+        }
+        //
+        tv_allow_new_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
+        if( md_product.getAllow_new_serial_cl() == 1){
+            tv_allow_new_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+            tv_allow_new_val.setTextColor(getResources().getColor(R.color.namoa_color_orange));
+        }
+
     }
 
     @Override
