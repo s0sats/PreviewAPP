@@ -70,11 +70,15 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     }
 
     private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("lbl_type");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -174,9 +178,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                     context,
                     R.layout.lib_custom_cell,
                     form_types,
-                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
+                    Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
+                    GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+                    "",
                     GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,
-                    GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE
+                    hmAux_Trans.get("lbl_type"),
+                    "",
+                    ""
             );
             //
             lv_form_types.setAdapter(mAdapter);

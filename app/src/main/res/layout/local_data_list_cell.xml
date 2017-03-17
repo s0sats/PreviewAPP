@@ -5,29 +5,226 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="15dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_date_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Data"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="22/01/1988"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_hour_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hora"/>
+
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="12:58"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/local_data_list_cell_01_tv_01"
+        android:id="@+id/local_data_list_cell_01_tv_prod_ttl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Teste"
-        android:textSize="18sp" />
+        android:text="Produto"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp">
 
-    <TextView
-        android:id="@+id/local_data_list_cell_01_tv_02"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_code_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="int.code"
+                android:gravity="left"
+                />
+
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_code_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="15"
+                android:visibility="gone"/>
+        </LinearLayout>
+        <View
+            android:layout_width="20dp"
+            android:layout_height="0dp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_id_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ext.cod"
+                android:gravity="right"/>
+
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_id_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="ND0015"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="02020"
-        android:textSize="15sp" />
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_prod_desc_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Desc"
+                android:gravity="left"
+                />
+
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_prod_desc_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="15"
+                android:visibility="gone"/>
+        </LinearLayout>
+        <View
+            android:layout_width="20dp"
+            android:layout_height="0dp"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_serial_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="S/N"
+                android:gravity="right"/>
+
+            <TextView
+                android:id="@+id/local_data_list_cell_01_tv_serial_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GTH25DE3"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+    </LinearLayout>
     <TextView
-        android:id="@+id/local_data_list_cell_01_tv_03"
+        android:id="@+id/local_data_list_cell_01_tv_form_ttl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="02020"
-        android:textSize="15sp" />
+        android:text="Formulario"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp">
+        <TextView
+            android:id="@+id/local_data_list_cell_01_tv_type_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tipo:"/>
+
+        <TextView
+            android:id="@+id/local_data_list_cell_01_tv_type_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="Teste"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp">
+        <TextView
+            android:id="@+id/local_data_list_cell_01_tv_form_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Form:"/>
+
+        <TextView
+            android:id="@+id/local_data_list_cell_01_tv_form_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="Inspec. Bug"
+            android:visibility="gone"/>
+    </LinearLayout>
+
 
 </LinearLayout>

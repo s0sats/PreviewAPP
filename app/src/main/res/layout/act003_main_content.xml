@@ -10,6 +10,29 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act003.Act003_Main"
     tools:showIn="@layout/act003_main">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+        <TextView
+            android:id="@+id/act003_tv_customer_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customer"
+            android:textSize="@dimen/font_size_title"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/act003_tv_customer_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mosolf"
+            android:textSize="@dimen/font_size_item"
+            android:paddingLeft="10dp"
+            />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

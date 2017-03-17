@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -19,6 +20,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +30,8 @@ import java.util.List;
 public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private Context context;
+    private TextView tv_customer_lbl;
+    private TextView tv_customer_val;
     private ListView lv_sites;
     private Act003_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
@@ -65,6 +69,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private void initVars() {
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
         //
+        tv_customer_lbl = (TextView) findViewById(R.id.act003_tv_customer_lbl);
+        tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
+        //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
         //
         if(mPresenter.checkPreferenceIsSet()){
@@ -75,6 +82,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     private void initActions() {
+
+        tv_customer_lbl.setText(hmAux_Trans.get("lbl_customer"));
+        tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
 
         lv_sites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -102,9 +112,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                     context,
                     R.layout.lib_custom_cell,
                     sites,
-                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
-                    MD_SiteDao.SITE_DESC,
-                    MD_SiteDao.SITE_ID
+                    Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
+                    MD_SiteDao.SITE_CODE,
+                    MD_SiteDao.SITE_ID,
+                    MD_SiteDao.SITE_DESC
             );
 
             lv_sites.setAdapter(mAdapter);
@@ -112,12 +123,15 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     private void loadTranslation(){
+        List<String> transList = new ArrayList<String>();
+        transList.add("lbl_customer");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
 
     }

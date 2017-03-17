@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -16,6 +17,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,9 +35,14 @@ import java.util.List;
 public class Act004_Main extends Base_Activity implements Act004_Main_View {
 
     private Context context;
+    private TextView tv_customer_lbl;
+    private TextView tv_customer_val;
+    private TextView tv_site_lbl;
+    private TextView tv_site_val;
     private ListView lv_operations;
     private Act004_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +72,9 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         transList.add("act004_title");
         transList.add("alert_no_operation_title");
         transList.add("alert_no_operation_msg");
+        transList.add("lbl_customer");
+        transList.add("lbl_site");
+        //transList.add("lbl_external_site");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -76,6 +88,11 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
 
     private void initVars() {
         mPresenter = new Act004_Main_Presenter_Impl(context, this);
+        //
+        tv_customer_lbl = (TextView) findViewById(R.id.act004_tv_customer_lbl);
+        tv_customer_val = (TextView) findViewById(R.id.act004_tv_customer_val);
+        tv_site_lbl = (TextView) findViewById(R.id.act004_tv_site_lbl);
+        tv_site_val = (TextView) findViewById(R.id.act004_tv_site_val);
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
         //
@@ -94,6 +111,32 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     }
 
     private void initActions() {
+
+        tv_customer_lbl.setText(hmAux_Trans.get("lbl_customer"));
+        tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+
+        tv_site_lbl.setText(hmAux_Trans.get("lbl_site"));
+
+        MD_Site site =
+                new MD_SiteDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ).getByString(
+                        new MD_Site_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_Site_Code(context)
+                        ).toSqlQuery()
+                );
+
+        String siteDesc = hmAux_Trans.get("lbl_external_site");
+
+        if(site != null){
+            siteDesc = site.getSite_desc();
+        }
+
+        tv_site_val.setText(siteDesc);
+        //
         lv_operations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
@@ -132,9 +175,10 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     context,
                     R.layout.lib_custom_cell,
                     operations,
-                    Lib_Custom_Cell_Adapter.CFG_ID_DESC,
-                    MD_OperationDao.OPERATION_DESC,
-                    MD_OperationDao.OPERATION_ID
+                    Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
+                    MD_OperationDao.OPERATION_CODE,
+                    MD_OperationDao.OPERATION_ID,
+                    MD_OperationDao.OPERATION_DESC
             );
 
             lv_operations.setAdapter(mAdapter);

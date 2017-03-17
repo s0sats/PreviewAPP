@@ -65,6 +65,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 HMAux item = new HMAux();
                 item.put("code", aux.get("group_code"));
                 item.put("desc", aux.get("group_desc"));
+                item.put("id", aux.get("group_id"));
                 item.put("full_desc", aux.get("full_group_desc"));
                 item.put("type", aux.get("type"));
                 // Hugo
@@ -77,6 +78,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                 HMAux item = new HMAux();
                 item.put("code", aux.get("product_code"));
                 item.put("desc", aux.get("product_desc"));
+                item.put("id", aux.get("product_id"));
                 item.put("full_desc", aux.get("full_product_desc"));
                 item.put("type", aux.get("type"));
                 item.put("recursive", aux.get(""));

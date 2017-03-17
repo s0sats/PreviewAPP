@@ -101,7 +101,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             prepareExecSessionProcess(customers.get(0),0,1,0);
 
         }else{
-            mAdapter =  new EV_User_Customer_Adapter(context,R.layout.lib_custom_cell,customers);
+            mAdapter =  new EV_User_Customer_Adapter(context,R.layout.ev_user_customer_cell,customers);
             lv_customers.setAdapter(mAdapter);
 
         }

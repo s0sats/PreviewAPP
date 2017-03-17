@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -56,27 +55,18 @@ public class Act006_Adapter extends BaseAdapter {
             convertView = mInflater.inflate(resource,parent,false);
 
         }
-
-        //Inicializa variaveis do layout da celula
-        LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.lib_custom_cell_ll_background);
-        //
-        TextView tvItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_item);
-        //
-        TextView tvSubItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_sub_item);
-        //
-        ImageView iv001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
-        //
-        ImageView iv002 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_002);
-        //
-        TextView  tvTopQty = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_top);
         //Resgata HmAux com as informações
         HMAux item = source.get(position);
 
+        //Inicializa variaveis do layout da celula
+        LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.namoa_custom_cell_2_ll_background);
+        //
+        TextView tvItem = (TextView) convertView.findViewById(R.id.namoa_custom_cell_2_tv_item);
+        //
+        TextView tvSubItem = (TextView) convertView.findViewById(R.id.namoa_custom_cell_2_tv_sub_item);
+
         //Esconde elementos que  não serão mostrados
         tvSubItem.setVisibility(View.GONE);
-        iv001.setVisibility(View.GONE);
-        iv002.setVisibility(View.GONE);
-        tvTopQty.setVisibility(View.GONE);
 
         //Configura tvItem
         tvItem.setTextColor(context.getResources().getColor(R.color.padrao_WHITE));

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,11 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +27,7 @@ import java.util.List;
 public class Lib_Custom_Cell_Adapter extends BaseAdapter {
 
     //CONSTANTES
-    public static final String CFG_ID_DESC = "ID_DESC";
+    public static final String CFG_ID_CODE_DESC = "ID_DESC";
     public static final String CFG_ID_DESC_DESC2 = "ID_DESC1_DESC2";
     public static final String CFG_DESC = "DESC";
     public static final String CFG_DESC_QTY = "DESC_QTY";
@@ -31,35 +36,42 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
     private int resource;
     private List<HMAux> source;
     private String config;
+    private String key_code;
     private String key_id;
-    private String key_text;
-    private String key_text2;
+    private String key_desc;
+    private String trans_lbl_code ="";
+    private String trans_lbl_id ="";
+    private String trans_lbl_desc ="";
+    //
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Name = "lib_custom_cell_adapter" ;
+    private HMAux hmAux_Trans;
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config,  String key_text) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config, String key_code, String key_id, String key_desc) {
         this.context = context;
         this.resource = resource;
         this.source = source;
         this.config = config;
-        this.key_text = key_text;
+        this.key_code = key_code;
+        this.key_id = key_id;
+        this.key_desc = key_desc;
+
+        loadTranslation();
     }
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config,  String key_text, String key_id) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config, String key_code, String key_id, String key_desc, String trans_lbl_code, String trans_lbl_id, String trans_lbl_desc) {
         this.context = context;
         this.resource = resource;
         this.source = source;
         this.config = config;
-        this.key_text = key_text;
+        this.key_code = key_code;
         this.key_id = key_id;
-    }
+        this.key_desc = key_desc;
+        this.trans_lbl_code = trans_lbl_code;
+        this.trans_lbl_id = trans_lbl_id;
+        this.trans_lbl_desc = trans_lbl_desc;
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> source, String config, String key_text, String key_id, String key_text2) {
-        this.context = context;
-        this.resource = resource;
-        this.source = source;
-        this.config = config;
-        this.key_id = key_id;
-        this.key_text = key_text;
-        this.key_text2 = key_text2;
+        loadTranslation();
     }
 
     @Override
@@ -85,98 +97,107 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
             //
             convertView = mInflater.inflate(resource,parent,false);
         }
+        //Resgata HmAux com as informações
+        HMAux item = source.get(position);
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.lib_custom_cell_ll_background);
         //
-        TextView tvItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_item);
+        TextView tv_code = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_code);
         //
-        TextView tvSubItem = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_sub_item);
+        TextView tv_id = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_id);
         //
-        ImageView iv001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
+        TextView tv_desc = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_desc);
         //
-        ImageView iv002 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_002);
-        //
-        TextView  tvTopQty = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_top);
-        //Resgata HmAux com as informações
-        HMAux item = source.get(position);
+        ImageView iv_001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
 
         //Inicia configuraçõa dos elementos
-        tvSubItem.setVisibility(View.GONE);
-        iv001.setVisibility(View.GONE);
-        iv002.setVisibility(View.GONE);
+        Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+        llBackground.setBackground(llDrawable);
+        //
+        iv_001.setVisibility(View.GONE);
+        //
+        ColorStateList filterColor =  context.getResources().getColorStateList(R.color.lib_custom_cell_font_color);
+        tv_code.setTextColor(filterColor);
+        tv_id.setTextColor(filterColor);
+        tv_desc.setTextColor(filterColor);
 
-        Drawable llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_1_states);
-        String itemText = "";
+        String codeText = (trans_lbl_code != "" ? trans_lbl_code : hmAux_Trans.get("lbl_code")) + " ";
+        String idText =  (trans_lbl_id != "" ? trans_lbl_id :hmAux_Trans.get("lbl_id") )+ " ";
+        String descText =  (trans_lbl_desc != "" ? trans_lbl_desc : ""/*hmAux_Trans.get("lbl_desc")*/) +"";
 
         switch (config){
-            case CFG_ID_DESC:
-                llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                //
+            case CFG_ID_CODE_DESC:
+             //
                 try {
-                    if (item.get(key_id).trim().length() > 0){
-                        itemText = item.get(key_id) + " - ";
+                    if (item.get(key_code).trim().length() > 0){
+                        codeText += item.get(key_code);
                     }
                 } catch (Exception e) {
+                    codeText = "";
                 }
-                //
-                itemText += item.get(key_text);
-                tvItem.setText(itemText);
-                break;
-            case CFG_ID_DESC_DESC2:
-                llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                //
                 try {
                     if (item.get(key_id).trim().length() > 0){
-                        itemText = item.get(key_id) + " - ";
+                        idText += item.get(key_id);
                     }
                 } catch (Exception e) {
+                    idText ="";
+                }
+                try {
+                    if (item.get(key_desc).trim().length() > 0){
+                        descText = item.get(key_desc);
+                    }
+                } catch (Exception e) {
+                    descText = "";
                 }
                 //
-                try {
-                    itemText += item.get(key_text);
-                } catch (Exception e) {
-                }
-                //
-                try {
-                    itemText += " - " + item.get(key_text2);
-                } catch (Exception e) {
-                }
-                tvItem.setText(itemText);
+
+                tv_code.setText(codeText);
+                tv_id.setText(idText);
+                tv_desc.setText(descText);
 
                 break;
+
             case CFG_DESC_QTY:
-                llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                //
-                itemText = item.get(key_text);
+                descText = item.get(key_desc);
                 //
                 try {
                     if (item.get(key_id).trim().length() > 0){
-                        itemText += " (" + item.get(key_id) + ")";
+                        descText += " (" + item.get(key_id) + ")";
                     }
                 } catch (Exception e) {
-                    itemText += " ( - )";
+                    descText += " ( - )";
                 }
                 //
                 //
-                tvItem.setText(itemText);
+                tv_desc.setText(descText);
                 break;
 
-            case CFG_DESC:default:
-                llBackground.setBackground(llDrawable);
-                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                tvSubItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_cell_1_font_color));
-                //
-                itemText = item.get(key_text);
-                tvItem.setText(itemText);
+            default:
+                descText = item.get(key_desc);
+                tv_desc.setText(descText);
                 break;
         }
 
         return convertView;
+    }
+
+
+    private void loadTranslation() {
+        List<String> translateList = new ArrayList<>();
+        translateList.add("lbl_code");
+        translateList.add("lbl_id");
+        translateList.add("lbl_desc");
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        mResource_Name
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
     }
 }

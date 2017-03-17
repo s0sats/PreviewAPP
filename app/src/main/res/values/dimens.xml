@@ -6,6 +6,13 @@
 
     <dimen name="font_size_title">15sp</dimen>
     <dimen name="font_size_item">12sp</dimen>
+
+    <dimen name="font_size_title_md">18sp</dimen>
+    <dimen name="font_size_item_md">16sp</dimen>
+
+
+
+
     <dimen name="btn_width_default">200dp</dimen>
 
 

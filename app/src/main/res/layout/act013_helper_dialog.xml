@@ -19,7 +19,7 @@
         android:id="@+id/act013_helper_dialog_chk_processing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/custom_yellow"
+        android:buttonTint="@color/namoa_color_orange_light2"
         android:layout_marginBottom="20dp"
         android:checked="true"
         android:clickable="false"
@@ -39,7 +39,7 @@
         android:id="@+id/act013_helper_dialog_chk_finalized"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_color_light_blue"
+        android:buttonTint="@color/namoa_color_light_blue3"
         android:layout_marginBottom="20dp"
         android:checked="true"
         android:clickable="false"/>
