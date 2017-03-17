@@ -109,6 +109,9 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
             convertView = mInflater.inflate(resource, parent, false);
         }
 
+        LinearLayout ll_back_b = (LinearLayout)
+                convertView.findViewById(R.id.act011_ff_options_cell_ll_a_b);
+
         LinearLayout ll_back = (LinearLayout)
                 convertView.findViewById(R.id.act011_ff_options_cell_ll_a);
 
@@ -129,16 +132,20 @@ public class Act011_FF_Options_Adapter extends BaseAdapter {
         tv_count.setText(item.get("count"));
 
         if (item.get("link").equals("OK")) {
-            ll_back.setBackgroundColor(0xff7DC24B);
+            ll_back.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green4));
+            ll_back_b.setBackground(null);
         } else if (item.get("link").equals("ERROR")) {
-            ll_back.setBackgroundColor(0xffff9900);
+            //ll_back.setBackgroundColor(0xffff9900);
+            //ll_back_b.setBackground(context.getDrawable(R.drawable.border_orange));
+            ll_back.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_orange_light2));
         } else {
+            ll_back_b.setBackground(null);
             ll_back.setBackgroundColor(0x00000000);
         }
 
         if (item.get("page").equalsIgnoreCase(String.valueOf(idselected))) {
             //tv_name.setTextColor(context.getResources().getColor(R.color.text_red));
-            ll_back.setBackgroundColor(0xff0099cc);
+            ll_back.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_blue3));
             //
             //ll_back.setBackground(context.getResources().getDrawable(R.drawable.btn_primary_layout));
         } else {
