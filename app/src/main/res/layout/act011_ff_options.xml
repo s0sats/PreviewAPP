@@ -43,6 +43,7 @@
         android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:padding="5dp">
 
         <TextView
@@ -82,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:src="@drawable/ic_delete_black_24px" />
+                android:src="@drawable/ic_apagar" />
 
         </LinearLayout>
 
@@ -100,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:src="@drawable/ic_save_black_24px" />
+                android:src="@drawable/ic_salvar" />
 
         </LinearLayout>
 
@@ -119,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:src="@drawable/ic_check_circle_black_24px" />
+                android:src="@drawable/ic_finalizar" />
 
         </LinearLayout>
 
@@ -138,9 +139,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:src="@drawable/autograph_24" />
+                android:src="@drawable/ic_assinatura2" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_ii"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/act011_ff_options_ll_iv_ii"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:src="@drawable/ic_info" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

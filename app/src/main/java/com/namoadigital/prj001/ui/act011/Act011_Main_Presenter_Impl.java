@@ -263,14 +263,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void saveData(GE_Custom_Form_Data formData) {
+    public void saveData(GE_Custom_Form_Data formData, boolean bMsg) {
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
-        mView.showMsg(
-                hmAux_Trans.get("alert_save_title"),//"Salvando Registro",
-                hmAux_Trans.get("alert_save_msg"),//"Registro Salvo Partialmente!!!",
-                0);
+        if (bMsg) {
+            mView.showMsg(
+                    hmAux_Trans.get("alert_save_title"),//"Salvando Registro",
+                    hmAux_Trans.get("alert_save_msg"),//"Registro Salvo Partialmente!!!",
+                    0);
+        }
     }
 
     @Override
