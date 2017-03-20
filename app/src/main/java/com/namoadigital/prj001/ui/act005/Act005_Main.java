@@ -452,6 +452,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public void callAct004(Context context) {
         Intent mIntent = new Intent(context, Act004_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.BACK_ACTION,1);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

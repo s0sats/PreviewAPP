@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -75,10 +76,31 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
         //
         if(mPresenter.checkPreferenceIsSet()){
-            callAct004(context);
+            Bundle bundle = getIntent().getExtras();
+            //Bundle é passado quando o btn voltar da act 004 foi clicado.
+            if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
+               callAct002(context);
+            }else{
+                callAct004(context);
+            }
+
         }else{
             mPresenter.getSites(hmAux_Trans);
         }
+    }
+
+    private void callAct002(Context context) {
+        ToolBox_Con.setPreference_Customer_Code(context,-1L);
+        Intent mIntent = new Intent(context, Act002_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.BACK_ACTION, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
     }
 
     private void initActions() {

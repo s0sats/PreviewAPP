@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -172,7 +173,13 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         }
         //Se so existe uma operação, seleciona ela e pula para proxima tela
         else if (operations.size() == 1) {
-            mPresenter.setOperationCode(operations.get(0));
+            Bundle bundle = getIntent().getExtras();
+            //Bundle é passado quando o btn voltar da act 004 foi clicado.
+            if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
+                callAct003(context);
+            }else{
+                mPresenter.setOperationCode(operations.get(0));
+            }
         } else {
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
@@ -204,6 +211,22 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         //
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+
+    }
+
+    @Override
+    public void callAct003(Context context) {
+        ToolBox_Con.setPreference_Site_Code(context,"-1");
+        Intent mIntent = new Intent(context, Act003_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.BACK_ACTION, 1);
         //
         mIntent.putExtras(bundle);
         //

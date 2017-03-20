@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act002;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
@@ -35,6 +37,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private Act002_Main_Presenter mPresenter;
     private EV_User_Customer_Adapter mAdapter;
     private String wsProcess;
+    private Bundle mBundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,10 +61,10 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
 
         //Tenta pegar bundle - Enviado pela Act001 ou Act005
-        Bundle bundle = getIntent().getExtras();
+        mBundle = getIntent().getExtras();
         //Se for != null, verifica se precisa chamar o WS de customer ou não
-        if(bundle != null){
-            if(bundle.getInt(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
+        if(mBundle != null){
+            if(mBundle.getInt(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
                 if(ToolBox_Con.isOnline(context)){
                     //Seta variavel que define ação do metodo processCloseACT
                     wsProcess = PROCESS_WS_GET_CUSTOMER;
@@ -104,7 +107,30 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     public void loadCustomers(List<HMAux> customers) {
         if(customers.size() == 1){
-            prepareExecSessionProcess(customers.get(0),0,1,0);
+            //Bundle é passado quando o btn voltar da act 004 foi clicado.
+            if(mBundle != null && mBundle.getInt(Constant.BACK_ACTION) == 1){
+                ToolBox.alertMSG(
+                        Act002_Main.this,
+                        "Logout",
+                        "Do you have access to just one customer, if back",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ToolBox_Con.cleanPreferences(context);
+                                //
+                                ToolBox_Inf.call_Act001_Main(context);
+                                //
+                                finish();
+                            }
+                        },
+                        1
+                );
+
+                mAdapter =  new EV_User_Customer_Adapter(context,R.layout.ev_user_customer_cell,customers);
+                lv_customers.setAdapter(mAdapter);
+            }else{
+                prepareExecSessionProcess(customers.get(0),0,1,0);
+            }
 
         }else{
             mAdapter =  new EV_User_Customer_Adapter(context,R.layout.ev_user_customer_cell,customers);

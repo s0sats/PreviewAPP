@@ -89,8 +89,6 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             ev_user_customerDao.addUpdate(customerList, true);
         }
 
-
-
         mView.loadCustomers(
                 ev_user_customerDao.query_HM(
                             new EV_User_Customer_Sql_001(
