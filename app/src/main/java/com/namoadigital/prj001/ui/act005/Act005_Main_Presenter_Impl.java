@@ -56,8 +56,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     };
 
     String[] icon ={
-            String.valueOf(R.drawable.ic_checklist),
-            String.valueOf(R.drawable.ic_lancamento),
+            String.valueOf(R.drawable.ic_n_form),
+            String.valueOf(R.drawable.ic_pendente),
             String.valueOf(R.drawable.ic_historico),
             String.valueOf(R.drawable.ic_enviar),
      //       String.valueOf(R.drawable.ic_sincronizar),

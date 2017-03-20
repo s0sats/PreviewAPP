@@ -26,7 +26,7 @@ import java.util.List;
  */
 
 public class Act002_Main extends Base_Activity implements Act002_Main_View {
-    //Variaivis que identificam qual WS esta rodando
+    //Variaveis que identificam qual WS esta rodando
     private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
     private final String PROCESS_WS_SYNC = "ws_sync";
 
@@ -62,21 +62,27 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //Se for != null, verifica se precisa chamar o WS de customer ou não
         if(bundle != null){
             if(bundle.getInt(Constant.EXECUTE_WS_GET_CUSTOMER) == 1){
-                //Seta variavel que define ação do metodo processCloseACT
-                wsProcess = PROCESS_WS_GET_CUSTOMER;
-                showPD(
-                context.getString(R.string.get_customer_alert_title),
-                context.getString(R.string.generic_start_processing_msg),
-                context.getString(R.string.generic_msg_cancel),
-                context.getString(R.string.generic_msg_ok)
+                if(ToolBox_Con.isOnline(context)){
+                    //Seta variavel que define ação do metodo processCloseACT
+                    wsProcess = PROCESS_WS_GET_CUSTOMER;
+                    showPD(
+                    context.getString(R.string.get_customer_alert_title),
+                    context.getString(R.string.generic_start_processing_msg),
+                    context.getString(R.string.generic_msg_cancel),
+                    context.getString(R.string.generic_msg_ok)
 
-                );
-                mPresenter.executeGetCustomerProcess();
+                    );
+
+                    mPresenter.executeGetCustomerProcess();
+                }else{
+                    mPresenter.getAllCustomers(true);
+                }
+
             }else{
                 if(mPresenter.checkPreferenceIsSet()){
                     callAct003(context);
                 }else {
-                    mPresenter.getAllCustomers();
+                    mPresenter.getAllCustomers(false);
                 }
             }
         }
@@ -222,7 +228,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //Se processo for get_customer, chama lista de customer
         //Se não, chama Act seleção de site.
         if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER)){
-            mPresenter.getAllCustomers();
+            mPresenter.getAllCustomers(false);
         }
         //
         if(wsProcess.equals(PROCESS_WS_SYNC)){

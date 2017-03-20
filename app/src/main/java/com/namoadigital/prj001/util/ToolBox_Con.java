@@ -606,6 +606,15 @@ public class ToolBox_Con {
         ).apply();
     }
 
+    public static void resetCustomerSiteOperationPreferences(Context context){
+
+        ToolBox_Con.setPreference_Customer_Code(context, -1);
+        ToolBox_Con.setPreference_Translate_Code(context, "");
+        ToolBox_Con.setPreference_Site_Code(context, "-1");
+        ToolBox_Con.setPreference_Operation_Code(context, -1);
+
+    }
+
     public static String customDBPath(long customer_code) {
         return (Constant.DB_PATH + "/C_" + customer_code + "_" +Constant.DB_VERSION_CUSTOM+ ".db3");
     }

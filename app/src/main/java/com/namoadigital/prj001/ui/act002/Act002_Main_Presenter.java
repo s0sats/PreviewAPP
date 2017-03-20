@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act002_Main_Presenter {
 
-    void getAllCustomers();
+    void getAllCustomers(boolean offline_update);
 
     void executeSessionProcess(String email, String password, String nfc, HMAux customer,int forced_login, int jump_validation, int jump_od);
 

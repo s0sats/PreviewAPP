@@ -20,6 +20,7 @@ import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -158,8 +159,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            ToolBox_Con.cleanPreferences(Act004_Main.this);
-                            ToolBox_Inf.call_Act001_Main(Act004_Main.this);
+                            callAct002(context);
                             finish();
                         }
                     },
@@ -192,6 +192,21 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    private void callAct002(Context context){
+        ToolBox_Con.resetCustomerSiteOperationPreferences(context);
+        Intent mIntent = new Intent(context, Act002_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+
     }
 
     @Override
