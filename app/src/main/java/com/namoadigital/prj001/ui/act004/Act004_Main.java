@@ -165,7 +165,10 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     },
                     0
             );
-
+            //
+            //No futuro, deixar a caixa cancelable false ou capturar a caixa
+            // e no evento setOnDismissListener , rodar o metodo que chamada
+            // callAct002
         }
         //Se so existe uma operação, seleciona ela e pula para proxima tela
         else if (operations.size() == 1) {
