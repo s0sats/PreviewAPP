@@ -969,7 +969,6 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance", context.getResources().getString(R.string.mdots_non_compliance));
         Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", context.getResources().getString(R.string.sys_alert_btn_ok));
         Constant.HMAUX_TRANS_LIB.put("footer_label", context.getResources().getString(R.string.footer_label));
-
     }
 
     public static boolean hasNFC(Context context) {
@@ -980,12 +979,12 @@ public class ToolBox_Inf {
         }
     }
 
-    public static String nlsDate2SqliteDate(Context context){
+    public static String nlsDate2SqliteDate(Context context) {
         String sqlite_format = ToolBox_Con.getPreference_Customer_nls_date_format(context);
         return sqlite_format
-                .replace("DD","%d")
-                .replace("MM","%m")
-                .replace("RRRR","%Y");
+                .replace("DD", "%d")
+                .replace("MM", "%m")
+                .replace("RRRR", "%Y");
     }
 
 

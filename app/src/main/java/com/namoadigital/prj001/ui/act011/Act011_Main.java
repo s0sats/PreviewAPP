@@ -332,7 +332,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
                 }
 
-                mPresenter.saveData(formData);
+                mPresenter.saveData(formData, true);
 
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -763,7 +763,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmPage(Integer.parseInt(cf.get("page")));
         mkEditTextNMFF.setmType(cf.get("custom_form_data_type"));
 
-        if (hasNFCSupport){
+        if (hasNFCSupport) {
             mkEditTextNMFF.setmNFC(true);
         } else {
             mkEditTextNMFF.setmNFC(false);
@@ -887,7 +887,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         // Teste Traducao
         //checkBoxFF.setmOption(cf.get("custom_form_data_content"));
-        checkBoxFF.setmOption(hmAux_Trans.get("NA") + "#" + hmAux_Trans.get("NO") + "#" +hmAux_Trans.get("YES"));
+        checkBoxFF.setmOption(hmAux_Trans.get("NA") + "#" + hmAux_Trans.get("NO") + "#" + hmAux_Trans.get("YES"));
 
         checkBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
         checkBoxFF.setmPre(prefix);
@@ -1388,6 +1388,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+
+                mPresenter.saveData(formData, false);
+                //
                 callAct005(Act011_Main.this);
             }
         };
@@ -1534,8 +1537,24 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         tv_title_pdf.setText(hmAux_Trans.get("dialog_info_title_pdf_lbl"));
 
-        String[] from = {"blob_name"};
-        int[] to = {R.id.act011_dialog_form_info_cell_tv_name};
+
+//      Incluir os vazios
+//        int repeat = 4 - pdfs_local.size();
+//
+//        if (pdfs_local.size() < 4) {
+//            for (int i = 0; i < repeat; i++) {
+//                HMAux aux = new HMAux();
+//                aux.put("blob_icon", String.valueOf(R.drawable.ic_picture_as_pdf_black_disabled_24px));
+//                aux.put("blob_name", "");
+//                aux.put("blob_url_local", "");
+//                //
+//                pdfs_local.add(aux);
+//            }
+//        }
+
+
+        String[] from = {"blob_icon", "blob_name"};
+        int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
         lv_pdfs.setAdapter(
                 new SimpleAdapter(
                         Act011_Main.this,
@@ -1546,17 +1565,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 )
         );
 
+        // Tirar Divisao
+        lv_pdfs.setDivider(null);
+
         lv_pdfs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux aux = (HMAux) parent.getItemAtPosition(position);
 
-                File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                if (aux.get("blob_name").trim().length() != 0) {
 
-                startActivity(intent);
+                    File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                    startActivity(intent);
+                }
             }
         });
 

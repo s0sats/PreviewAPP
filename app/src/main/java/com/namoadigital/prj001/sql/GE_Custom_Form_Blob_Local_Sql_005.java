@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -26,8 +27,8 @@ public class GE_Custom_Form_Blob_Local_Sql_005 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb.append(
-                " SELECT " +
-                        " blob_name, blob_url_local, '0' as page " +
+                " SELECT '" +
+                        String.valueOf(R.drawable.ic_picture_as_pdf_black_24px) + "'  as  blob_icon,  blob_name, blob_url_local, '0' as page " +
                         " FROM " +
                         GE_Custom_Form_Blob_LocalDao.TABLE +
                         " WHERE " +
@@ -35,7 +36,7 @@ public class GE_Custom_Form_Blob_Local_Sql_005 implements Specification {
                         "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_TYPE + " = '" + s_formtype_code + "' " +
                         "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_CODE + " = '" + s_form_code + "' " +
                         "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' ")
-                .append(";blob_name#blob_url_local#page")
+                .append(";blob_icon#blob_name#blob_url_local#page")
 
                 .toString();
     }

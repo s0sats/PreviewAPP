@@ -139,6 +139,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 );
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
+        mket_serial_id.setmNFC(true);
         controls_sta.add(mket_serial_id);
         mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
         //

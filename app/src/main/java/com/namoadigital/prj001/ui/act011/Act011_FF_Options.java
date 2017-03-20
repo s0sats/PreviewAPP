@@ -62,6 +62,8 @@ public class Act011_FF_Options extends Fragment {
     private transient LinearLayout ff_options_ll_a;
     private transient ImageView ff_options_ll_iv_a;
 
+    private transient LinearLayout ff_options_ll_ii;
+    private transient ImageView ff_options_ll_iv_ii;
 
     public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs, String signature, String desc) {
         this.tabsAndFields = tabsAndFields;
@@ -131,6 +133,9 @@ public class Act011_FF_Options extends Fragment {
         ff_options_ll_a = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_a);
         ff_options_ll_iv_a = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_a);
 
+        ff_options_ll_ii = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_ii);
+        ff_options_ll_iv_ii = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_ii);
+
     }
 
     public void setFOpc(int indice) {
@@ -154,7 +159,7 @@ public class Act011_FF_Options extends Fragment {
             @Override
             public void onClick(View v) {
                 if (delegate_ll != null) {
-                    delegate_ll.info();
+                    //delegate_ll.info();
                 }
             }
         });
@@ -194,6 +199,16 @@ public class Act011_FF_Options extends Fragment {
                 }
             }
         });
+
+        ff_options_ll_ii.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null) {
+                    delegate_ll.info();
+                }
+            }
+        });
+
 
     }
 
