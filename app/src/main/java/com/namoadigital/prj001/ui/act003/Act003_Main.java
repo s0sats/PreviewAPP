@@ -76,14 +76,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
         //
         if(mPresenter.checkPreferenceIsSet()){
-            Bundle bundle = getIntent().getExtras();
-            //Bundle é passado quando o btn voltar da act 004 foi clicado.
-            if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
-               callAct002(context);
-            }else{
                 callAct004(context);
-            }
-
         }else{
             mPresenter.getSites(hmAux_Trans);
         }
@@ -128,7 +121,13 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     public void loadSites(List<HMAux> sites) {
 
         if(sites.size() == 1 ){
-            mPresenter.setSiteCode(sites.get(0));
+            Bundle bundle = getIntent().getExtras();
+            //Bundle é passado quando o btn voltar da act 004 foi clicado.
+            if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
+                callAct002(context);
+            }else {
+                mPresenter.setSiteCode(sites.get(0));
+            }
         }else {
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
