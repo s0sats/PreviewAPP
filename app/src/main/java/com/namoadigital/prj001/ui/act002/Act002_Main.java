@@ -112,7 +112,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 ToolBox.alertMSG(
                         Act002_Main.this,
                         "Logout",
-                        "Do you have access to just one customer, if back",
+                        "Do you have access to just one customer! Do you to logout?",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
