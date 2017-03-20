@@ -126,7 +126,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="25dp">
 
                 <TextView
                     android:id="@+id/act008_tv_require_serial_lbl"

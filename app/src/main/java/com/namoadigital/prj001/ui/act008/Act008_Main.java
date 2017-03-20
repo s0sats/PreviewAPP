@@ -107,6 +107,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("sys_alert_btn_cancel");
         transList.add("sys_alert_btn_ok");
         transList.add("product_ttl");
+        transList.add("mket_search_hint");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -139,6 +140,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
         controls_sta.add(mket_serial_id);
+        mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
         //
         tv_product_ttl = (TextView) findViewById(R.id.act008_tv_product_ttl);
         tv_product_ttl.setTag("product_ttl");

@@ -89,6 +89,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         transList.add("lbl_code");
         transList.add("lbl_id");
         transList.add("lbl_desc");
+        transList.add("mket_hint_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -108,6 +109,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         );
 
         mket_product_search = (MKEditTextNM) findViewById(R.id.act007_mket_product_search);
+        mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
 
         lv_groups_products = (ListView) findViewById(R.id.act007_lv_groups_products);
 
