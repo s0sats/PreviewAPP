@@ -51,8 +51,10 @@
     <string name="alert_title_signature_validation">Validação de Assinatura</string>
     <string name="alert_msg_signature_validation">Erro: Assinatura na informada!!!</string>
     <string name="sys_alert_btn_ok">Ok</string>
-    <string name="mdots_server_title">Titulo do Comentário do Servidor</string>
-    <string name="mdots_user_title">Titulo do Comentário do Usuário"</string>
+    <string name="mdots_server_title">Comentário do Servidor</string>
+    <string name="mdots_user_title">Comentário do Usuário"</string>
     <string name="mdots_non_compliance">Não Conformidade"</string>
-    <string name="footer_label">Screen</string>
+    <string name="footer_label">Tela </string>
+    <string name="act002_logout_ttl">Logout</string>
+    <string name="act002_logout_one_customer_msg">Deseja realmente fazer logout?</string>
 </resources>

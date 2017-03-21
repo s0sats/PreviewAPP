@@ -97,6 +97,7 @@ public class Constant extends ConstantBase {
      * Translation params
      */
     public static final String APP_MODULE = "APP_PRJ001";
+    public static final String LIB_RESOURCE_NAME = "lib";
 
     /**
      * Footer info constants

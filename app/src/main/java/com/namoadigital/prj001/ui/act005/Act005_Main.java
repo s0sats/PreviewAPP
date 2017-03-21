@@ -22,6 +22,10 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -124,6 +128,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_send_finish_msg");
         transList.add("drawer_sync_alert_ttl");
         transList.add("drawer_sync_alert_msg");
+        transList.add("drawer_change_site_one_site_alert_ttl");
+        transList.add("drawer_change_site_one_site_alert_msg");
+        transList.add("drawer_change_operation_one_operation_alert_ttl");
+        transList.add("drawer_change_operation_one_operation_alert_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -191,6 +199,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void itemClicked(String index) {
                 DialogInterface.OnClickListener listener = null;
+                int negativeBtn = 1;
 
                 switch (index) {
                     case Act005_Opc.DRAWER_OPC_CUSTOMER:
@@ -215,36 +224,93 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
-                        //
-                        alertTitle = hmAux_Trans.get("drawer_change_site_alert_ttl");
-                        alertMsg = hmAux_Trans.get("drawer_change_site_alert_msg");
-                        //
-                        //Apaga preferencia de Site, Operatione volta a lista de site
-                        listener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Reseta preferencias do Customer e volta para
-                                ToolBox_Con.setPreference_Site_Code(context, "-1");
-                                ToolBox_Con.setPreference_Operation_Code(context, -1);
-                                //
-                                callAct003(context);
-                            }
-                        };
+                        MD_SiteDao siteDao =  new MD_SiteDao(
+                                context,
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+
+                        int qty_sites = siteDao.query_HM(
+                                    new MD_Site_Sql_002(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            hmAux_Trans.get("lbl_external_site")
+                                    ).toSqlQuery()
+                                ).size();
+
+                        if(qty_sites <= 1) {
+                            //Se apenas um site, da alert e não permite troca.
+                            alertTitle = hmAux_Trans.get("drawer_change_site_one_site_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_site_one_site_alert_msg");
+
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            };
+
+                            negativeBtn = 0;
+                        }else {
+                            //
+                            alertTitle = hmAux_Trans.get("drawer_change_site_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_site_alert_msg");
+                            //
+                            //Apaga preferencia de Site, Operatione volta a lista de site
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Reseta preferencias do Customer e volta para
+                                    ToolBox_Con.setPreference_Site_Code(context, "-1");
+                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
+                                    //
+                                    callAct003(context);
+                                }
+                            };
+                        }
                         break;
                     case Act005_Opc.DRAWER_OPC_OPERATION:
-                        //
-                        alertTitle = hmAux_Trans.get("drawer_change_operation_alert_ttl");
-                        alertMsg = hmAux_Trans.get("drawer_change_operation_alert_msg");
-                        //
-                        listener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Apaga preferencia de Operatione volta a ista de operation
-                                ToolBox_Con.setPreference_Operation_Code(context, -1);
-                                //
-                                callAct004(context);
-                            }
-                        };
+                        MD_OperationDao operationDao =  new MD_OperationDao(
+                                context,
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+
+                        int qty_operation = operationDao.query_HM(
+                                        new MD_Operation_Sql_001(
+                                                ToolBox_Con.getPreference_Customer_Code(context)
+                                        ).toSqlQuery()
+                                ).size();
+
+                        if(qty_operation <= 1) {
+                            //Se apenas uma operação, da alert e não permite troca.
+                            alertTitle = hmAux_Trans.get("drawer_change_operation_one_operation_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_operation_one_operation_alert_msg");
+
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            };
+
+                            negativeBtn = 0;
+                        }else{
+                            //
+                            alertTitle = hmAux_Trans.get("drawer_change_operation_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_operation_alert_msg");
+                            //
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Apaga preferencia de Operatione volta a ista de operation
+                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
+                                    //
+                                    callAct004(context);
+                                }
+                            };
+
+                        }
+
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
                         //
@@ -271,7 +337,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             alertTitle,
                             alertMsg,
                             listener,
-                            1
+                            negativeBtn
                     );
 
                 }
@@ -516,11 +582,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         if(!wsProcess.equals("")){
             showSuccessDialog();
+            //Atualiza traduções
+            loadTranslation();
             //Atualiza menu e os badges
             mPresenter.getMenuItens(hmAux_Trans);
             //Fecha Drawer
             mDrawerLayout.closeDrawer(GravityCompat.START);
-
         }
     }
 

@@ -55,6 +55,8 @@
     <string name="mdots_user_title">User Title"</string>
     <string name="mdots_non_compliance">Non Compliance"</string>
     <string name="footer_label">Screen</string>
+    <string name="act002_logout_ttl">Logout</string>
+    <string name="act002_logout_one_customer_msg">Do you have access to just one customer! Do you want to logout?</string>
 
 
 </resources>
