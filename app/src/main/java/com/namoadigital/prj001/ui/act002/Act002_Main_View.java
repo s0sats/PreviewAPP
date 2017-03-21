@@ -18,6 +18,8 @@ public interface Act002_Main_View {
     //Abri progress Dialog
     void showPD(String title,String msg,String labelCancel, String labelOk);
 
+    void callAct001();
+
 
 
 }

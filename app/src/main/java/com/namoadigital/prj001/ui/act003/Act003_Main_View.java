@@ -16,4 +16,6 @@ public interface Act003_Main_View {
     void loadSites(List<HMAux> sites);
 
     void callAct004(Context context);
+
+    void callAct002(Context context);
 }

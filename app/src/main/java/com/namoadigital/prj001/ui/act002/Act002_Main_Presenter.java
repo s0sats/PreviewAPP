@@ -21,4 +21,6 @@ public interface Act002_Main_Presenter {
      */
     boolean checkPreferenceIsSet();
 
+    void onBackPressedClicked();
+
 }

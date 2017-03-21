@@ -82,7 +82,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         }
     }
 
-    private void callAct002(Context context) {
+    @Override
+    public void callAct002(Context context) {
         ToolBox_Con.setPreference_Customer_Code(context,-1L);
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

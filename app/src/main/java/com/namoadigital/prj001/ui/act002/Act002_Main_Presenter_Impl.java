@@ -168,4 +168,8 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         return false;
     }
 
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct001();
+    }
 }

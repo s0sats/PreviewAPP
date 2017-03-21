@@ -109,23 +109,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         if(customers.size() == 1){
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
             if(mBundle != null && mBundle.getInt(Constant.BACK_ACTION) == 1){
-                ToolBox.alertMSG(
-                        Act002_Main.this,
-                        "Logout",
-                        "Do you have access to just one customer! Do you to logout?",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ToolBox_Con.cleanPreferences(context);
-                                //
-                                ToolBox_Inf.call_Act001_Main(context);
-                                //
-                                finish();
-                            }
-                        },
-                        1
-                );
-
+                //
+                callAct001();
+                //
                 mAdapter =  new EV_User_Customer_Adapter(context,R.layout.ev_user_customer_cell,customers);
                 lv_customers.setAdapter(mAdapter);
             }else{
@@ -137,6 +123,28 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             lv_customers.setAdapter(mAdapter);
 
         }
+    }
+
+    @Override
+    public void callAct001() {
+
+        ToolBox.alertMSG(
+                Act002_Main.this,
+                "Logout",
+                "Do you have access to just one customer! Do you to logout?",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ToolBox_Con.cleanPreferences(context);
+                        //
+                        ToolBox_Inf.call_Act001_Main(context);
+                        //
+                        finish();
+                    }
+                },
+                1
+        );
+
     }
 
     private void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
@@ -265,7 +273,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     }
 
-  /*  @Override
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
+
+    /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.act001_main_menu, menu);
