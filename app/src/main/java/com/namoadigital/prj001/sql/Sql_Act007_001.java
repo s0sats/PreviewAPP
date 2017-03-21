@@ -22,7 +22,8 @@ public class Sql_Act007_001 implements Specification {
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
 
-        return sb
+        //String teste =
+               return sb
                 .append("SELECT\n" +
                         "      T.*     \n" +
                         "FROM (\n" +
@@ -42,10 +43,12 @@ public class Sql_Act007_001 implements Specification {
                         "     ) T\n" +
                         "WHERE\n" +
                         "   t.recursive_code_father = " + s_recursive_code_father  + "\n" +
-                        "   and ( '" + s_filter  + "' IS NULL OR  t.group_id like '%" + s_filter  + "%' OR t.group_desc like '%" + s_filter  + "%'  )\n" +
+                        "   and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
                         "ORDER BY\n" +
                         "   t.group_id;")
                 .append("group_code#group_id#group_desc#full_group_desc#type#recursive_code")
                 .toString().replace("'%null%'","null").replace("'null'","null");
+
+       // return teste;
     }
 }

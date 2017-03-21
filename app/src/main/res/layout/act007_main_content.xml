@@ -35,6 +35,7 @@
             app:mNFC="false"
             app:mOCR="false"
             android:background="@drawable/namoa_bg_1"
+            android:inputType="text"
             />
 
         <ListView
