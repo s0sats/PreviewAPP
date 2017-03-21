@@ -52,6 +52,7 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -285,7 +286,7 @@ public class WS_Sync extends IntentService {
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
-            siteDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
+            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
             productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
             productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
