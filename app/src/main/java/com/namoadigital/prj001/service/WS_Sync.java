@@ -133,6 +133,7 @@ public class WS_Sync extends IntentService {
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -152,12 +153,7 @@ public class WS_Sync extends IntentService {
         //Verifica o tipo Checklist e gera lista de codigo de produtos.
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
             ArrayList<Long> CHECKLIST = new ArrayList<>();
-            Sync_ChecklistDao syncChecklistDao =
-                    new Sync_ChecklistDao(
-                            getApplicationContext(),
-                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                            Constant.DB_VERSION_CUSTOM
-                    );
+
             //Pega lista de Sync_Checklist
             syncChecklists = syncChecklistDao.query(
                 new Sync_Checklist_Sql_001(
@@ -397,7 +393,7 @@ public class WS_Sync extends IntentService {
             //
 
             File[] files_product = ToolBox_Inf.getListOfFiles_v2("md_product-");
-
+            List<Sync_Checklist> newSyncList = new ArrayList<>();
             for (File _file : files_product) {
 
                 ArrayList<MD_Product> products = gson.fromJson(
@@ -408,7 +404,29 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
+                //Se é sincronimo MAIN + CHECKLIST
+                //Verifica se o usuário ainda tem acesso
+                //a todos os produtos da tabela interna.
+                //Os que não tiver mais acesso, serão apagados.
+                //
+                if(product_code == -1L){
+                    for (Sync_Checklist sync_prod : syncChecklists) {
+                        for (MD_Product product : products) {
+                            if(product.getProduct_code() == sync_prod.getProduct_code() ){
+                                newSyncList.add(sync_prod);
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 productDao.addUpdate(products, true);
+            }
+
+            if(product_code == -1L) {
+                //Reconstroi tabela de produtos interno
+                //com os produtos que o usr ainda tem acesso.
+                syncChecklistDao.addUpdate(newSyncList, true);
             }
             //
             // Processamento Product Group
@@ -485,7 +503,7 @@ public class WS_Sync extends IntentService {
             //
 
             //Se existe product_code, seta controle para false, se não true.
-            productExist = product_code == -1L ? true : false;
+            productExist = product_code == -1L;
             File[] files_cf_product = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
 
             for (File _file : files_cf_product) {
@@ -510,6 +528,7 @@ public class WS_Sync extends IntentService {
                         }
                     }
                 }
+
                 customFormProductDao.addUpdate(customFormsProduct, true);
             }
 
@@ -604,8 +623,6 @@ public class WS_Sync extends IntentService {
 
         translist.add("msg_no_forms_found");
         translist.add("msg_lost_access_to_site_or_operation");
-    //    translist.add("generic_no_forms_found");
-      //  translist.add("ws_sync_loose_access_to_site_or_operation");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
