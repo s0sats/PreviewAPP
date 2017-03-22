@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -42,7 +43,7 @@ public class WS_UpdateSoftware extends IntentService {
                 l_version_required = "";
             }
 
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Starting Update Process...", "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_start_update_process_msg), "", "0");
 
             if (!l_version_link.equalsIgnoreCase("")) {
 
@@ -53,9 +54,9 @@ public class WS_UpdateSoftware extends IntentService {
             } else {
 
                 if (l_version_required.equals("0")) {
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "ERROR: On Update. Empty Link...", "", "0");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.generic_error_update_empty_link), "", "0");
                 } else {
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_2", "ERROR: On Update. Empty Link...", "", "0");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_2", getString(R.string.generic_error_update_empty_link), "", "0");
                 }
             }
 
@@ -85,7 +86,7 @@ public class WS_UpdateSoftware extends IntentService {
 
     private void processUpdate() throws Exception {
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Starting Download...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_starting_download_msg), "", "0");
 
         String local_link = "/sdcard/download" + "/" + "namoa.apk";
 
@@ -96,7 +97,7 @@ public class WS_UpdateSoftware extends IntentService {
                 local_link
         );
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_APP", "Close App for Update Process...", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_APP", getString(R.string.close_app_update_process_msg), "", "0");
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(

@@ -28,13 +28,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private Context context;
     private Act005_Main_View mView;
     private GE_Custom_Form_LocalDao customFormLocalDao;
+    private HMAux hmAux_Trans = new HMAux();
 
-
-
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView ,GE_Custom_Form_LocalDao customFormLocalDao) {
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     String[] menuId = {
@@ -126,7 +126,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", "Starting to sync ...", "", "0");
+        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_sync"), "", "0");
 
     }
 
@@ -189,7 +189,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", "Prepering to send form data ...", "", "0");
+        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
 
     }
 
