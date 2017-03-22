@@ -721,6 +721,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         //
                         act011_ff_options.tabsS(hmPages);
                     }
+
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
                 }
 
                 @Override
