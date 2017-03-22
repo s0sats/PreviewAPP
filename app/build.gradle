@@ -42,7 +42,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
 
     compile 'com.beardedhen:androidbootstrap:2.3.1'
-    compile 'com.namoa_digital:library:0.0.139'
+    compile 'com.namoa_digital:library:0.0.140'
 
     testCompile 'junit:junit:4.12'
 }
