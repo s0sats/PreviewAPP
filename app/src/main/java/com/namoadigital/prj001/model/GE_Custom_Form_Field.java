@@ -19,6 +19,7 @@ public class GE_Custom_Form_Field {
     private int custom_form_order;
     private int page;
     private int required;
+    private String automatic;
     private String comment;
 
     public GE_Custom_Form_Field() {
@@ -127,6 +128,14 @@ public class GE_Custom_Form_Field {
 
     public void setRequired(int required) {
         this.required = required;
+    }
+
+    public String getAutomatic() {
+        return automatic;
+    }
+
+    public void setAutomatic(String automatic) {
+        this.automatic = automatic;
     }
 
     public String getComment() {

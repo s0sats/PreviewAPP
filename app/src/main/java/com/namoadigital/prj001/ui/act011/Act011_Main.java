@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
@@ -427,6 +428,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
                 showCustomDialogSignature();
+            }
+
+            @Override
+            public void auto() {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                int quantidade = 0;
+
+                for (CustomFF customFF : customFFs) {
+                    quantidade += customFF.activateAutoReplay();
+                }
+
+                Toast.makeText(
+                        context,
+                        "Quantidade de Respostas Alteradas: " + String.valueOf(quantidade),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
 
@@ -898,6 +916,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
+        //checkBoxFF.setmAutomatic(cf.get("automatic"));
+
+        cf.put("automatic", "0");
+
+        checkBoxFF.setmAutomatic("0");
+
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
@@ -930,6 +954,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingImageFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+
+        //ratingImageFF.setmAutomatic(cf.get("automatic"));
+
+        cf.put("automatic", "GREEN");
+
+        ratingImageFF.setmAutomatic("GREEN");
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));

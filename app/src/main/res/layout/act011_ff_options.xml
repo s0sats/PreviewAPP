@@ -38,7 +38,7 @@
         android:background="#4D000000" />
 
     <LinearLayout
-        android:id="@+id/act011_ff_options_ll_i"
+        android:id="@+id/act011_ff_options_ll_auto"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center_vertical"
@@ -47,13 +47,13 @@
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/act011_ff_options_ll_it"
+            android:id="@+id/act011_ff_options_ll_autot"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:focusable="false"
             android:paddingLeft="16dp"
-            android:text="Info"
+            android:text="Automatic"
             android:textSize="16sp"
             android:textStyle="bold" />
 

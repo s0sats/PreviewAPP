@@ -35,6 +35,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_ORDER = "custom_form_order";
     public static final String PAGE = "page";
     public static final String REQUIRED = "required";
+    public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
 
     public GE_Custom_Form_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -271,6 +272,9 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_field.setCustom_form_order(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_ORDER)));
             custom_form_field.setPage(cursor.getInt(cursor.getColumnIndex(PAGE)));
             custom_form_field.setRequired(cursor.getInt(cursor.getColumnIndex(REQUIRED)));
+
+            custom_form_field.setAutomatic(cursor.getString(cursor.getColumnIndex(AUTOMATIC)));
+
             custom_form_field.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             return custom_form_field;
@@ -320,6 +324,9 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if (custom_form_field.getRequired() > -1) {
                 contentValues.put(REQUIRED, custom_form_field.getRequired());
+            }
+            if (custom_form_field.getAutomatic() != null) {
+                contentValues.put(AUTOMATIC, custom_form_field.getAutomatic());
             }
             if (custom_form_field.getComment() != null) {
                 contentValues.put(COMMENT, custom_form_field.getComment());

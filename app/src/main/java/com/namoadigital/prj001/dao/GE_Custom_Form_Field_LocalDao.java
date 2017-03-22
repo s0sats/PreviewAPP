@@ -38,6 +38,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
     public static final String CUSTOM_FORM_ORDER = "custom_form_order";
     public static final String PAGE = "page";
     public static final String REQUIRED = "required";
+    public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
     public static final String CUSTOM_FORM_FIELD_DESC = "custom_form_field_desc";
 
@@ -318,6 +319,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setCustom_form_order(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_ORDER)));
             custom_form_field_local.setPage(cursor.getInt(cursor.getColumnIndex(PAGE)));
             custom_form_field_local.setRequired(cursor.getInt(cursor.getColumnIndex(REQUIRED)));
+
+            custom_form_field_local.setAutomatic(cursor.getString(cursor.getColumnIndex(AUTOMATIC)));
+
             custom_form_field_local.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
             custom_form_field_local.setCustom_form_field_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_FIELD_DESC)));
 
@@ -371,6 +375,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             }
             if (custom_form_field_local.getRequired() > -1) {
                 contentValues.put(REQUIRED, custom_form_field_local.getRequired());
+            }
+            if (custom_form_field_local.getAutomatic() != null) {
+                contentValues.put(AUTOMATIC, custom_form_field_local.getAutomatic());
             }
             if (custom_form_field_local.getComment() != null) {
                 contentValues.put(COMMENT, custom_form_field_local.getComment());

@@ -47,8 +47,8 @@ public class Act011_FF_Options extends Fragment {
     private transient LinearLayout ff_options_ll_h;
     private transient TextView ff_options_ll_ih;
 
-    private transient LinearLayout ff_options_ll_i;
-    private transient TextView ff_options_ll_it;
+    private transient LinearLayout ff_options_ll_auto;
+    private transient TextView ff_options_ll_autot;
 
     private transient LinearLayout ff_options_ll_e;
     private transient ImageView ff_options_ll_iv_e;
@@ -91,6 +91,8 @@ public class Act011_FF_Options extends Fragment {
         public void check();
 
         public void autograph();
+
+        public void auto();
     }
 
     private ICustom_Form_FF_Options_ll delegate_ll;
@@ -118,8 +120,8 @@ public class Act011_FF_Options extends Fragment {
         ff_options_ll_h  = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_h);
         ff_options_ll_ih = (TextView) view.findViewById(R.id.act011_ff_options_ll_ih);
 
-        ff_options_ll_i = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_i);
-        ff_options_ll_it = (TextView) view.findViewById(R.id.act011_ff_options_ll_it);
+        ff_options_ll_auto = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_auto);
+        ff_options_ll_autot = (TextView) view.findViewById(R.id.act011_ff_options_ll_autot);
 
         ff_options_ll_e = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_e);
         ff_options_ll_iv_e = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_e);
@@ -155,11 +157,11 @@ public class Act011_FF_Options extends Fragment {
             }
         });
 
-        ff_options_ll_i.setOnClickListener(new View.OnClickListener() {
+        ff_options_ll_auto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (delegate_ll != null) {
-                    //delegate_ll.info();
+                    delegate_ll.auto();
                 }
             }
         });
@@ -250,12 +252,24 @@ public class Act011_FF_Options extends Fragment {
         ArrayList<HMAux> tabs = new ArrayList<>();
         this.signature = signature;
 
+        int activateAutoAnswer = 0;
+
         if (cf_fields != null) {
             for (int i = 0; i < cf_fields.size(); i++) {
                 if (cf_fields.get(i).get("custom_form_data_type").equalsIgnoreCase("tab")) {
                     tabs.add(cf_fields.get(i));
                 }
+
+                if (!cf_fields.get(i).get("automatic").equalsIgnoreCase("")){
+                    activateAutoAnswer++;
+                }
             }
+        }
+
+        if (activateAutoAnswer > 0){
+            ff_options_ll_auto.setVisibility(View.VISIBLE);
+        } else {
+            ff_options_ll_auto.setVisibility(View.GONE);
         }
 
         int pagecount = 0;

@@ -475,6 +475,28 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region PHONE_UUID_CODE
+    public static void setPreference_PHONE_UUID_CODE(Context context, String phone_uuid_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.PHONE_UUID_CODE,
+                phone_uuid_code
+        ).apply();
+    }
+
+    public static String getPreference_PHONE_UUID_CODE(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.PHONE_UUID_CODE,
+                ""
+        );
+    }
+    //endregion
+
     //region Nls_date_Format
     public static void setPreference_Customer_nls_date_format(Context context, String nls_date_format) {
         SharedPreferences sharedPreferences =
@@ -606,7 +628,7 @@ public class ToolBox_Con {
         ).apply();
     }
 
-    public static void resetCustomerSiteOperationPreferences(Context context){
+    public static void resetCustomerSiteOperationPreferences(Context context) {
 
         ToolBox_Con.setPreference_Customer_Code(context, -1);
         ToolBox_Con.setPreference_Translate_Code(context, "");
@@ -616,7 +638,7 @@ public class ToolBox_Con {
     }
 
     public static String customDBPath(long customer_code) {
-        return (Constant.DB_PATH + "/C_" + customer_code + "_" +Constant.DB_VERSION_CUSTOM+ ".db3");
+        return (Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");
     }
 
     public static boolean isOnline(Context context) {
@@ -643,11 +665,11 @@ public class ToolBox_Con {
         NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         //
-        if ( wifi.isAvailable() && wifi.isConnected()){
+        if (wifi.isAvailable() && wifi.isConnected()) {
             return "WIFI";
         }
         //
-        if ( mobile.isAvailable() && mobile.isConnected()){
+        if (mobile.isAvailable() && mobile.isConnected()) {
             return "MOBILE";
         }
         //
