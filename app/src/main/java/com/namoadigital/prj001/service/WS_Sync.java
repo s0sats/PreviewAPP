@@ -395,7 +395,6 @@ public class WS_Sync extends IntentService {
             File[] files_product = ToolBox_Inf.getListOfFiles_v2("md_product-");
             List<Sync_Checklist> newSyncList = new ArrayList<>();
             for (File _file : files_product) {
-
                 ArrayList<MD_Product> products = gson.fromJson(
                         ToolBox.jsonFromOracle(
                             ToolBox_Inf.getContents(_file)
