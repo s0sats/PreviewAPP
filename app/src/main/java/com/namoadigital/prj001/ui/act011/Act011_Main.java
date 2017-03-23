@@ -183,6 +183,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         hideKeyBoard();
 
         loadTranslation();
+
+        ToolBox_Inf.libTranslation(context);
     }
 
     private void loadTranslation() {
@@ -1418,6 +1420,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
+                // modificar para incluir a remossao do custom_form_local.
                 mPresenter.saveData(formData, false);
                 //
                 callAct005(Act011_Main.this);
@@ -1473,7 +1476,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             } else {
                 formData.setSignature_name("");
                 if (signature == 0) {
-                    mPresenter.checkData(formData);
+                    //mPresenter.checkData(formData);
                 }
             }
         } else {
