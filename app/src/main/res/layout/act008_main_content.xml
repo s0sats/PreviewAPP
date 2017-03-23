@@ -141,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="Sim"
-                    android:textColor="@color/namoa_color_disabled_gray" />
+                    android:textColor="@color/namoa_color_orange" />
 
 
                 <View
@@ -161,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="Não"
-                    android:textColor="@color/namoa_color_disabled_gray" />
+                    android:textColor="@color/namoa_color_orange" />
 
 
             </LinearLayout>
