@@ -46,9 +46,8 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:padding="5dp"
-            android:background="@drawable/border_back"
             android:dividerHeight="1dp"
-            android:divider="@color/namoa_color_light_blue3"
+            android:divider="@color/namoa_color_light_blue7"
             />
 
         <LinearLayout
