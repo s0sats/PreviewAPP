@@ -22,6 +22,77 @@
             android:orientation="vertical"
             android:padding="15dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_produto"
+
+                    />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/act008_tv_product_code_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:padding="2dp"
+                            android:text="Code"
+                            android:textSize="@dimen/font_size_item_md"
+
+                            />
+
+                        <View
+                            android:layout_width="5dp"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/act008_tv_product_id_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:padding="2dp"
+                            android:text="Id"
+                            android:textSize="@dimen/font_size_item_md"
+                            />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/act008_tv_product_desc_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="2dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="2dp"
+                        android:paddingTop="2dp"
+                        android:text="Product Description"
+                        android:textSize="@dimen/font_size_title_md" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
             <TextView
                 android:id="@+id/act008_tv_product_ttl"
                 android:layout_width="wrap_content"
@@ -30,73 +101,44 @@
                 android:layout_marginTop="5dp"
                 android:text="Product"
                 android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:paddingLeft="5dp"-->
+                <!--android:visibility="gone">-->
 
-                <TextView
-                    android:id="@+id/act008_tv_product_code_lbl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:text="Code"
-                    android:textSize="@dimen/font_size_item_md"
-                    android:textStyle="bold" />
+                <!--<TextView-->
+                    <!--android:id="@+id/act008_tv_product_code_val"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="left"-->
+                    <!--android:padding="2dp"-->
+                    <!--android:paddingLeft="5dp"-->
+                    <!--android:text="Code"-->
+                    <!--android:textColor="@color/namoa_color_light_blue"-->
+                    <!--android:textSize="@dimen/font_size_item_md" -->
+                    <!--/>-->
 
-                <View
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
+                <!--<View-->
+                    <!--android:layout_width="5dp"-->
+                    <!--android:layout_height="match_parent" />-->
 
-                <TextView
-                    android:id="@+id/act008_tv_product_id_lbl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:text="Id"
-                    android:textSize="@dimen/font_size_item_md"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="5dp">
-
-                <TextView
-                    android:id="@+id/act008_tv_product_code_val"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:paddingLeft="5dp"
-                    android:text="Code"
-                    android:textColor="@color/namoa_color_light_blue"
-                    android:textSize="@dimen/font_size_item_md" />
-
-                <View
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/act008_tv_product_id_val"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:text="Id"
-                    android:textColor="@color/namoa_color_light_blue"
-                    android:textSize="@dimen/font_size_item_md" />
-            </LinearLayout>
+                <!--<TextView-->
+                    <!--android:id="@+id/act008_tv_product_id_val"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="left"-->
+                    <!--android:padding="2dp"-->
+                    <!--android:text="Id"-->
+                    <!--android:textColor="@color/namoa_color_light_blue"-->
+                    <!--android:textSize="@dimen/font_size_item_md" />-->
+            <!--</LinearLayout>-->
 
             <TextView
                 android:id="@+id/act008_tv_product_desc_ttl"
@@ -107,25 +149,14 @@
                 android:padding="2dp"
                 android:text="Description"
                 android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/act008_tv_product_desc_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="2dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="2dp"
-                android:paddingTop="2dp"
-                android:text="Product Description"
-                android:textColor="@color/namoa_color_light_blue"
-                android:textSize="@dimen/font_size_item_md" />
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="50dp"
                 android:orientation="horizontal"
                 android:layout_marginBottom="25dp">
 
@@ -167,16 +198,16 @@
             </LinearLayout>
 
 
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act008_mket_serial"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/namoa_bg_1"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    app:mNFC="false"
-                    app:mOCR="false"
-                    android:textSize="@dimen/font_size_title"/>
+            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+                    <!--android:id="@+id/act008_mket_serial"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="50dp"-->
+                    <!--android:background="@drawable/namoa_bg_1"-->
+                    <!--android:inputType="text"-->
+                    <!--android:padding="10dp"-->
+                    <!--app:mNFC="false"-->
+                    <!--app:mOCR="false"-->
+                    <!--android:textSize="@dimen/font_size_title"/>-->
 
 
             <LinearLayout
