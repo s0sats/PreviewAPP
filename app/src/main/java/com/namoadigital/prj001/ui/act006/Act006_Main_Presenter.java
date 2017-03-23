@@ -6,8 +6,10 @@ package com.namoadigital.prj001.ui.act006;
 
 public interface Act006_Main_Presenter {
 
-    void getAllOpcs();
+    void getPendencies();
 
     void onBackPressedClicked();
+
+    void checkPendenciesFlow(int pendencies_qty);
 
 }

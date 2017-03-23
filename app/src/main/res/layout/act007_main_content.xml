@@ -36,6 +36,7 @@
             app:mOCR="false"
             android:background="@drawable/namoa_bg_1"
             android:inputType="text"
+            android:textSize="@dimen/font_size_title"
             />
 
         <ListView

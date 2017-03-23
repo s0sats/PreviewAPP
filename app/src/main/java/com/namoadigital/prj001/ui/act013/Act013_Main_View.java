@@ -19,6 +19,8 @@ public interface Act013_Main_View {
 
     void callAct012(Context context);
 
+    void callAct006(Context context);
+
     void alertFormNotReady();
 
 
