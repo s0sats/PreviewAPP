@@ -965,6 +965,8 @@ public class ToolBox_Inf {
     public static void libTranslation(Context context) {
         Constant.HMAUX_TRANS_LIB = new HMAux();
 
+
+
         if (!ToolBox_Con.getPreference_Translate_Code(context).equals("")) {
             List<String> transList = new ArrayList<>();
             Constant.HMAUX_TRANS_LIB = setLanguage(

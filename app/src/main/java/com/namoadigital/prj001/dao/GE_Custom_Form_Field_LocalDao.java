@@ -411,6 +411,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             contentValues.put(CUSTOM_FORM_ORDER, hmAux.get(CUSTOM_FORM_ORDER));
             contentValues.put(PAGE, hmAux.get(PAGE));
             contentValues.put(REQUIRED, hmAux.get(REQUIRED));
+            contentValues.put(AUTOMATIC, hmAux.get(AUTOMATIC));
             contentValues.put(COMMENT, hmAux.get(COMMENT));
             //contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get(CUSTOM_FORM_FIELD_DESC));
             contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get("TXT_VALUE".toLowerCase()));

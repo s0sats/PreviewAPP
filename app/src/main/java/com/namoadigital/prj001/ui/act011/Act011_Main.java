@@ -122,6 +122,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private String product_code;
     private String product_desc;
+    private String product_id;
     private String serial_id;
     private String type;
     private String type_desc;
@@ -473,6 +474,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 product_code,
                 form_data,
                 product_desc,
+                product_id,
                 type_desc,
                 form_desc,
                 serial_id
@@ -561,6 +563,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         if (bundle != null) {
             product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
             product_desc = bundle.getString(Constant.ACT008_PRODUCT_DESC, "");
+            product_id = bundle.getString(Constant.ACT008_PRODUCT_ID, "Sem Product ID");
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
             type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
             type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
@@ -916,11 +919,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
-        //checkBoxFF.setmAutomatic(cf.get("automatic"));
-
-        cf.put("automatic", "0");
-
-        checkBoxFF.setmAutomatic("0");
+        checkBoxFF.setmAutomatic(cf.get("automatic"));
 
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -955,11 +954,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
-        //ratingImageFF.setmAutomatic(cf.get("automatic"));
-
-        cf.put("automatic", "GREEN");
-
-        ratingImageFF.setmAutomatic("GREEN");
+        ratingImageFF.setmAutomatic(cf.get("automatic"));
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1524,8 +1519,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
         TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_title);
 
-        TextView tv_product_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_lbl);
-        TextView tv_product_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_val);
+        TextView tv_product_title_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_title_lbl);
+        TextView tv_product_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_lbl);
+        TextView tv_product_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_val);
+        TextView tv_product_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_lbl);
+        TextView tv_product_id_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_val);
+
         TextView tv_product_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_desc);
         //
         TextView tv_serial_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
@@ -1547,13 +1546,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
-        tv_product_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
+        tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
         tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
         tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
 
-        tv_product_val.setText(product_code);
+        tv_product_code_val.setText(product_code);
         tv_product_desc.setText(product_desc);
 
         tv_serial_val.setText(serial_id);

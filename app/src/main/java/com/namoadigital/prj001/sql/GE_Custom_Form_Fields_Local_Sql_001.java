@@ -3,6 +3,8 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Field;
 
 /**
  * Created by neomatrix on 08/02/17.
@@ -39,8 +41,13 @@ public class GE_Custom_Form_Fields_Local_Sql_001 implements Specification {
                         "     AND " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_CODE + " = '" + s_form_code + "' " +
                         "     AND " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' " +
                         "     AND " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA + " = '" + s_form_data + "' " +
+                        "     ORDER BY " +
+                        "         " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_TYPE +
+                        "      ,  " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_CODE +
+                        "      ,  " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_VERSION +
+                        "      ,  " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA +
+                        "      ,  " + GE_Custom_Form_Field_LocalDao.PAGE +
                         ";CUSTOMER_CODE#CUSTOM_FORM_TYPE#CUSTOM_FORM_CODE#CUSTOM_FORM_VERSION#CUSTOM_FORM_DATA#CUSTOM_FORM_SEQ#CUSTOM_FORM_DATA_TYPE#CUSTOM_FORM_DATA_SIZE#CUSTOM_FORM_DATA_MASK#CUSTOM_FORM_DATA_CONTENT#CUSTOM_FORM_LOCAL_LINK#CUSTOM_FORM_ORDER#PAGE#REQUIRED#AUTOMATIC#COMMENT#CUSTOM_FORM_FIELD_DESC;")
-
 
                 .toString();
     }

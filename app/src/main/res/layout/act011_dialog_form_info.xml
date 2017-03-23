@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:text="title"
-        android:textSize="@dimen/font_size_title"
+        android:textSize="@dimen/font_size_title_md"
         android:textStyle="bold" />
 
     <ScrollView
@@ -26,6 +26,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/act_011_dialog_tv_product_title_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Product"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -43,6 +52,29 @@
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_product_code_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act_011_dialog_tv_product_id_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="ID:"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act_011_dialog_tv_product_id_val"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

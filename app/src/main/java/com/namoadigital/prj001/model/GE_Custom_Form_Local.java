@@ -15,8 +15,10 @@ public class GE_Custom_Form_Local {
     private String custom_form_status;
     private String custom_form_src;
     private int require_signature;
+    private String automatic_fill;
     private int custom_product_code;
     private String custom_product_desc;
+    private String custom_product_id;
     private String custom_form_type_desc;
     private String custom_form_desc;
     private String serial_id;
@@ -93,6 +95,14 @@ public class GE_Custom_Form_Local {
         this.require_signature = require_signature;
     }
 
+    public String getAutomatic_fill() {
+        return automatic_fill;
+    }
+
+    public void setAutomatic_fill(String automatic_fill) {
+        this.automatic_fill = automatic_fill;
+    }
+
     public int getCustom_product_code() {
         return custom_product_code;
     }
@@ -107,6 +117,14 @@ public class GE_Custom_Form_Local {
 
     public void setCustom_product_desc(String custom_product_desc) {
         this.custom_product_desc = custom_product_desc;
+    }
+
+    public String getCustom_product_id() {
+        return custom_product_id;
+    }
+
+    public void setCustom_product_id(String custom_product_id) {
+        this.custom_product_id = custom_product_id;
     }
 
     public String getCustom_form_type_desc() {
