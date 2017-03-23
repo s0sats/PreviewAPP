@@ -87,11 +87,17 @@ public class Sql_Act013_001 implements Specification {
                         "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' THEN 1\n" +
                         "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' THEN 2\n" +
                         "           ELSE 3\n" +
-                        "      END , \n" +
+                        "      END ," +
+                        "      (CASE WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
+                        "            ELSE  '31/12/9999 23:59'\n" +
+                        "       END) ASC,\n" +
+                        "      (CASE WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' THEN d.date_end\n" +
+                        "            ELSE  '01/01/1900 00:00'\n" +
+                        "       END) DESC , \n" +
                         "      l.custom_form_type, \n" +
                         "      l.custom_product_code, \n" +
                         "      l.serial_id, \n" +
-                        "      l.custom_form_data " +
+                        "      l.custom_form_data" +
                         ";")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
