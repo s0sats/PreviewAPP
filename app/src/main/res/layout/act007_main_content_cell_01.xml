@@ -61,7 +61,8 @@
                         android:padding="1dp"
                         android:text="Id"
                         android:textColor="@color/lib_custom_cell_font_color"
-                        android:textSize="@dimen/font_size_item" />
+                        android:textSize="@dimen/font_size_item"
+                        android:gravity="right"/>
 
                 </LinearLayout>
 

@@ -10,19 +10,37 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act010.Act010_Main"
     tools:showIn="@layout/act010_main">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="10dp">
 
-        <TextView
-            android:id="@+id/act010_tv_form_lbl"
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_formulario"
+            android:padding="10dp"
+
+            />
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Form Type:"
-            android:textSize="@dimen/font_size_title_md"
-            android:textStyle="bold"/>
+            android:orientation="vertical"
+            android:layout_weight="5"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/act010_tv_form_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Form Type:"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/act010_tv_form_type_lbl"
@@ -30,16 +48,18 @@
                 android:layout_height="wrap_content"
                 android:text="Type:"
                 android:textSize="@dimen/font_size_title"
-                android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/act010_tv_form_type_val"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="22"
-            android:textSize="@dimen/font_size_item"
-            android:paddingLeft="10dp"
-            android:textColor="@color/namoa_color_light_blue"
-            />
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/act010_tv_form_type_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="22"
+                android:textSize="@dimen/font_size_item_md"
+
+                />
 
             <TextView
                 android:id="@+id/act010_tv_form_desc_lbl"
@@ -47,17 +67,21 @@
                 android:layout_height="wrap_content"
                 android:text="Desc:"
                 android:textSize="@dimen/font_size_title"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/act010_tv_form_desc_val"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="huehue br"
-            android:textSize="@dimen/font_size_item"
-            android:paddingLeft="10dp"
-            android:textColor="@color/namoa_color_light_blue"
-            />
+            <TextView
+                android:id="@+id/act010_tv_form_desc_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="huehue br"
+                android:textSize="@dimen/font_size_title_md" />
+
+        </LinearLayout>
+
+
+
 
     </LinearLayout>
 
@@ -65,8 +89,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="5dp">
 
         <ListView
@@ -76,9 +100,8 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:padding="5dp"
             android:divider="@color/padrao_TRANSPARENT"
-            />
+            android:padding="5dp" />
 
     </LinearLayout>
 
