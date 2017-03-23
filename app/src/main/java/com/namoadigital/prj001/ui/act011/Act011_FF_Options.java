@@ -248,6 +248,12 @@ public class Act011_FF_Options extends Fragment {
 
     }
 
+    public void translaTab(HMAux hmAux_Trans){
+
+        ff_options_ll_autot.setText(hmAux_Trans.get("drawer_automatic_lbl"));
+
+    }
+
     public void loadCF_Fields(List<HMAux> cf_fields, HMAux resTabs, List<HMAux> pdfs, String signature, String description) {
 
         ff_options_ll_ih.setText(description);

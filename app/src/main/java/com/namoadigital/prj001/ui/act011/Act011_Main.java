@@ -207,6 +207,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_require_signature_msg");
         transList.add("alert_optional_signature_msg");
         transList.add("dialog_signature_title_lbl");
+        transList.add("drawer_automatic_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -760,6 +761,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
             act011_ff_options.enableTab(formData.getCustom_form_status());
+            act011_ff_options.translaTab(hmAux_Trans);
 
             returnValidCheck(String.valueOf(index_old));
         }
