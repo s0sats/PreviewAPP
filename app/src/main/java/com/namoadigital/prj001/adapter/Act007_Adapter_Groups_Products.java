@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,20 +75,24 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
         TextView tv_desc = (TextView)
                 convertView.findViewById(R.id.act007_main_content_cell_tv_desc);
 
+        ll_fundo.setBackground(null);
+
         String codeText = hmAux_Trans.get("lbl_code") + " " ;
         String idText =  hmAux_Trans.get("lbl_id") + " " ;
         String descText =  /*hmAux_Trans.get("lbl_desc") +*/ " " ;
 
-        tv_code.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
-        tv_id.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
-        tv_desc.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+        ColorStateList filterColor =  context.getResources().getColorStateList(R.color.namoa_color_light_blue7);
+        //
+        tv_code.setTextColor(filterColor);
+        tv_id.setTextColor(filterColor);
+        tv_desc.setTextColor(filterColor);
+        //
+        tv_desc.setTypeface(tv_desc.getTypeface(), Typeface.BOLD);
 
         if (item.get("type").equalsIgnoreCase("group")) {
-            ll_fundo.setBackground(context.getResources().getDrawable(R.drawable.namoa_cell_4_states));
-            //
             iv_001.setVisibility(View.VISIBLE);
-            iv_001.setImageResource(R.drawable.ic_folder_black_24dp);
-            iv_001.setColorFilter(context.getResources().getColor(R.color.namoa_color_dark_blue2));
+            iv_001.setImageResource(R.drawable.ic_pasta);
+            iv_001.setColorFilter(context.getResources().getColor(R.color.namoa_color_light_blue7));
             //
             codeText += item.get("code");
             idText += item.get("id");
@@ -97,9 +103,9 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
             tv_desc.setText(descText);
 
         } else {
-            ll_fundo.setBackground(null);
-            //
-            iv_001.setVisibility(View.INVISIBLE);
+            iv_001.setVisibility(View.VISIBLE);
+            iv_001.setImageResource(R.drawable.ic_produto);
+            iv_001.setColorFilter(context.getResources().getColor(R.color.namoa_color_light_green5));
             //
             codeText += item.get("code");
             idText += item.get("id");
@@ -109,7 +115,6 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
             tv_id.setText(idText);
             tv_desc.setText(descText);
 
-            tv_desc.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue));
         }
 
         return convertView;

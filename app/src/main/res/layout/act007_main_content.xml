@@ -38,6 +38,8 @@
             android:padding="10dp"
             app:mNFC="false"
             app:mOCR="false" />
+            android:textSize="@dimen/font_size_title"
+            />
 
         <ListView
             android:id="@+id/act007_lv_groups_products"
@@ -45,10 +47,10 @@
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:background="@drawable/border_back"
-            android:divider="@color/namoa_color_light_blue3"
+            android:padding="5dp"
             android:dividerHeight="1dp"
-            android:padding="5dp" />
+            android:divider="@color/namoa_color_light_blue7"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,20 +60,22 @@
             <Button
                 android:id="@+id/act007_btn_back"
                 android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:layout_weight="1"
                 android:background="@drawable/btn_namoa_main_states"
-                android:textColor="@color/padrao_WHITE" />
+                android:textColor="@color/padrao_WHITE"
+                />
 
             <Button
                 android:id="@+id/act007_btn_home"
                 android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:layout_weight="1"
                 android:background="@drawable/btn_namoa_main_states"
-                android:textColor="@color/padrao_WHITE" />
+                android:textColor="@color/padrao_WHITE"
+             />
 
         </LinearLayout>
 

@@ -20,6 +20,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Local_Data_List_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -46,6 +47,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private CheckBox chk_finalized;
     private ImageView iv_help;
     private List<CheckBox> checkBoxList;
+    private Bundle recBundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,6 +98,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     private void initVars() {
+
+        recBundle = getIntent().getExtras();
+
         mPresenter =
                 new Act013_Main_Presenter_Impl(
                         context,
@@ -306,6 +311,14 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     @Override
+    public void callAct006(Context context) {
+        Intent mIntent = new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void alertFormNotReady() {
 
         ToolBox.alertMSG(
@@ -320,6 +333,6 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(recBundle);
     }
 }

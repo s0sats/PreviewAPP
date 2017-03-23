@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -120,6 +121,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter {
         tv_code.setTextColor(filterColor);
         tv_id.setTextColor(filterColor);
         tv_desc.setTextColor(filterColor);
+
+        tv_desc.setTypeface(tv_desc.getTypeface(), Typeface.BOLD);
 
         String codeText = (trans_lbl_code != "" ? trans_lbl_code : hmAux_Trans.get("lbl_code")) + " ";
         String idText =  (trans_lbl_id != "" ? trans_lbl_id :hmAux_Trans.get("lbl_id") )+ " ";

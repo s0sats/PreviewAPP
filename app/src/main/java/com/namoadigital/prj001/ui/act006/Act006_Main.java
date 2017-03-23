@@ -6,18 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.Button;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act006_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
-import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -39,8 +38,10 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     private Context context;
     private Act006_Main_Presenter mPresenter;
 
-    private ListView lv_checklist_opcs;
-    private Act006_Adapter mAdapter;
+    private Button btn_new;
+    private Button btn_pendencies;
+    private int pendencies_qty;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +78,8 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         transList.add("act006_lbl_new");
         transList.add("act006_lbl_barcode");
         transList.add("act006_lbl_checklist");
+        transList.add("alert_no_pendencies_title");
+        transList.add("alert_no_pendencies_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -90,11 +93,22 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     private void initVars() {
         mPresenter = new Act006_Main_Presenter_Impl(
                 context,
-                this
+                this,
+                new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
+
         );
 
-        lv_checklist_opcs = (ListView) findViewById(R.id.act006_lv_checklist_opcs);
-        mPresenter.getAllOpcs();
+        btn_new = (Button) findViewById(R.id.act006_btn_new);
+        btn_new.setText(hmAux_Trans.get("act006_lbl_new"));
+
+        btn_pendencies = (Button) findViewById(R.id.act006_btn_pendencies);
+        btn_pendencies.setText(hmAux_Trans.get("act006_lbl_checklist"));
+
+        mPresenter.getPendencies();
     }
 
     private void iniUIFooter() {
@@ -129,43 +143,27 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
     private void initActions() {
 
-        lv_checklist_opcs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        btn_new.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                switch (item.get(LIST_OPT)) {
-                    case "new":
-                        callAct007(context);
-                        break;
-                    case "barcode":
-                        callBarCode(item);
-                        break;
-                    case "checklist":
-                        callAct012(context);
-                        break;
-                    default:
-                        break;
-                }
+            public void onClick(View view) {
+                callAct007(context);
             }
         });
+
+        btn_pendencies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.checkPendenciesFlow(pendencies_qty);
+            }
+        });
+
     }
 
     @Override
-    public void loadCheckListOpcs(List<HMAux> opcs) {
-
-        for (HMAux item : opcs) {
-            if (hmAux_Trans.get(item.get(LIST_LABEL)) != null) {
-                item.put(LIST_LABEL, hmAux_Trans.get(item.get(LIST_LABEL)));
-            } else {
-                item.put(LIST_LABEL, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(LIST_LABEL)));
-            }
-        }
-
-        mAdapter = new Act006_Adapter(context,R.layout.namoa_custom_cell_2,opcs);
-
-        lv_checklist_opcs.setAdapter(mAdapter);
-
+    public void setPendenciesQty(int qty) {
+        pendencies_qty = qty;
+        String btn_text = btn_pendencies.getText().toString().trim() +" (" +pendencies_qty+")";
+        btn_pendencies.setText(btn_text);
     }
 
     @Override
@@ -176,6 +174,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         finish();
     }
 
+    //Metodo que será chamado quando houver btn barcode.
     private void callBarCode(HMAux item) {
         try {
             Intent mIntent = new Intent(
@@ -207,9 +206,27 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     }
 
     @Override
-    public void callAct012(Context context) {
-        Intent mIntent = new Intent(context, Act012_Main.class);
+    public void showMsg() {
+
+        ToolBox.alertMSG(
+                Act006_Main.this,
+                hmAux_Trans.get("alert_no_pendencies_title"),
+                hmAux_Trans.get("alert_no_pendencies_msg"),
+                null,
+                0
+        );
+
+    }
+
+    @Override
+    public void callAct013(Context context) {
+        Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle =  new Bundle();
+        bundle.putInt(Constant.ACT006,1);
+        mIntent.putExtras(bundle);
+
         startActivity(mIntent);
         finish();
     }

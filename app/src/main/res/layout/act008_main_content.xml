@@ -175,7 +175,8 @@
                     android:inputType="text"
                     android:padding="10dp"
                     app:mNFC="false"
-                    app:mOCR="false" />
+                    app:mOCR="false"
+                    android:textSize="@dimen/font_size_title"/>
 
 
             <LinearLayout

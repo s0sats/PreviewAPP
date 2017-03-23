@@ -20,18 +20,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Customer"
-            android:textSize="@dimen/font_size_title"
-            android:textStyle="bold"/>
+            android:textSize="@dimen/font_size_title_md"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/act003_tv_customer_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customer"
+            android:textSize="@dimen/font_size_title_md"
+            android:textStyle="bold"/>
+ <!--       <TextView
+            android:id="@+id/act003_tv_customer_lbl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mosolf"
             android:textSize="@dimen/font_size_item"
             android:paddingLeft="10dp"
             android:textColor="@color/namoa_color_light_blue"
+            android:visibility="gone"
             />
-
+-->
     </LinearLayout>
 
 
@@ -39,7 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/white"
         android:orientation="vertical">
 
         <ListView

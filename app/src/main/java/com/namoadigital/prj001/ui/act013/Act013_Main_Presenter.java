@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act013;
 
+import android.os.Bundle;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 
 /**
@@ -14,5 +16,5 @@ public interface Act013_Main_Presenter {
 
     void validateOpenForm(HMAux item);
 
-    void onBackPressedClicked();
+    void onBackPressedClicked(Bundle recBundle);
 }

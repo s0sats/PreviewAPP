@@ -81,7 +81,13 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
     }
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct012(context);
+    public void onBackPressedClicked(Bundle recBundle) {
+
+        if(recBundle != null && recBundle.getInt(Constant.ACT006) == 1){
+
+            mView.callAct006(context);
+        }else{
+            mView.callAct012(context);
+        }
     }
 }

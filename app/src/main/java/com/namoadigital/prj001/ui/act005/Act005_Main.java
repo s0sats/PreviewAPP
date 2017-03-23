@@ -132,6 +132,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("drawer_change_site_one_site_alert_msg");
         transList.add("drawer_change_operation_one_operation_alert_ttl");
         transList.add("drawer_change_operation_one_operation_alert_msg");
+        transList.add("msg_start_sync");
+        transList.add("msg_preparing_to_send_data");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -155,7 +157,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                hmAux_Trans
 
         );
         //
@@ -213,9 +216,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                                 //if(ToolBox_Con.isOnline(context)) {
                                     //Reseta preferencias do Customer e volta para
                                     //Act002 - lista de customer
-                                    ToolBox_Con.resetCustomerSiteOperationPreferences(context);
-
-                                    callAct002(context);
+                                  changeCustomer();
 //                                }else{
 //                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
 //                                }
@@ -384,6 +385,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             }
         });
 
+
+    }
+
+    private void changeCustomer() {
+        ToolBox_Con.resetCustomerSiteOperationPreferences(context);
+
+        callAct002(context);
 
     }
 
@@ -589,6 +597,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             //Fecha Drawer
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        changeCustomer();
     }
 
     private void showSuccessDialog() {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
@@ -73,6 +74,12 @@ public class WS_Sync extends IntentService {
 
     private StringBuilder sResult;
 
+    //
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "ws_sync";
+
     public WS_Sync() {
         super("WS_Sync");
     }
@@ -126,10 +133,13 @@ public class WS_Sync extends IntentService {
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         DataPackage dataPackage = new DataPackage();
+        //Lista de produtos que foram usado.
+        List<Sync_Checklist> syncChecklists = new ArrayList<>();
 
         //Inicia processsamento das informações para o envio
 
@@ -143,14 +153,9 @@ public class WS_Sync extends IntentService {
         //Verifica o tipo Checklist e gera lista de codigo de produtos.
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
             ArrayList<Long> CHECKLIST = new ArrayList<>();
-            Sync_ChecklistDao syncChecklistDao =
-                    new Sync_ChecklistDao(
-                            getApplicationContext(),
-                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                            Constant.DB_VERSION_CUSTOM
-                    );
+
             //Pega lista de Sync_Checklist
-            List<Sync_Checklist> syncChecklists = syncChecklistDao.query(
+            syncChecklists = syncChecklistDao.query(
                 new Sync_Checklist_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                 ).toSqlQuery()
@@ -272,10 +277,28 @@ public class WS_Sync extends IntentService {
         }
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
+        //
+        // Tenta pegar tradução dos itens do WS
+        //Seleciona traduções
+        //if(!ToolBox_Con.getPreference_Translate_Code(getApplicationContext()).equals("")){
+            loadTranslation();
+        //}
 
         //
         //Processamento das tabelas do MAIN
         //
+        /**
+        *    VARIAVEIS DE PROFILE PARA OPERATION E SITE
+        *  Após aplicação do profile na web, sempre que houver sincronismo do MAIN
+        *  é necessario verificar se a operação e site das preferencias, ainda
+        *  existem na lista enviado pelo server.
+        *  Caso um deles não exista, após processar todas as tabelas envia msg
+        *  e envia para change customer.
+        */
+        boolean operationExist = ToolBox_Con.getPreference_Operation_Code(getApplicationContext()) == -1L;
+        //Se for site externo, seta true, senão false.
+        boolean siteExist = (ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("") || ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("-1") );
+
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
             //Cria DAOs das tabelas MAIN
             MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -290,6 +313,7 @@ public class WS_Sync extends IntentService {
             productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
             productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
+
             //
             // Processamento Operation
             //
@@ -305,12 +329,32 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
+                /*
+                * Verifica se operação das preferencias ainda
+                * esta na lista de operações enviadas.
+                * Se não tiver, ao final do processo envia para change customer.
+                *
+                */
+                if(!operationExist) {
+                    for (MD_Operation operation : operations) {
+                        if (ToolBox_Con.getPreference_Operation_Code(getApplicationContext())
+                             == operation.getOperation_code()
+                        ) {
+                            operationExist = true;
+                            break;
+                        }
+
+                    }
+                }
+
                 operationDao.addUpdate(operations, true);
             }
 
             //
             // Processamento Site
             //
+
+
             File[] files_site = ToolBox_Inf.getListOfFiles_v2("md_site-");
 
             for (File _file : files_site) {
@@ -323,6 +367,24 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
+                /*
+                * Se site != de externo,
+                * Verifica se site das preferencias
+                * esta na lista de site enviadas.
+                * Se não tiver, ao final do processo desloga usr.
+                */
+                if(!siteExist){
+                    for (MD_Site site : sites) {
+                        if(ToolBox_Con
+                                .getPreference_Site_Code(getApplicationContext())
+                                .equals(String.valueOf(site.getSite_code()))
+                        ){
+                            siteExist = true;
+                            break;
+                        }
+                    }
+                }
+
                 siteDao.addUpdate(sites, true);
             }
 
@@ -331,9 +393,8 @@ public class WS_Sync extends IntentService {
             //
 
             File[] files_product = ToolBox_Inf.getListOfFiles_v2("md_product-");
-
+            List<Sync_Checklist> newSyncList = new ArrayList<>();
             for (File _file : files_product) {
-
                 ArrayList<MD_Product> products = gson.fromJson(
                         ToolBox.jsonFromOracle(
                             ToolBox_Inf.getContents(_file)
@@ -342,7 +403,29 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
+                //Se é sincronimo MAIN + CHECKLIST
+                //Verifica se o usuário ainda tem acesso
+                //a todos os produtos da tabela interna.
+                //Os que não tiver mais acesso, serão apagados.
+                //
+                if(product_code == -1L){
+                    for (Sync_Checklist sync_prod : syncChecklists) {
+                        for (MD_Product product : products) {
+                            if(product.getProduct_code() == sync_prod.getProduct_code() ){
+                                newSyncList.add(sync_prod);
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 productDao.addUpdate(products, true);
+            }
+
+            if(product_code == -1L) {
+                //Reconstroi tabela de produtos interno
+                //com os produtos que o usr ainda tem acesso.
+                syncChecklistDao.addUpdate(newSyncList, true);
             }
             //
             // Processamento Product Group
@@ -419,7 +502,7 @@ public class WS_Sync extends IntentService {
             //
 
             //Se existe product_code, seta controle para false, se não true.
-            productExist = product_code == -1L ? true : false;
+            productExist = product_code == -1L;
             File[] files_cf_product = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
 
             for (File _file : files_cf_product) {
@@ -444,6 +527,7 @@ public class WS_Sync extends IntentService {
                         }
                     }
                 }
+
                 customFormProductDao.addUpdate(customFormsProduct, true);
             }
 
@@ -523,12 +607,40 @@ public class WS_Sync extends IntentService {
         }
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist ){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.generic_no_forms_found), rec.getLink_url(), "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
+        }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN) && (!operationExist || !siteExist)){
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
         }else{
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_no_forms_found");
+        translist.add("msg_lost_access_to_site_or_operation");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
+
+        for (String trans: translist) {
+            if(hmAux_Trans.containsKey(trans) && hmAux_Trans.get(trans).contains(Constant.APP_MODULE+"/") ){
+                hmAux_Trans.put(trans,getString(getResources().getIdentifier(trans,"string",getPackageName())));
+            }
+        }
     }
 
 }

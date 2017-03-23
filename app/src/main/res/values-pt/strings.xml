@@ -38,7 +38,7 @@
     <string name="generic_no_connection_ttl">Conexão não encontrada</string>
     <string name="generic_no_connection_msg">Nenhuma conexão encontrada!\nTenta novamente quando houver conexão</string>
     <string name="generic_zip_not_found_msg">Arquivo zip não encontrado!\nPor favor tente novamente!</string>
-    <string name="generic_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
+    <string name="msg_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
     <string name="act002_title_">Lista de Clientes</string>
     <!-- Lib -->
     <string name="nfc_no_support">Erro: Esse aparelho não suporta NFC.</string>
@@ -57,4 +57,9 @@
     <string name="footer_label">Tela </string>
     <string name="act002_logout_ttl">Logout</string>
     <string name="act002_logout_one_customer_msg">Deseja realmente fazer logout?</string>
+    <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar o Cliente novamente.</string>
+    <string name="generic_start_update_process_msg">Iniciando processo de atualização</string>
+    <string name="generic_error_update_empty_link">ERRO: Ao atualizar!Link vazio!</string>
+    <string name="generic_starting_download_msg">Iniciando dowload</string>
+    <string name="close_app_update_process_msg">Feche o aplicativo para efetivar a atualização.</string>
 </resources>
