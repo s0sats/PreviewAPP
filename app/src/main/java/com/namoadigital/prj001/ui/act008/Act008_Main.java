@@ -254,13 +254,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
         if( md_product.getRequire_serial() == 1){
             tv_required_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
-            tv_required_val.setTextColor(getResources().getColor(R.color.namoa_color_orange));
         }
         //
         tv_allow_new_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
         if( md_product.getAllow_new_serial_cl() == 1){
             tv_allow_new_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
-            tv_allow_new_val.setTextColor(getResources().getColor(R.color.namoa_color_orange));
         }
 
     }
