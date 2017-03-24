@@ -147,16 +147,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         tv_product_ttl.setTag("product_ttl");
         //
         tv_product_code_label = (TextView) findViewById(R.id.act008_tv_product_code_lbl);
-        tv_product_code_label.setTag("product_label");
+        //tv_product_code_label.setTag("product_label");
         //
         tv_product_id_label = (TextView) findViewById(R.id.act008_tv_product_id_lbl);
-        tv_product_id_label.setTag("product_id_label");
+        //tv_product_id_label.setTag("product_id_label");
         //
-        tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_val);
-        tv_product_id_value = (TextView) findViewById(R.id.act008_tv_product_id_val);
+      //  tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_val);
+      //  tv_product_id_value = (TextView) findViewById(R.id.act008_tv_product_id_val);
         //
-        tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_product_desc_ttl);
-        tv_product_desc_label.setTag("product_desc_label");
+       // tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_product_desc_ttl);
+        //tv_product_desc_label.setTag("product_desc_label");
         tv_product_desc_value = (TextView) findViewById(R.id.act008_tv_product_desc_value);
         //
         tv_required_lbl = (TextView) findViewById(R.id.act008_tv_require_serial_lbl);
@@ -175,9 +175,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //Adiciona Views na lista de tradução
 
         views.add(tv_product_ttl);
-        views.add(tv_product_code_label);
-        views.add(tv_product_id_label);
-        views.add(tv_product_desc_label);
+        //views.add(tv_product_code_label);
+        //views.add(tv_product_id_label);
+        //views.add(tv_product_desc_label);
         views.add(tv_required_lbl);
         views.add(tv_allow_new_lbl);
         views.add(btn_create);
@@ -244,8 +244,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public void setProductValues(MD_Product md_product) {
         //
-        tv_product_code_value.setText(String.valueOf(md_product.getProduct_code()));
-        tv_product_id_value.setText(md_product.getProduct_id());
+        tv_product_code_label.setText(
+                hmAux_Trans.get("product_label")+" "+
+                String.valueOf(md_product.getProduct_code())
+
+        );
+        tv_product_id_label.setText(
+                hmAux_Trans.get("product_id_label")+" "+
+                md_product.getProduct_id());
         tv_product_desc_value.setText(md_product.getProduct_desc());
         //
         serial_required = md_product.getRequire_serial();

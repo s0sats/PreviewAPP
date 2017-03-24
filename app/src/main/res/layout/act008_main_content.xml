@@ -32,7 +32,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:src="@drawable/ic_produto"
 
                     />
@@ -198,16 +198,16 @@
             </LinearLayout>
 
 
-            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
-                    <!--android:id="@+id/act008_mket_serial"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="50dp"-->
-                    <!--android:background="@drawable/namoa_bg_1"-->
-                    <!--android:inputType="text"-->
-                    <!--android:padding="10dp"-->
-                    <!--app:mNFC="false"-->
-                    <!--app:mOCR="false"-->
-                    <!--android:textSize="@dimen/font_size_title"/>-->
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act008_mket_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/namoa_bg_1"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    app:mNFC="false"
+                    app:mOCR="false"
+                    android:textSize="@dimen/font_size_title"/>
 
 
             <LinearLayout
