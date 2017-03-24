@@ -30,6 +30,7 @@ public class Sql_Act007_002 implements Specification {
 
             return sb
                     .append(" SELECT\n" +
+                            "  DISTINCT " +
                             "    p.product_code,\n" +
                             "    p.product_id,\n" +
                             "    p.product_desc,\n" +
@@ -50,6 +51,7 @@ public class Sql_Act007_002 implements Specification {
         } else {
             return sb
                     .append("     SELECT\n" +
+                            "       DISTINCT" +
                             "        p.product_code,\n" +
                             "        p.product_id,\n" +
                             "        p.product_desc,\n" +
