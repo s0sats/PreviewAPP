@@ -214,10 +214,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 hmAux_Trans.get("alert_no_serial_typed_msg")
         );
     }
-    @Override
-    public void startDownloadServices(){
 
-        if(!downloadStarted) {
+    @Override
+    public void startDownloadServices() {
+
+        if (!downloadStarted) {
             Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
             Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
             Bundle bundle = new Bundle();
