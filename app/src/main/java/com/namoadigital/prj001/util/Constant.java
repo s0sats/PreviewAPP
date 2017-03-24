@@ -126,6 +126,11 @@ public class Constant extends ConstantBase {
     public static final String GS_SERIAL_ALLOW_NEW = "serialallownew";
     public static final String GS_SERIAL_ID = "serialserialid";
 
+    /**
+     * Serial Logout
+     */
+    public static final String WS_LOGOUT_CUSTOMER_LIST = "logoutcustomerlist";
+
 
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";
@@ -164,6 +169,7 @@ public class Constant extends ConstantBase {
     public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";
     public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
+    public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
 
 
     //Constantes do Status do Cabeçalho
