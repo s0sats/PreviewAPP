@@ -3,14 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:paddingLeft="5dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    >
 
- <CheckBox
-     android:id="@+id/act005_dialog_logout_chk_customer"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:text="ronaldo"
-     android:textSize="@dimen/font_size_item_md"
-     android:layout_gravity="center_vertical"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        >
+
+        <ImageView
+            android:id="@+id/act005_dialog_logout_iv_chk"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_check_box_outline_blank_black_24dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:tint="@color/namoa_color_dark_blue"/>
+
+        <TextView
+            android:id="@+id/act005_dialog_logout_tv_customer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="4"
+            android:text="Customer"
+            android:textSize="@dimen/font_size_item_md"
+            android:paddingLeft="3dp"/>
+
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -19,6 +19,7 @@ import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
@@ -160,8 +161,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            callAct002(context);
-                            finish();
+                            killCurSession(context);
                         }
                     },
                     0
@@ -233,6 +233,32 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         startActivity(mIntent);
         finish();
 
+    }
+
+    private void killCurSession(Context context){
+
+        enableProgressDialog(
+                hmAux_Trans.get("alert_logout_ttl"),
+                hmAux_Trans.get("alert_logout_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+
+
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+        callAct002(context);
     }
 
     @Override

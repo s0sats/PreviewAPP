@@ -28,4 +28,6 @@ public interface Act005_Main_View {
 
     void setWsProcess(String ws_called);
 
+    void callLoginProcess();
+
 }

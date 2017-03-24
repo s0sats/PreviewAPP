@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
@@ -42,7 +44,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private HMAux hmAux_Trans = new HMAux();
     private EV_User_CustomerDao userCustomerDao;
 
+    //logout dialog
+    private String logoutList = "";
     private transient Dialog logoutDialog;
+    private Act005_Logout_Adapter mAdapter;
+    private ListView lv_customer;
+    private List<HMAux> customer_list;
 
     public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao) {
         this.context = context;
@@ -203,20 +210,36 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         View view = inflater.inflate(R.layout.act005_dialog_logout, null);
 
-        TextView tv_logout_title = (TextView) view.findViewById(R.id.act005_dialog_logout_tv_logout_lbl);
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_customer_selection = (TextView) view.findViewById(R.id.act005_dialog_logout_tv_customer_select);
+        tv_customer_selection.setText(hmAux_Trans.get("logout_dialog_customer_select"));
+
+        CheckBox chk_all = (CheckBox) view.findViewById(R.id.act005_dialog_logout_chk_all);
+        chk_all.setText(hmAux_Trans.get("logout_dialog_check_all"));
         //
-        ListView lv_customer = (ListView) view.findViewById(R.id.act005_dialog_logout_lv_customer);
+        TextView tv_logout_title = (TextView) view.findViewById(R.id.act005_dialog_logout_tv_logout_lbl);
+        tv_logout_title.setText(hmAux_Trans.get("logout_dialog_ttl"));
+        //
+        lv_customer = (ListView) view.findViewById(R.id.act005_dialog_logout_lv_customer);
         //
         Button btn_logout = (Button) view.findViewById(R.id.act005_dialog_logout_btn_logout);
+        btn_logout.setText(hmAux_Trans.get("logout_dialog_btn"));
 
-        List<HMAux> customer_list
-                =  userCustomerDao.query_HM(
+        /**
+         * Ini Actions
+         */
+
+        customer_list =  userCustomerDao.query_HM(
                         new EV_User_Customer_Sql_004(
+                           String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                            ToolBox_Con.getPreference_User_Code(context)
                             ).toSqlQuery()
                         );
 
-        Act005_Logout_Adapter mAdapter = new Act005_Logout_Adapter(context, customer_list);
+        mAdapter = new Act005_Logout_Adapter(context, customer_list);
 
         lv_customer.setAdapter(mAdapter);
 
@@ -229,15 +252,59 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 }else{
                     item.put(EV_User_Customer_Sql_004.KEY_LOGOUT,"0");
                 }
-                ((HMAux) parent.getItemAtPosition(position)).put(EV_User_Customer_Sql_004.KEY_LOGOUT,"0");
 
+                mAdapter.notifyDataSetChanged();
+            }
+        });
 
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (HMAux aux  : customer_list) {
+                    if(aux.get(EV_User_Customer_Sql_004.KEY_LOGOUT).equals("1")){
+                        logoutList += aux.get(EV_User_CustomerDao.CUSTOMER_CODE) + "|";
+                        if(aux.get(EV_User_CustomerDao.CUSTOMER_CODE).equals(String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))){
+                            ToolBox_Con.setPreference_Customer_Code(context,-1L);
+                        }
+                    }
+                }
+
+                if(logoutList.length() > 0) {
+                    //
+                    logoutList = logoutList.substring(0, logoutList.length() - 1);
+                    //
+                    if (ToolBox_Con.isOnline(context)) {
+                        executeLogout(logoutList);
+                    } else {
+                        if(ToolBox_Con.getPreference_Customer_Code(context) == -1L){
+                            mView.callLoginProcess();
+                        }
+                    }
+                }
+
+                logoutDialog.dismiss();
+            }
+        });
+
+        chk_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckBox checkBox = (CheckBox) view;
+                for (HMAux aux :customer_list) {
+                    if(checkBox.isChecked()){
+                        aux.put(EV_User_Customer_Sql_004.KEY_LOGOUT,"1");
+                    }else{
+                        aux.put(EV_User_Customer_Sql_004.KEY_LOGOUT,"0");
+                    }
+                }
+
+                mAdapter.notifyDataSetChanged();
             }
         });
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.98F;
-        float dmH = (float) dm.heightPixels * 0.98F;
+        float dmH = (float) dm.heightPixels * 0.90F;
 
         logoutDialog.setContentView(view);
         logoutDialog.setCancelable(true);
@@ -260,5 +327,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     }
 
+    private void executeLogout(String customer_list){
+        mView.setWsProcess(Act005_Main.WS_PROCESS_LOGOUT);
+
+        mView.showPD();
+
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,customer_list);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+
+    }
 
 }

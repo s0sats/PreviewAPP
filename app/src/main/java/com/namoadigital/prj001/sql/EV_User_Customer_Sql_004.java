@@ -11,9 +11,11 @@ public class EV_User_Customer_Sql_004 implements Specification {
 
     public static final String KEY_LOGOUT = "key_logout";
 
+    private String s_customer_code;
     private String s_user;
 
-    public EV_User_Customer_Sql_004(String s_user) {
+    public EV_User_Customer_Sql_004(String s_customer_code, String s_user) {
+        this.s_customer_code = s_customer_code;
         this.s_user = s_user;
     }
 
@@ -24,7 +26,7 @@ public class EV_User_Customer_Sql_004 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "   e.*," +
-                        "   '0' "+ KEY_LOGOUT +"\n" +
+                        "   case when e.customer_code = '"+s_customer_code+"' then 1 else 0 end "+ KEY_LOGOUT +"\n" +
                         " FROM\n" +
                         EV_User_CustomerDao.TABLE +" e\n" +
                         " WHERE\n" +

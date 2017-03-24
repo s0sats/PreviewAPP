@@ -62,6 +62,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
     public static final String WS_PROCESS_SEND = "ws_process_send";
+    public static final String WS_PROCESS_LOGOUT = "ws_process_logout";
 
 
     private Context context;
@@ -137,6 +138,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("drawer_change_operation_one_operation_alert_msg");
         transList.add("msg_start_sync");
         transList.add("msg_preparing_to_send_data");
+        transList.add("logout_dialog_btn");
+        transList.add("logout_dialog_ttl");
+        transList.add("alert_logout_ttl");
+        transList.add("alert_logout_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -375,7 +380,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void logoutClicked() {
 
-               // mPresenter.showLogoutDialog();
+                mPresenter.showLogoutDialog();
 
                /* Intent mIntent = new Intent(context, WBR_Logout.class);
                 Bundle bundle = new Bundle();
@@ -388,20 +393,20 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
 */
 
-                ToolBox.alertMSG(
-                        Act005_Main.this,
-                        hmAux_Trans.get("drawer_logout_alert_ttl"),
-                        hmAux_Trans.get("drawer_logout_alert_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ToolBox_Con.cleanPreferences(Act005_Main.this);
-                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
-                                finish();
-                            }
-                        },
-                        1
-                );
+//                ToolBox.alertMSG(
+//                        Act005_Main.this,
+//                        hmAux_Trans.get("drawer_logout_alert_ttl"),
+//                        hmAux_Trans.get("drawer_logout_alert_msg"),
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                ToolBox_Con.cleanPreferences(Act005_Main.this);
+//                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
+//                                finish();
+//                            }
+//                        },
+//                        1
+//                );
 
             }
         });
@@ -478,11 +483,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
                 alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
-
                 break;
             case Act005_Main.WS_PROCESS_SYNC:
-                alertTitle = hmAux_Trans.get("alert_sync_msg");
+                alertTitle = hmAux_Trans.get("alert_sync_ttl");
                 alertMsg =  hmAux_Trans.get("alert_sync_msg");
+                break;
+            case Act005_Main.WS_PROCESS_LOGOUT:
+                alertTitle = hmAux_Trans.get("alert_logout_ttl");
+                alertMsg =  hmAux_Trans.get("alert_logout_msg");
                 break;
             default:
                 break;
@@ -610,13 +618,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         progressDialog.dismiss();
 
         if (!wsProcess.equals("")) {
-            showSuccessDialog();
-            //Atualiza traduções
-            loadTranslation();
-            //Atualiza menu e os badges
-            mPresenter.getMenuItens(hmAux_Trans);
-            //Fecha Drawer
-            mDrawerLayout.closeDrawer(GravityCompat.START);
+            if(wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)){
+                if(ToolBox_Con.getPreference_Customer_Code(context) == -1L){
+                  processLogin();
+                }
+            }else {
+                showSuccessDialog();
+                //Atualiza traduções
+                loadTranslation();
+                //Atualiza menu e os badges
+                mPresenter.getMenuItens(hmAux_Trans);
+                //Fecha Drawer
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
         }
     }
 
@@ -657,6 +671,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 0
         );
 
+    }
+
+    @Override
+    public void callLoginProcess() {
+        processLogin();
     }
 
     //TRATA SESSION_NOT_FOUND

@@ -94,7 +94,7 @@ public class WS_Logout extends IntentService {
             case "OK":
             case "ERROR":
             default:
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_APP", "Logout Completed", "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "", "", "0");
                 break;
         }
     }

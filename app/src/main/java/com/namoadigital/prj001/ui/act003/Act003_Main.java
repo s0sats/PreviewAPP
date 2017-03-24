@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act003;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,10 +12,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -49,6 +52,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         initVars();
         iniUIFooter();
         initActions();
+
+
     }
 
     private void iniSetup() {
@@ -83,13 +88,17 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     @Override
-    public void callAct002(Context context) {
+    public void callAct002(Context context, boolean force_get_customer) {
         ToolBox_Con.setPreference_Customer_Code(context,-1L);
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.BACK_ACTION, 1);
+
+        if(force_get_customer){
+            bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER, 1);
+        }
         //
         mIntent.putExtras(bundle);
         //
@@ -120,12 +129,29 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     @Override
     public void loadSites(List<HMAux> sites) {
+        if(sites.size() == 0) {
+            ToolBox.alertMSG(
+                    Act003_Main.this,
+                    hmAux_Trans.get("alert_no_site_title"),
+                    hmAux_Trans.get("alert_no_site_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            killCurSession(context);
+                        }
+                    },
+                    0
+            );
+            //
+            //No futuro, deixar a caixa cancelable false ou capturar a caixa
+            // e no evento setOnDismissListener , rodar o metodo que chamada
+            // callAct002
 
-        if(sites.size() == 1 ){
+        }else if(sites.size() == 1 ){
             Bundle bundle = getIntent().getExtras();
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
             if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
-                callAct002(context);
+                callAct002(context,false);
             }else {
                 mPresenter.setSiteCode(sites.get(0));
             }
@@ -147,6 +173,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private void loadTranslation(){
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_customer");
+        transList.add("alert_no_site_title");
+        transList.add("alert_no_site_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -157,6 +185,33 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         );
 
     }
+
+    private void killCurSession(Context context){
+
+        enableProgressDialog(
+                hmAux_Trans.get("alert_logout_ttl"),
+                hmAux_Trans.get("alert_logout_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+        callAct002(context,true);
+    }
+
+
 
     @Override
     public void onBackPressed() {

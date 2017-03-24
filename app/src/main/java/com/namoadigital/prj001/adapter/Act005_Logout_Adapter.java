@@ -5,11 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 
 import java.util.List;
 
@@ -56,17 +58,19 @@ public class Act005_Logout_Adapter extends BaseAdapter {
         //Resgata HmAux com as informações
         HMAux item = source.get(position);
 
-        CheckBox chk_001 = (CheckBox) convertView.findViewById(R.id.act005_dialog_logout_chk_customer);
+        ImageView iV001 = (ImageView) convertView.findViewById(R.id.act005_dialog_logout_iv_chk);
+        iV001.setColorFilter(context.getResources().getColor(R.color.namoa_color_dark_blue));
 
-        chk_001.setTag(item.get(EV_User_CustomerDao.CUSTOMER_CODE));
-        chk_001.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
+        TextView textView = (TextView) convertView.findViewById(R.id.act005_dialog_logout_tv_customer);
 
-        chk_001.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        textView.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
 
-            }
-        });
+        if (item.get(EV_User_Customer_Sql_004.KEY_LOGOUT).equals("1")){
+            iV001.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_box_black_24dp));
+        }else{
+            iV001.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp));
+        }
+
         return convertView;
     }
 }
