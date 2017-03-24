@@ -53,6 +53,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private Button btn_create;
 
     private Act008_Main_Presenter mPresenter;
+    private MD_Product product;
 
     private Bundle bundle;
     private long product_code;
@@ -243,6 +244,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void setProductValues(MD_Product md_product) {
+        product = md_product;
         //
         tv_product_code_label.setText(
                 hmAux_Trans.get("product_label")+" "+
@@ -392,8 +394,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent =  new Intent(context, Act009_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_DESC,tv_product_desc_value.getText().toString().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_ID,tv_product_id_value.getText().toString().trim());
+        bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
+        bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
 
         mIntent.putExtras(bundle);
 
