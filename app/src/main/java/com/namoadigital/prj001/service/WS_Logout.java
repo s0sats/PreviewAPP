@@ -72,7 +72,7 @@ public class WS_Logout extends IntentService {
         env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
         env.setCustomer_code(customer_list);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Solicitando logout", "", "0");
+       // ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Solicitando logout", "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_LOGOUT,

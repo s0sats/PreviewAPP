@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/act005_dialog_logout_tv_logout_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="Logout"
+            android:textSize="@dimen/font_size_title_md"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/namoa_color_dark_blue" />
+        <CheckBox
+            android:id="@+id/act005_dialog_logout_chk_all"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Check All"
+            android:textSize="@dimen/font_size_item_md"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/act005_dialog_logout_lv_customer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:clickable="false">
+
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/act005_dialog_logout_btn_logout"
+            android:layout_width="@dimen/btn_width_default"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_namoa_main_states" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+ <CheckBox
+     android:id="@+id/act005_dialog_logout_chk_customer"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:text="ronaldo"
+     android:textSize="@dimen/font_size_item_md"
+     android:layout_gravity="center_vertical"/>
+
+</LinearLayout>

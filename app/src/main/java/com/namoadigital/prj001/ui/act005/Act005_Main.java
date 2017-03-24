@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -77,6 +78,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private String wsProcess;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +96,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private void iniSetup() {
 
-        context = getBaseContext();
+        context = Act005_Main.this;
         //
         fm = getSupportFragmentManager();
         //
@@ -158,7 +160,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
-                hmAux_Trans
+                hmAux_Trans,
+                new EV_User_CustomerDao(
+                        context,
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
+                )
+
 
         );
         //
@@ -366,6 +374,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void logoutClicked() {
 
+               // mPresenter.showLogoutDialog();
+
+               /* Intent mIntent = new Intent(context, WBR_Logout.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,"1|5");//Pula validação de other device
+
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                //ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+
+*/
+
                 ToolBox.alertMSG(
                         Act005_Main.this,
                         hmAux_Trans.get("drawer_logout_alert_ttl"),
@@ -386,6 +407,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
 
     }
+
 
     private void changeCustomer() {
         ToolBox_Con.resetCustomerSiteOperationPreferences(context);
