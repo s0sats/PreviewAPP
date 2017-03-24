@@ -11,16 +11,13 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act011_FF_Options_Adapter;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +36,8 @@ public class Act011_FF_Options extends Fragment {
     private transient List<HMAux> tabsAndFields;
 
     private String signature;
+
+    private int activateAutoAnswer;
 
     //private SimpleAdapter adapter_tabs;
 
@@ -117,7 +116,7 @@ public class Act011_FF_Options extends Fragment {
 
         lv_tabs = (ListView) view.findViewById(R.id.act011_ff_options_lv_tabs);
 
-        ff_options_ll_h  = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_h);
+        ff_options_ll_h = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_h);
         ff_options_ll_ih = (TextView) view.findViewById(R.id.act011_ff_options_ll_ih);
 
         ff_options_ll_auto = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_auto);
@@ -234,7 +233,12 @@ public class Act011_FF_Options extends Fragment {
                 ff_options_ll_e.setVisibility(View.VISIBLE);
                 ff_options_ll_s.setVisibility(View.VISIBLE);
                 ff_options_ll_f.setVisibility(View.VISIBLE);
-                ff_options_ll_auto.setVisibility(View.VISIBLE);
+
+                if (activateAutoAnswer > 0) {
+                    ff_options_ll_auto.setVisibility(View.VISIBLE);
+                } else {
+                    ff_options_ll_auto.setVisibility(View.GONE);
+                }
 
                 break;
         }
@@ -248,7 +252,7 @@ public class Act011_FF_Options extends Fragment {
 
     }
 
-    public void translaTab(HMAux hmAux_Trans){
+    public void translaTab(HMAux hmAux_Trans) {
 
         ff_options_ll_autot.setText(hmAux_Trans.get("drawer_automatic_lbl"));
 
@@ -261,7 +265,7 @@ public class Act011_FF_Options extends Fragment {
         ArrayList<HMAux> tabs = new ArrayList<>();
         this.signature = signature;
 
-        int activateAutoAnswer = 0;
+        activateAutoAnswer = 0;
 
         if (cf_fields != null) {
             for (int i = 0; i < cf_fields.size(); i++) {
@@ -269,13 +273,13 @@ public class Act011_FF_Options extends Fragment {
                     tabs.add(cf_fields.get(i));
                 }
 
-                if (!cf_fields.get(i).get("automatic").equalsIgnoreCase("")){
+                if (!cf_fields.get(i).get("automatic").equalsIgnoreCase("")) {
                     activateAutoAnswer++;
                 }
             }
         }
 
-        if (activateAutoAnswer > 0){
+        if (activateAutoAnswer > 0) {
             ff_options_ll_auto.setVisibility(View.VISIBLE);
         } else {
             ff_options_ll_auto.setVisibility(View.GONE);

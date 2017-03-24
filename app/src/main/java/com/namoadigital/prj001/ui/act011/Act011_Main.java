@@ -59,6 +59,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
@@ -136,6 +137,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private boolean ignoreUpdate = false;
 
+    private boolean bNew = false;
+
+    private GE_Custom_Form_Local formLocal;
     private GE_Custom_Form_Data formData;
 
     private boolean includeField;
@@ -338,6 +342,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 }
 
                 mPresenter.saveData(formData, true);
+
+                bNew = false;
 
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -613,9 +619,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature) {
 
         this.prefix = prefix;
+        this.bNew = bNew;
+        this.formLocal = formLocal;
         this.formData = formData;
         this.index_old = indexF;
         this.index = 1;
@@ -1404,6 +1412,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mPresenter.checkData(formData);
+                                bNew = false;
                             }
                         }
                 );
@@ -1423,7 +1432,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 // modificar para incluir a remossao do custom_form_local.
-                mPresenter.saveData(formData, false);
+                //mPresenter.saveData(formData, false);
+                if (bNew) {
+                    mPresenter.deleteFormLocal(formLocal);
+                }
                 //
                 callAct005(Act011_Main.this);
             }
@@ -1475,6 +1487,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 formData.setSignature_name(sName);
                 //
                 mPresenter.checkData(formData);
+                bNew = false;
             } else {
                 formData.setSignature_name("");
                 if (signature == 0) {
