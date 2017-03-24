@@ -34,7 +34,8 @@ public class Act015_Main_Presenter_Impl implements Act015_Main_Presenter {
         List<HMAux> sent_datas =
                 customFormLocalDao.query_HM(
                         new Sql_Act015_001(
-                                ToolBox_Con.getPreference_Customer_Code(context)
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                context
                         ).toSqlQuery()
                 );
         //
