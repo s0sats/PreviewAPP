@@ -233,8 +233,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
                         int qty_sites = siteDao.query_HM(
                                     new MD_Site_Sql_002(
-                                            ToolBox_Con.getPreference_Customer_Code(context),
-                                            hmAux_Trans.get("lbl_external_site")
+                                            ToolBox_Con.getPreference_Customer_Code(context)
                                     ).toSqlQuery()
                                 ).size();
 

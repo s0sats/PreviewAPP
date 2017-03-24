@@ -297,7 +297,7 @@ public class WS_Sync extends IntentService {
         */
         boolean operationExist = ToolBox_Con.getPreference_Operation_Code(getApplicationContext()) == -1L;
         //Se for site externo, seta true, senão false.
-        boolean siteExist = (ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("") || ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("-1") );
+        boolean siteExist = ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("-1");
 
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
             //Cria DAOs das tabelas MAIN
@@ -368,7 +368,6 @@ public class WS_Sync extends IntentService {
                 );
 
                 /*
-                * Se site != de externo,
                 * Verifica se site das preferencias
                 * esta na lista de site enviadas.
                 * Se não tiver, ao final do processo desloga usr.
