@@ -1,15 +1,26 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.util.Constant;
@@ -29,12 +40,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private Act005_Main_View mView;
     private GE_Custom_Form_LocalDao customFormLocalDao;
     private HMAux hmAux_Trans = new HMAux();
+    private EV_User_CustomerDao userCustomerDao;
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans) {
+    private transient Dialog logoutDialog;
+
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
         this.hmAux_Trans = hmAux_Trans;
+        this.userCustomerDao = userCustomerDao;
     }
 
     String[] menuId = {
@@ -177,6 +192,58 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Override
+    public void showLogoutDialog() {
+
+        logoutDialog = new Dialog(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        View view = inflater.inflate(R.layout.act005_dialog_logout, null);
+
+        TextView tv_logout_title = (TextView) view.findViewById(R.id.act005_dialog_logout_tv_logout_lbl);
+        //
+        ListView lv_customer = (ListView) view.findViewById(R.id.act005_dialog_logout_lv_customer);
+        //
+        Button btn_logout = (Button) view.findViewById(R.id.act005_dialog_logout_btn_logout);
+
+        List<HMAux> customer_list
+                =  userCustomerDao.query_HM(
+                        new EV_User_Customer_Sql_004(
+                           ToolBox_Con.getPreference_User_Code(context)
+                            ).toSqlQuery()
+                        );
+
+        Act005_Logout_Adapter mAdapter = new Act005_Logout_Adapter(context, customer_list);
+
+        lv_customer.setAdapter(mAdapter);
+
+        lv_customer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                if(item.get(EV_User_Customer_Sql_004.KEY_LOGOUT).equals("0")){
+                    item.put(EV_User_Customer_Sql_004.KEY_LOGOUT,"1");
+                }else{
+                    item.put(EV_User_Customer_Sql_004.KEY_LOGOUT,"0");
+                }
+                ((HMAux) parent.getItemAtPosition(position)).put(EV_User_Customer_Sql_004.KEY_LOGOUT,"0");
+
+
+            }
+        });
+
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.98F;
+        float dmH = (float) dm.heightPixels * 0.98F;
+
+        logoutDialog.setContentView(view);
+        logoutDialog.setCancelable(true);
+        logoutDialog.getWindow().setLayout((int) dmW, (int) dmH);
+
+        logoutDialog.show();
     }
 
     private void executeSaveProcess() {

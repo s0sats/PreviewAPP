@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -96,7 +97,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private void iniSetup() {
 
-        context = getBaseContext();
+        context = Act005_Main.this;
         //
         fm = getSupportFragmentManager();
         //
@@ -160,7 +161,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
-                hmAux_Trans
+                hmAux_Trans,
+                new EV_User_CustomerDao(
+                        context,
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
+                )
+
 
         );
         //
@@ -227,18 +234,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
-                        MD_SiteDao siteDao = new MD_SiteDao(
+                        MD_SiteDao siteDao =  new MD_SiteDao(
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
                         );
 
                         int qty_sites = siteDao.query_HM(
-                                new MD_Site_Sql_002(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        hmAux_Trans.get("lbl_external_site")
-                                ).toSqlQuery()
-                        ).size();
+                                    new MD_Site_Sql_002(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                                ).size();
 
                         if (qty_sites <= 1) {
                             //Se apenas um site, da alert e não permite troca.
@@ -279,10 +285,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         );
 
                         int qty_operation = operationDao.query_HM(
-                                new MD_Operation_Sql_001(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).size();
+                                        new MD_Operation_Sql_001(
+                                                ToolBox_Con.getPreference_Customer_Code(context)
+                                        ).toSqlQuery()
+                                ).size();
 
                         if (qty_operation <= 1) {
                             //Se apenas uma operação, da alert e não permite troca.
@@ -369,6 +375,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             @Override
             public void logoutClicked() {
 
+               // mPresenter.showLogoutDialog();
+
+               /* Intent mIntent = new Intent(context, WBR_Logout.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,"1|5");//Pula validação de other device
+
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                //ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+
+*/
+
                 ToolBox.alertMSG(
                         Act005_Main.this,
                         hmAux_Trans.get("drawer_logout_alert_ttl"),
@@ -441,29 +460,29 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
+        mVersion_Value =Constant.PRJ001_VERSION;
 
     }
 
     @Override
     public void showPD() {
 
-        switch (wsProcess) {
+        switch (wsProcess){
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
-                alertMsg = hmAux_Trans.get("alert_send_finish_msg");
+                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
 
                 break;
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_msg");
-                alertMsg = hmAux_Trans.get("alert_sync_msg");
+                alertMsg =  hmAux_Trans.get("alert_sync_msg");
                 break;
             default:
                 break;

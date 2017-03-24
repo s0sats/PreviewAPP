@@ -897,11 +897,7 @@ public class ToolBox_Inf {
         customerDesc = ToolBox_Con.getPreference_Customer_Code(context) + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context);
         operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
 
-        if (site == null) {
-            siteDesc = HmTrans.get("lbl_external_site");
-        } else {
-            siteDesc = site.getSite_code() + " - " + site.getSite_desc();
-        }
+        siteDesc = site.getSite_code() + " - " + site.getSite_desc();
 
         hmAux.put(Constant.FOOTER_CUSTOMER_LBL, HmTrans.get("footer_dialog_customer_lbl"));
         hmAux.put(Constant.FOOTER_CUSTOMER, customerDesc);
