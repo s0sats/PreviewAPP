@@ -24,6 +24,8 @@ import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -214,9 +216,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //if(ToolBox_Con.isOnline(context)) {
-                                    //Reseta preferencias do Customer e volta para
-                                    //Act002 - lista de customer
-                                  changeCustomer();
+                                //Reseta preferencias do Customer e volta para
+                                //Act002 - lista de customer
+                                changeCustomer();
 //                                }else{
 //                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
 //                                }
@@ -225,20 +227,20 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
-                        MD_SiteDao siteDao =  new MD_SiteDao(
+                        MD_SiteDao siteDao = new MD_SiteDao(
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
                         );
 
                         int qty_sites = siteDao.query_HM(
-                                    new MD_Site_Sql_002(
-                                            ToolBox_Con.getPreference_Customer_Code(context),
-                                            hmAux_Trans.get("lbl_external_site")
-                                    ).toSqlQuery()
-                                ).size();
+                                new MD_Site_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        hmAux_Trans.get("lbl_external_site")
+                                ).toSqlQuery()
+                        ).size();
 
-                        if(qty_sites <= 1) {
+                        if (qty_sites <= 1) {
                             //Se apenas um site, da alert e não permite troca.
                             alertTitle = hmAux_Trans.get("drawer_change_site_one_site_alert_ttl");
                             alertMsg = hmAux_Trans.get("drawer_change_site_one_site_alert_msg");
@@ -251,7 +253,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             };
 
                             negativeBtn = 0;
-                        }else {
+                        } else {
                             //
                             alertTitle = hmAux_Trans.get("drawer_change_site_alert_ttl");
                             alertMsg = hmAux_Trans.get("drawer_change_site_alert_msg");
@@ -270,19 +272,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         }
                         break;
                     case Act005_Opc.DRAWER_OPC_OPERATION:
-                        MD_OperationDao operationDao =  new MD_OperationDao(
+                        MD_OperationDao operationDao = new MD_OperationDao(
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
                         );
 
                         int qty_operation = operationDao.query_HM(
-                                        new MD_Operation_Sql_001(
-                                                ToolBox_Con.getPreference_Customer_Code(context)
-                                        ).toSqlQuery()
-                                ).size();
+                                new MD_Operation_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).size();
 
-                        if(qty_operation <= 1) {
+                        if (qty_operation <= 1) {
                             //Se apenas uma operação, da alert e não permite troca.
                             alertTitle = hmAux_Trans.get("drawer_change_operation_one_operation_alert_ttl");
                             alertMsg = hmAux_Trans.get("drawer_change_operation_one_operation_alert_msg");
@@ -295,7 +297,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                             };
 
                             negativeBtn = 0;
-                        }else{
+                        } else {
                             //
                             alertTitle = hmAux_Trans.get("drawer_change_operation_alert_ttl");
                             alertMsg = hmAux_Trans.get("drawer_change_operation_alert_msg");
@@ -439,29 +441,29 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value =Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;
 
     }
 
     @Override
     public void showPD() {
 
-        switch (wsProcess){
+        switch (wsProcess) {
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
-                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_send_finish_msg");
 
                 break;
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_msg");
-                alertMsg =  hmAux_Trans.get("alert_sync_msg");
+                alertMsg = hmAux_Trans.get("alert_sync_msg");
                 break;
             default:
                 break;
@@ -534,7 +536,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.BACK_ACTION,1);
+        bundle.putInt(Constant.BACK_ACTION, 1);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -588,7 +590,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         super.processCloseACT(mLink, mRequired);
         progressDialog.dismiss();
 
-        if(!wsProcess.equals("")){
+        if (!wsProcess.equals("")) {
             showSuccessDialog();
             //Atualiza traduções
             loadTranslation();
@@ -606,15 +608,19 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     private void showSuccessDialog() {
-        switch (wsProcess){
+        switch (wsProcess) {
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
-                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_send_finish_msg");
                 break;
 
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
-                alertMsg =  hmAux_Trans.get("alert_sync_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
+                //
+                // Hugo
+                startDownloadServices();
+                //
                 break;
 
             default:
@@ -699,6 +705,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         return super.onOptionsItemSelected(item);
     }
 
+    public void startDownloadServices() {
+
+        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        mIntentPDF.putExtras(bundle);
+        mIntentPIC.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentPDF);
+        context.sendBroadcast(mIntentPIC);
+    }
 
 
 }

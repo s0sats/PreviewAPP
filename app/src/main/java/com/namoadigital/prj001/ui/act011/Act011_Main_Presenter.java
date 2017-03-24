@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -17,5 +18,7 @@ public interface Act011_Main_Presenter {
     void checkSignature(GE_Custom_Form_Data formData, int signature, int opc);
 
     void onBackPressedClicked();
+
+    void deleteFormLocal(GE_Custom_Form_Local formLocal);
 
 }

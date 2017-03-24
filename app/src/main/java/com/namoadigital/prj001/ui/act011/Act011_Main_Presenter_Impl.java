@@ -24,6 +24,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.util.Constant;
@@ -77,6 +78,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     @Override
     public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id) {
 
+        boolean bNew = false;
+
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
                         customer_code,
@@ -94,6 +97,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         if (customFormLocal != null) {
 
+            bNew = false;
+
             index = -1;
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
@@ -107,6 +112,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
 
         } else {
+
+            bNew = true;
 
             index = 0;
 
@@ -209,7 +216,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString()
         );
 
-        mView.loadFragment_CF_Fields(cf_fields, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
+        mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
     }
 
     private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {
@@ -338,5 +345,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
+    }
+
+    @Override
+    public void deleteFormLocal(GE_Custom_Form_Local formLocal) {
+        custom_form_LocalDao.remove(
+                new GE_Custom_Form_Local_Sql_005(
+                        String.valueOf(formLocal.getCustomer_code()),
+                        String.valueOf(formLocal.getCustom_form_type()),
+                        String.valueOf(formLocal.getCustom_form_code()),
+                        String.valueOf(formLocal.getCustom_form_version()),
+                        String.valueOf(formLocal.getCustom_form_data())
+                ).toSqlQuery()
+        );
     }
 }
