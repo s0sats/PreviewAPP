@@ -168,6 +168,10 @@
 
         <service android:name=".service.WS_DownLoad_Customer_Logo" />
 
+        <receiver android:name=".receiver.WBR_Logout" />
+
+        <service android:name=".service.WS_Logout" />
+
         <receiver android:name=".receiver.WBR_Cleanning" />
 
         <service
