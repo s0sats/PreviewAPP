@@ -251,9 +251,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     act011_ff_options.tabsS(resTabs);
                 } else {
+                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
+
+                    // Hugo
+                    Set keys = resTabs.keySet();
+
+                    for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                        String key = (String) i.next();
+                        String value = (String) resTabs.get(key);
+
+                        hmPages.put(key, value);
+                    }
+
                     act011_ff_options.tabsS(hmPages);
                 }
                 //
+                //resTabs = returnValidCheckTabs(String.valueOf(index_old));
                 //act011_ff_options.tabsS(resTabs);
             }
         };
@@ -272,30 +285,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             @Override
             public void tabSelected(int idtab, String link) {
 
-                if (!link.contains(".pdf")) {
+                ignoreUpdate = true;
 
-                    ignoreUpdate = true;
+                index_old = index;
+                index = idtab;
 
-                    index_old = index;
-                    index = idtab;
+                resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
-                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
-                    //
-                    act011_ff_options.tabsS(resTabs);
-                    //
-                    returnValidCheck(String.valueOf(index_old));
-                    //
-                    pager.setCurrentItem(idtab - 1);
+                act011_ff_options.tabsS(resTabs);
 
-                } else {
+                returnValidCheck(String.valueOf(index_old));
 
-                    File file = new File(Constant.CACHE_PATH + "/" + link);
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                    startActivity(intent);
-                }
+                pager.setCurrentItem(idtab - 1);
                 //
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -407,15 +408,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         }
                     }
 
-                    if (signature == 1) {
-                        GE_File geFile = new GE_File();
-                        geFile.setFile_code(index);
-                        geFile.setFile_path(mSignature);
-                        geFile.setFile_status("OPENED");
-                        geFile.setFile_date(sDate);
-                        //
-                        geFiles.add(geFile);
-                    }
+                    // Hugo
+
+//                    if (signature == 1) {
+//                        GE_File geFile = new GE_File();
+//                        geFile.setFile_code(index);
+//                        geFile.setFile_path(mSignature);
+//                        geFile.setFile_status("OPENED");
+//                        geFile.setFile_date(sDate);
+//                        //
+//                        geFiles.add(geFile);
+//                    }
 
                     formData.setSignature(mSignature);
 
@@ -733,7 +736,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     //
                     setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
                     //
-
                     if (ignoreUpdate) {
                         ignoreUpdate = false;
                     } else {
@@ -1485,6 +1487,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             if (sFile.exists()) {
                 formData.setSignature(mSignature);
                 formData.setSignature_name(sName);
+                //
+                // Hugo
+                GE_File geFile = new GE_File();
+                geFile.setFile_code(index);
+                geFile.setFile_path(mSignature);
+                geFile.setFile_status("OPENED");
+                geFile.setFile_date(sDate);
+                //
+                geFiles.add(geFile);
                 //
                 mPresenter.checkData(formData);
                 bNew = false;

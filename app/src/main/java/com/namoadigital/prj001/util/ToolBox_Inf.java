@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
@@ -26,6 +27,7 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -34,6 +36,7 @@ import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
@@ -140,7 +143,7 @@ public class ToolBox_Inf {
 
         String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UUID_CODE(context);
 
-        if (phone_uuid_code.trim().length() == 0){
+        if (phone_uuid_code.trim().length() == 0) {
             phone_uuid_code = androidId_UUID.toString();
 
             ToolBox_Con.setPreference_PHONE_UUID_CODE(context, phone_uuid_code);
@@ -961,7 +964,7 @@ public class ToolBox_Inf {
     public static void libTranslation(Context context) {
         Constant.HMAUX_TRANS_LIB = new HMAux();
 
-        if(!ToolBox_Con.getPreference_Translate_Code(context).equals("")){
+        if (!ToolBox_Con.getPreference_Translate_Code(context).equals("")) {
             List<String> transList = new ArrayList<>();
             Constant.HMAUX_TRANS_LIB = setLanguage(
                     context,
@@ -975,20 +978,20 @@ public class ToolBox_Inf {
                     transList);
         }
 
-        Constant.HMAUX_TRANS_LIB.put("nfc_no_support",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_no_support") || Constant.HMAUX_TRANS_LIB.get("nfc_no_support").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_no_support) : Constant.HMAUX_TRANS_LIB.get("nfc_no_support")));
-        Constant.HMAUX_TRANS_LIB.put("nfc_no_data",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_no_data")  || Constant.HMAUX_TRANS_LIB.get("nfc_no_data").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_no_data) : Constant.HMAUX_TRANS_LIB.get("nfc_no_data" )));
-        Constant.HMAUX_TRANS_LIB.put("nfc_invalid_tag",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_invalid_tag") || Constant.HMAUX_TRANS_LIB.get("nfc_invalid_tag").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_invalid_tag) : Constant.HMAUX_TRANS_LIB.get("nfc_no_support" )));
-        Constant.HMAUX_TRANS_LIB.put("nfc_invalid_type",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_invalid_type") || Constant.HMAUX_TRANS_LIB.get("nfc_invalid_type").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_invalid_type) : Constant.HMAUX_TRANS_LIB.get("nfc_invalid_type" )));
-        Constant.HMAUX_TRANS_LIB.put("nfc_security_violation",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_security_violation") || Constant.HMAUX_TRANS_LIB.get("nfc_security_violation").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_security_violation) : Constant.HMAUX_TRANS_LIB.get("nfc_security_violation" )));
-        Constant.HMAUX_TRANS_LIB.put("nfc_security_crypto_no_support",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_security_crypto_no_support")  ||  Constant.HMAUX_TRANS_LIB.get("nfc_security_crypto_no_support").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_security_crypto_no_support) : Constant.HMAUX_TRANS_LIB.get("nfc_security_crypto_no_support" )));
-        Constant.HMAUX_TRANS_LIB.put("nfc_security_geral",(!Constant.HMAUX_TRANS_LIB.containsKey("nfc_security_geral") ||  Constant.HMAUX_TRANS_LIB.get("nfc_security_geral").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.nfc_security_geral) : Constant.HMAUX_TRANS_LIB.get("nfc_security_geral" )));
-        Constant.HMAUX_TRANS_LIB.put("alert_title_signature_validation",(!Constant.HMAUX_TRANS_LIB.containsKey("alert_title_signature_validation") ||  Constant.HMAUX_TRANS_LIB.get("alert_title_signature_validation").contains(Constant.APP_MODULE+"/")? context.getResources().getString(R.string.alert_title_signature_validation) : Constant.HMAUX_TRANS_LIB.get("alert_title_signature_validation" )));
-        Constant.HMAUX_TRANS_LIB.put("alert_msg_signature_validation",(!Constant.HMAUX_TRANS_LIB.containsKey("alert_msg_signature_validation")  ||  Constant.HMAUX_TRANS_LIB.get("alert_msg_signature_validation").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.alert_msg_signature_validation) : Constant.HMAUX_TRANS_LIB.get("alert_msg_signature_validation" )));
-        Constant.HMAUX_TRANS_LIB.put("mdots_server_title",(!Constant.HMAUX_TRANS_LIB.containsKey("mdots_server_title") || Constant.HMAUX_TRANS_LIB.get("mdots_server_title").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.mdots_server_title) : Constant.HMAUX_TRANS_LIB.get("mdots_server_title" )));
-        Constant.HMAUX_TRANS_LIB.put("mdots_user_title",(!Constant.HMAUX_TRANS_LIB.containsKey("mdots_user_title")  || Constant.HMAUX_TRANS_LIB.get("mdots_user_title").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.mdots_user_title) : Constant.HMAUX_TRANS_LIB.get("mdots_user_title" )));
-        Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance",(!Constant.HMAUX_TRANS_LIB.containsKey("mdots_non_compliance") || Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.mdots_non_compliance) : Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance" )));
-        Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok",(!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_ok") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.sys_alert_btn_ok) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok" )));
-        Constant.HMAUX_TRANS_LIB.put("footer_label",(!Constant.HMAUX_TRANS_LIB.containsKey("footer_label")  ||  Constant.HMAUX_TRANS_LIB.get("footer_label").contains(Constant.APP_MODULE+"/") ? context.getResources().getString(R.string.footer_label) : Constant.HMAUX_TRANS_LIB.get("footer_label" )));
+        Constant.HMAUX_TRANS_LIB.put("nfc_no_support", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_no_support") || Constant.HMAUX_TRANS_LIB.get("nfc_no_support").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_no_support) : Constant.HMAUX_TRANS_LIB.get("nfc_no_support")));
+        Constant.HMAUX_TRANS_LIB.put("nfc_no_data", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_no_data") || Constant.HMAUX_TRANS_LIB.get("nfc_no_data").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_no_data) : Constant.HMAUX_TRANS_LIB.get("nfc_no_data")));
+        Constant.HMAUX_TRANS_LIB.put("nfc_invalid_tag", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_invalid_tag") || Constant.HMAUX_TRANS_LIB.get("nfc_invalid_tag").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_invalid_tag) : Constant.HMAUX_TRANS_LIB.get("nfc_no_support")));
+        Constant.HMAUX_TRANS_LIB.put("nfc_invalid_type", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_invalid_type") || Constant.HMAUX_TRANS_LIB.get("nfc_invalid_type").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_invalid_type) : Constant.HMAUX_TRANS_LIB.get("nfc_invalid_type")));
+        Constant.HMAUX_TRANS_LIB.put("nfc_security_violation", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_security_violation") || Constant.HMAUX_TRANS_LIB.get("nfc_security_violation").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_security_violation) : Constant.HMAUX_TRANS_LIB.get("nfc_security_violation")));
+        Constant.HMAUX_TRANS_LIB.put("nfc_security_crypto_no_support", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_security_crypto_no_support") || Constant.HMAUX_TRANS_LIB.get("nfc_security_crypto_no_support").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_security_crypto_no_support) : Constant.HMAUX_TRANS_LIB.get("nfc_security_crypto_no_support")));
+        Constant.HMAUX_TRANS_LIB.put("nfc_security_geral", (!Constant.HMAUX_TRANS_LIB.containsKey("nfc_security_geral") || Constant.HMAUX_TRANS_LIB.get("nfc_security_geral").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.nfc_security_geral) : Constant.HMAUX_TRANS_LIB.get("nfc_security_geral")));
+        Constant.HMAUX_TRANS_LIB.put("alert_title_signature_validation", (!Constant.HMAUX_TRANS_LIB.containsKey("alert_title_signature_validation") || Constant.HMAUX_TRANS_LIB.get("alert_title_signature_validation").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.alert_title_signature_validation) : Constant.HMAUX_TRANS_LIB.get("alert_title_signature_validation")));
+        Constant.HMAUX_TRANS_LIB.put("alert_msg_signature_validation", (!Constant.HMAUX_TRANS_LIB.containsKey("alert_msg_signature_validation") || Constant.HMAUX_TRANS_LIB.get("alert_msg_signature_validation").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.alert_msg_signature_validation) : Constant.HMAUX_TRANS_LIB.get("alert_msg_signature_validation")));
+        Constant.HMAUX_TRANS_LIB.put("mdots_server_title", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_server_title") || Constant.HMAUX_TRANS_LIB.get("mdots_server_title").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_server_title) : Constant.HMAUX_TRANS_LIB.get("mdots_server_title")));
+        Constant.HMAUX_TRANS_LIB.put("mdots_user_title", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_user_title") || Constant.HMAUX_TRANS_LIB.get("mdots_user_title").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_user_title) : Constant.HMAUX_TRANS_LIB.get("mdots_user_title")));
+        Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_non_compliance") || Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_non_compliance) : Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance")));
+        Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", (!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_ok") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.sys_alert_btn_ok) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok")));
+        Constant.HMAUX_TRANS_LIB.put("footer_label", (!Constant.HMAUX_TRANS_LIB.containsKey("footer_label") || Constant.HMAUX_TRANS_LIB.get("footer_label").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.footer_label) : Constant.HMAUX_TRANS_LIB.get("footer_label")));
     }
 
     public static boolean hasNFC(Context context) {
@@ -1005,6 +1008,19 @@ public class ToolBox_Inf {
                 .replace("DD", "%d")
                 .replace("MM", "%m")
                 .replace("RRRR", "%Y");
+    }
+
+    public static void cleanningFormLocal(Context context) {
+        GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        formLocalDao.remove(
+                new GE_Custom_Form_Local_Sql_010().toSqlQuery()
+        );
+
     }
 
 

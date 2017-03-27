@@ -47,6 +47,7 @@ public class GE_Custom_Form_Fields_Local_Sql_001 implements Specification {
                         "      ,  " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_VERSION +
                         "      ,  " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA +
                         "      ,  " + GE_Custom_Form_Field_LocalDao.PAGE +
+                        "      ,  " + GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ +
                         ";CUSTOMER_CODE#CUSTOM_FORM_TYPE#CUSTOM_FORM_CODE#CUSTOM_FORM_VERSION#CUSTOM_FORM_DATA#CUSTOM_FORM_SEQ#CUSTOM_FORM_DATA_TYPE#CUSTOM_FORM_DATA_SIZE#CUSTOM_FORM_DATA_MASK#CUSTOM_FORM_DATA_CONTENT#CUSTOM_FORM_LOCAL_LINK#CUSTOM_FORM_ORDER#PAGE#REQUIRED#AUTOMATIC#COMMENT#CUSTOM_FORM_FIELD_DESC;")
 
                 .toString();
