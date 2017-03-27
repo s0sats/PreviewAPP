@@ -34,6 +34,7 @@ public class WS_Logout extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
+        sResult = new StringBuilder();
 
         try {
 
