@@ -4,6 +4,7 @@ import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -15,11 +16,13 @@ public class GE_Custom_Form_Sql_002 implements Specification {
     private long s_customer_code;
     private int s_form_type_code;
     private String s_translate_code;
+    private String product_code;
 
-    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code) {
+    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String product_code) {
         this.s_customer_code = s_customer_code;
         this.s_form_type_code = s_form_type_code;
         this.s_translate_code = s_translate_code;
+        this.product_code = product_code;
     }
 
     @Override
@@ -49,10 +52,17 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "         AND tr."+EV_Module_Res_Txt_TransDao.TRANSLATE_CODE+" = '" + s_translate_code +"'\n" +
                 "         AND tr."+EV_Module_Res_TxtDao.TXT_CODE+" = 'TITLE') "+GE_Custom_FormDao.CUSTOM_FORM_DESC+"\n" +
                 "    FROM\n" +
-                     GE_Custom_FormDao.TABLE +" CF \n" +
+                     GE_Custom_FormDao.TABLE +" CF \n," +
+                     GE_Custom_Form_ProductDao.TABLE +" p \n" +
                 "    WHERE\n" +
-                "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = '" + s_customer_code + "'\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = p." + GE_Custom_Form_ProductDao.CUSTOMER_CODE + "\n " +
+                "      AND cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+" = p." + GE_Custom_Form_ProductDao.CUSTOM_FORM_TYPE + "\n " +
+                "      AND cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+" = p." + GE_Custom_Form_ProductDao.CUSTOM_FORM_CODE + "\n " +
+                "      AND cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+" = p." + GE_Custom_Form_ProductDao.CUSTOM_FORM_VERSION + "\n " +
+
+                "      AND cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = '" + s_customer_code + "'\n" +
                 "      AND cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+" = '" + s_form_type_code +"'\n" +
+                "      AND p."+ GE_Custom_Form_ProductDao.PRODUCT_CODE+" = '" + product_code +"'\n" +
                 "    \n" +
                 "    ORDER BY\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
