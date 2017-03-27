@@ -145,6 +145,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("logout_dialog_ttl");
         transList.add("alert_logout_ttl");
         transList.add("alert_logout_msg");
+        transList.add("lbl_sync_data");
+        transList.add("lbl_logout");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

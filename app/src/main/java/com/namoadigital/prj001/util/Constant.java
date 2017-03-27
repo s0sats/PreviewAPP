@@ -161,6 +161,9 @@ public class Constant extends ConstantBase {
     /**
      * WebService
      */
+    /**
+     * Desenvolvimento
+     */
     public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
     public static final String WS_GETSESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
 
@@ -170,6 +173,20 @@ public class Constant extends ConstantBase {
     public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
     public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
+
+    /**
+     * Produção
+     */
+//    public static final String WS_GETCUSTOMERS = "https://portal.namoadigital.com/ws/prj001/server_get_customer.ws";
+//    public static final String WS_GETSESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
+//
+//    public static final String WS_SYNC = "https://portal.namoadigital.com/ws/prj001/server_sync.ws";
+//    public static final String WS_SESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
+//    public static final String WS_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save.ws";
+//    public static final String WS_SERIAL = "https://portal.namoadigital.com/ws/prj001/server_serial.ws";
+//    public static final String WS_UPLOAD = "https://portal.namoadigital.com/inc/ws/aws_file.ws";
+//    public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
+//
 
 
     //Constantes do Status do Cabeçalho

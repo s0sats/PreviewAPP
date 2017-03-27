@@ -109,6 +109,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("sys_alert_btn_ok");
         transList.add("product_ttl");
         transList.add("mket_search_hint");
+        transList.add("product_label");
+        transList.add("product_id_label");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
