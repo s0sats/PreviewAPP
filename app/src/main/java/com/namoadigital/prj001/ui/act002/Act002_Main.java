@@ -161,7 +161,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                         getString(R.string.generic_msg_ok));
 
                 mPresenter.executeSessionProcess(
-                        ToolBox_Con.getPreference_User_Email(context),
+                        ToolBox_Con.getPreference_User_Code_Nick(context),
                         ToolBox_Con.getPreference_User_Pwd(context),
                         ToolBox_Con.getPreference_User_NFC(context),
                         item,
