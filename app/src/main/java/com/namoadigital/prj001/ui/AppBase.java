@@ -65,5 +65,6 @@ public class AppBase extends Application {
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         ToolBox_Inf.libTranslation(getApplicationContext());
+
     }
 }

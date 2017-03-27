@@ -99,6 +99,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         context = Act005_Main.this;
         //
+        // Hugo
+        ToolBox_Inf.cleanningFormLocal(context);
+        //
         fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
