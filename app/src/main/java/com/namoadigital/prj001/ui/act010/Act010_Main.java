@@ -97,7 +97,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 context,
                 this,
                 new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                product_code
         );
 
         tv_form_ttl = (TextView) findViewById(R.id.act010_tv_form_lbl);

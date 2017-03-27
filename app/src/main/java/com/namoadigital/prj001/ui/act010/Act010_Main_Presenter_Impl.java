@@ -23,12 +23,14 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter{
     private EV_Module_Res_Txt_TransDao module_res_txt_transDao;
     private GE_Custom_FormDao custom_formDao;
 
-    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao) {
+    private long product_id;
+
+    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, long product_id) {
         this.context = context;
         this.mView = mView;
-        //
         this.module_res_txt_transDao = module_res_txt_transDao;
         this.custom_formDao = custom_formDao;
+        this.product_id = product_id;
     }
 
     @Override
@@ -39,7 +41,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter{
                         new GE_Custom_Form_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 custom_form_type,
-                                ToolBox_Con.getPreference_Translate_Code(context)
+                                ToolBox_Con.getPreference_Translate_Code(context),
+                                String.valueOf(product_id)
                         ).toSqlQuery()
                 );
 

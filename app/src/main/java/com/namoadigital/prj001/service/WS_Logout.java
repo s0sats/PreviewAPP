@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.TLogout_Env;
 import com.namoadigital.prj001.model.TLogout_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -21,6 +23,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class WS_Logout extends IntentService {
 
     private StringBuilder sResult;
+    private EV_User_CustomerDao customerDao;
 
     public WS_Logout() {
         super("WS_Logout");
@@ -31,6 +34,7 @@ public class WS_Logout extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
+        sResult = new StringBuilder();
 
         try {
 
@@ -84,16 +88,29 @@ public class WS_Logout extends IntentService {
                 TLogout_Rec.class
         );
 
-        checkLogoutReturn(rec.getLogout());
+        checkLogoutReturn(rec.getLogout(),customer_list);
 
     }
 
-    private void checkLogoutReturn(String logout_return) {
-
+    private void checkLogoutReturn(String logout_return, String customer_list) {
+        customerDao = new EV_User_CustomerDao(
+                getApplicationContext(),
+                Constant.DB_FULL_BASE,
+                Constant.DB_VERSION_BASE
+        );
         switch (logout_return.toUpperCase()){
             case "OK":
             case "ERROR":
             default:
+                customer_list = customer_list.replace("|","','");
+
+                customerDao.addUpdate(
+                        new EV_User_Customer_Sql_005(
+                            ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                            customer_list
+                        ).toSqlQuery()
+                );
+
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "", "", "0");
                 break;
         }

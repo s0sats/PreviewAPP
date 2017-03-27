@@ -1,8 +1,12 @@
 package com.namoadigital.prj001.sql;
 
+import android.content.Context;
+
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 24/02/2017.
@@ -11,9 +15,11 @@ import com.namoadigital.prj001.util.Constant;
 public class Sql_Act015_001 implements Specification {
 
     private long s_customer_code;
+    private String sqlite_date_format;
 
-    public Sql_Act015_001(long s_customer_code) {
+    public Sql_Act015_001(long s_customer_code, Context context) {
         this.s_customer_code = s_customer_code;
+        this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
     }
 
     @Override
@@ -31,14 +37,23 @@ public class Sql_Act015_001 implements Specification {
                         "  l.custom_product_desc,\n" +
                         "  l.custom_form_data,\n" +
                         "  l.custom_form_status," +
-                        "  l.serial_id "+
+                        "  l.serial_id,"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start) date_start,\n" +
+                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end) date_end "+
                         " \n" +
                         "  FROM\n" +
-                        GE_Custom_Form_LocalDao.TABLE+ " l\n" +
+                        GE_Custom_Form_LocalDao.TABLE+ " l\n," +
+                        GE_Custom_Form_DataDao.TABLE+ " d\n " +
                         "  WHERE\n" +
-                        "    l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        "    AND l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SENT+"'" +
+                        "      l.customer_code = d.customer_code\n" +
+                        "      AND l.custom_form_type = d.custom_form_type\n" +
+                        "      AND l.custom_form_code = d.custom_form_code\n" +
+                        "      AND l.custom_form_version = d.custom_form_version\n" +
+                        "      AND l.custom_form_data = d.custom_form_data\n" +
+                        "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
+                        "      AND l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SENT+"'" +
                         "  ORDER BY" +
+                        "    d.date_end desc," +
                         "    l.custom_form_type, " +
                         "    l.custom_product_code, " +
                         "    l.serial_id, \n" +
@@ -47,7 +62,7 @@ public class Sql_Act015_001 implements Specification {
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_form_data#" +
-                        "custom_form_status#serial_id")
+                        "custom_form_status#serial_id#date_start#date_end")
                 .toString();
     }
 }
