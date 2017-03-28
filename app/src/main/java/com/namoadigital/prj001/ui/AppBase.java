@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui;
 import android.app.Application;
 import android.os.Environment;
 
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
@@ -57,6 +58,8 @@ public class AppBase extends Application {
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         ToolBox_Inf.libTranslation(getApplicationContext());
+
+        Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
 
     }
 }

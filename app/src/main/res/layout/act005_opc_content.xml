@@ -24,7 +24,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
         android:background="@color/namoa_color_light_blue3"/>
 
     <ListView
@@ -33,7 +33,7 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:divider="@color/namoa_color_light_blue3"
-        android:dividerHeight="1dp">
+        android:dividerHeight="0dp">
 
     </ListView>
 

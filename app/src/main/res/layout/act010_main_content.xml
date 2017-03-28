@@ -9,7 +9,8 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act010.Act010_Main"
-    tools:showIn="@layout/act010_main">
+    tools:showIn="@layout/act010_main"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,12 +19,11 @@
         android:padding="10dp">
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="10dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
             android:src="@drawable/ic_formulario"
-
+            android:padding="2dp"
             />
 
         <LinearLayout
@@ -31,7 +31,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:paddingLeft="0dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/act010_tv_form_lbl"

@@ -186,7 +186,7 @@ public class Constant extends ConstantBase {
 //    public static final String WS_SERIAL = "https://portal.namoadigital.com/ws/prj001/server_serial.ws";
 //    public static final String WS_UPLOAD = "https://portal.namoadigital.com/inc/ws/aws_file.ws";
 //    public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
-//
+
 
 
     //Constantes do Status do Cabeçalho

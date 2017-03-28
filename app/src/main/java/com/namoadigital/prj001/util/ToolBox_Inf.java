@@ -27,7 +27,6 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
-import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -1024,6 +1023,10 @@ public class ToolBox_Inf {
                 new GE_Custom_Form_Local_Sql_010().toSqlQuery()
         );
 
+    }
+
+    public static boolean isDevelopmentBase(){
+       return Constant.WS_GETCUSTOMERS.contains("https://dev.");
     }
 
 

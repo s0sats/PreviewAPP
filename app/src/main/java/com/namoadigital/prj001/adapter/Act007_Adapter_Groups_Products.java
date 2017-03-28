@@ -79,7 +79,7 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
 
         String codeText = hmAux_Trans.get("lbl_code") + " " ;
         String idText =  hmAux_Trans.get("lbl_id") + " " ;
-        String descText =  /*hmAux_Trans.get("lbl_desc") +*/ " " ;
+        String descText =  /*hmAux_Trans.get("lbl_desc") + " "*/ "" ;
 
         ColorStateList filterColor =  context.getResources().getColorStateList(R.color.namoa_color_light_blue7);
         //

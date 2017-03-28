@@ -63,4 +63,5 @@
     <string name="generic_error_update_empty_link">ERRO: Ao atualizar!Link vazio!</string>
     <string name="generic_starting_download_msg">Iniciando dowload</string>
     <string name="close_app_update_process_msg">Feche o aplicativo para efetivar a atualização.</string>
+    <string name="login_dev_db_msg">Base de Testes!!!</string>
 </resources>

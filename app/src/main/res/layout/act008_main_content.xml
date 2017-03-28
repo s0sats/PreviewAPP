@@ -20,29 +20,42 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:padding="15dp"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp">
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_produto"
+                    android:orientation="horizontal"
+                    android:layout_marginRight="10dp"
+                    >
 
-                    />
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:padding="5dp"
 
+                        android:src="@drawable/ic_produto" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:paddingLeft="0dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -199,15 +212,15 @@
 
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act008_mket_serial"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/namoa_bg_1"
-                    android:inputType="text"
-                    android:padding="10dp"
-                    app:mNFC="false"
-                    app:mOCR="false"
-                    android:textSize="@dimen/font_size_title"/>
+                android:id="@+id/act008_mket_serial"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/namoa_bg_1"
+                android:inputType="text"
+                android:padding="10dp"
+                app:mNFC="false"
+                app:mOCR="false"
+                android:textSize="@dimen/font_size_title"/>
 
 
             <LinearLayout
