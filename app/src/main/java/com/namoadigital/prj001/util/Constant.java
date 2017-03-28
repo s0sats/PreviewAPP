@@ -12,7 +12,7 @@ public class Constant extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "0.10";
+    public static final String PRJ001_VERSION = "0.11";
 
     /**
      * UI Module
@@ -186,7 +186,7 @@ public class Constant extends ConstantBase {
 //    public static final String WS_SERIAL = "https://portal.namoadigital.com/ws/prj001/server_serial.ws";
 //    public static final String WS_UPLOAD = "https://portal.namoadigital.com/inc/ws/aws_file.ws";
 //    public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
-
+//
 
 
     //Constantes do Status do Cabeçalho
