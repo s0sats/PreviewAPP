@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
@@ -30,6 +31,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private MKEditTextNM mk_login;
     private EditText et_password;
     private Button btn_login;
+    private TextView tv_dev_db;
 
     private Act001_Main_Presenter mPresenter;
 
@@ -67,6 +69,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (Button) findViewById(R.id.act001_btn_login);
+        tv_dev_db = (TextView) findViewById(R.id.act001_tv_dev_db);
         //
         mPresenter = new Act001_Main_Presenter_Impl(
                 context,
@@ -95,6 +98,15 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 );
             }
         });
+
+        //"TRATATIVA" que identifica se app
+        //aponta pra produção ou desenvolvimento
+
+        if(Constant.DEVELOPMENT_BASE){
+            tv_dev_db.setText(R.string.login_dev_db_msg);
+            tv_dev_db.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
