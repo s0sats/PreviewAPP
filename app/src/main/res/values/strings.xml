@@ -50,6 +50,7 @@
     <string name="nfc_security_geral">Error:\n"</string>
     <string name="alert_title_signature_validation">Signature Validation</string>
     <string name="alert_msg_signature_validation">Error: No Signature Especifyied!!!</string>
+    <string name="signature_hint">Signature Name</string>
     <string name="sys_alert_btn_ok">Ok</string>
     <string name="mdots_server_title">Server Comment Title</string>
     <string name="mdots_user_title">User Title"</string>
