@@ -50,6 +50,7 @@
     <string name="nfc_security_geral">Erro:\n"</string>
     <string name="alert_title_signature_validation">Validação de Assinatura</string>
     <string name="alert_msg_signature_validation">Erro: Assinatura na informada!!!</string>
+    <string name="signature_hint">Nome da Assinatura</string>
     <string name="sys_alert_btn_ok">Ok</string>
     <string name="mdots_server_title">Comentário do Servidor</string>
     <string name="mdots_user_title">Comentário do Usuário"</string>
