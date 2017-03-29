@@ -212,6 +212,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_optional_signature_msg");
         transList.add("dialog_signature_title_lbl");
         transList.add("drawer_automatic_lbl");
+        transList.add("qty_automatic_answer_msg");
+        transList.add("dialog_info_product_code_lbl");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -455,7 +458,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 Toast.makeText(
                         context,
-                        "Quantidade de Respostas Alteradas: " + String.valueOf(quantidade),
+                        hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
                         Toast.LENGTH_SHORT
                 ).show();
             }
@@ -1575,7 +1578,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
-        tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
+        tv_product_title_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
+        tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_code_lbl"));
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
         tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
