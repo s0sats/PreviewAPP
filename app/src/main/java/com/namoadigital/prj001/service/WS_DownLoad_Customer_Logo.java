@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -28,40 +29,54 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        Bundle bundle = intent.getExtras();
-
-        EV_User_CustomerDao userCustomerDao =
-                new EV_User_CustomerDao(
-                        getApplicationContext(),
-                        Constant.DB_FULL_BASE,
-                        Constant.DB_VERSION_BASE
-                );
-
-        EV_User_Customer userCustomer =
-                userCustomerDao.getByString(
-                        new EV_User_Customer_Sql_002(
-                                ToolBox_Con.getPreference_User_Code(getApplicationContext()),
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
-                        ).toSqlQuery()
-                );
-        String logo_prefix = "logo_c_" + userCustomer.getCustomer_code();
-
         try {
-            if (!ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png")) {
-
-                ToolBox_Inf.deleteDownloadFileInf(logo_prefix + ".tmp");
-                //
-                ToolBox_Inf.downloadImagePDF(
-                        userCustomer.getLogo_url(),
-                        Constant.CACHE_PATH + "/" + logo_prefix + ".tmp"
-                );
-                //Extensão sempre .png ,
-                //pois no android le a imagens independente da extensão
-                ToolBox_Inf.renameDownloadFileInf(logo_prefix,".png");
+            if(!ToolBox_Inf.isDownloadRunning()){
+                //Log.v("WS_Customer_Logo","true");
+                WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
+                ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
             }
 
-        } catch (Exception e) {
+            Bundle bundle = intent.getExtras();
 
+            EV_User_CustomerDao userCustomerDao =
+                    new EV_User_CustomerDao(
+                            getApplicationContext(),
+                            Constant.DB_FULL_BASE,
+                            Constant.DB_VERSION_BASE
+                    );
+
+            EV_User_Customer userCustomer =
+                    userCustomerDao.getByString(
+                            new EV_User_Customer_Sql_002(
+                                    ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
+                            ).toSqlQuery()
+                    );
+            String logo_prefix = "logo_c_" + userCustomer.getCustomer_code();
+
+
+                if (!ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(logo_prefix + ".tmp");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            userCustomer.getLogo_url(),
+                            Constant.CACHE_PATH + "/" + logo_prefix + ".tmp"
+                    );
+                    //Extensão sempre .png ,
+                    //pois no android le a imagens independente da extensão
+                    ToolBox_Inf.renameDownloadFileInf(logo_prefix,".png");
+                }
+
+        } catch (Exception e) {
+            String results = e.toString();
+        }finally {
+            WBR_DownLoad_Customer_Logo.IS_RUNNING = false;
+            WBR_DownLoad_Customer_Logo.completeWakefulIntent(intent);
+            //Log.v("WS_Customer_Logo","false");
+            if(!ToolBox_Inf.isDownloadRunning()){
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
         }
     }
 

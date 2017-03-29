@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.util;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 
@@ -30,6 +32,9 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
@@ -63,6 +68,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -1027,6 +1034,74 @@ public class ToolBox_Inf {
 
     public static boolean isDevelopmentBase(){
        return Constant.WS_GETCUSTOMERS.contains("https://dev.");
+    }
+
+    public static boolean isDownloadRunning(){
+        if(WBR_DownLoad_Customer_Logo.IS_RUNNING
+            || WBR_DownLoad_PDF.IS_RUNNING
+            || WBR_DownLoad_Picture.IS_RUNNING
+        ){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param context
+     * @param notification_id Constant com o id da notificação;
+     */
+    public static void showNotification(Context context, int notification_id){
+        List<String> translist = new ArrayList<>();
+        int animation = -1;
+        String title = "";
+        String msg = "";
+
+        HMAux hmAux_Trans = ToolBox_Inf.setLanguage(
+                        context,
+                        "",
+                        "0",
+                        ToolBox_Con.getPreference_Translate_Code(context),
+                        translist
+                    );
+
+        switch (notification_id){
+
+            case Constant.NOTIFICATION_UPLOAD:
+                animation = R.drawable.upload_animation;
+                title = hmAux_Trans.get("notification_ttl_upload");
+                msg = hmAux_Trans.get("notification_msg_upload");
+                break;
+
+            case Constant.NOTIFICATION_DOWNLOAD:
+                animation = R.drawable.download_animation;
+                title = hmAux_Trans.get("notification_ttl_download");
+                msg = hmAux_Trans.get("notification_msg_download");
+                break;
+        }
+        //Se Id encontrado gera notificação, se não, não.
+        if(animation != -1) {
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(context)
+                            .setSmallIcon(animation)
+                            .setContentTitle(title)
+                            .setContentText(msg)
+                            .setTicker("");
+
+            mBuilder.setAutoCancel(true);
+
+            NotificationManager mNotifyManager =
+                    (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+            mNotifyManager.notify(notification_id, mBuilder.build());
+
+        }
+
+    }
+
+    public static void cancelNotification(Context context, int notification_id){
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(notification_id);
     }
 
 

@@ -198,6 +198,7 @@ public class Constant extends ConstantBase {
 
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
+    public static final int NOTIFICATION_DOWNLOAD = 667;
 
     //Helper
     public static final String BACK_ACTION = "back_action";

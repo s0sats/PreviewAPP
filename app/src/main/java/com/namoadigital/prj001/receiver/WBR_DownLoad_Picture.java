@@ -6,13 +6,15 @@ import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.namoadigital.prj001.service.WS_DownLoad_Picture;
-import com.namoadigital.prj001.service.WS_Serial;
 
 /**
  * Created by neomatrix on 01/02/17.
  */
 
 public class WBR_DownLoad_Picture extends WakefulBroadcastReceiver {
+
+    public static boolean IS_RUNNING = false;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
