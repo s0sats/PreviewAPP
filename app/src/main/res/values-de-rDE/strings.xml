@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PRJ001</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="act001_email_nick">E-Mail / Benutzername</string>
+    <string name="act001_password">Passwort</string>
+    <string name="act001_btn_login">Einloggen</string>
+</resources>

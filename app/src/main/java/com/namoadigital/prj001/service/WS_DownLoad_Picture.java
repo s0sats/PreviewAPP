@@ -35,6 +35,12 @@ public class WS_DownLoad_Picture extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            if(!ToolBox_Inf.isDownloadRunning()){
+                //Log.v("WS_DownLoad_Picture","true");
+                WBR_DownLoad_Picture.IS_RUNNING = true;
+                ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
+
             Bundle bundle = intent.getExtras();
             //
             ArrayList<HMAux> dados = new ArrayList<>();
@@ -128,7 +134,14 @@ public class WS_DownLoad_Picture extends IntentService {
         } catch (Exception e) {
             String results = e.toString();
         } finally {
+            //Log.v("WS_DownLoad_Picture","false");
+            WBR_DownLoad_Picture.IS_RUNNING = false;
             WBR_DownLoad_Picture.completeWakefulIntent(intent);
+            if(!ToolBox_Inf.isDownloadRunning()){
+                ToolBox_Inf.cancelNotification(
+                        getApplicationContext(),
+                        Constant.NOTIFICATION_DOWNLOAD);
+            }
         }
     }
 }

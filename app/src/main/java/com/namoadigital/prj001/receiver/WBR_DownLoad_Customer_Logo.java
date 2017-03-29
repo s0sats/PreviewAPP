@@ -12,6 +12,9 @@ import com.namoadigital.prj001.service.WS_DownLoad_Customer_Logo;
  */
 
 public class WBR_DownLoad_Customer_Logo extends WakefulBroadcastReceiver {
+
+    public static boolean IS_RUNNING = false;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
@@ -25,5 +28,6 @@ public class WBR_DownLoad_Customer_Logo extends WakefulBroadcastReceiver {
         }
 
         startWakefulService(context, mService);
+
     }
 }

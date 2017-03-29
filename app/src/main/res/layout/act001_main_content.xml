@@ -41,7 +41,7 @@
             android:id="@+id/act001_mk_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail / nickname"
+            android:hint="@string/act001_email_nick"
             android:backgroundTint="@color/namoa_color_dark_blue"
             android:inputType="text" />
 
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/namoa_color_dark_blue"
-            android:hint="Password"
+            android:hint="@string/act001_password"
             android:inputType="textPassword" />
 
         <View
@@ -73,7 +73,7 @@
                 android:layout_width="@dimen/btn_width_default"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_namoa_main_states"
-                android:text="Login"
+                android:text="@string/act001_btn_login"
                 android:textColor="@color/padrao_WHITE"
                 android:layout_margin="5dp"
                 />

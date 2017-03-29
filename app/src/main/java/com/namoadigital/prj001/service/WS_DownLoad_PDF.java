@@ -31,6 +31,14 @@ public class WS_DownLoad_PDF extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+
+            if(!ToolBox_Inf.isDownloadRunning()){
+               //Log.v("WS_DownLoad_PDF","true");
+                WBR_DownLoad_PDF.IS_RUNNING = true;
+                ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
+
+
             Bundle bundle = intent.getExtras();
             //
             ArrayList<HMAux> dados = new ArrayList<>();
@@ -108,7 +116,13 @@ public class WS_DownLoad_PDF extends IntentService {
         } catch (Exception e) {
             String results = e.toString();
         } finally {
+            WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);
+            if(!ToolBox_Inf.isDownloadRunning()){
+                //Log.v("WS_DownLoad_PDF","false");
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
+
         }
     }
 }

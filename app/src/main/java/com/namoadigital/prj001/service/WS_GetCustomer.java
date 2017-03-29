@@ -156,6 +156,17 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
+        //Verifica se novo usr igual ao ultimo logado
+        //Se for diferente apaga os bancos mult
+        if(userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
+            boolean del;
+            File[] files_db = getListDB("C_");
+
+            for (File _file : files_db) {
+                del = _file.delete();
+            }
+        }
+
         //Apaga dados da tabela
         ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
 
@@ -201,16 +212,6 @@ public class WS_GetCustomer extends IntentService {
             ev_user_customerDao.addUpdate(customers, true);
         }
 
-        //Verifica se novo usr igual ao ultimo logado
-        //Se for diferente apaga os bancos mult
-        if(userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
-            boolean del;
-            File[] files_db = getListDB("C_");
-
-            for (File _file : files_db) {
-               del = _file.delete();
-            }
-        }
 
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
         ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));
