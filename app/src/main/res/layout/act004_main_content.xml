@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Site"
-        android:textSize="@dimen/font_size_title_md"
+        android:textSize="@dimen/font_size_item_md"
         android:textStyle="bold"/>
 
     <!--<TextView

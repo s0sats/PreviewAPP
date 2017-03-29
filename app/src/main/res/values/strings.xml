@@ -64,6 +64,9 @@
     <string name="generic_starting_download_msg">Starting Download</string>
     <string name="close_app_update_process_msg">Close App for Update Process</string>
     <string name="login_dev_db_msg">Development Base!!!</string>
+    <string name="act001_email_nick">E-mail / nickname</string>
+    <string name="act001_password">Password</string>
+    <string name="act001_btn_login">Log in</string>
 
 
 </resources>

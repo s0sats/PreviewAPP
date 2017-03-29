@@ -64,4 +64,7 @@
     <string name="generic_starting_download_msg">Iniciando dowload</string>
     <string name="close_app_update_process_msg">Feche o aplicativo para efetivar a atualização.</string>
     <string name="login_dev_db_msg">Base de Testes!!!</string>
+    <string name="act001_email_nick">E-mail / apelido</string>
+    <string name="act001_password">Senha</string>
+    <string name="act001_btn_login">Entrar</string>
 </resources>
