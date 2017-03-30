@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
@@ -605,6 +606,27 @@ public class WS_Sync extends IntentService {
 
                 customFormBlobDao.addUpdate(geCustomFormBlobs, true);
             }
+
+        }
+        //
+        //Processamento das tabelas do SCHEDULE
+        //
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SCHEDULE)){
+            GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            //formLocalDao.remove();
+
+            /*
+            *
+            *    Selecionar todos registros da local
+            *
+            * Verificar se existem os itens enviados pelo server na tabela local.
+            * Se tiver, atualiza os registros locais com o que veio do server.
+            * Se não tiver, remover do novo insert.
+            *
+            *
+            *
+            *
+             */
 
         }
 
