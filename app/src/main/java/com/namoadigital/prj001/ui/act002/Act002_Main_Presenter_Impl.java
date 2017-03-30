@@ -150,7 +150,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
         Intent mIntent = new Intent(context, WBR_GetCustomer.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.GC_USER_CODE, ToolBox_Con.getPreference_User_Email(context));
+        bundle.putString(Constant.GC_USER_CODE, ToolBox_Con.getPreference_User_Code_Nick(context));
         bundle.putString(Constant.GC_PWD, ToolBox_Con.getPreference_User_Pwd(context));
         bundle.putString(Constant.GC_NFC, ToolBox_Con.getPreference_User_NFC(context));
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
