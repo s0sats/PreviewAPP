@@ -35,7 +35,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#4D000000" />
+        android:background="#4D000000"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/act011_ff_options_ll_auto"
@@ -44,25 +45,36 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:background="@drawable/namoa_cell_5_states"
+        >
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_resposta_padrao_states"/>
 
         <TextView
             android:id="@+id/act011_ff_options_ll_autot"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:focusable="false"
             android:paddingLeft="16dp"
             android:text="Automatic"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/namoa_cell_5_font_color"/>
 
     </LinearLayout>
 
     <View
+        android:id="@+id/act011_ff_options_view_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#4D000000" />
+        android:background="#4D000000"
+        android:visibility="visible"/>
 
     <LinearLayout
         android:layout_width="match_parent"

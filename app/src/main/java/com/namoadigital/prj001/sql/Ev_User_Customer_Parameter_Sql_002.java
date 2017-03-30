@@ -15,9 +15,11 @@ import com.namoadigital.prj001.database.Specification;
 public class Ev_User_Customer_Parameter_Sql_002 implements Specification {
 
     private String customer_code;
+    private String parameter_code;
 
-    public Ev_User_Customer_Parameter_Sql_002(String customer_code) {
+    public Ev_User_Customer_Parameter_Sql_002(String customer_code, String parameter_code) {
         this.customer_code = customer_code;
+        this.parameter_code = parameter_code;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class Ev_User_Customer_Parameter_Sql_002 implements Specification {
                         Ev_User_Customer_ParameterDao.TABLE +" cp \n " +
                         " WHERE \n" +
                         "  cp.customer_code = '"+customer_code+"' \n " +
-                        "  AND cp.parameter_code = '"+customer_code+"'")
+                        "  AND cp.parameter_code = '"+parameter_code+"'")
                 .toString();
     }
 }

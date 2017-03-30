@@ -64,6 +64,8 @@ public class Act011_FF_Options extends Fragment {
     private transient LinearLayout ff_options_ll_ii;
     private transient ImageView ff_options_ll_iv_ii;
 
+    private transient View ff_options_view_divider;
+
     public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs, String signature, String desc) {
         this.tabsAndFields = tabsAndFields;
         //
@@ -136,6 +138,8 @@ public class Act011_FF_Options extends Fragment {
 
         ff_options_ll_ii = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_ii);
         ff_options_ll_iv_ii = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_ii);
+
+        ff_options_view_divider = view.findViewById(R.id.act011_ff_options_view_divider);
 
     }
 
@@ -236,8 +240,10 @@ public class Act011_FF_Options extends Fragment {
 
                 if (activateAutoAnswer > 0) {
                     ff_options_ll_auto.setVisibility(View.VISIBLE);
+                    ff_options_view_divider.setVisibility(View.GONE);
                 } else {
                     ff_options_ll_auto.setVisibility(View.GONE);
+                    ff_options_view_divider.setVisibility(View.VISIBLE);
                 }
 
                 break;
@@ -281,8 +287,10 @@ public class Act011_FF_Options extends Fragment {
 
         if (activateAutoAnswer > 0) {
             ff_options_ll_auto.setVisibility(View.VISIBLE);
+            ff_options_view_divider.setVisibility(View.GONE);
         } else {
             ff_options_ll_auto.setVisibility(View.GONE);
+            ff_options_view_divider.setVisibility(View.VISIBLE);
         }
 
         int pagecount = 0;

@@ -207,6 +207,9 @@ public class WS_Sync extends IntentService {
         ) {
             return;
         }
+        //Carrega traduções , quando existem.
+        loadTranslation();
+        //
 
         if(rec.getZip() == null){
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
@@ -281,7 +284,7 @@ public class WS_Sync extends IntentService {
         // Tenta pegar tradução dos itens do WS
         //Seleciona traduções
         //if(!ToolBox_Con.getPreference_Translate_Code(getApplicationContext()).equals("")){
-            loadTranslation();
+          //  loadTranslation();
         //}
 
         //
