@@ -203,13 +203,13 @@ public class WS_Sync extends IntentService {
                 rec.getLink_url(),
                 jump_validation,
                 jump_od
-        )
-                ) {
+                )
+        ) {
             return;
         }
 
         if(rec.getZip() == null){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.generic_zip_not_found_msg), rec.getLink_url(), "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
             return;
         }
 
