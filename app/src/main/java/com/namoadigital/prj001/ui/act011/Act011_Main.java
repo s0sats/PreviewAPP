@@ -450,11 +450,42 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void auto() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
+                HMAux hmP = new HMAux();
+
                 int quantidade = 0;
 
                 for (CustomFF customFF : customFFs) {
-                    quantidade += customFF.activateAutoReplay();
+                    if (customFF.activateAutoReplay() != 0) {
+                        quantidade += 1;
+
+                        hmP.put(String.valueOf(customFF.getmPage()), String.valueOf(customFF.getmPage()));
+                    }
                 }
+                //
+                // Hugo auto
+
+                Set keysAuto = hmP.keySet();
+
+                for (Iterator iAuto = keysAuto.iterator(); iAuto.hasNext(); ) {
+
+                    String keyAutoHM = (String) iAuto.next();
+
+                    returnValidCheck(keyAutoHM);
+
+                    resTabs = returnValidCheckTabs(keyAutoHM);
+                    //
+                    Set keys = resTabs.keySet();
+
+                    for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                        String key = (String) i.next();
+                        String value = (String) resTabs.get(key);
+
+                        hmPages.put(key, value);
+                    }
+                }
+                //
+                act011_ff_options.tabsS(hmPages);
+
 
                 Toast.makeText(
                         context,
