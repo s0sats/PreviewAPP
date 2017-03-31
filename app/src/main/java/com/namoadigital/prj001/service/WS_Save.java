@@ -32,8 +32,6 @@ import java.util.List;
 
 public class WS_Save extends IntentService {
 
-    private StringBuilder sResult;
-    //
     private GE_Custom_Form_DataDao formDataDao;
     private GE_Custom_Form_Data_FieldDao formDataFieldDao;
     //
@@ -59,6 +57,7 @@ public class WS_Save extends IntentService {
 
         try {
 
+
             formDataDao = new GE_Custom_Form_DataDao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -78,26 +77,11 @@ public class WS_Save extends IntentService {
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
 
-            sResult = new StringBuilder();
-
             processWS_Save(jumpValidation, jumpOD);
 
         } catch (Exception e) {
 
-            String results = "ERROR: ";
-
-            if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - " + sResult.toString();
-                sb.append(results);
-
-            } else if(e.toString().contains("ORA-")) {
-                results += "Oracle - " + sResult.toString();
-                sb.append(results);
-
-            }else{
-                sb.append(results)
-                        .append(e.toString());
-            }
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 

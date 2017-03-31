@@ -1104,5 +1104,71 @@ public class ToolBox_Inf {
         manager.cancel(notification_id);
     }
 
+    public static StringBuilder wsExceptionTreatment(Context context, Exception e){
+        StringBuilder sb = new StringBuilder();
+        String results = "";
+
+        HMAux hmAux_Trans = new HMAux();
+
+        if (!ToolBox_Con.getPreference_Translate_Code(context).equals("")) {
+            List<String> transList = new ArrayList<>();
+            transList.add("ws_exception_contact_admin_json_syntax");
+            transList.add("ws_exception_contact_admin_oracle");
+            transList.add("ws_exception_contact_admin_timeout");
+            transList.add("generic_error_lbl");
+
+            hmAux_Trans = setLanguage(
+                    context,
+                    Constant.APP_MODULE,
+                    getResourceCode(
+                            context,
+                            Constant.APP_MODULE,
+                            "0"
+                    ),
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    transList);
+        }
+
+        hmAux_Trans.put("ws_exception_contact_admin_json_syntax",
+                (!hmAux_Trans.containsKey("ws_exception_contact_admin_json_syntax") || hmAux_Trans.get("ws_exception_contact_admin_json_syntax").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_json_syntax)  : hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+                );
+
+        hmAux_Trans.put("ws_exception_contact_admin_oracle",
+                (!hmAux_Trans.containsKey("ws_exception_contact_admin_oracle") || hmAux_Trans.get("ws_exception_contact_admin_oracle").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_oracle)  : hmAux_Trans.get("ws_exception_contact_admin_oracle"))
+        );
+
+        hmAux_Trans.put("ws_exception_contact_admin_timeout",
+                (!hmAux_Trans.containsKey("ws_exception_contact_admin_timeout") || hmAux_Trans.get("ws_exception_contact_admin_timeout").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_timeout)  : hmAux_Trans.get("ws_exception_contact_admin_timeout"))
+        );
+
+        results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl)  : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
+
+        if (e.toString().contains("JsonSyntaxException")) {
+            sb.append(results).append(" ").append("JsonParse!\n")
+                .append(hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+                .append("\n")
+                .append(e.toString()
+              );
+
+        } else if(e.toString().contains("ORA-")) {
+            sb.append(results).append(" ").append("ORACLE!\n")
+                .append(hmAux_Trans.get("ws_exception_contact_admin_oracle"))
+                    .append("\n")
+                    .append(e.toString()
+            );
+
+        } else if(e.toString().toLowerCase().contains("timeout")) {
+            sb.append(results).append(" ").append("Timeout!\n ")
+            .append(hmAux_Trans.get("ws_exception_contact_admin_timeout"))
+            .append("\n")
+            .append(e.toString()
+            );
+        }else{
+            sb.append(results)
+                .append("\n")
+                .append(e.toString());
+        }
+        return sb;
+    }
 
 }

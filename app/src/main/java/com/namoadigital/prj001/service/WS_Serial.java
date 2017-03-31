@@ -23,7 +23,6 @@ import java.util.List;
 
 public class WS_Serial extends IntentService {
 
-    private StringBuilder sResult;
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -47,26 +46,12 @@ public class WS_Serial extends IntentService {
             int serial_allow_new = bundle.getInt(Constant.GS_SERIAL_ALLOW_NEW);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
-            sResult = new StringBuilder();
 
             processWS_Serial(product_code, serial_id, serial_required, serial_allow_new, jumpValidation,jumpOD);
 
         }catch (Exception e) {
 
-            String results = "ERROR: ";
-
-            if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - " + sResult.toString();
-                sb.append(results);
-
-            } else if(e.toString().contains("ORA-")) {
-                results += "Oracle - " + sResult.toString();
-                sb.append(results);
-
-            }else{
-                sb.append(results)
-                        .append(e.toString());
-            }
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 

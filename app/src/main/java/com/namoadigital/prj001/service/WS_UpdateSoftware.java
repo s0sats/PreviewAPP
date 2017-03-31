@@ -21,8 +21,6 @@ public class WS_UpdateSoftware extends IntentService {
     private String l_version_link;
     private String l_version_required;
 
-    private StringBuilder sResult;
-
     public WS_UpdateSoftware() {
         super("WS_UpdateSoftware");
     }
@@ -63,21 +61,11 @@ public class WS_UpdateSoftware extends IntentService {
 
         } catch (Exception e) {
 
-            String results = "ERROR: ";
-
-            if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - " + sResult.toString();
-                sb.append(results);
-
-            } else {
-                sb.append(results)
-                        .append(e.toString());
-            }
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-
             WBR_UpdateSoftware.completeWakefulIntent(intent);
 
         }

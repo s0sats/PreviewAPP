@@ -27,6 +27,7 @@ import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -760,5 +761,18 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         context.sendBroadcast(mIntentPIC);
     }
 
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
 
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+
+        finish();
+    }
 }

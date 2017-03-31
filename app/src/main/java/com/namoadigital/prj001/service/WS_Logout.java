@@ -22,7 +22,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class WS_Logout extends IntentService {
 
-    private StringBuilder sResult;
     private EV_User_CustomerDao customerDao;
 
     public WS_Logout() {
@@ -34,7 +33,6 @@ public class WS_Logout extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
-        sResult = new StringBuilder();
 
         try {
 
@@ -43,20 +41,7 @@ public class WS_Logout extends IntentService {
 
         }catch (Exception e) {
 
-            String results = "ERROR: ";
-
-            if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - " + sResult.toString();
-                sb.append(results);
-
-            } else if(e.toString().contains("ORA-")) {
-                results += "Oracle - " + sResult.toString();
-                sb.append(results);
-
-            }else{
-                sb.append(results)
-                        .append(e.toString());
-            }
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 

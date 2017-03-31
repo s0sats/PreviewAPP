@@ -72,8 +72,6 @@ public class WS_Sync extends IntentService {
     private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
 
-    private StringBuilder sResult;
-
     //
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -99,28 +97,13 @@ public class WS_Sync extends IntentService {
             //Essa chave só é passada pela Act008, tela de criação se formulario.
             Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE,-1L);
 
-            sResult = new StringBuilder();
-
             processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD,product_code );
 
         }catch (Exception e) {
 
-        String results = "ERROR: ";
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
-        if (e.toString().contains("JsonSyntaxException")) {
-            results += "JsonParse - " + sResult.toString();
-            sb.append(results);
-
-        } else if(e.toString().contains("ORA-")) {
-            results += "Oracle - " + sResult.toString();
-            sb.append(results);
-
-        }else{
-            sb.append(results)
-                    .append(e.toString());
-        }
-
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
 
