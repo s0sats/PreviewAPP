@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
@@ -34,6 +35,8 @@ import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field;
+import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -46,7 +49,9 @@ import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
@@ -351,7 +356,7 @@ public class WS_Sync extends IntentService {
                     }
                 }
 
-                operationDao.addUpdate(operations, true);
+                operationDao.addUpdate(operations, false);
             }
 
             //
@@ -388,7 +393,7 @@ public class WS_Sync extends IntentService {
                     }
                 }
 
-                siteDao.addUpdate(sites, true);
+                siteDao.addUpdate(sites, false);
             }
 
             //
@@ -422,7 +427,7 @@ public class WS_Sync extends IntentService {
                     }
                 }
 
-                productDao.addUpdate(products, true);
+                productDao.addUpdate(products, false);
             }
 
             if(product_code == -1L) {
@@ -446,7 +451,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                productGroupDao.addUpdate(productGroups, true);
+                productGroupDao.addUpdate(productGroups, false);
             }
 
             //
@@ -464,7 +469,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                productGroupProductDao.addUpdate(productGroupProducts, true);
+                productGroupProductDao.addUpdate(productGroupProducts, false);
             }
 
         }
@@ -531,7 +536,7 @@ public class WS_Sync extends IntentService {
                     }
                 }
 
-                customFormProductDao.addUpdate(customFormsProduct, true);
+                customFormProductDao.addUpdate(customFormsProduct, false);
             }
 
             //
@@ -550,7 +555,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormDao.addUpdate(customForms, true);
+                customFormDao.addUpdate(customForms, false);
             }
 
             //
@@ -568,7 +573,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormTypeDao.addUpdate(customFormsTypes, true);
+                customFormTypeDao.addUpdate(customFormsTypes, false);
             }
             //
             // Processamento Custom Form Field
@@ -585,7 +590,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormFieldDao.addUpdate(customFormsFields, true);
+                customFormFieldDao.addUpdate(customFormsFields, false);
             }
 
 
@@ -604,7 +609,7 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-                customFormBlobDao.addUpdate(geCustomFormBlobs, true);
+                customFormBlobDao.addUpdate(geCustomFormBlobs, false);
             }
 
         }
@@ -613,18 +618,46 @@ public class WS_Sync extends IntentService {
         //
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SCHEDULE)){
             GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            //formLocalDao.remove();
+            GE_Custom_Form_Field_LocalDao formFieldLocalDao = new GE_Custom_Form_Field_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            //Lista de form locais - filtrar por data_serv e status
+            List<GE_Custom_Form_Local>  formLocals =
+                    formLocalDao.query(
+                            new GE_Custom_Form_Local_Sql_011(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
+                            ).toSqlQuery()
+                    );
+            ////Lista de form field locais
+            List<GE_Custom_Form_Field_Local> formFieldLocals =
+                    formFieldLocalDao.query(
+                            new GE_Custom_Form_Field_Local_Sql_005(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
+                            ).toSqlQuery()
+                    );
+
+            File[] files_sch_forms = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form-");
+
+            for (File _file : files_sch_forms) {
+                List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
+
+                ArrayList<GE_Custom_Form_Local> scheduleForms  = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<GE_Custom_Form_Local>>() {
+                        }.getType()
+                );
+                newFormsLocal.addAll(scheduleForms);
+
+                // customFormBlobDao.addUpdate(geCustomFormBlobs, false);
+            }
 
             /*
             *
-            *    Selecionar todos registros da local
+            * Selecionar todos registros da local
             *
             * Verificar se existem os itens enviados pelo server na tabela local.
             * Se tiver, atualiza os registros locais com o que veio do server.
             * Se não tiver, remover do novo insert.
-            *
-            *
-            *
             *
              */
 

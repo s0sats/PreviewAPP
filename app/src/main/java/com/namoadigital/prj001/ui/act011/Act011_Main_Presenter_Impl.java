@@ -148,7 +148,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
-            customFormLocal.setCustom_form_src("0");
+            customFormLocal.setCustom_form_data_serv(0);
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_product_id(product_id);
