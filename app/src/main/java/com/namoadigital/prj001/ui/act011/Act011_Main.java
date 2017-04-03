@@ -875,9 +875,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     opcs[i] = jo.getString("DECIMAL");
                 }
                 //
-                mkEditTextNMFF.setmMaxSize(Integer.parseInt(opcs[0]));
+                mkEditTextNMFF.setmDecimal(Integer.parseInt(opcs[0]));
             } catch (JSONException e) {
-                mkEditTextNMFF.setmMaxSize(0);
+                mkEditTextNMFF.setmDecimal(0);
             }
         }
 
