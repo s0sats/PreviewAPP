@@ -20,6 +20,7 @@ public class TSession_Env {
     private String force_login;
     private String customer_code;
     private int translate_code;
+    private String gcm_id = "google_cloud_msg"; //valor chumbado para testes
 
     public String getApp_code() {
         return app_code;
@@ -123,5 +124,13 @@ public class TSession_Env {
 
     public void setTranslate_code(int translate_code) {
         this.translate_code = translate_code;
+    }
+
+    public String getGcm_id() {
+        return gcm_id;
+    }
+
+    public void setGcm_id(String gcm_id) {
+        this.gcm_id = gcm_id;
     }
 }

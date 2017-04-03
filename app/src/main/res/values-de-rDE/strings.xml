@@ -68,4 +68,8 @@
     <string name="act001_email_nick">E-Mail / Benutzername</string>
     <string name="act001_password">Passwort</string>
     <string name="act001_btn_login">Einloggen</string>
+    <string name="ws_exception_contact_admin_json_syntax">The received data is unreadable!\nContact support team.</string>
+    <string name="ws_exception_contact_admin_oracle">A database error has occurred!\nContact support team!</string>
+    <string name="ws_exception_contact_admin_timeout">Time limit for server response has exceeded!\nCheck your  connections and try again!</string>
+    <string name="generic_error_lbl">ERROR:</string>
 </resources>
