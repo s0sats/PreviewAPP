@@ -51,6 +51,7 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
@@ -636,9 +637,22 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
 
-               /* for (GE_Custom_Form_Local formLocal : scheduleForms) {
+                for (GE_Custom_Form_Local schedules : scheduleForms) {
+                    int new_form_data = Integer.parseInt(formLocalDao.getByStringHM(
+                            new GE_Custom_Form_Local_Sql_002(
+                                    String.valueOf(schedules.getCustomer_code()),
+                                    String.valueOf(schedules.getCustom_form_type()),
+                                    String.valueOf(schedules.getCustom_form_code()),
+                                    String.valueOf(schedules.getCustom_form_version())
+                            )
+                                    .toSqlQuery()
+                                    .toLowerCase()
+                    ).get("id"));
 
-                }*/
+                    schedules.setCustom_form_data(new_form_data);
+                    schedules.setCustom_form_pre(ToolBox_Inf.getPrefix(getApplicationContext()));
+
+                }
 
 
                  newFormsLocal.addAll(scheduleForms);
