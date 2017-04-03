@@ -165,6 +165,12 @@ public class WS_Sync extends IntentService {
                 dataPackage.setCHECKLIST(CHECKLIST);
             }
         }
+        int SCHEDULE_go = 1;
+        if(SCHEDULE_go == 1){
+            //No caso do Main, sempre é vazio
+            ArrayList<String> SCHEDULE = new ArrayList<>();
+            dataPackage.setSCHEDULE(SCHEDULE);
+        }
 
         TSync_Env env =  new TSync_Env();
 
@@ -629,7 +635,13 @@ public class WS_Sync extends IntentService {
                         new TypeToken<ArrayList<GE_Custom_Form_Local>>() {
                         }.getType()
                 );
-                newFormsLocal.addAll(scheduleForms);
+
+               /* for (GE_Custom_Form_Local formLocal : scheduleForms) {
+
+                }*/
+
+
+                 newFormsLocal.addAll(scheduleForms);
 
                 // customFormBlobDao.addUpdate(geCustomFormBlobs, false);
             }
