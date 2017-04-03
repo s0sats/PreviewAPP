@@ -1040,6 +1040,7 @@ public class ToolBox_Inf {
         if(WBR_DownLoad_Customer_Logo.IS_RUNNING
             || WBR_DownLoad_PDF.IS_RUNNING
             || WBR_DownLoad_Picture.IS_RUNNING
+            || WBR_UpdateSoftware.IS_RUNNING
         ){
             return true;
         }

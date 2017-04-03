@@ -37,7 +37,11 @@ public class WS_Logout extends IntentService {
         try {
 
             String customer_list = bundle.getString(Constant.WS_LOGOUT_CUSTOMER_LIST);
-            processWS_Logout(customer_list);
+            String user_code =  ToolBox_Con.getPreference_User_Code(getApplicationContext());
+            if (bundle.containsKey(Constant.WS_LOGOUT_USER_CODE)){
+               user_code = bundle.getString(Constant.WS_LOGOUT_USER_CODE);
+            }
+            processWS_Logout(customer_list,user_code);
 
         }catch (Exception e) {
 
@@ -50,14 +54,14 @@ public class WS_Logout extends IntentService {
         }
     }
 
-    private void processWS_Logout(String customer_list) {
+    private void processWS_Logout(String customer_list, String user_code) {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         TLogout_Env env =  new TLogout_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
-        env.setUser_code(ToolBox_Con.getPreference_User_Code(getApplicationContext()));
+        env.setUser_code(user_code);
         env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
         env.setCustomer_code(customer_list);
 
@@ -73,11 +77,11 @@ public class WS_Logout extends IntentService {
                 TLogout_Rec.class
         );
 
-        checkLogoutReturn(rec.getLogout(),customer_list);
+        checkLogoutReturn(rec.getLogout(),customer_list,user_code);
 
     }
 
-    private void checkLogoutReturn(String logout_return, String customer_list) {
+    private void checkLogoutReturn(String logout_return, String customer_list, String user_code) {
         customerDao = new EV_User_CustomerDao(
                 getApplicationContext(),
                 Constant.DB_FULL_BASE,
@@ -91,7 +95,7 @@ public class WS_Logout extends IntentService {
 
                 customerDao.addUpdate(
                         new EV_User_Customer_Sql_005(
-                            ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                            user_code,
                             customer_list
                         ).toSqlQuery()
                 );

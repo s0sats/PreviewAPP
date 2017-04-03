@@ -12,7 +12,7 @@ public class Constant extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "0.12";
+    public static final String PRJ001_VERSION = "0.13";
 
     /**
      * UI Module
@@ -130,6 +130,7 @@ public class Constant extends ConstantBase {
      * Serial Logout
      */
     public static final String WS_LOGOUT_CUSTOMER_LIST = "logoutcustomerlist";
+    public static final String WS_LOGOUT_USER_CODE = "logoutusercode";
 
 
     public static final String SW_TYPE_BR = "sw_type_br";

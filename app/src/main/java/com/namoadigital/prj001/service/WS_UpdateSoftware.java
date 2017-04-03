@@ -32,6 +32,12 @@ public class WS_UpdateSoftware extends IntentService {
 
         try {
 
+            if(!ToolBox_Inf.isDownloadRunning()){
+                //Log.v("WS_Customer_Logo","true");
+                 WBR_UpdateSoftware.IS_RUNNING = true;
+                 ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
+
             if (bundle != null) {
                 l_version_link = bundle.getString(Constant.SW_LINK);
                 l_version_required = bundle.getString(Constant.SW_REQUIRED);
@@ -66,7 +72,13 @@ public class WS_UpdateSoftware extends IntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
+            WBR_UpdateSoftware.IS_RUNNING = false;
             WBR_UpdateSoftware.completeWakefulIntent(intent);
+
+            //Log.v("WS_Customer_Logo","false");
+            if(!ToolBox_Inf.isDownloadRunning()){
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
 
         }
 

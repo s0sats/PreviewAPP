@@ -613,8 +613,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
         //
-        ToolBox_Con.cleanPreferences(context);
-        //
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
 
@@ -764,14 +762,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
         super.processCloseAPP(mLink, mRequired);
-
+        //
         Intent mIntent = new Intent(context, WBR_Logout.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
-
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
 
         finish();
     }
