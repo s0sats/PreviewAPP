@@ -214,6 +214,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("drawer_automatic_lbl");
         transList.add("qty_automatic_answer_msg");
         transList.add("dialog_info_product_code_lbl");
+        transList.add("dialog_info_product_id_lbl");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -1594,6 +1595,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         TextView tv_serial_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
         TextView tv_serial_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_id);
         //
+        TextView tv_form_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_title);
         TextView tv_form_type_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_lbl);
         TextView tv_form_type_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_val);
         TextView tv_form_type_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_desc);
@@ -1609,9 +1611,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
+        tv_product_id_lbl.setText(hmAux_Trans.get("dialog_info_product_id_lbl"));
         tv_product_title_lbl.setText(hmAux_Trans.get("dialog_info_product_lbl"));
         tv_product_code_lbl.setText(hmAux_Trans.get("dialog_info_product_code_lbl"));
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_info_serial_lbl"));
+        tv_form_title.setText(hmAux_Trans.get("dialog_info_form_ttl"));
         tv_form_type_lbl.setText(hmAux_Trans.get("dialog_info_form_type_lbl"));
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
         tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
@@ -1622,7 +1626,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_serial_val.setText(serial_id);
 
         tv_form_type_val.setText(type);
-        tv_form_type_desc.setText(type_desc);
+        tv_form_type_desc.setText(type + " - " + type_desc);
 
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);

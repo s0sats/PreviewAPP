@@ -22,7 +22,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class WS_Logout extends IntentService {
 
-    private StringBuilder sResult;
     private EV_User_CustomerDao customerDao;
 
     public WS_Logout() {
@@ -34,29 +33,19 @@ public class WS_Logout extends IntentService {
 
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
-        sResult = new StringBuilder();
 
         try {
 
             String customer_list = bundle.getString(Constant.WS_LOGOUT_CUSTOMER_LIST);
-            processWS_Logout(customer_list);
+            String user_code =  ToolBox_Con.getPreference_User_Code(getApplicationContext());
+            if (bundle.containsKey(Constant.WS_LOGOUT_USER_CODE)){
+               user_code = bundle.getString(Constant.WS_LOGOUT_USER_CODE);
+            }
+            processWS_Logout(customer_list,user_code);
 
         }catch (Exception e) {
 
-            String results = "ERROR: ";
-
-            if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - " + sResult.toString();
-                sb.append(results);
-
-            } else if(e.toString().contains("ORA-")) {
-                results += "Oracle - " + sResult.toString();
-                sb.append(results);
-
-            }else{
-                sb.append(results)
-                        .append(e.toString());
-            }
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
@@ -65,14 +54,14 @@ public class WS_Logout extends IntentService {
         }
     }
 
-    private void processWS_Logout(String customer_list) {
+    private void processWS_Logout(String customer_list, String user_code) {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         TLogout_Env env =  new TLogout_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
-        env.setUser_code(ToolBox_Con.getPreference_User_Code(getApplicationContext()));
+        env.setUser_code(user_code);
         env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
         env.setCustomer_code(customer_list);
 
@@ -88,11 +77,11 @@ public class WS_Logout extends IntentService {
                 TLogout_Rec.class
         );
 
-        checkLogoutReturn(rec.getLogout(),customer_list);
+        checkLogoutReturn(rec.getLogout(),customer_list,user_code);
 
     }
 
-    private void checkLogoutReturn(String logout_return, String customer_list) {
+    private void checkLogoutReturn(String logout_return, String customer_list, String user_code) {
         customerDao = new EV_User_CustomerDao(
                 getApplicationContext(),
                 Constant.DB_FULL_BASE,
@@ -106,7 +95,7 @@ public class WS_Logout extends IntentService {
 
                 customerDao.addUpdate(
                         new EV_User_Customer_Sql_005(
-                            ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                            user_code,
                             customer_list
                         ).toSqlQuery()
                 );

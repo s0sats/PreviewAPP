@@ -39,9 +39,6 @@ public class WS_GetCustomer extends IntentService {
     private EV_User_CustomerDao ev_user_customerDao;
     private GE_Custom_Form_LocalDao customFormLocalDao;
 
-    private StringBuilder sResult;
-
-
     public WS_GetCustomer() {
         super("WS_GetCustomer");
     }
@@ -59,26 +56,11 @@ public class WS_GetCustomer extends IntentService {
             String nfc = bundle.getString(Constant.GC_NFC);
             int statusjump = bundle.getInt(Constant.GC_STATUS_JUMP);
 
-            sResult = new StringBuilder();
-
             processWS_GC(user, password, nfc, statusjump);
 
         } catch (Exception e) {
 
-            String results = "ERROR: ";
-
-            if (e.toString().contains("JsonSyntaxException")) {
-                results += "JsonParse - " + sResult.toString();
-                sb.append(results);
-
-            } else if(e.toString().contains("ORA-")) {
-                results += "Oracle - " + sResult.toString();
-                sb.append(results);
-
-            }else{
-                sb.append(results)
-                        .append(e.toString());
-            }
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
