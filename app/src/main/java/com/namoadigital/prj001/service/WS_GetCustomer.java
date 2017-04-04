@@ -11,14 +11,17 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
+import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -37,6 +40,7 @@ public class WS_GetCustomer extends IntentService {
 
     private EV_UserDao ev_userDao;
     private EV_User_CustomerDao ev_user_customerDao;
+    private Ev_User_Customer_ParameterDao ev_user_customerParamDao;
     private GE_Custom_Form_LocalDao customFormLocalDao;
 
     public WS_GetCustomer() {
@@ -76,6 +80,8 @@ public class WS_GetCustomer extends IntentService {
 
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        ev_user_customerParamDao = new Ev_User_Customer_ParameterDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_customer), "", "0");
 
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -194,6 +200,22 @@ public class WS_GetCustomer extends IntentService {
             ev_user_customerDao.addUpdate(customers, true);
         }
 
+        ev_user_customerParamDao.remove(new Ev_User_Customer_Parameter_Sql_Truncate().toSqlQuery());
+
+        File[] files_Params = ToolBox_Inf.getListOfFiles_v2("ev_user_customer_parameter-");
+
+        for (File _file : files_Params) {
+
+            ArrayList<Ev_User_Customer_Parameter> customer_params = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<Ev_User_Customer_Parameter>>() {
+                    }.getType()
+            );
+
+            ev_user_customerParamDao.addUpdate(customer_params,true);
+        }
 
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
         ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));

@@ -304,7 +304,12 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_field_local.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_field_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
-            custom_form_field_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))) {
+                custom_form_field_local.setCustom_form_data_serv(0);
+            }else {
+                custom_form_field_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            }
+
             custom_form_field_local.setCustom_form_seq(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_SEQ)));
             custom_form_field_local.setCustom_form_data_type(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DATA_TYPE)));
 
