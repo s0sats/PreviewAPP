@@ -49,7 +49,6 @@ import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_011;
@@ -616,18 +615,27 @@ public class WS_Sync extends IntentService {
                                     String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
                             ).toSqlQuery()
                     );
-            ////Lista de form field locais
-            List<GE_Custom_Form_Field_Local> formFieldLocals =
-                    formFieldLocalDao.query(
-                            new GE_Custom_Form_Field_Local_Sql_005(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
-                            ).toSqlQuery()
-                    );
+
+            /*
+            *
+            * Selecionar somente registros com data_serv  da local
+            *
+            * Fazer loop na lista retornada e verificar se existe aquele registro
+            * na tab local e com status <> de schedule.
+            * Se status <> de Schedule, ignorar registro enviado pelo server.
+            * Add itens enviados a tab local.
+            *
+            * Fields
+            * Fazer loop nos fields e se não existir cabeçalalho nos itens, ignorar.
+            */
+
+            //
+            // Processamento Custom Form Local
+            //
+            List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
 
             File[] files_sch_forms = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form-");
-
             for (File _file : files_sch_forms) {
-                List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
 
                 ArrayList<GE_Custom_Form_Local> scheduleForms  = gson.fromJson(
                         ToolBox.jsonFromOracle(
@@ -636,39 +644,98 @@ public class WS_Sync extends IntentService {
                         new TypeToken<ArrayList<GE_Custom_Form_Local>>() {
                         }.getType()
                 );
+                /*
+                * Valida se cada forms recebido  deve ser ignorado ou não.
+                * Form só é ignorado caso o form recebido já exista na base local
+                * com um STATUS diferente de SCHEDULE
+                */
 
                 for (GE_Custom_Form_Local schedules : scheduleForms) {
-                    int new_form_data = Integer.parseInt(formLocalDao.getByStringHM(
-                            new GE_Custom_Form_Local_Sql_002(
-                                    String.valueOf(schedules.getCustomer_code()),
-                                    String.valueOf(schedules.getCustom_form_type()),
-                                    String.valueOf(schedules.getCustom_form_code()),
-                                    String.valueOf(schedules.getCustom_form_version())
-                            )
-                                    .toSqlQuery()
-                                    .toLowerCase()
-                    ).get("id"));
+                    boolean add = true;
+                    for (GE_Custom_Form_Local local : formLocals ) {
+                        if(local.getCustomer_code() == schedules.getCustomer_code()
+                            && local.getCustom_form_type() == schedules.getCustom_form_type()
+                            && local.getCustom_form_code() == schedules.getCustom_form_code()
+                            && local.getCustom_form_version() == schedules.getCustom_form_version()
+                            && local.getCustom_form_data_serv() == schedules.getCustom_form_data_serv()
+                        ){
+                            if(!local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)){
+                                add = false;
+                            }else{
+                                //Se registro ja existe, atualiza form_data no novo item
+                                schedules.setCustom_form_data(local.getCustom_form_data());
+                            }
+                            break;
+                        }
 
-                    schedules.setCustom_form_data(new_form_data);
-                    schedules.setCustom_form_pre(ToolBox_Inf.getPrefix(getApplicationContext()));
+                    }
+                    //Se form não existe
+                    //ou se existe mas ainda com status Schedule
+                    //adiciona valores necessários e adiciona na lista de novos forms
+                    if(add){
+                        Long new_form_data = schedules.getCustom_form_data() ;
 
+                        if(new_form_data == 0){
+                            new_form_data = Long.parseLong(formLocalDao.getByStringHM(
+                                    new GE_Custom_Form_Local_Sql_002(
+                                            String.valueOf(schedules.getCustomer_code()),
+                                            String.valueOf(schedules.getCustom_form_type()),
+                                            String.valueOf(schedules.getCustom_form_code()),
+                                            String.valueOf(schedules.getCustom_form_version())
+                                    )
+                                            .toSqlQuery()
+                                            .toLowerCase()
+                            ).get("id"));
+
+                        }
+
+                        schedules.setCustom_form_data(new_form_data);
+                        schedules.setCustom_form_pre(ToolBox_Inf.getPrefix(getApplicationContext()));
+                        //
+                        newFormsLocal.add(schedules);
+                        //Insere/Atualiza
+                        formLocalDao.addUpdate(schedules);
+
+                    }
                 }
 
-
-                 newFormsLocal.addAll(scheduleForms);
-
-                // customFormBlobDao.addUpdate(geCustomFormBlobs, false);
+                //formLocalDao.addUpdate(newFormsLocal, false);
             }
+            //
+            // Processamento Custom Form Fields Local
+            //
 
-            /*
-            *
-            * Selecionar todos registros da local
-            *
-            * Verificar se existem os itens enviados pelo server na tabela local.
-            * Se tiver, atualiza os registros locais com o que veio do server.
-            * Se não tiver, remover do novo insert.
-            *
-             */
+            List<GE_Custom_Form_Field_Local> newFormsFiedlLocal = new ArrayList<>();
+            //
+            File[] files_sch_form_fields = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form_field-");
+            for (File _file : files_sch_form_fields) {
+                ArrayList<GE_Custom_Form_Field_Local> scheduleFormFields  = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<GE_Custom_Form_Field_Local>>() {
+                        }.getType()
+                );
+
+                for (GE_Custom_Form_Field_Local scheduleField : scheduleFormFields) {
+
+                    for (GE_Custom_Form_Local local : newFormsLocal ) {
+                        if(local.getCustomer_code() == scheduleField.getCustomer_code()
+                            && local.getCustom_form_type() == scheduleField.getCustom_form_type()
+                            && local.getCustom_form_code() == scheduleField.getCustom_form_code()
+                            && local.getCustom_form_version() == scheduleField.getCustom_form_version()
+                            && local.getCustom_form_data_serv() == scheduleField.getCustom_form_data_serv()
+                            ){
+                            scheduleField.setCustom_form_data(local.getCustom_form_data());
+                            newFormsFiedlLocal.add(scheduleField);
+                            break;
+                        }
+
+                    }
+                }
+
+                formFieldLocalDao.addUpdate(newFormsFiedlLocal, false);
+            }
 
         }
 
