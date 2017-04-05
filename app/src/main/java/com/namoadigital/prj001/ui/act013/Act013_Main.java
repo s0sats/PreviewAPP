@@ -49,6 +49,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private List<CheckBox> checkBoxList;
     private Bundle recBundle;
 
+    private boolean accessToSchedule;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +113,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                                 Constant.DB_VERSION_CUSTOM
                         )
                 );
+        //Verifica se usr tem acesso aos agendados
+        accessToSchedule = ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST);
         //
         lv_pendencies = (ListView) findViewById(R.id.act013_lv_pendencies);
         //
@@ -124,7 +128,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         chk_processing.setChecked(true);
         //
         chk_scheduled = (CheckBox) findViewById(R.id.act013_chk_scheduled);
-        chk_scheduled.setVisibility(View.GONE);
+        chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         //
         chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
         //Add checkbox na lista
@@ -266,7 +270,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         CheckBox chk_scheduled = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_scheduled);
         chk_scheduled.setText(hmAux_Trans.get("lbl_chk_scheduled"));
-        chk_scheduled.setVisibility(View.GONE);
+        chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         //
         CheckBox chk_finalized = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_finalized);
         chk_finalized.setText(hmAux_Trans.get("lbl_chk_finalized"));

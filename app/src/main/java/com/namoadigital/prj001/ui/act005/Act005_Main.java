@@ -55,6 +55,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_BADGE = "menu_badge";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
@@ -148,6 +149,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_logout_msg");
         transList.add("lbl_sync_data");
         transList.add("lbl_logout");
+        transList.add("lbl_schedule_data");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

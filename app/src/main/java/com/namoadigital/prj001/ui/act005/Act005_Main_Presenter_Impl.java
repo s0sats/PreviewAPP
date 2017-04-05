@@ -61,6 +61,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] menuId = {
             Act005_Main.MENU_ID_CHECKLIST,
+            Act005_Main.MENU_ID_SCHEDULE_DATA,
             Act005_Main.MENU_ID_PENDING_DATA,
             Act005_Main.MENU_ID_HISTORIC_DATA,
             Act005_Main.MENU_ID_SEND_DATA,
@@ -70,6 +71,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] menuDesc = {
             "lbl_checklist",
+            "lbl_schedule_data",
             "lbl_pending_data",
             "lbl_historic_data",
             "lbl_send_data",
@@ -79,11 +81,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] icon ={
             String.valueOf(R.drawable.ic_n_form),
+            String.valueOf(R.drawable.ic_info),
             String.valueOf(R.drawable.ic_pendente),
             String.valueOf(R.drawable.ic_historico),
             String.valueOf(R.drawable.ic_enviar),
      //       String.valueOf(R.drawable.ic_sincronizar),
             String.valueOf(R.drawable.ic_sair)
+    };
+
+    String[] parameter ={
+            Constant.PARAM_CHECKLIST,
+            Constant.PARAM_SCHEDULE_CHECKLIST,
+            "",
+            "",
+            "",
+            // "",
+            ""
     };
 
 
@@ -93,40 +106,45 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         List<HMAux> menuList = new ArrayList<>();
 
         for (int i = 0; i < menuId.length;i++ ){
-            HMAux Aux = new HMAux();
-            String qty = "";
-            Aux.put(Act005_Main.MENU_ID, menuId[i]);
-            Aux.put(Act005_Main.MENU_ICON, icon[i]);
-            Aux.put(Act005_Main.MENU_DESC,menuDesc[i]);
+            //SÓ exibe item de menu se menu não requer param
+            //ou se customer possui acesso ao param
+            boolean showMenu = parameter[i].equals("") || ToolBox_Inf.parameterExists(context, parameter[i]);
+            //
+            if(showMenu) {
+                HMAux Aux = new HMAux();
+                String qty = "";
+                Aux.put(Act005_Main.MENU_ID, menuId[i]);
+                Aux.put(Act005_Main.MENU_ICON, icon[i]);
+                Aux.put(Act005_Main.MENU_DESC, menuDesc[i]);
 
-            switch (menuId[i]){
-                case Act005_Main.MENU_ID_PENDING_DATA:
-                    qty = customFormLocalDao.getByStringHM(
-                            new Sql_Act005_001(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                            ).toSqlQuery()
-                    ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
+                switch (menuId[i]) {
+                    case Act005_Main.MENU_ID_PENDING_DATA:
+                        qty = customFormLocalDao.getByStringHM(
+                                new Sql_Act005_001(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
 
-                    Aux.put(Act005_Main.MENU_BADGE,qty);
-                    break;
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
 
-                case Act005_Main.MENU_ID_SEND_DATA:
-                    qty = customFormLocalDao.getByStringHM(
-                            new Sql_Act005_002(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                            ).toSqlQuery()
-                    ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
+                    case Act005_Main.MENU_ID_SEND_DATA:
+                        qty = customFormLocalDao.getByStringHM(
+                                new Sql_Act005_002(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
 
-                    Aux.put(Act005_Main.MENU_BADGE,qty);
-                    break;
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
 
-                default:
-                    Aux.put(Act005_Main.MENU_BADGE,qty);
-                    break;
+                    default:
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
+                }
+
+                menuList.add(Aux);
             }
-
-            menuList.add(Aux);
-
         }
         mView.loadMenu(menuList);
     }

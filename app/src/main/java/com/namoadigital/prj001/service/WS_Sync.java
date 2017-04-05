@@ -165,8 +165,9 @@ public class WS_Sync extends IntentService {
                 dataPackage.setCHECKLIST(CHECKLIST);
             }
         }
-        int SCHEDULE_go = 1;
-        if(SCHEDULE_go == 1){
+        //Verifica se customer possui acesso aos agendamentos e se tiver
+        //adiciona parametro no sincronismo.
+        if(ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SCHEDULE_CHECKLIST)){
             //No caso do Main, sempre é vazio
             ArrayList<String> SCHEDULE = new ArrayList<>();
             dataPackage.setSCHEDULE(SCHEDULE);
