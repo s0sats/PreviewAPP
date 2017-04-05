@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PRJ001</string>
+    <string name="app_name">Namoa</string>
     <string name="action_settings">Settings</string>
     <string name="act005_drawer_opened">Drawer Aberto</string>
     <string name="act005_drawer_closed">Drawer Fechado</string>
