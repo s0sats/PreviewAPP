@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -1175,6 +1176,14 @@ public class ToolBox_Inf {
                 .append(e.toString());
         }
         return sb;
+    }
+
+    public static boolean checkParameter(Context context, String param){
+        Ev_User_Customer_ParameterDao parameterDao
+                = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        //CHAMAR QUERY QUE VERIFICAR PERMISSION
+
+        return false;
     }
 
 }

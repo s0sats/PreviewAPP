@@ -171,4 +171,10 @@ public class ConstantBaseApp  extends ConstantBase {
     //Helper
     public static final String BACK_ACTION = "back_action";
 
+    //Parametros de Permissões
+    public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
+    public static final String PARAM_CHECKLIST = "CHECKLIST";
+    public static final String PARAM_WM = "WM";
+    public static final String PARAM_SO = "SO";
+
 }
