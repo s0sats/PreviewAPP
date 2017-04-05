@@ -13,7 +13,7 @@ public class GE_Custom_Form_Local {
     private long custom_form_data;
     private String custom_form_pre;
     private String custom_form_status;
-    private String custom_form_src;
+    private int custom_form_data_serv;
     private int require_signature;
     private String automatic_fill;
     private int custom_product_code;
@@ -79,12 +79,12 @@ public class GE_Custom_Form_Local {
         this.custom_form_status = custom_form_status;
     }
 
-    public String getCustom_form_src() {
-        return custom_form_src;
+    public int getCustom_form_data_serv() {
+        return custom_form_data_serv;
     }
 
-    public void setCustom_form_src(String custom_form_src) {
-        this.custom_form_src = custom_form_src;
+    public void setCustom_form_data_serv(int custom_form_data_serv) {
+        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     public int getRequire_signature() {
