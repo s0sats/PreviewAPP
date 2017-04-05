@@ -34,9 +34,6 @@ public class AppBase extends Application {
         // Infra PATH
         DB_PATH = Environment
                 .getExternalStorageDirectory().getPath() + "/namoa";
-
-        //DB_PATH = getFilesDir().getPath();
-
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
@@ -45,8 +42,6 @@ public class AppBase extends Application {
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
-        //CACHE_PATH = DB_PATH + "/CC_CACHE";
-
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
 
         DB_NAME_BASE = "namoa_sms.db3";

@@ -38,7 +38,7 @@ public class WS_DownLoad_Picture extends IntentService {
             if(!ToolBox_Inf.isDownloadRunning()){
                 //Log.v("WS_DownLoad_Picture","true");
                 WBR_DownLoad_Picture.IS_RUNNING = true;
-                ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
             Bundle bundle = intent.getExtras();

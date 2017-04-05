@@ -41,6 +41,9 @@
     <string name="msg_no_forms_found">None Form found for this Product!</string>
     <string name="act002_title_">Customers List</string>
     <!--LIB -->
+    <string name="nfc_activity_title">NFC Scan</string>
+    <string name="nfc_activity_desc">Approach an NFC Tag on you device</string>
+
     <string name="nfc_no_support">Error: this device does not support NFC</string>
     <string name="nfc_no_data">Error: Information not available</string>
     <string name="nfc_invalid_tag">Error: Invalid Tag</string>

@@ -39,7 +39,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
         this.mView = mView;
-        this.ev_user_customerDao = new EV_User_CustomerDao(context,Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
+        this.ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
     }
 
     @Override

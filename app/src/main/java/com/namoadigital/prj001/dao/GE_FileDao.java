@@ -3,13 +3,11 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;

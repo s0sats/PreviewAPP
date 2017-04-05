@@ -39,6 +39,8 @@
     <string name="msg_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
     <string name="act002_title_">Lista de Clientes    </string>
     <!--LIB-->
+    <string name="nfc_activity_title">NFC Scanner</string>
+    <string name="nfc_activity_desc">Aproxime a Tag NFC do seu dispositivo</string>
     <string name="nfc_no_support">Erro: Esse aparelho não suporta NFC</string>
     <string name="nfc_no_data">Erro: Informação não disponível</string>
     <string name="nfc_invalid_tag">Erro: Tag Inválida</string>
