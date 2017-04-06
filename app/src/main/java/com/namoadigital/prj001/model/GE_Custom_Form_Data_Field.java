@@ -1,11 +1,8 @@
 package com.namoadigital.prj001.model;
 
-import android.graphics.BitmapFactory;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.ConstantBase;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +28,8 @@ public class GE_Custom_Form_Data_Field {
     private long custom_form_data; // Indexador
     @Expose
     private int custom_form_seq;
+    @Expose
+    private long custom_form_data_serv; // Indexador
 
     private String value; // Resposta
 
@@ -52,6 +51,7 @@ public class GE_Custom_Form_Data_Field {
         this.custom_form_version = -1;
         this.custom_form_data = -1L;
         this.custom_form_seq = -1;
+        this.custom_form_data_serv = -1L;
         this.value = "";
         this.value_extra = "";
         this.value_json = "";
@@ -104,6 +104,14 @@ public class GE_Custom_Form_Data_Field {
 
     public void setCustom_form_seq(int custom_form_seq) {
         this.custom_form_seq = custom_form_seq;
+    }
+
+    public long getCustom_form_data_serv() {
+        return custom_form_data_serv;
+    }
+
+    public void setCustom_form_data_serv(long custom_form_data_serv) {
+        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     public String getValue() {

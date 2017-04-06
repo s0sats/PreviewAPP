@@ -22,6 +22,8 @@ public class GE_Custom_Form_Local {
     private String custom_form_type_desc;
     private String custom_form_desc;
     private String serial_id;
+    private String schedule_date_start_format;
+    private String schedule_date_end_format;
 
     public long getCustomer_code() {
         return customer_code;
@@ -149,5 +151,21 @@ public class GE_Custom_Form_Local {
 
     public void setSerial_id(String serial_id) {
         this.serial_id = serial_id;
+    }
+
+    public String getSchedule_date_start_format() {
+        return schedule_date_start_format;
+    }
+
+    public void setSchedule_date_start_format(String schedule_date_start_format) {
+        this.schedule_date_start_format = schedule_date_start_format;
+    }
+
+    public String getSchedule_date_end_format() {
+        return schedule_date_end_format;
+    }
+
+    public void setSchedule_date_end_format(String schedule_date_end_format) {
+        this.schedule_date_end_format = schedule_date_end_format;
     }
 }

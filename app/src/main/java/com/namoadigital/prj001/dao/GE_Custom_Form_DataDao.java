@@ -27,6 +27,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
+    public static final String CUSTOM_FORM_DATA_SERV = "custom_form_data_serv";
     public static final String CUSTOM_FORM_STATUS = "custom_form_status";
     public static final String PRODUCT_CODE = "product_code";
     public static final String SERIAL_ID = "serial_id";
@@ -262,6 +263,13 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_data.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_data.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
+
+            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))){
+                custom_form_data.setCustom_form_data_serv(0);
+            }else{
+                custom_form_data.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            }
+
             custom_form_data.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
             custom_form_data.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             custom_form_data.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
@@ -308,6 +316,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }
             if (custom_form_data.getCustom_form_data() > -1) {
                 contentValues.put(CUSTOM_FORM_DATA, custom_form_data.getCustom_form_data());
+            }
+            if (custom_form_data.getCustom_form_data_serv() > -1) {
+                contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_data.getCustom_form_data_serv());
             }
             if (custom_form_data.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_data.getCustom_form_status());

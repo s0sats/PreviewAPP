@@ -90,7 +90,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     };
 
     String[] parameter ={
-            Constant.PARAM_CHECKLIST,
+            "",
             Constant.PARAM_SCHEDULE_CHECKLIST,
             "",
             "",
