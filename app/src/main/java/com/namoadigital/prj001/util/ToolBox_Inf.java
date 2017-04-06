@@ -299,6 +299,14 @@ public class ToolBox_Inf {
         }
     }
 
+    public static void deleteLocalImage(String sFile) {
+        File file = new File(Constant.CACHE_PATH_PHOTO + "/" + sFile);
+
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
     public static boolean unpackZip(String path, String zipname) {
 
         String stp = Constant.ZIP_PATH + "/";
@@ -1037,41 +1045,40 @@ public class ToolBox_Inf {
 
     }
 
-    public static boolean isDevelopmentBase(){
-       return Constant.WS_GETCUSTOMERS.contains("https://dev.");
+    public static boolean isDevelopmentBase() {
+        return Constant.WS_GETCUSTOMERS.contains("https://dev.");
     }
 
-    public static boolean isDownloadRunning(){
-        if(WBR_DownLoad_Customer_Logo.IS_RUNNING
-            || WBR_DownLoad_PDF.IS_RUNNING
-            || WBR_DownLoad_Picture.IS_RUNNING
-            || WBR_UpdateSoftware.IS_RUNNING
-        ){
+    public static boolean isDownloadRunning() {
+        if (WBR_DownLoad_Customer_Logo.IS_RUNNING
+                || WBR_DownLoad_PDF.IS_RUNNING
+                || WBR_DownLoad_Picture.IS_RUNNING
+                || WBR_UpdateSoftware.IS_RUNNING
+                ) {
             return true;
         }
         return false;
     }
 
     /**
-     *
      * @param context
      * @param notification_id Constant com o id da notificação;
      */
-    public static void showNotification(Context context, int notification_id){
+    public static void showNotification(Context context, int notification_id) {
         List<String> translist = new ArrayList<>();
         int animation = -1;
         String title = "";
         String msg = "";
 
         HMAux hmAux_Trans = ToolBox_Inf.setLanguage(
-                        context,
-                        "",
-                        "0",
-                        ToolBox_Con.getPreference_Translate_Code(context),
-                        translist
-                    );
+                context,
+                "",
+                "0",
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translist
+        );
 
-        switch (notification_id){
+        switch (notification_id) {
 
             case Constant.NOTIFICATION_UPLOAD:
                 animation = R.drawable.upload_animation;
@@ -1086,7 +1093,7 @@ public class ToolBox_Inf {
                 break;
         }
         //Se Id encontrado gera notificação, se não, não.
-        if(animation != -1) {
+        if (animation != -1) {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(context)
                             .setSmallIcon(animation)
@@ -1105,12 +1112,12 @@ public class ToolBox_Inf {
 
     }
 
-    public static void cancelNotification(Context context, int notification_id){
+    public static void cancelNotification(Context context, int notification_id) {
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(notification_id);
     }
 
-    public static StringBuilder wsExceptionTreatment(Context context, Exception e){
+    public static StringBuilder wsExceptionTreatment(Context context, Exception e) {
         StringBuilder sb = new StringBuilder();
         String results = "";
 
@@ -1136,43 +1143,43 @@ public class ToolBox_Inf {
         }
 
         hmAux_Trans.put("ws_exception_contact_admin_json_syntax",
-                (!hmAux_Trans.containsKey("ws_exception_contact_admin_json_syntax") || hmAux_Trans.get("ws_exception_contact_admin_json_syntax").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_json_syntax)  : hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
-                );
+                (!hmAux_Trans.containsKey("ws_exception_contact_admin_json_syntax") || hmAux_Trans.get("ws_exception_contact_admin_json_syntax").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_json_syntax) : hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
+        );
 
         hmAux_Trans.put("ws_exception_contact_admin_oracle",
-                (!hmAux_Trans.containsKey("ws_exception_contact_admin_oracle") || hmAux_Trans.get("ws_exception_contact_admin_oracle").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_oracle)  : hmAux_Trans.get("ws_exception_contact_admin_oracle"))
+                (!hmAux_Trans.containsKey("ws_exception_contact_admin_oracle") || hmAux_Trans.get("ws_exception_contact_admin_oracle").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_oracle) : hmAux_Trans.get("ws_exception_contact_admin_oracle"))
         );
 
         hmAux_Trans.put("ws_exception_contact_admin_timeout",
-                (!hmAux_Trans.containsKey("ws_exception_contact_admin_timeout") || hmAux_Trans.get("ws_exception_contact_admin_timeout").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_timeout)  : hmAux_Trans.get("ws_exception_contact_admin_timeout"))
+                (!hmAux_Trans.containsKey("ws_exception_contact_admin_timeout") || hmAux_Trans.get("ws_exception_contact_admin_timeout").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_timeout) : hmAux_Trans.get("ws_exception_contact_admin_timeout"))
         );
 
-        results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl)  : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
+        results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
 
         if (e.toString().contains("JsonSyntaxException")) {
             sb.append(results).append(" ").append("JsonParse!\n")
-                .append(hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
-                .append("\n")
-                .append(e.toString()
-              );
-
-        } else if(e.toString().contains("ORA-")) {
-            sb.append(results).append(" ").append("ORACLE!\n")
-                .append(hmAux_Trans.get("ws_exception_contact_admin_oracle"))
+                    .append(hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
                     .append("\n")
                     .append(e.toString()
-            );
+                    );
 
-        } else if(e.toString().toLowerCase().contains("timeout")) {
+        } else if (e.toString().contains("ORA-")) {
+            sb.append(results).append(" ").append("ORACLE!\n")
+                    .append(hmAux_Trans.get("ws_exception_contact_admin_oracle"))
+                    .append("\n")
+                    .append(e.toString()
+                    );
+
+        } else if (e.toString().toLowerCase().contains("timeout")) {
             sb.append(results).append(" ").append("Timeout!\n ")
-            .append(hmAux_Trans.get("ws_exception_contact_admin_timeout"))
-            .append("\n")
-            .append(e.toString()
-            );
-        }else{
+                    .append(hmAux_Trans.get("ws_exception_contact_admin_timeout"))
+                    .append("\n")
+                    .append(e.toString()
+                    );
+        } else {
             sb.append(results)
-                .append("\n")
-                .append(e.toString());
+                    .append("\n")
+                    .append(e.toString());
         }
         return sb;
     }
