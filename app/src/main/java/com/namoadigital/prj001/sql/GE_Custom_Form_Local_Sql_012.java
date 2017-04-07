@@ -15,11 +15,17 @@ import com.namoadigital.prj001.database.Specification;
 public class GE_Custom_Form_Local_Sql_012 implements Specification {
 
     private String customer_code;
-    private String custom_form_data_serv_list;
+    private String custom_form_type;
+    private String custom_form_code;
+    private String custom_form_version;
+    private String custom_form_data_serv;
 
-    public GE_Custom_Form_Local_Sql_012(String customer_code, String custom_form_data_serv_list) {
+    public GE_Custom_Form_Local_Sql_012(String customer_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data_serv) {
         this.customer_code = customer_code;
-        this.custom_form_data_serv_list = custom_form_data_serv_list;
+        this.custom_form_type = custom_form_type;
+        this.custom_form_code = custom_form_code;
+        this.custom_form_version = custom_form_version;
+        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     @Override
@@ -32,7 +38,10 @@ public class GE_Custom_Form_Local_Sql_012 implements Specification {
                         GE_Custom_Form_LocalDao.TABLE +" \n" +
                         " WHERE\n" +
                         "   customer_code = '"+customer_code+"'\n" +
-                        "   AND custom_form_data_serv in ("+custom_form_data_serv_list+");")
+                        "   AND custom_form_type = '"+custom_form_type+"'\n" +
+                        "   AND custom_form_code = '"+custom_form_code+"'\n" +
+                        "   AND custom_form_version = '"+custom_form_version+"'\n" +
+                        "   AND custom_form_data_serv = '"+custom_form_data_serv+"';")
                 .toString();
     }
 }

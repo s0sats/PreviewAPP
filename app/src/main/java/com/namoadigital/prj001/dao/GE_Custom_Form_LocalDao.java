@@ -17,7 +17,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Form_Local> {
+public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_Custom_Form_Local> {
     private final Mapper<GE_Custom_Form_Local, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Local> toGE_Custom_Form_LocalMapper;
 
@@ -141,6 +141,39 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
         } catch (Exception e) {
         } finally {
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public void remove(Iterable<GE_Custom_Form_Local> custom_form_locals) {
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA_SERV).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data_serv())).append("'");
+
+                db.delete(TABLE, sbWhere.toString(), null);
+
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+        } finally {
+            db.endTransaction();
         }
 
         closeDB();

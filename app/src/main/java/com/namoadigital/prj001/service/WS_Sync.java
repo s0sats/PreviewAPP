@@ -55,7 +55,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_011;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_012;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
@@ -614,15 +613,6 @@ public class WS_Sync extends IntentService {
             GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_Field_LocalDao formFieldLocalDao = new GE_Custom_Form_Field_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_Blob_LocalDao blobLocalDao = new GE_Custom_Form_Blob_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            String data_serv_del = "";
-            //Lista de form locais - filtrar por data_serv e status
-            List<GE_Custom_Form_Local>  formLocals =
-                    formLocalDao.query(
-                            new GE_Custom_Form_Local_Sql_011(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                    false
-                            ).toSqlQuery()
-                    );
 
             /*
             *
@@ -641,37 +631,51 @@ public class WS_Sync extends IntentService {
             // Processamento Custom Form Local
             //
             List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
+            List<GE_Custom_Form_Local> formLocalToDelete = new ArrayList<>();
 
             File[] files_sch_forms = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form-");
 
             if(files_sch_forms.length == 0){
+                //Lista de form locais COM STATUS SCHEDULE
+                List<GE_Custom_Form_Local>  formLocals =
+                        formLocalDao.query(
+                                new GE_Custom_Form_Local_Sql_011(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                        true
+                                ).toSqlQuery()
+                        );
 
                 if(formLocals.size() > 0) {
-
+                    //APAGA TODOS OS ITENS DA LISTA.
+                    formLocalDao.remove(formLocals);
+                    //FAZ LOOP NA LISTA E APAGA TODOS AS PERGUNTAS
+                    //DO ITEM LOCAL
                     for (GE_Custom_Form_Local local : formLocals) {
-                        if (local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
-                            data_serv_del += "'"+local.getCustom_form_data_serv() + "',";
-                        }
+
+                        formFieldLocalDao.remove(
+                                new GE_Custom_Form_Field_Local_Sql_006(
+                                        String.valueOf(local.getCustomer_code()),
+                                        String.valueOf(local.getCustom_form_type()),
+                                        String.valueOf(local.getCustom_form_code()),
+                                        String.valueOf(local.getCustom_form_version()),
+                                        String.valueOf(local.getCustom_form_data_serv())
+                                ).toSqlQuery()
+                        );
+
                     }
-
-                    data_serv_del = data_serv_del.substring(0,data_serv_del.length() -1);
-
-                    formLocalDao.remove(
-                            new GE_Custom_Form_Local_Sql_012(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                    data_serv_del
-                            ).toSqlQuery()
-                    );
-
-                    formFieldLocalDao.remove(
-                            new GE_Custom_Form_Field_Local_Sql_006(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                    data_serv_del
-                            ).toSqlQuery()
-                    );
                 }
             }else {
-
+                //Lista de form locais com data_serv INDEPENDENTE DO STATUS.
+                List<GE_Custom_Form_Local>  formLocals =
+                        formLocalDao.query(
+                                new GE_Custom_Form_Local_Sql_011(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                        false
+                                ).toSqlQuery()
+                        );
+                //
+                formLocalToDelete = formLocals;
+                //
                 for (File _file : files_sch_forms) {
 
                     ArrayList<GE_Custom_Form_Local> scheduleForms = gson.fromJson(
@@ -686,7 +690,6 @@ public class WS_Sync extends IntentService {
                 * Form só é ignorado caso o form recebido já exista na base local
                 * com um STATUS diferente de SCHEDULE
                 */
-
                     for (GE_Custom_Form_Local schedules : scheduleForms) {
                         boolean add = true;
                         for (GE_Custom_Form_Local local : formLocals) {
@@ -702,6 +705,8 @@ public class WS_Sync extends IntentService {
                                     //Se registro ja existe, atualiza form_data no novo item
                                     schedules.setCustom_form_data(local.getCustom_form_data());
                                 }
+                                //Se encontrou o registro, remove ele da lista de deleção.
+                                formLocalToDelete.remove(local);
                                 break;
                             }
                         }
@@ -731,11 +736,30 @@ public class WS_Sync extends IntentService {
                             newFormsLocal.add(schedules);
                             //Insere/Atualiza
                             formLocalDao.addUpdate(schedules);
-
                         }
                     }
-
-                    //formLocalDao.addUpdate(newFormsLocal, false);
+                    //SE EXISTE ITENS A SEREM DELETADOS
+                    //APAGA CABEÇALHO E ITENS
+                    if(formLocalToDelete.size() > 0) {
+                        //
+                        for (GE_Custom_Form_Local local : formLocalToDelete) {
+                            if(local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)){
+                                formFieldLocalDao.remove(
+                                        new GE_Custom_Form_Field_Local_Sql_006(
+                                                String.valueOf(local.getCustomer_code()),
+                                                String.valueOf(local.getCustom_form_type()),
+                                                String.valueOf(local.getCustom_form_code()),
+                                                String.valueOf(local.getCustom_form_version()),
+                                                String.valueOf(local.getCustom_form_data_serv())
+                                        ).toSqlQuery()
+                                );
+                            }else{
+                                formLocalToDelete.remove(local);
+                            }
+                        }
+                        //APAGA TODOS OS ITENS DA LISTA.
+                        formLocalDao.remove(formLocalToDelete);
+                    }
                 }
                 //
                 // Processamento Custom Form Fields Local
@@ -785,7 +809,24 @@ public class WS_Sync extends IntentService {
                             new TypeToken<ArrayList<GE_Custom_Form_Blob_Local>>() {
                             }.getType()
                     );
+                    for (GE_Custom_Form_Blob_Local blob : blobsLocal) {
+                        boolean add = false;
+                        for (GE_Custom_Form_Local local : newFormsLocal) {
+                            if (local.getCustomer_code() == blob.getCustomer_code()
+                                    && local.getCustom_form_type() == blob.getCustom_form_type()
+                                    && local.getCustom_form_code() == blob.getCustom_form_code()
+                                    && local.getCustom_form_version() == blob.getCustom_form_version()
+                            ){
+                                add = true;
+                                break;
+                            }
+                        }
 
+                        if(!add){
+                            blobsLocal.remove(blob);
+                        }
+
+                    }
                     blobLocalDao.addUpdate(blobsLocal, false);
                 }
             }
