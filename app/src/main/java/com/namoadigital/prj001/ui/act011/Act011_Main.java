@@ -378,6 +378,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     );
 
                     int index = Integer.parseInt(aux.get("next_code"));
+                    //int index = 0;
 
                     geFiles.clear();
 

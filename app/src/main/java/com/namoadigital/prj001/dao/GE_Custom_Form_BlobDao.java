@@ -255,7 +255,7 @@ public class GE_Custom_Form_BlobDao extends BaseDao implements Dao<GE_Custom_For
 
             GE_Custom_Form_Blob geCustomFormBlob =  new GE_Custom_Form_Blob();
 
-            geCustomFormBlob.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
+            geCustomFormBlob.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             geCustomFormBlob.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
             geCustomFormBlob.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             geCustomFormBlob.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
