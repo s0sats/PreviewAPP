@@ -7,7 +7,6 @@ import android.database.Cursor;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
-import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.util.Constant;
 
@@ -256,7 +255,7 @@ public class GE_Custom_Form_Blob_LocalDao extends BaseDao implements Dao<GE_Cust
 
             GE_Custom_Form_Blob_Local geCustomFormBlobLocal =  new GE_Custom_Form_Blob_Local();
 
-            geCustomFormBlobLocal.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
+            geCustomFormBlobLocal.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             geCustomFormBlobLocal.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
             geCustomFormBlobLocal.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             geCustomFormBlobLocal.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));

@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.service;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,6 +19,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by neomatrix on 20/01/17.
@@ -76,7 +80,8 @@ public class WS_Upload_Img extends IntentService {
             }
 
         } catch (Exception e) {
-            String results = e.toString();
+            programAlarm(getApplicationContext());
+
         } finally {
             WBR_Upload_Img.completeWakefulIntent(intent);
          //   cancelNotification();
@@ -85,5 +90,35 @@ public class WS_Upload_Img extends IntentService {
                     Constant.NOTIFICATION_UPLOAD
             );
         }
+    }
+
+    private void programAlarm(Context context) {
+        Calendar calendarAux = Calendar.getInstance();
+        //
+        calendarAux.set(
+                Calendar.MINUTE,
+                calendarAux.get(Calendar.MINUTE) + 1
+        );
+        //
+        Intent mIntent = new Intent(
+                context,
+                WBR_Upload_Img.class
+        );
+        //
+        PendingIntent pi = PendingIntent.getBroadcast(
+                context,
+                0,
+                mIntent,
+                0
+        );
+        //
+        AlarmManager am = (AlarmManager)
+                context.getSystemService(ALARM_SERVICE);
+        //
+        am.set(
+                AlarmManager.RTC_WAKEUP,
+                calendarAux.getTimeInMillis(),
+                pi
+        );
     }
 }

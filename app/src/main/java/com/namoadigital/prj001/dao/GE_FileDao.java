@@ -234,7 +234,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
         public GE_File map(Cursor cursor) {
             GE_File ge_file = new GE_File();
 
-            ge_file.setFile_code(cursor.getLong(cursor.getColumnIndex(FILE_CODE)));
+            ge_file.setFile_code(cursor.getString(cursor.getColumnIndex(FILE_CODE)));
             ge_file.setFile_path(cursor.getString(cursor.getColumnIndex(FILE_PATH)));
             ge_file.setFile_status(cursor.getString(cursor.getColumnIndex(FILE_STATUS)));
             ge_file.setFile_date(cursor.getString(cursor.getColumnIndex(FILE_DATE)));
@@ -249,7 +249,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
         public ContentValues map(GE_File ge_file) {
             ContentValues contentValues = new ContentValues();
 
-            if (ge_file.getFile_code() > -1) {
+            if (ge_file.getFile_code() != null) {
                 contentValues.put(FILE_CODE, ge_file.getFile_code());
             }
             if (ge_file.getFile_path() != null) {

@@ -389,7 +389,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
                             if (sFile.exists()) {
                                 GE_File geFile = new GE_File();
-                                geFile.setFile_code(index++);
+                                geFile.setFile_code(sFile_v.replace(".png", "").replace(".jpg", ""));
                                 geFile.setFile_path(sFile_v);
                                 geFile.setFile_status("OPENED");
                                 geFile.setFile_date(sDate);
@@ -402,7 +402,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
                             if (sFile.exists()) {
                                 GE_File geFile = new GE_File();
-                                geFile.setFile_code(index++);
+                                geFile.setFile_code(sFile_e.replace(".png", "").replace(".jpg", ""));
                                 geFile.setFile_path(sFile_e);
                                 geFile.setFile_status("OPENED");
                                 geFile.setFile_date(sDate);
@@ -1525,7 +1525,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 // Hugo
                 GE_File geFile = new GE_File();
-                geFile.setFile_code(index);
+                geFile.setFile_code(mSignature.replace(".png", ""));
                 geFile.setFile_path(mSignature);
                 geFile.setFile_status("OPENED");
                 geFile.setFile_date(sDate);
