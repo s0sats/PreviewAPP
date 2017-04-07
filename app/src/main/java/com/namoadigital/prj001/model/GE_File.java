@@ -6,16 +6,16 @@ package com.namoadigital.prj001.model;
 
 public class GE_File {
 
-    private long file_code;
+    private String file_code;
     private String file_path;
     private String file_status;
     private String file_date;
 
-    public long getFile_code() {
+    public String getFile_code() {
         return file_code;
     }
 
-    public void setFile_code(long file_code) {
+    public void setFile_code(String file_code) {
         this.file_code = file_code;
     }
 
