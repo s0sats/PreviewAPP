@@ -265,7 +265,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
 
             if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))){
-                custom_form_data.setCustom_form_data_serv(0);
+                custom_form_data.setCustom_form_data_serv(null);
             }else{
                 custom_form_data.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
             }
@@ -317,9 +317,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getCustom_form_data() > -1) {
                 contentValues.put(CUSTOM_FORM_DATA, custom_form_data.getCustom_form_data());
             }
-            if (custom_form_data.getCustom_form_data_serv() > -1) {
-                contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_data.getCustom_form_data_serv());
-            }
+
+            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_data.getCustom_form_data_serv());
+
             if (custom_form_data.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_data.getCustom_form_status());
             }

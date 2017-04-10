@@ -41,7 +41,7 @@ public class GE_Custom_Form_Local_Sql_011 implements Specification {
                         GE_Custom_Form_LocalDao.TABLE +" fl \n" +
                         " WHERE \n" +
                         "      fl.customer_code = '"+customer_code+"'\n" +
-                        "      AND fl.custom_form_data_serv > 0 \n" +
+                        "      AND fl.custom_form_data_serv is not null \n" +
                         filter +
                         " ORDER BY\n" +
                         "    fl.customer_code,\n" +

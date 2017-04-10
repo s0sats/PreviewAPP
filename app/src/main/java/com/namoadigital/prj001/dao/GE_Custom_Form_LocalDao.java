@@ -297,7 +297,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             custom_form_local.setCustom_form_pre(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_PRE)));
             custom_form_local.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
-            custom_form_local.setCustom_form_data_serv(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))){
+                custom_form_local.setCustom_form_data_serv(null);
+            }else{
+                custom_form_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            }
             custom_form_local.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
             custom_form_local.setAutomatic_fill(cursor.getString(cursor.getColumnIndex(AUTOMATIC_FILL)));
             custom_form_local.setCustom_product_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_PRODUCT_CODE)));
@@ -347,9 +351,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             if (custom_form_local.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_local.getCustom_form_status());
             }
-            if (custom_form_local.getCustom_form_data_serv() > -1) {
-                contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_local.getCustom_form_data_serv());
-            }
+
+            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_local.getCustom_form_data_serv());
+
             if (custom_form_local.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form_local.getRequire_signature());
             }
@@ -376,9 +380,13 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }
             if (custom_form_local.getSchedule_date_start_format() != null) {
                 contentValues.put(SCHEDULE_DATE_START_FORMAT, custom_form_local.getSchedule_date_start_format());
+            }else{
+                contentValues.put(SCHEDULE_DATE_START_FORMAT, "1900-01-01 00:00:00 +00:00");
             }
             if (custom_form_local.getSchedule_date_end_format() != null) {
                 contentValues.put(SCHEDULE_DATE_END_FORMAT, custom_form_local.getSchedule_date_end_format());
+            }else{
+                contentValues.put(SCHEDULE_DATE_END_FORMAT, "1900-01-01 00:00:00 +00:00");
             }
 
             return contentValues;

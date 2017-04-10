@@ -696,6 +696,7 @@ public class WS_Sync extends IntentService {
                                     && local.getCustom_form_type() == schedules.getCustom_form_type()
                                     && local.getCustom_form_code() == schedules.getCustom_form_code()
                                     && local.getCustom_form_version() == schedules.getCustom_form_version()
+                                    && local.getCustom_form_data_serv() != null
                                     && local.getCustom_form_data_serv() == schedules.getCustom_form_data_serv()
                                     ) {
                                 if (!local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
@@ -782,6 +783,7 @@ public class WS_Sync extends IntentService {
                                     && local.getCustom_form_type() == scheduleField.getCustom_form_type()
                                     && local.getCustom_form_code() == scheduleField.getCustom_form_code()
                                     && local.getCustom_form_version() == scheduleField.getCustom_form_version()
+                                    && local.getCustom_form_data_serv() != null
                                     && local.getCustom_form_data_serv() == scheduleField.getCustom_form_data_serv()
                                     ) {
                                 scheduleField.setCustom_form_data(local.getCustom_form_data());

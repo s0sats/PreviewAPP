@@ -29,7 +29,7 @@ public class GE_Custom_Form_Data_Field {
     @Expose
     private int custom_form_seq;
     @Expose
-    private long custom_form_data_serv; // Indexador
+    private Long custom_form_data_serv; // Indexador
 
     private String value; // Resposta
 
@@ -51,7 +51,7 @@ public class GE_Custom_Form_Data_Field {
         this.custom_form_version = -1;
         this.custom_form_data = -1L;
         this.custom_form_seq = -1;
-        this.custom_form_data_serv = -1L;
+        this.custom_form_data_serv = null;
         this.value = "";
         this.value_extra = "";
         this.value_json = "";
@@ -106,11 +106,11 @@ public class GE_Custom_Form_Data_Field {
         this.custom_form_seq = custom_form_seq;
     }
 
-    public long getCustom_form_data_serv() {
+    public Long getCustom_form_data_serv() {
         return custom_form_data_serv;
     }
 
-    public void setCustom_form_data_serv(long custom_form_data_serv) {
+    public void setCustom_form_data_serv(Long custom_form_data_serv) {
         this.custom_form_data_serv = custom_form_data_serv;
     }
 

@@ -27,7 +27,7 @@ public class GE_Custom_Form_Data {
     private long custom_form_data; // Indexador
 
     @Expose
-    private long custom_form_data_serv; // Indexador
+    private Long custom_form_data_serv; // Indexador
 
     @Expose
     private String custom_form_status; // Local (0 = nao sincronizado 1 = sincronizado 2 = Bloqueado para envio)
@@ -70,7 +70,7 @@ public class GE_Custom_Form_Data {
         this.custom_form_code = -1;
         this.custom_form_version = -1;
         this.custom_form_data = -1L;
-        this.custom_form_data_serv = -1L;
+        this.custom_form_data_serv = null;
         this.custom_form_status = "2";
         this.product_code = -1L;
         this.serial_id = "";
@@ -125,11 +125,11 @@ public class GE_Custom_Form_Data {
         this.custom_form_data = custom_form_data;
     }
 
-    public long getCustom_form_data_serv() {
+    public Long getCustom_form_data_serv() {
         return custom_form_data_serv;
     }
 
-    public void setCustom_form_data_serv(long custom_form_data_serv) {
+    public void setCustom_form_data_serv(Long custom_form_data_serv) {
         this.custom_form_data_serv = custom_form_data_serv;
     }
 
