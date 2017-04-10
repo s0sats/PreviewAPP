@@ -130,6 +130,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
+        data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();

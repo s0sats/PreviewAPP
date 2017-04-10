@@ -171,7 +171,7 @@ public class WS_Sync extends IntentService {
         //Verifica se customer possui acesso aos agendamentos e se tiver
         //adiciona parametro no sincronismo.
         if(ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SCHEDULE_CHECKLIST)){
-            //No caso do Main, sempre é vazio
+            //Assim como o Main, o array list é vazio.
             ArrayList<String> SCHEDULE = new ArrayList<>();
             dataPackage.setSCHEDULE(SCHEDULE);
         }
@@ -631,7 +631,7 @@ public class WS_Sync extends IntentService {
             // Processamento Custom Form Local
             //
             List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
-            List<GE_Custom_Form_Local> formLocalToDelete = new ArrayList<>();
+            List<GE_Custom_Form_Local> formLocalToDelete = null;
 
             File[] files_sch_forms = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form-");
 
@@ -674,7 +674,7 @@ public class WS_Sync extends IntentService {
                                 ).toSqlQuery()
                         );
                 //
-                formLocalToDelete = formLocals;
+                formLocalToDelete = new ArrayList<>(formLocals);
                 //
                 for (File _file : files_sch_forms) {
 
