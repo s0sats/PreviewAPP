@@ -630,8 +630,6 @@ public class WS_Sync extends IntentService {
             //
             // Processamento Custom Form Local
             //
-            List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
-            List<GE_Custom_Form_Local> formLocalToDelete = null;
 
             File[] files_sch_forms = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form-");
 
@@ -648,7 +646,7 @@ public class WS_Sync extends IntentService {
                 if(formLocals.size() > 0) {
                     //APAGA TODOS OS ITENS DA LISTA.
                     formLocalDao.remove(formLocals);
-                    //FAZ LOOP NA LISTA E APAGA TODOS AS PERGUNTAS
+                    //FAZ LOOP NA LISTA E APAGA TODOS AS PERGUNTAS e BLOBS
                     //DO ITEM LOCAL
                     for (GE_Custom_Form_Local local : formLocals) {
 
@@ -674,7 +672,8 @@ public class WS_Sync extends IntentService {
                                 ).toSqlQuery()
                         );
                 //
-                formLocalToDelete = new ArrayList<>(formLocals);
+                List<GE_Custom_Form_Local> newFormsLocal = new ArrayList<>();
+                List<GE_Custom_Form_Local> formLocalToDelete = new ArrayList<>(formLocals);
                 //
                 for (File _file : files_sch_forms) {
 
