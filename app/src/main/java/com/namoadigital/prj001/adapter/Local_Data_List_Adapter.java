@@ -203,6 +203,15 @@ public class Local_Data_List_Adapter extends BaseAdapter {
 //                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
 
                 break;
+            case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+                llBackground.setBackground(llDrawable);
+//                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+//                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+//                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+
+                break;
 
             default:
                 llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
