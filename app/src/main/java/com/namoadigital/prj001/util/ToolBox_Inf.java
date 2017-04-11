@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -27,6 +28,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -38,6 +40,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
+import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
@@ -1182,6 +1185,29 @@ public class ToolBox_Inf {
                     .append(e.toString());
         }
         return sb;
+    }
+
+    public static boolean parameterExists(Context context, String param){
+        try {
+            Ev_User_Customer_ParameterDao parameterDao
+                    = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+            //
+            Ev_User_Customer_Parameter parameter
+                    = parameterDao.getByString(
+                    new Ev_User_Customer_Parameter_Sql_002(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            param
+                    ).toSqlQuery()
+            );
+
+            if (parameter != null) {
+                return true;
+            }
+        }catch (Exception e){
+            return false;
+        }
+
+        return false;
     }
 
 }

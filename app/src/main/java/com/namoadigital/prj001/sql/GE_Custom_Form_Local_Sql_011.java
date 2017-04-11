@@ -17,9 +17,17 @@ import com.namoadigital.prj001.database.Specification;
 public class GE_Custom_Form_Local_Sql_011 implements Specification {
 
     private String customer_code;
+    private boolean filter_status;
+    private String filter = "";
 
-    public GE_Custom_Form_Local_Sql_011(String customer_code) {
+
+    public GE_Custom_Form_Local_Sql_011(String customer_code, boolean filter_status) {
         this.customer_code = customer_code;
+        this.filter_status = filter_status;
+
+        if(filter_status){
+            filter = " AND fl.custom_form_status = 'SCHEDULE' ";
+        }
     }
 
     @Override
@@ -33,8 +41,8 @@ public class GE_Custom_Form_Local_Sql_011 implements Specification {
                         GE_Custom_Form_LocalDao.TABLE +" fl \n" +
                         " WHERE \n" +
                         "      fl.customer_code = '"+customer_code+"'\n" +
-                        "      AND fl.custom_form_data_serv > 0 \n" +
-                       // "      AND fl.custom_form_status = 'SCHEDULE'" +
+                        "      AND fl.custom_form_data_serv is not null \n" +
+                        filter +
                         " ORDER BY\n" +
                         "    fl.customer_code,\n" +
                         "    fl.custom_form_type,\n" +

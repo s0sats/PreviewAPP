@@ -13,7 +13,7 @@ public class ConstantBaseApp  extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "0.13";
+    public static final String PRJ001_VERSION = "0.14";
 
     /**
      * UI Module
@@ -33,6 +33,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT013 = "act013";
     public static final String ACT014 = "act014";
     public static final String ACT015 = "act015";
+    public static final String ACT016 = "act016";
 
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
@@ -170,5 +171,11 @@ public class ConstantBaseApp  extends ConstantBase {
 
     //Helper
     public static final String BACK_ACTION = "back_action";
+
+    //Parametros de Permissões
+    public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
+    public static final String PARAM_CHECKLIST ="N-FORM";// "CHECKLIST";
+    public static final String PARAM_WM = "WM";
+    public static final String PARAM_SO = "SO";
 
 }

@@ -17,7 +17,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Form_Local> {
+public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_Custom_Form_Local> {
     private final Mapper<GE_Custom_Form_Local, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Local> toGE_Custom_Form_LocalMapper;
 
@@ -38,6 +38,8 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
     public static final String SERIAL_ID = "serial_id";
+    public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
+    public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -139,6 +141,39 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
         } catch (Exception e) {
         } finally {
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public void remove(Iterable<GE_Custom_Form_Local> custom_form_locals) {
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA_SERV).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data_serv())).append("'");
+
+                db.delete(TABLE, sbWhere.toString(), null);
+
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+        } finally {
+            db.endTransaction();
         }
 
         closeDB();
@@ -262,7 +297,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             custom_form_local.setCustom_form_pre(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_PRE)));
             custom_form_local.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
-            custom_form_local.setCustom_form_data_serv(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))){
+                custom_form_local.setCustom_form_data_serv(null);
+            }else{
+                custom_form_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            }
             custom_form_local.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
             custom_form_local.setAutomatic_fill(cursor.getString(cursor.getColumnIndex(AUTOMATIC_FILL)));
             custom_form_local.setCustom_product_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_PRODUCT_CODE)));
@@ -271,6 +310,16 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_local.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
             custom_form_local.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT))){
+                custom_form_local.setSchedule_date_start_format("1900-01-01 00:00:00 +00:00");
+            }else{
+                custom_form_local.setSchedule_date_start_format(cursor.getString(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT))){
+                custom_form_local.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
+            }else{
+                custom_form_local.setSchedule_date_end_format(cursor.getString(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT)));
+            }
 
             return custom_form_local;
         }
@@ -302,9 +351,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_local.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_local.getCustom_form_status());
             }
-            if (custom_form_local.getCustom_form_data_serv() > -1) {
-                contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_local.getCustom_form_data_serv());
-            }
+
+            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_local.getCustom_form_data_serv());
+
             if (custom_form_local.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form_local.getRequire_signature());
             }
@@ -328,6 +377,16 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if (custom_form_local.getSerial_id() != null) {
                 contentValues.put(SERIAL_ID, custom_form_local.getSerial_id());
+            }
+            if (custom_form_local.getSchedule_date_start_format() != null) {
+                contentValues.put(SCHEDULE_DATE_START_FORMAT, custom_form_local.getSchedule_date_start_format());
+            }else{
+                contentValues.put(SCHEDULE_DATE_START_FORMAT, "1900-01-01 00:00:00 +00:00");
+            }
+            if (custom_form_local.getSchedule_date_end_format() != null) {
+                contentValues.put(SCHEDULE_DATE_END_FORMAT, custom_form_local.getSchedule_date_end_format());
+            }else{
+                contentValues.put(SCHEDULE_DATE_END_FORMAT, "1900-01-01 00:00:00 +00:00");
             }
 
             return contentValues;

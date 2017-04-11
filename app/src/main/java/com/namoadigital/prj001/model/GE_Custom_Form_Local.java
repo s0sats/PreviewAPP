@@ -13,7 +13,7 @@ public class GE_Custom_Form_Local {
     private long custom_form_data;
     private String custom_form_pre;
     private String custom_form_status;
-    private int custom_form_data_serv;
+    private Long custom_form_data_serv;
     private int require_signature;
     private String automatic_fill;
     private int custom_product_code;
@@ -22,6 +22,8 @@ public class GE_Custom_Form_Local {
     private String custom_form_type_desc;
     private String custom_form_desc;
     private String serial_id;
+    private String schedule_date_start_format;
+    private String schedule_date_end_format;
 
     public long getCustomer_code() {
         return customer_code;
@@ -79,11 +81,11 @@ public class GE_Custom_Form_Local {
         this.custom_form_status = custom_form_status;
     }
 
-    public int getCustom_form_data_serv() {
+    public Long getCustom_form_data_serv() {
         return custom_form_data_serv;
     }
 
-    public void setCustom_form_data_serv(int custom_form_data_serv) {
+    public void setCustom_form_data_serv(Long custom_form_data_serv) {
         this.custom_form_data_serv = custom_form_data_serv;
     }
 
@@ -149,5 +151,21 @@ public class GE_Custom_Form_Local {
 
     public void setSerial_id(String serial_id) {
         this.serial_id = serial_id;
+    }
+
+    public String getSchedule_date_start_format() {
+        return schedule_date_start_format;
+    }
+
+    public void setSchedule_date_start_format(String schedule_date_start_format) {
+        this.schedule_date_start_format = schedule_date_start_format;
+    }
+
+    public String getSchedule_date_end_format() {
+        return schedule_date_end_format;
+    }
+
+    public void setSchedule_date_end_format(String schedule_date_end_format) {
+        this.schedule_date_end_format = schedule_date_end_format;
     }
 }
