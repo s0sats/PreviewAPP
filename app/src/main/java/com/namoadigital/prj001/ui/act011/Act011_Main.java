@@ -426,7 +426,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     formData.setSignature(mSignature);
 
-                    mPresenter.checkSignature(formData, signature, 0);
+                    mPresenter.checkSignature(formData, signature, 0,geFiles);
 
                 } else {
 
@@ -1416,14 +1416,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                GE_FileDao geFileDao = new GE_FileDao(
-                                        context,
-                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-                                );
-
-                                geFileDao.addUpdate(geFiles, false);
-
-                                activateUpload(context);
+//                                GE_FileDao geFileDao = new GE_FileDao(
+//                                        context,
+//                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+//                                );
+//
+//                                geFileDao.addUpdate(geFiles, false);
+//
+//                                activateUpload(context);
 
                                 callAct005(context);
                             }
@@ -1448,7 +1448,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mPresenter.checkData(formData);
+                                mPresenter.checkData(formData,geFiles);
                                 bNew = false;
                             }
                         }
@@ -1532,7 +1532,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 geFiles.add(geFile);
                 //
-                mPresenter.checkData(formData);
+                mPresenter.checkData(formData, geFiles );
                 bNew = false;
             } else {
                 formData.setSignature_name("");

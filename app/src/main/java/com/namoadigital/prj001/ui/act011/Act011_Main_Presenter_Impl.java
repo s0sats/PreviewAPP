@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -13,9 +15,12 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -286,7 +291,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkData(GE_Custom_Form_Data formData) {
+    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles) {
         custom_form_LocalDao.addUpdate(
                 new GE_Custom_Form_Local_Sql_004(
                         String.valueOf(formData.getCustomer_code()),
@@ -304,6 +309,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
+        /*Adição da fila de upload */
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        geFileDao.addUpdate(geFiles, false);
+
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //FIM - Adição da fila de upload */
         mView.showMsg(
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
@@ -313,12 +333,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc) {
+    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc,ArrayList<GE_File> geFiles) {
 
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
-                    checkData(formData);
+                    checkData(formData,geFiles);
                 } else {
                     mView.showMsg(
                             hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -329,7 +349,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 break;
             default:
                 if (opc == 1) {
-                    checkData(formData);
+                    checkData(formData,geFiles);
                 } else {
                     mView.showMsg(
                             hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
