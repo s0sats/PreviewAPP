@@ -693,6 +693,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     form_data_field.setCustom_form_code(formData.getCustom_form_code());
                     form_data_field.setCustom_form_version(formData.getCustom_form_version());
                     form_data_field.setCustom_form_data(formData.getCustom_form_data());
+                    form_data_field.setCustom_form_data_serv(formData.getCustom_form_data_serv());
                     form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
                     //
                     formData.getDataFields().add(form_data_field);
