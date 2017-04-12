@@ -178,4 +178,11 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String PARAM_WM = "WM";
     public static final String PARAM_SO = "SO";
 
+    //Modulos
+    public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
+    public static final String MODULE_SO = "MODULE_SO";
+    public static final String MODULE_WM= "MODULE_WM";
+    public static final String MODULE_TO= "MODULE_TO";
+
+
 }

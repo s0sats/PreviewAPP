@@ -20,6 +20,14 @@
         android:gravity="center_horizontal"
         android:padding="5dp">
 
+        <com.namoa_digital.namoa_library.ctls.CalendarView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/act016_cv_schedules"
+            >
+
+        </com.namoa_digital.namoa_library.ctls.CalendarView>
+
         <ListView
             android:id="@+id/act016_lv_schedules"
             android:layout_width="match_parent"

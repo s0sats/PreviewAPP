@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -13,9 +15,12 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -96,12 +101,22 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         int index = -1;
 
         if (customFormLocal != null) {
+            //Se Form vem do agendamento, muda status para in processing
+            if (customFormLocal.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+                //
+                customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
+                //
+                custom_form_LocalDao.addUpdate(customFormLocal);
 
+                bNew = true;
 
+                index = 0;
+            } else {
+                bNew = false;
 
-            bNew = false;
+                index = -1;
+            }
 
-            index = -1;
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
                     new GE_Custom_Form_Fields_Local_Sql_001(
@@ -207,7 +222,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getCustom_form_type(),
                 customFormLocal.getCustom_form_code(),
                 customFormLocal.getCustom_form_version(),
-                customFormLocal.getCustom_form_data()
+                customFormLocal.getCustom_form_data(),
+                customFormLocal.getCustom_form_data_serv()
         );
 
         ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
@@ -223,7 +239,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
     }
 
-    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {
+    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv) {
 
         GE_Custom_Form_Data form_data = custom_form_dataDao
 
@@ -260,7 +276,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_code((int) custom_form_code);
             form_data.setCustom_form_version((int) custom_form_version);
             form_data.setCustom_form_data(custom_form_data);
-            form_data.setCustom_form_data_serv(null);
+            form_data.setCustom_form_data_serv(custom_form_data_serv);
             form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
             form_data.setProduct_code(product_code);
             form_data.setSerial_id("");
@@ -290,7 +306,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkData(GE_Custom_Form_Data formData) {
+    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles) {
         custom_form_LocalDao.addUpdate(
                 new GE_Custom_Form_Local_Sql_004(
                         String.valueOf(formData.getCustomer_code()),
@@ -308,19 +324,37 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
 
+        /*Adição da fila de upload */
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        geFileDao.addUpdate(geFiles, false);
+
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+         /*Fim da fila de upload */
+        //
         mView.showMsg(
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
                 2);
+
+
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc) {
+    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles) {
 
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
-                    checkData(formData);
+                    checkData(formData, geFiles);
                 } else {
                     mView.showMsg(
                             hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -331,7 +365,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 break;
             default:
                 if (opc == 1) {
-                    checkData(formData);
+                    checkData(formData, geFiles);
                 } else {
                     mView.showMsg(
                             hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",

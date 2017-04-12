@@ -427,7 +427,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     formData.setSignature(mSignature);
 
-                    mPresenter.checkSignature(formData, signature, 0);
+                    mPresenter.checkSignature(formData, signature, 0,geFiles);
 
                 } else {
 
@@ -686,13 +686,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             //
             for (HMAux cf : cf_fields) {
 
-                if (includeField && !cf.get("custom_form_data_type").equalsIgnoreCase("label") && !cf.get("custom_form_data_type").equalsIgnoreCase("ta")) {
+                if (includeField && !cf.get("custom_form_data_type").equalsIgnoreCase("label") && !cf.get("custom_form_data_type").equalsIgnoreCase("tab")) {
                     GE_Custom_Form_Data_Field form_data_field = new GE_Custom_Form_Data_Field();
                     form_data_field.setCustomer_code(formData.getCustomer_code());
                     form_data_field.setCustom_form_type(formData.getCustom_form_type());
                     form_data_field.setCustom_form_code(formData.getCustom_form_code());
                     form_data_field.setCustom_form_version(formData.getCustom_form_version());
                     form_data_field.setCustom_form_data(formData.getCustom_form_data());
+                    form_data_field.setCustom_form_data_serv(formData.getCustom_form_data_serv());
                     form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
                     //
                     formData.getDataFields().add(form_data_field);
@@ -1409,14 +1410,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 break;
             case 2:
-
-                formLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_FINALIZED);
-                act011_ff_options.enableTab(formData.getCustom_form_status());
-                //
-                for (CustomFF customFF : customFFs){
-                    customFF.setmEnabled(false);
-                }
-
                 ToolBox.alertMSG(
                         Act011_Main.this,
                         title,
@@ -1425,19 +1418,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-//                                GE_FileDao geFileDao = new GE_FileDao(
-//                                        context,
-//                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-//                                );
-//
-//                                geFileDao.addUpdate(geFiles, false);
-//
-//                                activateUpload(context);
+                               /* GE_FileDao geFileDao = new GE_FileDao(
+                                        context,
+                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+                                );
+
+                                geFileDao.addUpdate(geFiles, false);
+
+                                activateUpload(context);*/
 
                                 callAct005(context);
                             }
                         },
-                        0
+                        0,
+                        false
                 );
 
                 break;
@@ -1457,7 +1451,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mPresenter.checkData(formData);
+                                mPresenter.checkData(formData,geFiles);
                                 bNew = false;
                             }
                         }
@@ -1483,7 +1477,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     mPresenter.deleteFormLocal(formLocal);
                 }
                 //
-
                 callAct005(Act011_Main.this);
             }
         };
@@ -1542,7 +1535,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 geFiles.add(geFile);
                 //
-                mPresenter.checkData(formData);
+                mPresenter.checkData(formData, geFiles );
                 bNew = false;
             } else {
                 formData.setSignature_name("");

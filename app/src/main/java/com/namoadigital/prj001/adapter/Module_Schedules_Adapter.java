@@ -80,8 +80,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_main_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_main_lbl);
         TextView tv_main_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_main_val);
 
-        tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
-
         tv_list.add(tv_main_lbl);
         tv_list.add(tv_main_val);
 
@@ -89,21 +87,16 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_date_label);
         TextView tv_date_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_date_val);
 
-        tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
-
         tv_list.add(tv_date_lbl);
         tv_list.add(tv_date_val);
         //
         TextView tv_ttl_001 = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_ttl_001);
 
-        tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
 
         tv_list.add(tv_ttl_001);
         //
         TextView tv_item_01_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_01_lbl);
         TextView tv_item_01_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_01_val);
-
-        tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
 
         tv_list.add(tv_item_01_lbl);
         tv_list.add(tv_item_01_val);
@@ -111,16 +104,11 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_item_02_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_02_lbl);
         TextView tv_item_02_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_02_val);
 
-        String[] id = item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC).split("-");
-        tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+id[0].trim());
-
         tv_list.add(tv_item_02_lbl);
         tv_list.add(tv_item_02_val);
         //
         TextView tv_item_03_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_03_lbl);
         TextView tv_item_03_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_03_val);
-
-        tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
 
         tv_list.add(tv_item_03_lbl);
         tv_list.add(tv_item_03_val);
@@ -129,26 +117,15 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_item_04_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_04_lbl);
         TextView tv_item_04_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_04_val);
 
-        tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id")+" "+item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
-
-        if(item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0){
-            tv_item_04_lbl.setVisibility(View.GONE);
-            tv_item_04_val.setVisibility(View.GONE);
-        }
-
         tv_list.add(tv_item_04_lbl);
         tv_list.add(tv_item_04_val);
         //
         TextView tv_ttl_002 = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_ttl_002);
 
-        tv_ttl_002.setText(hmAux_Trans.get("ttl_form"));
-
         tv_list.add(tv_ttl_002);
         //
         TextView tv_item_05_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_05_lbl);
         TextView tv_item_05_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_05_val);
-
-        tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
 
         tv_list.add(tv_item_05_lbl);
         tv_list.add(tv_item_05_val);
@@ -156,12 +133,46 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_item_06_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_06_lbl);
         TextView tv_item_06_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_06_val);
 
-        tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
-
         tv_list.add(tv_item_06_lbl);
         tv_list.add(tv_item_06_val);
         //
         Drawable llDrawable = null;
+
+
+        switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
+
+            case Constant.MODULE_CHECKLIST:
+
+                iv_main.setImageDrawable(context.getDrawable(R.drawable.ic_n_form));
+                tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
+                tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
+                tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
+                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" ");
+                tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
+                tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id")+" "+item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
+
+                if(item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0){
+                    tv_item_04_lbl.setVisibility(View.GONE);
+                    tv_item_04_val.setVisibility(View.GONE);
+                }
+                tv_ttl_002.setText(hmAux_Trans.get("ttl_form"));
+                tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+                tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+
+
+
+
+
+
+            break;
+
+
+
+
+        }
+
+
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
@@ -176,33 +187,22 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 //                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
 //                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-
                 break;
+
             case Constant.CUSTOM_FORM_STATUS_SENT:
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
                 llBackground.setBackground(llDrawable);
-//                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-
                 break;
+
             case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
                 llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
                 llBackground.setBackground(llDrawable);
-//                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-
                 break;
 
             default:
                 llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
                 llBackground.setBackground(llDrawable);
-                //               tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                //               tvItem2.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                //               tvItem3.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-
                 break;
         }
 

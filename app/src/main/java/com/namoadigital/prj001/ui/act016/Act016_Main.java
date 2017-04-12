@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
@@ -23,6 +24,7 @@ public class Act016_Main extends Base_Activity {
 
     private Context context;
     private ListView lv_schedules;
+    private CalendarView cv_schedules;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,8 @@ public class Act016_Main extends Base_Activity {
     private void initVars() {
         //
         lv_schedules = (ListView) findViewById(R.id.act016_lv_schedules);
+        //
+        cv_schedules = (CalendarView) findViewById(R.id.act016_cv_schedules);
 
     }
 
