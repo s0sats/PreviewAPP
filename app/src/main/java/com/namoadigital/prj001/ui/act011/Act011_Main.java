@@ -1483,6 +1483,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     mPresenter.deleteFormLocal(formLocal);
                 }
                 //
+
                 callAct005(Act011_Main.this);
             }
         };
