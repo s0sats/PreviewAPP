@@ -1409,6 +1409,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 break;
             case 2:
+
+                formLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_FINALIZED);
+                act011_ff_options.enableTab(formData.getCustom_form_status());
+                //
+                for (CustomFF customFF : customFFs){
+                    customFF.setmEnabled(false);
+                }
+
                 ToolBox.alertMSG(
                         Act011_Main.this,
                         title,
@@ -1429,8 +1437,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                 callAct005(context);
                             }
                         },
-                        0,
-                        false
+                        0
                 );
 
                 break;

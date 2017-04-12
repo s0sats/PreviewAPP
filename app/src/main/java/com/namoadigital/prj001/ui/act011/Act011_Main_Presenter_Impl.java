@@ -97,6 +97,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         if (customFormLocal != null) {
 
+
+
             bNew = false;
 
             index = -1;
