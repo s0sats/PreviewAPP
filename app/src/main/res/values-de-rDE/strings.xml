@@ -61,7 +61,7 @@
     <string name="msg_lost_access_to_site_or_operation">You have no longer access to the Site or Operation you are logged!\nYou shall select another Customer or Login again</string>
     <string name="generic_start_update_process_msg">Starting Update Process</string>
     <string name="generic_error_update_empty_link">Error: updating error! Empty Link!</string>
-    <string name="generic_starting_download_msg">Starting the Download</string>
+    <string name="generic_starting_download_msg">Download in progress</string>
     <string name="close_app_update_process_msg">Please close the APP to conclude the update</string>
     <string name="login_dev_db_msg">Testing Mode!!!</string>
 

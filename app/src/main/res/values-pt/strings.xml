@@ -59,7 +59,7 @@
     <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar outro Cliente ou fazer Login novamente.</string>"
     <string name="generic_start_update_process_msg">Iniciando processo de atualização</string>
     <string name="generic_error_update_empty_link">Erro: erro ao atualizar!Link vazio!</string>
-    <string name="generic_starting_download_msg">Iniciando o dowload</string>
+    <string name="generic_starting_download_msg">Download em andamento</string>
     <string name="close_app_update_process_msg">Por favor feche o aplicativo para efetivar a atualização</string>
     <string name="login_dev_db_msg">Base de Testes!!!</string>
     <string name="act001_email_nick">e-mail / apelido</string>
