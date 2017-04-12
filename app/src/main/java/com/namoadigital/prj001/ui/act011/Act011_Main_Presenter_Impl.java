@@ -310,8 +310,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
                 2);
-
-
     }
 
     @Override

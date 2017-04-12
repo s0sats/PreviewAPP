@@ -198,10 +198,26 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".ui.act016.Act015_Main"
-            android:label="@string/title_activity_act015__main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <!--<activity-->
+        <!--android:name=".ui.act016.Act015_Main"-->
+        <!--android:label="@string/title_activity_act015__main"-->
+        <!--android:theme="@style/AppTheme.NoActionBar"></activity>-->
+
+        <service android:name=".fcm.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".fcm.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".fcm.RegistrationIntentService" />
+
+
     </application>
 
 </manifest>

@@ -201,7 +201,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
     @Override
     public List<HMAux> query_HM(String s_query) {
-        List<HMAux> md_sites = new ArrayList<>();
+        List<HMAux> ge_files = new ArrayList<>();
         openDB();
 
         String s_query_div[] = s_query.split(";");
@@ -213,7 +213,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
             Cursor cursor = db.rawQuery(s_query_div[0], null);
 
             while (cursor.moveToNext()) {
-                md_sites.add(toHMAuxMapper.map(cursor));
+                ge_files.add(toHMAuxMapper.map(cursor));
             }
 
             cursor.close();
@@ -224,7 +224,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
         closeDB();
 
-        return md_sites;
+        return ge_files;
     }
 
     private class CursorGE_FileMapper implements Mapper<Cursor,GE_File> {

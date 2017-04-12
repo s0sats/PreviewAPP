@@ -686,7 +686,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             //
             for (HMAux cf : cf_fields) {
 
-                if (includeField && !cf.get("custom_form_data_type").equalsIgnoreCase("label") && !cf.get("custom_form_data_type").equalsIgnoreCase("tab")) {
+                if (includeField && !cf.get("custom_form_data_type").equalsIgnoreCase("label") && !cf.get("custom_form_data_type").equalsIgnoreCase("ta")) {
                     GE_Custom_Form_Data_Field form_data_field = new GE_Custom_Form_Data_Field();
                     form_data_field.setCustomer_code(formData.getCustomer_code());
                     form_data_field.setCustom_form_type(formData.getCustom_form_type());
@@ -1417,19 +1417,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                GE_FileDao geFileDao = new GE_FileDao(
-                                        context,
-                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-                                );
-
-                                geFileDao.addUpdate(geFiles, false);
-
-                                activateUpload(context);
+//                                GE_FileDao geFileDao = new GE_FileDao(
+//                                        context,
+//                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+//                                );
+//
+//                                geFileDao.addUpdate(geFiles, false);
+//
+//                                activateUpload(context);
 
                                 callAct005(context);
                             }
                         },
-                        0
+                        0,
+                        false
                 );
 
                 break;
