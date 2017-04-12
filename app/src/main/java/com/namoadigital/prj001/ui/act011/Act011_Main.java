@@ -1428,8 +1428,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                 callAct005(context);
                             }
                         },
-                        0,
-                        false
+                        0
                 );
 
                 break;
@@ -1452,8 +1451,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                 mPresenter.checkData(formData,geFiles);
                                 bNew = false;
                             }
-                        },
-                        false
+                        }
                 );
 
                 break;
