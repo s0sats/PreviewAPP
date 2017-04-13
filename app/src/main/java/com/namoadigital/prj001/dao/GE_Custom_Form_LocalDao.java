@@ -40,6 +40,8 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String SERIAL_ID = "serial_id";
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
+    public static final String SCHEDULE_DATE_START_FORMAT_MS = "schedule_date_start_format_ms";
+    public static final String SCHEDULE_DATE_END_FORMAT_MS = "schedule_date_end_format_ms";
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -320,6 +322,8 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }else{
                 custom_form_local.setSchedule_date_end_format(cursor.getString(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT)));
             }
+            custom_form_local.setSchedule_date_start_format_ms(cursor.getLong(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT_MS)));
+            custom_form_local.setSchedule_date_end_format_ms(cursor.getLong(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT_MS)));
 
             return custom_form_local;
         }
@@ -387,6 +391,12 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
                 contentValues.put(SCHEDULE_DATE_END_FORMAT, custom_form_local.getSchedule_date_end_format());
             }else{
                 contentValues.put(SCHEDULE_DATE_END_FORMAT, "1900-01-01 00:00:00 +00:00");
+            }
+            if (custom_form_local.getSchedule_date_start_format_ms() > -1) {
+                contentValues.put(SCHEDULE_DATE_START_FORMAT_MS, custom_form_local.getSchedule_date_start_format_ms());
+            }
+            if (custom_form_local.getSchedule_date_end_format_ms() > -1) {
+                contentValues.put(SCHEDULE_DATE_END_FORMAT_MS, custom_form_local.getSchedule_date_end_format_ms());
             }
 
             return contentValues;
