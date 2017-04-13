@@ -17,6 +17,7 @@ public class FCMMessage {
     private String sync;
     private String status;
     private String date_create;
+    private long date_create_ms;
 
     public FCMMessage() {
         this.fcmmessage_code = -1;
@@ -118,5 +119,13 @@ public class FCMMessage {
 
     public void setDate_create(String date_create) {
         this.date_create = date_create;
+    }
+
+    public long getDate_create_ms() {
+        return date_create_ms;
+    }
+
+    public void setDate_create_ms(long date_create_ms) {
+        this.date_create_ms = date_create_ms;
     }
 }

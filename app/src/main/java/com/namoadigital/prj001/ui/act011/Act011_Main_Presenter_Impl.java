@@ -108,7 +108,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //
                 custom_form_LocalDao.addUpdate(customFormLocal);
 
-                bNew = true;
+                //bNew = true;
+                bNew = false;
 
                 index = 0;
             } else {

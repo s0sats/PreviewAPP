@@ -52,8 +52,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         initVars();
         iniUIFooter();
         initActions();
-
-
     }
 
     private void iniSetup() {

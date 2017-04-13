@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,11 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
     public static final String SYNC = "sync";
     public static final String STATUS = "status";
     public static final String DATE_CREATE = "date_create";
+    public static final String DATE_CREATE_MS = "date_create_ms";
 
 
-    public FCMMessageDao(Context context, String mDB_NAME, int mDB_VERSION, String mMode) {
-        super(context, mDB_NAME, mDB_VERSION, mMode);
+    public FCMMessageDao(Context context, String DB_NAME, int DB_VERSION) {
+        super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
 
         this.toContentValuesMapper = new FCMMessageToContentValuesMapper();
         this.toFCMMessageMapper = new CursorFCMMessageMapper();
@@ -245,6 +247,7 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
             fcmMessage.setSync(cursor.getString(cursor.getColumnIndex(SYNC)));
             fcmMessage.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
             fcmMessage.setDate_create(cursor.getString(cursor.getColumnIndex(DATE_CREATE)));
+            fcmMessage.setDate_create_ms(cursor.getLong(cursor.getColumnIndex(DATE_CREATE_MS)));
 
             return fcmMessage;
         }
@@ -288,6 +291,9 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
             }
             if (fcmMessage.getDate_create() != null) {
                 contentValues.put(DATE_CREATE, fcmMessage.getDate_create());
+            }
+            if (fcmMessage.getDate_create_ms() != -1) {
+                contentValues.put(DATE_CREATE_MS, fcmMessage.getDate_create_ms());
             }
 
             return contentValues;

@@ -26,7 +26,7 @@ public class RegistrationIntentService extends IntentService {
 
             String sToken = FirebaseInstanceId.getInstance().getToken();
 
-            Log.d("ID", sToken);
+            Log.d("ID_GOOGLE", sToken);
 
 
         } catch (Exception e) {

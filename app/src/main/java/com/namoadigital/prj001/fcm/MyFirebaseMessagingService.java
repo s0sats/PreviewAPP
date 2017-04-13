@@ -8,19 +8,24 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.EV_UserDao;
+import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.util.Constant;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // ...
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d("msg", "From: " + remoteMessage.getFrom());
+        FCMMessageDao fcmMessageDao = new FCMMessageDao(
+                getApplicationContext(),
+                Constant.DB_FULL_BASE,
+                Constant.DB_VERSION_BASE
+        );
 
-        // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
 
             StringBuilder sb = new StringBuilder();
@@ -42,6 +47,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             sb.append(remoteMessage.getData().get("sender"));
             sb.append("\nsync: ");
             sb.append(remoteMessage.getData().get("sync"));
+
+            FCMMessage fcmMessage = new FCMMessage();
+
+            fcmMessage.setCustomer(remoteMessage.getData().get("customer"));
+            fcmMessage.setType(remoteMessage.getData().get("type"));
+            fcmMessage.setTitle(remoteMessage.getData().get("title"));
+            fcmMessage.setMsg_short(remoteMessage.getData().get("msg_short"));
+            fcmMessage.setMsg_long(remoteMessage.getData().get("msg_long"));
+            fcmMessage.setModule(remoteMessage.getData().get("module"));
+            fcmMessage.setSender(remoteMessage.getData().get("sender"));
+            fcmMessage.setSync(remoteMessage.getData().get("sync"));
+            fcmMessage.setStatus("1");
+            fcmMessage.setDate_create(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            fcmMessage.setDate_create_ms(0);
+
+            fcmMessageDao.addUpdate(fcmMessage);
 
             Log.d("msg", "Message data payload: " + sb.toString());
 
