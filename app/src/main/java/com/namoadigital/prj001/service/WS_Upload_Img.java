@@ -100,7 +100,7 @@ public class WS_Upload_Img extends IntentService {
         //
         calendarAux.set(
                 Calendar.MINUTE,
-                calendarAux.get(Calendar.MINUTE) + 1
+                calendarAux.get(Calendar.MINUTE) + 5
         );
         //
         Intent mIntent = new Intent(
@@ -110,7 +110,7 @@ public class WS_Upload_Img extends IntentService {
         //
         PendingIntent pi = PendingIntent.getBroadcast(
                 context,
-                0,
+                10,
                 mIntent,
                 0
         );

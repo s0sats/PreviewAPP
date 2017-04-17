@@ -23,7 +23,7 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
     private final Mapper<FCMMessage, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, FCMMessage> toFCMMessageMapper;
 
-    public static final String TABLE = "fcm_messages";
+    public static final String TABLE = "fcmmessages";
     public static final String FCMMESSAGE_CODE = "fcmmessage_code";
     public static final String CUSTOMER = "customer";
     public static final String TYPE = "type";

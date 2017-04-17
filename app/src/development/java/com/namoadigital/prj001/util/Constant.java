@@ -17,6 +17,7 @@ public class Constant extends ConstantBaseApp {
      */
     public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
     public static final String WS_GETSESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
+    public static final String WS_GOOGLE = "https://dev.namoadigital.com/ws/prj001/server_gcm_set.ws";
 
     public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
     public static final String WS_SESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";

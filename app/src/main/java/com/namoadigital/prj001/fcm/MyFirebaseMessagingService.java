@@ -14,6 +14,8 @@ import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -59,9 +61,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setSender(remoteMessage.getData().get("sender"));
             fcmMessage.setSync(remoteMessage.getData().get("sync"));
             fcmMessage.setStatus("1");
-            fcmMessage.setDate_create(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            fcmMessage.setDate_create_ms(0);
-
+            String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+            fcmMessage.setDate_create(sDate);
+            fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
+            //
             fcmMessageDao.addUpdate(fcmMessage);
 
             Log.d("msg", "Message data payload: " + sb.toString());
