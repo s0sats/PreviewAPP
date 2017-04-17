@@ -5,6 +5,7 @@ import android.content.Context;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -16,10 +17,12 @@ public class Sql_Act017_001 implements Specification {
 
     private long s_customer_code;
     private String sqlite_date_format;
+    private String selected_date;
 
-    public Sql_Act017_001(Context context, long s_customer_code) {
+    public Sql_Act017_001(Context context, long s_customer_code ,String selected_date) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
+        this.selected_date = selected_date;
 
     }
 
@@ -28,6 +31,7 @@ public class Sql_Act017_001 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
+                        "'"+Constant.MODULE_CHECKLIST +"' "+ Act017_Main.ACT017_MODULE_KEY +" ,\n" +
                         "  l.customer_code,\n" +
                         "  l.custom_form_type,\n" +
                         "  l.custom_form_type_desc,\n" +
@@ -39,10 +43,10 @@ public class Sql_Act017_001 implements Specification {
                         "  l.custom_form_data,\n" +
                         "  l.custom_form_status,\n" +
                         "  l.serial_id,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start) date_start,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end) date_end,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format) schedule_date_start_format,\n"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format) schedule_date_end_format\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
+                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
+                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format\n"+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n" +
@@ -56,6 +60,7 @@ public class Sql_Act017_001 implements Specification {
                         "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "      AND l.custom_form_status <> '" + Constant.CUSTOM_FORM_STATUS_SENT+"'" +
                         "      AND l.custom_form_data_serv is not null \n" +
+                        "      AND strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"' \n" +
                         "  ORDER BY\n" +
                         "      CASE WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"' THEN 0\n" +
                         "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' THEN 1\n" +
@@ -73,6 +78,7 @@ public class Sql_Act017_001 implements Specification {
                         "      l.serial_id, \n" +
                         "      l.custom_form_data" +
                         ";")
+                .append( Act017_Main.ACT017_MODULE_KEY+"#")
                 .append("customer_code#custom_form_type#custom_form_type_desc#" +
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_form_data#" +

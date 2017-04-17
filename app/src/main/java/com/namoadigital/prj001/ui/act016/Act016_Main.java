@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.ui.act016;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,6 +27,8 @@ import java.util.List;
  */
 
 public class Act016_Main extends Base_Activity implements Act016_Main_View {
+
+    public static final String ACT016_SELECTED_DATE = "selected_date";
 
     private Context context;
     private ListView lv_schedules;
@@ -98,51 +102,18 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         //
         mPresenter.getSchedule();
 
-
-
-        /*HMAux a1 = new HMAux();
-        a1.put(CalendarView.DT, "2017-04-04");
-        a1.put(CalendarView.DELAYED_COUNT, "1");
-        a1.put(CalendarView.INPROCESSING_COUNT, "0");
-        a1.put(CalendarView.SCHEDULED_COUNT, "0");
-        a1.put(CalendarView.FINALIZED_COUNT, "0");
-        events.add(a1);
-        //
-        HMAux a2 = new HMAux();
-        a2.put(CalendarView.DT, "2017-04-19");
-        a2.put(CalendarView.DELAYED_COUNT, "0");
-        a2.put(CalendarView.INPROCESSING_COUNT, "1");
-        a2.put(CalendarView.SCHEDULED_COUNT, "0");
-        a2.put(CalendarView.FINALIZED_COUNT, "0");
-        events.add(a2);
-        //
-        HMAux a3 = new HMAux();
-        a3.put(CalendarView.DT, "2017-04-05");
-        a3.put(CalendarView.DELAYED_COUNT, "0");
-        a3.put(CalendarView.INPROCESSING_COUNT, "0");
-        a3.put(CalendarView.SCHEDULED_COUNT, "1");
-        a3.put(CalendarView.FINALIZED_COUNT, "0");
-        events.add(a3);
-        //
-        HMAux a4 = new HMAux();
-        a4.put(CalendarView.DT, "2017-04-18");
-        a4.put(CalendarView.DELAYED_COUNT, "0");
-        a4.put(CalendarView.INPROCESSING_COUNT, "0");
-        a4.put(CalendarView.SCHEDULED_COUNT, "0");
-        a4.put(CalendarView.FINALIZED_COUNT, "1");
-        events.add(a4);
-        cv_schedules.updateCalendar(events);*/
     }
 
     private void initActions() {
         cv_schedules.setEventHandler(new CalendarView.EventHandler() {
             @Override
             public void onDayPress(Date date) {
-                Toast.makeText(
+                /*Toast.makeText(
                         getBaseContext(),
                         date.toString(),
                         Toast.LENGTH_SHORT
-                ).show();
+                ).show();*/
+                mPresenter.formatDate(date);
             }
         });
     }
@@ -185,5 +156,28 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         //
         cv_schedules.updateCalendar(events);
 
+    }
+
+    @Override
+    public void callAct017(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act017_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct005() {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 }
