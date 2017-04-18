@@ -31,7 +31,9 @@
                 android:layout_weight="2"
                 android:paddingLeft="10dp"
                 android:text="Filtros"
-                android:textSize="@dimen/font_size_title" />
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:gravity="center"/>
 
         </LinearLayout>
 

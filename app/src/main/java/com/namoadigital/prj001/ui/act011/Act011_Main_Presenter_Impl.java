@@ -105,6 +105,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             if (customFormLocal.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
                 //
                 customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
+                customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
                 //
                 custom_form_LocalDao.addUpdate(customFormLocal);
 

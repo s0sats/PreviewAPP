@@ -731,7 +731,7 @@ public class WS_Sync extends IntentService {
                             }
 
                             schedules.setCustom_form_data(new_form_data);
-                            schedules.setCustom_form_pre(ToolBox_Inf.getPrefix(getApplicationContext()));
+                            schedules.setCustom_form_pre("");
 
                             schedules.setSchedule_date_start_format_ms(ToolBox_Inf.dateToMilliseconds(schedules.getSchedule_date_start_format()));
                             schedules.setSchedule_date_end_format_ms(ToolBox_Inf.dateToMilliseconds(schedules.getSchedule_date_end_format()));
@@ -742,8 +742,11 @@ public class WS_Sync extends IntentService {
                         }
                     }
                     //SE EXISTE ITENS A SEREM DELETADOS
-                    //APAGA CABEÇALHO E ITENS
+                    //VERIFICA O STATUS E SE = SCHEDULE APAGA,
+                    //SENÃO NÃO APAGA.
                     if(formLocalToDelete.size() > 0) {
+                        //LISTA COM OS QUE SERÃO DELETADOS MESMO
+                        List<GE_Custom_Form_Local> finalDelete = new ArrayList<>(formLocalToDelete);
                         //
                         for (GE_Custom_Form_Local local : formLocalToDelete) {
                             if(local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)){
@@ -757,11 +760,15 @@ public class WS_Sync extends IntentService {
                                         ).toSqlQuery()
                                 );
                             }else{
-                                formLocalToDelete.remove(local);
+                                finalDelete.remove(local);
                             }
                         }
-                        //APAGA TODOS OS ITENS DA LISTA.
-                        formLocalDao.remove(formLocalToDelete);
+                        //
+                        if(finalDelete.size() > 0){
+                            //APAGA TODOS OS ITENS DA LISTA.
+                            formLocalDao.remove(finalDelete);
+                        }
+
                     }
                 }
                 //

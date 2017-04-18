@@ -145,7 +145,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
                 iv_main.setImageDrawable(context.getDrawable(R.drawable.ic_n_form));
                 //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
-                tv_main_lbl.setText(item.get(Act017_Main.ACT017_MODULE_KEY));
+                tv_main_lbl.setText(hmAux_Trans.get("CHECKLIST"));
 
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
@@ -173,7 +173,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
             //
             case Constant.CUSTOM_FORM_STATUS_FINALIZED:
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_4_states);
+                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
                 llBackground.setBackground(llDrawable);
 //                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
@@ -187,7 +187,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
             case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
-                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
                 llBackground.setBackground(llDrawable);
                 break;
 
@@ -211,7 +211,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("ttl_form");
         translateList.add("lbl_type");
         translateList.add("lbl_form");
-       // translateList.add("lbl_module");
+        translateList.add("CHECKLIST");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
