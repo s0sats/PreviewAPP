@@ -35,6 +35,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT015 = "act015";
     public static final String ACT016 = "act016";
     public static final String ACT017 = "act017";
+    public static final String ACT018 = "act018";
 
 
     public static final String ACT007_PRODUCT_CODE = "product_code";

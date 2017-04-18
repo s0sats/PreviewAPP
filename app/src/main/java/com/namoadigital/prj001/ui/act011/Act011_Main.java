@@ -807,6 +807,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
+            act011_ff_options.enableScheduled(formData.getCustom_form_data_serv());
             act011_ff_options.enableTab(formData.getCustom_form_status());
             act011_ff_options.translaTab(hmAux_Trans);
 

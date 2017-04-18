@@ -1,20 +1,161 @@
 package com.namoadigital.prj001.ui.act018;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
+import com.namoadigital.prj001.adapter.Act018_Adapter_Messages;
+import com.namoadigital.prj001.dao.EV_UserDao;
+import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_GroupDao;
+import com.namoadigital.prj001.ui.act007.Act007_Main_Presenter_Impl;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 17/04/17.
  */
 
-public class Act018_Main extends Base_Activity {
+public class Act018_Main extends Base_Activity implements Act018_Main_View {
+
+    private Context context;
+    private ListView lv_messages;
+
+
+    private Act018_Main_Presenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act018_main);
+
+        SERVICE_TYPE = "SESSION";
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //
+        iniSetup();
+        //
+        initVars();
+        //
+        iniUIFooter();
+        //
+        initActions();
     }
 
+    private void iniSetup() {
+        context = getBaseContext();
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT018
+        );
+
+        loadTranslation();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+    }
+
+    private void initVars() {
+        mPresenter = new Act018_Main_Presenter_Impl(
+                context,
+                this,
+                new FCMMessageDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE)
+        );
+
+        lv_messages = (ListView) findViewById(R.id.act018_lv_messages);
+
+        recuperaGetIntents();
+
+        mPresenter.setAdapterData();
+    }
+
+    private void recuperaGetIntents() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+
+        } else {
+        }
+    }
+
+    private void iniUIFooter() {
+        iniFooter();
+        //
+        mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
+        mAct_Info = Constant.ACT018;
+        mAct_Title = Constant.ACT018 + "_" + "title";
+        //
+        setUILanguage(hmAux_Trans);
+        setMenuLanguage(hmAux_Trans);
+        setTitleLanguage();
+        setFooter();
+
+        //Aplica informações do rodapé
+        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+
+        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
+
+        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
+        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
+        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
+        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
+        mVersion_Value = Constant.PRJ001_VERSION;
+
+        //Aplica informações do rodapé -fim
+    }
+
+    private void initActions() {
+
+    }
+
+    @Override
+    public void loadMessages(List<HMAux> messages) {
+        lv_messages.setAdapter(
+                new Act018_Adapter_Messages(
+                        context,
+                        R.layout.act018_main_content_cell_01,
+                        messages
+                )
+        );
+
+    }
+
+    @Override
+    public void callAct019(Context context, Bundle bundle) {
+
+    }
+
+    @Override
+    public void callAct014(Context context) {
+
+    }
 }

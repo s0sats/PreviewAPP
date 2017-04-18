@@ -2,7 +2,9 @@ package com.namoadigital.prj001.fcm;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
@@ -13,6 +15,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -60,7 +63,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setModule(remoteMessage.getData().get("module"));
             fcmMessage.setSender(remoteMessage.getData().get("sender"));
             fcmMessage.setSync(remoteMessage.getData().get("sync"));
-            fcmMessage.setStatus("1");
+            fcmMessage.setStatus("0");
             String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
@@ -90,11 +93,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
+        Intent mIntent = new Intent(getBaseContext(), Act018_Main.class);
+        //
+        PendingIntent pi = PendingIntent.getActivity(this, 0, mIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        //
         Notification.Builder builder = new Notification.Builder(context);
         builder.setSmallIcon(R.mipmap.ic_namoa);
         builder.setAutoCancel(true);
         builder.setContentTitle("NAMOA / PRJ0001 " + title);
+        builder.setContentIntent(pi);
         builder.setContentText(message);
+        builder.setOngoing(true);
         //
         builder.setDefaults(
                 Notification.DEFAULT_SOUND |

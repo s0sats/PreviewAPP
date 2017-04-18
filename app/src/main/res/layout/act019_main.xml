@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.act018.Act018_Main">
+    tools:context=".ui.act019.Act019_Main">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,6 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/act018_main_content" />
+    <include layout="@layout/act019_main_content" />
 
 </android.support.design.widget.CoordinatorLayout>
