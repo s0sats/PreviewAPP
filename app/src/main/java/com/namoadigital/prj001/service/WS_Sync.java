@@ -609,7 +609,7 @@ public class WS_Sync extends IntentService {
         //
         //Processamento das tabelas do SCHEDULE
         //
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SCHEDULE)){
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SCHEDULE) && dataPackage.getSCHEDULE() != null){
             GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_Field_LocalDao formFieldLocalDao = new GE_Custom_Form_Field_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_Blob_LocalDao blobLocalDao = new GE_Custom_Form_Blob_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -732,7 +732,10 @@ public class WS_Sync extends IntentService {
 
                             schedules.setCustom_form_data(new_form_data);
                             schedules.setCustom_form_pre(ToolBox_Inf.getPrefix(getApplicationContext()));
-                            //
+
+                            schedules.setSchedule_date_start_format_ms(ToolBox_Inf.dateToMilliseconds(schedules.getSchedule_date_start_format()));
+                            schedules.setSchedule_date_end_format_ms(ToolBox_Inf.dateToMilliseconds(schedules.getSchedule_date_end_format()));
+                             //
                             newFormsLocal.add(schedules);
                             //Insere/Atualiza
                             formLocalDao.addUpdate(schedules);

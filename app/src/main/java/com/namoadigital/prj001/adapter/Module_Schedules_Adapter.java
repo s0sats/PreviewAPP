@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -138,13 +139,14 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         //
         Drawable llDrawable = null;
 
-
-        switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
 
             case Constant.MODULE_CHECKLIST:
 
                 iv_main.setImageDrawable(context.getDrawable(R.drawable.ic_n_form));
-                tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
+                //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
+                tv_main_lbl.setText(item.get(Act017_Main.ACT017_MODULE_KEY));
+
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
                 tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
@@ -159,20 +161,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 tv_ttl_002.setText(hmAux_Trans.get("ttl_form"));
                 tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
                 tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
-
-
-
-
-
-
             break;
 
-
-
-
         }
-
-
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
@@ -220,6 +211,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("ttl_form");
         translateList.add("lbl_type");
         translateList.add("lbl_form");
+       // translateList.add("lbl_module");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

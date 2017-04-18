@@ -63,9 +63,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -1187,6 +1189,12 @@ public class ToolBox_Inf {
         return sb;
     }
 
+    /**
+     * Verifica se o parametro passado existe para aquele customer
+     * @param context
+     * @param param Constante do parametro a ser buscado
+     * @return true or false;
+     */
     public static boolean parameterExists(Context context, String param){
         try {
             Ev_User_Customer_ParameterDao parameterDao
@@ -1208,6 +1216,43 @@ public class ToolBox_Inf {
         }
 
         return false;
+    }
+
+    /**
+     * Converte data enviada para o timezone do aparelho
+     * @param
+     * @return data convertida
+     */
+    public static String convertToDeviceTMZ(String date_tmz){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+           // calendar.setTime(sdf.parse("2017-04-13 12:24:46 +0000"));
+            calendar.setTime(sdf.parse(date_tmz));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return sdf.format(calendar.getTime());
+    }
+
+    /**
+     * Devolve milisegundos de uma data
+     * @param date_tmz
+     * @return
+     */
+    public static long dateToMilliseconds(String date_tmz) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(date_tmz));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar.getTimeInMillis();
     }
 
 }

@@ -135,6 +135,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".ui.act017.Act017_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".ui.act018.Act018_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -202,6 +208,11 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
+
+        <!--<activity-->
+        <!--android:name=".ui.act016.Act015_Main"-->
+        <!--android:label="@string/title_activity_act015__main"-->
+        <!--android:theme="@style/AppTheme.NoActionBar"></activity>-->
 
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
