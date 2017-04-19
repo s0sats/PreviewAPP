@@ -45,11 +45,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //
-        ToolBox_Con.setPreference_Google_ID_OK(
-                getApplicationContext(),
-                ""
-        );
+
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
         //

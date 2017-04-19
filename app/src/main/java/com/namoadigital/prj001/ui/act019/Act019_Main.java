@@ -63,8 +63,10 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         iniUIFooter();
         //
         initActions();
-
+        //
         cleanNotification();
+        //
+        ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
     }
 
     private void iniSetup() {
@@ -180,8 +182,8 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         tv_date.setText(
                 ToolBox.millisecondsToString(
                         fcmMessage.getDate_create_ms(),
-                        ToolBox_Inf.nlsDate2SqliteDate(context)
-                ).replace("%", " ").replace("/ ", "-")
+                        ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                )
         );
         tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));
         tv_msg_value.setText(fcmMessage.getMsg_long());

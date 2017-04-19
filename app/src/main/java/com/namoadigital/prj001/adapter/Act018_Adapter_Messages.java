@@ -1,15 +1,12 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -91,8 +88,8 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         tv_date.setText(
                 ToolBox.millisecondsToString(
                         Long.parseLong(item.get("date_create_ms")),
-                        ToolBox_Inf.nlsDate2SqliteDate(context)
-                ).replace("%", " ").replace("/ ", "-")
+                        ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                )
         );
 
         tv_msg_short.setText(item.get("msg_short"));

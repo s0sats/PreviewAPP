@@ -26,6 +26,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -100,6 +101,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         initVars();
         iniUIFooter();
         initActions();
+        //
+        Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
+        startService(mIntent);
     }
 
     private void iniSetup() {

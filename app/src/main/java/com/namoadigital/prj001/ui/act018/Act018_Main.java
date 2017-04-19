@@ -13,15 +13,9 @@ import android.widget.ListView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
 import com.namoadigital.prj001.adapter.Act018_Adapter_Messages;
-import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act007.Act007_Main_Presenter_Impl;
-import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -64,8 +58,10 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
         iniUIFooter();
         //
         initActions();
-
+        //
         cleanNotification();
+        //
+        ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
     }
 
     private void iniSetup() {
