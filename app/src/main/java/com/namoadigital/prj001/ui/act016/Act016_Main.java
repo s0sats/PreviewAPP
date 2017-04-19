@@ -8,6 +8,7 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -35,6 +36,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private CalendarView cv_schedules;
     private HashSet<HMAux> events;
     private Act016_Main_Presenter_Impl mPresenter;
+    private Bundle bundle;
+    private Date selected_date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                 mModule_Code,
                 Constant.ACT016
         );
-
+        //
+        getBundleInfo();
+        //
         loadTranslation();
     }
 
@@ -78,6 +83,14 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
         );
+    }
+
+    private void getBundleInfo() {
+        bundle =  getIntent().getExtras();
+        if(bundle != null && bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
+            selected_date = ToolBox.generateDate(bundle.getString(Act016_Main.ACT016_SELECTED_DATE));
+        }
+
     }
 
     private void initVars() {
@@ -153,8 +166,14 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     public void loadSchedule(List<HMAux> scheduleData) {
         //
         events.addAll(scheduleData);
-        //
-        cv_schedules.updateCalendar(events);
+        //Se volta da Act017, lista de agendados, passa data clicada
+        //para carregar calendario na data correta.
+        if(selected_date != null){
+            cv_schedules.updateCalendar(selected_date,events);
+        }else{
+            cv_schedules.updateCalendar(events);
+        }
+
 
     }
 

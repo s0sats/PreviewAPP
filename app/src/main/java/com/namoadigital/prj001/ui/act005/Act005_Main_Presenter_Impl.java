@@ -27,6 +27,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act005_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -87,7 +88,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] icon = {
             String.valueOf(R.drawable.ic_n_form),
-            String.valueOf(R.drawable.ic_info),
+            String.valueOf(R.drawable.ic_calendario),
             String.valueOf(R.drawable.ic_pendente),
             String.valueOf(R.drawable.ic_historico),
             String.valueOf(R.drawable.ic_info),
@@ -141,6 +142,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
+
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
+
+                    case Act005_Main.MENU_ID_SCHEDULE_DATA:
+                        qty = customFormLocalDao.getByStringHM(
+                                new Sql_Act005_003(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;

@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -22,7 +23,9 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -72,8 +75,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 mModule_Code,
                 Constant.ACT017
         );
-
+        //
         getBundleInfo();
+        //
         loadTranslation();
 
     }
@@ -121,6 +125,47 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         lv_schedules = (ListView) findViewById(R.id.act017_lv_schedules);
         //
         mPresenter.getSchedules(scheduled_date);
+        //
+        String date_desc = getDateDesc(scheduled_date);
+
+        date_desc += "";
+        //
+        tv_title.setText(date_desc);
+    }
+
+    private String getDateDesc(String scheduled_date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat showFormat = new SimpleDateFormat("EEEE, dd/MMM/yyyy");
+        Date date;
+        String final_date = "";
+        String day_desc = "";
+        String month_desc = "";
+
+        try {
+            //date = showFormat.format(format.parse(scheduled_date));
+            date = format.parse(scheduled_date);
+            //
+            day_desc = getDayTranslate(date);
+            month_desc = getMonthTranslate(date);
+            //formata data do oracle para format
+            //e troca MM por ** para substituir mes por extenso no final.
+            String customer_format =
+                    ToolBox_Con.getPreference_Customer_nls_date_format(context)
+                            .replace("DD","dd")
+                            .replace("/"," ")
+                            .replace("MM","**")
+                            .replace("RRRR","yyyy");
+            //
+            showFormat = new SimpleDateFormat(customer_format);
+            final_date = day_desc + ", " + showFormat.format(date).replace("**", month_desc);
+
+        } catch (Exception e) {
+            date = format.getCalendar().getTime();
+            final_date = showFormat.format(date);
+        }
+
+        return final_date;
+
     }
 
     private void iniUIFooter() {
@@ -218,10 +263,90 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         }
     }
 
+    private String getDayTranslate(Date date){
+        String dayTrans = "";
+
+        switch (date.getDay()){
+            case 0:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("daySunday");
+                break;
+            case 1:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayMonday");
+                break;
+            case 2:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayTuesday");
+                break;
+            case 3:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayWednesday");
+                break;
+            case 4:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayThursday");
+                break;
+            case 5:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("dayFriday");
+                break;
+            case 6:
+                dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("daySaturday");
+                break;
+            default:
+                break;
+        }
+
+        return dayTrans ;
+    }
+
+    private String getMonthTranslate(Date date){
+        String monthTrans = "";
+
+        switch (date.getMonth()) {
+            case 0:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monJanuary");
+                break;
+            case 1:
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monFebruary");
+                break;
+            case 2:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monMarch");
+                break;
+            case 3:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monApril");
+                break;
+            case 4:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monMay");
+                break;
+            case 5:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monJune");
+                break;
+            case 6:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monJuly");
+                break;
+            case 7:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monAugust");
+                break;
+            case 8:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monSeptember");
+                break;
+            case 9:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monOctober");
+                break;
+            case 10:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monNovember");
+                break;
+            case 11:
+                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monDecember");
+                break;
+            default:
+                break;
+        }
+
+        return monthTrans;
+    }
+
     @Override
     public void callAct016(Context context) {
         Intent mIntent = new Intent(context, Act016_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

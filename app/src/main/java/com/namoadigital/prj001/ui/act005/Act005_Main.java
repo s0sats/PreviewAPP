@@ -161,6 +161,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+
+        //Carrega traduções da biblioteca
+        ToolBox_Inf.libTranslation(getApplicationContext());
     }
 
     private void initVars() {

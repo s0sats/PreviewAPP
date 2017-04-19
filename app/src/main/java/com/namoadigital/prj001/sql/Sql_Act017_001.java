@@ -58,7 +58,7 @@ public class Sql_Act017_001 implements Specification {
                         "      AND l.custom_form_data = d.custom_form_data\n" +
                         "  WHERE\n" +
                         "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        "      AND l.custom_form_status <> '" + Constant.CUSTOM_FORM_STATUS_SENT+"'" +
+                       // "      AND l.custom_form_status <> '" + Constant.CUSTOM_FORM_STATUS_SENT+"'" +
                         "      AND l.custom_form_data_serv is not null \n" +
                         "      AND strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') = '"+selected_date+"' \n" +
                         "  ORDER BY\n" +

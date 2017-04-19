@@ -38,8 +38,8 @@ public class Sql_Act015_001 implements Specification {
                         "  l.custom_form_data,\n" +
                         "  l.custom_form_status," +
                         "  l.serial_id,"+
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start) date_start,\n" +
-                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end) date_end "+
+                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
+                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end "+
                         " \n" +
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l\n," +

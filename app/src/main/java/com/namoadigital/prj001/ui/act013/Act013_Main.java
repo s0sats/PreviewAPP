@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act013;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,6 +36,9 @@ import java.util.List;
  */
 
 public class Act013_Main extends Base_Activity implements Act013_Main_View {
+
+    public static final String FORM_IN_PROCESSING = "form_in_processing";
+    public static final String START_FORM = "start_form";
 
     private Context context;
     private Act013_Main_Presenter mPresenter;
@@ -89,6 +93,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("lbl_chk_in_processing");
         translateList.add("lbl_chk_scheduled");
         translateList.add("lbl_chk_finalized");
+        //
+        translateList.add("alert_ttl_exists_in_processing");
+        translateList.add("alert_msg_exists_in_processing");
+        translateList.add("alert_ttl_start_new_processing");
+        translateList.add("alert_msg_start_new_processing");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -215,7 +224,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     /**
-     *   Analisa todos checklist
+     * Analisa todos checklist
      * e chama função que monsta lista ja passando os
      * filtros selecionados.
      */
@@ -294,6 +303,45 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 );
         lv_pendencies.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    public void showMsg(String type, final HMAux item) {
+        String title = "";
+        String msg = "";
+        DialogInterface.OnClickListener listener = null;
+        Integer btnNegative = null;
+
+        switch (type){
+            case FORM_IN_PROCESSING:
+                title = hmAux_Trans.get("alert_ttl_exists_in_processing");
+                msg = hmAux_Trans.get("alert_msg_exists_in_processing");
+                btnNegative = 0;
+                break;
+
+            case START_FORM:
+                title = hmAux_Trans.get("alert_ttl_start_new_processing");
+                msg = hmAux_Trans.get("alert_msg_start_new_processing");
+                btnNegative = 1;
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.addFormInfoToBundle(item);
+                    }
+                };
+                break;
+
+        }
+
+        if(btnNegative != null) {
+            ToolBox.alertMSG(
+                    this,
+                    title,
+                    msg,
+                    listener,
+                    btnNegative
+            );
+        }
     }
 
     @Override

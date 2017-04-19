@@ -7,6 +7,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -72,6 +73,12 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
     @Override
     public void prepareOpenForm(HMAux item) {
+        //Atualiza status do form para in_processing
+        //foi comentando pois a atualização do status já corre na act011
+        //e pq se o form a ser aberto tem status inprocessing, fom ja abre
+        //com as bas e campos sendo validados.
+        //updateFormStatus(item);
+
         Bundle bundle = new Bundle();
         bundle.putString(Constant.ACT007_PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
         bundle.putString(Constant.ACT008_PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
@@ -85,6 +92,20 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         mView.callAct011(context,bundle);
 
+    }
+
+    private void updateFormStatus(HMAux item) {
+
+        formLocalDao.addUpdate(
+                new GE_Custom_Form_Local_Sql_004(
+                        item.get(GE_Custom_Form_LocalDao.CUSTOMER_CODE),
+                        item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE),
+                        item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE),
+                        item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION),
+                        item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA),
+                        Constant.CUSTOM_FORM_STATUS_IN_PROCESSING
+                ).toSqlQuery()
+        );
     }
 
     @Override

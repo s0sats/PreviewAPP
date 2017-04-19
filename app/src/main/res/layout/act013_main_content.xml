@@ -50,14 +50,14 @@
                     android:id="@+id/act013_chk_scheduled"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:buttonTint="@color/namoa_lime_green"
+                    android:buttonTint="@color/namoa_color_light_blue3"
                     android:visibility="visible" />
 
                 <CheckBox
                     android:id="@+id/act013_chk_finalized"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:buttonTint="@color/namoa_color_light_blue3" />
+                    android:buttonTint="@color/namoa_color_light_green4" />
 
                 <ImageView
                     android:id="@+id/act013_iv_help"

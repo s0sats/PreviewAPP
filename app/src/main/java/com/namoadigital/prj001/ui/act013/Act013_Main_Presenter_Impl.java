@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -73,11 +75,39 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION))
                 )
          ){
-
-            addFormInfoToBundle(item);
+            if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+                if (isAnyFormInProcessing(item)) {
+                      mView.showMsg(Act013_Main.FORM_IN_PROCESSING, item);
+                } else {
+                      mView.showMsg(Act013_Main.START_FORM, item);
+                }
+            }else{
+                addFormInfoToBundle(item);
+            }
         }else{
             mView.alertFormNotReady();
         }
+    }
+
+    public boolean isAnyFormInProcessing(HMAux item) {
+
+        GE_Custom_Form_Local customFormLocal =
+                customFormLocalDao.getByString(
+                        new GE_Custom_Form_Local_Sql_003(
+                                item.get(GE_Custom_Form_LocalDao.CUSTOMER_CODE),
+                                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE),
+                                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE),
+                                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION),
+                                "0",
+                                item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE),
+                                item.get(GE_Custom_Form_LocalDao.SERIAL_ID)
+                        ).toSqlQuery()
+                );
+
+        if(customFormLocal != null){
+            return true;
+        }
+        return false;
     }
 
     @Override

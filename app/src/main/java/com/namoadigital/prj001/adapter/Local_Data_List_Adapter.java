@@ -183,12 +183,13 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
             case Constant.CUSTOM_FORM_STATUS_IN_PROCESSING:
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
                 llBackground.setBackground(llDrawable);
                 break;
             //
             case Constant.CUSTOM_FORM_STATUS_FINALIZED:
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_4_states);
+                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
                 llBackground.setBackground(llDrawable);
 //                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
@@ -205,7 +206,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
                 break;
             case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
-                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
                 llBackground.setBackground(llDrawable);
 //                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
