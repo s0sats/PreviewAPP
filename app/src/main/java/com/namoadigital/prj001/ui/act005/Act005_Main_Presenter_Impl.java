@@ -82,7 +82,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] icon ={
             String.valueOf(R.drawable.ic_n_form),
-            String.valueOf(R.drawable.ic_schedule_black_24dp),
+            String.valueOf(R.drawable.ic_calendario),
             String.valueOf(R.drawable.ic_pendente),
             String.valueOf(R.drawable.ic_historico),
             String.valueOf(R.drawable.ic_enviar),
@@ -99,7 +99,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             // "",
             ""
     };
-
 
 
     @Override

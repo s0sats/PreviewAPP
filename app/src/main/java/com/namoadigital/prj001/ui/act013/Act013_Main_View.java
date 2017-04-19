@@ -21,6 +21,8 @@ public interface Act013_Main_View {
 
     void callAct006(Context context);
 
+    void showMsg(String type, final HMAux item);
+
     void alertFormNotReady();
 
 

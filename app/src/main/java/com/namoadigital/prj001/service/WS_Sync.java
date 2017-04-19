@@ -820,6 +820,10 @@ public class WS_Sync extends IntentService {
                             new TypeToken<ArrayList<GE_Custom_Form_Blob_Local>>() {
                             }.getType()
                     );
+                    //CRIA COPIA DA LISTA DE BLOBS QUE SERÁ USADA PARA INSERT/UPDATE
+                    //ESSA LISTA É NECESSARIA PARA NÃO CAUSAR EXCEPTION
+                    //ConcurrentModificationException
+                    List<GE_Custom_Form_Blob_Local> finalBlobs = new ArrayList<>(blobsLocal);
                     for (GE_Custom_Form_Blob_Local blob : blobsLocal) {
                         boolean add = false;
                         for (GE_Custom_Form_Local local : newFormsLocal) {
@@ -834,11 +838,11 @@ public class WS_Sync extends IntentService {
                         }
 
                         if(!add){
-                            blobsLocal.remove(blob);
+                            finalBlobs.remove(blob);
                         }
 
                     }
-                    blobLocalDao.addUpdate(blobsLocal, false);
+                    blobLocalDao.addUpdate(finalBlobs, false);
                 }
             }
         }

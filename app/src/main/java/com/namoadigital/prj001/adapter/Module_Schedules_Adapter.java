@@ -168,6 +168,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
             case Constant.CUSTOM_FORM_STATUS_IN_PROCESSING:
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
                 llBackground.setBackground(llDrawable);
                 break;
