@@ -64,6 +64,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     private HMAux hmAux_Trans;
 
+    private boolean bAgendado;
+
 
     public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, HMAux hmAux_Trans) {
         this.context = context;
@@ -84,6 +86,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id) {
 
         boolean bNew = false;
+        bAgendado = false;
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
@@ -111,13 +114,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //
                 bNew = false;
 
+                bAgendado = true;
+
                 index = 0;
             } else {
                 bNew = false;
 
                 index = -1;
             }
-
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
                     new GE_Custom_Form_Fields_Local_Sql_001(
@@ -228,6 +232,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getCustom_form_data(),
                 customFormLocal.getCustom_form_data_serv()
         );
+
+        if (bAgendado) {
+            custom_form_dataDao.addUpdate(formData);
+            custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
+        }
 
         ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
 

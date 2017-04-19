@@ -16,6 +16,8 @@ public interface Act018_Main_Presenter {
 
     List<HMAux> getFcmMessageList();
 
+    void modifyDBRead(long fcmmessage_code);
+
     void addFormInfoToBundle(HMAux item);
 
     void onBackPressedClicked();

@@ -22,6 +22,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -37,6 +38,7 @@ import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -59,6 +61,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
+    public static final String MENU_ID_MESSAGES = "menu_messages";
+
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
     public static final String MENU_ID_CLOSE = "menu_close_app";
@@ -178,9 +182,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         context,
                         Constant.DB_FULL_BASE,
                         Constant.DB_VERSION_BASE
+                ),
+                new FCMMessageDao(
+                        context,
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
                 )
-
-
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
@@ -593,6 +600,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    public void callAct018(Context context) {
+        Intent mIntent = new Intent(context, Act018_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void closeApp() {
 
         ToolBox.alertMSG(
@@ -754,6 +769,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         }*/
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //
+        mPresenter.getMenuItens(hmAux_Trans);
     }
 
     public void startDownloadServices() {

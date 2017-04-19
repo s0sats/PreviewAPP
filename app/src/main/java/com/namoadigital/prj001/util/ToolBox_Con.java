@@ -450,6 +450,25 @@ public class ToolBox_Con {
         );
     }
 
+    public static void setPreference_Google_ID_DT(Context context, long sDT) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.GOOGLE_ID_DT,
+                sDT
+        ).apply();
+    }
+
+    public static Long getPreference_Google_ID_DT(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.GOOGLE_ID_DT,
+                0L
+        );
+    }
 
     //endregion
 

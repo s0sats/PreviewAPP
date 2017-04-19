@@ -25,6 +25,9 @@ import java.util.List;
 
 public class Act018_Adapter_Messages extends BaseAdapter {
 
+    public static final String ALERT = "alert";
+    public static final String WARNING = "warning";
+
     private Context context;
     private int resource;
     private List<HMAux> data;
@@ -73,12 +76,23 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         TextView tv_msg_short = (TextView)
                 convertView.findViewById(R.id.act018_main_content_cell_tv_msg_short);
 
+        switch (item.get("type").toLowerCase()) {
+            case ALERT:
+                iv_001.setImageResource(R.drawable.ic_alert_n);
+                break;
+            case WARNING:
+                iv_001.setImageResource(R.drawable.ic_problem_n);
+                break;
+            default:
+                break;
+        }
+
         tv_title.setText(item.get("title"));
         tv_date.setText(
                 ToolBox.millisecondsToString(
                         Long.parseLong(item.get("date_create_ms")),
                         ToolBox_Inf.nlsDate2SqliteDate(context)
-                ).replace("%", " ").replace("/ ","-")
+                ).replace("%", " ").replace("/ ", "-")
         );
 
         tv_msg_short.setText(item.get("msg_short"));

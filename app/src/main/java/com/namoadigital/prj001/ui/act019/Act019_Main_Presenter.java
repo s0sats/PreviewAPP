@@ -10,11 +10,8 @@ import java.util.List;
 
 public interface Act019_Main_Presenter {
 
-    void setAdapterData();
+    void setData(long fcmmessage_code);
 
-    List<HMAux> getFcmMessageList();
+    void modifyDBRead(long fcmmessage_code);
 
-    void addFormInfoToBundle(HMAux item);
-
-    void onBackPressedClicked();
 }

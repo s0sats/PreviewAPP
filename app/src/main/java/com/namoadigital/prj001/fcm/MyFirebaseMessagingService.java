@@ -6,19 +6,24 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
+import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.Calendar;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -69,13 +74,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
             fcmMessageDao.addUpdate(fcmMessage);
+            long fcmmessage_code = Long.parseLong(
+                    fcmMessageDao.getByStringHM(
+                            new FCMMessage_Sql_002().toSqlQuery()
+                    ).get(FCMMessage_Sql_002.FCMMESSAGE_CODE)
+            );
+
+            int fcmmessage_qty = Integer.parseInt(
+                    fcmMessageDao.getByStringHM(
+                            new FCMMessage_Sql_003().toSqlQuery()
+                    ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY)
+            );
 
             Log.d("msg", "Message data payload: " + sb.toString());
 
             makeNF(
                     getApplicationContext(),
                     remoteMessage.getData().get("title"),
-                    remoteMessage.getData().get("type")
+                    remoteMessage.getData().get("type"),
+                    fcmmessage_code,
+                    fcmmessage_qty
             );
         }
 
@@ -89,11 +107,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
 
-    private void makeNF(Context context, String title, String message) {
+    private void makeNF(Context context, String title, String message, long fcmmessage_code, int fcmmessage_qty) {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        Intent mIntent = new Intent(getBaseContext(), Act018_Main.class);
+        Intent mIntent = null;
+
+        if (fcmmessage_qty > 1) {
+            Bundle bundle = new Bundle();
+            bundle.putString("action", "NOTIFICATION");
+            mIntent = new Intent(getBaseContext(), Act018_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundle);
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString("action", "NOTIFICATION");
+            bundle.putLong("fcmmessage_code", fcmmessage_code);
+            mIntent = new Intent(getBaseContext(), Act019_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundle);
+        }
         //
         PendingIntent pi = PendingIntent.getActivity(this, 0, mIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
@@ -102,14 +135,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Notification.Builder builder = new Notification.Builder(context);
         builder.setSmallIcon(R.mipmap.ic_namoa);
         builder.setAutoCancel(true);
-        builder.setContentTitle("NAMOA / PRJ0001 " + title);
+        builder.setContentTitle(title);
         builder.setContentIntent(pi);
-        builder.setContentText(message);
+        if (fcmmessage_qty > 1) {
+            builder.setContentText("(" + String.valueOf(fcmmessage_qty) + ") " + message);
+        } else {
+            builder.setContentText(message);
+        }
         builder.setOngoing(true);
         //
-        builder.setDefaults(
-                Notification.DEFAULT_SOUND |
-                        Notification.DEFAULT_VIBRATE);
+        long dt_last = ToolBox_Con.getPreference_Google_ID_DT(getApplicationContext());
+        Calendar cal_now = Calendar.getInstance();
+        long dt_now = cal_now.getTimeInMillis();
+        //
+        if ((dt_last == 0) || ((dt_now - dt_last) > (120 * 1000))) {
+            builder.setDefaults(
+                    Notification.DEFAULT_SOUND |
+                            Notification.DEFAULT_VIBRATE);
+        } else {
+            // Nada
+        }
+        //
+        ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), dt_now);
         //
         // Devolve a versao do Android instalado no equipamento
         int versao = Build.VERSION.SDK_INT;
@@ -120,4 +167,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             nm.notify(10, builder.getNotification());
         }
     }
+
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.FCMMessage;
 
 import java.util.List;
 
@@ -13,10 +14,8 @@ import java.util.List;
 
 public interface Act019_Main_View {
 
-    void loadMessages(List<HMAux> messages);
+    void loadMessage(FCMMessage fcmMessage);
 
-    void callAct019(Context context, Bundle bundle);
-
-    void callAct014(Context context);
+    void callAct018(Context context);
 
 }

@@ -9,6 +9,9 @@ import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_001;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.ui.act007.Act007_Main_View;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -48,6 +51,13 @@ public class Act018_Main_Presenter_Impl implements Act018_Main_Presenter {
                 );
 
         return fcmMessageList;
+    }
+
+    @Override
+    public void modifyDBRead(long fcmmessage_code) {
+        fcmMessageDao.addUpdate(
+                new FCMMessage_Sql_004(String.valueOf(fcmmessage_code)).toSqlQuery()
+        );
     }
 
     @Override

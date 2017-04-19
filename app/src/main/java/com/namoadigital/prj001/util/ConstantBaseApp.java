@@ -36,7 +36,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT016 = "act016";
     public static final String ACT017 = "act017";
     public static final String ACT018 = "act018";
-
+    public static final String ACT019 = "act019";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -155,6 +155,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String SESSION_APP = "session_app";
     public static final String GOOGLE_ID = "google_id";
     public static final String GOOGLE_ID_OK = "google_id_ok";
+    public static final String GOOGLE_ID_DT = "google_id_dt";
     public static final String EXECUTE_WS_GET_CUSTOMER = "session_app";
 
 
