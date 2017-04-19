@@ -21,7 +21,6 @@ import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.Calendar;
 
@@ -91,7 +90,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             makeNF(
                     getApplicationContext(),
                     remoteMessage.getData().get("title"),
-                    remoteMessage.getData().get("type"),
+                    remoteMessage.getData().get("msg_short"),
                     fcmmessage_code,
                     fcmmessage_qty
             );

@@ -91,7 +91,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_calendario),
             String.valueOf(R.drawable.ic_pendente),
             String.valueOf(R.drawable.ic_historico),
-            String.valueOf(R.drawable.ic_info),
+            String.valueOf(R.drawable.ic_notificacao),
             String.valueOf(R.drawable.ic_enviar),
             //       String.valueOf(R.drawable.ic_sincronizar),
             String.valueOf(R.drawable.ic_sair)
