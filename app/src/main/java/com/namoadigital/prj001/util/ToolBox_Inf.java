@@ -1037,6 +1037,14 @@ public class ToolBox_Inf {
                 .replace("RRRR", "%Y");
     }
 
+    public static String nlsDateFormat(Context context) {
+        String sqlite_format = ToolBox_Con.getPreference_Customer_nls_date_format(context);
+        return sqlite_format
+                .replace("DD", "dd")
+                .replace("MM", "MM")
+                .replace("RRRR", "yyyy");
+    }
+
     public static void cleanningFormLocal(Context context) {
         GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
                 context,
