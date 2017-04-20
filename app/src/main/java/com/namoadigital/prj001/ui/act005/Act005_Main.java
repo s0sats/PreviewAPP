@@ -260,17 +260,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
-                        MD_SiteDao siteDao =  new MD_SiteDao(
+                        MD_SiteDao siteDao = new MD_SiteDao(
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
                         );
 
                         int qty_sites = siteDao.query_HM(
-                                    new MD_Site_Sql_002(
-                                            ToolBox_Con.getPreference_Customer_Code(context)
-                                    ).toSqlQuery()
-                                ).size();
+                                new MD_Site_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).size();
 
                         if (qty_sites <= 1) {
                             //Se apenas um site, da alert e não permite troca.
@@ -311,10 +311,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         );
 
                         int qty_operation = operationDao.query_HM(
-                                        new MD_Operation_Sql_001(
-                                                ToolBox_Con.getPreference_Customer_Code(context)
-                                        ).toSqlQuery()
-                                ).size();
+                                new MD_Operation_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).size();
 
                         if (qty_operation <= 1) {
                             //Se apenas uma operação, da alert e não permite troca.
@@ -486,32 +486,32 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value =Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;
 
     }
 
     @Override
     public void showPD() {
 
-        switch (wsProcess){
+        switch (wsProcess) {
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
-                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_send_finish_msg");
                 break;
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_ttl");
-                alertMsg =  hmAux_Trans.get("alert_sync_msg");
+                alertMsg = hmAux_Trans.get("alert_sync_msg");
                 break;
             case Act005_Main.WS_PROCESS_LOGOUT:
                 alertTitle = hmAux_Trans.get("alert_logout_ttl");
-                alertMsg =  hmAux_Trans.get("alert_logout_msg");
+                alertMsg = hmAux_Trans.get("alert_logout_msg");
                 break;
             default:
                 break;
@@ -609,7 +609,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void callAct018(Context context) {
         Intent mIntent = new Intent(context, Act018_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mIntent);
         finish();
     }
@@ -624,6 +624,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
+
                         finish();
                     }
                 },
@@ -653,11 +655,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         progressDialog.dismiss();
 
         if (!wsProcess.equals("")) {
-            if(wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)){
-                if(ToolBox_Con.getPreference_Customer_Code(context) == -1L){
-                  processLogin();
+            if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+                if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
+                    processLogin();
                 }
-            }else {
+            } else {
                 showSuccessDialog();
                 //Atualiza traduções
                 loadTranslation();

@@ -71,5 +71,9 @@
     <string name="ws_exception_contact_admin_oracle">Ocorreu um erro de banco de dados!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_timeout">Tempo de resposta excedido!\nVerifique suas conexões e tente novamente!</string>
     <string name="generic_error_lbl">ERRO:</string>
+    <string name="title_notification_generic">Namoa</string>
+    <string name="message_notification_sync">Sincronismo Necessário</string>
+    <string name="message_received_notification_sync">Mensagens Recebidas</string>
+
 
 </resources>

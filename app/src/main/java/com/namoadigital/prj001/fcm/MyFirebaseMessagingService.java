@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.Calendar;
 
@@ -94,6 +96,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     fcmmessage_code,
                     fcmmessage_qty
             );
+
+            if (fcmMessage.getSync().equalsIgnoreCase("1")) {
+                ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "1");
+                ToolBox_Inf.call_Notification_Sync(getApplicationContext(), 11);
+            }
         }
 
         // Check if message contains a notification payload.
@@ -104,7 +111,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }
-
 
     private void makeNF(Context context, String title, String message, long fcmmessage_code, int fcmmessage_qty) {
         NotificationManager nm = (NotificationManager)
@@ -137,7 +143,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         builder.setContentTitle(title);
         builder.setContentIntent(pi);
         if (fcmmessage_qty > 1) {
-            builder.setContentText("(" + String.valueOf(fcmmessage_qty) + ") " + message);
+            builder.setContentText("(" + String.valueOf(fcmmessage_qty) + ") " + context.getResources().getString(R.string.message_received_notification_sync));
         } else {
             builder.setContentText(message);
         }
@@ -154,6 +160,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
             // Nada
         }
+        //
+
+//        if (NotificationManagerCompat.from(getApplicationContext()).areNotificationsEnabled()){
+//
+//            Log.d("NOTIFI", "ok");
+//
+//
+//        } else {
+//
+//            Log.d("NOTIFI", "nao");
+//        }
         //
         ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), dt_now);
         //

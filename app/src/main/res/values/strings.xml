@@ -71,5 +71,9 @@
     <string name="ws_exception_contact_admin_timeout">Time limit for server response has exceeded. \nCheck your  connections and try again!</string>
     <string name="generic_error_lbl">ERROR:</string>
     <string name="title_activity_act015__main">Act015_Main</string>
+    <string name="title_notification_generic">Namoa</string>
+    <string name="message_notification_sync">Sync Required</string>
+    <string name="message_received_notification_sync">Messages Received</string>
+
 
 </resources>

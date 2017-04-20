@@ -470,6 +470,47 @@ public class ToolBox_Con {
         );
     }
 
+    public static void setPreference_SYNC_REQUIRED(Context context, String sRequired) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.SYNC_REQUIRED,
+                sRequired
+        ).apply();
+    }
+
+    public static String getPreference_SYNC_REQUIRED(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.SYNC_REQUIRED,
+                ""
+        );
+    }
+
+    public static void setPreference_MessageClear(Context context, String sMessageClear) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.MESSAGE_CLEAR,
+                sMessageClear
+        ).apply();
+    }
+
+    public static String getPreference_MessageClear(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.MESSAGE_CLEAR,
+                ""
+        );
+    }
+
+
     //endregion
 
     //region Customer_Code_TMP

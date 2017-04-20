@@ -238,6 +238,8 @@
 
         <service android:name=".fcm.WS_Google" />
 
+        <service android:name=".fcm.WS_Notification_Sync" />
+
 
     </application>
 

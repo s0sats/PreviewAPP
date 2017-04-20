@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -56,17 +57,28 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        iniSetup();
-        //
-        initVars();
-        //
-        iniUIFooter();
-        //
-        initActions();
-        //
-        cleanNotification();
-        //
-        ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(getBaseContext());
+        String user_code = ToolBox_Con.getPreference_User_Code(getBaseContext());
+
+
+        if (customer_code == -1L) {
+            if (user_code.trim().length() == 0) {
+                ToolBox_Inf.call_Act001_Main(Act019_Main.this);
+            } else {
+            }
+        } else {
+            iniSetup();
+            //
+            initVars();
+            //
+            iniUIFooter();
+            //
+            initActions();
+            //
+            cleanNotification();
+            //
+            ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
+        }
     }
 
     private void iniSetup() {
@@ -182,7 +194,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         tv_date.setText(
                 ToolBox.millisecondsToString(
                         fcmMessage.getDate_create_ms(),
-                        ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                        ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y", "y").replace("m", "M")
                 )
         );
         tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));

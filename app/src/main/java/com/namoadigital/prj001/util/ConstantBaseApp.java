@@ -157,6 +157,8 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String GOOGLE_ID_OK = "google_id_ok";
     public static final String GOOGLE_ID_DT = "google_id_dt";
     public static final String EXECUTE_WS_GET_CUSTOMER = "session_app";
+    public static final String SYNC_REQUIRED = "sync_required";
+    public static final String MESSAGE_CLEAR = "message_clear";
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

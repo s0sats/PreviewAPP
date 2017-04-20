@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.util;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -8,9 +9,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 
@@ -26,6 +29,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
@@ -658,6 +662,39 @@ public class ToolBox_Inf {
         context.startActivity(mIntent);
     }
 
+
+    public static void call_Notification_Sync(Context context, int id) {
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        Intent mIntent = new Intent(context, WS_Notification_Sync.class);
+        ;
+
+        PendingIntent pi = PendingIntent.getService(
+                context,
+                0,
+                mIntent,
+                0
+        );
+        //
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setSmallIcon(R.drawable.sync_notification_animation);
+        builder.setAutoCancel(true);
+        builder.setContentTitle(context.getString(R.string.title_notification_generic));
+        builder.setContentIntent(pi);
+        builder.setContentText(context.getString(R.string.message_notification_sync));
+        builder.setOngoing(true);
+        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        //
+        int versao = Build.VERSION.SDK_INT;
+        //
+        if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            nm.notify(id, builder.build());
+        } else {
+            nm.notify(id, builder.getNotification());
+        }
+    }
+
     /**
      * Metodo que retorna o Resource_code, baseado no Resource_name
      *
@@ -1037,6 +1074,14 @@ public class ToolBox_Inf {
                 .replace("RRRR", "%Y");
     }
 
+    public static String nlsDateFormat(Context context) {
+        String sqlite_format = ToolBox_Con.getPreference_Customer_nls_date_format(context);
+        return sqlite_format
+                .replace("DD", "dd")
+                .replace("MM", "MM")
+                .replace("RRRR", "yyyy");
+    }
+
     public static void cleanningFormLocal(Context context) {
         GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
                 context,
@@ -1191,11 +1236,12 @@ public class ToolBox_Inf {
 
     /**
      * Verifica se o parametro passado existe para aquele customer
+     *
      * @param context
-     * @param param Constante do parametro a ser buscado
+     * @param param   Constante do parametro a ser buscado
      * @return true or false;
      */
-    public static boolean parameterExists(Context context, String param){
+    public static boolean parameterExists(Context context, String param) {
         try {
             Ev_User_Customer_ParameterDao parameterDao
                     = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
@@ -1211,7 +1257,7 @@ public class ToolBox_Inf {
             if (parameter != null) {
                 return true;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
@@ -1220,15 +1266,16 @@ public class ToolBox_Inf {
 
     /**
      * Converte data enviada para o timezone do aparelho
+     *
      * @param
      * @return data convertida
      */
-    public static String convertToDeviceTMZ(String date_tmz){
+    public static String convertToDeviceTMZ(String date_tmz) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
         Calendar calendar = Calendar.getInstance();
         try {
-           // calendar.setTime(sdf.parse("2017-04-13 12:24:46 +0000"));
+            // calendar.setTime(sdf.parse("2017-04-13 12:24:46 +0000"));
             calendar.setTime(sdf.parse(date_tmz));
         } catch (ParseException e) {
             e.printStackTrace();
@@ -1239,6 +1286,7 @@ public class ToolBox_Inf {
 
     /**
      * Devolve milisegundos de uma data
+     *
      * @param date_tmz
      * @return
      */

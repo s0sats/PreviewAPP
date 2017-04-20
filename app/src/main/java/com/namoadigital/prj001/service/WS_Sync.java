@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -108,6 +110,9 @@ public class WS_Sync extends IntentService {
 
             processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD,product_code );
 
+            // Limpeza da Notificacao
+            cleanNotification(getApplicationContext());
+
         }catch (Exception e) {
 
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
@@ -119,6 +124,15 @@ public class WS_Sync extends IntentService {
             WBR_Sync.completeWakefulIntent(intent);
         }
 
+    }
+
+    private void cleanNotification(Context context) {
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        nm.cancel(11);
+        //
+        ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "");
     }
 
     private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code) throws Exception {

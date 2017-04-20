@@ -51,17 +51,28 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        iniSetup();
-        //
-        initVars();
-        //
-        iniUIFooter();
-        //
-        initActions();
-        //
-        cleanNotification();
-        //
-        ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(getBaseContext());
+        String user_code = ToolBox_Con.getPreference_User_Code(getBaseContext());
+
+        if (customer_code == -1L) {
+            if (user_code.trim().length() == 0) {
+                ToolBox_Inf.call_Act001_Main(Act018_Main.this);
+            } else {
+                finish();
+            }
+        } else {
+            iniSetup();
+            //
+            initVars();
+            //
+            iniUIFooter();
+            //
+            initActions();
+            //
+            cleanNotification();
+            //
+            ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), 0L);
+        }
     }
 
     private void iniSetup() {

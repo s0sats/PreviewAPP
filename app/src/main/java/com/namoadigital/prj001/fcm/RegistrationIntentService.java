@@ -31,6 +31,8 @@ public class RegistrationIntentService extends IntentService {
 
         try {
 
+            String tt = ToolBox_Con.getPreference_Google_ID_OK(getApplicationContext());
+
             if (!ToolBox_Con.getPreference_Google_ID_OK(getApplicationContext()).equalsIgnoreCase("OK")){
                 String sToken = FirebaseInstanceId.getInstance().getToken();
 
