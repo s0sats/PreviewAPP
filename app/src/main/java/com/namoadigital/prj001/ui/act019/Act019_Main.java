@@ -39,11 +39,15 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
     private long fcmmessage_code;
 
     private ImageView iv_icon;
+    private ImageView iv_module;
     private TextView tv_title;
     private TextView tv_module;
+    private TextView tv_module_val;
     private TextView tv_type;
     private TextView tv_sender;
+    private TextView tv_sender_val;
     private TextView tv_date;
+    private TextView tv_date_val;
     private TextView tv_msg_lbl;
     private TextView tv_msg_value;
 
@@ -92,10 +96,14 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
         iv_icon = (ImageView) findViewById(R.id.act019_iv_icon);
         tv_title = (TextView) findViewById(R.id.act019_tv_title_lbl);
+        //iv_module = (ImageView) findViewById(R.id.act019_iv_module);
         tv_module = (TextView) findViewById(R.id.act019_tv_module_lbl);
-        tv_type = (TextView) findViewById(R.id.act019_tv_type_lbl);
+        tv_module_val = (TextView) findViewById(R.id.act019_tv_module_val);
+        //tv_type = (TextView) findViewById(R.id.act019_tv_type_lbl);
         tv_sender = (TextView) findViewById(R.id.act019_tv_sender_lbl);
+        tv_sender_val = (TextView) findViewById(R.id.act019_tv_sender_val);
         tv_date = (TextView) findViewById(R.id.act019_tv_date_lbl);
+        tv_date_val = (TextView) findViewById(R.id.act019_tv_date_val);
         tv_msg_lbl = (TextView) findViewById(R.id.act019_tv_msg_lbl);
         tv_msg_value = (TextView) findViewById(R.id.act019_tv_msg_value);
 
@@ -106,6 +114,9 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
+        transList.add("lbl_module");
+        transList.add("lbl_sender");
+        transList.add("lbl_date");
         transList.add("lbl_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -187,14 +198,27 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
             iv_icon.setImageResource(R.drawable.ic_problem_n);
         }
 
+//        switch (fcmMessage.getModule()){
+//
+//            case "CHECKLIST":
+//                iv_module.setImageDrawable(getResources().getDrawable(R.drawable.ic_n_form));
+//                break;
+//            default:
+//                iv_module.setImageDrawable(null);
+//        }
+
         tv_title.setText(fcmMessage.getTitle());
-        tv_module.setText(fcmMessage.getModule());
-        tv_type.setText(fcmMessage.getType());
-        tv_sender.setText(fcmMessage.getSender());
-        tv_date.setText(
+        tv_module.setText(hmAux_Trans.get("lbl_module"));
+        tv_module_val.setText(hmAux_Trans.get(fcmMessage.getModule()));
+        //tv_type.setText(fcmMessage.getType());
+        tv_sender.setText(hmAux_Trans.get("lbl_sender"));
+        tv_sender_val.setText(fcmMessage.getSender());
+        tv_date.setText(hmAux_Trans.get("lbl_date"));
+        tv_date_val.setText(
                 ToolBox.millisecondsToString(
                         fcmMessage.getDate_create_ms(),
-                        ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y", "y").replace("m", "M")
+                        //ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                        ToolBox_Inf.nlsDateFormat(context)
                 )
         );
         tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));

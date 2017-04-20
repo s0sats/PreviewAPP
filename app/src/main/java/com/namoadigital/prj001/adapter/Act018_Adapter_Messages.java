@@ -24,6 +24,7 @@ public class Act018_Adapter_Messages extends BaseAdapter {
 
     public static final String ALERT = "alert";
     public static final String WARNING = "warning";
+    public static final String MODULE_CHECKLIST = "CHECKLIST";
 
     private Context context;
     private int resource;
@@ -64,6 +65,10 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         ImageView iv_001 = (ImageView)
                 convertView.findViewById(R.id.act018_main_content_cell_iv_001);
 
+        ImageView iv_002 = (ImageView)
+                convertView.findViewById(R.id.act018_main_content_cell_iv_002);
+
+
         TextView tv_title = (TextView)
                 convertView.findViewById(R.id.act018_main_content_cell_tv_title);
 
@@ -73,12 +78,21 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         TextView tv_msg_short = (TextView)
                 convertView.findViewById(R.id.act018_main_content_cell_tv_msg_short);
 
+        switch (item.get("module")) {
+            case MODULE_CHECKLIST:
+                iv_001.setImageResource(R.drawable.ic_n_form);
+                break;
+            default:
+                iv_001.setVisibility(View.GONE);
+                break;
+        }
+
         switch (item.get("type").toLowerCase()) {
             case ALERT:
-                iv_001.setImageResource(R.drawable.ic_alert_n);
+                iv_002.setImageResource(R.drawable.ic_alert_n);
                 break;
             case WARNING:
-                iv_001.setImageResource(R.drawable.ic_problem_n);
+                iv_002.setImageResource(R.drawable.ic_problem_n);
                 break;
             default:
                 break;
@@ -88,7 +102,8 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         tv_date.setText(
                 ToolBox.millisecondsToString(
                         Long.parseLong(item.get("date_create_ms")),
-                        ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                        //ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                        ToolBox_Inf.nlsDateFormat(context)
                 )
         );
 
