@@ -113,8 +113,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_id_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_label);
         TextView tv_id_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_val);
 
-        String[] id = item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC).split("-");
-        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+id[0].trim());
+        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
 
         tv_list.add(tv_id_lbl);
         tv_list.add(tv_id_val);

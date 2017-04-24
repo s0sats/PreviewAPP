@@ -150,7 +150,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
                 tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
-                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" ");
+                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
                 tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
                 tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id")+" "+item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
 
