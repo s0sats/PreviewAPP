@@ -37,6 +37,8 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.receiver.WBR_AL_Full;
+import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
@@ -1016,6 +1018,83 @@ public class ToolBox_Inf {
                 pi
         );
     }
+
+    public static void reprogramAlarms_Full_Quarter(Context context) {
+        AlarmManager am = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendarAux = Calendar.getInstance();
+        //
+        calendarAux.set(
+                Calendar.HOUR,
+                calendarAux.get(Calendar.HOUR) + 1
+        );
+        //
+        calendarAux.set(
+                Calendar.MINUTE,
+                0
+        );
+        //
+        calendarAux.set(
+                Calendar.SECOND,
+                0
+        );
+
+        /**
+         * Alarme a cada 4 horas
+         */
+        Intent mIntent_Full = new Intent(context,
+                WBR_AL_Full.class
+        );
+        //
+        PendingIntent pi_full = PendingIntent.getBroadcast(
+                context,
+                100,
+                mIntent_Full,
+                0
+        );
+        //
+        am.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendarAux.getTimeInMillis(),
+                (1000 * 60 * 60 * 4),
+                pi_full
+        );
+
+        calendarAux.set(
+                Calendar.MINUTE,
+                15
+        );
+
+        /**
+         * Alarme a cada 15 minutos
+         */
+        Intent mIntent_Quarter = new Intent(context,
+                WBR_AL_Quarter.class
+        );
+        //
+        PendingIntent pi_Quarter = PendingIntent.getBroadcast(
+                context,
+                200,
+                mIntent_Quarter,
+                0
+        );
+        //
+        am.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendarAux.getTimeInMillis(),
+                (1000 * 60 * 15),
+                pi_Quarter
+        );
+        //
+        ToolBox_Inf.generateNotification(context, 100);
+    }
+
+    public static void generateNotification(Context context, int parameter) {
+
+
+    }
+
 
     public static void libTranslation(Context context) {
         Constant.HMAUX_TRANS_LIB = new HMAux();

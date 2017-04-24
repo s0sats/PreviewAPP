@@ -16,6 +16,7 @@ public class WBR_BootCompleted extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         ToolBox_Inf.reprogramAlarms(context);
+        ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
 
     }
 }

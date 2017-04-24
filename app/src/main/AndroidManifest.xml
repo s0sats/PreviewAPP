@@ -142,17 +142,17 @@
 
         <activity
             android:name=".ui.act018.Act018_Main"
+            android:excludeFromRecents="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act019.Act019_Main"
+            android:excludeFromRecents="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
 
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
@@ -216,6 +216,14 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".receiver.WBR_AL_Full" />
+
+        <service android:name=".service.WS_AL_Full" />
+
+        <receiver android:name=".receiver.WBR_AL_Quarter" />
+
+        <service android:name=".service.WS_AL_Quarter" />
 
         <!--<activity-->
         <!--android:name=".ui.act016.Act015_Main"-->
