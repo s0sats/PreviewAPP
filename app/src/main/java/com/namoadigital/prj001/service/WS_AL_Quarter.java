@@ -2,6 +2,7 @@ package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -45,14 +46,16 @@ public class WS_AL_Quarter extends IntentService {
 
             long difference = dt_current - dt_full;
 
-            if (difference < (1000 * 60 * 5)){
+            //if (difference < (1000 * 60 * 5)){
                 ToolBox_Inf.generateNotification(getApplicationContext(), 200);
-            }
+            //}
 
         } catch (Exception e) {
             String results = e.toString();
         } finally {
         }
+
+        Log.d("ALARM", String.valueOf("QUARTER"));
     }
 
 }

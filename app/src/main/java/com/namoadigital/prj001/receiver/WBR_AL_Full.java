@@ -16,11 +16,11 @@ public class WBR_AL_Full extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        activateCleanning(context);
+        activateWBR_AL_Full(context);
 
     }
 
-    private void activateCleanning(Context context) {
+    private void activateWBR_AL_Full(Context context) {
         Intent mIntent = new Intent(context, WS_AL_Full.class);
         Bundle bundle = new Bundle();
 

@@ -427,7 +427,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     formData.setSignature(mSignature);
 
-                    mPresenter.checkSignature(formData, signature, 0,geFiles);
+                    mPresenter.checkSignature(formData, signature, 0, geFiles);
 
                 } else {
 
@@ -1452,7 +1452,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mPresenter.checkData(formData,geFiles);
+                                mPresenter.checkData(formData, geFiles);
                                 bNew = false;
                             }
                         }
@@ -1536,7 +1536,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 geFiles.add(geFile);
                 //
-                mPresenter.checkData(formData, geFiles );
+                mPresenter.checkData(formData, geFiles);
                 bNew = false;
             } else {
                 formData.setSignature_name("");
@@ -1681,8 +1681,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 if (aux.get("blob_name").trim().length() != 0) {
 
                     File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+
+                    try {
+                        ToolBox_Inf.copyFile(
+                                file,
+                                new File(Constant.CACHE_PDF)
+                        );
+                    } catch (Exception e) {
+                    }
+
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                     startActivity(intent);

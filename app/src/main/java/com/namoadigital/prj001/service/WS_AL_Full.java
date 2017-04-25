@@ -2,6 +2,7 @@ package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -46,6 +47,8 @@ public class WS_AL_Full extends IntentService {
             String results = e.toString();
         } finally {
         }
+
+        Log.d("ALARM", String.valueOf("FULL"));
     }
 
 

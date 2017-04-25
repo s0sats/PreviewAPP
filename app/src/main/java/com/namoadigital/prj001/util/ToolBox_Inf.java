@@ -16,12 +16,14 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
@@ -46,10 +48,13 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
@@ -67,6 +72,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -117,6 +123,11 @@ public class ToolBox_Inf {
         File dirCachePhoto = new File(Constant.CACHE_PATH_PHOTO);
         if (!dirCachePhoto.exists()) {
             dirCachePhoto.mkdir();
+        }
+        //
+        File dirCachePDF = new File(Constant.CACHE_PDF);
+        if (!dirCachePDF.exists()) {
+            dirCachePDF.mkdir();
         }
     }
 
@@ -681,9 +692,9 @@ public class ToolBox_Inf {
         //
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.sync_notification_animation);
-        builder.setAutoCancel(true);
+        builder.setAutoCancel(false);
         builder.setContentTitle(context.getString(R.string.title_notification_generic));
-        builder.setContentIntent(pi);
+        //builder.setContentIntent(pi);
         builder.setContentText(context.getString(R.string.message_notification_sync));
         builder.setOngoing(true);
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
@@ -1039,6 +1050,11 @@ public class ToolBox_Inf {
                 Calendar.SECOND,
                 0
         );
+//        // Tirar
+//        calendarAux.set(
+//                Calendar.SECOND,
+//                calendarAux.get(Calendar.SECOND) + 15
+//        );
 
         /**
          * Alarme a cada 4 horas
@@ -1047,23 +1063,34 @@ public class ToolBox_Inf {
                 WBR_AL_Full.class
         );
         //
-        PendingIntent pi_full = PendingIntent.getBroadcast(
-                context,
-                100,
-                mIntent_Full,
-                0
-        );
-        //
-        am.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                calendarAux.getTimeInMillis(),
-                (1000 * 60 * 60 * 4),
-                pi_full
-        );
+        boolean isWorking = (PendingIntent.getBroadcast(
+                context, 100, mIntent_Full, PendingIntent.FLAG_NO_CREATE) != null);
+
+        Log.d("ALARM", String.valueOf(isWorking));
+
+        if (!isWorking) {
+
+            PendingIntent pi_full = PendingIntent.getBroadcast(
+                    context,
+                    100,
+                    mIntent_Full,
+                    0
+            );
+            //
+            am.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendarAux.getTimeInMillis(),
+                    (1000 * 60 * 60 * 4),
+                    //(1000 * 60 * 5),
+                    pi_full
+            );
+        }
+
+        calendarAux = Calendar.getInstance();
 
         calendarAux.set(
-                Calendar.MINUTE,
-                15
+                Calendar.SECOND,
+                calendarAux.get(Calendar.SECOND) + 15
         );
 
         /**
@@ -1073,28 +1100,155 @@ public class ToolBox_Inf {
                 WBR_AL_Quarter.class
         );
         //
-        PendingIntent pi_Quarter = PendingIntent.getBroadcast(
-                context,
-                200,
-                mIntent_Quarter,
-                0
-        );
+        isWorking = (PendingIntent.getBroadcast(
+                context, 200, mIntent_Quarter, PendingIntent.FLAG_NO_CREATE) != null);
+
+        Log.d("ALARM", String.valueOf(isWorking));
+
+        if (!isWorking) {
+            PendingIntent pi_Quarter = PendingIntent.getBroadcast(
+                    context,
+                    200,
+                    mIntent_Quarter,
+                    0
+            );
+            //
+            am.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendarAux.getTimeInMillis(),
+                    (1000 * 60 * 15),
+                    //(1000 * 60 * 2),
+                    pi_Quarter
+            );
+        }
         //
-        am.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                calendarAux.getTimeInMillis(),
-                (1000 * 60 * 15),
-                pi_Quarter
-        );
-        //
-        ToolBox_Inf.generateNotification(context, 100);
+        generateNotification(context, 300);
     }
 
     public static void generateNotification(Context context, int parameter) {
 
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
 
+        EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(
+                context,
+                Constant.DB_FULL_BASE,
+                Constant.DB_VERSION_BASE
+        );
+
+        GE_Custom_Form_LocalDao formLocalDao;
+
+        ArrayList<HMAux> customers_vs_total = new ArrayList<>();
+
+        ArrayList<HMAux> totals;
+
+        ArrayList<HMAux> customers = (ArrayList<HMAux>) ev_user_customerDao.query_HM(
+                new EV_User_Customer_Sql_006()
+                        .toSqlQuery()
+        );
+
+        for (HMAux hmAux : customers) {
+            formLocalDao =
+                    new GE_Custom_Form_LocalDao(
+                            context,
+                            ToolBox_Con.customDBPath(Long.parseLong(hmAux.get("customer_code"))),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+            HMAux auxCT = new HMAux();
+            auxCT.put("customer_code", hmAux.get("customer_code"));
+            auxCT.put("customer_name", hmAux.get("customer_name"));
+            auxCT.put("translate_code", hmAux.get("translate_code"));
+            //
+            boolean bInclude = false;
+            //
+            if (parameter == 100 || parameter == 300) {
+                totals = (ArrayList<HMAux>) formLocalDao.query_HM(
+                        new GE_Custom_Form_Local_Sql_013(
+                                Calendar.getInstance().getTimeInMillis()
+                        ).toSqlQuery()
+                );
+            } else {
+                totals = (ArrayList<HMAux>) formLocalDao.query_HM(
+                        new GE_Custom_Form_Local_Sql_014(
+                                Calendar.getInstance().getTimeInMillis()
+                        ).toSqlQuery()
+                );
+            }
+            //
+            for (HMAux hmAuxTotal : totals) {
+                bInclude = true;
+
+                if (parameter == 100 || parameter == 300) {
+                    if (hmAuxTotal.get("type").equalsIgnoreCase("future")) {
+                        auxCT.put("future", hmAuxTotal.get("total"));
+                    } else {
+                        auxCT.put("late", hmAuxTotal.get("total"));
+                    }
+                } else {
+                    if (hmAuxTotal.get("type").equalsIgnoreCase("future")) {
+                        auxCT.put("future", hmAuxTotal.get("total"));
+                    } else {
+                    }
+                }
+            }
+            //
+            if (bInclude) {
+                HMAux hmTr = translationCustomerSys(context, auxCT.get("translate_code"));
+                auxCT.put("future_text", hmTr.get("message_full_quarter_notification_future"));
+                auxCT.put("late_text", hmTr.get("message_full_quarter_notification_late"));
+                customers_vs_total.add(auxCT);
+            }
+
+        }
+
+        int tamanho_final = customers_vs_total.size();
+
+
+        for (HMAux cust : customers_vs_total) {
+
+            StringBuilder sbFinal = new StringBuilder();
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+            builder.setSmallIcon(R.drawable.ic_calendario);
+            builder.setAutoCancel(true);
+
+            if (parameter == 100 || parameter == 300) {
+                if (!cust.get("future").equals("0") || !cust.get("late").equals("0")) {
+                    sbFinal
+                            .append(cust.get("future_text") + "(")
+                            .append(cust.get("future") + ")  ")
+                            .append(cust.get("late_text") + "(")
+                            .append(cust.get("late") + ")\n");
+                }
+            } else {
+                if (!cust.get("future").equals("0")) {
+                    sbFinal
+                            .append(cust.get("future_text") + "(")
+                            .append(cust.get("future") + ")\n");
+                }
+            }
+
+            if (sbFinal.toString().length() != 0) {
+
+                //builder.setContentTitle(context.getString(R.string.title_notification_generic));
+                //builder.setContentText(context.getString(R.string.message_notification_sync));
+                builder.setContentTitle(cust.get("customer_name"));
+                builder.setContentText(sbFinal.toString());
+                builder.setAutoCancel(true);
+                builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+                //
+                int versao = Build.VERSION.SDK_INT;
+                //
+                if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    nm.notify(parameter + Integer.parseInt(cust.get("customer_code")), builder.build());
+                } else {
+                    nm.notify(parameter + Integer.parseInt(cust.get("customer_code")), builder.getNotification());
+                }
+
+            }
+        }
     }
-
 
     public static void libTranslation(Context context) {
         Constant.HMAUX_TRANS_LIB = new HMAux();
@@ -1136,6 +1290,30 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", (!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_ok") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.sys_alert_btn_ok) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok")));
         Constant.HMAUX_TRANS_LIB.put("footer_label", (!Constant.HMAUX_TRANS_LIB.containsKey("footer_label") || Constant.HMAUX_TRANS_LIB.get("footer_label").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.footer_label) : Constant.HMAUX_TRANS_LIB.get("footer_label")));
     }
+
+    public static HMAux translationCustomerSys(Context context, String translate_code) {
+        HMAux hmAux = new HMAux();
+
+        if (!translate_code.equals("")) {
+            List<String> transList = new ArrayList<>();
+            hmAux = setLanguage(
+                    context,
+                    Constant.APP_MODULE,
+                    getResourceCode(
+                            context,
+                            Constant.APP_MODULE,
+                            Constant.LIB_RESOURCE_NAME
+                    ),
+                    translate_code,
+                    transList);
+        }
+
+        hmAux.put("message_full_quarter_notification_future", (!hmAux.containsKey("message_full_quarter_notification_future") || hmAux.get("message_full_quarter_notification_future").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_future) : hmAux.get("message_full_quarter_notification_future")));
+        hmAux.put("message_full_quarter_notification_late", (!hmAux.containsKey("message_full_quarter_notification_late") || hmAux.get("message_full_quarter_notification_late").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_late) : hmAux.get("message_full_quarter_notification_late")));
+
+        return hmAux;
+    }
+
 
     public static boolean hasNFC(Context context) {
         if (NfcAdapter.getDefaultAdapter(context) != null) {
@@ -1380,6 +1558,54 @@ public class ToolBox_Inf {
         }
 
         return calendar.getTimeInMillis();
+    }
+
+    public static void copyFile(File file, File dir) throws IOException {
+        File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+
+    }
+
+    public static File[] getListOfFiles_v4(String path, String... sufix) {
+
+        File fileList = new File(path);
+        File[] files = fileList.listFiles(new GenericExtFilter(sufix));
+        //
+        if (files != null) {
+            Arrays.sort(files);
+        }
+        //
+        return files;
+    }
+
+    private static class GenericExtFilter implements FilenameFilter {
+        private String[] exts;
+
+        public GenericExtFilter(String... exts) {
+            this.exts = exts;
+        }
+
+        @Override
+        public boolean accept(File dir, String name) {
+            for (String ext : exts) {
+                if (name.endsWith(ext)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
 }

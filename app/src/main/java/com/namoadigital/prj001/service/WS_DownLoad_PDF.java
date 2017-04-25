@@ -32,8 +32,8 @@ public class WS_DownLoad_PDF extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
 
-            if(!ToolBox_Inf.isDownloadRunning()){
-               //Log.v("WS_DownLoad_PDF","true");
+            if (!ToolBox_Inf.isDownloadRunning()) {
+                //Log.v("WS_DownLoad_PDF","true");
                 WBR_DownLoad_PDF.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
@@ -118,9 +118,9 @@ public class WS_DownLoad_PDF extends IntentService {
         } finally {
             WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);
-            if(!ToolBox_Inf.isDownloadRunning()){
+            if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_PDF","false");
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
         }

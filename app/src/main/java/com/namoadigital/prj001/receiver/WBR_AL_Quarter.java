@@ -16,11 +16,11 @@ public class WBR_AL_Quarter extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        activateCleanning(context);
+        activateWBR_AL_Quarter(context);
 
     }
 
-    private void activateCleanning(Context context) {
+    private void activateWBR_AL_Quarter(Context context) {
         Intent mIntent = new Intent(context, WS_AL_Quarter.class);
         Bundle bundle = new Bundle();
 
