@@ -808,7 +808,7 @@ public class WS_Sync extends IntentService {
                                     && local.getCustom_form_code() == scheduleField.getCustom_form_code()
                                     && local.getCustom_form_version() == scheduleField.getCustom_form_version()
                                     && local.getCustom_form_data_serv() != null
-                                    && local.getCustom_form_data_serv() == scheduleField.getCustom_form_data_serv()
+                                    && local.getCustom_form_data_serv().equals(scheduleField.getCustom_form_data_serv())
                                     ) {
                                 scheduleField.setCustom_form_data(local.getCustom_form_data());
                                 newFormsFiedlLocal.add(scheduleField);

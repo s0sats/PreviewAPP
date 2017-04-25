@@ -75,5 +75,7 @@
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Sync Required</string>
     <string name="message_received_notification_sync">Messages Received</string>
+    <string name="message_full_quarter_notification_future">Scheduled</string>
+    <string name="message_full_quarter_notification_late">Late</string>
 
 </resources>
