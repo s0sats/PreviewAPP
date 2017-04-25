@@ -133,6 +133,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     ).toSqlQuery().toString().toLowerCase()
             );
 
+            int hugo = 10;
+
         } else {
 
             bNew = true;

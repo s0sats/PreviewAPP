@@ -427,7 +427,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                     formData.setSignature(mSignature);
 
-                    mPresenter.checkSignature(formData, signature, 0,geFiles);
+                    mPresenter.checkSignature(formData, signature, 0, geFiles);
 
                 } else {
 
@@ -1344,19 +1344,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        //return super.onPrepareOptionsMenu(menu);
-        //Pega os settings do menu e esconde
-        MenuItem item = menu.findItem(R.id.act11_action_settings);
-        item.setVisible(false);
-        return true;
-    }
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        //return super.onPrepareOptionsMenu(menu);
+//        //Pega os settings do menu e esconde
+//        MenuItem item = menu.findItem(R.id.act11_action_settings);
+//        item.setVisible(false);
+//
+//        return true;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
@@ -1452,7 +1458,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mPresenter.checkData(formData,geFiles);
+                                mPresenter.checkData(formData, geFiles);
                                 bNew = false;
                             }
                         }
@@ -1536,7 +1542,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 geFiles.add(geFile);
                 //
-                mPresenter.checkData(formData, geFiles );
+                mPresenter.checkData(formData, geFiles);
                 bNew = false;
             } else {
                 formData.setSignature_name("");
@@ -1681,8 +1687,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 if (aux.get("blob_name").trim().length() != 0) {
 
                     File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+
+                    try {
+                        ToolBox_Inf.copyFile(
+                                file,
+                                new File(Constant.CACHE_PDF)
+                        );
+                    } catch (Exception e) {
+                    }
+
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                     startActivity(intent);

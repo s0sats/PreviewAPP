@@ -94,6 +94,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act005_main);
 
+        //Hugo Remover
+        //ToolBox_Inf.generateNotification(getApplicationContext(), 200);
+        ToolBox_Inf.reprogramAlarms_Full_Quarter(Act005_Main.this);
+        //
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //

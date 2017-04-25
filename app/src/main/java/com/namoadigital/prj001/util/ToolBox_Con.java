@@ -470,6 +470,26 @@ public class ToolBox_Con {
         );
     }
 
+    public static void setPreference_AL_DT(Context context, long sDT) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.AL_DT,
+                sDT
+        ).apply();
+    }
+
+    public static Long getPreference_AL_DT(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.AL_DT,
+                0L
+        );
+    }
+
     public static void setPreference_SYNC_REQUIRED(Context context, String sRequired) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);

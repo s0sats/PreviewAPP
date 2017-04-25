@@ -8,6 +8,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_NAME_BASE;
@@ -43,6 +44,7 @@ public class AppBase extends Application {
 
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
+        CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 5;
