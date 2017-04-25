@@ -41,7 +41,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                                     context,
                                     Constant.APP_MODULE,
-                                    "local_data_list_adapter"
+                                    "module_schedules_adapter"
                                 );
         loadTranslation();
     }
@@ -137,6 +137,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         tv_list.add(tv_item_06_lbl);
         tv_list.add(tv_item_06_val);
         //
+        TextView tv_item_07_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_07_lbl);
+        TextView tv_item_07_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_07_val);
+
+        tv_list.add(tv_item_07_lbl);
+        tv_list.add(tv_item_07_val);
+        //
         Drawable llDrawable = null;
 
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
@@ -150,7 +156,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
                 tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
-                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" ");
+                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
                 tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
                 tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id")+" "+item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
 
@@ -158,9 +164,17 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     tv_item_04_lbl.setVisibility(View.GONE);
                     tv_item_04_val.setVisibility(View.GONE);
                 }
+
                 tv_ttl_002.setText(hmAux_Trans.get("ttl_form"));
                 tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
                 tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+
+                if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0){
+                    tv_item_07_lbl.setVisibility(View.VISIBLE);
+                    tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+                }else{
+                    tv_item_07_lbl.setVisibility(View.VISIBLE);
+                }
             break;
 
         }
@@ -188,6 +202,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
             case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                //
                 llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
                 llBackground.setBackground(llDrawable);
                 break;
@@ -209,10 +224,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("lbl_product_code");
         translateList.add("lbl_product_id");
         translateList.add("lbl_product_desc");
+        translateList.add("lbl_serial_id");
         translateList.add("ttl_form");
         translateList.add("lbl_type");
         translateList.add("lbl_form");
         translateList.add("CHECKLIST");
+        translateList.add("lbl_data_serv");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

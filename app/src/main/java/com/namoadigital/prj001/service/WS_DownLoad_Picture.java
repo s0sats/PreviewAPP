@@ -70,7 +70,7 @@ public class WS_DownLoad_Picture extends IntentService {
             //
             for (HMAux hmAux : dados_geral) {
                 HMAux item = new HMAux();
-                item.put("custom_name", hmAux.get("custom_name"));
+                item.put("custom_name", hmAux.get("custom_name").toLowerCase());
                 item.put("custom_form_data_content", hmAux.get("custom_form_data_content"));
                 //
                 dados.add(item);

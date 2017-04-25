@@ -29,7 +29,7 @@ public class Sql_Act005_003 implements Specification {
                         " WHERE\n" +
                         "   l.customer_code = '"+customer_code+"' \n" +
                         "   and l.custom_form_data_serv is not null " +
-                        "   and l.schedule_date_start_format_ms < (strftime('%s', 'now','localtime')  * 1000 ) " +
+                        "   and l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) " +
                         "   and l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"'\n")
                 .append(";"+ BADGE_SCHEDULED_QTY)
                 .toString();

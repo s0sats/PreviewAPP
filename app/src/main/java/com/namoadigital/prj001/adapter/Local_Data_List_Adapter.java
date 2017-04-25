@@ -113,8 +113,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_id_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_label);
         TextView tv_id_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_val);
 
-        String[] id = item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC).split("-");
-        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+id[0].trim());
+        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
 
         tv_list.add(tv_id_lbl);
         tv_list.add(tv_id_val);
@@ -162,6 +161,20 @@ public class Local_Data_List_Adapter extends BaseAdapter {
 
         tv_list.add(tv_form_lbl);
         tv_list.add(tv_form_val);
+        //
+        TextView tv_data_serv_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_data_serv_lbl);
+        TextView tv_data_serv_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_data_serv_val);
+
+        if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0){
+            tv_data_serv_lbl.setVisibility(View.VISIBLE);
+            tv_data_serv_lbl.setText(hmAux_Trans.get("lbl_data_serv")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+        }else{
+            tv_data_serv_lbl.setVisibility(View.GONE);
+            tv_data_serv_lbl.setText("");
+        }
+
+        tv_list.add(tv_data_serv_lbl);
+        tv_list.add(tv_data_serv_val);
         //
         Drawable llDrawable = null;
 
@@ -239,6 +252,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         translateList.add("ttl_form");
         translateList.add("lbl_type");
         translateList.add("lbl_form");
+        translateList.add("lbl_data_serv");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

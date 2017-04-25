@@ -22,13 +22,13 @@ public class Sql_Act016_001 implements Specification {
                         "  sum(t.inprocessing_count) "+CalendarView.INPROCESSING_COUNT+ ",\n" +
                         "  sum(t.scheduled_count) "+CalendarView.SCHEDULED_COUNT+ ",\n" +
                         "  sum(t.finalized_count) "+CalendarView.FINALIZED_COUNT+ ",\n" +
-                        "  sum(t.sent_count) "+CalendarView.SENT_COUNT+ "\n" +
+                        "  sum(t.sent_count) "+CalendarView.SENT_COUNT+ "\n " +
                         " FROM(\n" +
                         "  SELECT\n" +
                         "      strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') schedule_date_start,\n" +
-                        "      (l.schedule_date_start_format_ms < (strftime('%s', 'now','localtime')  * 1000 ) and l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' ) delayed_count,\n" +
+                        "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' ) delayed_count,\n" +
                         "      (l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-                        "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now','localtime')  * 1000 ) AND l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"') scheduled_count,    \n" +
+                        "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now')  * 1000 ) AND l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"') scheduled_count,    \n" +
                         "      (l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_FINALIZED+"') finalized_count,\n" +
                         "      (l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SENT+"') sent_count\n" +
                         "     \n" +
@@ -46,6 +46,7 @@ public class Sql_Act016_001 implements Specification {
                         +"#"+ CalendarView.SCHEDULED_COUNT
                         +"#"+ CalendarView.FINALIZED_COUNT
                         +"#"+ CalendarView.SENT_COUNT
+                        +"#cur_data#cur_mili"
                 )
                 .toString();
 
