@@ -70,7 +70,7 @@ public class WS_DownLoad_Picture extends IntentService {
             //
             for (HMAux hmAux : dados_geral) {
                 HMAux item = new HMAux();
-                item.put("custom_name", hmAux.get("custom_name"));
+                item.put("custom_name", hmAux.get("custom_name").toLowerCase());
                 item.put("custom_form_data_content", hmAux.get("custom_form_data_content"));
                 //
                 dados.add(item);
@@ -93,16 +93,16 @@ public class WS_DownLoad_Picture extends IntentService {
                 } catch (JSONException e) {
                 }
                 //
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name") + ".jpg")) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".jpg")) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name") + ".tmp");
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".tmp");
                     //
                     ToolBox_Inf.downloadImagePDF(
                             value,
-                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name") + ".tmp"
+                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name").toLowerCase() + ".tmp"
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name"), ".jpg");
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name").toLowerCase(), ".jpg");
                 }
                 //
                 String nome_parte[] = hmAux.get("custom_name").split("_");

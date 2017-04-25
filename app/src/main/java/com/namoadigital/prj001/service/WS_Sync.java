@@ -711,7 +711,7 @@ public class WS_Sync extends IntentService {
                                     && local.getCustom_form_code() == schedules.getCustom_form_code()
                                     && local.getCustom_form_version() == schedules.getCustom_form_version()
                                     && local.getCustom_form_data_serv() != null
-                                    && local.getCustom_form_data_serv() == schedules.getCustom_form_data_serv()
+                                    && local.getCustom_form_data_serv().equals(schedules.getCustom_form_data_serv())
                                     ) {
                                 if (!local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
                                     add = false;
