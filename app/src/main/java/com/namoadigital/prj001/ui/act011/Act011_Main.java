@@ -1344,19 +1344,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        //return super.onPrepareOptionsMenu(menu);
-        //Pega os settings do menu e esconde
-        MenuItem item = menu.findItem(R.id.act11_action_settings);
-        item.setVisible(false);
-        return true;
-    }
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        //return super.onPrepareOptionsMenu(menu);
+//        //Pega os settings do menu e esconde
+//        MenuItem item = menu.findItem(R.id.act11_action_settings);
+//        item.setVisible(false);
+//
+//        return true;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
