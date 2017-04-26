@@ -674,6 +674,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.signature = signature;
         this.mSignature = "s_" + prefix + "1.png";
         this.pdfs_local = (ArrayList<HMAux>) pdfs;
+        this.form_data = String.valueOf(formLocal.getCustom_form_data());
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id)) {
             formData.setSerial_id(serial_id);
