@@ -1689,12 +1689,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
 
                     try {
+
+                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
                         ToolBox_Inf.copyFile(
                                 file,
                                 new File(Constant.CACHE_PDF)
                         );
                     } catch (Exception e) {
                     }
+
+
 
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");

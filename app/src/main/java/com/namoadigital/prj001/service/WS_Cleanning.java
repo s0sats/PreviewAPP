@@ -4,12 +4,14 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
@@ -42,6 +44,7 @@ public class WS_Cleanning extends IntentService {
         try {
 
             deleteFormLocal();
+            deleteFCMMessages();
 
         } catch (Exception e) {
             String results = e.toString();
@@ -165,6 +168,21 @@ public class WS_Cleanning extends IntentService {
 
     }
 
+    private void deleteFCMMessages() {
+        FCMMessageDao fcmMessageDao =
+                new FCMMessageDao(
+                        getApplicationContext(),
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
+                );
+
+        fcmMessageDao.remove(
+                new FCMMessage_Sql_006(
+                        sDTFormat_21_Days()
+                ).toSqlQuery()
+        );
+    }
+
     public String sDTFormat_5_Days(String sDTFormatS) {
         String sResults = "";
         Calendar ca1 = Calendar.getInstance();
@@ -186,6 +204,14 @@ public class WS_Cleanning extends IntentService {
         }
 
         return sResults;
+    }
+
+    public String sDTFormat_21_Days() {
+        String sResults = "";
+        Calendar ca1 = Calendar.getInstance();
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 22);
+
+        return String.valueOf(ca1.getTimeInMillis());
     }
 
 }
