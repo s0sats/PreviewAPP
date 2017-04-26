@@ -36,7 +36,6 @@ import java.util.List;
 public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private Context context;
-    private TextView tv_customer_lbl;
     private TextView tv_customer_val;
     private ListView lv_sites;
     private Act003_Main_Presenter mPresenter;
@@ -75,7 +74,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private void initVars() {
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
         //
-        tv_customer_lbl = (TextView) findViewById(R.id.act003_tv_customer_lbl);
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
@@ -108,7 +106,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private void initActions() {
 
-        tv_customer_lbl.setText(hmAux_Trans.get("lbl_customer"));
         tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
 
         lv_sites.setOnItemClickListener(new AdapterView.OnItemClickListener() {

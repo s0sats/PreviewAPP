@@ -10,38 +10,46 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act003.Act003_Main"
     tools:showIn="@layout/act003_main">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="15dp">
-        <TextView
-            android:id="@+id/act003_tv_customer_lbl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Customer"
-            android:textSize="@dimen/font_size_title_md"
-            android:textStyle="bold"
-            android:visibility="gone"/>
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_site"
+            android:padding="5dp"
+            />
+
 
         <TextView
             android:id="@+id/act003_tv_customer_val"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="Customer"
             android:textSize="@dimen/font_size_title_md"
-            android:textStyle="bold"/>
- <!--       <TextView
-            android:id="@+id/act003_tv_customer_lbl"
-            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Mosolf"
-            android:textSize="@dimen/font_size_item"
-            android:paddingLeft="10dp"
-            android:textColor="@color/namoa_color_light_blue"
-            android:visibility="gone"
-            />
--->
+            android:layout_weight="5"
+            android:orientation="vertical"
+            android:paddingLeft="0dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp">
+
+
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
 
