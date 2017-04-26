@@ -165,16 +165,31 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_data_serv_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_data_serv_lbl);
         TextView tv_data_serv_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_data_serv_val);
 
+        tv_list.add(tv_data_serv_lbl);
+        tv_list.add(tv_data_serv_val);
+
+        TextView tv_date_schedule_start_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_lbl);
+        TextView tv_date_schedule_start_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_val);
+
+        tv_list.add(tv_date_schedule_start_lbl);
+        tv_list.add(tv_date_schedule_start_val);
+
         if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0){
             tv_data_serv_lbl.setVisibility(View.VISIBLE);
             tv_data_serv_lbl.setText(hmAux_Trans.get("lbl_data_serv")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+            //
+            tv_date_schedule_start_lbl.setVisibility(View.VISIBLE);
+            tv_date_schedule_start_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+
         }else{
             tv_data_serv_lbl.setVisibility(View.GONE);
             tv_data_serv_lbl.setText("");
+            //
+            tv_date_schedule_start_lbl.setVisibility(View.GONE);
+            tv_date_schedule_start_lbl.setText("");
         }
 
-        tv_list.add(tv_data_serv_lbl);
-        tv_list.add(tv_data_serv_val);
+
         //
         Drawable llDrawable = null;
 
@@ -253,6 +268,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         translateList.add("lbl_type");
         translateList.add("lbl_form");
         translateList.add("lbl_data_serv");
+        translateList.add("lbl_date_schedule_start");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
