@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -215,6 +217,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("qty_automatic_answer_msg");
         transList.add("dialog_info_product_code_lbl");
         transList.add("dialog_info_product_id_lbl");
+        transList.add("dialog_info_data_serv_lbl");
+        transList.add("dialog_info_dt_schedule_start_lbl");
+        transList.add("dialog_info_dt_schedule_end_lbl");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -1616,7 +1621,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         TextView tv_form_version_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_lbl);
         TextView tv_form_version_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_val);
-
+        //
+        LinearLayout ll_schedule_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_scheduel_info);
+        //
+        TextView tv_data_serv_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
+        TextView tv_data_serv_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
+        //
+        TextView tv_dt_schedule_start_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_lbl);
+        TextView tv_dt_schedule_start_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_val);
+        //
+        TextView tv_dt_schedule_end_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_lbl);
+        TextView tv_dt_schedule_end_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_val);
+        //
         TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
@@ -1646,8 +1662,45 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
 
-        tv_title_pdf.setText(hmAux_Trans.get("dialog_info_title_pdf_lbl"));
+        tv_form_code_val.setText(form);
+        tv_form_code_desc.setText(form_desc);
 
+
+        GE_Custom_Form_LocalDao formLocalDao =
+                new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+        HMAux dialogFormLocal
+                = formLocalDao.getByStringHM(
+                        new Sql_Act011_003(
+                                context,
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                type,
+                                form,
+                                form_version,
+                                form_data
+                        ).toSqlQuery()
+
+                  );
+        if(dialogFormLocal != null && dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).length() > 0){
+
+            tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
+            tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
+            tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
+
+            //
+            ll_schedule_info.setVisibility(View.VISIBLE);
+            tv_data_serv_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+            tv_dt_schedule_start_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+            tv_dt_schedule_end_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
+        }else{
+            ll_schedule_info.setVisibility(View.GONE);
+        }
+
+        tv_title_pdf.setText(hmAux_Trans.get("dialog_info_title_pdf_lbl"));
 
 //      Incluir os vazios
 //        int repeat = 4 - pdfs_local.size();

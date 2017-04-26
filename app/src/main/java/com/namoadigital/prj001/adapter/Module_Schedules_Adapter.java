@@ -143,6 +143,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         tv_list.add(tv_item_07_lbl);
         tv_list.add(tv_item_07_val);
         //
+        TextView tv_item_08_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_08_lbl);
+        TextView tv_item_08_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_08_val);
+
+        tv_list.add(tv_item_08_lbl);
+        tv_list.add(tv_item_08_val);
+        //
         Drawable llDrawable = null;
 
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
@@ -172,8 +178,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0){
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
                     tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+
+                    tv_item_08_lbl.setVisibility(View.VISIBLE);
+                    tv_item_08_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
                 }else{
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
+                    tv_item_08_lbl.setVisibility(View.VISIBLE);
                 }
             break;
 
@@ -230,6 +240,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("lbl_form");
         translateList.add("CHECKLIST");
         translateList.add("lbl_data_serv");
+        translateList.add("lbl_date_schedule_start");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
