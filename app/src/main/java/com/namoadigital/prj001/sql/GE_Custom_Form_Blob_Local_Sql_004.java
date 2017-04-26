@@ -24,32 +24,34 @@ public class GE_Custom_Form_Blob_Local_Sql_004 implements Specification {
 
     @Override
     public String toSqlQuery() {
-        StringBuilder sb =  new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         return sb
                 .append(" SELECT " +
                         "   bl.* " +
                         " FROM " +
-                        GE_Custom_Form_Blob_LocalDao.TABLE + "  bl " +
+                        GE_Custom_Form_BlobDao.TABLE + "  bl " +
                         " WHERE " +
-                        "   bl.customer_code = '"+customer_code+"' " +
-                        "   and bl.custom_form_type = '"+custom_form_type+"' " +
-                        "   and bl.custom_form_code = '"+custom_form_code+"' " +
-                        "   and bl.custom_form_version = '"+custom_form_code+"' " +
+                        "   bl.customer_code = '" + customer_code + "' " +
+                        "   and bl.custom_form_type = '" + custom_form_type + "' " +
+                        "   and bl.custom_form_code = '" + custom_form_code + "' " +
+                        "   and bl.custom_form_version = '" + custom_form_version + "' " +
                         "    " +
                         "   and bl.blob_url_local = ''" +
                         " " +
                         " UNION " +
+
                         " " +
+
                         " SELECT " +
                         "  bl.* " +
                         " FROM " +
-                        GE_Custom_Form_BlobDao.TABLE + "  bl " +
+                        GE_Custom_Form_Blob_LocalDao.TABLE + "  bl " +
                         " WHERE " +
-                        "   bl.customer_code = '"+customer_code+"' " +
-                        "   and bl.custom_form_type = '"+custom_form_type+"' " +
-                        "   and bl.custom_form_code = '"+custom_form_code+"' " +
-                        "   and bl.custom_form_version = '"+custom_form_code+"' " +
+                        "   bl.customer_code = '" + customer_code + "' " +
+                        "   and bl.custom_form_type = '" + custom_form_type + "' " +
+                        "   and bl.custom_form_code = '" + custom_form_code + "' " +
+                        "   and bl.custom_form_version = '" + custom_form_version + "' " +
                         "    " +
                         "   and bl.blob_url_local = ''")
                 .toString();
