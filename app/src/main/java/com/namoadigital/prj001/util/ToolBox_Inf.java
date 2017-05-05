@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.util;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
@@ -1122,7 +1120,7 @@ public class ToolBox_Inf {
             );
         }
         //
-        generateNotification(context, 300);
+       // generateNotification(context, 300);
     }
 
     public static void generateNotification(Context context, int parameter) {

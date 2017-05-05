@@ -743,7 +743,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        menu.add(0, 2, Menu.NONE, "User Info");
 
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
