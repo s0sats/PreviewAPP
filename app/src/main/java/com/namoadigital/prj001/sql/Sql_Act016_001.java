@@ -11,6 +11,12 @@ import com.namoadigital.prj001.util.Constant;
 
 public class Sql_Act016_001 implements Specification {
 
+    private String customer_code;
+
+    public Sql_Act016_001(String customer_code) {
+        this.customer_code = customer_code;
+    }
+
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
@@ -35,7 +41,7 @@ public class Sql_Act016_001 implements Specification {
                         "  FROM "+ GE_Custom_Form_LocalDao.TABLE+" l\n" +
                         "  \n" +
                         "  WHERE \n" +
-                        "        l.customer_code= '1'     \n" +
+                        "        l.customer_code= '"+customer_code+"'     \n" +
                         "        AND l.custom_form_data_serv is not null) T\n" +
                         "      \n" +
                         " GROUP BY\n" +

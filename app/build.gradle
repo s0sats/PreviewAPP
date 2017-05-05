@@ -41,7 +41,8 @@ repositories {
 
 repositories {
     maven {
-        url "file:///C:/AppsAndroid/NamoaLib"
+        //url "file:///C:/AppsAndroid/NamoaLib"
+        url "file:///C:/Android/LIB"
     }
 }
 
@@ -62,6 +63,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     testCompile 'junit:junit:4.12'
+
+    provided files('json-20160212.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act016_001;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,7 +35,9 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
     public void getSchedule() {
         List<HMAux> schedules =
                 formLocalDao.query_HM(
-                        new Sql_Act016_001().toSqlQuery()
+                        new Sql_Act016_001(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                        ).toSqlQuery()
                 );
 
         mView.loadSchedule(schedules);
