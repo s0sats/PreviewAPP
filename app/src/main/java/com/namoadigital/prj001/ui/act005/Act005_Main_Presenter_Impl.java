@@ -397,4 +397,27 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     }
 
+    @Override
+    public void executeEnableNFC() {
+        mView.setWsProcess(Act005_Main.WS_PROCESS_ENABLE_NFC);
+
+       // mView.showPD();
+
+    }
+
+    @Override
+    public void executeCancelNFC() {
+        mView.setWsProcess(Act005_Main.WS_PROCESS_CANCEL_NFC);
+
+       // mView.showPD();
+
+    }
+
+    @Override
+    public void executeSupport() {
+        mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
+
+        //mView.showPD();
+
+    }
 }

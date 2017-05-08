@@ -25,8 +25,11 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
     public static final String USER_CODE = "user_code";
     public static final String USER_NICK = "user_nick";
     public static final String EMAIL_P = "email_p";
+    public static final String ADMIN = "admin";
+    public static final String EXIST_NFC = "exist_nfc";
+    public static final String NFC_BLOCKED = "nfc_blocked";
 
-    private String[] columns = {USER_CODE, USER_NICK, EMAIL_P};
+    private String[] columns = {USER_CODE, USER_NICK, EMAIL_P, ADMIN, EXIST_NFC, NFC_BLOCKED};
 
     public EV_UserDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
@@ -236,6 +239,15 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
             if (user.getEmail_p() != null) {
                 contentValues.put(EMAIL_P, user.getEmail_p());
             }
+            if (user.getAdmin() > -1) {
+                contentValues.put(ADMIN, user.getAdmin());
+            }
+            if (user.getExist_nfc() > -1) {
+                contentValues.put(EXIST_NFC, user.getExist_nfc());
+            }
+            if (user.getNfc_blocked() > -1) {
+                contentValues.put(NFC_BLOCKED, user.getNfc_blocked());
+            }
 
             return contentValues;
         }
@@ -249,6 +261,9 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
             user.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
             user.setUser_nick(cursor.getString(cursor.getColumnIndex(USER_NICK)));
             user.setEmail_p(cursor.getString(cursor.getColumnIndex(EMAIL_P)));
+            user.setAdmin(cursor.getInt(cursor.getColumnIndex(ADMIN)));
+            user.setExist_nfc(cursor.getInt(cursor.getColumnIndex(EXIST_NFC)));
+            user.setNfc_blocked(cursor.getInt(cursor.getColumnIndex(NFC_BLOCKED)));
 
             return user;
         }

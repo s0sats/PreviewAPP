@@ -643,6 +643,62 @@ public class ToolBox_Inf {
         return true;
     }
 
+    public static boolean processWSCheckValidationNFCAuth(Context context, String validation, String error_msg, String s_Link, String ret, String ret_error) {
+
+        switch (validation) {
+            case "OK":
+                break;
+
+            case "UPDATE_REQUIRED":
+                break;
+
+            case "VERSION_ERRO":
+                sendBCStatus(context, "VERSION_ERRO", error_msg, s_Link, "1");
+
+                return false;
+
+            case "VERSION_INVALID":
+                sendBCStatus(context, "VERSION_INVALID", error_msg, s_Link, "1");
+
+                return false;
+
+            case "EXPIRED":
+                sendBCStatus(context, "EXPIRED", error_msg, s_Link, "1");
+
+                return false;
+
+            case "USER_BLOCKED":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+
+                return false;
+
+            case "SESSION_NOT_FOUND":
+                sendBCStatus(context, "ERROR_3", error_msg, s_Link, "0");
+                return false;
+
+            case "CREATE_SESSION_ABORT":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
+            case "LICENSE_QTY_INVALID":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+            case "PARAMETERS_ERROR":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
+            default:
+                break;
+        }
+
+        if (ret_error != null){
+            sendBCStatus(context, "ERROR_1", ret_error, s_Link, "0");
+            return false;
+        }
+
+        return true;
+    }
+
     public static String BitMapToBase64(Bitmap bm) {
         if (bm != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
