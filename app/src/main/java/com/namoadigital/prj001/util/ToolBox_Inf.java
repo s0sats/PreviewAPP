@@ -44,6 +44,8 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
@@ -127,6 +129,12 @@ public class ToolBox_Inf {
         if (!dirCachePDF.exists()) {
             dirCachePDF.mkdir();
         }
+
+        File dirSupport = new File(Constant.SUPPORT_PATH);
+        if (!dirSupport.exists()) {
+            dirSupport.mkdir();
+        }
+
     }
 
     public static String md5(String s) {
@@ -1416,6 +1424,13 @@ public class ToolBox_Inf {
                 || WBR_DownLoad_Picture.IS_RUNNING
                 || WBR_UpdateSoftware.IS_RUNNING
                 ) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isUploadRunning() {
+        if ( WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING ) {
             return true;
         }
         return false;

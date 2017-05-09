@@ -25,6 +25,7 @@ import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -433,7 +434,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public void executeSupport() {
         mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
-        //mView.showPD();
+        mView.showPD();
+
+        Intent mIntent = new Intent(context, WBR_Upload_Support.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
 
     }
 }

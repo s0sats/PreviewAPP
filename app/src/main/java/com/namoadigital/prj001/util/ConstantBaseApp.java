@@ -79,9 +79,15 @@ public class ConstantBaseApp  extends ConstantBase {
     public static String ZIP_PATH;
     public static String IMG_PATH;
     public static String THU_PATH;
+    public static String SUPPORT_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
+
+    public static String SUPPORT_NAME;
+    public static String SUPPORT_NAME_FULL;
+
+
 
     /**
      * Service Login Parameter

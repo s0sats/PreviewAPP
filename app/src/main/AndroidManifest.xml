@@ -256,6 +256,9 @@
 
         <service android:name=".service.WS_Cancel_NFC" />
 
+        <receiver android:name=".receiver.WBR_Upload_Support" />
+
+        <service android:name=".service.WS_Upload_Support" />
 
     </application>
 

@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -566,6 +565,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 alertTitle = hmAux_Trans.get("progress_enable_nfc_ttl");
                 alertMsg = hmAux_Trans.get("progress_enable_nfc_msg");
                 break;
+
+            case Act005_Main.WS_PROCESS_CANCEL_NFC:
+                alertTitle = hmAux_Trans.get("progress_cancel_nfc_ttl");
+                alertMsg = hmAux_Trans.get("progress_cancel_nfc_msg");
+                break;
+
+            case Act005_Main.WS_PROCESS_SUPPORT:
+                alertTitle = hmAux_Trans.get("progress_support_ttl");
+                alertMsg = hmAux_Trans.get("progress_support_msg");
+                break;
+
             default:
                 break;
 
@@ -756,6 +766,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 alertMsg = hmAux_Trans.get("alert_cancel_nfc_finish_msg");
                 invalidateOptionsMenu();
                 break;
+
+            case Act005_Main.WS_PROCESS_SUPPORT:
+                alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_support_nfc_finish_msg");
+                break;
+
             default:
                 break;
 
@@ -893,13 +909,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case TOOLBAR_SUPPORT:
                 alertTitle = hmAux_Trans.get("alert_support_ttl");
                 alertMsg = hmAux_Trans.get("alert_support_nfc_msg");
-//                listener =  new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        mPresenter.executeSupport();
-//                    }
-//                };
-                Toast.makeText(context, "Suporte", Toast.LENGTH_SHORT).show();
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeSupport();
+                    }
+                };
                 break;
 
             default:
@@ -912,7 +927,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                     alertTitle,
                     alertMsg,
                     listener,
-                    0
+                    1
             );
         }
 
