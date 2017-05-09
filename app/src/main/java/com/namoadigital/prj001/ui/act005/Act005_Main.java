@@ -25,15 +25,18 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -122,6 +125,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
+
     }
 
     private void iniSetup() {
@@ -179,6 +183,26 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("toolbar_enable_nfc");
         transList.add("toolbar_cancel_nfc");
         transList.add("toolbar_support");
+        transList.add("alert_enable_nfc_ttl");
+        transList.add("alert_enable_nfc_msg");
+        transList.add("alert_cancel_nfc_ttl");
+        transList.add("alert_cancel_nfc_msg");
+        transList.add("alert_support_ttl");
+        transList.add("alert_support_msg");
+
+        transList.add("progress_enable_nfc_ttl");
+        transList.add("progress_enable_nfc_msg");
+        transList.add("progress_cancel_nfc_ttl");
+        transList.add("progress_cancel_nfc_msg");
+        transList.add("progress_support_ttl");
+        transList.add("progress_support_msg");
+
+        transList.add("alert_enable_nfc_finish_ttl");
+        transList.add("alert_enable_nfc_finish_msg");
+        transList.add("alert_cancel_nfc_finish_ttl");
+        transList.add("alert_cancel_nfc_finish_msg");
+        transList.add("alert_support_finish_ttl");
+        transList.add("alert_support_finish_msg");
 
 
         //
@@ -537,6 +561,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 alertTitle = hmAux_Trans.get("alert_logout_ttl");
                 alertMsg = hmAux_Trans.get("alert_logout_msg");
                 break;
+
+            case Act005_Main.WS_PROCESS_ENABLE_NFC:
+                alertTitle = hmAux_Trans.get("progress_enable_nfc_ttl");
+                alertMsg = hmAux_Trans.get("progress_enable_nfc_msg");
+                break;
             default:
                 break;
 
@@ -716,7 +745,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 startDownloadServices();
                 //
                 break;
+            case Act005_Main.WS_PROCESS_ENABLE_NFC:
+                alertTitle = hmAux_Trans.get("alert_enable_nfc_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_enable_nfc_finish_msg");
+                invalidateOptionsMenu();
+                break;
 
+            case Act005_Main.WS_PROCESS_CANCEL_NFC:
+                alertTitle = hmAux_Trans.get("alert_cancel_nfc_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_cancel_nfc_finish_msg");
+                invalidateOptionsMenu();
+                break;
             default:
                 break;
 
@@ -764,32 +803,49 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
         }
 
-        menu.add(0, TOOLBAR_NAMOA_LOGO, Menu.FIRST + 0, getResources().getString(R.string.app_name));
-        menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("toolbar_enable_nfc"));
-        menu.add(0, TOOLBAR_CANCEL_NFC, Menu.FIRST + 2, hmAux_Trans.get("toolbar_cancel_nfc"));
-        menu.add(0, TOOLBAR_SUPPORT, Menu.FIRST + 3, hmAux_Trans.get("toolbar_support"));
+        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        EV_User user = userDao.getByString(
+                new EV_User_Sql_001(
+                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
+                ).toSqlQuery()
+            );
 
+        //
+        //Menu Namoa logo
+        menu.add(0, TOOLBAR_NAMOA_LOGO, Menu.FIRST + 0, getResources().getString(R.string.app_name));
         menu.findItem(TOOLBAR_NAMOA_LOGO).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.findItem(TOOLBAR_NAMOA_LOGO).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.findItem(TOOLBAR_NAMOA_LOGO).setTitle(getResources().getString(R.string.app_name));
 
-        Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
-        nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
+        //
+        //Menu Habilita nfc
+        if(user.getNfc_blocked() == 1) {
+            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
+            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
 
-        menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(nfc_icon);
-        menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_ENABLE_NFC).setTitle( hmAux_Trans.get("toolbar_enable_nfc"));
+            menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("toolbar_enable_nfc"));
+            menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(nfc_icon);
+            menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("toolbar_enable_nfc"));
+        }
 
-        Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
-        nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
+        //
+        //Menu Cancela nfc
+        if(user.getExist_nfc() == 1) {
+            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
+            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
 
-        menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(nfc_icon2);
-        menu.findItem(TOOLBAR_CANCEL_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_CANCEL_NFC).setTitle( hmAux_Trans.get("toolbar_cancel_nfc"));
-
+            menu.add(0, TOOLBAR_CANCEL_NFC, Menu.FIRST + 2, hmAux_Trans.get("toolbar_cancel_nfc"));
+            menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(nfc_icon2);
+            menu.findItem(TOOLBAR_CANCEL_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(TOOLBAR_CANCEL_NFC).setTitle(hmAux_Trans.get("toolbar_cancel_nfc"));
+        }
+        //
+        //Menu Suporte
+        menu.add(0, TOOLBAR_SUPPORT, Menu.FIRST + 3, hmAux_Trans.get("toolbar_support"));
         menu.findItem(TOOLBAR_SUPPORT).setIcon(getResources().getDrawable(R.drawable.ic_headset_mic_black_24dp));
         menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT).setTitle( hmAux_Trans.get("toolbar_support"));
+        menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
         return true;
     }
@@ -807,7 +863,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         DialogInterface.OnClickListener listener = null;
 
-        switch (id){
+        switch (id) {
 
             case TOOLBAR_NAMOA_LOGO:
                 return true;
@@ -815,27 +871,23 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case TOOLBAR_ENABLE_NFC:
                 alertTitle = hmAux_Trans.get("alert_enable_nfc_ttl");
                 alertMsg = hmAux_Trans.get("alert_enable_nfc_msg");
-//                listener =  new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //mPresenter.executeEnableNFC();
-//
-//                    }
-//                };
-                Toast.makeText(context,"Enable NFC",Toast.LENGTH_SHORT).show();
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeEnableNFC();
+                    }
+                };
                 break;
 
             case TOOLBAR_CANCEL_NFC:
                 alertTitle = hmAux_Trans.get("alert_cancel_nfc_ttl");
                 alertMsg = hmAux_Trans.get("alert_cancel_nfc_msg");
-//                listener =  new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //mPresenter.executeCancelNFC();
-//
-//                    }
-//                };
-                Toast.makeText(context,"Cancel NFC",Toast.LENGTH_SHORT).show();
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeCancelNFC();
+                    }
+                };
                 break;
 
             case TOOLBAR_SUPPORT:
@@ -847,25 +899,25 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 //                        mPresenter.executeSupport();
 //                    }
 //                };
-                Toast.makeText(context,"Suporte",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Suporte", Toast.LENGTH_SHORT).show();
                 break;
 
             default:
                 return true;
         }
 
-//        if(listener != null) {
-//            ToolBox.alertMSG(
-//                    Act005_Main.this,
-//                    alertTitle,
-//                    alertMsg,
-//                    null,
-//                    0
-//            );
-//        }
+        if(listener != null) {
+            ToolBox.alertMSG(
+                    Act005_Main.this,
+                    alertTitle,
+                    alertMsg,
+                    listener,
+                    0
+            );
+        }
 
         return true;
-       // return super.onOptionsItemSelected(item);
+        // return super.onOptionsItemSelected(item);
     }
 
     @Override

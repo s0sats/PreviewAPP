@@ -248,6 +248,14 @@
 
         <service android:name=".fcm.WS_Notification_Sync" />
 
+        <receiver android:name=".receiver.WBR_Enable_NFC" />
+
+        <service android:name=".service.WS_Enable_NFC" />
+
+        <receiver android:name=".receiver.WBR_Cancel_NFC" />
+
+        <service android:name=".service.WS_Cancel_NFC" />
+
 
     </application>
 
