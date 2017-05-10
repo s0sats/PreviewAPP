@@ -29,7 +29,7 @@ public class GE_Custom_Form_Field_Local_Sql_003 implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "    fl.customer_code,  " +
+                        "    customer_code,  " +
                         "    fl.custom_form_type,  " +
                         "    fl.custom_form_code,  " +
                         "    fl.custom_form_version,  " +
@@ -51,11 +51,11 @@ public class GE_Custom_Form_Field_Local_Sql_003 implements Specification {
                         "   and fl.custom_form_version = '"+custom_form_version+"' " +
                         "    " +
                         "   and fl.custom_form_data_type = 'PICTURE' " +
-                        "   and fl.custom_form_local_link = ''" +
+                       "   and fl.custom_form_local_link = ''" +
                         " " +
                         " UNION " +
                         " SELECT " +
-                        "    fl.customer_code,  " +
+                        "    customer_code,  " +
                         "    fl.custom_form_type,  " +
                         "    fl.custom_form_code,  " +
                         "    fl.custom_form_version,  " +
@@ -79,6 +79,9 @@ public class GE_Custom_Form_Field_Local_Sql_003 implements Specification {
                         "   and fl.custom_form_data_type = 'PICTURE' " +
                         "   and fl.custom_form_local_link = ''" +
                         ";")
+                .append("customer_code" +
+                        //"#custom_form_type#custom_form_code#custom_form_version#custom_form_local_link" +
+                        "")
                 .toString();
     }
 }

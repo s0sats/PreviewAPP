@@ -34,7 +34,6 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
-import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
@@ -954,7 +953,7 @@ public class ToolBox_Inf {
                             ToolBox_Con.customDBPath(customer_code),
                             Constant.DB_VERSION_CUSTOM
                     );
-            List<GE_Custom_Form_Field_Local> pendingPictures = fieldLocalDao.query(
+            List<HMAux> pendingPictures = fieldLocalDao.query_HM(
                     new GE_Custom_Form_Field_Local_Sql_003(
                             customer_code,
                             custom_form_type,
