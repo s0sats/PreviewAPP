@@ -328,6 +328,25 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String uploadFileSupport(String ws_url, String json, String sPath, String sFile) {
+        try {
+            // Set your file path here
+            FileInputStream fstrm = new FileInputStream(sPath + "/" + sFile);
+
+            // Set your server page url (and the file title/description)
+            HttpFileUpload hfu = new HttpFileUpload(ws_url, json);
+
+            return hfu.Send_Now(fstrm, sFile);
+
+        } catch (Exception e) {
+            String error = e.toString();
+            return "Error: " + e.toString();
+        }
+    }
+
+
+
+
     public static void deleteLocalImage(String sFile) {
         File file = new File(Constant.CACHE_PATH_PHOTO + "/" + sFile);
 

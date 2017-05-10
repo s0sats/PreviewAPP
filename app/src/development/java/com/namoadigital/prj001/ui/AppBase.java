@@ -46,7 +46,7 @@ public class AppBase extends Application {
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
-        SUPPORT_NAME = "namoa_prj002.zip";
+        SUPPORT_NAME = "support.zip";
         SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
 
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";

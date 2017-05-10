@@ -21,10 +21,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-
 
 public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
@@ -50,62 +46,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         // Hugo Remover
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
-        //
-        //File[] filesGFZ = ToolBox_Inf.getListOfFiles_v4(Constant.CACHE_PATH, "jpg", "png", "pdf");
-        //
-        //String st = "/data/user/0/com.namoadigital.prj001.production/files/CC_CACHE/pdf_1_1_9_2_103.pdf";
 
-        //String st = "/data/user/0/com.namoadigital.prj001.production/databases/namoa_sms.db3";
-
-        //String st = "/data/user/0/com.namoadigital.prj001.production/files";
-
-        //File[] filesGFZ = ToolBox_Inf.getListOfFiles_v4(st, "db3");
-
-        //st = filesGFZ[0].getPath();
-
-        //String st = getBaseContext().getDatabasePath(Constant.DB_NAME_BASE).getPath();
-
-        //try {
-        //    ToolBox_Inf.copyFile(
-        //            new File(st),
-        //            new File("/sdcard/Download")
-        //    );
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
-        //
-
-        // List Files and Directories
-        File myDirectoryFull = new File("/data/user/0/com.namoadigital.prj001.production");
-        File[] files = myDirectoryFull.listFiles();
-
-        ToolBox_Inf.zipFolder(
-                "/data/user/0/com.namoadigital.prj001.production/files/CC_CACHE",
-                "/sdcard/DBase/Hugo.zip"
-        );
-
-        File myDirectory = new File("/data/user/0/com.namoadigital.prj001.production/files");
-        File[] directories = myDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                boolean isd = pathname.isDirectory();
-                boolean isf = pathname.isFile();
-
-                return ( isd || isf);
-            }
-        });
-//
-//        Copiar arquivos
-//        try {
-//            ToolBox_Inf.copyFile(
-//                    new File("/data/user/0/com.namoadigital.prj001.production/shared_prefs/com.namoadigital.prj001.production_preferences.xml"),
-//                    new File("/sdcard/CC_CACHE_PDF")
-//            );
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        //
         context = Act001_Main.this;
 
         super.onCreate(savedInstanceState);

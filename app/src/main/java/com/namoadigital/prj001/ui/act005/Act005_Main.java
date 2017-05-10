@@ -766,7 +766,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
             case Act005_Main.WS_PROCESS_SUPPORT:
                 alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
-                alertMsg = hmAux_Trans.get("alert_support_nfc_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
 
             default:

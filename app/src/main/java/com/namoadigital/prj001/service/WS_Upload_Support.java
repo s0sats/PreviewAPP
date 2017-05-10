@@ -2,11 +2,17 @@ package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.namoadigital.prj001.model.TUploadImg_Env;
+import com.namoadigital.prj001.model.TUploadImg_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -14,6 +20,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Created by d.luche on 09/05/2017.
@@ -32,10 +39,10 @@ public class WS_Upload_Support extends IntentService {
 
         try{
 
-            if (!ToolBox_Inf.isUploadRunning()) {
+           /* if (!ToolBox_Inf.isUploadRunning()) {
                 WBR_Upload_Support.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_UPLOAD);
-            }
+            }*/
 
             processUploadSupport();
 
@@ -50,7 +57,7 @@ public class WS_Upload_Support extends IntentService {
             WBR_Upload_Support.completeWakefulIntent(intent);
 
             if(!ToolBox_Inf.isUploadRunning()){
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_UPLOAD);
             }
         }
 
@@ -58,12 +65,76 @@ public class WS_Upload_Support extends IntentService {
 
     private void processUploadSupport() throws IOException {
 
-        //Copia arquivos para o diretorio de support
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Separando arquivos de suporte", "", "0");
 
+        prepareSupportData();
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Enviados dados", "", "0");
+
+        if (!ToolBox_Inf.isUploadRunning()) {
+            WBR_Upload_Support.IS_RUNNING = true;
+            ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_UPLOAD);
+        }
+
+        Gson gson = new Gson();
+        String dateHour = ToolBox_Inf.getPrefix(getApplicationContext());
+        String support_name =
+                Constant.SUPPORT_NAME.substring(0,Constant.SUPPORT_NAME.length()-4)
+                +"_"
+                + dateHour.substring(0,dateHour.length() -1)
+                +".zip";
+
+        TUploadImg_Env env = new TUploadImg_Env();
+        env.setApp_code(Constant.PRJ001_CODE);
+        env.setApp_version(Constant.PRJ001_VERSION);
+        env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
+        env.setFile_path(support_name);
+        env.setSupport(1);
+        env.setUser_nick(ToolBox_Con.getPreference_User_Code_Nick(getApplicationContext()));
+        env.setCustomer_desc(ToolBox_Con.getPreference_Customer_Code_NAME(getApplicationContext()));
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Recebendo dados", "", "0");
+
+        String resultado = ToolBox_Inf.uploadFileSupport(
+                Constant.WS_UPLOAD,
+                gson.toJson(env),
+                Constant.ZIP_PATH,
+                Constant.SUPPORT_NAME
+        );
+
+        TUploadImg_Rec rec = gson.fromJson(
+                resultado,
+                TUploadImg_Rec.class
+        );
+
+        if (rec.getSave().equalsIgnoreCase("OK")) {
+            //
+            File support_file = new File(Constant.ZIP_PATH+ "/" + Constant.SUPPORT_NAME);
+            if(support_file.exists() && support_file.isFile()){
+                support_file.delete();
+            }
+            //Limpa diretorios de suporte
+            ToolBox_Inf.deleteAllFOD(Constant.SUPPORT_PATH);
+            //
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+        }else{
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Erro ao enviar arquivo de suporte.\nTente novamente", "", "0");
+        }
+
+    }
+
+    private void prepareSupportData() throws IOException {
+
+        //Limpa diretorios de suporte
+        ToolBox_Inf.deleteAllFOD(Constant.SUPPORT_PATH);
+
+        //Diretorio de suporte
+        File dest = new File(Constant.SUPPORT_PATH);
+
+        //Copia arquivos para o diretorio de support
         File[] files = getListDB(".db3");
 
         for (File db_file : files ) {
-            File dest = new File(Constant.SUPPORT_PATH);
             ToolBox_Inf.copyFile(db_file,dest);
         }
 
@@ -79,7 +150,7 @@ public class WS_Upload_Support extends IntentService {
         }
 
         //Lista cc_cache
-        File[] files_form_jpg = ToolBox_Inf.getListOfFiles_v4(Constant.CACHE_PATH,".jpg");
+        File[] files_form_jpg = ToolBox_Inf.getListOfFiles_v4(Constant.CACHE_PATH,".jpg",".png");
         File cc_cache_list = new File(Constant.SUPPORT_PATH,"cc_cache_list.txt");
 
         if(cc_cache_list.exists()){
@@ -100,29 +171,42 @@ public class WS_Upload_Support extends IntentService {
             writeIn(file.getName().concat("\n"),cc_photo_list);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+        //Lista de preferencias
+        File preference_list = new File(Constant.SUPPORT_PATH,"preference_list.txt");
+
+        if(preference_list.exists()){
+            preference_list.delete();
+        }
+
+        String sPath = getFilesDir().getParent().concat("/shared_prefs");  //.getPath().replace("/files","/shared_prefs");
+        sPath += "/" + getPackageName() + "_preferences.xml";
+        File preference_path = new File(sPath);
+
+        if(preference_path.exists() &&  preference_path.isFile()){
+            ToolBox_Inf.copyFile(preference_path, dest);
+
+        }else{
+
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+            Map<String,?> ret =  sharedPreferences.getAll();
+
+            writeIn(ret.toString().concat("\n"),preference_list);
+        }
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Compactando arquivos", "", "0");
+
+        ToolBox_Inf.zipFolder(Constant.SUPPORT_PATH, Constant.ZIP_PATH + "/" + Constant.SUPPORT_NAME);
 
     }
+
 
     public void writeIn(String data , File file) throws IOException {
         FileWriter writer =  new FileWriter(file,true);
         writer.append(data);
         writer.close();
     }
-
-    /*public void copy(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }*/
 
     public static File[] getListDB(final String prefix) {
         File fileList = new File(Constant.DB_PATH);

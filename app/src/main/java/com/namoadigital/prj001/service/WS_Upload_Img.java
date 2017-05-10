@@ -49,6 +49,7 @@ public class WS_Upload_Img extends IntentService {
             env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
+            env.setSupport(0);
 
             Bundle bundle = intent.getExtras();
             //
