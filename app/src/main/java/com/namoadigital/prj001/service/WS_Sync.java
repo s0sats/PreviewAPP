@@ -35,6 +35,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
@@ -136,6 +137,7 @@ public class WS_Sync extends IntentService {
     }
 
     private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code) throws Exception {
+        EV_UserDao userDao =  new EV_UserDao(getApplicationContext(),Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -239,6 +241,24 @@ public class WS_Sync extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step1), "", "0");
 
+        //Atualiza tabela de user
+
+        File[] files_user = ToolBox_Inf.getListOfFiles_v2("ev_user-");
+
+        for (File _file : files_user) {
+
+            ArrayList<EV_User> users = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<EV_User>>() {
+                    }.getType()
+            );
+
+            userDao.addUpdate(users, false);
+        }
+
+        //Processa traduções
         File[] files_module_res = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
 
         for (File _file : files_module_res) {

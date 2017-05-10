@@ -21,6 +21,9 @@ import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
+import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -38,9 +41,13 @@ public class AppBase extends Application {
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
+        SUPPORT_PATH = DB_PATH + "/support";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
+
+        SUPPORT_NAME = "namoa_prj002.zip";
+        SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
 
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";

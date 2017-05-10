@@ -44,6 +44,8 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
@@ -128,6 +130,12 @@ public class ToolBox_Inf {
         if (!dirCachePDF.exists()) {
             dirCachePDF.mkdir();
         }
+
+        File dirSupport = new File(Constant.SUPPORT_PATH);
+        if (!dirSupport.exists()) {
+            dirSupport.mkdir();
+        }
+
     }
 
     public static String md5(String s) {
@@ -664,6 +672,62 @@ public class ToolBox_Inf {
 
             default:
                 break;
+        }
+
+        return true;
+    }
+
+    public static boolean processWSCheckValidationNFCAuth(Context context, String validation, String error_msg, String s_Link, String ret, String ret_error) {
+
+        switch (validation) {
+            case "OK":
+                break;
+
+            case "UPDATE_REQUIRED":
+                break;
+
+            case "VERSION_ERRO":
+                sendBCStatus(context, "VERSION_ERRO", error_msg, s_Link, "1");
+
+                return false;
+
+            case "VERSION_INVALID":
+                sendBCStatus(context, "VERSION_INVALID", error_msg, s_Link, "1");
+
+                return false;
+
+            case "EXPIRED":
+                sendBCStatus(context, "EXPIRED", error_msg, s_Link, "1");
+
+                return false;
+
+            case "USER_BLOCKED":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+
+                return false;
+
+            case "SESSION_NOT_FOUND":
+                sendBCStatus(context, "ERROR_3", error_msg, s_Link, "0");
+                return false;
+
+            case "CREATE_SESSION_ABORT":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
+            case "LICENSE_QTY_INVALID":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+            case "PARAMETERS_ERROR":
+                sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
+            default:
+                break;
+        }
+
+        if (ret_error != null){
+            sendBCStatus(context, "ERROR_1", ret_error, s_Link, "0");
+            return false;
         }
 
         return true;
@@ -1388,6 +1452,13 @@ public class ToolBox_Inf {
                 || WBR_DownLoad_Picture.IS_RUNNING
                 || WBR_UpdateSoftware.IS_RUNNING
                 ) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isUploadRunning() {
+        if ( WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING ) {
             return true;
         }
         return false;

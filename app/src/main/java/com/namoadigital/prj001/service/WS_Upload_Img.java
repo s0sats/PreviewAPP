@@ -34,11 +34,15 @@ public class WS_Upload_Img extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-            //Chama notificação.
-            ToolBox_Inf.showNotification(
-                    getApplicationContext(),
-                    Constant.NOTIFICATION_UPLOAD
-            );
+
+            if (!ToolBox_Inf.isUploadRunning()) {
+                WBR_Upload_Img.IS_RUNNING = true;
+                //Chama notificação.
+                ToolBox_Inf.showNotification(
+                        getApplicationContext(),
+                        Constant.NOTIFICATION_UPLOAD
+                );
+            }
 
             Gson gson = new Gson();
             TUploadImg_Env env = new TUploadImg_Env();
@@ -86,12 +90,12 @@ public class WS_Upload_Img extends IntentService {
         } catch (Exception e) {
             programAlarm(getApplicationContext());
         } finally {
+            WBR_Upload_Img.IS_RUNNING = false;
             WBR_Upload_Img.completeWakefulIntent(intent);
             //
-            ToolBox_Inf.cancelNotification(
-                    getApplicationContext(),
-                    Constant.NOTIFICATION_UPLOAD
-            );
+            if(!ToolBox_Inf.isUploadRunning()){
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+            }
         }
     }
 
