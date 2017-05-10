@@ -22,12 +22,12 @@ public class FCMMessage_Sql_005 implements Specification {
 
         return sb
                 .append(" SELECT " +
-                        "      * " +
+                        "      *, customer_name " +
                         " FROM ")
-                .append(FCMMessageDao.TABLE)
+                .append(FCMMessageDao.TABLE + " inner join ev_user_customers on fcmmessages.customer = ev_user_customers.customer_code ")
                 .append(" WHERE " +
                         FCMMessageDao.FCMMESSAGE_CODE + " = '" + s_fcmmessage_code + "' ")
-                .append(";")
+                .append(";fcmmessage_code#customer#type#title#msg_short#msg_long#module#sender#status#date_create_ms#customer_name")
                 .toString();
     }
 }

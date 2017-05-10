@@ -62,6 +62,9 @@ public class Act018_Adapter_Messages extends BaseAdapter {
 
         HMAux item = data.get(position);
 
+        TextView tv_customer = (TextView)
+                convertView.findViewById(R.id.act018_main_content_cell_tv_customer);
+
         ImageView iv_001 = (ImageView)
                 convertView.findViewById(R.id.act018_main_content_cell_iv_001);
 
@@ -98,6 +101,7 @@ public class Act018_Adapter_Messages extends BaseAdapter {
                 break;
         }
 
+        tv_customer.setText(item.get("customer_name"));
         tv_title.setText(item.get("title"));
         tv_date.setText(
                 ToolBox.millisecondsToString(

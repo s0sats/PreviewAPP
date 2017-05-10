@@ -41,6 +41,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
     private ImageView iv_icon;
     private ImageView iv_module;
     private TextView tv_title;
+    private TextView tv_customer;
     private TextView tv_module;
     private TextView tv_module_val;
     private TextView tv_type;
@@ -48,6 +49,8 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
     private TextView tv_sender_val;
     private TextView tv_date;
     private TextView tv_date_val;
+    private TextView tv_msg_short_lbl;
+    private TextView tv_msg_short_value;
     private TextView tv_msg_lbl;
     private TextView tv_msg_value;
 
@@ -96,6 +99,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
         iv_icon = (ImageView) findViewById(R.id.act019_iv_icon);
         tv_title = (TextView) findViewById(R.id.act019_tv_title_lbl);
+        tv_customer = (TextView) findViewById(R.id.act019_tv_customer_value);
         //iv_module = (ImageView) findViewById(R.id.act019_iv_module);
         tv_module = (TextView) findViewById(R.id.act019_tv_module_lbl);
         tv_module_val = (TextView) findViewById(R.id.act019_tv_module_val);
@@ -104,6 +108,8 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         tv_sender_val = (TextView) findViewById(R.id.act019_tv_sender_val);
         tv_date = (TextView) findViewById(R.id.act019_tv_date_lbl);
         tv_date_val = (TextView) findViewById(R.id.act019_tv_date_val);
+        tv_msg_short_lbl = (TextView) findViewById(R.id.act019_tv_msg_short_lbl);
+        tv_msg_short_value = (TextView) findViewById(R.id.act019_tv_msg_short_value);
         tv_msg_lbl = (TextView) findViewById(R.id.act019_tv_msg_lbl);
         tv_msg_value = (TextView) findViewById(R.id.act019_tv_msg_value);
 
@@ -117,7 +123,9 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         transList.add("lbl_module");
         transList.add("lbl_sender");
         transList.add("lbl_date");
+        transList.add("lbl_msg_short");
         transList.add("lbl_msg");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -208,6 +216,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 //        }
 
         tv_title.setText(fcmMessage.getTitle());
+        tv_customer.setText(fcmMessage.getCustomer());
         tv_module.setText(hmAux_Trans.get("lbl_module"));
         tv_module_val.setText(hmAux_Trans.get(fcmMessage.getModule()));
         //tv_type.setText(fcmMessage.getType());
@@ -221,8 +230,52 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
                         ToolBox_Inf.nlsDateFormat(context)
                 )
         );
+        tv_msg_short_lbl.setText(hmAux_Trans.get("lbl_msg_short"));
+        tv_msg_short_lbl.setText(fcmMessage.getMsg_long());
+
         tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));
         tv_msg_value.setText(fcmMessage.getMsg_long());
+    }
+
+    @Override
+    public void loadMessage(HMAux fcmMessage) {
+        if (fcmMessage.get("type").equalsIgnoreCase("alert")) {
+            iv_icon.setImageResource(R.drawable.ic_alert_n);
+        }
+        if (fcmMessage.get("type").equalsIgnoreCase("warning")) {
+            iv_icon.setImageResource(R.drawable.ic_problem_n);
+        }
+
+//        switch (fcmMessage.getModule()){
+//
+//            case "CHECKLIST":
+//                iv_module.setImageDrawable(getResources().getDrawable(R.drawable.ic_n_form));
+//                break;
+//            default:
+//                iv_module.setImageDrawable(null);
+//        }
+
+        tv_title.setText(fcmMessage.get("title"));
+        tv_customer.setText(fcmMessage.get("customer_name"));
+        tv_module.setText(hmAux_Trans.get("lbl_module"));
+        tv_module_val.setText(hmAux_Trans.get(fcmMessage.get("module")));
+        //tv_type.setText(fcmMessage.getType());
+        tv_sender.setText(hmAux_Trans.get("lbl_sender"));
+        tv_sender_val.setText(fcmMessage.get("sender"));
+        tv_date.setText(hmAux_Trans.get("lbl_date"));
+        tv_date_val.setText(
+                ToolBox.millisecondsToString(
+                        Long.parseLong(fcmMessage.get("date_create_ms")),
+                        //ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                        ToolBox_Inf.nlsDateFormat(context)
+                )
+        );
+        tv_msg_short_lbl.setText(hmAux_Trans.get("lbl_msg_short"));
+        tv_msg_short_value.setText(fcmMessage.get("msg_short"));
+
+        tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));
+        tv_msg_value.setText(fcmMessage.get("msg_long"));
+
     }
 
     private void cleanNotification() {

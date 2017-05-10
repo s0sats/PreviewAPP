@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -371,6 +372,31 @@ public class ToolBox_Inf {
         }
 
         return true;
+    }
+
+    public static void zipFolder(String inputFolderPath, String outZipPath) {
+        try {
+            FileOutputStream fos = new FileOutputStream(outZipPath);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            File srcFile = new File(inputFolderPath);
+            File[] files = srcFile.listFiles();
+            Log.d("ZIP", "Zip directory: " + srcFile.getName());
+            for (int i = 0; i < files.length; i++) {
+                Log.d("ZIP", "Adding file: " + files[i].getName());
+                byte[] buffer = new byte[1024];
+                FileInputStream fis = new FileInputStream(files[i]);
+                zos.putNextEntry(new ZipEntry(files[i].getName()));
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, length);
+                }
+                zos.closeEntry();
+                fis.close();
+            }
+            zos.close();
+        } catch (IOException ioe) {
+            Log.e("ZIP", ioe.getMessage());
+        }
     }
 
     public static File[] getListOfFiles_v2(final String prefix) {
@@ -1227,6 +1253,8 @@ public class ToolBox_Inf {
                 }
             }
 
+            int parameter_unified = 500;
+
             if (sbFinal.toString().length() != 0) {
 
                 //builder.setContentTitle(context.getString(R.string.title_notification_generic));
@@ -1239,9 +1267,9 @@ public class ToolBox_Inf {
                 int versao = Build.VERSION.SDK_INT;
                 //
                 if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    nm.notify(parameter + Integer.parseInt(cust.get("customer_code")), builder.build());
+                    nm.notify(parameter_unified + Integer.parseInt(cust.get("customer_code")), builder.build());
                 } else {
-                    nm.notify(parameter + Integer.parseInt(cust.get("customer_code")), builder.getNotification());
+                    nm.notify(parameter_unified + Integer.parseInt(cust.get("customer_code")), builder.getNotification());
                 }
 
             }

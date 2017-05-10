@@ -33,7 +33,13 @@ public class Act019_Main_Presenter_Impl implements Act019_Main_Presenter {
 
     @Override
     public void setData(long fcmmessage_code) {
-        FCMMessage fcmMessage = fcmMessageDao.getByString(
+//        FCMMessage fcmMessage = fcmMessageDao.getByString(
+//                new FCMMessage_Sql_005(
+//                        String.valueOf(fcmmessage_code)
+//                ).toSqlQuery()
+//        );
+
+        HMAux fcmMessage = fcmMessageDao.getByStringHM(
                 new FCMMessage_Sql_005(
                         String.valueOf(fcmmessage_code)
                 ).toSqlQuery()

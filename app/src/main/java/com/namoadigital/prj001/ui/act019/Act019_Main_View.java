@@ -16,6 +16,8 @@ public interface Act019_Main_View {
 
     void loadMessage(FCMMessage fcmMessage);
 
+    void loadMessage(HMAux fcmMessage);
+
     void callAct018(Context context);
 
 }

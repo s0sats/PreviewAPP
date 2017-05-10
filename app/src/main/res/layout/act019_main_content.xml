@@ -11,179 +11,226 @@
     tools:context=".ui.act019.Act019_Main"
     tools:showIn="@layout/act019_main">
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/footer_dialog_ll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFFFF"
-            android:clickable="true"
-            android:descendantFocusability="blocksDescendants"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="5dp">
 
             <LinearLayout
+                android:id="@+id/footer_dialog_ll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:background="#FFFFFFFF"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <ImageView
-                    android:id="@+id/act019_iv_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_alert_n" />
-
-                <TextView
-                    android:id="@+id/act019_tv_title_lbl"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Titulo"
-                    android:textColor="@color/namoa_color_dark_blue_lib"
-                    android:textSize="@dimen/font_size_title_md_lib"
-                    android:layout_marginLeft="15dp"
-                    android:textStyle="bold" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/act019_iv_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_alert_n" />
 
-            <!--<LinearLayout-->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/act019_tv_title_lbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
+                            android:text="Titulo"
+                            android:textColor="@color/namoa_color_dark_blue_lib"
+                            android:textSize="@dimen/font_size_title_md_lib"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!--<LinearLayout-->
                 <!--android:layout_width="match_parent"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:gravity="center_vertical"-->
                 <!--android:orientation="horizontal"-->
                 <!--android:visibility="gone">-->
                 <!--<LinearLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:orientation="horizontal">-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:orientation="horizontal">-->
 
-                    <!--<ImageView-->
-                        <!--android:id="@+id/act019_iv_module"-->
-                        <!--android:layout_width="40dp"-->
-                        <!--android:layout_height="40dp"-->
-                        <!--android:src="@drawable/ic_n_form"-->
-                        <!--android:visibility="gone"/>-->
+                <!--<ImageView-->
+                <!--android:id="@+id/act019_iv_module"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:src="@drawable/ic_n_form"-->
+                <!--android:visibility="gone"/>-->
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/act019_tv_module_lbl"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="10dp"-->
-                        <!--android:text="Module"-->
-                        <!--android:textColor="@color/namoa_color_dark_blue_lib"-->
-                        <!--android:textSize="@dimen/font_size_item"-->
-                        <!--android:textStyle="bold"-->
-                        <!--android:gravity="center"/>-->
+                <!--<TextView-->
+                <!--android:id="@+id/act019_tv_module_lbl"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:text="Module"-->
+                <!--android:textColor="@color/namoa_color_dark_blue_lib"-->
+                <!--android:textSize="@dimen/font_size_item"-->
+                <!--android:textStyle="bold"-->
+                <!--android:gravity="center"/>-->
 
                 <!--</LinearLayout>-->
 
-            <!--</LinearLayout>-->
+                <!--</LinearLayout>-->
 
-            <TextView
-                android:id="@+id/act019_tv_module_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Module"
-                android:textColor="@color/namoa_color_dark_blue_lib"
-                android:textSize="@dimen/font_size_item"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/act019_tv_module_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:text="N-Form"
-                android:textColor="@color/namoa_color_light_blue_lib"
-                android:textSize="@dimen/font_size_item" />
+                <TextView
+                    android:id="@+id/act019_tv_customer_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Molsof Customer"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
 
-    <!--        <TextView
-                android:id="@+id/act019_tv_type_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Type"
-                android:textColor="@color/namoa_color_dark_blue_lib"
-                android:textSize="@dimen/font_size_item"
-                android:textStyle="bold" />-->
+                <TextView
+                    android:id="@+id/act019_tv_module_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Module"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_item"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/act019_tv_sender_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Sender"
-                android:textColor="@color/namoa_color_dark_blue_lib"
-                android:textSize="@dimen/font_size_item"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/act019_tv_sender_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:text="N-Form"
-                android:textColor="@color/namoa_color_light_blue_lib"
-                android:textSize="@dimen/font_size_item" />
+                <TextView
+                    android:id="@+id/act019_tv_module_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="N-Form"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item" />
 
-            <TextView
-                android:id="@+id/act019_tv_date_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="01/12/2017"
-                android:textColor="@color/namoa_color_dark_blue_lib"
-                android:textSize="@dimen/font_size_item"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/act019_tv_date_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:text="N-Form"
-                android:textColor="@color/namoa_color_light_blue_lib"
-                android:textSize="@dimen/font_size_item" />
+                <!--        <TextView
+                            android:id="@+id/act019_tv_type_lbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Type"
+                            android:textColor="@color/namoa_color_dark_blue_lib"
+                            android:textSize="@dimen/font_size_item"
+                            android:textStyle="bold" />-->
 
-            <TextView
-                android:id="@+id/act019_tv_msg_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Mensagem"
-                android:textColor="@color/namoa_color_dark_blue_lib"
-                android:textSize="@dimen/font_size_item"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/act019_tv_sender_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Sender"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_item"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/act019_tv_msg_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:text="MOSOLF"
-                android:textColor="@color/namoa_color_light_blue_lib"
-                android:textSize="@dimen/font_size_item" />
+                <TextView
+                    android:id="@+id/act019_tv_sender_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="N-Form"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item" />
+
+                <TextView
+                    android:id="@+id/act019_tv_date_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="01/12/2017"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_item"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act019_tv_date_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="N-Form"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item" />
+
+                <TextView
+                    android:id="@+id/act019_tv_msg_short_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Mensagem Curta"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_item"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act019_tv_msg_short_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="MOSOLF short"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item" />
+
+                <TextView
+                    android:id="@+id/act019_tv_msg_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Mensagem"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_item"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act019_tv_msg_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="MOSOLF Completa"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-
-    </LinearLayout>
+    </ScrollView>
 
     <include layout="@layout/footer_base" />
 

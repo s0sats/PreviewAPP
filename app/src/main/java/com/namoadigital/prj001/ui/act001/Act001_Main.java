@@ -22,6 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
 
@@ -72,6 +73,38 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //} catch (IOException e) {
         //    e.printStackTrace();
         //}
+        //
+
+        // List Files and Directories
+        File myDirectoryFull = new File("/data/user/0/com.namoadigital.prj001.production");
+        File[] files = myDirectoryFull.listFiles();
+
+        ToolBox_Inf.zipFolder(
+                "/data/user/0/com.namoadigital.prj001.production/files/CC_CACHE",
+                "/sdcard/DBase/Hugo.zip"
+        );
+
+        File myDirectory = new File("/data/user/0/com.namoadigital.prj001.production/files");
+        File[] directories = myDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                boolean isd = pathname.isDirectory();
+                boolean isf = pathname.isFile();
+
+                return ( isd || isf);
+            }
+        });
+//
+//        Copiar arquivos
+//        try {
+//            ToolBox_Inf.copyFile(
+//                    new File("/data/user/0/com.namoadigital.prj001.production/shared_prefs/com.namoadigital.prj001.production_preferences.xml"),
+//                    new File("/sdcard/CC_CACHE_PDF")
+//            );
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         //
         context = Act001_Main.this;
 

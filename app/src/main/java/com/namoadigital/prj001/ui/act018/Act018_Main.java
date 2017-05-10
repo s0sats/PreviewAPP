@@ -10,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -34,6 +36,7 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
 
     private Context context;
     private ListView lv_messages;
+    private TextView tv_empty;
     private Act018_Adapter_Messages adapterMessages;
     private List<HMAux> messages;
 
@@ -93,6 +96,7 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
+        transList.add("lbl_msg_empty");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -111,6 +115,7 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
         );
 
         lv_messages = (ListView) findViewById(R.id.act018_lv_messages);
+        tv_empty = (TextView) findViewById(R.id.act018_tv_empty);
 
         recuperaGetIntents();
 
@@ -188,6 +193,15 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
     @Override
     public void loadMessages(List<HMAux> messages) {
         this.messages = messages;
+        tv_empty.setText(hmAux_Trans.get("lbl_msg_empty"));
+
+        if (messages.size() != 0) {
+            lv_messages.setVisibility(View.VISIBLE);
+            tv_empty.setVisibility(View.GONE);
+        } else {
+            lv_messages.setVisibility(View.GONE);
+            tv_empty.setVisibility(View.VISIBLE);
+        }
 
         adapterMessages = new Act018_Adapter_Messages(
                 context,

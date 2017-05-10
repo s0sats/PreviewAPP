@@ -22,12 +22,12 @@ public class FCMMessage_Sql_001 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append(" select *\n" +
+                .append(" select *, customer_name\n" +
                         " FROM\n" +
-                        FCMMessageDao.TABLE + " \n" +
+                        FCMMessageDao.TABLE + " inner join ev_user_customers on fcmmessages.customer = ev_user_customers.customer_code\n" +
                         " ORDER BY date_create_ms desc")
                 .append(";")
-                .append("fcmmessage_code#customer#type#title#msg_short#module#sender#status#date_create_ms")
+                .append("fcmmessage_code#customer#type#title#msg_short#module#sender#status#date_create_ms#customer_name")
                 .toString();
     }
 }
