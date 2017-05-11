@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
@@ -42,6 +43,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_Custom_Form_Operation;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -58,6 +60,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_011;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Operation_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
@@ -523,6 +526,7 @@ public class WS_Sync extends IntentService {
             GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_OperationDao customFormOperationDao = new GE_Custom_Form_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
@@ -530,6 +534,7 @@ public class WS_Sync extends IntentService {
             customFormTypeDao.remove(new GE_Custom_Form_Type_Sql_Truncate().toSqlQuery());
             customFormFieldDao.remove(new GE_Custom_Form_Field_Sql_Truncate().toSqlQuery());
             customFormProductDao.remove(new GE_Custom_Form_Product_Sql_Truncate().toSqlQuery());
+            customFormOperationDao.remove(new GE_Custom_Form_Operation_Sql_Trucate().toSqlQuery());
             customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
 
             //
@@ -619,7 +624,23 @@ public class WS_Sync extends IntentService {
 
                 customFormFieldDao.addUpdate(customFormsFields, false);
             }
+            //
+            // Processamento Custom Form Operation
+            //
+            File[] files_cf_operation = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_operation-");
 
+            for (File _file : files_cf_operation) {
+
+                ArrayList<GE_Custom_Form_Operation> customFormsOperations = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<GE_Custom_Form_Operation>>() {
+                        }.getType()
+                );
+
+                customFormOperationDao.addUpdate(customFormsOperations, false);
+            }
 
             //
             // Processamento Custom Form Blob
