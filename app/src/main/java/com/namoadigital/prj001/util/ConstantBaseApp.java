@@ -134,10 +134,16 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String GS_SERIAL_ID = "serialserialid";
 
     /**
-     * Serial Logout
+     * WS Logout
      */
     public static final String WS_LOGOUT_CUSTOMER_LIST = "logoutcustomerlist";
     public static final String WS_LOGOUT_USER_CODE = "logoutusercode";
+
+    /**
+     * WS Support
+     */
+    public static final String WS_SUPPORT_MSG = "supportmsg";
+
 
 
     public static final String SW_TYPE_BR = "sw_type_br";

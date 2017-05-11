@@ -10,9 +10,6 @@ public class TUploadImg_Env {
     private String app_version;
     private String device_code;
     private String file_path;
-    private int support;
-    private String customer_desc;
-    private String user_nick;
 
     public String getApp_code() {
         return app_code;
@@ -46,27 +43,4 @@ public class TUploadImg_Env {
         this.file_path = file_path;
     }
 
-    public int getSupport() {
-        return support;
-    }
-
-    public void setSupport(int support) {
-        this.support = support;
-    }
-
-    public String getCustomer_desc() {
-        return customer_desc;
-    }
-
-    public void setCustomer_desc(String customer_desc) {
-        this.customer_desc = customer_desc;
-    }
-
-    public String getUser_nick() {
-        return user_nick;
-    }
-
-    public void setUser_nick(String user_nick) {
-        this.user_nick = user_nick;
-    }
 }

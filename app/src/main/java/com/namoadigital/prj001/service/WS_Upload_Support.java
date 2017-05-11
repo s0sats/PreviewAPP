@@ -8,8 +8,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.namoadigital.prj001.model.TUploadImg_Env;
-import com.namoadigital.prj001.model.TUploadImg_Rec;
+import com.namoadigital.prj001.model.TUpload_Support_Env;
+import com.namoadigital.prj001.model.TUpload_Support_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -44,7 +44,8 @@ public class WS_Upload_Support extends IntentService {
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_UPLOAD);
             }*/
 
-            processUploadSupport();
+            String support_msg =  bundle.getString(Constant.WS_SUPPORT_MSG,"");
+            processUploadSupport(support_msg);
 
         }catch (Exception e){
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
@@ -63,7 +64,7 @@ public class WS_Upload_Support extends IntentService {
 
     }
 
-    private void processUploadSupport() throws IOException {
+    private void processUploadSupport(String support_msg) throws IOException {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Separando arquivos de suporte", "", "0");
 
@@ -84,14 +85,17 @@ public class WS_Upload_Support extends IntentService {
                 + dateHour.substring(0,dateHour.length() -1)
                 +".zip";
 
-        TUploadImg_Env env = new TUploadImg_Env();
+        TUpload_Support_Env env = new TUpload_Support_Env();
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
         env.setFile_path(support_name);
         env.setSupport(1);
+        env.setUser_code(ToolBox_Con.getPreference_User_Code(getApplicationContext()));
         env.setUser_nick(ToolBox_Con.getPreference_User_Code_Nick(getApplicationContext()));
+        env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
         env.setCustomer_desc(ToolBox_Con.getPreference_Customer_Code_NAME(getApplicationContext()));
+        env.setSupport_msg(support_msg);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Recebendo dados", "", "0");
 
@@ -102,9 +106,9 @@ public class WS_Upload_Support extends IntentService {
                 Constant.SUPPORT_NAME
         );
 
-        TUploadImg_Rec rec = gson.fromJson(
+        TUpload_Support_Rec rec = gson.fromJson(
                 resultado,
-                TUploadImg_Rec.class
+                TUpload_Support_Rec.class
         );
 
         if (rec.getSave().equalsIgnoreCase("OK")) {
