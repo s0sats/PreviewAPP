@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TUpload_Support_Env;
 import com.namoadigital.prj001.model.TUpload_Support_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
@@ -19,7 +20,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +30,12 @@ import java.util.Map;
  */
 
 public class WS_Upload_Support extends IntentService {
+
+
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "ws_upload_support";
 
     public WS_Upload_Support() {
         super("WS_Upload_Support");
@@ -38,11 +47,6 @@ public class WS_Upload_Support extends IntentService {
         StringBuilder sb = new StringBuilder();
 
         try{
-
-           /* if (!ToolBox_Inf.isUploadRunning()) {
-                WBR_Upload_Support.IS_RUNNING = true;
-                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_UPLOAD);
-            }*/
 
             String support_msg =  bundle.getString(Constant.WS_SUPPORT_MSG,"");
             processUploadSupport(support_msg);
@@ -65,12 +69,13 @@ public class WS_Upload_Support extends IntentService {
     }
 
     private void processUploadSupport(String support_msg) throws IOException {
+        loadTranslation();
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Separando arquivos de suporte", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_data") , "", "0");
 
         prepareSupportData();
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Enviados dados", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
 
         if (!ToolBox_Inf.isUploadRunning()) {
             WBR_Upload_Support.IS_RUNNING = true;
@@ -97,7 +102,7 @@ public class WS_Upload_Support extends IntentService {
         env.setCustomer_desc(ToolBox_Con.getPreference_Customer_Code_NAME(getApplicationContext()));
         env.setSupport_msg(support_msg);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Recebendo dados", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_waiting_answer"), "", "0");
 
         String resultado = ToolBox_Inf.uploadFileSupport(
                 Constant.WS_UPLOAD,
@@ -120,9 +125,9 @@ public class WS_Upload_Support extends IntentService {
             //Limpa diretorios de suporte
             ToolBox_Inf.deleteAllFOD(Constant.SUPPORT_PATH);
             //
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_ending_processing"), "", "0");
         }else{
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "Erro ao enviar arquivo de suporte.\nTente novamente", "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_answer_error"), "", "0");
         }
 
     }
@@ -199,7 +204,7 @@ public class WS_Upload_Support extends IntentService {
             writeIn(ret.toString().concat("\n"),preference_list);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", "Compactando arquivos", "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_files"), "", "0");
 
         ToolBox_Inf.zipFolder(Constant.SUPPORT_PATH, Constant.ZIP_PATH + "/" + Constant.SUPPORT_NAME);
 
@@ -229,5 +234,29 @@ public class WS_Upload_Support extends IntentService {
         }
         //
         return files;
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_preparing_data");
+        translist.add("msg_sending_data");
+        translist.add("msg_waiting_answer");
+        translist.add("msg_ending_processing");
+        translist.add("msg_answer_error");
+        translist.add("msg_zipping_data");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
     }
 }
