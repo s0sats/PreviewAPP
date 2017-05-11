@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -166,6 +165,8 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
 

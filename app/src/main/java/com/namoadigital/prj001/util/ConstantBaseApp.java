@@ -118,6 +118,8 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String FOOTER_OPERATION = "footer_operation";
     public static final String FOOTER_BTN_OK = "footer_btn_ok";
     public static final String FOOTER_VERSION_LBL = "footer_version_lbl";
+    public static final String FOOTER_IMEI_LBL = "footer_imei_lbl";
+    public static final String FOOTER_IMEI = "footer_imei";
 
     /**
      * Sync WS
