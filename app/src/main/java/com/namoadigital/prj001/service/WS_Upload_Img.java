@@ -94,7 +94,7 @@ public class WS_Upload_Img extends IntentService {
             WBR_Upload_Img.completeWakefulIntent(intent);
             //
             if(!ToolBox_Inf.isUploadRunning()){
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_UPLOAD);
             }
         }
     }
