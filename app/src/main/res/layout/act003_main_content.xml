@@ -24,32 +24,31 @@
             android:src="@drawable/ic_site"
             android:padding="5dp"
             />
-
-
-        <TextView
-            android:id="@+id/act003_tv_customer_val"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Customer"
-            android:textSize="@dimen/font_size_title_md"
-            android:textStyle="bold"
-            android:gravity="center_vertical"/>
-
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
             android:orientation="vertical"
-            android:paddingLeft="0dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp">
+            >
 
+            <TextView
+                android:id="@+id/act003_tv_customer_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:text="Customer"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/act004_tv_site_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Site"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold"
+                android:visibility="invisible"/>
 
         </LinearLayout>
-
-
     </LinearLayout>
 
 

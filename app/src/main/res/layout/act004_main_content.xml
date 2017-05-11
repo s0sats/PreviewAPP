@@ -14,62 +14,58 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="15dp">
-    <TextView
-        android:id="@+id/act004_tv_customer_lbl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Customer"
-        android:textSize="@dimen/font_size_title_md"
-        android:textStyle="bold"
-        android:visibility="gone"/>
-    <TextView
-        android:id="@+id/act004_tv_customer_val"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Customer"
-        android:textSize="@dimen/font_size_title_md"
-        android:textStyle="bold"
-        android:layout_marginBottom="15dp"/>
 
-    <!--<TextView-->
-        <!--android:id="@+id/act004_tv_customer_val"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Mosolf"-->
-        <!--android:textSize="@dimen/font_size_item"-->
-        <!--android:paddingLeft="10dp"-->
-        <!--android:textColor="@color/namoa_color_light_blue"-->
-        <!--android:visibility="invisible"/>-->
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_site"
+            android:padding="5dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
 
-    <TextView
-        android:id="@+id/act004_tv_site_lbl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Site"
-        android:textSize="@dimen/font_size_title_md"
-        android:textStyle="bold"
-        android:visibility="gone"/>
+            <TextView
+                android:id="@+id/act004_tv_customer_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Customer"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/act004_tv_site_val"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Site"
-        android:textSize="@dimen/font_size_item_md"
-        android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/act004_tv_customer_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:text="Customer"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
 
-    <!--<TextView
-        android:id="@+id/act004_tv_site_val"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Externo"
-        android:textSize="@dimen/font_size_item"
-        android:paddingLeft="10dp"
-        android:textColor="@color/namoa_color_light_blue"
-        android:visibility="gone"/>
-        -->
+            <TextView
+                android:id="@+id/act004_tv_site_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Site"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/act004_tv_site_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Site"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
