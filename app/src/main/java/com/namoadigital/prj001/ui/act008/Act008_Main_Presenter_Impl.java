@@ -17,6 +17,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_001;
+import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -40,9 +41,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private boolean downloadStarted = false;
     private HMAux hmAux_Trans;
     private GE_Custom_Form_OperationDao formOperationDao;
+    private boolean isSchedule;
 
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao,boolean isSchedule) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -50,19 +52,39 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.product_code = product_code;
         this.hmAux_Trans = hmAux_Trans;
         this.formOperationDao = formOperationDao;
+        this.isSchedule = isSchedule;
     }
 
     @Override
-    public void getProductInfo() {
-        MD_Product md_product =
-                mdProductDao.getByString(
-                        new MD_Product_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code
-                        ).toSqlQuery()
-                );
+    public void getProductInfo( Bundle bundle) {
+        MD_Product md_product = null;
+        //Se for um agendamento, busca dados da custom_form_local
+        //se não do MD
+        if(isSchedule){
+            md_product =
+                    mdProductDao.getByString(
+                            new Sql_Act008_002(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
+                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
+                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
+                                    bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
+                            ).toSqlQuery()
+                    );
+
+        }else{
+            md_product =
+                    mdProductDao.getByString(
+                            new MD_Product_Sql_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    product_code
+                            ).toSqlQuery()
+                    );
+
+        }
+
         //Erro, produto não encontrado
-        if(md_product.getProduct_code() < 1){
+        if(md_product.getProduct_code() < 1 || md_product == null){
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_product_not_found_title"),
                     hmAux_Trans.get("alert_product_not_found_msg")
@@ -120,7 +142,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 executeSerialProcess(serial);
             }else{
                 if (required == 0){
-                    mView.callAct009(context);
+                    //mView.callAct009(context);
+                    defineFlow();
                     //Atualiza data na tabela de produtos local
                     updateSyncChecklist();
                 }else{
@@ -202,7 +225,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             executeSerialProcess(serial);
         }else{
             if (serial.length() == 0 && serial_required == 0 ){
-                mView.callAct009(context);
+                //mView.callAct009(context);
+                defineFlow();
                 //Atualiza data na tabela de produtos local
                 updateSyncChecklist();
             }else{
@@ -256,7 +280,24 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
+    public void defineFlow() {
+
+        if(isSchedule){
+            mView.callAct011(context);
+        }else{
+            mView.callAct009(context);
+        }
+
+    }
+
+    @Override
     public void onBackPressedClicked() {
-        mView.callAct007(context);
+
+        if(isSchedule){
+            mView.callAct017(context);
+        }else{
+            mView.callAct007(context);
+        }
+
     }
 }

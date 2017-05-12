@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.ui.act008;
 
+import android.os.Bundle;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
 
 public interface Act008_Main_Presenter {
 
-    void getProductInfo();
+    void getProductInfo(Bundle bundle);
 
     void validateSerial(String serial , int required , int allow_new);
 
@@ -23,5 +25,7 @@ public interface Act008_Main_Presenter {
     void onBackPressedClicked();
 
     boolean checkFormXOperationExists();
+
+    void defineFlow();
 
 }
