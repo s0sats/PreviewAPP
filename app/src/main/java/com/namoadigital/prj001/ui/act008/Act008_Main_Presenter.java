@@ -20,7 +20,7 @@ public interface Act008_Main_Presenter {
 
     void startDownloadServices();
 
-    void onBackPressedClicked();
+    void onBackPressedClicked(String scheduled_date);
 
     boolean checkFormXOperationExists();
 

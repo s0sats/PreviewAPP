@@ -22,6 +22,9 @@ import java.util.Calendar;
 
 public class SV_LocationTracker extends Service {
 
+    public static String msg_nok = "";
+    public static String msg_ok = "";
+
     // 1 minutos
     private static int PROGRESS_TIME_OUT = 1 * 60 * 1000;
 

@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -85,11 +86,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void getBundleInfo() {
-        bundle =  getIntent().getExtras();
-        if(bundle != null){
-           scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
         }
-
     }
 
     private void loadTranslation() {
@@ -153,10 +153,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             //e troca MM por ** para substituir mes por extenso no final.
             String customer_format =
                     ToolBox_Con.getPreference_Customer_nls_date_format(context)
-                            .replace("DD","dd")
-                            .replace("/"," ")
-                            .replace("MM","**")
-                            .replace("RRRR","yyyy");
+                            .replace("DD", "dd")
+                            .replace("/", " ")
+                            .replace("MM", "**")
+                            .replace("RRRR", "yyyy");
             //
             showFormat = new SimpleDateFormat(customer_format);
             final_date = day_desc + ", " + showFormat.format(date).replace("**", month_desc);
@@ -188,9 +188,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -218,11 +218,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     public void loadSchedules(List<HMAux> schedules) {
 
-        mAdapter =  new Module_Schedules_Adapter(
-                            context,
-                            R.layout.module_schedules_cell,
-                            schedules
-                    );
+        mAdapter = new Module_Schedules_Adapter(
+                context,
+                R.layout.module_schedules_cell,
+                schedules
+        );
 
         lv_schedules.setAdapter(mAdapter);
 
@@ -235,12 +235,12 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         DialogInterface.OnClickListener listener = null;
         Integer btnNegative = null;
 
-        switch (type){
+        switch (type) {
             case MODULE_CHECKLIST_FORM_IN_PROCESSING:
                 title = hmAux_Trans.get("alert_ttl_exists_in_processing");
                 msg = hmAux_Trans.get("alert_msg_exists_in_processing");
                 btnNegative = 0;
-            break;
+                break;
 
             case MODULE_CHECKLIST_START_FORM:
                 title = hmAux_Trans.get("alert_ttl_start_new_processing");
@@ -249,14 +249,14 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mPresenter.prepareOpenForm(item);
+                        mPresenter.prepareOpenForm(item, "SERIAL_NO");
                     }
                 };
                 break;
 
         }
 
-        if(btnNegative != null) {
+        if (btnNegative != null) {
             ToolBox.alertMSG(
                     this,
                     title,
@@ -267,10 +267,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         }
     }
 
-    private String getDayTranslate(Date date){
+    private String getDayTranslate(Date date) {
         String dayTrans = "";
 
-        switch (date.getDay()){
+        switch (date.getDay()) {
             case 0:
                 dayTrans = ConstantBase.HMAUX_TRANS_LIB.get("daySunday");
                 break;
@@ -296,10 +296,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 break;
         }
 
-        return dayTrans ;
+        return dayTrans;
     }
 
-    private String getMonthTranslate(Date date){
+    private String getMonthTranslate(Date date) {
         String monthTrans = "";
 
         switch (date.getMonth()) {
@@ -310,40 +310,50 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monFebruary");
                 break;
             case 2:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monMarch");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monMarch");
                 break;
             case 3:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monApril");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monApril");
                 break;
             case 4:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monMay");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monMay");
                 break;
             case 5:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monJune");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monJune");
                 break;
             case 6:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monJuly");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monJuly");
                 break;
             case 7:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monAugust");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monAugust");
                 break;
             case 8:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monSeptember");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monSeptember");
                 break;
             case 9:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monOctober");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monOctober");
                 break;
             case 10:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monNovember");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monNovember");
                 break;
             case 11:
-                monthTrans =ConstantBase.HMAUX_TRANS_LIB.get("monDecember");
+                monthTrans = ConstantBase.HMAUX_TRANS_LIB.get("monDecember");
                 break;
             default:
                 break;
         }
 
         return monthTrans;
+    }
+
+    @Override
+    public void callAct008(Context context, Bundle bundle) {
+        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
+        Intent mIntent = new Intent(context, Act008_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

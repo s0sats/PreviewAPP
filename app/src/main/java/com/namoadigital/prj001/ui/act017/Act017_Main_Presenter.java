@@ -12,7 +12,7 @@ public interface Act017_Main_Presenter {
 
     void checkScheduleFlow(HMAux item);
 
-    void prepareOpenForm(HMAux item);
+    void prepareOpenForm(HMAux item,  String serial_status);
 
     void onBackPressedClicked();
 }

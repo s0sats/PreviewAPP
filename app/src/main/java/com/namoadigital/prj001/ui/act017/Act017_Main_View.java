@@ -15,7 +15,9 @@ public interface Act017_Main_View {
 
     void loadSchedules(List<HMAux> schedules);
 
-    void showMsg(String type, HMAux item );
+    void showMsg(String type, HMAux item);
+
+    void callAct008(Context context, Bundle bundle);
 
     void callAct016(Context context);
 

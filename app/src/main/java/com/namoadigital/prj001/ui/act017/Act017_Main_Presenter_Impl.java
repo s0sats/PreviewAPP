@@ -9,6 +9,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
+import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -62,7 +63,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                         mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
                     }
                 }else{
-                    prepareOpenForm(item);
+                    prepareOpenForm(item, "SERIAL_OK");
                 }
 
             break;
@@ -72,7 +73,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     @Override
-    public void prepareOpenForm(HMAux item) {
+    public void prepareOpenForm(HMAux item, String serial_status) {
         //Atualiza status do form para in_processing
         //foi comentando pois a atualização do status já corre na act011
         //e pq se o form a ser aberto tem status inprocessing, fom ja abre
@@ -90,7 +91,16 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
 
-        mView.callAct011(context,bundle);
+        switch (serial_status.toUpperCase()){
+            case "SERIAL_NO":
+                mView.callAct008(context,bundle);
+                break;
+            case "SERIAL_OK":
+                mView.callAct011(context,bundle);
+                break;
+        }
+
+        //mView.callAct011(context,bundle);
 
     }
 

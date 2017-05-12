@@ -63,6 +63,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
@@ -221,6 +222,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_info_dt_schedule_start_lbl");
         transList.add("dialog_info_dt_schedule_end_lbl");
 
+        transList.add("alert_location_info_title");
+        transList.add("alert_location_info_required");
+        transList.add("alert_location_gps_info");
+        transList.add("alert_location_info_aquired_succesfully");
+        transList.add("alert_location_info_aquired_unsuccesfully");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -377,13 +383,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     // Mudar par 1
                     if (formLocal.getRequire_location() == 0) {
                         enableProgressDialog(
-                                "Location Info",
-                                "Location Info required",
-                                "Cancel",
-                                "Ok"
+                                hmAux_Trans.get("alert_location_info_title"),
+                                hmAux_Trans.get("alert_location_info_required"),
+                                hmAux_Trans.get("sys_alert_btn_cancel"),
+                                hmAux_Trans.get("sys_alert_btn_ok")
                         );
                         //
-                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", "Check() GPS?", "", "0");
+                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
 
                     } else {
                         startCheckIN();
@@ -1906,7 +1912,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     @Override
     protected void processGPS_ENABLED() {
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", "GPS Go get Location", "", "0");
+        SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
+        SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", hmAux_Trans.get("alert_location_gps_info"), "", "0");
         ToolBox_Inf.call_Location_Tracker(context);
     }
 
