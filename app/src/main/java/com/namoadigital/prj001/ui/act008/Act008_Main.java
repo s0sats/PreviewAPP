@@ -114,6 +114,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("mket_search_hint");
         transList.add("product_label");
         transList.add("product_id_label");
+        transList.add("alert_no_form_for_operation_ttl");
+        transList.add("alert_no_form_for_operation_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -402,16 +404,26 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void callAct009(Context context) {
-        Intent mIntent =  new Intent(context, Act009_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
 
-        mIntent.putExtras(bundle);
+        if(mPresenter.checkFormXOperationExists()){
 
-        startActivity(mIntent);
-        finish();
+            Intent mIntent =  new Intent(context, Act009_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+            bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
+            bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
+
+            mIntent.putExtras(bundle);
+
+            startActivity(mIntent);
+            finish();
+        }else{
+            showAlertDialog(
+                    hmAux_Trans.get("alert_no_form_for_operation_ttl"),
+                    hmAux_Trans.get("alert_no_form_for_operation_msg")
+            );
+
+        }
     }
 
     //Trata retorno do Serial

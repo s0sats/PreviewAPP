@@ -37,7 +37,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                 new GE_Custom_Form_Type_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
-                        ToolBox_Con.getPreference_Translate_Code(context)
+                        ToolBox_Con.getPreference_Translate_Code(context),
+                        ToolBox_Con.getPreference_Operation_Code(context)
                 ).toSqlQuery()
         );
 
