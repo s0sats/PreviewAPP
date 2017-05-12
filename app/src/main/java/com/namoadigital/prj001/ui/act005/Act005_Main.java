@@ -199,6 +199,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_cancel_nfc_finish_msg");
         transList.add("alert_support_finish_ttl");
         transList.add("alert_support_finish_msg");
+        //alert support
+        transList.add("support_dialog_ttl");
+
 
 
         //
@@ -444,35 +447,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
             @Override
             public void logoutClicked() {
-
                 mPresenter.showLogoutDialog();
-
-               /* Intent mIntent = new Intent(context, WBR_Logout.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,"1|5");//Pula validação de other device
-
-                mIntent.putExtras(bundle);
-                //
-                context.sendBroadcast(mIntent);
-                //ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-
-*/
-
-//                ToolBox.alertMSG(
-//                        Act005_Main.this,
-//                        hmAux_Trans.get("drawer_logout_alert_ttl"),
-//                        hmAux_Trans.get("drawer_logout_alert_msg"),
-//                        new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                ToolBox_Con.cleanPreferences(Act005_Main.this);
-//                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
-//                                finish();
-//                            }
-//                        },
-//                        1
-//                );
-
             }
         });
 
@@ -536,6 +511,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
 
@@ -766,7 +743,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
             case Act005_Main.WS_PROCESS_SUPPORT:
                 alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
-                alertMsg = hmAux_Trans.get("alert_support_nfc_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
 
             default:
@@ -904,14 +881,16 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 break;
 
             case TOOLBAR_SUPPORT:
-                alertTitle = hmAux_Trans.get("alert_support_ttl");
+                mPresenter.showSupportDialog();
+                /*alertTitle = hmAux_Trans.get("alert_support_ttl");
                 alertMsg = hmAux_Trans.get("alert_support_nfc_msg");
                 listener =  new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.executeSupport();
+                        mPresenter.showSupportDialog();
+                        //mPresenter.executeSupport("MSG");
                     }
-                };
+                };*/
                 break;
 
             default:

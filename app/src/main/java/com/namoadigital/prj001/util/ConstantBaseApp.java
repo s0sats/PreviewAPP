@@ -118,6 +118,8 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String FOOTER_OPERATION = "footer_operation";
     public static final String FOOTER_BTN_OK = "footer_btn_ok";
     public static final String FOOTER_VERSION_LBL = "footer_version_lbl";
+    public static final String FOOTER_IMEI_LBL = "footer_imei_lbl";
+    public static final String FOOTER_IMEI = "footer_imei";
 
     /**
      * Sync WS
@@ -134,10 +136,16 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String GS_SERIAL_ID = "serialserialid";
 
     /**
-     * Serial Logout
+     * WS Logout
      */
     public static final String WS_LOGOUT_CUSTOMER_LIST = "logoutcustomerlist";
     public static final String WS_LOGOUT_USER_CODE = "logoutusercode";
+
+    /**
+     * WS Support
+     */
+    public static final String WS_SUPPORT_MSG = "supportmsg";
+
 
 
     public static final String SW_TYPE_BR = "sw_type_br";

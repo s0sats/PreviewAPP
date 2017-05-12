@@ -22,4 +22,6 @@ public interface Act008_Main_Presenter {
 
     void onBackPressedClicked();
 
+    boolean checkFormXOperationExists();
+
 }

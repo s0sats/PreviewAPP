@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -13,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
@@ -51,7 +54,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private EV_User_CustomerDao userCustomerDao;
     private FCMMessageDao fcmMessageDao;
 
-    //logout dialog
     private String logoutList = "";
     private transient Dialog logoutDialog;
     private Act005_Logout_Adapter mAdapter;
@@ -258,6 +260,34 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
     }
 
+    @Override
+    public void showSupportDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act005_dialog_support, null);
+
+        /**
+         * Ini Vars
+         */
+        TextView tv_msg = (TextView) view.findViewById(R.id.act005_dialog_support_tv_msg);
+        tv_msg.setText(hmAux_Trans.get("alert_support_msg"));
+        final MKEditTextNM et_support_msg = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_msg);
+
+        builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                executeSupport(et_support_msg.getText().toString().trim());
+            }
+        });
+        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null);
+
+        builder.show();
+    }
 
     @Override
     public void showLogoutDialog() {
@@ -431,13 +461,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void executeSupport() {
+    public void executeSupport(String support_msg) {
         mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
         mView.showPD();
 
         Intent mIntent = new Intent(context, WBR_Upload_Support.class);
         Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SUPPORT_MSG,support_msg);
 
         mIntent.putExtras(bundle);
         //

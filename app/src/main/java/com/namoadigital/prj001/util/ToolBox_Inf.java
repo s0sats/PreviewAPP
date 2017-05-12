@@ -34,7 +34,6 @@ import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
-import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
@@ -328,6 +327,25 @@ public class ToolBox_Inf {
             return "Error: " + e.toString();
         }
     }
+
+    public static String uploadFileSupport(String ws_url, String json, String sPath, String sFile) {
+        try {
+            // Set your file path here
+            FileInputStream fstrm = new FileInputStream(sPath + "/" + sFile);
+
+            // Set your server page url (and the file title/description)
+            HttpFileUpload hfu = new HttpFileUpload(ws_url, json);
+
+            return hfu.Send_Now(fstrm, sFile);
+
+        } catch (Exception e) {
+            String error = e.toString();
+            return "Error: " + e.toString();
+        }
+    }
+
+
+
 
     public static void deleteLocalImage(String sFile) {
         File file = new File(Constant.CACHE_PATH_PHOTO + "/" + sFile);
@@ -1021,6 +1039,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_operation_lbl");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
+        transList.add("footer_dialog_imei");
         //
         HMAux HmTrans = setLanguage(
                 context,
@@ -1068,6 +1087,8 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
         hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));
         hmAux.put(Constant.FOOTER_VERSION_LBL, HmTrans.get("footer_version_lbl"));
+        hmAux.put(Constant.FOOTER_IMEI_LBL, HmTrans.get("footer_dialog_imei"));
+        hmAux.put(Constant.FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
 
         return hmAux;
 

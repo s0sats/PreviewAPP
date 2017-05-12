@@ -20,5 +20,7 @@ public interface Act005_Main_Presenter {
 
     void executeCancelNFC();
 
-    void executeSupport();
+    void executeSupport(String support_msg);
+
+    void showSupportDialog();
 }

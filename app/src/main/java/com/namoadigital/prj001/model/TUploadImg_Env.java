@@ -42,4 +42,5 @@ public class TUploadImg_Env {
     public void setFile_path(String file_path) {
         this.file_path = file_path;
     }
+
 }

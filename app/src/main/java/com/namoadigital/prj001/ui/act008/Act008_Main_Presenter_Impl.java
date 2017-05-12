@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
@@ -37,14 +38,17 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private Long product_code;
     private boolean downloadStarted = false;
     private HMAux hmAux_Trans;
+    private GE_Custom_Form_OperationDao formOperationDao;
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans) {
+
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
         this.mdProductDao = mdProductDao;
         this.product_code = product_code;
         this.hmAux_Trans = hmAux_Trans;
+        this.formOperationDao = formOperationDao;
     }
 
     @Override
@@ -230,6 +234,14 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             //Atualiza var e impede que os serviços sejam chamados 2 vezes seguidas
             downloadStarted = true;
         }
+    }
+
+    @Override
+    public boolean checkFormXOperationExists() {
+
+
+
+        return false;
     }
 
     @Override
