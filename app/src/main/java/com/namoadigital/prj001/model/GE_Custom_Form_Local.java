@@ -15,6 +15,7 @@ public class GE_Custom_Form_Local {
     private String custom_form_status;
     private Long custom_form_data_serv;
     private int require_signature;
+    private int require_location;
     private String automatic_fill;
     private int custom_product_code;
     private String custom_product_desc;
@@ -26,6 +27,8 @@ public class GE_Custom_Form_Local {
     private String schedule_date_end_format;
     private long schedule_date_start_format_ms;
     private long schedule_date_end_format_ms;
+    private int require_serial;
+    private int allow_new_serial_cl;
 
     public long getCustomer_code() {
         return customer_code;
@@ -97,6 +100,14 @@ public class GE_Custom_Form_Local {
 
     public void setRequire_signature(int require_signature) {
         this.require_signature = require_signature;
+    }
+
+    public int getRequire_location() {
+        return require_location;
+    }
+
+    public void setRequire_location(int require_location) {
+        this.require_location = require_location;
     }
 
     public String getAutomatic_fill() {
@@ -185,5 +196,21 @@ public class GE_Custom_Form_Local {
 
     public void setSchedule_date_end_format_ms(long schedule_date_end_format_ms) {
         this.schedule_date_end_format_ms = schedule_date_end_format_ms;
+    }
+
+    public int getRequire_serial() {
+        return require_serial;
+    }
+
+    public void setRequire_serial(int require_serial) {
+        this.require_serial = require_serial;
+    }
+
+    public int getAllow_new_serial_cl() {
+        return allow_new_serial_cl;
+    }
+
+    public void setAllow_new_serial_cl(int allow_new_serial_cl) {
+        this.allow_new_serial_cl = allow_new_serial_cl;
     }
 }

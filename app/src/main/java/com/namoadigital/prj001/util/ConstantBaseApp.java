@@ -166,6 +166,12 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String EXECUTE_WS_GET_CUSTOMER = "session_app";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String MESSAGE_CLEAR = "message_clear";
+    public static final String LOCATION_MESSAGE = "location_message";
+    public static final String LOCATION_TYPE = "location_type";
+    public static final String LOCATION_LAT = "location_lat";
+    public static final String LOCATION_LNG = "location_lng";
+
+
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

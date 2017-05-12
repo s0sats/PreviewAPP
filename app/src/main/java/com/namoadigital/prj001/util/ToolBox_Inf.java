@@ -46,6 +46,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
@@ -725,7 +726,7 @@ public class ToolBox_Inf {
                 break;
         }
 
-        if (ret_error != null){
+        if (ret_error != null) {
             sendBCStatus(context, "ERROR_1", ret_error, s_Link, "0");
             return false;
         }
@@ -935,7 +936,7 @@ public class ToolBox_Inf {
                             ToolBox_Con.customDBPath(customer_code),
                             Constant.DB_VERSION_CUSTOM
                     );
-            List<GE_Custom_Form_Field_Local> pendingPictures = fieldLocalDao.query(
+            List<HMAux> pendingPictures = fieldLocalDao.query_HM(
                     new GE_Custom_Form_Field_Local_Sql_003(
                             customer_code,
                             custom_form_type,
@@ -1210,7 +1211,7 @@ public class ToolBox_Inf {
             );
         }
         //
-       // generateNotification(context, 300);
+        // generateNotification(context, 300);
     }
 
     public static void generateNotification(Context context, int parameter) {
@@ -1458,7 +1459,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean isUploadRunning() {
-        if ( WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING ) {
+        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING) {
             return true;
         }
         return false;
@@ -1704,5 +1705,20 @@ public class ToolBox_Inf {
             return false;
         }
     }
+
+    public static void call_Location_Tracker(Context context) {
+        if (!SV_LocationTracker.status) {
+            Intent mIntent = new Intent(context, SV_LocationTracker.class);
+            context.startService(mIntent);
+        }
+    }
+
+    public static void stop_Location_Tracker(Context context) {
+        if (SV_LocationTracker.status) {
+            Intent mIntent = new Intent(context, SV_LocationTracker.class);
+            context.stopService(mIntent);
+        }
+    }
+
 
 }

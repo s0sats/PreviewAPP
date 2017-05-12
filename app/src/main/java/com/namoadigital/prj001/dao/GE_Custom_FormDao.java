@@ -27,6 +27,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String REQUIRE_SIGNATURE = "require_signature";
+    public static final String REQUIRE_LOCATION = "require_location";
     public static final String AUTOMATIC_FILL = "automatic_fill";
     //Não é campo da tabela, descrição vem da tradução
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
@@ -247,6 +248,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
+            custom_form.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
             custom_form.setAutomatic_fill(cursor.getString(cursor.getColumnIndex(AUTOMATIC_FILL)));
 
             return custom_form;
@@ -272,6 +274,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             }
             if (custom_form.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form.getRequire_signature());
+            }
+            if (custom_form.getRequire_location() > -1) {
+                contentValues.put(REQUIRE_LOCATION, custom_form.getRequire_location());
             }
             if (custom_form.getAutomatic_fill() != null) {
                 contentValues.put(AUTOMATIC_FILL, custom_form.getAutomatic_fill());

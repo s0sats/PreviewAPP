@@ -11,7 +11,10 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static android.R.attr.data;
 
 /**
  * Created by neomatrix on 11/01/17.
@@ -280,6 +283,16 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             Cursor cursor = db.rawQuery(s_query_div[0], null);
 
             while (cursor.moveToNext()) {
+
+
+                String data = cursor.getString(0);
+                String column_name = cursor.getColumnName(0);
+
+                HashMap<String,String> map = new HashMap<String,String>();
+                map.put("column_value",data);
+                map.put("column_name",column_name);
+
+
                 custom_form_field_locals.add(toHMAuxMapper.map(cursor));
             }
 

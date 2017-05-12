@@ -11,6 +11,7 @@ public class GE_Custom_Form {
     private int custom_form_code;
     private int custom_form_version;
     private int require_signature;
+    private int require_location;
     private String automatic_fill;
 
     public long getCustomer_code() {
@@ -51,6 +52,14 @@ public class GE_Custom_Form {
 
     public void setRequire_signature(int require_signature) {
         this.require_signature = require_signature;
+    }
+
+    public int getRequire_location() {
+        return require_location;
+    }
+
+    public void setRequire_location(int require_location) {
+        this.require_location = require_location;
     }
 
     public String getAutomatic_fill() {

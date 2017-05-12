@@ -76,24 +76,34 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
 
         // List Files and Directories
-        File myDirectoryFull = new File("/data/user/0/com.namoadigital.prj001.production");
-        File[] files = myDirectoryFull.listFiles();
+//        File myDirectoryFull = new File("/data/user/0/com.namoadigital.prj001.production");
+//        File[] files = myDirectoryFull.listFiles();
 
-        ToolBox_Inf.zipFolder(
-                "/data/user/0/com.namoadigital.prj001.production/files/CC_CACHE",
-                "/sdcard/DBase/Hugo.zip"
-        );
 
-        File myDirectory = new File("/data/user/0/com.namoadigital.prj001.production/files");
-        File[] directories = myDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                boolean isd = pathname.isDirectory();
-                boolean isf = pathname.isFile();
+//        String sPath = getFilesDir().getPath().replace("/files","/shared_prefs");
+//
+//        File myDirectoryFull = new File(sPath);
+//        File[] files = myDirectoryFull.listFiles();
+//
+//        int i = 10;
 
-                return ( isd || isf);
-            }
-        });
+
+//
+//        ToolBox_Inf.zipFolder(
+//                "/data/user/0/com.namoadigital.prj001.production/files/CC_CACHE",
+//                "/sdcard/DBase/Hugo.zip"
+//        );
+//
+//        File myDirectory = new File("/data/user/0/com.namoadigital.prj001.production/files");
+//        File[] directories = myDirectory.listFiles(new FileFilter() {
+//            @Override
+//            public boolean accept(File pathname) {
+//                boolean isd = pathname.isDirectory();
+//                boolean isf = pathname.isFile();
+//
+//                return ( isd || isf);
+//            }
+//        });
 //
 //        Copiar arquivos
 //        try {

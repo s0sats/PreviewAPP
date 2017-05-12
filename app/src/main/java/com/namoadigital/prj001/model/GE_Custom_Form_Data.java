@@ -62,6 +62,16 @@ public class GE_Custom_Form_Data {
     @Expose
     private String token;
 
+    @Expose
+    private String location_type;
+
+    @Expose
+    private String location_lat;
+
+    @Expose
+    private String location_lng;
+
+
     private List<GE_Custom_Form_Data_Field> dataFields;
 
     public GE_Custom_Form_Data() {
@@ -83,6 +93,9 @@ public class GE_Custom_Form_Data {
         this.signature_name = "";
         this.token = "";
         this.dataFields = new ArrayList<>();
+        this.location_type = "";
+        this.location_lat = "";
+        this.location_lng = "";
     }
 
     public long getCustomer_code() {
@@ -219,6 +232,30 @@ public class GE_Custom_Form_Data {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getLocation_type() {
+        return location_type;
+    }
+
+    public void setLocation_type(String location_type) {
+        this.location_type = location_type;
+    }
+
+    public String getLocation_lat() {
+        return location_lat;
+    }
+
+    public void setLocation_lat(String location_lat) {
+        this.location_lat = location_lat;
+    }
+
+    public String getLocation_lng() {
+        return location_lng;
+    }
+
+    public void setLocation_lng(String location_lng) {
+        this.location_lng = location_lng;
     }
 
     public List<GE_Custom_Form_Data_Field> getDataFields() {
