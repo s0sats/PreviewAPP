@@ -113,8 +113,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         TextView tv_id_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_label);
         TextView tv_id_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_id_val);
 
-        String[] id = item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC).split("-");
-        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+id[0].trim());
+        tv_id_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
 
         tv_list.add(tv_id_lbl);
         tv_list.add(tv_id_val);
@@ -163,6 +162,35 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         tv_list.add(tv_form_lbl);
         tv_list.add(tv_form_val);
         //
+        TextView tv_data_serv_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_data_serv_lbl);
+        TextView tv_data_serv_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_data_serv_val);
+
+        tv_list.add(tv_data_serv_lbl);
+        tv_list.add(tv_data_serv_val);
+
+        TextView tv_date_schedule_start_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_lbl);
+        TextView tv_date_schedule_start_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_date_schedule_start_val);
+
+        tv_list.add(tv_date_schedule_start_lbl);
+        tv_list.add(tv_date_schedule_start_val);
+
+        if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0){
+            tv_data_serv_lbl.setVisibility(View.VISIBLE);
+            tv_data_serv_lbl.setText(hmAux_Trans.get("lbl_data_serv")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+            //
+            tv_date_schedule_start_lbl.setVisibility(View.VISIBLE);
+            tv_date_schedule_start_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+
+        }else{
+            tv_data_serv_lbl.setVisibility(View.GONE);
+            tv_data_serv_lbl.setText("");
+            //
+            tv_date_schedule_start_lbl.setVisibility(View.GONE);
+            tv_date_schedule_start_lbl.setText("");
+        }
+
+
+        //
         Drawable llDrawable = null;
 
 //        tvItem.setText(
@@ -183,12 +211,13 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
             case Constant.CUSTOM_FORM_STATUS_IN_PROCESSING:
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
                 llBackground.setBackground(llDrawable);
                 break;
             //
             case Constant.CUSTOM_FORM_STATUS_FINALIZED:
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_4_states);
+                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
                 llBackground.setBackground(llDrawable);
 //                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
@@ -197,6 +226,15 @@ public class Local_Data_List_Adapter extends BaseAdapter {
                 break;
             case Constant.CUSTOM_FORM_STATUS_SENT:
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
+                llBackground.setBackground(llDrawable);
+//                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+//                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+//                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+
+                break;
+            case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
                 llBackground.setBackground(llDrawable);
 //                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
@@ -229,6 +267,8 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         translateList.add("ttl_form");
         translateList.add("lbl_type");
         translateList.add("lbl_form");
+        translateList.add("lbl_data_serv");
+        translateList.add("lbl_date_schedule_start");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

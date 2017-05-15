@@ -11,6 +11,7 @@ public class GE_Custom_Form_Field_Local {
     private int custom_form_code;
     private int custom_form_version;
     private long custom_form_data;
+    private Long custom_form_data_serv;
     private int custom_form_seq;
     private String custom_form_data_type;
     private Integer custom_form_data_size;
@@ -62,6 +63,14 @@ public class GE_Custom_Form_Field_Local {
 
     public void setCustom_form_data(long custom_form_data) {
         this.custom_form_data = custom_form_data;
+    }
+
+    public Long getCustom_form_data_serv() {
+        return custom_form_data_serv;
+    }
+
+    public void setCustom_form_data_serv(Long custom_form_data_serv) {
+        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     public int getCustom_form_seq() {

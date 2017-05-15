@@ -4,6 +4,7 @@ import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -17,12 +18,14 @@ public class GE_Custom_Form_Sql_002 implements Specification {
     private int s_form_type_code;
     private String s_translate_code;
     private String product_code;
+    private long s_operation_code;
 
-    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String product_code) {
+    public GE_Custom_Form_Sql_002(long s_customer_code, int s_form_type_code, String s_translate_code, String product_code, long s_operation_code) {
         this.s_customer_code = s_customer_code;
         this.s_form_type_code = s_form_type_code;
         this.s_translate_code = s_translate_code;
         this.product_code = product_code;
+        this.s_operation_code = s_operation_code;
     }
 
     @Override
@@ -63,6 +66,17 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "      AND cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = '" + s_customer_code + "'\n" +
                 "      AND cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+" = '" + s_form_type_code +"'\n" +
                 "      AND p."+ GE_Custom_Form_ProductDao.PRODUCT_CODE+" = '" + product_code +"'\n" +
+                "      AND EXISTS(SELECT\n" +
+                "                     1\n" +
+                "               FROM\n" +
+                                    GE_Custom_Form_OperationDao.TABLE +" o\n" +
+                "               WHERE\n" +
+                "                 o.customer_code = p.customer_code\n" +
+                "                 and o.custom_form_type = p.custom_form_type\n" +
+                "                 and o.custom_form_code = p.custom_form_code\n" +
+                "                 and o.custom_form_version = p.custom_form_version\n" +
+                "                 and o.operation_code = '"+s_operation_code+"'\n" +
+                "                )  " +
                 "    \n" +
                 "    ORDER BY\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +

@@ -8,6 +8,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_NAME_BASE;
@@ -20,6 +21,9 @@ import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
+import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -34,20 +38,20 @@ public class AppBase extends Application {
         // Infra PATH
         DB_PATH = Environment
                 .getExternalStorageDirectory().getPath() + "/namoa";
-
-        //DB_PATH = getFilesDir().getPath();
-
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
+        SUPPORT_PATH = DB_PATH + "/support";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
-        CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
-        //CACHE_PATH = DB_PATH + "/CC_CACHE";
+        SUPPORT_NAME = "support.zip";
+        SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
 
+        CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
+        CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 5;

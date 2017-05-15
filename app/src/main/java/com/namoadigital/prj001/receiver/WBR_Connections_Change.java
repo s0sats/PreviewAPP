@@ -24,9 +24,30 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 activateUpload(context);
                 activateCleanning(context);
                 //
+                activateDownLoadPDF(context);
+                activateDownLoadPicture(context);
+                //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
         }
+    }
+
+    private void activateDownLoadPDF(Context context) {
+        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void activateDownLoadPicture(Context context) {
+        Intent mIntent = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private void activateUpload(Context context) {

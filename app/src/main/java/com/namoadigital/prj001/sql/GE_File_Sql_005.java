@@ -24,9 +24,9 @@ public class GE_File_Sql_005 implements Specification {
 
         return sb
                 .append(" DELETE   \n" +
-                        " FROM\n" +
+                        " FROM \n" +
                         "   ge_files \n" +
-                        " WHERE\n" +
+                        " WHERE \n" +
                         "   file_code in("+file_code_list+");\n")
                 .toString();
     }

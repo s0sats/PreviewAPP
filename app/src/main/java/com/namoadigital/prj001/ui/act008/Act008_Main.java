@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -16,11 +18,15 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
+import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -59,6 +65,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private long product_code;
     private int serial_required;
     private int serial_allow_new;
+    //agendamento
+    private boolean isSchedule;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,6 +119,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("mket_search_hint");
         transList.add("product_label");
         transList.add("product_id_label");
+        transList.add("alert_no_form_for_operation_ttl");
+        transList.add("alert_no_form_for_operation_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -122,6 +132,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void initVars() {
+        //Variavel q identifica se dados do produto são chamados do master data ou não.
+        isSchedule = false;
         //
         recoverIntentsInfo();
         //
@@ -138,7 +150,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
                 product_code,
-                hmAux_Trans
+                hmAux_Trans,
+                new GE_Custom_Form_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                isSchedule
                 );
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
@@ -190,6 +207,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
+            //Chamada vinda da act017
+            if(bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
+                isSchedule = true;
+            }
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
         } else {
             product_code = 0L;
@@ -220,6 +241,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
 
@@ -228,7 +251,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private void initActions() {
         //
-        mPresenter.getProductInfo();
+        mPresenter.getProductInfo(bundle);
         //
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -327,7 +350,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        callAct009(context);
+                        //callAct009(context);
+                        mPresenter.defineFlow();
                     }
                 };
             }
@@ -378,7 +402,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         disableProgressDialog();
 
-        callAct009(context);
+        //callAct009(context);
+        mPresenter.defineFlow();
 
     }
     //Trata retorno de serial OK
@@ -388,21 +413,64 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         disableProgressDialog();
 
-        callAct009(context);
+        //callAct009(context);
+        mPresenter.defineFlow();
     }
 
     @Override
     public void callAct009(Context context) {
-        Intent mIntent =  new Intent(context, Act009_Main.class);
+
+        if(mPresenter.checkFormXOperationExists()){
+
+            Intent mIntent =  new Intent(context, Act009_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+            bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
+            bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
+
+            mIntent.putExtras(bundle);
+
+            startActivity(mIntent);
+            finish();
+        }else{
+            showAlertDialog(
+                    hmAux_Trans.get("alert_no_form_for_operation_ttl"),
+                    hmAux_Trans.get("alert_no_form_for_operation_msg")
+            );
+
+        }
+    }
+
+    @Override
+    public void callAct011(Context context) {
+        Intent mIntent =  new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct017(Context context) {
+        Intent mIntent =  new Intent(context, Act017_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Remove dados não necessarios para act017
+        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
+        bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
+        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE);
+        bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
+        bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
+        bundle.remove(Constant.ACT013_CUSTOM_FORM_DATA);
 
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);
         finish();
+
     }
 
     //Trata retorno do Serial
@@ -432,5 +500,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

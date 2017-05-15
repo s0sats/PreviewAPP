@@ -12,6 +12,9 @@ import com.namoadigital.prj001.service.WS_Upload_Img;
  */
 
 public class WBR_Upload_Img extends WakefulBroadcastReceiver {
+
+    public static boolean IS_RUNNING = false;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();

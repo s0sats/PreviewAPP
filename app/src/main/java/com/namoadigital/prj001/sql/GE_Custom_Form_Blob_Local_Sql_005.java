@@ -28,14 +28,16 @@ public class GE_Custom_Form_Blob_Local_Sql_005 implements Specification {
 
         return sb.append(
                 " SELECT '" +
-                        String.valueOf(R.drawable.ic_picture_as_pdf_black_24px) + "'  as  blob_icon,  blob_name, blob_url_local, '0' as page " +
+                        String.valueOf(R.drawable.ic_picture_as_pdf_black_24px) + "'  as blob_icon,  blob_name, blob_url_local, '0' as page " +
                         " FROM " +
                         GE_Custom_Form_Blob_LocalDao.TABLE +
                         " WHERE " +
                         GE_Custom_Form_Blob_LocalDao.CUSTOMER_CODE + "= '" + s_customer_code + "' " +
                         "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_TYPE + " = '" + s_formtype_code + "' " +
                         "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_CODE + " = '" + s_form_code + "' " +
-                        "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' ")
+                        "     AND " + GE_Custom_Form_Blob_LocalDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' " +
+                        "     AND " + GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL + " <> '' ")
+
                 .append(";blob_icon#blob_name#blob_url_local#page")
 
                 .toString();

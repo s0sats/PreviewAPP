@@ -297,6 +297,110 @@
                     />
 
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/act_011_dialog_ll_scheduel_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp">
+
+                    <TextView
+                        android:id="@+id/act_011_dialog_tv_data_serv_lbl"
+                        android:text="Seq.Exec::"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start|center_vertical"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"
+                        android:textColor="@color/namoa_color_light_blue"/>
+
+                    <TextView
+                        android:id="@+id/act_011_dialog_tv_data_serv_val"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:gravity="start|center_vertical"
+                        android:text="2"
+                        android:textColor="@color/namoa_color_light_blue"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp">
+
+                    <TextView
+                        android:id="@+id/act_011_dialog_tv_schedule_dt_start_lbl"
+                        android:text="Agendamento Ini:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start|center_vertical"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"
+                        android:textColor="@color/namoa_color_light_blue"/>
+
+                    <TextView
+                        android:id="@+id/act_011_dialog_tv_schedule_dt_start_val"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:gravity="start|center_vertical"
+                        android:text="2"
+                        android:textColor="@color/namoa_color_light_blue"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp">
+
+                    <TextView
+                        android:id="@+id/act_011_dialog_tv_schedule_dt_end_lbl"
+                        android:text="Agendamento Ini:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start|center_vertical"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"
+                        android:textColor="@color/namoa_color_light_blue"/>
+
+                    <TextView
+                        android:id="@+id/act_011_dialog_tv_schedule_dt_end_val"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:gravity="start|center_vertical"
+                        android:text="2"
+                        android:textColor="@color/namoa_color_light_blue"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

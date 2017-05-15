@@ -1,0 +1,29 @@
+package com.namoadigital.prj001.util;
+
+/**
+ * Created by neomatrix on 09/01/17.
+ */
+
+public class Constant extends ConstantBaseApp {
+
+    /**
+     * WebService
+     */
+
+    /**
+     * Desenvolvimento
+     */
+    public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
+    public static final String WS_GETSESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
+    public static final String WS_GOOGLE = "https://dev.namoadigital.com/ws/prj001/server_gcm_set.ws";
+
+    public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
+    public static final String WS_SESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
+    public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";
+    public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
+    public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
+    public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
+
+    public static final String WS_ENABLE_NFC = "https://dev.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
+    public static final String WS_CANCEL_NFC = "https://dev.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";
+}

@@ -34,11 +34,15 @@ public class WS_Upload_Img extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-            //Chama notificação.
-           ToolBox_Inf.showNotification(
-                   getApplicationContext(),
-                   Constant.NOTIFICATION_UPLOAD
-           );
+
+            if (!ToolBox_Inf.isUploadRunning()) {
+                WBR_Upload_Img.IS_RUNNING = true;
+                //Chama notificação.
+                ToolBox_Inf.showNotification(
+                        getApplicationContext(),
+                        Constant.NOTIFICATION_UPLOAD
+                );
+            }
 
             Gson gson = new Gson();
             TUploadImg_Env env = new TUploadImg_Env();
@@ -68,6 +72,9 @@ public class WS_Upload_Img extends IntentService {
                         geFile.getFile_path()
                 );
 
+                // Hugo Erro
+                //throw new Exception("TimeOut Exception");
+
                 TUploadImg_Rec rec = gson.fromJson(
                         sResults,
                         TUploadImg_Rec.class
@@ -79,16 +86,16 @@ public class WS_Upload_Img extends IntentService {
                 }
             }
 
+
         } catch (Exception e) {
             programAlarm(getApplicationContext());
-
         } finally {
+            WBR_Upload_Img.IS_RUNNING = false;
             WBR_Upload_Img.completeWakefulIntent(intent);
-         //   cancelNotification();
-            ToolBox_Inf.cancelNotification(
-                    getApplicationContext(),
-                    Constant.NOTIFICATION_UPLOAD
-            );
+            //
+            if(!ToolBox_Inf.isUploadRunning()){
+                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_UPLOAD);
+            }
         }
     }
 
@@ -97,7 +104,7 @@ public class WS_Upload_Img extends IntentService {
         //
         calendarAux.set(
                 Calendar.MINUTE,
-                calendarAux.get(Calendar.MINUTE) + 1
+                calendarAux.get(Calendar.MINUTE) + 5
         );
         //
         Intent mIntent = new Intent(
@@ -107,7 +114,7 @@ public class WS_Upload_Img extends IntentService {
         //
         PendingIntent pi = PendingIntent.getBroadcast(
                 context,
-                0,
+                10,
                 mIntent,
                 0
         );

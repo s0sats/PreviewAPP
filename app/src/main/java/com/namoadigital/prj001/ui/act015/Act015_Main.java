@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -118,6 +120,8 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
 
@@ -169,5 +173,16 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

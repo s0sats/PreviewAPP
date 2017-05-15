@@ -64,6 +64,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     private HMAux hmAux_Trans;
 
+    private boolean bAgendado;
+
 
     public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, HMAux hmAux_Trans) {
         this.context = context;
@@ -84,6 +86,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id) {
 
         boolean bNew = false;
+        bAgendado = false;
 
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_003(
@@ -101,10 +104,24 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         int index = -1;
 
         if (customFormLocal != null) {
+            //Se Form vem do agendamento, muda status para in processing
+            if (customFormLocal.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+                //
+                customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
+                customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
+                //
+                custom_form_LocalDao.addUpdate(customFormLocal);
+                //
+                bNew = false;
 
-            bNew = false;
+                bAgendado = true;
 
-            index = -1;
+                index = 0;
+            } else {
+                bNew = false;
+
+                index = -1;
+            }
 
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
                     new GE_Custom_Form_Fields_Local_Sql_001(
@@ -115,6 +132,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             String.valueOf(customFormLocal.getCustom_form_data())
                     ).toSqlQuery().toString().toLowerCase()
             );
+
+            int hugo = 10;
 
         } else {
 
@@ -153,8 +172,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
-            // Mudar
-            customFormLocal.setCustom_form_src("0");
+            customFormLocal.setCustom_form_data_serv(null);
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_product_id(product_id);
@@ -163,6 +181,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setSerial_id(serial_id);
             customFormLocal.setRequire_signature(customForm.getRequire_signature());
             customFormLocal.setAutomatic_fill(customForm.getAutomatic_fill());
+            customFormLocal.setSchedule_date_start_format("1900-01-01 00:00:00 +00:00");
+            customFormLocal.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
+            customFormLocal.setSchedule_date_start_format_ms(0);
+            customFormLocal.setSchedule_date_end_format_ms(0);
 
             custom_form_LocalDao.addUpdate(customFormLocal);
 
@@ -209,8 +231,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getCustom_form_type(),
                 customFormLocal.getCustom_form_code(),
                 customFormLocal.getCustom_form_version(),
-                customFormLocal.getCustom_form_data()
+                customFormLocal.getCustom_form_data(),
+                customFormLocal.getCustom_form_data_serv()
         );
+
+        if (bAgendado) {
+            custom_form_dataDao.addUpdate(formData);
+            custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
+        }
 
         ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
 
@@ -225,7 +253,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
     }
 
-    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {
+    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv) {
 
         GE_Custom_Form_Data form_data = custom_form_dataDao
 
@@ -262,6 +290,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_code((int) custom_form_code);
             form_data.setCustom_form_version((int) custom_form_version);
             form_data.setCustom_form_data(custom_form_data);
+            form_data.setCustom_form_data_serv(custom_form_data_serv);
             form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
             form_data.setProduct_code(product_code);
             form_data.setSerial_id("");
@@ -323,7 +352,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        //FIM - Adição da fila de upload */
+         /*Fim da fila de upload */
+        //
         mView.showMsg(
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
@@ -333,12 +363,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc,ArrayList<GE_File> geFiles) {
+    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles) {
 
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())) {
-                    checkData(formData,geFiles);
+                    checkData(formData, geFiles);
                 } else {
                     mView.showMsg(
                             hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -349,7 +379,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 break;
             default:
                 if (opc == 1) {
-                    checkData(formData,geFiles);
+                    checkData(formData, geFiles);
                 } else {
                     mView.showMsg(
                             hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",

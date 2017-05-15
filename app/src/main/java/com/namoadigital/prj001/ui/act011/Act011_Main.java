@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -62,11 +63,13 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -215,7 +218,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("qty_automatic_answer_msg");
         transList.add("dialog_info_product_code_lbl");
         transList.add("dialog_info_product_id_lbl");
+        transList.add("dialog_info_data_serv_lbl");
+        transList.add("dialog_info_dt_schedule_start_lbl");
+        transList.add("dialog_info_dt_schedule_end_lbl");
 
+        transList.add("alert_location_info_title");
+        transList.add("alert_location_info_required");
+        transList.add("alert_location_gps_info");
+        transList.add("alert_location_info_aquired_succesfully");
+        transList.add("alert_location_info_aquired_unsuccesfully");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -339,6 +350,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void save() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
+                formData.setLocation_type("");
+                formData.setLocation_lat("");
+                formData.setLocation_lng("");
+
                 returnValidCheck(String.valueOf(-1));
 
                 for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
@@ -357,76 +372,96 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void check() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
+                formData.setLocation_type("");
+                formData.setLocation_lat("");
+                formData.setLocation_lng("");
+
                 int sum = returnValidCheck(String.valueOf(-1));
 
                 if (sum == 0) {
 
-                    for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-                        df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-                        df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-                    }
-
-                    sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
-
-                    GE_FileDao geFileDao = new GE_FileDao(
-                            context,
-                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-                    );
-
-                    HMAux aux = geFileDao.getByStringHM(
-                            new GE_File_Sql_003().toSqlQuery()
-                    );
-
-                    int index = Integer.parseInt(aux.get("next_code"));
-
-                    geFiles.clear();
-
-                    for (int i = 0; i < customFFs.size(); i++) {
-                        String sFile_v = customFFs.get(i).getmValue();
-                        String sFile_e = customFFs.get(i).getmDots_photo();
-
-                        if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
-                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
-                            if (sFile.exists()) {
-                                GE_File geFile = new GE_File();
-                                geFile.setFile_code(sFile_v.replace(".png", "").replace(".jpg", ""));
-                                geFile.setFile_path(sFile_v);
-                                geFile.setFile_status("OPENED");
-                                geFile.setFile_date(sDate);
-
-                                geFiles.add(geFile);
-                            }
-                        }
+                    // Mudar par 1
+                    if (formLocal.getRequire_location() == 0) {
+                        enableProgressDialog(
+                                hmAux_Trans.get("alert_location_info_title"),
+                                hmAux_Trans.get("alert_location_info_required"),
+                                hmAux_Trans.get("sys_alert_btn_cancel"),
+                                hmAux_Trans.get("sys_alert_btn_ok")
+                        );
                         //
-                        if (sFile_e.endsWith(".png") || sFile_e.endsWith(".jpg")) {
-                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
-                            if (sFile.exists()) {
-                                GE_File geFile = new GE_File();
-                                geFile.setFile_code(sFile_e.replace(".png", "").replace(".jpg", ""));
-                                geFile.setFile_path(sFile_e);
-                                geFile.setFile_status("OPENED");
-                                geFile.setFile_date(sDate);
+                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
 
-                                geFiles.add(geFile);
-                            }
-                        }
+                    } else {
+                        startCheckIN();
                     }
 
-                    // Hugo
-
-//                    if (signature == 1) {
-//                        GE_File geFile = new GE_File();
-//                        geFile.setFile_code(index);
-//                        geFile.setFile_path(mSignature);
-//                        geFile.setFile_status("OPENED");
-//                        geFile.setFile_date(sDate);
-//                        //
-//                        geFiles.add(geFile);
+//                    for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+//                        df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+//                        df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
 //                    }
-
-                    formData.setSignature(mSignature);
-
-                    mPresenter.checkSignature(formData, signature, 0,geFiles);
+//
+//                    sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+//
+//                    GE_FileDao geFileDao = new GE_FileDao(
+//                            context,
+//                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+//                    );
+//
+//                    HMAux aux = geFileDao.getByStringHM(
+//                            new GE_File_Sql_003().toSqlQuery()
+//                    );
+//
+//                    int index = Integer.parseInt(aux.get("next_code"));
+//                    //int index = 0;
+//
+//                    geFiles.clear();
+//
+//                    for (int i = 0; i < customFFs.size(); i++) {
+//                        String sFile_v = customFFs.get(i).getmValue();
+//                        String sFile_e = customFFs.get(i).getmDots_photo();
+//
+//                        if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
+//                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
+//                            if (sFile.exists()) {
+//                                GE_File geFile = new GE_File();
+//                                geFile.setFile_code(sFile_v.replace(".png", "").replace(".jpg", ""));
+//                                geFile.setFile_path(sFile_v);
+//                                geFile.setFile_status("OPENED");
+//                                geFile.setFile_date(sDate);
+//
+//                                geFiles.add(geFile);
+//                            }
+//                        }
+//                        //
+//                        if (sFile_e.endsWith(".png") || sFile_e.endsWith(".jpg")) {
+//                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
+//                            if (sFile.exists()) {
+//                                GE_File geFile = new GE_File();
+//                                geFile.setFile_code(sFile_e.replace(".png", "").replace(".jpg", ""));
+//                                geFile.setFile_path(sFile_e);
+//                                geFile.setFile_status("OPENED");
+//                                geFile.setFile_date(sDate);
+//
+//                                geFiles.add(geFile);
+//                            }
+//                        }
+//                    }
+//
+//                    // Hugo
+//
+////                    if (signature == 1) {
+////                        GE_File geFile = new GE_File();
+////                        geFile.setFile_code(index);
+////                        geFile.setFile_path(mSignature);
+////                        geFile.setFile_status("OPENED");
+////                        geFile.setFile_date(sDate);
+////                        //
+////                        geFiles.add(geFile);
+////                    }
+//
+//                    formData.setSignature(mSignature);
+//
+//                    mPresenter.checkSignature(formData, signature, 0, geFiles);
 
                 } else {
 
@@ -527,6 +562,63 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 serial_id
         );
 
+    }
+
+    private void startCheckIN() {
+        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+        }
+
+        sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        HMAux aux = geFileDao.getByStringHM(
+                new GE_File_Sql_003().toSqlQuery()
+        );
+
+        int index = Integer.parseInt(aux.get("next_code"));
+
+        geFiles.clear();
+
+        for (int i = 0; i < customFFs.size(); i++) {
+            String sFile_v = customFFs.get(i).getmValue();
+            String sFile_e = customFFs.get(i).getmDots_photo();
+
+            if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_v.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_path(sFile_v);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(sDate);
+
+                    geFiles.add(geFile);
+                }
+            }
+            //
+            if (sFile_e.endsWith(".png") || sFile_e.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_e.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_path(sFile_e);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(sDate);
+
+                    geFiles.add(geFile);
+                }
+            }
+        }
+
+        formData.setSignature(mSignature);
+
+        mPresenter.checkSignature(formData, signature, 0, geFiles);
     }
 
     private void deleteFormLocal() {
@@ -646,6 +738,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
 
@@ -668,6 +762,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.signature = signature;
         this.mSignature = "s_" + prefix + "1.png";
         this.pdfs_local = (ArrayList<HMAux>) pdfs;
+        this.form_data = String.valueOf(formLocal.getCustom_form_data());
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id)) {
             formData.setSerial_id(serial_id);
@@ -692,6 +787,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     form_data_field.setCustom_form_code(formData.getCustom_form_code());
                     form_data_field.setCustom_form_version(formData.getCustom_form_version());
                     form_data_field.setCustom_form_data(formData.getCustom_form_data());
+                    form_data_field.setCustom_form_data_serv(formData.getCustom_form_data_serv());
                     form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
                     //
                     formData.getDataFields().add(form_data_field);
@@ -805,6 +901,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
+            act011_ff_options.enableScheduled(formData.getCustom_form_data_serv());
             act011_ff_options.enableTab(formData.getCustom_form_status());
             act011_ff_options.translaTab(hmAux_Trans);
 
@@ -1341,19 +1438,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        //return super.onPrepareOptionsMenu(menu);
-        //Pega os settings do menu e esconde
-        MenuItem item = menu.findItem(R.id.act11_action_settings);
-        item.setVisible(false);
-        return true;
-    }
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        //return super.onPrepareOptionsMenu(menu);
+//        //Pega os settings do menu e esconde
+//        MenuItem item = menu.findItem(R.id.act11_action_settings);
+//        item.setVisible(false);
+//
+//        return true;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
@@ -1416,19 +1519,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-//                                GE_FileDao geFileDao = new GE_FileDao(
-//                                        context,
-//                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-//                                );
-//
-//                                geFileDao.addUpdate(geFiles, false);
-//
-//                                activateUpload(context);
+                               /* GE_FileDao geFileDao = new GE_FileDao(
+                                        context,
+                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+                                );
+
+                                geFileDao.addUpdate(geFiles, false);
+
+                                activateUpload(context);*/
 
                                 callAct005(context);
                             }
                         },
-                        0
+                        0,
+                        false
                 );
 
                 break;
@@ -1448,7 +1552,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mPresenter.checkData(formData,geFiles);
+                                mPresenter.checkData(formData, geFiles);
                                 bNew = false;
                             }
                         }
@@ -1532,7 +1636,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 //
                 geFiles.add(geFile);
                 //
-                mPresenter.checkData(formData, geFiles );
+                mPresenter.checkData(formData, geFiles);
                 bNew = false;
             } else {
                 formData.setSignature_name("");
@@ -1606,7 +1710,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         TextView tv_form_version_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_lbl);
         TextView tv_form_version_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_val);
-
+        //
+        LinearLayout ll_schedule_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_scheduel_info);
+        //
+        TextView tv_data_serv_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
+        TextView tv_data_serv_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
+        //
+        TextView tv_dt_schedule_start_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_lbl);
+        TextView tv_dt_schedule_start_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_val);
+        //
+        TextView tv_dt_schedule_end_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_lbl);
+        TextView tv_dt_schedule_end_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_val);
+        //
         TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
         ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
@@ -1636,8 +1751,45 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
 
-        tv_title_pdf.setText(hmAux_Trans.get("dialog_info_title_pdf_lbl"));
+        tv_form_code_val.setText(form);
+        tv_form_code_desc.setText(form_desc);
 
+
+        GE_Custom_Form_LocalDao formLocalDao =
+                new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+        HMAux dialogFormLocal
+                = formLocalDao.getByStringHM(
+                new Sql_Act011_003(
+                        context,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        type,
+                        form,
+                        form_version,
+                        form_data
+                ).toSqlQuery()
+
+        );
+        if (dialogFormLocal != null && dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).length() > 0) {
+
+            tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
+            tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
+            tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
+
+            //
+            ll_schedule_info.setVisibility(View.VISIBLE);
+            tv_data_serv_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+            tv_dt_schedule_start_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+            tv_dt_schedule_end_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
+        } else {
+            ll_schedule_info.setVisibility(View.GONE);
+        }
+
+        tv_title_pdf.setText(hmAux_Trans.get("dialog_info_title_pdf_lbl"));
 
 //      Incluir os vazios
 //        int repeat = 4 - pdfs_local.size();
@@ -1677,8 +1829,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 if (aux.get("blob_name").trim().length() != 0) {
 
                     File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+
+                    try {
+
+                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                        ToolBox_Inf.copyFile(
+                                file,
+                                new File(Constant.CACHE_PDF)
+                        );
+                    } catch (Exception e) {
+                    }
+
+
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + aux.get("blob_url_local"))), "application/pdf");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                     startActivity(intent);
@@ -1745,4 +1910,40 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         }
     }
 
+    @Override
+    protected void processGPS_ENABLED() {
+        SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
+        SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", hmAux_Trans.get("alert_location_gps_info"), "", "0");
+        ToolBox_Inf.call_Location_Tracker(context);
+    }
+
+    @Override
+    protected void processGPS_OK(String mLink, String mRequired) {
+        progressDialog.dismiss();
+        //
+        String parts[] = mLink.split("#");
+        formData.setLocation_type(parts[0]);
+        formData.setLocation_lat(parts[1]);
+        formData.setLocation_lng(parts[2]);
+
+        //processa as coordenadas
+        startCheckIN();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        progressDialog.dismiss();
+        //
+        formData.setLocation_type("");
+        formData.setLocation_lat("");
+        formData.setLocation_lng("");
+    }
+
+    @Override
+    protected void processGPS_STOP() {
+        ToolBox_Inf.stop_Location_Tracker(context);
+        progressDialog.dismiss();
+    }
 }

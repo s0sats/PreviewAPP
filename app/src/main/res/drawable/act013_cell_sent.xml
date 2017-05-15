@@ -6,5 +6,5 @@
          android:width="1dp"
          android:color="#ffbe42" />-->
     <!--Background -->
-    <solid android:color="@color/namoa_color_light_green4" />
+    <solid android:color="@color/namoa_color_gray2" />
 </shape>

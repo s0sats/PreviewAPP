@@ -17,6 +17,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+
+        production {
+            applicationId "com.namoadigital.prj001.production"
+        }
+
+        development {
+            applicationId "com.namoadigital.prj001.development"
+        }
+
+    }
+
+
 }
 
 repositories {
@@ -27,7 +41,8 @@ repositories {
 
 repositories {
     maven {
-        url "file:///C:/AppsAndroid/NamoaLib"
+        //url "file:///C:/AppsAndroid/NamoaLib"
+        url "file:///C:/Android/LIB"
     }
 }
 
@@ -37,12 +52,19 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     compile 'com.google.code.gson:gson:2.8.0'
-
     compile 'com.beardedhen:androidbootstrap:2.3.1'
-    compile 'com.namoa_digital:library:0.0.169'
 
+    compile 'com.namoa_digital:library:0.0.189'
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
     testCompile 'junit:junit:4.12'
+
+    provided files('json-20160212.jar')
 }
+
+apply plugin: 'com.google.gms.google-services'

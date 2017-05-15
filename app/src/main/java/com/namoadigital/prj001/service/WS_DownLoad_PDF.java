@@ -32,10 +32,10 @@ public class WS_DownLoad_PDF extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
 
-            if(!ToolBox_Inf.isDownloadRunning()){
-               //Log.v("WS_DownLoad_PDF","true");
+            if (!ToolBox_Inf.isDownloadRunning()) {
+                //Log.v("WS_DownLoad_PDF","true");
                 WBR_DownLoad_PDF.IS_RUNNING = true;
-                ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
 
@@ -68,7 +68,7 @@ public class WS_DownLoad_PDF extends IntentService {
             //
             for (HMAux hmAux : dados_geral) {
                 HMAux item = new HMAux();
-                item.put("custom_name", hmAux.get("custom_name"));
+                item.put("custom_name", hmAux.get("custom_name").toLowerCase());
                 item.put("blob_url", hmAux.get("blob_url"));
                 //
                 dados.add(item);
@@ -76,16 +76,16 @@ public class WS_DownLoad_PDF extends IntentService {
             //
             for (HMAux hmAux : dados) {
                 //
-                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name") + ".pdf")) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".pdf")) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name") + ".tmp");
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".tmp");
                     //
                     ToolBox_Inf.downloadImagePDF(
                             hmAux.get("blob_url"),
-                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name") + ".tmp"
+                            Constant.CACHE_PATH + "/" + hmAux.get("custom_name").toLowerCase() + ".tmp"
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name"), ".pdf");
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get("custom_name").toLowerCase(), ".pdf");
                 }
                 //
                 String nome_parte[] = hmAux.get("custom_name").split("_");
@@ -118,9 +118,9 @@ public class WS_DownLoad_PDF extends IntentService {
         } finally {
             WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);
-            if(!ToolBox_Inf.isDownloadRunning()){
+            if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_PDF","false");
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
         }

@@ -2,11 +2,14 @@ package com.namoadigital.prj001.ui.act013;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -36,6 +39,9 @@ import java.util.List;
 
 public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
+    public static final String FORM_IN_PROCESSING = "form_in_processing";
+    public static final String START_FORM = "start_form";
+
     private Context context;
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
@@ -48,6 +54,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private ImageView iv_help;
     private List<CheckBox> checkBoxList;
     private Bundle recBundle;
+
+    private boolean accessToSchedule;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +95,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("lbl_chk_in_processing");
         translateList.add("lbl_chk_scheduled");
         translateList.add("lbl_chk_finalized");
+        //
+        translateList.add("alert_ttl_exists_in_processing");
+        translateList.add("alert_msg_exists_in_processing");
+        translateList.add("alert_ttl_start_new_processing");
+        translateList.add("alert_msg_start_new_processing");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -111,6 +124,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                                 Constant.DB_VERSION_CUSTOM
                         )
                 );
+        //Verifica se usr tem acesso aos agendados
+        accessToSchedule = ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST);
         //
         lv_pendencies = (ListView) findViewById(R.id.act013_lv_pendencies);
         //
@@ -124,7 +139,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         chk_processing.setChecked(true);
         //
         chk_scheduled = (CheckBox) findViewById(R.id.act013_chk_scheduled);
-        chk_scheduled.setVisibility(View.GONE);
+        chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         //
         chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
         //Add checkbox na lista
@@ -162,6 +177,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
         //Aplica informações do rodapé - fim
@@ -211,7 +228,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     /**
-     *   Analisa todos checklist
+     * Analisa todos checklist
      * e chama função que monsta lista ja passando os
      * filtros selecionados.
      */
@@ -266,7 +283,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         CheckBox chk_scheduled = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_scheduled);
         chk_scheduled.setText(hmAux_Trans.get("lbl_chk_scheduled"));
-        chk_scheduled.setVisibility(View.GONE);
+        chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         //
         CheckBox chk_finalized = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_finalized);
         chk_finalized.setText(hmAux_Trans.get("lbl_chk_finalized"));
@@ -290,6 +307,45 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 );
         lv_pendencies.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    public void showMsg(String type, final HMAux item) {
+        String title = "";
+        String msg = "";
+        DialogInterface.OnClickListener listener = null;
+        Integer btnNegative = null;
+
+        switch (type){
+            case FORM_IN_PROCESSING:
+                title = hmAux_Trans.get("alert_ttl_exists_in_processing");
+                msg = hmAux_Trans.get("alert_msg_exists_in_processing");
+                btnNegative = 0;
+                break;
+
+            case START_FORM:
+                title = hmAux_Trans.get("alert_ttl_start_new_processing");
+                msg = hmAux_Trans.get("alert_msg_start_new_processing");
+                btnNegative = 1;
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.addFormInfoToBundle(item);
+                    }
+                };
+                break;
+
+        }
+
+        if(btnNegative != null) {
+            ToolBox.alertMSG(
+                    this,
+                    title,
+                    msg,
+                    listener,
+                    btnNegative
+            );
+        }
     }
 
     @Override
@@ -334,5 +390,16 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked(recBundle);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

@@ -13,8 +13,9 @@ public class GE_Custom_Form_Local {
     private long custom_form_data;
     private String custom_form_pre;
     private String custom_form_status;
-    private String custom_form_src;
+    private Long custom_form_data_serv;
     private int require_signature;
+    private int require_location;
     private String automatic_fill;
     private int custom_product_code;
     private String custom_product_desc;
@@ -22,6 +23,12 @@ public class GE_Custom_Form_Local {
     private String custom_form_type_desc;
     private String custom_form_desc;
     private String serial_id;
+    private String schedule_date_start_format;
+    private String schedule_date_end_format;
+    private long schedule_date_start_format_ms;
+    private long schedule_date_end_format_ms;
+    private int require_serial;
+    private int allow_new_serial_cl;
 
     public long getCustomer_code() {
         return customer_code;
@@ -79,12 +86,12 @@ public class GE_Custom_Form_Local {
         this.custom_form_status = custom_form_status;
     }
 
-    public String getCustom_form_src() {
-        return custom_form_src;
+    public Long getCustom_form_data_serv() {
+        return custom_form_data_serv;
     }
 
-    public void setCustom_form_src(String custom_form_src) {
-        this.custom_form_src = custom_form_src;
+    public void setCustom_form_data_serv(Long custom_form_data_serv) {
+        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     public int getRequire_signature() {
@@ -93,6 +100,14 @@ public class GE_Custom_Form_Local {
 
     public void setRequire_signature(int require_signature) {
         this.require_signature = require_signature;
+    }
+
+    public int getRequire_location() {
+        return require_location;
+    }
+
+    public void setRequire_location(int require_location) {
+        this.require_location = require_location;
     }
 
     public String getAutomatic_fill() {
@@ -149,5 +164,53 @@ public class GE_Custom_Form_Local {
 
     public void setSerial_id(String serial_id) {
         this.serial_id = serial_id;
+    }
+
+    public String getSchedule_date_start_format() {
+        return schedule_date_start_format;
+    }
+
+    public void setSchedule_date_start_format(String schedule_date_start_format) {
+        this.schedule_date_start_format = schedule_date_start_format;
+    }
+
+    public String getSchedule_date_end_format() {
+        return schedule_date_end_format;
+    }
+
+    public void setSchedule_date_end_format(String schedule_date_end_format) {
+        this.schedule_date_end_format = schedule_date_end_format;
+    }
+
+    public long getSchedule_date_start_format_ms() {
+        return schedule_date_start_format_ms;
+    }
+
+    public void setSchedule_date_start_format_ms(long schedule_date_start_format_ms) {
+        this.schedule_date_start_format_ms = schedule_date_start_format_ms;
+    }
+
+    public long getSchedule_date_end_format_ms() {
+        return schedule_date_end_format_ms;
+    }
+
+    public void setSchedule_date_end_format_ms(long schedule_date_end_format_ms) {
+        this.schedule_date_end_format_ms = schedule_date_end_format_ms;
+    }
+
+    public int getRequire_serial() {
+        return require_serial;
+    }
+
+    public void setRequire_serial(int require_serial) {
+        this.require_serial = require_serial;
+    }
+
+    public int getAllow_new_serial_cl() {
+        return allow_new_serial_cl;
+    }
+
+    public void setAllow_new_serial_cl(int allow_new_serial_cl) {
+        this.allow_new_serial_cl = allow_new_serial_cl;
     }
 }

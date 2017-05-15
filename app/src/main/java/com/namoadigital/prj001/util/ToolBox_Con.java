@@ -409,6 +409,130 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region google_id
+    public static void setPreference_Google_ID(Context context, String google_id) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.GOOGLE_ID,
+                google_id
+        ).apply();
+    }
+
+    public static String getPreference_Google_ID(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.GOOGLE_ID,
+                ""
+        );
+    }
+
+    public static void setPreference_Google_ID_OK(Context context, String sOk) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.GOOGLE_ID_OK,
+                sOk
+        ).apply();
+    }
+
+    public static String getPreference_Google_ID_OK(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.GOOGLE_ID_OK,
+                ""
+        );
+    }
+
+    public static void setPreference_Google_ID_DT(Context context, long sDT) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.GOOGLE_ID_DT,
+                sDT
+        ).apply();
+    }
+
+    public static Long getPreference_Google_ID_DT(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.GOOGLE_ID_DT,
+                0L
+        );
+    }
+
+    public static void setPreference_AL_DT(Context context, long sDT) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.AL_DT,
+                sDT
+        ).apply();
+    }
+
+    public static Long getPreference_AL_DT(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.AL_DT,
+                0L
+        );
+    }
+
+    public static void setPreference_SYNC_REQUIRED(Context context, String sRequired) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.SYNC_REQUIRED,
+                sRequired
+        ).apply();
+    }
+
+    public static String getPreference_SYNC_REQUIRED(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.SYNC_REQUIRED,
+                ""
+        );
+    }
+
+    public static void setPreference_MessageClear(Context context, String sMessageClear) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.MESSAGE_CLEAR,
+                sMessageClear
+        ).apply();
+    }
+
+    public static String getPreference_MessageClear(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.MESSAGE_CLEAR,
+                ""
+        );
+    }
+
+
+    //endregion
+
     //region Customer_Code_TMP
     public static void setPreference_Customer_Code_TMP(Context context, long customer_code) {
         SharedPreferences sharedPreferences =

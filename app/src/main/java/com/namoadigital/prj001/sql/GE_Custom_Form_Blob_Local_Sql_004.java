@@ -35,7 +35,7 @@ public class GE_Custom_Form_Blob_Local_Sql_004 implements Specification {
                         "   bl.customer_code = '"+customer_code+"' " +
                         "   and bl.custom_form_type = '"+custom_form_type+"' " +
                         "   and bl.custom_form_code = '"+custom_form_code+"' " +
-                        "   and bl.custom_form_version = '"+custom_form_code+"' " +
+                        "   and bl.custom_form_version = '"+custom_form_version+"' " +
                         "    " +
                         "   and bl.blob_url_local = ''" +
                         " " +
@@ -49,7 +49,7 @@ public class GE_Custom_Form_Blob_Local_Sql_004 implements Specification {
                         "   bl.customer_code = '"+customer_code+"' " +
                         "   and bl.custom_form_type = '"+custom_form_type+"' " +
                         "   and bl.custom_form_code = '"+custom_form_code+"' " +
-                        "   and bl.custom_form_version = '"+custom_form_code+"' " +
+                        "   and bl.custom_form_version = '"+custom_form_version+"' " +
                         "    " +
                         "   and bl.blob_url_local = ''")
                 .toString();

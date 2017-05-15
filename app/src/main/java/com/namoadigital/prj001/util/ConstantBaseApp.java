@@ -3,16 +3,17 @@ package com.namoadigital.prj001.util;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 
 /**
- * Created by neomatrix on 09/01/17.
+ * Created by neomatrix on 05/04/17.
  */
 
-public class Constant extends ConstantBase {
+public class ConstantBaseApp  extends ConstantBase {
+
 
     /**
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "0.18";
+    public static final String PRJ001_VERSION = "1.03";
 
     /**
      * UI Module
@@ -32,7 +33,10 @@ public class Constant extends ConstantBase {
     public static final String ACT013 = "act013";
     public static final String ACT014 = "act014";
     public static final String ACT015 = "act015";
-
+    public static final String ACT016 = "act016";
+    public static final String ACT017 = "act017";
+    public static final String ACT018 = "act018";
+    public static final String ACT019 = "act019";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -75,12 +79,15 @@ public class Constant extends ConstantBase {
     public static String ZIP_PATH;
     public static String IMG_PATH;
     public static String THU_PATH;
+    public static String SUPPORT_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
 
-//    public static String CACHE_PATH;
-//    public static String CACHE_PATH_PHOTO;
+    public static String SUPPORT_NAME;
+    public static String SUPPORT_NAME_FULL;
+
+
 
     /**
      * Service Login Parameter
@@ -111,6 +118,8 @@ public class Constant extends ConstantBase {
     public static final String FOOTER_OPERATION = "footer_operation";
     public static final String FOOTER_BTN_OK = "footer_btn_ok";
     public static final String FOOTER_VERSION_LBL = "footer_version_lbl";
+    public static final String FOOTER_IMEI_LBL = "footer_imei_lbl";
+    public static final String FOOTER_IMEI = "footer_imei";
 
     /**
      * Sync WS
@@ -127,10 +136,16 @@ public class Constant extends ConstantBase {
     public static final String GS_SERIAL_ID = "serialserialid";
 
     /**
-     * Serial Logout
+     * WS Logout
      */
     public static final String WS_LOGOUT_CUSTOMER_LIST = "logoutcustomerlist";
     public static final String WS_LOGOUT_USER_CODE = "logoutusercode";
+
+    /**
+     * WS Support
+     */
+    public static final String WS_SUPPORT_MSG = "supportmsg";
+
 
 
     public static final String SW_TYPE_BR = "sw_type_br";
@@ -152,48 +167,31 @@ public class Constant extends ConstantBase {
     public static final String PHONE_UUID_CODE = "phone_uuid_code";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
     public static final String SESSION_APP = "session_app";
+    public static final String GOOGLE_ID = "google_id";
+    public static final String GOOGLE_ID_OK = "google_id_ok";
+    public static final String GOOGLE_ID_DT = "google_id_dt";
+    public static final String AL_DT = "al_dt";
     public static final String EXECUTE_WS_GET_CUSTOMER = "session_app";
+    public static final String SYNC_REQUIRED = "sync_required";
+    public static final String MESSAGE_CLEAR = "message_clear";
+    public static final String LOCATION_MESSAGE = "location_message";
+    public static final String LOCATION_TYPE = "location_type";
+    public static final String LOCATION_LAT = "location_lat";
+    public static final String LOCATION_LNG = "location_lng";
+
+
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
     public static final String USER_CUSTOMER_TRANSLATE_CODE_TMP = "user_customer_translate_code_temp";
 
-    /**
-     * WebService
-     */
-    /**
-     * Desenvolvimento
-     */
-    public static final String WS_GETCUSTOMERS = "https://dev.namoadigital.com/ws/prj001/server_get_customer.ws";
-    public static final String WS_GETSESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
-
-    public static final String WS_SYNC = "https://dev.namoadigital.com/ws/prj001/server_sync.ws";
-    public static final String WS_SESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
-    public static final String WS_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save.ws";
-    public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
-    public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
-    public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
-
-    /**
-     * Produção
-     */
-//    public static final String WS_GETCUSTOMERS = "https://portal.namoadigital.com/ws/prj001/server_get_customer.ws";
-//    public static final String WS_GETSESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
-//
-//    public static final String WS_SYNC = "https://portal.namoadigital.com/ws/prj001/server_sync.ws";
-//    public static final String WS_SESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
-//    public static final String WS_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save.ws";
-//    public static final String WS_SERIAL = "https://portal.namoadigital.com/ws/prj001/server_serial.ws";
-//    public static final String WS_UPLOAD = "https://portal.namoadigital.com/inc/ws/aws_file.ws";
-//    public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
-
     //Constantes do Status do Cabeçalho
     public static final String CUSTOM_FORM_STATUS_RECEIVED = "RECEIVED";
     public static final String CUSTOM_FORM_STATUS_IN_PROCESSING = "IN_PROCESSING";
     public static final String CUSTOM_FORM_STATUS_FINALIZED = "FINALIZED";
     public static final String CUSTOM_FORM_STATUS_SENT = "SENT";
-    public static final String CUSTOM_FORM_STATUS_SCHEDULED = "SCHEDULED";
+    public static final String CUSTOM_FORM_STATUS_SCHEDULED = "SCHEDULE";
 
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
@@ -201,6 +199,18 @@ public class Constant extends ConstantBase {
 
     //Helper
     public static final String BACK_ACTION = "back_action";
+
+    //Parametros de Permissões
+    public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
+    public static final String PARAM_CHECKLIST ="N-FORM";// "CHECKLIST";
+    public static final String PARAM_WM = "WM";
+    public static final String PARAM_SO = "SO";
+
+    //Modulos
+    public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
+    public static final String MODULE_SO = "MODULE_SO";
+    public static final String MODULE_WM= "MODULE_WM";
+    public static final String MODULE_TO= "MODULE_TO";
 
 
 }

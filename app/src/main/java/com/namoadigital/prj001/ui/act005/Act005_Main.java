@@ -3,12 +3,15 @@ package com.namoadigital.prj001.ui.act005;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,13 +24,18 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.fcm.RegistrationIntentService;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -36,6 +44,8 @@ import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -55,8 +65,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_BADGE = "menu_badge";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
+    public static final String MENU_ID_MESSAGES = "menu_messages";
+
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
     public static final String MENU_ID_CLOSE = "menu_close_app";
@@ -64,6 +77,15 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
     public static final String WS_PROCESS_SEND = "ws_process_send";
     public static final String WS_PROCESS_LOGOUT = "ws_process_logout";
+    public static final String WS_PROCESS_ENABLE_NFC = "ws_process_enable_nfc";
+    public static final String WS_PROCESS_CANCEL_NFC = "ws_process_cancel_nfc";
+    public static final String WS_PROCESS_SUPPORT = "ws_process_support";
+
+    //toolbar constants
+    private static final int TOOLBAR_NAMOA_LOGO = 1;
+    private static final int TOOLBAR_ENABLE_NFC = 2;
+    private static final int TOOLBAR_CANCEL_NFC = 3;
+    private static final int TOOLBAR_SUPPORT = 4;
 
 
     private Context context;
@@ -86,7 +108,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act005_main);
-
+        //
+        ToolBox_Inf.reprogramAlarms_Full_Quarter(Act005_Main.this);
+        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -95,6 +119,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         iniUIFooter();
         initActions();
         //
+        Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
+        startService(mIntent);
+
     }
 
     private void iniSetup() {
@@ -113,7 +140,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         );
         //
         loadTranslation();
-
     }
 
     private void loadTranslation() {
@@ -148,6 +174,36 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_logout_msg");
         transList.add("lbl_sync_data");
         transList.add("lbl_logout");
+        transList.add("lbl_schedule_data");
+        //toolbar
+        transList.add("toolbar_enable_nfc");
+        transList.add("toolbar_cancel_nfc");
+        transList.add("toolbar_support");
+        transList.add("alert_enable_nfc_ttl");
+        transList.add("alert_enable_nfc_msg");
+        transList.add("alert_cancel_nfc_ttl");
+        transList.add("alert_cancel_nfc_msg");
+        transList.add("alert_support_ttl");
+        transList.add("alert_support_msg");
+
+        transList.add("progress_enable_nfc_ttl");
+        transList.add("progress_enable_nfc_msg");
+        transList.add("progress_cancel_nfc_ttl");
+        transList.add("progress_cancel_nfc_msg");
+        transList.add("progress_support_ttl");
+        transList.add("progress_support_msg");
+
+        transList.add("alert_enable_nfc_finish_ttl");
+        transList.add("alert_enable_nfc_finish_msg");
+        transList.add("alert_cancel_nfc_finish_ttl");
+        transList.add("alert_cancel_nfc_finish_msg");
+        transList.add("alert_support_finish_ttl");
+        transList.add("alert_support_finish_msg");
+        //alert support
+        transList.add("support_dialog_ttl");
+
+
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -156,6 +212,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+
+        //Carrega traduções da biblioteca
+        ToolBox_Inf.libTranslation(getApplicationContext());
     }
 
     private void initVars() {
@@ -177,9 +236,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         context,
                         Constant.DB_FULL_BASE,
                         Constant.DB_VERSION_BASE
+                ),
+                new FCMMessageDao(
+                        context,
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
                 )
-
-
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
@@ -245,17 +307,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
                         break;
                     case Act005_Opc.DRAWER_OPC_SITE:
-                        MD_SiteDao siteDao =  new MD_SiteDao(
+                        MD_SiteDao siteDao = new MD_SiteDao(
                                 context,
                                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                                 Constant.DB_VERSION_CUSTOM
                         );
 
                         int qty_sites = siteDao.query_HM(
-                                    new MD_Site_Sql_002(
-                                            ToolBox_Con.getPreference_Customer_Code(context)
-                                    ).toSqlQuery()
-                                ).size();
+                                new MD_Site_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).size();
 
                         if (qty_sites <= 1) {
                             //Se apenas um site, da alert e não permite troca.
@@ -296,10 +358,10 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         );
 
                         int qty_operation = operationDao.query_HM(
-                                        new MD_Operation_Sql_001(
-                                                ToolBox_Con.getPreference_Customer_Code(context)
-                                        ).toSqlQuery()
-                                ).size();
+                                new MD_Operation_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).size();
 
                         if (qty_operation <= 1) {
                             //Se apenas uma operação, da alert e não permite troca.
@@ -385,35 +447,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
             @Override
             public void logoutClicked() {
-
                 mPresenter.showLogoutDialog();
-
-               /* Intent mIntent = new Intent(context, WBR_Logout.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,"1|5");//Pula validação de other device
-
-                mIntent.putExtras(bundle);
-                //
-                context.sendBroadcast(mIntent);
-                //ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-
-*/
-
-//                ToolBox.alertMSG(
-//                        Act005_Main.this,
-//                        hmAux_Trans.get("drawer_logout_alert_ttl"),
-//                        hmAux_Trans.get("drawer_logout_alert_msg"),
-//                        new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                ToolBox_Con.cleanPreferences(Act005_Main.this);
-//                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
-//                                finish();
-//                            }
-//                        },
-//                        1
-//                );
-
             }
         });
 
@@ -471,33 +505,51 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
+        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
+        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value =Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;
 
     }
 
     @Override
     public void showPD() {
 
-        switch (wsProcess){
+        switch (wsProcess) {
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
-                alertMsg =  hmAux_Trans.get("alert_send_finish_msg");
+                alertMsg = hmAux_Trans.get("alert_send_finish_msg");
                 break;
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_ttl");
-                alertMsg =  hmAux_Trans.get("alert_sync_msg");
+                alertMsg = hmAux_Trans.get("alert_sync_msg");
                 break;
             case Act005_Main.WS_PROCESS_LOGOUT:
                 alertTitle = hmAux_Trans.get("alert_logout_ttl");
-                alertMsg =  hmAux_Trans.get("alert_logout_msg");
+                alertMsg = hmAux_Trans.get("alert_logout_msg");
                 break;
+
+            case Act005_Main.WS_PROCESS_ENABLE_NFC:
+                alertTitle = hmAux_Trans.get("progress_enable_nfc_ttl");
+                alertMsg = hmAux_Trans.get("progress_enable_nfc_msg");
+                break;
+
+            case Act005_Main.WS_PROCESS_CANCEL_NFC:
+                alertTitle = hmAux_Trans.get("progress_cancel_nfc_ttl");
+                alertMsg = hmAux_Trans.get("progress_cancel_nfc_msg");
+                break;
+
+            case Act005_Main.WS_PROCESS_SUPPORT:
+                alertTitle = hmAux_Trans.get("progress_support_ttl");
+                alertMsg = hmAux_Trans.get("progress_support_msg");
+                break;
+
             default:
                 break;
 
@@ -584,6 +636,22 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    public void callAct016(Context context) {
+        Intent mIntent = new Intent(context, Act016_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct018(Context context) {
+        Intent mIntent = new Intent(context, Act018_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void closeApp() {
 
         ToolBox.alertMSG(
@@ -593,6 +661,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
+
                         finish();
                     }
                 },
@@ -622,11 +692,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         progressDialog.dismiss();
 
         if (!wsProcess.equals("")) {
-            if(wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)){
-                if(ToolBox_Con.getPreference_Customer_Code(context) == -1L){
-                  processLogin();
+            if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+                if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
+                    processLogin();
                 }
-            }else {
+            } else {
                 showSuccessDialog();
                 //Atualiza traduções
                 loadTranslation();
@@ -658,6 +728,22 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 // Hugo
                 startDownloadServices();
                 //
+                break;
+            case Act005_Main.WS_PROCESS_ENABLE_NFC:
+                alertTitle = hmAux_Trans.get("alert_enable_nfc_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_enable_nfc_finish_msg");
+                invalidateOptionsMenu();
+                break;
+
+            case Act005_Main.WS_PROCESS_CANCEL_NFC:
+                alertTitle = hmAux_Trans.get("alert_cancel_nfc_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_cancel_nfc_finish_msg");
+                invalidateOptionsMenu();
+                break;
+
+            case Act005_Main.WS_PROCESS_SUPPORT:
+                alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
 
             default:
@@ -701,20 +787,55 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     }
 
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        //return super.onPrepareOptionsMenu(menu);
-        //Pega os settings do menu e esconde
-        MenuItem item = menu.findItem(R.id.act05_action_settings);
-        item.setVisible(false);
-        return true;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.act005_main_menu, menu);
+        if (menu instanceof MenuBuilder) {
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+
+        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        EV_User user = userDao.getByString(
+                new EV_User_Sql_001(
+                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
+                ).toSqlQuery()
+            );
+
+        //
+        //Menu Namoa logo
+        menu.add(0, TOOLBAR_NAMOA_LOGO, Menu.FIRST + 0, getResources().getString(R.string.app_name));
+        menu.findItem(TOOLBAR_NAMOA_LOGO).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.findItem(TOOLBAR_NAMOA_LOGO).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.findItem(TOOLBAR_NAMOA_LOGO).setTitle(getResources().getString(R.string.app_name));
+
+        //
+        //Menu Habilita nfc
+        if(user.getNfc_blocked() == 1) {
+            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
+            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
+
+            menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("toolbar_enable_nfc"));
+            menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(nfc_icon);
+            menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("toolbar_enable_nfc"));
+        }
+
+        //
+        //Menu Cancela nfc
+        if(user.getExist_nfc() == 1) {
+            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
+            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
+
+            menu.add(0, TOOLBAR_CANCEL_NFC, Menu.FIRST + 2, hmAux_Trans.get("toolbar_cancel_nfc"));
+            menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(nfc_icon2);
+            menu.findItem(TOOLBAR_CANCEL_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(TOOLBAR_CANCEL_NFC).setTitle(hmAux_Trans.get("toolbar_cancel_nfc"));
+        }
+        //
+        //Menu Suporte
+        menu.add(0, TOOLBAR_SUPPORT, Menu.FIRST + 3, hmAux_Trans.get("toolbar_support"));
+        menu.findItem(TOOLBAR_SUPPORT).setIcon(getResources().getDrawable(R.drawable.ic_headset_mic_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
         return true;
     }
@@ -730,21 +851,71 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             return true;
         }
 
-        //noinspection SimplifiableIfStatement
-       /* if (id == R.id.act05_action_settings) {
+        DialogInterface.OnClickListener listener = null;
 
-            ToolBox_Con.cleanPreferences(context);
+        switch (id) {
 
-            Intent mIntent = new Intent(context, Act001_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(mIntent);
+            case TOOLBAR_NAMOA_LOGO:
+                return true;
 
-            finish();
+            case TOOLBAR_ENABLE_NFC:
+                alertTitle = hmAux_Trans.get("alert_enable_nfc_ttl");
+                alertMsg = hmAux_Trans.get("alert_enable_nfc_msg");
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeEnableNFC();
+                    }
+                };
+                break;
 
-            return true;
-        }*/
+            case TOOLBAR_CANCEL_NFC:
+                alertTitle = hmAux_Trans.get("alert_cancel_nfc_ttl");
+                alertMsg = hmAux_Trans.get("alert_cancel_nfc_msg");
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeCancelNFC();
+                    }
+                };
+                break;
 
-        return super.onOptionsItemSelected(item);
+            case TOOLBAR_SUPPORT:
+                mPresenter.showSupportDialog();
+                /*alertTitle = hmAux_Trans.get("alert_support_ttl");
+                alertMsg = hmAux_Trans.get("alert_support_nfc_msg");
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.showSupportDialog();
+                        //mPresenter.executeSupport("MSG");
+                    }
+                };*/
+                break;
+
+            default:
+                return true;
+        }
+
+        if(listener != null) {
+            ToolBox.alertMSG(
+                    Act005_Main.this,
+                    alertTitle,
+                    alertMsg,
+                    listener,
+                    1
+            );
+        }
+
+        return true;
+        // return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //
+        mPresenter.getMenuItens(hmAux_Trans);
     }
 
     public void startDownloadServices() {

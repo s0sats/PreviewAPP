@@ -15,4 +15,12 @@ public interface Act005_Main_Presenter {
     void accessMenuItem(String menu_id, int jump_validation_UR);
 
     void showLogoutDialog();
+
+    void executeEnableNFC();
+
+    void executeCancelNFC();
+
+    void executeSupport(String support_msg);
+
+    void showSupportDialog();
 }

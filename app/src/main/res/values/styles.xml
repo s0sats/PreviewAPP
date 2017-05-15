@@ -12,7 +12,7 @@
         <item name="colorAccent">@color/namoa_color_light_green3</item>
         <item name="android:textColor">@color/namoa_color_dark_blue</item>
         <item name="android:textColorPrimary">@color/namoa_color_dark_blue</item>
-     <!--   <item name="android:textColorPrimary">@color/namoa_color_light_blue</item>-->
+        <!--   <item name="android:textColorPrimary">@color/namoa_color_light_blue</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Namoa</string>
-    <string name="action_settings">Settings</string>
     <string name="act005_drawer_opened">Drawer Aberto</string>
     <string name="act005_drawer_closed">Drawer Fechado</string>
     <string name="get_customer_alert_title">Cliente</string>
@@ -39,6 +37,8 @@
     <string name="msg_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
     <string name="act002_title_">Lista de Clientes    </string>
     <!--LIB-->
+    <string name="nfc_activity_title">NFC Scanner</string>
+    <string name="nfc_activity_desc">Aproxime a Tag NFC do seu dispositivo</string>
     <string name="nfc_no_support">Erro: Esse aparelho não suporta NFC</string>
     <string name="nfc_no_data">Erro: Informação não disponível</string>
     <string name="nfc_invalid_tag">Erro: Tag Inválida</string>
@@ -59,7 +59,7 @@
     <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar outro Cliente ou fazer Login novamente.</string>"
     <string name="generic_start_update_process_msg">Iniciando processo de atualização</string>
     <string name="generic_error_update_empty_link">Erro: erro ao atualizar!Link vazio!</string>
-    <string name="generic_starting_download_msg">Download em andamento</string>
+    <string name="generic_starting_download_msg">Download em Andamento</string>
     <string name="close_app_update_process_msg">Por favor feche o aplicativo para efetivar a atualização</string>
     <string name="login_dev_db_msg">Base de Testes!!!</string>
     <string name="act001_email_nick">e-mail / apelido</string>
@@ -69,5 +69,12 @@
     <string name="ws_exception_contact_admin_oracle">Ocorreu um erro de banco de dados!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_timeout">Tempo de resposta excedido!\nVerifique suas conexões e tente novamente!</string>
     <string name="generic_error_lbl">ERRO:</string>
+    <string name="title_notification_generic">Namoa</string>
+    <string name="message_notification_sync">Sincronismo Necessário</string>
+    <string name="message_received_notification_sync">Mensagens Recebidas</string>
+    <string name="message_full_quarter_notification_future">Agendados</string>
+    <string name="message_full_quarter_notification_late">Atrasados</string>
+
+
 
 </resources>

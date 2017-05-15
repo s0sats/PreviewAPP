@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act016.Act016_Main"
+    tools:showIn="@layout/act016_main">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="5dp">
+
+        <com.namoa_digital.namoa_library.ctls.CalendarView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/act016_cv_schedules"
+            >
+
+        </com.namoa_digital.namoa_library.ctls.CalendarView>
+
+        <ListView
+            android:id="@+id/act016_lv_schedules"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="4dp"/>
+
+    </LinearLayout>
+    <include layout="@layout/footer_base" />
+
+</LinearLayout>

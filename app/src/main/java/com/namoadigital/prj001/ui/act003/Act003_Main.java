@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,7 +36,6 @@ import java.util.List;
 public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private Context context;
-    private TextView tv_customer_lbl;
     private TextView tv_customer_val;
     private ListView lv_sites;
     private Act003_Main_Presenter mPresenter;
@@ -52,8 +53,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         initVars();
         iniUIFooter();
         initActions();
-
-
     }
 
     private void iniSetup() {
@@ -75,7 +74,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private void initVars() {
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
         //
-        tv_customer_lbl = (TextView) findViewById(R.id.act003_tv_customer_lbl);
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
@@ -108,7 +106,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private void initActions() {
 
-        tv_customer_lbl.setText(hmAux_Trans.get("lbl_customer"));
         tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
 
         lv_sites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -211,11 +208,20 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         callAct002(context,true);
     }
 
-
-
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 }

@@ -27,6 +27,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
+    public static final String CUSTOM_FORM_DATA_SERV = "custom_form_data_serv";
     public static final String CUSTOM_FORM_STATUS = "custom_form_status";
     public static final String PRODUCT_CODE = "product_code";
     public static final String SERIAL_ID = "serial_id";
@@ -38,6 +39,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String SIGNATURE = "signature";
     public static final String SIGNATURE_NAME = "signature_name";
     public static final String TOKEN = "token";
+    public static final String LOCATION_TYPE = "location_type";
+    public static final String LOCATION_LAT = "location_lat";
+    public static final String LOCATION_LNG = "location_lng";
     public static final String USER_CODE_END = "user_code_end";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
@@ -262,6 +266,13 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_data.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_data.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
+
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))) {
+                custom_form_data.setCustom_form_data_serv(null);
+            } else {
+                custom_form_data.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
+            }
+
             custom_form_data.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
             custom_form_data.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             custom_form_data.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
@@ -271,19 +282,37 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setSite_code(cursor.getString(cursor.getColumnIndex(SITE_CODE)));
             custom_form_data.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
 
-            if(cursor.isNull(cursor.getColumnIndex(SIGNATURE))){
+            if (cursor.isNull(cursor.getColumnIndex(SIGNATURE))) {
                 custom_form_data.setSignature("");
-            }else{
+            } else {
                 custom_form_data.setSignature(cursor.getString(cursor.getColumnIndex(SIGNATURE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(SIGNATURE_NAME))){
+            if (cursor.isNull(cursor.getColumnIndex(SIGNATURE_NAME))) {
                 custom_form_data.setSignature_name("");
-            }else{
+            } else {
                 custom_form_data.setSignature_name(cursor.getString(cursor.getColumnIndex(SIGNATURE_NAME)));
             }
 
             custom_form_data.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
+
+            if (cursor.isNull(cursor.getColumnIndex(LOCATION_TYPE))) {
+                custom_form_data.setLocation_type("");
+            } else {
+                custom_form_data.setLocation_type(cursor.getString(cursor.getColumnIndex(LOCATION_TYPE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(LOCATION_LAT))) {
+                custom_form_data.setLocation_lat("");
+            } else {
+                custom_form_data.setLocation_lat(cursor.getString(cursor.getColumnIndex(LOCATION_LAT)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(LOCATION_LNG))) {
+                custom_form_data.setLocation_lng("");
+            } else {
+                custom_form_data.setLocation_lng(cursor.getString(cursor.getColumnIndex(LOCATION_LNG)));
+            }
 
             return custom_form_data;
         }
@@ -309,6 +338,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getCustom_form_data() > -1) {
                 contentValues.put(CUSTOM_FORM_DATA, custom_form_data.getCustom_form_data());
             }
+
+            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_data.getCustom_form_data_serv());
+
             if (custom_form_data.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_data.getCustom_form_status());
             }
@@ -333,14 +365,23 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getOperation_code() > -1) {
                 contentValues.put(OPERATION_CODE, custom_form_data.getOperation_code());
             }
-            if(custom_form_data.getSignature() != null){
+            if (custom_form_data.getSignature() != null) {
                 contentValues.put(SIGNATURE, custom_form_data.getSignature());
             }
-            if(custom_form_data.getSignature_name() != null){
+            if (custom_form_data.getSignature_name() != null) {
                 contentValues.put(SIGNATURE_NAME, custom_form_data.getSignature_name());
             }
-            if(custom_form_data.getToken() != null){
+            if (custom_form_data.getToken() != null) {
                 contentValues.put(TOKEN, custom_form_data.getToken());
+            }
+            if (custom_form_data.getLocation_type() != null) {
+                contentValues.put(LOCATION_TYPE, custom_form_data.getLocation_type());
+            }
+            if (custom_form_data.getLocation_lat() != null) {
+                contentValues.put(LOCATION_LAT, custom_form_data.getLocation_lat());
+            }
+            if (custom_form_data.getLocation_lng() != null) {
+                contentValues.put(LOCATION_LNG, custom_form_data.getLocation_lng());
             }
 
             return contentValues;

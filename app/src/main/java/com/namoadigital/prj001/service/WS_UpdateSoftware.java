@@ -35,7 +35,7 @@ public class WS_UpdateSoftware extends IntentService {
             if(!ToolBox_Inf.isDownloadRunning()){
                 //Log.v("WS_Customer_Logo","true");
                  WBR_UpdateSoftware.IS_RUNNING = true;
-                 ToolBox_Inf.showNotification(getApplicationContext(),Constant.NOTIFICATION_DOWNLOAD);
+                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
             if (bundle != null) {

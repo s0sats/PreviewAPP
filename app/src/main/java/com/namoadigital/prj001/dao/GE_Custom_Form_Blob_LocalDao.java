@@ -213,6 +213,8 @@ public class GE_Custom_Form_Blob_LocalDao extends BaseDao implements Dao<GE_Cust
             cursor.close();
         } catch (Exception e) {
 
+            String st = e.toString();
+
         } finally {
         }
 

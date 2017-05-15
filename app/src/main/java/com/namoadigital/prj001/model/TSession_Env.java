@@ -20,7 +20,7 @@ public class TSession_Env {
     private String force_login;
     private String customer_code;
     private int translate_code;
-    private String gcm_id = "google_cloud_msg"; //valor chumbado para testes
+    private String gcm_id = "";
 
     public String getApp_code() {
         return app_code;
