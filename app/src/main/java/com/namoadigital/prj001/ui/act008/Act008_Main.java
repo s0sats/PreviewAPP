@@ -207,19 +207,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            //TESTE APAGAR APÓS MERGE
-            bundle.putString(Act016_Main.ACT016_SELECTED_DATE,"2017-05-11");
-            //TESTE APAGAR APÓS MERGE
             //Chamada vinda da act017
             if(bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
                 isSchedule = true;
-                //TESTE APAGAR APÓS MERGE
-                bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, "31");
-                bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,"2");
-                bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,"2");
-                bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,"2");
-                //TESTE APAGAR APÓS MERGE
-
             }
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
         } else {

@@ -249,7 +249,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mPresenter.prepareOpenForm(item, "SERIAL_NO");
+                        boolean hasSerial = item.get(GE_Custom_Form_LocalDao.SERIAL_ID).length() > 0;
+
+                        mPresenter.prepareOpenForm(item, hasSerial);
                     }
                 };
                 break;
