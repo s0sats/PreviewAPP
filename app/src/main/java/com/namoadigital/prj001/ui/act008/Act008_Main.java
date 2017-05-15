@@ -63,9 +63,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private Bundle bundle;
     private long product_code;
-    private String scheduled_date;
     private int serial_required;
     private int serial_allow_new;
+    //agendamento
+    private boolean isSchedule;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,6 +119,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("mket_search_hint");
         transList.add("product_label");
         transList.add("product_id_label");
+        transList.add("alert_no_form_for_operation_ttl");
+        transList.add("alert_no_form_for_operation_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -129,17 +132,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void initVars() {
+        //Variavel q identifica se dados do produto são chamados do master data ou não.
+        isSchedule = false;
         //
         recoverIntentsInfo();
         //
-        mPresenter = new Act008_Main_Presenter_Impl(
+        mPresenter =  new Act008_Main_Presenter_Impl(
                 context,
                 this,
                 new Sync_ChecklistDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                ),
+                        ),
                 new MD_ProductDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -150,8 +155,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
-                scheduled_date
-        );
+                isSchedule
+                );
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act008_mket_serial);
         mket_serial_id.setmNFC(true);
@@ -167,10 +172,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         tv_product_id_label = (TextView) findViewById(R.id.act008_tv_product_id_lbl);
         //tv_product_id_label.setTag("product_id_label");
         //
-        //  tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_val);
-        //  tv_product_id_value = (TextView) findViewById(R.id.act008_tv_product_id_val);
+      //  tv_product_code_value = (TextView) findViewById(R.id.act008_tv_product_code_val);
+      //  tv_product_id_value = (TextView) findViewById(R.id.act008_tv_product_id_val);
         //
-        // tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_product_desc_ttl);
+       // tv_product_desc_label = (TextView) findViewById(R.id.act008_tv_product_desc_ttl);
         //tv_product_desc_label.setTag("product_desc_label");
         tv_product_desc_value = (TextView) findViewById(R.id.act008_tv_product_desc_value);
         //
@@ -202,8 +207,21 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
+            //TESTE APAGAR APÓS MERGE
+            bundle.putString(Act016_Main.ACT016_SELECTED_DATE,"2017-05-11");
+            //TESTE APAGAR APÓS MERGE
+            //Chamada vinda da act017
+            if(bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
+                isSchedule = true;
+                //TESTE APAGAR APÓS MERGE
+                bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, "31");
+                bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,"2");
+                bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,"2");
+                bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,"2");
+                //TESTE APAGAR APÓS MERGE
+
+            }
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE, "");
         } else {
             product_code = 0L;
         }
@@ -227,9 +245,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -243,7 +261,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private void initActions() {
         //
-        mPresenter.getProductInfo();
+        mPresenter.getProductInfo(bundle);
         //
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,33 +282,33 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         product = md_product;
         //
         tv_product_code_label.setText(
-                hmAux_Trans.get("product_label") + " " +
-                        String.valueOf(md_product.getProduct_code())
+                hmAux_Trans.get("product_label")+" "+
+                String.valueOf(md_product.getProduct_code())
 
         );
         tv_product_id_label.setText(
-                hmAux_Trans.get("product_id_label") + " " +
-                        md_product.getProduct_id());
+                hmAux_Trans.get("product_id_label")+" "+
+                md_product.getProduct_id());
         tv_product_desc_value.setText(md_product.getProduct_desc());
         //
         serial_required = md_product.getRequire_serial();
         serial_allow_new = md_product.getAllow_new_serial_cl();
         //
-        tv_required_val.setText("(" + hmAux_Trans.get("NO").toUpperCase() + ")");
-        if (md_product.getRequire_serial() == 1) {
-            tv_required_val.setText("(" + hmAux_Trans.get("YES").toUpperCase() + ")");
+        tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
+        if( md_product.getRequire_serial() == 1){
+            tv_required_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
         }
         //
-        tv_allow_new_val.setText("(" + hmAux_Trans.get("NO").toUpperCase() + ")");
-        if (md_product.getAllow_new_serial_cl() == 1) {
-            tv_allow_new_val.setText("(" + hmAux_Trans.get("YES").toUpperCase() + ")");
+        tv_allow_new_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
+        if( md_product.getAllow_new_serial_cl() == 1){
+            tv_allow_new_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
         }
 
     }
 
     @Override
     public void callAct007(Context context) {
-        Intent mIntent = new Intent(context, Act007_Main.class);
+        Intent mIntent =  new Intent(context, Act007_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Remove produto do bundle
         bundle.remove(Constant.ACT007_PRODUCT_CODE);
@@ -325,24 +343,25 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String msg = "";
         DialogInterface.OnClickListener listener = null;
 
-        if (serial_required == 1) {
+        if (serial_required == 1){
             title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
             msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
-        } else {
+        }else{
 
-            if (serial_allow_new == 0 &&
-                    mket_serial_id.getText().toString().trim().length() > 0
-                    ) {
+            if(serial_allow_new == 0 &&
+               mket_serial_id.getText().toString().trim().length() > 0
+            ){
                 title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
                 msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
-            } else {
+            }else{
                 title = hmAux_Trans.get("alert_offine_mode_title"); //"Continue in offline mode?";
                 msg = hmAux_Trans.get("alert_offine_mode_msg"); //"No connection has been found!\nDo you want continue without check the Serial id ?! ";
 
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        callAct009(context);
+                        //callAct009(context);
+                        mPresenter.defineFlow();
                     }
                 };
             }
@@ -363,7 +382,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String alertTitle = "";
         String alertMsg = "";
 
-        switch (wsProcess) {
+        switch (wsProcess){
             case WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_start_sync_title");
                 alertMsg = hmAux_Trans.get("alert_start_sync_msg");
@@ -376,17 +395,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 break;
         }
 
-        if (alertTitle.length() != 0) {
-            enableProgressDialog(
-                    alertTitle,
-                    alertMsg,
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
+        if(alertTitle.length() != 0){
+           enableProgressDialog(
+                   alertTitle,
+                   alertMsg,
+                   hmAux_Trans.get("sys_alert_btn_cancel"),
+                   hmAux_Trans.get("sys_alert_btn_ok")
+                   );
 
         }
     }
-
     //Trata retorno de serial não existente
     @Override
     protected void processSerialNExist() {
@@ -394,10 +412,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         disableProgressDialog();
 
-        callAct009(context);
+        //callAct009(context);
+        mPresenter.defineFlow();
 
     }
-
     //Trata retorno de serial OK
     @Override
     protected void processSerialOk() {
@@ -405,33 +423,49 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         disableProgressDialog();
 
-        callAct009(context);
+        //callAct009(context);
+        mPresenter.defineFlow();
     }
 
     @Override
     public void callAct009(Context context) {
-        Intent mIntent = new Intent(context, Act009_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(Constant.ACT008_SERIAL_ID, mket_serial_id.getText().toString().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_DESC, product.getProduct_desc().trim());
-        bundle.putString(Constant.ACT008_PRODUCT_ID, product.getProduct_id().trim());
 
+        if(mPresenter.checkFormXOperationExists()){
+
+            Intent mIntent =  new Intent(context, Act009_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+            bundle.putString(Constant.ACT008_PRODUCT_DESC,product.getProduct_desc().trim());
+            bundle.putString(Constant.ACT008_PRODUCT_ID,product.getProduct_id().trim());
+
+            mIntent.putExtras(bundle);
+
+            startActivity(mIntent);
+            finish();
+        }else{
+            showAlertDialog(
+                    hmAux_Trans.get("alert_no_form_for_operation_ttl"),
+                    hmAux_Trans.get("alert_no_form_for_operation_msg")
+            );
+
+        }
+    }
+
+    @Override
+    public void callAct011(Context context) {
+        Intent mIntent =  new Intent(context, Act011_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);
         finish();
     }
 
-    /**
-     * Outro Fluxo para obtencao do numero de serie para o agendamento
-     *
-     * @param context
-     */
     @Override
     public void callAct017(Context context) {
-        Intent mIntent = new Intent(context, Act017_Main.class);
+        Intent mIntent =  new Intent(context, Act017_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //
+        //Remove dados não necessarios para act017
         bundle.remove(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(Constant.ACT008_PRODUCT_DESC);
         bundle.remove(Constant.ACT008_SERIAL_ID);
@@ -441,19 +475,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         bundle.remove(Constant.ACT010_CUSTOM_FORM_VERSION);
         bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
         bundle.remove(Constant.ACT013_CUSTOM_FORM_DATA);
-        //
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
 
-    @Override
-    public void callAct011(Context context) {
-        Intent mIntent = new Intent(context, Act011_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
+
         startActivity(mIntent);
         finish();
+
     }
 
     //Trata retorno do Serial
@@ -464,10 +491,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         disableProgressDialog();
         //Atualiza data na tabela de produtos loca
         mPresenter.updateSyncChecklist();
-        mPresenter.proceedToSerialProcess(mket_serial_id.getText().toString().trim(), serial_required);
+        mPresenter.proceedToSerialProcess(mket_serial_id.getText().toString().trim() , serial_required);
 
     }
-
     //TRATA MSG SESSION NOT FOUND
     @Override
     protected void processLogin() {
@@ -483,7 +509,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked(scheduled_date);
+        mPresenter.onBackPressedClicked();
     }
 
     @Override

@@ -33,6 +33,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private EditText et_password;
     private Button btn_login;
     private TextView tv_dev_db;
+    private TextView tv_version;
 
     private Act001_Main_Presenter mPresenter;
 
@@ -73,6 +74,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (Button) findViewById(R.id.act001_btn_login);
         tv_dev_db = (TextView) findViewById(R.id.act001_tv_dev_db);
+        tv_version = (TextView) findViewById(R.id.act001_tv_version);
         //
         mPresenter = new Act001_Main_Presenter_Impl(
                 context,
@@ -109,6 +111,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             tv_dev_db.setText(R.string.login_dev_db_msg);
             tv_dev_db.setVisibility(View.VISIBLE);
         }
+
+        tv_version.setText("v" + Constant.PRJ001_VERSION);
 
     }
 

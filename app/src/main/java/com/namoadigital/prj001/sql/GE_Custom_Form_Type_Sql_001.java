@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.database.Specification;
@@ -17,11 +18,13 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
     private long s_customer_code;
     private long s_product_code;
     private String s_translate_code;
+    private long s_operation_code;
 
-    public GE_Custom_Form_Type_Sql_001(long s_customer_code, long s_product_code, String s_translate_code) {
+    public GE_Custom_Form_Type_Sql_001(long s_customer_code, long s_product_code, String s_translate_code, long s_operation_code) {
         this.s_customer_code = s_customer_code;
         this.s_product_code = s_product_code;
         this.s_translate_code = s_translate_code;
+        this.s_operation_code = s_operation_code;
     }
 
     @Override
@@ -57,6 +60,17 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
                         "   " +
                         "   AND p."+GE_Custom_Form_ProductDao.CUSTOMER_CODE+" = '" + s_customer_code + "' " +
                         "   AND p."+GE_Custom_Form_ProductDao.PRODUCT_CODE +" = '" + s_product_code + "' " +
+                        "   AND EXISTS(SELECT\n" +
+                        "                     1\n" +
+                        "               FROM\n" +
+                                            GE_Custom_Form_OperationDao.TABLE +" o\n" +
+                        "               WHERE\n" +
+                        "                 o.customer_code = p.customer_code\n" +
+                        "                 and o.custom_form_type = p.custom_form_type\n" +
+                        "                 and o.custom_form_code = p.custom_form_code\n" +
+                        "                 and o.custom_form_version = p.custom_form_version\n" +
+                        "                 and o.operation_code = '"+s_operation_code+"'\n" +
+                        "                )  " +
                         " order by " +
                         "   t."+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+" ;" +
                         GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)

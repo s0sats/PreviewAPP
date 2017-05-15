@@ -16,6 +16,8 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act008_001;
+import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -38,13 +40,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private Long product_code;
     private boolean downloadStarted = false;
     private HMAux hmAux_Trans;
-
-    private String scheduled_date;
-
     private GE_Custom_Form_OperationDao formOperationDao;
+    private boolean isSchedule;
 
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, String scheduled_date) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao,boolean isSchedule) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -52,26 +52,45 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.product_code = product_code;
         this.hmAux_Trans = hmAux_Trans;
         this.formOperationDao = formOperationDao;
-        this.scheduled_date = scheduled_date;
+        this.isSchedule = isSchedule;
     }
 
     @Override
-    public void getProductInfo() {
-        MD_Product md_product =
-                mdProductDao.getByString(
-                        new MD_Product_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code
-                        ).toSqlQuery()
-                );
+    public void getProductInfo( Bundle bundle) {
+        MD_Product md_product = null;
+        //Se for um agendamento, busca dados da custom_form_local
+        //se não do MD
+        if(isSchedule){
+            md_product =
+                    mdProductDao.getByString(
+                            new Sql_Act008_002(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
+                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
+                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
+                                    bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
+                            ).toSqlQuery()
+                    );
+
+        }else{
+            md_product =
+                    mdProductDao.getByString(
+                            new MD_Product_Sql_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    product_code
+                            ).toSqlQuery()
+                    );
+
+        }
+
         //Erro, produto não encontrado
-        if (md_product.getProduct_code() < 1) {
+        if(md_product.getProduct_code() < 1 || md_product == null){
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_product_not_found_title"),
                     hmAux_Trans.get("alert_product_not_found_msg")
-            );
-        } else {
-            mView.setProductValues(md_product);
+                    );
+        }else{
+           mView.setProductValues(md_product);
         }
     }
 
@@ -85,21 +104,21 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             mView.showAlertDialog(
                     hmAux_Trans.get("alert_no_serial_typed_title"),
                     hmAux_Trans.get("alert_no_serial_typed_msg")
-            );
-        } else {
+                    );
+        }else{
             checkConnection(serial, required, allow_new);
         }
 
-        // checkConnection(serial, required, allow_new);
+       // checkConnection(serial, required, allow_new);
 
     }
 
     private void checkConnection(String serial, int required, int allow_new) {
         //verifica se tem conexão.
-        if (ToolBox_Con.isOnline(context)) {
+        if(ToolBox_Con.isOnline(context)){
             //Se tem, chama metodo que verifica se produto ja existe na tabela.
             checkSyncChecklist(serial, required, allow_new);
-        } else {
+        }else{
             //Se não tiver conexão, chama metodo para tratativa do offline.
             mView.continueOffline();
         }
@@ -116,21 +135,18 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                         ).toSqlQuery()
                 );
 
-        if (hmAuxList.size() == 0) {
+        if(hmAuxList.size() == 0){
             executeSyncProcess();
-        } else {
-            if (serial.length() > 0) {
+        }else{
+            if( serial.length() > 0 ) {
                 executeSerialProcess(serial);
-            } else {
-                if (required == 0) {
-                    if (scheduled_date.equals("")){
-                        mView.callAct009(context);
-                    } else {
-                        mView.callAct011(context);
-                    }
+            }else{
+                if (required == 0){
+                    //mView.callAct009(context);
+                    defineFlow();
                     //Atualiza data na tabela de produtos local
                     updateSyncChecklist();
-                } else {
+                }else{
                     alertSerialEmpty();
                 }
             }
@@ -144,8 +160,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
-        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+        bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
         bundle.putLong(Constant.GS_PRODUCT_CODE, product_code);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
@@ -173,7 +189,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         bundle.putLong(Constant.GS_SERIAL_PRODUCT_CODE, product_code);
         bundle.putInt(Constant.GS_SERIAL_REQUIRED, md_product.getRequire_serial());
         bundle.putInt(Constant.GS_SERIAL_ALLOW_NEW, md_product.getAllow_new_serial_cl());
-        bundle.putString(Constant.GS_SERIAL_ID, serial);
+        bundle.putString(Constant.GS_SERIAL_ID,serial);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
         //
@@ -187,11 +203,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     @Override
     public void updateSyncChecklist() {
         //Pega data atual
-        Calendar cDate = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cDate =  Calendar.getInstance();
+        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
         String last_update = dateFormat.format(cDate.getTime());
 
-        Sync_Checklist syncChecklist = new Sync_Checklist();
+        Sync_Checklist syncChecklist =  new Sync_Checklist();
 
         syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
         syncChecklist.setProduct_code(product_code);
@@ -205,19 +221,16 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     @Override
     public void proceedToSerialProcess(String serial, int serial_required) {
 
-        if (serial.length() > 0) {
+        if (serial.length() > 0 ){
             executeSerialProcess(serial);
-        } else {
-            if (serial.length() == 0 && serial_required == 0) {
-                if (scheduled_date.equals("")){
-                    mView.callAct009(context);
-                } else {
-                    mView.callAct011(context);
-                }
+        }else{
+            if (serial.length() == 0 && serial_required == 0 ){
+                //mView.callAct009(context);
+                defineFlow();
                 //Atualiza data na tabela de produtos local
                 updateSyncChecklist();
-            } else {
-                alertSerialEmpty();
+            }else{
+              alertSerialEmpty();
             }
         }
     }
@@ -251,15 +264,40 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     @Override
     public boolean checkFormXOperationExists() {
 
-        return false;
+        String hasFormXOperation =
+                formOperationDao.getByStringHM(
+                  new Sql_Act008_001(
+                          ToolBox_Con.getPreference_Customer_Code(context),
+                          product_code,
+                          ToolBox_Con.getPreference_Operation_Code(context)
+                  ).toSqlQuery()
+                ).get(Sql_Act008_001.FORM_OPERATION_PROFILE);
+        if(hasFormXOperation.equals("0") ||hasFormXOperation.equals("null")){
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public void onBackPressedClicked(String scheduled_date) {
-        if (scheduled_date.equals("")) {
-            mView.callAct007(context);
-        } else {
-            mView.callAct017(context);
+    public void defineFlow() {
+
+        if(isSchedule){
+            mView.callAct011(context);
+        }else{
+            mView.callAct009(context);
         }
+
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+
+        if(isSchedule){
+            mView.callAct017(context);
+        }else{
+            mView.callAct007(context);
+        }
+
     }
 }
