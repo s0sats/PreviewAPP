@@ -17,7 +17,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -134,9 +133,6 @@ public class WS_Upload_Support extends IntentService {
 
     private void prepareSupportData() throws IOException {
 
-        //Limpa diretorios de suporte
-        ToolBox_Inf.deleteAllFOD(Constant.SUPPORT_PATH);
-
         //Diretorio de suporte
         File dest = new File(Constant.SUPPORT_PATH);
 
@@ -155,7 +151,7 @@ public class WS_Upload_Support extends IntentService {
             pdf_list.delete();
         }
         for (File file : files_pdf ) {
-            writeIn(file.getName().concat("\n"),pdf_list);
+             ToolBox_Inf.writeIn(file.getName().concat("\n"),pdf_list);
         }
 
         //Lista cc_cache
@@ -166,7 +162,7 @@ public class WS_Upload_Support extends IntentService {
             cc_cache_list.delete();
         }
         for (File file : files_form_jpg ) {
-            writeIn(file.getName().concat("\n"),cc_cache_list);
+             ToolBox_Inf.writeIn(file.getName().concat("\n"),cc_cache_list);
         }
 
         //Lista cc_cache_photo
@@ -177,7 +173,7 @@ public class WS_Upload_Support extends IntentService {
             cc_photo_list.delete();
         }
         for (File file : files_cc_photo ) {
-            writeIn(file.getName().concat("\n"),cc_photo_list);
+             ToolBox_Inf.writeIn(file.getName().concat("\n"),cc_photo_list);
         }
 
         //Lista de preferencias
@@ -201,7 +197,7 @@ public class WS_Upload_Support extends IntentService {
 
             Map<String,?> ret =  sharedPreferences.getAll();
 
-            writeIn(ret.toString().concat("\n"),preference_list);
+             ToolBox_Inf.writeIn(ret.toString().concat("\n"),preference_list);
         }
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_files"), "", "0");
@@ -210,12 +206,6 @@ public class WS_Upload_Support extends IntentService {
 
     }
 
-
-    public void writeIn(String data , File file) throws IOException {
-        FileWriter writer =  new FileWriter(file,true);
-        writer.append(data);
-        writer.close();
-    }
 
     public static File[] getListDB(final String prefix) {
         File fileList = new File(Constant.DB_PATH);

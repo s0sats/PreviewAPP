@@ -105,6 +105,7 @@ public class WS_Sync extends IntentService {
 
         try {
 
+            //throw new Exception("ORA-");
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
@@ -118,6 +119,8 @@ public class WS_Sync extends IntentService {
             cleanNotification(getApplicationContext());
 
         }catch (Exception e) {
+
+            //ToolBox_Inf.registerException("WS_Sync",e.toString());
 
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 

@@ -21,7 +21,9 @@
         <ListView
             android:id="@+id/act018_lv_messages"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="2dp"/>
 
         <TextView
             android:id="@+id/act018_tv_empty"
