@@ -58,7 +58,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.beardedhen:androidbootstrap:2.3.1'
 
-    compile 'com.namoa_digital:library:0.0.189'
+    compile 'com.namoa_digital:library:0.0.192'
 
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.firebase:firebase-messaging:10.0.1'

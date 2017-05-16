@@ -630,6 +630,8 @@ public class ToolBox_Con {
                 Constant.NLS_DATE_FORMAT,
                 nls_date_format
         ).apply();
+
+        Constant.DATEFORMATDT = nls_date_format.toLowerCase().replace("m","M").replace("R","y");
     }
 
     public static String getPreference_Customer_nls_date_format(Context context) {
