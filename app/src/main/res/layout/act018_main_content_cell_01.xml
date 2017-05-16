@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/act007_main_content_cell_ll_background"
+        android:id="@+id/act018_main_content_cell_ll_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/lib_custom_cell_bg_base"
@@ -16,14 +16,6 @@
         android:paddingRight="5dp"
         android:paddingTop="10dp">
 
-        <TextView
-            android:id="@+id/act018_main_content_cell_tv_customer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Customer"
-            android:textColor="@color/lib_custom_cell_font_color"
-            android:textSize="@dimen/font_size_title"
-            android:textStyle="bold" />
 
 
         <LinearLayout
@@ -41,7 +33,19 @@
                     android:id="@+id/act018_main_content_cell_iv_001"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:maxHeight="24dp"
+                    android:maxWidth="24dp"
+                    android:src="@drawable/ic_done_all_black_24dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/act018_main_content_cell_iv_002"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:maxHeight="24dp"
@@ -50,10 +54,10 @@
                     android:visibility="visible" />
 
                 <ImageView
-                    android:id="@+id/act018_main_content_cell_iv_002"
+                    android:id="@+id/act018_main_content_cell_iv_003"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:maxHeight="24dp"
@@ -68,6 +72,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act018_main_content_cell_tv_customer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Customer"
+                    android:textColor="@color/lib_custom_cell_font_color"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

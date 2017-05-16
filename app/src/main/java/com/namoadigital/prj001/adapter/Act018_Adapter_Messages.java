@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -71,6 +74,9 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         ImageView iv_002 = (ImageView)
                 convertView.findViewById(R.id.act018_main_content_cell_iv_002);
 
+        ImageView iv_003 = (ImageView)
+                convertView.findViewById(R.id.act018_main_content_cell_iv_003);
+
 
         TextView tv_title = (TextView)
                 convertView.findViewById(R.id.act018_main_content_cell_tv_title);
@@ -81,21 +87,23 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         TextView tv_msg_short = (TextView)
                 convertView.findViewById(R.id.act018_main_content_cell_tv_msg_short);
 
+        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act018_main_content_cell_ll_background);
+
         switch (item.get("module")) {
             case MODULE_CHECKLIST:
-                iv_001.setImageResource(R.drawable.ic_n_form);
+                iv_002.setImageResource(R.drawable.ic_n_form);
                 break;
             default:
-                iv_001.setVisibility(View.GONE);
+                iv_002.setVisibility(View.GONE);
                 break;
         }
 
         switch (item.get("type").toLowerCase()) {
             case ALERT:
-                iv_002.setImageResource(R.drawable.ic_alert_n);
+                iv_003.setImageResource(R.drawable.ic_alert_n);
                 break;
             case WARNING:
-                iv_002.setImageResource(R.drawable.ic_problem_n);
+                iv_003.setImageResource(R.drawable.ic_problem_n);
                 break;
             default:
                 break;
@@ -117,9 +125,22 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         if (item.get("status").equalsIgnoreCase("1")) {
             tv_title.setTypeface(null, Typeface.NORMAL);
             tv_date.setTypeface(null, Typeface.NORMAL);
+
+            Drawable bgDrawble = context.getDrawable(R.drawable.namoa_cell_8_states);
+            ll_background.setBackground(bgDrawble);
+
+
+            Drawable done_icon = context.getDrawable(R.drawable.ic_done_all_black_24dp);
+            done_icon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
+            iv_001.setImageDrawable(done_icon);
+
+            iv_001.setVisibility(View.VISIBLE);
         } else {
             tv_title.setTypeface(null, Typeface.BOLD);
             tv_date.setTypeface(null, Typeface.BOLD);
+//            tv_customer.setTextColor(context.getResources().getColor(R.color.font_required));
+//            tv_title.setTextColor(context.getResources().getColor(R.color.font_required));
+//            tv_date.setTextColor(context.getResources().getColor(R.color.font_required));
         }
 
         return convertView;

@@ -67,6 +67,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1583,27 +1584,34 @@ public class ToolBox_Inf {
         results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
 
         if (e.toString().contains("JsonSyntaxException")) {
-            sb.append(results).append(" ").append("JsonParse!\n")
+            sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_contact_admin_json_syntax"))
                     .append("\n")
+                    .append("\n")
+                    .append("JsonParse!\n")
                     .append(e.toString()
                     );
 
         } else if (e.toString().contains("ORA-")) {
-            sb.append(results).append(" ").append("ORACLE!\n")
+            sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_contact_admin_oracle"))
                     .append("\n")
+                    .append("\n")
+                    .append("ORACLE!\n")
                     .append(e.toString()
                     );
 
         } else if (e.toString().toLowerCase().contains("timeout")) {
-            sb.append(results).append(" ").append("Timeout!\n ")
+            sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_contact_admin_timeout"))
                     .append("\n")
+                    .append("\n")
+                    .append("Timeout!\n ")
                     .append(e.toString()
                     );
         } else {
             sb.append(results)
+                    .append("\n")
                     .append("\n")
                     .append(e.toString());
         }
@@ -1738,6 +1746,36 @@ public class ToolBox_Inf {
         if (SV_LocationTracker.status) {
             Intent mIntent = new Intent(context, SV_LocationTracker.class);
             context.stopService(mIntent);
+        }
+    }
+
+    public static void writeIn(String data , File file) throws IOException {
+        FileWriter writer =  new FileWriter(file,true);
+        writer.append(data);
+        writer.close();
+    }
+
+    public static String getDateHourStr(){
+        //
+        SimpleDateFormat formater = new SimpleDateFormat("yyyyMMdd");
+        String curr_date = formater.format(new Date());
+        //
+        formater = new SimpleDateFormat("HHmmss");
+        String curr_time = formater.format(new Date());
+        //
+        String dateHour = curr_date + "_" + curr_time;
+
+        return dateHour;
+    }
+
+    public static void registerException(String local, String exception) {
+
+        File exception_file = new File(Constant.SUPPORT_PATH,"excep_" + getDateHourStr() + ".txt");
+
+        try {
+            ToolBox_Inf.writeIn(local + ";\n" +exception,exception_file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

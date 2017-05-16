@@ -381,7 +381,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 if (sum == 0) {
 
                     // Mudar par 1
-                    if (formLocal.getRequire_location() == 0) {
+                    if (formLocal.getRequire_location() == 1) {
                         enableProgressDialog(
                                 hmAux_Trans.get("alert_location_info_title"),
                                 hmAux_Trans.get("alert_location_info_required"),

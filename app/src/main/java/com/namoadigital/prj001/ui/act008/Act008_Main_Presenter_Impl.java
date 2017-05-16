@@ -135,7 +135,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                         ).toSqlQuery()
                 );
 
-        if(hmAuxList.size() == 0){
+        if(hmAuxList.size() == 0 && !isSchedule){
             executeSyncProcess();
         }else{
             if( serial.length() > 0 ) {

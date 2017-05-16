@@ -445,6 +445,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct011(Context context) {
         Intent mIntent =  new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putString(Constant.ACT008_SERIAL_ID,mket_serial_id.getText().toString().trim());
+
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);

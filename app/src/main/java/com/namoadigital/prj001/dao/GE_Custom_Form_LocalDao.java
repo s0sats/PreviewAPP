@@ -42,6 +42,10 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
     public static final String SCHEDULE_DATE_START_FORMAT_MS = "schedule_date_start_format_ms";
     public static final String SCHEDULE_DATE_END_FORMAT_MS = "schedule_date_end_format_ms";
+    public static final String REQUIRE_SERIAL = "require_serial";
+    public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
+    public static final String REQUIRE_LOCATION = "require_location";
+
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -322,8 +326,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }else{
                 custom_form_local.setSchedule_date_end_format(cursor.getString(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT)));
             }
-            custom_form_local.setSchedule_date_start_format_ms(cursor.getLong(cursor.getColumnIndex(SCHEDULE_DATE_START_FORMAT_MS)));
-            custom_form_local.setSchedule_date_end_format_ms(cursor.getLong(cursor.getColumnIndex(SCHEDULE_DATE_END_FORMAT_MS)));
+            custom_form_local.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
+            custom_form_local.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
+            custom_form_local.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
 
             return custom_form_local;
         }
@@ -397,6 +402,15 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }
             if (custom_form_local.getSchedule_date_end_format_ms() > -1) {
                 contentValues.put(SCHEDULE_DATE_END_FORMAT_MS, custom_form_local.getSchedule_date_end_format_ms());
+            }
+            if (custom_form_local.getRequire_serial() > -1) {
+                contentValues.put(REQUIRE_SERIAL, custom_form_local.getRequire_serial());
+            }
+            if (custom_form_local.getAllow_new_serial_cl() > -1) {
+                contentValues.put(ALLOW_NEW_SERIAL_CL, custom_form_local.getAllow_new_serial_cl());
+            }
+            if (custom_form_local.getRequire_location() > -1) {
+                contentValues.put(REQUIRE_LOCATION, custom_form_local.getRequire_location());
             }
 
             return contentValues;
