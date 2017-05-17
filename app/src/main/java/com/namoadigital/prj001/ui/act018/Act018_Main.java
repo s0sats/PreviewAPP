@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +34,8 @@ import java.util.List;
 
 public class Act018_Main extends Base_Activity implements Act018_Main_View {
 
+    public static final String ACT018_MSG_IDX = "act018_msg_idx";
+
     private Context context;
     private ListView lv_messages;
     private TextView tv_empty;
@@ -44,6 +47,7 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
     private Bundle bundle = new Bundle();
 
     private String sAction = "";
+    private int msg_idx = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +130,8 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
         super.onResume();
         //
         mPresenter.setAdapterData();
+
+        setMsgAtPosition();
     }
 
     private void recuperaGetIntents() {
@@ -134,6 +140,7 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
             this.bundle = bundle;
             //
             sAction = bundle.getString("action", "");
+            msg_idx = bundle.getInt(ACT018_MSG_IDX,-1);
         } else {
             bundle = new Bundle();
             bundle.putString("action", "");
@@ -186,7 +193,9 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
                 modifyDB(id);
 
                 bundle.putLong("fcmmessage_code", id);
+                bundle.putInt(ACT018_MSG_IDX,position);
                 callAct019(context, bundle);
+
             }
         });
     }
@@ -209,8 +218,11 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
                 R.layout.act018_main_content_cell_01,
                 messages
         );
-
+        //seta qual item é selecionado
+        adapterMessages.setMsg_selected(msg_idx);
+        //
         lv_messages.setAdapter(adapterMessages);
+
     }
 
     private void cleanNotification() {
@@ -246,6 +258,18 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
         finish();
     }
 
+    private void setMsgAtPosition(){
+        if(msg_idx != - 1){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lv_messages.smoothScrollToPosition(msg_idx);
+            }
+        }, 300);
+    }
+    }
+
     @Override
     public void onBackPressed() {
         if (sAction.equalsIgnoreCase("NOTIFICATION")) {
@@ -254,6 +278,8 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
             callAct005(context);
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

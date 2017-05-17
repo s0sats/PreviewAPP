@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableContainer;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +35,13 @@ public class Act018_Adapter_Messages extends BaseAdapter {
     private Context context;
     private int resource;
     private List<HMAux> data;
+    private int msg_selected;
 
     public Act018_Adapter_Messages(Context context, int resource, List<HMAux> data) {
         this.context = context;
         this.resource = resource;
         this.data = data;
+        this.msg_selected = -1;
     }
 
     @Override
@@ -52,6 +57,10 @@ public class Act018_Adapter_Messages extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         return Long.parseLong((data.get(position).get("fcmmessage_code")));
+    }
+
+    public void setMsg_selected(int position){
+        msg_selected = position;
     }
 
     @Override
@@ -129,7 +138,6 @@ public class Act018_Adapter_Messages extends BaseAdapter {
             Drawable bgDrawble = context.getDrawable(R.drawable.namoa_cell_8_states);
             ll_background.setBackground(bgDrawble);
 
-
             Drawable done_icon = context.getDrawable(R.drawable.ic_done_all_black_24dp);
             done_icon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
             iv_001.setImageDrawable(done_icon);
@@ -141,6 +149,20 @@ public class Act018_Adapter_Messages extends BaseAdapter {
 //            tv_customer.setTextColor(context.getResources().getColor(R.color.font_required));
 //            tv_title.setTextColor(context.getResources().getColor(R.color.font_required));
 //            tv_date.setTextColor(context.getResources().getColor(R.color.font_required));
+        }
+        //Se o item for o selecionado,
+        //muda cor da linha e do fundo drawable
+        if(position == msg_selected){
+            StateListDrawable drawble = (StateListDrawable) context.getDrawable(R.drawable.namoa_cell_4_states);//ll_background.getBackground();
+            DrawableContainer.DrawableContainerState dcs = (DrawableContainer.DrawableContainerState) drawble.getConstantState();
+            Drawable[] drawableItems = dcs.getChildren();
+
+            GradientDrawable  bgDrawble = (GradientDrawable) drawableItems[0];
+
+            bgDrawble.setStroke(2,context.getResources().getColor(R.color.namoa_color_orange));
+            bgDrawble.setColor(context.getResources().getColor(R.color.namoa_color_orange_light));
+
+            ll_background.setBackground(bgDrawble);
         }
 
         return convertView;

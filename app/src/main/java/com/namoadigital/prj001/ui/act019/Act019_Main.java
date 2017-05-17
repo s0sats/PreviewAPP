@@ -37,6 +37,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
     private String sAction = "";
     private long fcmmessage_code;
+    private int msg_idx = -1;
 
     private ImageView iv_icon;
     private ImageView iv_module;
@@ -158,6 +159,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         if (bundle != null) {
             sAction = bundle.getString("action", "");
             fcmmessage_code = bundle.getLong("fcmmessage_code", -1L);
+            msg_idx = (bundle.containsKey(Act018_Main.ACT018_MSG_IDX) ? bundle.getInt(Act018_Main.ACT018_MSG_IDX,-1) : -1 );
         } else {
             sAction = "";
             fcmmessage_code = -1L;
@@ -291,6 +293,11 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
     public void callAct018(Context context) {
         Intent mIntent = new Intent(context, Act018_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(Act018_Main.ACT018_MSG_IDX,msg_idx);
+
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
 
         finish();
