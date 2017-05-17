@@ -14,6 +14,8 @@ public interface Act006_Main_View {
 
     void callAct013(Context context);
 
+    void callAct020(Context context);
+
     void setPendenciesQty(int qty);
 
     void showMsg();
