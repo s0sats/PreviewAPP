@@ -74,6 +74,8 @@
     <string name="message_received_notification_sync">Mensagens Recebidas</string>
     <string name="message_full_quarter_notification_future">Agendados</string>
     <string name="message_full_quarter_notification_late">Atrasados</string>
+    <string name="msg_nfc_card_blocked">Cartão NFC bloqueado!</string>
+    <string name="msg_unespected_error">Erro inesperado!</string>
 
 
 

@@ -75,5 +75,7 @@
     <string name="message_received_notification_sync">Messages Received</string>
     <string name="message_full_quarter_notification_future">Scheduled</string>
     <string name="message_full_quarter_notification_late">Late</string>
+    <string name="msg_nfc_card_blocked">NFC card blocked!</string>
+    <string name="msg_unespected_error">Unexpected error!</string>
 
 </resources>

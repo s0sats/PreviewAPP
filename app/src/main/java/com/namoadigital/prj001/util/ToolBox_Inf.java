@@ -600,9 +600,13 @@ public class ToolBox_Inf {
                     }
                 case "OK":
                     break;
+                case "NFC_BLOCKED":
+                    sendBCStatus(context, "ERROR_1",context.getString(R.string.msg_nfc_card_blocked) /*context.getString(R.string.msg_user_canceled)*/, s_Link, "0");
+                    return false;
 
                 default:
-                    break;
+                    sendBCStatus(context, "ERROR_1",context.getString(R.string.msg_unespected_error), s_Link, "0");
+                    return false;
             }
         }
 
