@@ -77,5 +77,7 @@
     <string name="message_full_quarter_notification_late">Late</string>
     <string name="msg_nfc_card_blocked">NFC card blocked!</string>
     <string name="msg_unespected_error">Unexpected error!</string>
+    <string name="notification_ttl_download">Processing Download</string>
+    <string name="notification_msg_download">Please do not turn off the network conection</string>
 
 </resources>

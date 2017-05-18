@@ -26,7 +26,7 @@ public class GE_Custom_Form_Local_Sql_010 implements Specification {
                         "select customer_code  || '|' || custom_form_type  || '|' || custom_form_code  || '|' || custom_form_version || '|' || custom_form_data  id from ge_custom_form_datas\n" +
                         "\n" +
                         ") " +
-                        "AND custom_form_data_serv = 0")
+                        "AND custom_form_data_serv is null")
                 .toString();
     }
 }
