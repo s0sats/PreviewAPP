@@ -28,7 +28,8 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
 
     private Context context;
     private Act020_Main_Presenter mPresenter;
-    private MKEditTextNM mket_search;
+    private MKEditTextNM mket_search_prod;
+    private MKEditTextNM mket_search_serial;
     private Button btn_search;
 
     @Override
@@ -63,7 +64,8 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("search_hint");
+        transList.add("search_prod_hint");
+        transList.add("search_serial_hint");
         transList.add("btn_search");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -88,7 +90,14 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
                 )
         );
         //
-        mket_search = (MKEditTextNM) findViewById(R.id.act020_mket_search);
+        mket_search_prod = (MKEditTextNM) findViewById(R.id.act020_mket_search_product);
+        mket_search_prod.setHint(hmAux_Trans.get("search_prod_hint"));
+        controls_sta.add(mket_search_prod);
+
+        mket_search_serial = (MKEditTextNM) findViewById(R.id.act020_mket_search_serial);
+        mket_search_prod.setHint(hmAux_Trans.get("search_serial_hint"));
+        controls_sta.add(mket_search_prod);
+
         //
         btn_search = (Button) findViewById(R.id.act020_btn_search);
         //

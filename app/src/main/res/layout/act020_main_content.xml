@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_main"
+    android:id="@+id/act020_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act020.Act020_Main"
@@ -12,39 +13,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="15dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act020_mket_search"
+        <ListView
+            android:id="@+id/act020_lv_prod_serial"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/namoa_bg_1"
-            android:inputType="text"
-            android:padding="10dp"
-            android:textSize="@dimen/font_size_title"
-            app:mBARCODE="true"
-            app:mNFC="true"
-            app:mOCR="false" />
+            android:layout_height="match_parent"/>
 
+        <include layout="@layout/footer_base" />
 
-        <Button
-            android:id="@+id/act020_btn_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/btn_namoa_main_states"
-            android:text="NEW"
-            android:textColor="@color/padrao_WHITE" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/act020_lv_prod_serial"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="250dp"
         android:layout_height="match_parent"
-        />
+        android:layout_gravity="start"
+        android:clickable="true"
+        android:orientation="vertical">
 
-    <include layout="@layout/footer_base" />
+        <fragment
+            android:id="@+id/act020_frag_filter"
+            android:name="com.namoadigital.prj001.ui."
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/act020_opc_content" />
 
-</LinearLayout>
+    </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>
