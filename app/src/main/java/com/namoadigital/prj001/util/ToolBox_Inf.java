@@ -1520,8 +1520,14 @@ public class ToolBox_Inf {
 
             case Constant.NOTIFICATION_DOWNLOAD:
                 animation = R.drawable.download_animation;
-                title = hmAux_Trans.get("notification_ttl_download");
-                msg = hmAux_Trans.get("notification_msg_download");
+                title = context.getString(R.string.notification_ttl_download);
+                if(hmAux_Trans.containsKey("notification_ttl_download")){
+                    title =  hmAux_Trans.get("notification_ttl_download");
+                }
+                msg = context.getString(R.string.notification_msg_download);
+                if(hmAux_Trans.containsKey("notification_msg_download")){
+                    msg = hmAux_Trans.get("notification_msg_download");
+                }
                 break;
         }
         //Se Id encontrado gera notificação, se não, não.

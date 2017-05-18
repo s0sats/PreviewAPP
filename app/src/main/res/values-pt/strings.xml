@@ -76,7 +76,8 @@
     <string name="message_full_quarter_notification_late">Atrasados</string>
     <string name="msg_nfc_card_blocked">Cartão NFC bloqueado!</string>
     <string name="msg_unespected_error">Erro inesperado!</string>
-
+    <string name="notification_ttl_download">Download em andamento</string>
+    <string name="notification_msg_download">Favor não desligar conexões de rede.</string>
 
 
 </resources>
