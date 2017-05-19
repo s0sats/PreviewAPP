@@ -185,6 +185,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
             customFormLocal.setSchedule_date_start_format_ms(0);
             customFormLocal.setSchedule_date_end_format_ms(0);
+            customFormLocal.setRequire_location(customForm.getRequire_location());
 
             custom_form_LocalDao.addUpdate(customFormLocal);
 
