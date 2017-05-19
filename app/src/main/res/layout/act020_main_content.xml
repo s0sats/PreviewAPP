@@ -37,7 +37,7 @@
             android:name="com.namoadigital.prj001.ui."
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/act020_opc_content" />
+            tools:layout="@layout/act020_drawer_content" />
 
     </LinearLayout>
 

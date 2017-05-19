@@ -56,6 +56,8 @@
     <color name="namoa_color_warning_yellow">#FFFF00</color>
     <color name="namoa_color_danger_red">#D9534F</color>
     <color name="namoa_color_disabled_gray">#ADADAD</color>
+    <color name="namoa_icon_color">#044C60</color>
+    <color name="namoa_icon_pressed_color">#11EDEDED</color>
 
     <!-- Cores WEB -->
     <color name="main_bar_background"> #a3ca55 </color>
