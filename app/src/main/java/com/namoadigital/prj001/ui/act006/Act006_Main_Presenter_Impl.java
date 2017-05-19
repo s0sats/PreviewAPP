@@ -64,6 +64,22 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     @Override
+    public void defineFlow(HMAux item) {
+
+        switch (item.get(Act006_Main.NEW_OPT_ID)){
+            case Act006_Main.NEW_OPT_TP_PRODUCT:
+                mView.callAct007(context);
+                break;
+            case Act006_Main.NEW_OPT_TP_SERIAL:
+                mView.callAct020(context);
+                break;
+            case Act006_Main.NEW_OPT_TP_LOCATION:
+                default:
+                break;
+        }
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
     }
