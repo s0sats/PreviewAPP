@@ -272,6 +272,10 @@
 
         <service android:name=".service.WS_Upload_Support" />
 
+        <receiver android:name=".receiver.WBR_Serial_Search" />
+
+        <service android:name=".service.WS_Serial_Search" />
+
     </application>
 
 </manifest>

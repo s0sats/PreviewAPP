@@ -78,6 +78,8 @@
     <string name="msg_unespected_error">Erro inesperado!</string>
     <string name="notification_ttl_download">Download em andamento</string>
     <string name="notification_msg_download">Favor não desligar conexões de rede.</string>
+    <string name="generic_drawer_opened">Drawer Opened</string>
+    <string name="generic_drawer_closed">Drawer Closed</string>
 
 
 </resources>

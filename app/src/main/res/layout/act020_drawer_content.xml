@@ -9,15 +9,52 @@
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/act020_drawer_content_tv_product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="sdsd"
+                android:textSize="@dimen/font_size_title_md" />
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act020_drawer_content_mket_product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:mBARCODE="true"
+                app:mNFC="true"
+                app:mOCR="false"
+                android:paddingLeft="10dp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"/>
+            <TextView
+                android:id="@+id/act020_drawer_content_tv_serial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textSize="@dimen/font_size_title_md"/>
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act020_drawer_content_mket_serial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:mBARCODE="true"
+                app:mNFC="true"
+                app:mOCR="false"
+                android:paddingLeft="10dp"/>
 
 
         </LinearLayout>
@@ -26,16 +63,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:background="@drawable/namoa_icon_bg_states">
+
         <ImageView
             android:id="@+id/act020_drawer_content_iv_search"
-            android:layout_width="40dp"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:src="@drawable/ic_search_black_24dp"
-            android:tint="@color/namoa_icon_color"
             android:layout_margin="5dp"
-            android:background="@drawable/namoa_icon_bg_states"
-            />
+            android:src="@drawable/ic_search_black_24dp"
+            android:tint="@color/namoa_icon_color" />
 
 
     </LinearLayout>

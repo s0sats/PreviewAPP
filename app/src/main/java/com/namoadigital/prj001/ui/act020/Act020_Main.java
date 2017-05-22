@@ -4,14 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -24,13 +34,18 @@ import java.util.List;
  * Created by d.luche on 17/05/2017.
  */
 
-public class Act020_Main extends Base_Activity implements Act020_Main_View{
+public class Act020_Main extends Base_Activity implements Act020_Main_View {
 
     private Context context;
     private Act020_Main_Presenter mPresenter;
-    private MKEditTextNM mket_search_prod;
-    private MKEditTextNM mket_search_serial;
-    private Button btn_search;
+    private DrawerLayout mDrawerLayout;
+    private FragmentManager fm;
+    private Act020_Filter fragFilters;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private TextView tv_records;
+    private ListView lv_prod_serial_list;
+    private Act020_Prod_Serial_Adapter mAdapter;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +72,9 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
                 mModule_Code,
                 Constant.ACT020
         );
-
+        //
+        fm = getSupportFragmentManager();
+        //
         loadTranslation();
 
     }
@@ -66,13 +83,17 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
         List<String> transList = new ArrayList<String>();
         transList.add("search_prod_hint");
         transList.add("search_serial_hint");
-        transList.add("btn_search");
+        transList.add("drawer_product_lbl");
+        transList.add("drawer_serial_lbl");
+        transList.add("progress_serial_search_ttl");
+        transList.add("progress_serial_search_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
 
     }
@@ -90,17 +111,61 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
                 )
         );
         //
-        mket_search_prod = (MKEditTextNM) findViewById(R.id.act020_mket_search_product);
-        mket_search_prod.setHint(hmAux_Trans.get("search_prod_hint"));
-        controls_sta.add(mket_search_prod);
-
-        mket_search_serial = (MKEditTextNM) findViewById(R.id.act020_mket_search_serial);
-        mket_search_prod.setHint(hmAux_Trans.get("search_serial_hint"));
-        controls_sta.add(mket_search_prod);
-
+        tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
         //
-        btn_search = (Button) findViewById(R.id.act020_btn_search);
+        lv_prod_serial_list = (ListView) findViewById(R.id.act020_lv_prod_serial);
         //
+        /*
+        * Drawer setup
+        */
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.act020_drawer);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                Act020_Main.this,
+                mDrawerLayout,
+                R.string.act005_drawer_opened,
+                R.string.act005_drawer_opened
+        ) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                //
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                //
+                invalidateOptionsMenu();
+            }
+
+        };
+        //
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        //
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        //
+        mDrawerToggle.syncState();
+        //
+        fragFilters = (Act020_Filter) fm.findFragmentById(R.id.act020_frag_filter);
+        //
+        fragFilters.setHmAux_Trans(hmAux_Trans);
+        //
+        controls_sta.addAll(fragFilters.getControlsSta());
+        //
+        fragFilters.setOnDrawerClick(new Act020_Filter.IAct020_Filter() {
+            @Override
+            public void onIvSearchClick(String product, String serial) {
+                //Toast.makeText(context, "Prod: " + product + "\nSerial: "+ serial  , Toast.LENGTH_SHORT).show();
+                mPresenter.executeSerialSearch(product,serial,serial);
+            }
+        });
+       /*
+        * Drawer setup end
+        */
 
     }
 
@@ -122,9 +187,9 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -138,9 +203,59 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
     }
 
     private void initActions() {
+        //Abre drawer ao carregar a tela
+        mDrawerLayout.openDrawer(GravityCompat.START);
+        //Sincroniza icone do hambuguer
+        mDrawerToggle.syncState();
+        //
 
     }
 
+    @Override
+    public void showPD() {
+        enableProgressDialog(
+                hmAux_Trans.get("progress_serial_search_ttl"),
+                hmAux_Trans.get("progress_serial_search_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void setRecordInfo(long record_page) {
+        if(record_page > 0){
+           // tv_records.setText(hmAux_Trans.get("showing_lbl") + " :" +  record_page + "  " + hmAux_Trans.get("showing_lbl"));
+            tv_records.setText("Exibindo :" +  record_page + " registros");
+        }else{
+            tv_records.setText("Nenhum resultado encontrado");
+
+        }
+    }
+
+    @Override
+    public void loadProductSerialList(ArrayList<TProduct_Serial> prod_serial_list) {
+        //
+        mAdapter =  new Act020_Prod_Serial_Adapter(
+                context,
+                R.layout.act020_cell,
+                prod_serial_list
+        );
+        //
+        lv_prod_serial_list.setAdapter(mAdapter);
+
+    }
+
+    @Override
+    public void showQtyExceededMsg(long record_count) {
+
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") +"\n" + hmAux_Trans.get("alert_qty_records_founded"),
+                null,
+                0);
+
+    }
 
     @Override
     public void callAct006(Context context) {
@@ -152,11 +267,43 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View{
     }
 
     @Override
+    protected void processCloseACT(String ws_retorno, String mRequired) {
+        super.processCloseACT(ws_retorno, mRequired);
+
+        mPresenter.getProductSerialList(ws_retorno);
+        //
+        progressDialog.dismiss();
+        //
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
 
         mPresenter.onBackPressedClicked();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
 
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return true;
     }
 }

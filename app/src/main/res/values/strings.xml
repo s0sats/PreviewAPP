@@ -79,5 +79,7 @@
     <string name="msg_unespected_error">Unexpected error!</string>
     <string name="notification_ttl_download">Processing Download</string>
     <string name="notification_msg_download">Please do not turn off the network conection</string>
+    <string name="generic_drawer_opened">Drawer Opened</string>
+    <string name="generic_drawer_closed">Drawer Closed</string>
 
 </resources>
