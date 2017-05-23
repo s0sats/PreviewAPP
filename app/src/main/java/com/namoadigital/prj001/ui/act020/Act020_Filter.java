@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act020;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,23 +23,37 @@ import java.util.ArrayList;
 
 public class Act020_Filter extends Fragment {
 
+    private TextView tv_nfc_reader;
     private TextView tv_product;
     private MKEditTextNM mket_product;
+    private TextView tv_product_id;
+    private MKEditTextNM mket_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
     private ImageView iv_search;
     private HMAux hmAux_Trans;
     private IAct020_Filter delegate;
     private ArrayList<MKEditTextNM> controls_sta;
+    private Drawable drawableNFC;
 
     public interface IAct020_Filter{
 
-        void onIvSearchClick(String product, String serial);
+        void onNFCClick(int id);
+
+        void onIvSearchClick(String product, String product_id, String serial);
 
     }
 
     public void setOnDrawerClick(IAct020_Filter delegate){
         this.delegate = delegate;
+    }
+
+    public Drawable getDrawableNFC() {
+        return drawableNFC;
+    }
+
+    public void setDrawableNFC(Drawable drawableNFC) {
+        this.drawableNFC = drawableNFC;
     }
 
     @Nullable
@@ -54,11 +70,22 @@ public class Act020_Filter extends Fragment {
     private void iniVar(View view) {
 
         controls_sta = new ArrayList<>();
-
-        tv_product = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product);
         //
-        mket_product = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_product);
+        tv_nfc_reader = (TextView) view.findViewById(R.id.act020_drawer_content_tv_nfc_reader);
+        drawableNFC = tv_nfc_reader.getCompoundDrawables()[2];
+        drawableNFC.setBounds(0,0,50,50);
+
+        setDrawableNFC(drawableNFC);
+        //
+        tv_product = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product_code);
+        //
+        mket_product = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_product_code);
         controls_sta.add(mket_product);
+        //
+        tv_product_id = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product_id);
+        //
+        mket_product_id = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_product_id);
+        controls_sta.add(mket_product_id);
         //
         tv_serial = (TextView) view.findViewById(R.id.act020_drawer_content_tv_serial);
         //
@@ -67,9 +94,23 @@ public class Act020_Filter extends Fragment {
         //
         iv_search = (ImageView) view.findViewById(R.id.act020_drawer_content_iv_search);
 
+
     }
 
     private void iniAction() {
+
+        tv_nfc_reader.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (delegate != null) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        delegate.onNFCClick(tv_nfc_reader.getId());
+                    }
+
+                }
+                return false;
+            }
+        });
 
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,12 +118,29 @@ public class Act020_Filter extends Fragment {
                 if (delegate != null){
                     delegate.onIvSearchClick(
                             mket_product.getText().toString().trim(),
+                            mket_product_id.getText().toString().trim(),
                             mket_serial.getText().toString().trim()
                     );
                 }
             }
         });
 
+    }
+
+    public void setNFCText(String text){
+        tv_nfc_reader.setText(text.toString());
+    }
+
+    public void setProductCodeText(String text){
+        mket_product.setText(text.toString());
+    }
+
+    public void setProductIdText(String text){
+        mket_product_id.setText(text.toString());
+    }
+
+    public void setSerialIdText(String text){
+        mket_serial.setText(text.toString());
     }
 
     public void setHmAux_Trans(HMAux hmAux_Trans) {
@@ -92,6 +150,8 @@ public class Act020_Filter extends Fragment {
 
     private void setTranslation() {
         tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
+        //
+        tv_product_id.setText(hmAux_Trans.get("drawer_product_id_lbl"));
        // mket_product.setHint(hmAux_Trans.get("search_prod_hint"));
         tv_serial.setText(hmAux_Trans.get("drawer_serial_lbl"));
         //mket_serial.setHint(hmAux_Trans.get("search_prod_hint"));

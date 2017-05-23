@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act020;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +19,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -34,7 +36,7 @@ import java.util.List;
  * Created by d.luche on 17/05/2017.
  */
 
-public class Act020_Main extends Base_Activity implements Act020_Main_View {
+public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_View {
 
     private Context context;
     private Act020_Main_Presenter mPresenter;
@@ -65,7 +67,7 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
+        context = Act020_Main.this;
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -84,9 +86,12 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View {
         transList.add("search_prod_hint");
         transList.add("search_serial_hint");
         transList.add("drawer_product_lbl");
+        transList.add("drawer_product_id_lbl");
         transList.add("drawer_serial_lbl");
         transList.add("progress_serial_search_ttl");
         transList.add("progress_serial_search_msg");
+        transList.add("alert_no_search_parameter_ttl");
+        transList.add("alert_no_search_parameter_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -158,9 +163,34 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View {
         //
         fragFilters.setOnDrawerClick(new Act020_Filter.IAct020_Filter() {
             @Override
-            public void onIvSearchClick(String product, String serial) {
+            public void onIvSearchClick(String product, String product_id, String serial) {
                 //Toast.makeText(context, "Prod: " + product + "\nSerial: "+ serial  , Toast.LENGTH_SHORT).show();
-                mPresenter.executeSerialSearch(product,serial,serial);
+                if(product.trim().length() > 0
+                    || serial.trim().length() > 0 ){
+                    mPresenter.executeSerialSearch(product, product_id, serial,serial);
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_search_parameter_ttl"),
+                            hmAux_Trans.get("alert_no_search_parameter_msg"),
+                            null,
+                            0
+                    );
+                }
+
+            }
+
+            @Override
+            public void onNFCClick(int id) {
+                setbNFCStatus(true);
+                changeNFCDrawable(fragFilters.getDrawableNFC());
+                setNFCSetUp(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        true,
+                        true,
+                        id
+                );
+
             }
         });
        /*
@@ -208,7 +238,6 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View {
         //Sincroniza icone do hambuguer
         mDrawerToggle.syncState();
         //
-
     }
 
     @Override
@@ -257,6 +286,17 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View {
 
     }
 
+    private void changeNFCDrawable(Drawable drawableNFC) {
+
+        if(isbNFCStatus()){
+            drawableNFC.setColorFilter(getResources().getColor(R.color.emoticons_green), PorterDuff.Mode.SRC_ATOP);
+        }else{
+            drawableNFC.setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.SRC_ATOP);
+        }
+
+        fragFilters.setDrawableNFC(drawableNFC);
+    }
+
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
@@ -264,6 +304,47 @@ public class Act020_Main extends Base_Activity implements Act020_Main_View {
         //
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
+        changeNFCDrawable(fragFilters.getDrawableNFC());
+
+        if(!status){
+            if(progressDialog != null && progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_nfc_return"),
+                    value[0],
+                    null,
+                    0
+            );
+
+        }else{
+
+            switch (value[0]){
+                case PRODUCT:
+                    fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
+                    fragFilters.setProductCodeText(value[1]);
+                    mPresenter.executeSerialSearch(value[1],"","","");
+                    break;
+                case SERIAL:
+                    fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
+                    fragFilters.setProductCodeText(value[1]);
+                    fragFilters.setSerialIdText(value[2]);
+                    mPresenter.executeSerialSearch(value[1],"","",value[2]);
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        }
+
     }
 
     @Override

@@ -10,5 +10,5 @@ public interface Act020_Main_Presenter {
 
     void onBackPressedClicked();
 
-    void executeSerialSearch(String product_code, String serial_code, String serial_id);
+    void executeSerialSearch(String product_code, String product_id,String serial_code, String serial_id);
 }

@@ -55,7 +55,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     }
 
     @Override
-    public void executeSerialSearch(String product_code, String serial_code, String serial_id) {
+    public void executeSerialSearch(String product_code, String product_id, String serial_code, String serial_id) {
 
         mView.showPD();
 
@@ -63,6 +63,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         Bundle bundle = new Bundle();
         //
         bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
         bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_CODE, "");
         bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
         //

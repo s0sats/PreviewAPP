@@ -10,6 +10,7 @@ public class TSerial_Search_Env {
     private String app_version;
     private String session_app;
     private String product_code;
+    private String product_id;
     private String serial_code;
     private String serial_id;
 
@@ -43,6 +44,14 @@ public class TSerial_Search_Env {
 
     public void setProduct_code(String product_code) {
         this.product_code = product_code;
+    }
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
     }
 
     public String getSerial_code() {
