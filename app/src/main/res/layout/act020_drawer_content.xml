@@ -29,13 +29,16 @@
                 android:drawableTint="@android:color/darker_gray"
                 android:padding="10dp"
                 android:drawablePadding="15dp"
-                android:hint="Ativar NFC"
                 android:textSize="@dimen/font_size_title_md"
+                android:background="@drawable/btn_namoa_main_states"
+                android:textColor="@color/padrao_WHITE"
+                android:gravity="center"
+                android:text="Ativar NFC"
+                android:clickable="true"
                 />
             <View
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@android:color/darker_gray"/>
+                android:layout_height="5dp" />
 
             <TextView
                 android:id="@+id/act020_drawer_content_tv_product_code"

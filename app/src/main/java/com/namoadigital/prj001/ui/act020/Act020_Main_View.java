@@ -12,13 +12,13 @@ import java.util.ArrayList;
 
 public interface Act020_Main_View {
 
-    void showPD();
+    void showPD(String progress_type);
 
-    void setRecordInfo(long record_page);
+    void setRecordInfo(long record_size, long record_page);
 
     void loadProductSerialList(ArrayList<TProduct_Serial> prod_serial_list);
 
-    void showQtyExceededMsg(long record_count);
+    void showQtyExceededMsg(long record_page ,long record_count);
 
     void callAct006(Context context);
 

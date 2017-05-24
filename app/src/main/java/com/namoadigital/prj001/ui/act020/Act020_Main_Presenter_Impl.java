@@ -43,13 +43,13 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         );
 
         //Seta qtd de registro
-        mView.setRecordInfo(rec.getRecord_page());
+        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
         //chama
         mView.loadProductSerialList(rec.getRecord());
         //Se qtd de registro maior que o total retornado,
         //exibe msg para refinar a busca.
         if (rec.getRecord_count() > rec.getRecord_page()){
-            mView.showQtyExceededMsg(rec.getRecord_count());
+            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
         }
 
     }
@@ -57,7 +57,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     @Override
     public void executeSerialSearch(String product_code, String product_id, String serial_code, String serial_id) {
 
-        mView.showPD();
+        mView.showPD(Act020_Main.PROGRESS_WS);
 
         Intent mIntent =  new Intent(context, WBR_Serial_Search.class);
         Bundle bundle = new Bundle();

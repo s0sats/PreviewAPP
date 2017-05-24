@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Created by d.luche on 22/05/2017.
  */
 
-public class Act020_Filter extends Fragment {
+public class Act020_Frag_Filter extends Fragment {
 
     private TextView tv_nfc_reader;
     private TextView tv_product;
@@ -73,7 +73,7 @@ public class Act020_Filter extends Fragment {
         //
         tv_nfc_reader = (TextView) view.findViewById(R.id.act020_drawer_content_tv_nfc_reader);
         drawableNFC = tv_nfc_reader.getCompoundDrawables()[2];
-        drawableNFC.setBounds(0,0,50,50);
+        drawableNFC.setBounds(0,-10,50,50);
 
         setDrawableNFC(drawableNFC);
         //
@@ -149,6 +149,8 @@ public class Act020_Filter extends Fragment {
     }
 
     private void setTranslation() {
+        tv_nfc_reader.setText("Ativar NFC");
+        //
         tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
         //
         tv_product_id.setText(hmAux_Trans.get("drawer_product_id_lbl"));

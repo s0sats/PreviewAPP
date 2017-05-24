@@ -21,7 +21,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/act020_tv_record_info"
                 android:layout_width="match_parent"
@@ -30,12 +29,53 @@
                 android:textSize="@dimen/font_size_title"
                 android:gravity="center_horizontal"/>
 
-            <ListView
-                android:id="@+id/act020_lv_prod_serial"
+            <LinearLayout
+                android:id="@+id/act020_ll_limit_exceeded"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@color/padrao_TRANSPARENT"
-                android:dividerHeight="0dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/act020_tv_record_limit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textSize="@dimen/font_size_item"
+                    android:gravity="center"
+                    android:text="Limite de exibição: 10000"/>
+
+                <TextView
+                    android:id="@+id/act020_tv_record_count"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textSize="@dimen/font_size_item"
+                    android:gravity="center"
+                    android:text="Registros retornados: 1000"/>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ListView
+                    android:id="@+id/act020_lv_prod_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@color/padrao_TRANSPARENT"
+                    android:dividerHeight="0dp"/>
+                <TextView
+                    android:id="@+id/act020_tv_no_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/font_size_title_md"/>
+
+            </FrameLayout>
+
         </LinearLayout>
 
         <include layout="@layout/footer_base" />
@@ -51,7 +91,7 @@
 
         <fragment
             android:id="@+id/act020_frag_filter"
-            android:name="com.namoadigital.prj001.ui.act020.Act020_Filter"
+            android:name="com.namoadigital.prj001.ui.act020.Act020_Frag_Filter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/act020_drawer_content" />

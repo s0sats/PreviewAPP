@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.ui.act020;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,15 +42,26 @@ import java.util.List;
 
 public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_View {
 
+    public static final String PROGRESS_WS = "progress_ws";
+    public static final String PROGRESS_NFC = "progress_nfc";
+    private static final int PROGRESS_TIME_OUT = 10 * 1000;
+
     private Context context;
     private Act020_Main_Presenter mPresenter;
     private DrawerLayout mDrawerLayout;
     private FragmentManager fm;
-    private Act020_Filter fragFilters;
+    private Act020_Frag_Filter fragFilters;
     private ActionBarDrawerToggle mDrawerToggle;
     private TextView tv_records;
+    private LinearLayout ll_records;
+    private TextView tv_records_limit;
+    private TextView tv_records_count;
     private ListView lv_prod_serial_list;
+    private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
+
+    private Handler handler;
+    private Runnable runnable;
 
 
     @Override
@@ -92,6 +107,20 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         transList.add("progress_serial_search_msg");
         transList.add("alert_no_search_parameter_ttl");
         transList.add("alert_no_search_parameter_msg");
+        transList.add("progress_nfc_ttl");
+        transList.add("progress_nfc_msg");
+        transList.add("showing_lbl");
+        transList.add("records_lbl");
+        transList.add("no_record_found_lbl");
+        transList.add("alert_nfc_return");
+        transList.add("alert_qty_records_exceeded_ttl");
+        transList.add("alert_qty_records_exceeded_msg");
+        transList.add("alert_qty_records_founded");
+        transList.add("msg_start_search");
+        transList.add("alert_nfc_timeout");
+        transList.add("no_search_realized");
+        transList.add("records_display_limit_lbl");
+        transList.add("records_found_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -118,7 +147,27 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
         //
+        ll_records = (LinearLayout) findViewById(R.id.act020_ll_limit_exceeded);
+        //
+        tv_records_limit = (TextView) findViewById(R.id.act020_tv_record_limit);
+        //
+        tv_records_count = (TextView) findViewById(R.id.act020_tv_record_count);
+        //
         lv_prod_serial_list = (ListView) findViewById(R.id.act020_lv_prod_serial);
+        //
+        tv_no_result = (TextView) findViewById(R.id.act020_tv_no_result);
+        tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
+        //
+        handler =  new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                ToolBox_Inf.sendBCStatus(context, "ERROR_1", hmAux_Trans.get("alert_nfc_timeout"), "", "0");
+                setbNFCStatus(false);
+                changeNFCDrawable(fragFilters.getDrawableNFC());
+            }
+        };
+
         //
         /*
         * Drawer setup
@@ -155,16 +204,16 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         mDrawerToggle.syncState();
         //
-        fragFilters = (Act020_Filter) fm.findFragmentById(R.id.act020_frag_filter);
+        fragFilters = (Act020_Frag_Filter) fm.findFragmentById(R.id.act020_frag_filter);
         //
         fragFilters.setHmAux_Trans(hmAux_Trans);
         //
         controls_sta.addAll(fragFilters.getControlsSta());
         //
-        fragFilters.setOnDrawerClick(new Act020_Filter.IAct020_Filter() {
+        fragFilters.setOnDrawerClick(new Act020_Frag_Filter.IAct020_Filter() {
             @Override
             public void onIvSearchClick(String product, String product_id, String serial) {
-                //Toast.makeText(context, "Prod: " + product + "\nSerial: "+ serial  , Toast.LENGTH_SHORT).show();
+                //
                 if(product.trim().length() > 0
                     || serial.trim().length() > 0 ){
                     mPresenter.executeSerialSearch(product, product_id, serial,serial);
@@ -182,21 +231,28 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
             @Override
             public void onNFCClick(int id) {
+                //
+                fragFilters.setNFCText("Ativar NFC");
+                //Habilita leitura do NFC
                 setbNFCStatus(true);
+                //Chama metodo que muda o icone NFC
                 changeNFCDrawable(fragFilters.getDrawableNFC());
+                //Configura busca do NFC
                 setNFCSetUp(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         true,
                         true,
                         id
                 );
+                //Mostra progress
+                showPD(PROGRESS_NFC);
 
             }
         });
        /*
         * Drawer setup end
         */
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void iniUIFooter() {
@@ -241,28 +297,68 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
-    public void showPD() {
-        enableProgressDialog(
-                hmAux_Trans.get("progress_serial_search_ttl"),
-                hmAux_Trans.get("progress_serial_search_msg"),
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
-        );
+    public void showPD(String progress_type) {
+        String title = "";
+        String msg = "";
+
+        switch (progress_type){
+
+            case PROGRESS_WS:
+                title = hmAux_Trans.get("progress_serial_search_ttl");
+                msg = hmAux_Trans.get("progress_serial_search_msg");
+                break;
+
+            case PROGRESS_NFC:
+                title = hmAux_Trans.get("progress_nfc_ttl");
+                msg = hmAux_Trans.get("progress_nfc_msg");
+                handler.postDelayed(runnable, PROGRESS_TIME_OUT);
+                break;
+
+        }
+
+        if (progressDialog == null || !progressDialog.isShowing()){
+
+            enableProgressDialog(
+                    title,
+                    msg,
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+        }if(progressDialog != null && progressDialog.isShowing()){
+            progressDialog.setTitle(title);
+            progressDialog.setMessage(msg);
+        }
+
+        if(progress_type.equals(PROGRESS_NFC)){
+            progressDialog.setButton(
+                    DialogInterface.BUTTON_NEGATIVE,
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.dismiss();
+                        }
+                    }
+            );
+        }
     }
 
     @Override
-    public void setRecordInfo(long record_page) {
-        if(record_page > 0){
-           // tv_records.setText(hmAux_Trans.get("showing_lbl") + " :" +  record_page + "  " + hmAux_Trans.get("showing_lbl"));
-            tv_records.setText("Exibindo :" +  record_page + " registros");
+    public void setRecordInfo(long record_size, long record_page) {
+        if(record_size > 0){
+            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + "  " + hmAux_Trans.get("records_lbl"));
         }else{
-            tv_records.setText("Nenhum resultado encontrado");
+            tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
 
         }
     }
 
     @Override
     public void loadProductSerialList(ArrayList<TProduct_Serial> prod_serial_list) {
+        //Esconde tv com msg de nenhum busca feita
+        //e ll com informações de limite de excedido.
+        tv_no_result.setVisibility(View.GONE);
+        ll_records.setVisibility(View.GONE);
         //
         mAdapter =  new Act020_Prod_Serial_Adapter(
                 context,
@@ -271,16 +367,25 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         );
         //
         lv_prod_serial_list.setAdapter(mAdapter);
-
     }
 
     @Override
-    public void showQtyExceededMsg(long record_count) {
+    public void showQtyExceededMsg(long record_page, long record_count) {
+
+        ll_records.setVisibility(View.VISIBLE);
+
+        tv_records_limit.setText(
+                hmAux_Trans.get("records_display_limit_lbl") + " " + record_page
+        );
+
+        tv_records_count.setText(
+                hmAux_Trans.get("records_found_lbl") + " " + record_count
+        );
 
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
-                hmAux_Trans.get("alert_qty_records_exceeded_msg") +"\n" + hmAux_Trans.get("alert_qty_records_founded"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") +"\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
                 null,
                 0);
 
@@ -309,8 +414,13 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
+        //Metodo que modifica cor do icone nfc
         changeNFCDrawable(fragFilters.getDrawableNFC());
-
+        //Cancela timer
+        handler.removeCallbacks(runnable);
+        //
+        progressDialog.dismiss();
+        //
         if(!status){
             if(progressDialog != null && progressDialog.isShowing()){
                 progressDialog.dismiss();
