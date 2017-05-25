@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TSerial_Search_Env;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
@@ -14,11 +15,21 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by d.luche on 22/05/2017.
  */
 
 public class WS_Serial_Search extends IntentService {
+
+
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "ws_serial_search";
+
 
     public WS_Serial_Search() {
         super("WS_Serial_Search");
@@ -54,7 +65,7 @@ public class WS_Serial_Search extends IntentService {
     private void processWSSerialSearch(String product_code,String product_id, String serial_id) {
 
         //Seleciona traduções
-        //loadTranslation();
+        loadTranslation();
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -67,7 +78,7 @@ public class WS_Serial_Search extends IntentService {
         env.setProduct_id(product_id);
         env.setSerial_id(serial_id);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS",""/* hmAux_Trans.get("msg_checking_serial")*/, "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS",hmAux_Trans.get("msg_receving_data"), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SERIAL_SEARCH,
@@ -93,7 +104,29 @@ public class WS_Serial_Search extends IntentService {
         }
 
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT","Processando lista", resultado , "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
+
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_processing_list");
+        translist.add("msg_receving_data");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
+
 
     }
 }

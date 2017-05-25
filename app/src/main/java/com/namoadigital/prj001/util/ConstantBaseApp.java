@@ -57,6 +57,8 @@ public class ConstantBaseApp  extends ConstantBase {
 
     public static final String ACT013_CUSTOM_FORM_DATA = "custom_form_data";
 
+    public static final String ACT020_BACK_FLOW = "back_flow";
+
     /**
      * DataBase Definition
      */

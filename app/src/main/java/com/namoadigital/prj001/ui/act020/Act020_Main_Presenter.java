@@ -15,4 +15,8 @@ public interface Act020_Main_Presenter {
     void executeSerialSearch(String product_code, String product_id,String serial_id);
 
     void defineFlow(TProduct_Serial productSerial);
+
+    void updateSyncChecklist();
+
+    void prepareAct009();
 }

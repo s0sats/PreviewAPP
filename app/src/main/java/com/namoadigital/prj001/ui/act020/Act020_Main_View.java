@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public interface Act020_Main_View {
 
-    void showPD(String progress_type);
+    void showPD();
 
     void setRecordInfo(long record_size, long record_page);
 
@@ -26,5 +26,7 @@ public interface Act020_Main_View {
     void callAct009(Context context, Bundle bundle);
 
     void callAct011(Context context, Bundle bundle);
+
+    void setWs_process(String ws_process);
 
 }

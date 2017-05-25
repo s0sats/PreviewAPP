@@ -21,21 +21,29 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <com.namoa_digital.namoa_library.ctls.ButtonNFC
+                style="@style/ButtonNFC_Style"
                 android:id="@+id/act020_drawer_content_tv_nfc_reader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableRight="@drawable/ic_nfc"
-                android:drawableTint="@android:color/darker_gray"
-                android:padding="10dp"
-                android:drawablePadding="15dp"
-                android:textSize="@dimen/font_size_title_md"
-                android:background="@drawable/btn_namoa_main_states"
-                android:textColor="@color/padrao_WHITE"
-                android:gravity="center"
-                android:text="Ativar NFC"
-                android:clickable="true"
+                android:text="NFC"
                 />
+
+            <!--<TextView-->
+                <!--android:id="@+id/act020_drawer_content_tv_nfc_reader"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:drawableRight="@drawable/ic_nfc"-->
+                <!--android:drawableTint="@android:color/darker_gray"-->
+                <!--android:padding="10dp"-->
+                <!--android:drawablePadding="15dp"-->
+                <!--android:textSize="@dimen/font_size_title_md"-->
+                <!--android:background="@drawable/btn_namoa_main_states"-->
+                <!--android:textColor="@color/padrao_WHITE"-->
+                <!--android:gravity="center"-->
+                <!--android:text="Ativar NFC"-->
+                <!--android:clickable="true"-->
+                <!--/>-->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
@@ -56,6 +64,7 @@
                 app:mNFC="false"
                 app:mOCR="false"
                 android:paddingLeft="10dp"
+                android:inputType="text"
                 />
             <View
                 android:layout_width="match_parent"
@@ -77,6 +86,7 @@
                 app:mNFC="false"
                 app:mOCR="false"
                 android:paddingLeft="10dp"
+                android:inputType="text"
                 />
             <View
                 android:layout_width="match_parent"
@@ -96,7 +106,8 @@
                 app:mBARCODE="true"
                 app:mNFC="false"
                 app:mOCR="false"
-                android:paddingLeft="10dp"/>
+                android:paddingLeft="10dp"
+                android:inputType="text"/>
 
 
         </LinearLayout>

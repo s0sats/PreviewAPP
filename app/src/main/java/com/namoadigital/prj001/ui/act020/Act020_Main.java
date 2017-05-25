@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act020;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -28,6 +27,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -63,7 +63,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private ListView lv_prod_serial_list;
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
-
+    private String ws_process;
     private Handler handler;
     private Runnable runnable;
 
@@ -125,6 +125,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         transList.add("no_search_realized");
         transList.add("records_display_limit_lbl");
         transList.add("records_found_lbl");
+        transList.add("progress_sync_title");
+        transList.add("progress_sync_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -143,6 +145,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 this,
                 hmAux_Trans,
                 new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                new Sync_ChecklistDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -214,6 +221,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         controls_sta.addAll(fragFilters.getControlsSta());
         //
+        fragFilters.setClickListener(actionBTN);
+        //
         fragFilters.setOnDrawerClick(new Act020_Frag_Filter.IAct020_Filter() {
             @Override
             public void onIvSearchClick(String product, String product_id, String serial) {
@@ -233,7 +242,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
             }
 
-            @Override
+           /* @Override
             public void onNFCClick(int id) {
                 //
                 fragFilters.setNFCText("Ativar NFC");
@@ -251,7 +260,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 //Mostra progress
                 showPD(PROGRESS_NFC);
 
-            }
+            }*/
         });
        /*
         * Drawer setup end
@@ -312,21 +321,29 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
-    public void showPD(String progress_type) {
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
+    }
+
+    @Override
+    public void showPD() {
         String title = "";
         String msg = "";
-
-        switch (progress_type){
+        switch (ws_process){
 
             case PROGRESS_WS_SERIAL_SEARCH:
                 title = hmAux_Trans.get("progress_serial_search_ttl");
                 msg = hmAux_Trans.get("progress_serial_search_msg");
                 break;
 
-            case PROGRESS_NFC:
+            case PROGRESS_WS_SYNC:
+                title = hmAux_Trans.get("progress_sync_title");
+                msg = hmAux_Trans.get("progress_sync_msg");
+                break;
+
+            case PROGRESS_NFC:default:
                 title = hmAux_Trans.get("progress_nfc_ttl");
                 msg = hmAux_Trans.get("progress_nfc_msg");
-                handler.postDelayed(runnable, PROGRESS_TIME_OUT);
                 break;
 
         }
@@ -344,18 +361,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             progressDialog.setMessage(msg);
         }
 
-        if(progress_type.equals(PROGRESS_NFC)){
-            progressDialog.setButton(
-                    DialogInterface.BUTTON_NEGATIVE,
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            progressDialog.dismiss();
-                        }
-                    }
-            );
-        }
     }
 
     @Override
@@ -451,11 +456,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
         //Metodo que modifica cor do icone nfc
-        changeNFCDrawable(fragFilters.getDrawableNFC());
+        //changeNFCDrawable(fragFilters.getDrawableNFC());
         //Cancela timer
-        handler.removeCallbacks(runnable);
+        //handler.removeCallbacks(runnable);
         //
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
         //
         if(!status){
             if(progressDialog != null && progressDialog.isShowing()){
@@ -497,11 +502,21 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     protected void processCloseACT(String ws_retorno, String mRequired) {
         super.processCloseACT(ws_retorno, mRequired);
 
-        mPresenter.getProductSerialList(ws_retorno);
-        //
-        progressDialog.dismiss();
-        //
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        if(ws_process.equals(PROGRESS_WS_SYNC)){
+            mPresenter.updateSyncChecklist();
+            //
+            progressDialog.dismiss();
+            //
+            mPresenter.prepareAct009();
+
+        }else{
+            mPresenter.getProductSerialList(ws_retorno);
+            //
+            progressDialog.dismiss();
+            //
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+
     }
 
     @Override

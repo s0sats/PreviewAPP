@@ -5,15 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
@@ -23,7 +24,8 @@ import java.util.ArrayList;
 
 public class Act020_Frag_Filter extends Fragment {
 
-    private TextView tv_nfc_reader;
+   // private TextView tv_nfc_reader;
+    private ButtonNFC tv_nfc_reader;
     private TextView tv_product;
     private MKEditTextNM mket_product;
     private TextView tv_product_id;
@@ -35,13 +37,17 @@ public class Act020_Frag_Filter extends Fragment {
     private IAct020_Filter delegate;
     private ArrayList<MKEditTextNM> controls_sta;
     private Drawable drawableNFC;
+    private View.OnClickListener clickListener;
 
     public interface IAct020_Filter{
 
-        void onNFCClick(int id);
-
         void onIvSearchClick(String product, String product_id, String serial);
 
+    }
+
+    public void setClickListener(View.OnClickListener clickListener) {
+        this.clickListener = clickListener;
+        tv_nfc_reader.setOnClickListener(clickListener);
     }
 
     public void setOnDrawerClick(IAct020_Filter delegate){
@@ -71,11 +77,15 @@ public class Act020_Frag_Filter extends Fragment {
 
         controls_sta = new ArrayList<>();
         //
-        tv_nfc_reader = (TextView) view.findViewById(R.id.act020_drawer_content_tv_nfc_reader);
-        drawableNFC = tv_nfc_reader.getCompoundDrawables()[2];
-        drawableNFC.setBounds(0,-10,50,50);
+        tv_nfc_reader = (ButtonNFC) view.findViewById(R.id.act020_drawer_content_tv_nfc_reader);
+        tv_nfc_reader.setmCustomer_code(String.valueOf(ToolBox_Con.getPreference_Customer_Code(getContext())));
+        tv_nfc_reader.setmProduct(true);
+        tv_nfc_reader.setmSerial(true);
+        tv_nfc_reader.setmProgressClose(true);
+       /* drawableNFC = tv_nfc_reader.getCompoundDrawables()[2];
+        drawableNFC.setBounds(0,-10,50,50);*/
 
-        setDrawableNFC(drawableNFC);
+        //setDrawableNFC(drawableNFC);
         //
         tv_product = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product_code);
         //
@@ -99,7 +109,7 @@ public class Act020_Frag_Filter extends Fragment {
 
     private void iniAction() {
 
-        tv_nfc_reader.setOnTouchListener(new View.OnTouchListener() {
+      /*  tv_nfc_reader.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (delegate != null) {
@@ -110,7 +120,7 @@ public class Act020_Frag_Filter extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override
