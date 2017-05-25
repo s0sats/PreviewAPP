@@ -34,10 +34,9 @@ public class WS_Serial_Search extends IntentService {
 
             String product_code = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE);
             String product_id = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID);
-            String serial_code = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_CODE);
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
 
-            processWSSerialSearch(product_code, product_id, serial_code ,serial_id );
+            processWSSerialSearch(product_code, product_id,serial_id );
 
         }catch (Exception e) {
 
@@ -52,7 +51,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code,String product_id, String serial_code, String serial_id) {
+    private void processWSSerialSearch(String product_code,String product_id, String serial_id) {
 
         //Seleciona traduções
         //loadTranslation();
@@ -66,7 +65,6 @@ public class WS_Serial_Search extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setProduct_code(product_code);
         env.setProduct_id(product_id);
-        env.setSerial_code(serial_code);
         env.setSerial_id(serial_id);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS",""/* hmAux_Trans.get("msg_checking_serial")*/, "", "0");

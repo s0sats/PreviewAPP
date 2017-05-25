@@ -65,42 +65,46 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         //
         TProduct_Serial auxObj = source.get(position);
         //
+        TextView tv_rec_num = (TextView) convertView.findViewById(R.id.act020_cell_tv_rec_num);
+        //
         TextView tv_prod_ttl = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_ttl);
         TextView tv_prod_code = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_code);
         TextView tv_prod_id = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_id);
         TextView tv_prod_desc = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_desc);
-
+        //
         TextView tv_serial_ttl = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_ttl);
-        TextView tv_serial_code = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_code);
+        //TextView tv_serial_code = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_code);
         TextView tv_serial_id = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_id);
+        //
 
-
+        tv_rec_num.setText(String.valueOf(position + 1));
+        //
         tv_prod_ttl.setText(
                 hmAux_Trans.get("product_ttl")
         );
         tv_prod_code.setText(
                 hmAux_Trans.get("product_code_lbl")
-                        + " " + auxObj.getPRODUCT_CODE()
+                        + " " + auxObj.getProduct_code()
         );
         tv_prod_id.setText(
                 hmAux_Trans.get("product_id_lbl")
-                        + " " + auxObj.getPRODUCT_ID()
+                        + " " + auxObj.getProduct_id()
         );
         tv_prod_desc.setText(
                 hmAux_Trans.get("product_desc_lbl")
-                        + " " + auxObj.getPRODUCT_DESC()
+                        + " " + auxObj.getProduct_desc()
         );
         //
         tv_serial_ttl.setText(
                 hmAux_Trans.get("serial_ttl")
         );
-        tv_serial_code.setText(
-                hmAux_Trans.get("serial_code_lbl")
-                        + " " + auxObj.getSERIAL_CODE()
-        );
+//        tv_serial_code.setText(
+//                hmAux_Trans.get("serial_code_lbl")
+//                        + " " + auxObj.getSERIAL_CODE()
+//        );
         tv_serial_id.setText(
                 hmAux_Trans.get("serial_id_lbl")
-                        + " " + auxObj.getSERIAL_ID()
+                        + " " + auxObj.getSerial_id()
         );
         //
         return convertView;

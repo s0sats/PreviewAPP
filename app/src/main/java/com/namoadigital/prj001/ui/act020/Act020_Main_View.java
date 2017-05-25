@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act020;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoadigital.prj001.model.TProduct_Serial;
 
@@ -21,5 +22,9 @@ public interface Act020_Main_View {
     void showQtyExceededMsg(long record_page ,long record_count);
 
     void callAct006(Context context);
+
+    void callAct009(Context context, Bundle bundle);
+
+    void callAct011(Context context, Bundle bundle);
 
 }

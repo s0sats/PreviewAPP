@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act009.Act009_Main;
+import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -42,7 +45,8 @@ import java.util.List;
 
 public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_View {
 
-    public static final String PROGRESS_WS = "progress_ws";
+    public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
+    public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
     public static final String PROGRESS_NFC = "progress_nfc";
     private static final int PROGRESS_TIME_OUT = 10 * 1000;
 
@@ -216,7 +220,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 //
                 if(product.trim().length() > 0
                     || serial.trim().length() > 0 ){
-                    mPresenter.executeSerialSearch(product, product_id, serial,serial);
+                    mPresenter.executeSerialSearch(product, product_id, serial);
                 }else{
                     ToolBox.alertMSG(
                             context,
@@ -294,6 +298,17 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //Sincroniza icone do hambuguer
         mDrawerToggle.syncState();
         //
+
+        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
+
+                mPresenter.defineFlow(productSerial);
+            }
+        });
+
+
     }
 
     @Override
@@ -303,7 +318,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         switch (progress_type){
 
-            case PROGRESS_WS:
+            case PROGRESS_WS_SERIAL_SEARCH:
                 title = hmAux_Trans.get("progress_serial_search_ttl");
                 msg = hmAux_Trans.get("progress_serial_search_msg");
                 break;
@@ -412,6 +427,27 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
+    public void callAct009(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act009_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct011(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act011_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+
+    }
+
+    @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
         //Metodo que modifica cor do icone nfc
@@ -439,13 +475,13 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 case PRODUCT:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
                     fragFilters.setProductCodeText(value[1]);
-                    mPresenter.executeSerialSearch(value[1],"","","");
+                    mPresenter.executeSerialSearch(value[1],"","");
                     break;
                 case SERIAL:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
                     fragFilters.setProductCodeText(value[1]);
                     fragFilters.setSerialIdText(value[2]);
-                    mPresenter.executeSerialSearch(value[1],"","",value[2]);
+                    mPresenter.executeSerialSearch(value[1],"", value[2]);
                     break;
 
                 default:

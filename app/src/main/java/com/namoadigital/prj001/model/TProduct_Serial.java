@@ -6,58 +6,49 @@ package com.namoadigital.prj001.model;
 
 public class TProduct_Serial {
 
-    private long CUSTOMER_CODE;
-    private long PRODUCT_CODE;
-    private String PRODUCT_ID;
-    private String PRODUCT_DESC;
-    private long SERIAL_CODE;
-    private String SERIAL_ID;
+    private long customer_code;
+    private long product_code;
+    private String product_id;
+    private String product_desc;
+    private String serial_id;
 
-    public long getCUSTOMER_CODE() {
-        return CUSTOMER_CODE;
+    public long getCustomer_code() {
+        return customer_code;
     }
 
-    public void setCUSTOMER_CODE(long CUSTOMER_CODE) {
-        this.CUSTOMER_CODE = CUSTOMER_CODE;
+    public void setCustomer_code(long customer_code) {
+        this.customer_code = customer_code;
     }
 
-    public long getPRODUCT_CODE() {
-        return PRODUCT_CODE;
+    public long getProduct_code() {
+        return product_code;
     }
 
-    public void setPRODUCT_CODE(long PRODUCT_CODE) {
-        this.PRODUCT_CODE = PRODUCT_CODE;
+    public void setProduct_code(long product_code) {
+        this.product_code = product_code;
     }
 
-    public String getPRODUCT_ID() {
-        return PRODUCT_ID;
+    public String getProduct_id() {
+        return product_id;
     }
 
-    public void setPRODUCT_ID(String PRODUCT_ID) {
-        this.PRODUCT_ID = PRODUCT_ID;
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
     }
 
-    public String getPRODUCT_DESC() {
-        return PRODUCT_DESC;
+    public String getProduct_desc() {
+        return product_desc;
     }
 
-    public void setPRODUCT_DESC(String PRODUCT_DESC) {
-        this.PRODUCT_DESC = PRODUCT_DESC;
+    public void setProduct_desc(String product_desc) {
+        this.product_desc = product_desc;
     }
 
-    public long getSERIAL_CODE() {
-        return SERIAL_CODE;
+    public String getSerial_id() {
+        return serial_id;
     }
 
-    public void setSERIAL_CODE(long SERIAL_CODE) {
-        this.SERIAL_CODE = SERIAL_CODE;
-    }
-
-    public String getSERIAL_ID() {
-        return SERIAL_ID;
-    }
-
-    public void setSERIAL_ID(String SERIAL_ID) {
-        this.SERIAL_ID = SERIAL_ID;
+    public void setSerial_id(String serial_id) {
+        this.serial_id = serial_id;
     }
 }
