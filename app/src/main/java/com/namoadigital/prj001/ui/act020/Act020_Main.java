@@ -2,10 +2,7 @@ package com.namoadigital.prj001.ui.act020;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -48,7 +45,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
     public static final String PROGRESS_NFC = "progress_nfc";
-    private static final int PROGRESS_TIME_OUT = 10 * 1000;
 
     private Context context;
     private Act020_Main_Presenter mPresenter;
@@ -64,9 +60,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
-    private Handler handler;
-    private Runnable runnable;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -169,17 +162,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         tv_no_result = (TextView) findViewById(R.id.act020_tv_no_result);
         tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
         //
-        handler =  new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                ToolBox_Inf.sendBCStatus(context, "ERROR_1", hmAux_Trans.get("alert_nfc_timeout"), "", "0");
-                setbNFCStatus(false);
-                changeNFCDrawable(fragFilters.getDrawableNFC());
-            }
-        };
-
-        //
         /*
         * Drawer setup
         */
@@ -226,45 +208,29 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         fragFilters.setOnDrawerClick(new Act020_Frag_Filter.IAct020_Filter() {
             @Override
             public void onIvSearchClick(String product, String product_id, String serial) {
-                //
-                if(product.trim().length() > 0
-                    || serial.trim().length() > 0 ){
-                    mPresenter.executeSerialSearch(product, product_id, serial);
-                }else{
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_no_search_parameter_ttl"),
-                            hmAux_Trans.get("alert_no_search_parameter_msg"),
-                            null,
-                            0
-                    );
-                }
-
+                ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
+                    if (product.trim().length() > 0
+                            || serial.trim().length() > 0) {
+                        mPresenter.executeSerialSearch(product, product_id, serial);
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_no_search_parameter_ttl"),
+                                hmAux_Trans.get("alert_no_search_parameter_msg"),
+                                null,
+                                0
+                        );
+                    }
             }
 
-           /* @Override
-            public void onNFCClick(int id) {
-                //
-                fragFilters.setNFCText("Ativar NFC");
-                //Habilita leitura do NFC
-                setbNFCStatus(true);
-                //Chama metodo que muda o icone NFC
-                changeNFCDrawable(fragFilters.getDrawableNFC());
-                //Configura busca do NFC
-                setNFCSetUp(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        true,
-                        true,
-                        id
-                );
-                //Mostra progress
-                showPD(PROGRESS_NFC);
-
-            }*/
         });
        /*
         * Drawer setup end
         */
+        hideSoftKeyboard();
+    }
+
+    private void hideSoftKeyboard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
@@ -411,17 +377,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     }
 
-    private void changeNFCDrawable(Drawable drawableNFC) {
-
-        if(isbNFCStatus()){
-            drawableNFC.setColorFilter(getResources().getColor(R.color.emoticons_green), PorterDuff.Mode.SRC_ATOP);
-        }else{
-            drawableNFC.setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.SRC_ATOP);
-        }
-
-        fragFilters.setDrawableNFC(drawableNFC);
-    }
-
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
@@ -455,13 +410,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
-        //Metodo que modifica cor do icone nfc
-        //changeNFCDrawable(fragFilters.getDrawableNFC());
-        //Cancela timer
-        //handler.removeCallbacks(runnable);
-        //
-        //progressDialog.dismiss();
-        //
         if(!status){
             if(progressDialog != null && progressDialog.isShowing()){
                 progressDialog.dismiss();
@@ -504,6 +452,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         if(ws_process.equals(PROGRESS_WS_SYNC)){
             mPresenter.updateSyncChecklist();
+            mPresenter.startDownloadServices();
             //
             progressDialog.dismiss();
             //

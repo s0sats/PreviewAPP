@@ -46,7 +46,12 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     }
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct008(context);
+    public void onBackPressedClicked(boolean back_act020) {
+
+        if(back_act020){
+           mView.callAct020(context);
+        }else {
+           mView.callAct008(context);
+        }
     }
 }

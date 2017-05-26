@@ -19,4 +19,6 @@ public interface Act020_Main_Presenter {
     void updateSyncChecklist();
 
     void prepareAct009();
+
+    void startDownloadServices();
 }

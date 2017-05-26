@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act020;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 
 public class Act020_Frag_Filter extends Fragment {
 
-   // private TextView tv_nfc_reader;
     private ButtonNFC tv_nfc_reader;
     private TextView tv_product;
     private MKEditTextNM mket_product;
@@ -36,7 +34,6 @@ public class Act020_Frag_Filter extends Fragment {
     private HMAux hmAux_Trans;
     private IAct020_Filter delegate;
     private ArrayList<MKEditTextNM> controls_sta;
-    private Drawable drawableNFC;
     private View.OnClickListener clickListener;
 
     public interface IAct020_Filter{
@@ -52,14 +49,6 @@ public class Act020_Frag_Filter extends Fragment {
 
     public void setOnDrawerClick(IAct020_Filter delegate){
         this.delegate = delegate;
-    }
-
-    public Drawable getDrawableNFC() {
-        return drawableNFC;
-    }
-
-    public void setDrawableNFC(Drawable drawableNFC) {
-        this.drawableNFC = drawableNFC;
     }
 
     @Nullable
@@ -82,10 +71,6 @@ public class Act020_Frag_Filter extends Fragment {
         tv_nfc_reader.setmProduct(true);
         tv_nfc_reader.setmSerial(true);
         tv_nfc_reader.setmProgressClose(true);
-       /* drawableNFC = tv_nfc_reader.getCompoundDrawables()[2];
-        drawableNFC.setBounds(0,-10,50,50);*/
-
-        //setDrawableNFC(drawableNFC);
         //
         tv_product = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product_code);
         //
@@ -104,23 +89,9 @@ public class Act020_Frag_Filter extends Fragment {
         //
         iv_search = (ImageView) view.findViewById(R.id.act020_drawer_content_iv_search);
 
-
     }
 
     private void iniAction() {
-
-      /*  tv_nfc_reader.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (delegate != null) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        delegate.onNFCClick(tv_nfc_reader.getId());
-                    }
-
-                }
-                return false;
-            }
-        });*/
 
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override

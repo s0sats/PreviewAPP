@@ -80,21 +80,24 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     @Override
     public void executeSerialSearch(String product_code, String product_id, String serial_id) {
 
-        mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
-        mView.showPD();
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
+            mView.showPD();
 
-        Intent mIntent =  new Intent(context, WBR_Serial_Search.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
-        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
-        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
-
+            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+            ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override
@@ -109,17 +112,20 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         //Nenhum form aberto, manda para seleção de tipo e form
         if(formLocals.size() == 0){
 
-            if(ToolBox_Con.isOnline(context)){
-                List<HMAux> syncChecklists =  checkSyncChecklist();
+            List<HMAux> syncChecklists =  checkSyncChecklist();
 
-                if(syncChecklists == null || syncChecklists.size() == 0){
+            if(syncChecklists == null || syncChecklists.size() == 0){
+                if(ToolBox_Con.isOnline(context)) {
                     executeSyncProcess();
+                }else{
+                   ToolBox_Inf.showNoConnectionDialog(context);
                 }
-
+            }else{
+                prepareAct009();
             }
 
         }else{
-            GE_Custom_Form_Local aux = formLocals.get(1);
+            GE_Custom_Form_Local aux = formLocals.get(0);
             bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, productSerial.getProduct_desc());
             bundle.putString(Constant.ACT008_PRODUCT_ID, productSerial.getProduct_id());
@@ -133,20 +139,6 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
 
             mView.callAct011(context,bundle);
         }
-
-
-        /*
-            product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
-            product_desc = bundle.getString(Constant.ACT008_PRODUCT_DESC, "");
-            product_id = bundle.getString(Constant.ACT008_PRODUCT_ID, "Sem Product ID");
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
-            type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
-            type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
-            form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE, "");
-            form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
-            form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
-            form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
-        */
 
     }
 
@@ -173,9 +165,6 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
                         ).toSqlQuery()
                 );
 
-        int i =10 ;
-
-        i = hmAuxList.size();
         return hmAuxList;
     }
 
@@ -199,23 +188,28 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
 
     private void executeSyncProcess() {
 
-        mView.setWs_process(Act020_Main.PROGRESS_WS_SYNC);
-        mView.showPD();
+        if(ToolBox_Con.isOnline(context)) {
 
-        ArrayList<String> data_package = new ArrayList<>();
-        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        //
-        Intent mIntent = new Intent(context, WBR_Sync.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
-        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
-        bundle.putLong(Constant.GS_PRODUCT_CODE, tProductSerial.getProduct_code());
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-        bundle.putInt(Constant.GC_STATUS, 1);
+            mView.setWs_process(Act020_Main.PROGRESS_WS_SYNC);
+            mView.showPD();
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, tProductSerial.getProduct_code());
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override
@@ -225,14 +219,12 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
         bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
         bundle.putString(Constant.ACT008_SERIAL_ID, tProductSerial.getSerial_id());
-        bundle.putString(Constant.ACT020_BACK_FLOW, "1");
+        bundle.putBoolean(Constant.ACT020_BACK_FLOW, true);
 
         mView.callAct009(context,bundle);
-
-        startDownloadServices();
-
     }
 
+    @Override
     public void startDownloadServices() {
 
         if (!downloadStarted) {

@@ -8,5 +8,5 @@ public interface Act009_Main_Presenter {
 
     void setAdapterData(long product_code, String filter);
 
-    void onBackPressedClicked();
+    void onBackPressedClicked(boolean back_act020);
 }
