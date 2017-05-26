@@ -227,6 +227,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
             case Constant.CUSTOM_FORM_STATUS_SENT:
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
                 llBackground.setBackground(llDrawable);
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_END));
 //                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
 //                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
 //                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
