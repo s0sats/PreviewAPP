@@ -130,7 +130,7 @@ public class Act020_Frag_Filter extends Fragment {
     }
 
     private void setTranslation() {
-        tv_nfc_reader.setText("Ativar NFC");
+        tv_nfc_reader.setText(hmAux_Trans.get("enable_nfc _lbl"));
         //
         tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
         //
@@ -142,5 +142,15 @@ public class Act020_Frag_Filter extends Fragment {
 
     public ArrayList<MKEditTextNM> getControlsSta(){
         return controls_sta;
+    }
+
+    public void cleanFields(){
+        tv_nfc_reader.setText(hmAux_Trans.get("enable_nfc _lbl"));
+        //
+        tv_product.setText("");
+        //
+        tv_product_id.setText("");
+        //
+        tv_serial.setText("");
     }
 }

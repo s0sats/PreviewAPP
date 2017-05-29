@@ -379,6 +379,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     }
 
+
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
@@ -425,7 +426,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             );
 
         }else{
-
+            fragFilters.cleanFields();
+            //
             switch (value[0]){
                 case PRODUCT:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
