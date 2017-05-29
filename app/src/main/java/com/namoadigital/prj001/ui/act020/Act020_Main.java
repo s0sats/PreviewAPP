@@ -210,7 +210,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             public void onIvSearchClick(String product, String product_id, String serial) {
                 ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
                     if (product.trim().length() > 0
-                            || serial.trim().length() > 0) {
+                        || product_id.trim().length() > 0
+                        || serial.trim().length() > 0
+                    ){
                         mPresenter.executeSerialSearch(product, product_id, serial);
                     } else {
                         ToolBox.alertMSG(
@@ -465,6 +467,18 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             //
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
+
+    }
+
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
 
     }
 
