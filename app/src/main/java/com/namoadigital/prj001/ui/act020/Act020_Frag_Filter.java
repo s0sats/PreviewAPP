@@ -130,7 +130,7 @@ public class Act020_Frag_Filter extends Fragment {
     }
 
     private void setTranslation() {
-        tv_nfc_reader.setText(hmAux_Trans.get("enable_nfc _lbl"));
+        tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));
         //
         tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
         //
@@ -145,7 +145,7 @@ public class Act020_Frag_Filter extends Fragment {
     }
 
     public void cleanFields(){
-        tv_nfc_reader.setText(hmAux_Trans.get("enable_nfc _lbl"));
+        tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));
         //
         tv_product.setText("");
         //

@@ -64,7 +64,7 @@
                 app:mNFC="false"
                 app:mOCR="false"
                 android:paddingLeft="10dp"
-                android:inputType="text"
+                android:inputType="number"
                 />
             <View
                 android:layout_width="match_parent"

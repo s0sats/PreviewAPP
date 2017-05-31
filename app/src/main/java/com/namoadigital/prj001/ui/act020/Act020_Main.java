@@ -334,7 +334,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     @Override
     public void setRecordInfo(long record_size, long record_page) {
         if(record_size > 0){
-            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + "  " + hmAux_Trans.get("records_lbl"));
+            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
         }else{
             tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
 
