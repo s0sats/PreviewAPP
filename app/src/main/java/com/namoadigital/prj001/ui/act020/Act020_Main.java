@@ -427,6 +427,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         }else{
             fragFilters.cleanFields();
+            ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
             //
             switch (value[0]){
                 case PRODUCT:
