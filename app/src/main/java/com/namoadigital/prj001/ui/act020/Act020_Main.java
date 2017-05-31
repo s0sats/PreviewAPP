@@ -431,14 +431,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             switch (value[0]){
                 case PRODUCT:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
-                    fragFilters.setProductCodeText(value[1]);
-                    mPresenter.executeSerialSearch(value[1],"","");
+                    fragFilters.setProductCodeText(value[2]);
+                    mPresenter.executeSerialSearch(value[2],"","");
                     break;
                 case SERIAL:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
-                    fragFilters.setProductCodeText(value[1]);
-                    fragFilters.setSerialIdText(value[2]);
-                    mPresenter.executeSerialSearch(value[1],"", value[2]);
+                    fragFilters.setProductCodeText(value[2]);
+                    fragFilters.setSerialIdText(value[3]);
+                    mPresenter.executeSerialSearch(value[2],"", value[3]);
                     break;
 
                 default:

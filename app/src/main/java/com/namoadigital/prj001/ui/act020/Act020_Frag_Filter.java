@@ -147,10 +147,10 @@ public class Act020_Frag_Filter extends Fragment {
     public void cleanFields(){
         tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));
         //
-        tv_product.setText("");
+        mket_product.setText("");
         //
-        tv_product_id.setText("");
+        mket_product_id.setText("");
         //
-        tv_serial.setText("");
+        mket_serial.setText("");
     }
 }
