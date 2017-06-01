@@ -218,6 +218,21 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     private void initVars() {
+
+        /*
+        *
+        * Teste da função de exception
+        *
+        * apgar apos teste
+        * */
+
+        //ToolBox_Inf.registerException(Constant.ACT005,"Teste na mão");
+
+        /*
+        *
+        * Fim do teste
+        * */
+
         wsProcess = "";
 
         mDrawerLayout = (DrawerLayout)

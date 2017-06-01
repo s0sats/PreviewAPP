@@ -98,6 +98,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class ToolBox_Inf {
 
+    private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf" ;
+
     public static void mkDirectory() {
         File dirDB = new File(Constant.DB_PATH);
         if (!dirDB.exists()) {
@@ -327,6 +329,7 @@ public class ToolBox_Inf {
 
         } catch (Exception e) {
             String error = e.toString();
+            ToolBox_Inf.registerException(CLASS_NAME,e);
             return "Error: " + e.toString();
         }
     }
@@ -343,6 +346,7 @@ public class ToolBox_Inf {
 
         } catch (Exception e) {
             String error = e.toString();
+            ToolBox_Inf.registerException(CLASS_NAME,e);
             return "Error: " + e.toString();
         }
     }
@@ -398,6 +402,7 @@ public class ToolBox_Inf {
             zis.close();
 
         } catch (IOException e) {
+            ToolBox_Inf.registerException(CLASS_NAME,e);
             return false;
         }
 
@@ -425,6 +430,7 @@ public class ToolBox_Inf {
             }
             zos.close();
         } catch (IOException ioe) {
+            ToolBox_Inf.registerException(CLASS_NAME,ioe);
             Log.e("ZIP", ioe.getMessage());
         }
     }
@@ -466,6 +472,7 @@ public class ToolBox_Inf {
                 input.close();
             }
         } catch (IOException ex) {
+            ToolBox_Inf.registerException(CLASS_NAME,ex);
             ex.printStackTrace();
         }
 
@@ -528,6 +535,7 @@ public class ToolBox_Inf {
 
             br.close();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME,e);
 
         }
 
@@ -1675,6 +1683,7 @@ public class ToolBox_Inf {
             // calendar.setTime(sdf.parse("2017-04-13 12:24:46 +0000"));
             calendar.setTime(sdf.parse(date_tmz));
         } catch (ParseException e) {
+            ToolBox_Inf.registerException(CLASS_NAME,e);
             e.printStackTrace();
         }
 
@@ -1694,6 +1703,7 @@ public class ToolBox_Inf {
         try {
             calendar.setTime(sdf.parse(date_tmz));
         } catch (ParseException e) {
+            ToolBox_Inf.registerException(CLASS_NAME,e);
             e.printStackTrace();
         }
 
@@ -1781,12 +1791,23 @@ public class ToolBox_Inf {
         return dateHour;
     }
 
-    public static void registerException(String local, String exception) {
+    public static void registerException(String local, Exception exception) {
 
         File exception_file = new File(Constant.SUPPORT_PATH,"excep_" + getDateHourStr() + ".txt");
 
         try {
-            ToolBox_Inf.writeIn(local + ";\n" +exception,exception_file);
+
+            StackTraceElement[] stackTrace =  exception.getStackTrace();
+            String traceString = "";
+            String erro = "";
+
+            for (StackTraceElement trace: stackTrace ) {
+                traceString += trace.toString() + "\n ";
+            }
+
+            erro = "Local:\n "+ exception.toString() +"\n Trace:\n"+ traceString;
+
+            ToolBox_Inf.writeIn(local + ";\n" +erro,exception_file);
         } catch (IOException e) {
             e.printStackTrace();
         }

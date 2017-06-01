@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
