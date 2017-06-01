@@ -138,6 +138,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String mSignature;
     private int signature;
 
+    private boolean gpsCanceled = false;
+
     private boolean ignoreUpdate = false;
 
     private boolean bNew = false;
@@ -1920,6 +1922,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     }
 
     @Override
+    protected void processGPS_GO() {
+        super.processGPS_GO();
+        //
+        gpsCanceled = false;
+    }
+
+    @Override
     protected void processGPS_OK(String mLink, String mRequired) {
         progressDialog.dismiss();
         //
@@ -1929,7 +1938,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         formData.setLocation_lng(parts[2]);
 
         //processa as coordenadas
-        startCheckIN();
+        if (!gpsCanceled) {
+            startCheckIN();
+        } else {
+            gpsCanceled = false;
+        }
     }
 
     @Override
@@ -1944,6 +1957,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     @Override
     protected void processGPS_STOP() {
         ToolBox_Inf.stop_Location_Tracker(context);
+
+        gpsCanceled = true;
+
         progressDialog.dismiss();
     }
 }
