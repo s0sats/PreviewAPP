@@ -55,7 +55,6 @@ public class SV_LocationTracker extends Service {
 
         public LocationListener(String provider) {
             mLastLocation = new Location(provider);
-            loadTranslation();
         }
 
         @Override
@@ -148,6 +147,8 @@ public class SV_LocationTracker extends Service {
     public void onDestroy() {
         mHandler.removeCallbacks(mRunnable);
         status = false;
+
+        loadTranslation();
 
         if (!mLocation_Type.equals("")) {
             ToolBox_Inf.sendBCStatus(
