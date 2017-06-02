@@ -159,7 +159,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -187,7 +187,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -213,7 +213,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -241,7 +241,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 

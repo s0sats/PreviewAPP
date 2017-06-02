@@ -144,7 +144,7 @@ public class MD_Product_Group_ProductDao extends BaseDao implements Dao<MD_Produ
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -172,7 +172,7 @@ public class MD_Product_Group_ProductDao extends BaseDao implements Dao<MD_Produ
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -198,7 +198,7 @@ public class MD_Product_Group_ProductDao extends BaseDao implements Dao<MD_Produ
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -226,7 +226,7 @@ public class MD_Product_Group_ProductDao extends BaseDao implements Dao<MD_Produ
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
