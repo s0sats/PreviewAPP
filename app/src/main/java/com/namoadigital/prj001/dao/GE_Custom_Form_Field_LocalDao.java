@@ -9,12 +9,11 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_Custom_Form_Field_Local;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static android.R.attr.data;
 
 /**
  * Created by neomatrix on 11/01/17.
@@ -117,6 +116,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
@@ -153,7 +153,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            String st = e.toString();
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
@@ -206,7 +206,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -234,7 +234,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -260,7 +260,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -298,7 +298,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 

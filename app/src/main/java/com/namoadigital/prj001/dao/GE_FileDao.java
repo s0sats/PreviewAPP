@@ -192,7 +192,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -220,7 +220,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 

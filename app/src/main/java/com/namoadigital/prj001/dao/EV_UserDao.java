@@ -261,6 +261,7 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
         public EV_User map(Cursor cursor) {
             EV_User user = new EV_User();
 
+
             user.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
             user.setUser_nick(cursor.getString(cursor.getColumnIndex(USER_NICK)));
             user.setEmail_p(cursor.getString(cursor.getColumnIndex(EMAIL_P)));

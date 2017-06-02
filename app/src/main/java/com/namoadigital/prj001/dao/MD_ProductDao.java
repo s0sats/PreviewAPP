@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
@@ -138,7 +140,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -166,7 +168,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -192,7 +194,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -220,8 +222,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-
-            String results = e.toString();
+            ToolBox_Inf.registerException(getClass().getName(),e);
 
         } finally {
         }
@@ -248,7 +249,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 

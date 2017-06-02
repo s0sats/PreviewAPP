@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements Dao<Ev_Use
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
@@ -131,6 +133,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements Dao<Ev_Use
 
             cursor.close();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
 
         } finally {
         }
@@ -159,6 +162,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements Dao<Ev_Use
 
             cursor.close();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
 
         } finally {
         }
@@ -184,6 +188,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements Dao<Ev_Use
 
             cursor.close();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
 
         } finally {
         }
@@ -214,6 +219,7 @@ public class Ev_User_Customer_ParameterDao extends BaseDao implements Dao<Ev_Use
 
             cursor.close();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
             String st = e.toString();
         } finally {
         }

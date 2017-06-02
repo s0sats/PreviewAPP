@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +88,7 @@ public class Sync_ChecklistDao extends BaseDao implements Dao<Sync_Checklist> {
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
@@ -133,7 +135,7 @@ public class Sync_ChecklistDao extends BaseDao implements Dao<Sync_Checklist> {
             }
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
         closeDB();
@@ -160,7 +162,7 @@ public class Sync_ChecklistDao extends BaseDao implements Dao<Sync_Checklist> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -186,7 +188,7 @@ public class Sync_ChecklistDao extends BaseDao implements Dao<Sync_Checklist> {
             }
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
         closeDB();
@@ -214,7 +216,7 @@ public class Sync_ChecklistDao extends BaseDao implements Dao<Sync_Checklist> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
         closeDB();
