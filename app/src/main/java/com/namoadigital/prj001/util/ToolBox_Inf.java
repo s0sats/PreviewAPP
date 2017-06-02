@@ -1805,9 +1805,9 @@ public class ToolBox_Inf {
                 traceString += trace.toString() + "\n ";
             }
 
-            erro = "Local:\n "+ exception.toString() +"\n Trace:\n"+ traceString;
+            erro = "Local:\n "+ local+ ";\nException:\n "+ exception.toString() +";\nTrace:\n"+ traceString +";";
 
-            ToolBox_Inf.writeIn(local + ";\n" +erro,exception_file);
+            ToolBox_Inf.writeIn(erro,exception_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
