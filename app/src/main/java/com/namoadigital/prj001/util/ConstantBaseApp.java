@@ -2,6 +2,7 @@ package com.namoadigital.prj001.util;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 
+
 /**
  * Created by neomatrix on 05/04/17.
  */
@@ -14,6 +15,7 @@ public class ConstantBaseApp  extends ConstantBase {
      */
     public static final String PRJ001_CODE = "PRJ001";
     public static final String PRJ001_VERSION = "1.1.1";
+    //          ATUALIZAR ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
      * UI Module
