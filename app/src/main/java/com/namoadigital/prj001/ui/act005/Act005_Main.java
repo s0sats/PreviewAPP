@@ -3,8 +3,6 @@ package com.namoadigital.prj001.ui.act005;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -825,11 +823,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         //Menu Habilita nfc
         if(user.getNfc_blocked() == 1) {
-            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
-            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
+//            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
+//            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
 
             menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("toolbar_enable_nfc"));
-            menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(nfc_icon);
+            menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(R.drawable.ic_nfc_green);
             menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
             menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("toolbar_enable_nfc"));
         }
@@ -837,11 +835,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         //Menu Cancela nfc
         if(user.getExist_nfc() == 1) {
-            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
-            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
+//            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
+//            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
 
             menu.add(0, TOOLBAR_CANCEL_NFC, Menu.FIRST + 2, hmAux_Trans.get("toolbar_cancel_nfc"));
-            menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(nfc_icon2);
+            menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(R.drawable.ic_nfc_red);
             menu.findItem(TOOLBAR_CANCEL_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
             menu.findItem(TOOLBAR_CANCEL_NFC).setTitle(hmAux_Trans.get("toolbar_cancel_nfc"));
         }
