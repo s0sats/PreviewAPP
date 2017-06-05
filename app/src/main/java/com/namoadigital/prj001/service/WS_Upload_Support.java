@@ -53,6 +53,8 @@ public class WS_Upload_Support extends IntentService {
         }catch (Exception e){
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
 
+            ToolBox_Inf.registerException(getClass().getName(),e);
+
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
 

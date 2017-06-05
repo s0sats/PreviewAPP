@@ -8,8 +8,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.FCMMessage;
-import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +141,7 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -169,7 +169,7 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -194,7 +194,7 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -222,7 +222,7 @@ public class FCMMessageDao extends BaseDao implements Dao<FCMMessage> {
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 

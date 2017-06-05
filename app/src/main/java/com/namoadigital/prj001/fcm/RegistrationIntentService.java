@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.Calendar;
 
@@ -47,6 +47,7 @@ public class RegistrationIntentService extends IntentService {
             }
 
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
 
             programAlarm(getApplicationContext());
 

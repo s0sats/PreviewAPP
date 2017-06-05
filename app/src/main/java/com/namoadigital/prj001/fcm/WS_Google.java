@@ -8,31 +8,13 @@ import android.content.Intent;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.model.TGoogle_Env;
 import com.namoadigital.prj001.model.TGoogle_Rec;
-import com.namoadigital.prj001.model.TSync_Rec;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
-import com.namoadigital.prj001.sql.GE_File_Sql_005;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_001;
-import com.namoadigital.prj001.sql.WS_Cleaning_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by neomatrix on 28/10/16.
@@ -89,6 +71,8 @@ public class WS_Google extends IntentService {
             }
 
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+
             programAlarm(getApplicationContext());
         }
     }

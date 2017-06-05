@@ -52,6 +52,8 @@ public class WS_Cancel_NFC extends IntentService {
 
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
 
+            ToolBox_Inf.registerException(getClass().getName(),e);
+
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {

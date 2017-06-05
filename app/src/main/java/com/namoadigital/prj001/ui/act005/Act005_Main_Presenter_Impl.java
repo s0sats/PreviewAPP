@@ -256,6 +256,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
             }
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
             e.printStackTrace();
         }
     }

@@ -70,6 +70,7 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
 
         } catch (Exception e) {
             String results = e.toString();
+            ToolBox_Inf.registerException(getClass().getName(),e);
         }finally {
             WBR_DownLoad_Customer_Logo.IS_RUNNING = false;
             WBR_DownLoad_Customer_Logo.completeWakefulIntent(intent);

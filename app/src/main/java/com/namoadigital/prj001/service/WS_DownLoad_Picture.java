@@ -91,6 +91,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     }
 
                 } catch (JSONException e) {
+                    ToolBox_Inf.registerException(getClass().getName(),e);
                 }
                 //
                 if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".jpg")) {
@@ -133,6 +134,7 @@ public class WS_DownLoad_Picture extends IntentService {
 
         } catch (Exception e) {
             String results = e.toString();
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             //Log.v("WS_DownLoad_Picture","false");
             WBR_DownLoad_Picture.IS_RUNNING = false;

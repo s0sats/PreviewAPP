@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -157,6 +158,7 @@ public class GE_Custom_Form_Data_Field {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
         }
     }
@@ -200,6 +202,7 @@ public class GE_Custom_Form_Data_Field {
                 }
 
             } catch (JSONException e) {
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
 
             //this.value_extra_json = this.value_extra;
@@ -226,6 +229,7 @@ public class GE_Custom_Form_Data_Field {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
         }
     }

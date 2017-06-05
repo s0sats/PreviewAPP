@@ -1628,6 +1628,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             context.startActivity(mIntent);
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         }
 
     }
@@ -1804,6 +1805,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                 new File(Constant.CACHE_PDF)
                         );
                     } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(),e);
                     }
 
 

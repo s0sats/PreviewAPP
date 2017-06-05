@@ -27,6 +27,7 @@ public class HttpFileUpload {
             connectURL = new URL(urlString);
             Json = vJson;
         } catch (Exception ex) {
+            ToolBox_Inf.registerException(getClass().getName(),ex);
             Log.i("HttpFileUpload", "URL Malformatted");
         }
     }
@@ -128,10 +129,13 @@ public class HttpFileUpload {
             Log.i("Response", s);
             dos.close();
         } catch (MalformedURLException ex) {
+            ToolBox_Inf.registerException(getClass().getName(),ex);
             sResults = "URL error: " + ex.getMessage();
         } catch (IOException ioe) {
+            ToolBox_Inf.registerException(getClass().getName(),ioe);
             sResults = "IO error: " + ioe.getMessage();
         } catch (Exception exg){
+            ToolBox_Inf.registerException(getClass().getName(),exg);
             sResults = "Error: " + exg.getMessage();
         }
 

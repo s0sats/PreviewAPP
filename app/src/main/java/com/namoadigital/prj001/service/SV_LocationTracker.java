@@ -8,19 +8,24 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 11/05/17.
  */
 
 public class SV_LocationTracker extends Service {
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "gps_service";
 
     public static String msg_nok = "";
     public static String msg_ok = "";
@@ -143,11 +148,13 @@ public class SV_LocationTracker extends Service {
         mHandler.removeCallbacks(mRunnable);
         status = false;
 
+        loadTranslation();
+
         if (!mLocation_Type.equals("")) {
             ToolBox_Inf.sendBCStatus(
                     getApplicationContext(),
                     "GPS_OK",
-                    "GPS Location Aquired Succesfully!!!",
+                    hmAux_Trans.get("gps_location_aquired"),
                     mLocation_Type.toUpperCase() + "#" + mLocation_Latitude + "#" + mLocation_Longitude,
                     "0"
             );
@@ -155,7 +162,7 @@ public class SV_LocationTracker extends Service {
             ToolBox_Inf.sendBCStatus(
                     getApplicationContext(),
                     "CUSTOM_ERROR",
-                    "GPS Location Could Not be Aquired!!!",
+                    hmAux_Trans.get("gps_location_not_aquired"),
                     "",
                     "0"
             );
@@ -177,6 +184,26 @@ public class SV_LocationTracker extends Service {
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("gps_location_aquired");
+        translist.add("gps_location_not_aquired");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
     }
 }
 

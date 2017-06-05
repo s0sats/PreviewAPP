@@ -33,6 +33,8 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class ToolBox_Con {
 
+    private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Con";
+
     public static String connWebService(String urlEnd, String params) {
         StringBuilder sb = new StringBuilder();
 
@@ -70,6 +72,8 @@ public class ToolBox_Con {
 
             sb.append("Error: " + e.toString());
 
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -94,11 +98,13 @@ public class ToolBox_Con {
             }
 
         } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME,e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
+                    ToolBox_Inf.registerException(CLASS_NAME,e);
                     e.printStackTrace();
                 }
             }

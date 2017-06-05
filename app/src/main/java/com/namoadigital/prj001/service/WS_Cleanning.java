@@ -48,6 +48,7 @@ public class WS_Cleanning extends IntentService {
 
         } catch (Exception e) {
             String results = e.toString();
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
     }

@@ -115,6 +115,8 @@ public class WS_DownLoad_PDF extends IntentService {
 
         } catch (Exception e) {
             String results = e.toString();
+            ToolBox_Inf.registerException(getClass().getName(),e);
+
         } finally {
             WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);

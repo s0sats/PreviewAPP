@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,7 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
             db.endTransaction();
         }
@@ -150,6 +152,7 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
 
             cursor.close();
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
 
         } finally {
         }
@@ -178,7 +181,7 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -204,7 +207,7 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
@@ -232,7 +235,7 @@ public class GE_Custom_Form_ProductDao extends BaseDao implements Dao<GE_Custom_
 
             cursor.close();
         } catch (Exception e) {
-
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
 
