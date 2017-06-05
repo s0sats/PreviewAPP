@@ -179,7 +179,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private void iniSetup() {
         context = getBaseContext();
 
-        hasNFCSupport = ToolBox_Inf.hasNFC(context);
+        //hasNFCSupport = ToolBox_Inf.hasNFC(context);
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -211,8 +211,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("alert_error_on_finalize_msg");
         transList.add("alert_save_title");
         transList.add("alert_save_msg");
+
         transList.add("alert_finalize_title");
         transList.add("alert_finalize_msg");
+
+        transList.add("alert_question_finalize_title");
+        transList.add("alert_question_finalize_msg");
+
         transList.add("alert_require_signature_msg");
         transList.add("alert_optional_signature_msg");
         transList.add("dialog_signature_title_lbl");
@@ -382,88 +387,45 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 if (sum == 0) {
 
-                    // Mudar par 1
-                    if (formLocal.getRequire_location() == 1) {
-                        enableProgressDialog(
-                                hmAux_Trans.get("alert_location_info_title"),
-                                hmAux_Trans.get("alert_location_info_required"),
-                                hmAux_Trans.get("sys_alert_btn_cancel"),
-                                hmAux_Trans.get("sys_alert_btn_ok")
-                        );
-                        //
-                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
+                    // Mudar Aqui
+                    ToolBox.alertMSG(
+                            Act011_Main.this,
+                            hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
+                            hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (formLocal.getRequire_location() == 1) {
+                                        enableProgressDialog(
+                                                hmAux_Trans.get("alert_location_info_title"),
+                                                hmAux_Trans.get("alert_location_info_required"),
+                                                hmAux_Trans.get("sys_alert_btn_cancel"),
+                                                hmAux_Trans.get("sys_alert_btn_ok")
+                                        );
+                                        //
+                                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
 
-                    } else {
-                        startCheckIN();
-                    }
+                                    } else {
+                                        startCheckIN();
+                                    }
+                                }
+                            },
+                            1
+                    );
 
-//                    for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-//                        df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-//                        df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-//                    }
-//
-//                    sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
-//
-//                    GE_FileDao geFileDao = new GE_FileDao(
-//                            context,
-//                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-//                    );
-//
-//                    HMAux aux = geFileDao.getByStringHM(
-//                            new GE_File_Sql_003().toSqlQuery()
-//                    );
-//
-//                    int index = Integer.parseInt(aux.get("next_code"));
-//                    //int index = 0;
-//
-//                    geFiles.clear();
-//
-//                    for (int i = 0; i < customFFs.size(); i++) {
-//                        String sFile_v = customFFs.get(i).getmValue();
-//                        String sFile_e = customFFs.get(i).getmDots_photo();
-//
-//                        if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
-//                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
-//                            if (sFile.exists()) {
-//                                GE_File geFile = new GE_File();
-//                                geFile.setFile_code(sFile_v.replace(".png", "").replace(".jpg", ""));
-//                                geFile.setFile_path(sFile_v);
-//                                geFile.setFile_status("OPENED");
-//                                geFile.setFile_date(sDate);
-//
-//                                geFiles.add(geFile);
-//                            }
-//                        }
+//                    if (formLocal.getRequire_location() == 1) {
+//                        enableProgressDialog(
+//                                hmAux_Trans.get("alert_location_info_title"),
+//                                hmAux_Trans.get("alert_location_info_required"),
+//                                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                                hmAux_Trans.get("sys_alert_btn_ok")
+//                        );
 //                        //
-//                        if (sFile_e.endsWith(".png") || sFile_e.endsWith(".jpg")) {
-//                            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e);
-//                            if (sFile.exists()) {
-//                                GE_File geFile = new GE_File();
-//                                geFile.setFile_code(sFile_e.replace(".png", "").replace(".jpg", ""));
-//                                geFile.setFile_path(sFile_e);
-//                                geFile.setFile_status("OPENED");
-//                                geFile.setFile_date(sDate);
+//                        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
 //
-//                                geFiles.add(geFile);
-//                            }
-//                        }
+//                    } else {
+//                        startCheckIN();
 //                    }
-//
-//                    // Hugo
-//
-////                    if (signature == 1) {
-////                        GE_File geFile = new GE_File();
-////                        geFile.setFile_code(index);
-////                        geFile.setFile_path(mSignature);
-////                        geFile.setFile_status("OPENED");
-////                        geFile.setFile_date(sDate);
-////                        //
-////                        geFiles.add(geFile);
-////                    }
-//
-//                    formData.setSignature(mSignature);
-//
-//                    mPresenter.checkSignature(formData, signature, 0, geFiles);
 
                 } else {
 
@@ -936,11 +898,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmPage(Integer.parseInt(cf.get("page")));
         mkEditTextNMFF.setmType(cf.get("custom_form_data_type"));
 
-        if (hasNFCSupport) {
-            mkEditTextNMFF.setmNFC(true);
-        } else {
-            mkEditTextNMFF.setmNFC(false);
-        }
+//        Remover a configuraçao automatica do campo customizado de edicao mesmo que o equipamento suporte NFC.
+//        if (hasNFCSupport) {
+//            mkEditTextNMFF.setmNFC(true);
+//        } else {
+//            mkEditTextNMFF.setmNFC(false);
+//        }
 
         if (cf.get("custom_form_data_type").equalsIgnoreCase("DATE")) {
             mkEditTextNMFF.setmBARCODE(false);

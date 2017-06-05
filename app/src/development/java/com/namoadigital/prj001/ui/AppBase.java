@@ -4,8 +4,10 @@ import android.app.Application;
 import android.os.Environment;
 
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.PKG_CLEAN;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
@@ -17,11 +19,11 @@ import static com.namoadigital.prj001.util.Constant.DB_PATH;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION_BASE;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.IMG_PATH;
+import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
 import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
-import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 
@@ -60,6 +62,15 @@ public class AppBase extends Application {
         DB_NAME_CUSTOM = "cc.db3";
         DB_VERSION_CUSTOM = 8;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
+
+        PKG_CLEAN = "2";
+
+        String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
+
+        if (!PKG_CLEAN.equals(PGK_CLEAN_P)) {
+            ToolBox_Con.cleanPreferences(getApplicationContext());
+            ToolBox_Con.setPreference_PKG_CLEAN(getApplicationContext(), PKG_CLEAN);
+        }
 
         ToolBox_Inf.libTranslation(getApplicationContext());
 

@@ -164,6 +164,8 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String SW_LINK = "sw_link";
     public static final String SW_REQUIRED = "sw_required";
 
+    public static final String PKG_CLEAN_KEY = "pkg_clean_key";
+
     public static final String LOGIN_USER_CODE = "login_user_code";
     public static final String LOGIN_USER_CODE_NICK = "login_user_code_nick";
     public static final String LOGIN_USER_EMAIL = "login_user_email";
@@ -188,9 +190,6 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String LOCATION_TYPE = "location_type";
     public static final String LOCATION_LAT = "location_lat";
     public static final String LOCATION_LNG = "location_lng";
-
-
-
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";

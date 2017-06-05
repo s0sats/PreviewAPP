@@ -139,6 +139,30 @@ public class ToolBox_Con {
 
     }
 
+
+    //region PKG_CLEAN
+    public static void setPreference_PKG_CLEAN(Context context, String PKG_CLEAN) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.PKG_CLEAN_KEY,
+                PKG_CLEAN
+        ).apply();
+    }
+
+    public static String getPreference_PKG_CLEAN(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.PKG_CLEAN_KEY,
+                ""
+        );
+    }
+    //endregion
+
+
     //region User_Code
     public static void setPreference_User_Code(Context context, String user_code) {
         SharedPreferences sharedPreferences =
