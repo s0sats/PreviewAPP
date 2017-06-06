@@ -11,6 +11,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial;
@@ -250,12 +251,15 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (!downloadStarted) {
             Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
             Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+            Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
             Bundle bundle = new Bundle();
             mIntentPDF.putExtras(bundle);
             mIntentPIC.putExtras(bundle);
+            mIntentLogo.putExtras(bundle);
             //
             context.sendBroadcast(mIntentPDF);
             context.sendBroadcast(mIntentPIC);
+            context.sendBroadcast(mIntentLogo);
             //Atualiza var e impede que os serviços sejam chamados 2 vezes seguidas
             downloadStarted = true;
         }

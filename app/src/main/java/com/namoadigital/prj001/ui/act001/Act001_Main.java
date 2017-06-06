@@ -21,6 +21,8 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+
 
 public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
@@ -202,8 +204,29 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         super.processCloseACT(mLink, mRequired);
         //
         progressDialog.dismiss();
+        //Limpa imagem dos customers
+        clearFilesByPrefix(Constant.CACHE_PATH,"logo_c_");
         //
         call_Act002_Main(context);
+    }
+
+
+    private void clearFilesByPrefix(String path,String prefix) {
+        //File fileList = new File(Constant.CACHE_PATH);
+        File fileList = new File(path);
+        //
+        if (fileList.isDirectory()) {
+            String[] children = fileList.list();
+            for (int i = 0; i < children.length; i++) {
+                if(children[i].startsWith(prefix)){
+                    try {
+                        new File(fileList, children[i]).delete();
+                    }catch (Exception e){
+                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    }
+                }
+            }
+        }
     }
 
     @Override

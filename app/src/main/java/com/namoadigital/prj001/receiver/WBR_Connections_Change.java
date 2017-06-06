@@ -26,6 +26,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 //
                 activateDownLoadPDF(context);
                 activateDownLoadPicture(context);
+                activateLogo(context);
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
@@ -66,6 +67,15 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    private void activateLogo(Context context){
+        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
+        Bundle bundle = new Bundle();
+
+        mIntentLogo.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentLogo);
     }
 
 

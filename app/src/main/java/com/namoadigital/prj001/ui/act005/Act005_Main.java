@@ -30,6 +30,7 @@ import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -935,12 +936,15 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
+        mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);
         context.sendBroadcast(mIntentPIC);
+        context.sendBroadcast(mIntentLogo);
     }
 
     @Override

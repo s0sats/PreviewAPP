@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -72,6 +73,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     }
 
     private void initVars() {
+        //Inicia Download do logo do customer
+        startLogoDownload();
+
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
         //
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
@@ -85,6 +89,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         }
     }
 
+    private void startLogoDownload() {
+        Intent mIntent =  new Intent(getApplicationContext(),WBR_DownLoad_Customer_Logo.class);
+        getApplicationContext().sendBroadcast(mIntent);
+    }
     @Override
     public void callAct002(Context context, boolean force_get_customer) {
         ToolBox_Con.setPreference_Customer_Code(context,-1L);
