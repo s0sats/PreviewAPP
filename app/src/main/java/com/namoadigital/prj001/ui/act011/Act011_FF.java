@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 
 import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -76,7 +75,7 @@ public class Act011_FF extends Fragment {
                     try {
                         ((ViewGroup) fAux.getParent()).removeView(fAux);
                     } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                        //ToolBox_Inf.registerException(getClass().getName(),e);
                         e.printStackTrace();
                     }
                     //

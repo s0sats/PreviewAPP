@@ -176,7 +176,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 mStack.push(Long.parseLong(p_values[i]));
             }
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+           // ToolBox_Inf.registerException(getClass().getName(),e);
         }
     }
 

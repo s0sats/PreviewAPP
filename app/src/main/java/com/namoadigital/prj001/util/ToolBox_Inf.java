@@ -648,17 +648,17 @@ public class ToolBox_Inf {
                 }
 
             case "VERSION_ERRO":
-                sendBCStatus(context, "VERSION_ERRO", error_msg, s_Link, "1");
+                sendBCStatus(context, "VERSION_ERRO", context.getString(R.string.msg_version_invalid), s_Link, "1");
 
                 return false;
 
             case "VERSION_INVALID":
-                sendBCStatus(context, "VERSION_INVALID", error_msg, s_Link, "1");
+                sendBCStatus(context, "VERSION_INVALID", context.getString(R.string.msg_version_invalid), s_Link, "1");
 
                 return false;
 
             case "EXPIRED":
-                sendBCStatus(context, "EXPIRED", error_msg, s_Link, "1");
+                sendBCStatus(context, "EXPIRED", context.getString(R.string.msg_version_expired), s_Link, "1");
 
                 return false;
 
