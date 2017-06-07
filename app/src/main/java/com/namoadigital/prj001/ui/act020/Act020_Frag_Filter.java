@@ -35,6 +35,7 @@ public class Act020_Frag_Filter extends Fragment {
     private IAct020_Filter delegate;
     private ArrayList<MKEditTextNM> controls_sta;
     private View.OnClickListener clickListener;
+    private boolean supportNFC;
 
     public interface IAct020_Filter{
 
@@ -45,6 +46,15 @@ public class Act020_Frag_Filter extends Fragment {
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
         tv_nfc_reader.setOnClickListener(clickListener);
+    }
+
+    public void setSupportNFC(boolean supportNFC) {
+        this.supportNFC = supportNFC;
+        if(supportNFC){
+            tv_nfc_reader.setVisibility(View.VISIBLE);
+        }else{
+            tv_nfc_reader.setVisibility(View.GONE);
+        }
     }
 
     public void setOnDrawerClick(IAct020_Filter delegate){
@@ -89,9 +99,16 @@ public class Act020_Frag_Filter extends Fragment {
         //
         iv_search = (ImageView) view.findViewById(R.id.act020_drawer_content_iv_search);
 
+        if(supportNFC){
+            tv_nfc_reader.setVisibility(View.VISIBLE);
+        }else{
+            tv_nfc_reader.setVisibility(View.GONE);
+        }
+
     }
 
     private void iniAction() {
+
 
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override

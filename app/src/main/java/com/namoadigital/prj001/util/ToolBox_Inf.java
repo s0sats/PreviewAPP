@@ -513,6 +513,17 @@ public class ToolBox_Inf {
         from.renameTo(to);
     }
 
+    public static void renameDownloadFileInfV2(String path,String sName, String extOri, String extDest) {
+        if(extOri == null || extOri.trim().length() == 0){
+            extOri = ".tmp";
+        }
+
+        File from = new File(path + "/", sName + extOri);
+        File to = new File(path + "/", sName + extDest);
+        //
+        from.renameTo(to);
+    }
+
     public static boolean verifyDownloadFileInf(String sName) {
         File file = new File(Constant.CACHE_PATH + "/", sName);
 
@@ -1112,7 +1123,7 @@ public class ToolBox_Inf {
 
     public static String getCustomerLogoPath(Context context) {
 
-        return Constant.CACHE_PATH + "/logo_c_" + ToolBox_Con.getPreference_Customer_Code(context) + ".png";
+        return Constant.IMG_PATH + "/logo_c_" + ToolBox_Con.getPreference_Customer_Code(context) + ".png";
 
     }
 
@@ -1820,5 +1831,21 @@ public class ToolBox_Inf {
         }
     }
 
-
+    public static void clearFilesByPrefix(String path,String prefix) {
+        //File fileList = new File(Constant.CACHE_PATH);
+        File fileList = new File(path);
+        //
+        if (fileList.isDirectory()) {
+            String[] children = fileList.list();
+            for (int i = 0; i < children.length; i++) {
+                if(children[i].startsWith(prefix)){
+                    try {
+                        new File(fileList, children[i]).delete();
+                    }catch (Exception e){
+                        ToolBox_Inf.registerException(CLASS_NAME,e);
+                    }
+                }
+            }
+        }
+    }
 }

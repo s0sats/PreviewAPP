@@ -178,6 +178,17 @@ public class WS_Upload_Support extends IntentService {
              ToolBox_Inf.writeIn(file.getName().concat("\n"),cc_photo_list);
         }
 
+        //Lista /imgs
+        File[] files_imgs = ToolBox_Inf.getListOfFiles_v4(Constant.IMG_PATH,".jpg",".png");
+        File files_imgs_list = new File(Constant.SUPPORT_PATH,"imgs_list.txt");
+
+        if(files_imgs_list.exists()){
+            files_imgs_list.delete();
+        }
+        for (File file : files_imgs ) {
+            ToolBox_Inf.writeIn(file.getName().concat("\n"),files_imgs_list);
+        }
+
         //Lista de preferencias
         File preference_list = new File(Constant.SUPPORT_PATH,"preference_list.txt");
 

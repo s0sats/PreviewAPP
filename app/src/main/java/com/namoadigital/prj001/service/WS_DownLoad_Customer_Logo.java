@@ -61,11 +61,11 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
                     //
                     ToolBox_Inf.downloadImagePDF(
                             userCustomer.getLogo_url(),
-                            Constant.CACHE_PATH + "/" + logo_prefix + ".tmp"
+                            Constant.IMG_PATH + "/" + logo_prefix + ".tmp"
                     );
                     //Extensão sempre .png ,
                     //pois no android le a imagens independente da extensão
-                    ToolBox_Inf.renameDownloadFileInf(logo_prefix,".png");
+                    ToolBox_Inf.renameDownloadFileInfV2(Constant.IMG_PATH,logo_prefix,"",".png");
                 }
 
         } catch (Exception e) {

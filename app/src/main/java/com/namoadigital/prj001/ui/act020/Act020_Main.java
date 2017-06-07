@@ -46,7 +46,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
     public static final String PROGRESS_NFC = "progress_nfc";
 
-    private Context context;
+   // private Context context;
     private Act020_Main_Presenter mPresenter;
     private DrawerLayout mDrawerLayout;
     private FragmentManager fm;
@@ -60,6 +60,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +80,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void iniSetup() {
-        context = Act020_Main.this;
+        //context = Act020_Main.this;
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -200,6 +201,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         fragFilters = (Act020_Frag_Filter) fm.findFragmentById(R.id.act020_frag_filter);
         //
         fragFilters.setHmAux_Trans(hmAux_Trans);
+        //
+        fragFilters.setSupportNFC(supportNFC);
         //
         controls_sta.addAll(fragFilters.getControlsSta());
         //
@@ -449,6 +452,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         }
 
+    }
+
+    @Override
+    protected void nfcDataError(boolean status, int id, String... value) {
+        super.nfcDataError(status, id, value);
     }
 
     @Override
