@@ -100,7 +100,8 @@ public class WS_Save extends IntentService {
         loadTranslation();
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_getting_finalized_forms"), "", "0");
-        //Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+        //Antigo não usarGson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+       // Gson gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         if(processPendingToken(1) == 0){

@@ -480,7 +480,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         }
 
     }
-
+    //Tratativa SESSION NOT FOUND
     @Override
     protected void processLogin() {
         super.processLogin();
@@ -492,7 +492,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         finish();
 
     }
-
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
