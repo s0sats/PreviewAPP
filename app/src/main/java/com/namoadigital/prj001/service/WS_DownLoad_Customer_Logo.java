@@ -55,17 +55,23 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
             String logo_prefix = "logo_c_" + userCustomer.getCustomer_code();
 
 
-                if (!ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png")) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(logo_prefix + ".png",Constant.IMG_PATH)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(logo_prefix + ".tmp");
+                    ToolBox_Inf.deleteDownloadFileInf(logo_prefix + ".tmp",Constant.IMG_PATH);
                     //
                     ToolBox_Inf.downloadImagePDF(
                             userCustomer.getLogo_url(),
                             Constant.IMG_PATH + "/" + logo_prefix + ".tmp"
                     );
-                    //Extensão sempre .png ,
-                    //pois no android le a imagens independente da extensão
-                    ToolBox_Inf.renameDownloadFileInfV2(Constant.IMG_PATH,logo_prefix,"",".png");
+
+                    //Verfica se downlaod esta ok
+                    if(ToolBox_Inf.verifyImgIntegrity(Constant.IMG_PATH,logo_prefix + ".tmp")){
+                        //Extensão sempre .png ,
+                        //pois no android le a imagens independente da extensão
+                        ToolBox_Inf.renameDownloadFileInfV2(Constant.IMG_PATH,logo_prefix,"",".png");
+                    }else{
+                      throw new Exception("ImgIntegrity");
+                    }
                 }
 
         } catch (Exception e) {

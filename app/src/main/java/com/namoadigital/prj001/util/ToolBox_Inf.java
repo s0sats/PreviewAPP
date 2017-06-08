@@ -499,7 +499,11 @@ public class ToolBox_Inf {
     }
 
     public static void deleteDownloadFileInf(String sName) {
-        File file = new File(Constant.CACHE_PATH + "/" + sName);
+        deleteDownloadFileInf(sName,Constant.CACHE_PATH );
+    }
+
+    public static void deleteDownloadFileInf(String sName,String path) {
+        File file = new File(path + "/" + sName);
 
         if (file.exists()) {
             file.delete();
@@ -525,7 +529,12 @@ public class ToolBox_Inf {
     }
 
     public static boolean verifyDownloadFileInf(String sName) {
-        File file = new File(Constant.CACHE_PATH + "/", sName);
+        return verifyDownloadFileInf(sName,Constant.CACHE_PATH);
+
+    }
+
+    public static boolean verifyDownloadFileInf(String sName, String path) {
+        File file = new File(path + "/", sName);
 
         return file.exists();
     }
@@ -1848,4 +1857,24 @@ public class ToolBox_Inf {
             }
         }
     }
+
+    public static boolean verifyImgIntegrity(String path, String file_name){
+
+        File file =  new File(path +"/"+ file_name);
+
+        if(file.isFile()){
+            try {
+                Bitmap tmpImg = BitmapFactory.decodeFile(path + "/" + file_name);
+                if (tmpImg != null) {
+                    return true;
+                }
+            }catch (Exception e){
+                registerException(CLASS_NAME,e);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
 }
