@@ -498,14 +498,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         finish();
     }
-
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
 
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
-
+    //Metodo chamado ao finalizar o download da atualização.
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
         super.processCloseAPP(mLink, mRequired);
