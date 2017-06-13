@@ -94,11 +94,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             @Override
             public void onClick(View view) {
                 mEmail = mk_login.getText().toString().trim();
-                mPassWord = et_password.getText().toString().trim();
+                mPassWord = et_password.getText().toString().replace("\"","'").trim();
                 mNFC = "";
 
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
-                        et_password.getText().toString().trim(),
+                        et_password.getText().toString().replace("\"","'").trim(),
                         ""
                 );
             }
