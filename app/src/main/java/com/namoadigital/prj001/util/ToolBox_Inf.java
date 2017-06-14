@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
@@ -571,7 +572,8 @@ public class ToolBox_Inf {
         mIntent.putExtra(Constant.SW_LINK, link != null ? link : "");
         mIntent.putExtra(Constant.SW_REQUIRED, required != null ? required : 0);
 
-        context.sendBroadcast(mIntent);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
 
     public static void executeUpdSW(Context context, String link, String required) {
@@ -582,7 +584,7 @@ public class ToolBox_Inf {
         //
         mIntent.putExtras(bundle);
         //
-        context.sendBroadcast(mIntent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
 
     public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD) {

@@ -15,7 +15,7 @@ public class ConstantBaseApp  extends ConstantBase {
      */
     public static final String PRJ001_CODE = "PRJ001";
     public static final String PRJ001_VERSION = "1.1.4";
-    public static final String PKG_CLEAN_APP = "5";
+    public static final String PKG_CLEAN_APP = "6";
     //          ATUALIZAR ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -96,7 +96,7 @@ public class ConstantBaseApp  extends ConstantBase {
 
 
     /**
-     * Service Login Parameter
+     * SM_SO_Service Login Parameter
      */
     public static final String GC_USER_CODE = "userid";
     public static final String GC_PWD = "userpwd";
@@ -216,7 +216,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
     public static final String PARAM_CHECKLIST ="N-FORM";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
-    public static final String PARAM_SO = "SO";
+    public static final String PARAM_SO = "SM_SO";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
