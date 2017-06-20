@@ -127,7 +127,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         context = Act005_Main.this;
         //
-        // Hugo
         ToolBox_Inf.cleanningFormLocal(context);
         Constant.DATEFORMATDT =  ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m","M").replaceAll("r","y");
         fm = getSupportFragmentManager();
