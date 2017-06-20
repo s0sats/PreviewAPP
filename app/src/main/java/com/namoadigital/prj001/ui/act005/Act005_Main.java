@@ -17,8 +17,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -32,14 +30,6 @@ import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.SM_Env;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.SM_SO_File;
-import com.namoadigital.prj001.model.SM_SO_Pack;
-import com.namoadigital.prj001.model.SM_SO_Service;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -227,19 +217,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     private void initVars() {
-
-        /*
-        *
-        * Teste da função de exception
-        *
-        * apgar apos teste
-        * */
-        //geraTesteSO();
-
-        /*
-        *
-        * Fim do teste
-        * */
 
         wsProcess = "";
 
@@ -475,102 +452,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         });
 
 
-    }
-
-    private void geraTesteSO() {
-
-        SM_SO_Service_Exec_Task_File task_attach = new SM_SO_Service_Exec_Task_File();
-        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
-        SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
-        SM_SO_Service service = new SM_SO_Service();
-        SM_SO_Pack pack = new SM_SO_Pack();
-        SM_SO_File so_attach = new SM_SO_File();
-        SM_SO so =  new SM_SO();
-
-        ArrayList<SM_SO_File> soFileList = new ArrayList<>();
-        ArrayList<SM_SO_Pack> packList = new ArrayList<>();
-        ArrayList<SM_SO_Service> serviceList = new ArrayList<>();
-        ArrayList<SM_SO_Service_Exec> execList = new ArrayList<>();
-        ArrayList<SM_SO_Service_Exec_Task> taskList = new ArrayList<>();
-        ArrayList<SM_SO_Service_Exec_Task_File> taskAttachList = new ArrayList<>();
-
-        taskAttachList.add(task_attach);
-        task.setTask_attach(taskAttachList);
-        taskList.add(task);
-
-        exec.setTask(taskList);
-        execList.add(exec);
-
-        service.setExec(execList);
-        serviceList.add(service);
-        packList.add(pack);
-
-        pack.setService(serviceList);
-
-        so.setCustomer_code(1);
-        so.setSo_prefix(2017);
-        so.setSo_code(1);
-        so.setSo_desc("Teste So");
-        so.setSo_scn(1);
-        so.setProduct_code(15);
-        so.setProduct_id("btt");
-        so.setProduct_desc("Produto Batata");
-        so.setSerial_code(1);
-        so.setSerial_id("qwer");
-        so.setCategory_price_code(2);
-        so.setCategory_price_id("tbl_p_1");
-        so.setCategory_price_desc("Tabela de preço 1");
-        so.setSegment_code(5);
-        so.setSegment_id("Seg1");
-        so.setSegment_desc("Segmento 1");
-        so.setSite_code(15);
-        so.setSite_id("15");
-        so.setSite_desc("Predio do batata");
-        so.setOperation_code(10);
-        so.setOperation_id("10");
-        so.setOperation_desc("Chery");
-        so.setContract_code(1);
-        so.setContract_desc("Contrato alelui assinou");
-        so.setContract_po_erp("Sap");
-        so.setContract_po_client1("FDC154");
-        so.setContract_po_client2("");
-        so.setPriority_code(1);
-        so.setPriority_desc("ALTA");
-        so.setStatus("EDIT");
-        so.setQuality_approval_user(52);
-        so.setQuality_approval_date("2017-06-14");
-        so.setComments("TESTE");
-        so.setSo_father_prefix(null);
-        so.setSo_father_code(null);
-        so.setDeadline("2017-07-17");
-        so.setOrigin("APP");
-        so.setClient_type("CLIENT");
-        so.setClient_user(null);
-        so.setClient_code(1);
-        so.setClient_id("1");
-        so.setClient_name("CLIENTE NOME");
-        so.setClient_email("cliente@email.com.br");
-        so.setClient_phone("1231232131");
-        so.setClient_approval_image(null);
-        so.setClient_approval_date("2017-06-13");
-        so.setClient_approval_flag(0);
-        so.setPack(packList);
-        so.setSo_attach(soFileList);
-
-        SM_Env env = new SM_Env();
-        env.setSo(so);
-
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-        Gson gsonNoExpose = new GsonBuilder().serializeNulls().create();
-
-        String teste = gson.toJson(env);
-        String teste2 = gsonNoExpose.toJson(env);
-
-        SM_Env resposta = gson.fromJson(teste2,SM_Env.class);
-        SM_Env respostaFull = gsonNoExpose.fromJson(teste2,SM_Env.class);
-
-
-        teste += " ";
     }
 
     private void changeCustomer() {
