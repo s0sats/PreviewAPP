@@ -7,7 +7,9 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -20,6 +22,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
+import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -41,20 +44,20 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     private HMAux hmAux_Trans = new HMAux();
     private GE_Custom_Form_LocalDao formLocalDao;
     private Sync_ChecklistDao syncChecklistDao;
+    private GE_Custom_Form_OperationDao formOperationDao;
 
     //
     private boolean downloadStarted = false;
     private TProduct_Serial tProductSerial;
 
-
-    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao) {
+    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.formLocalDao = formLocalDao;
         this.syncChecklistDao = syncChecklistDao;
+        this.formOperationDao = formOperationDao;
     }
-
 
     @Override
     public void getProductSerialList(String ws_result) {
@@ -214,15 +217,44 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     }
 
     @Override
-    public void prepareAct009() {
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
-        bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
-        bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
-        bundle.putString(Constant.ACT008_SERIAL_ID, tProductSerial.getSerial_id());
-        bundle.putBoolean(Constant.ACT020_BACK_FLOW, true);
+    public boolean checkFormXOperationExists() {
+        String hasFormXOperation =
+                formOperationDao.getByStringHM(
+                        new Sql_Form_x_Operation(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                tProductSerial.getProduct_code(),
+                                ToolBox_Con.getPreference_Operation_Code(context)
+                        ).toSqlQuery()
+                ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
+        if(hasFormXOperation.equals("0") ||hasFormXOperation.equals("null")){
+            return false;
+        }
 
-        mView.callAct009(context,bundle);
+        return true;
+    }
+
+    @Override
+    public void prepareAct009() {
+
+        if(checkFormXOperationExists()) {
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
+            bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
+            bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
+            bundle.putString(Constant.ACT008_SERIAL_ID, tProductSerial.getSerial_id());
+            bundle.putBoolean(Constant.ACT020_BACK_FLOW, true);
+
+            mView.callAct009(context, bundle);
+        }else{
+            //
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_no_form_for_operation_ttl"),
+                    hmAux_Trans.get("alert_no_form_for_operation_msg"),
+                    null,
+                    0
+            );
+        }
     }
 
     @Override

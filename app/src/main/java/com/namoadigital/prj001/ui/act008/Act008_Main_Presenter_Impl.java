@@ -17,7 +17,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act008_001;
+import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -270,12 +270,12 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         String hasFormXOperation =
                 formOperationDao.getByStringHM(
-                  new Sql_Act008_001(
+                  new Sql_Form_x_Operation(
                           ToolBox_Con.getPreference_Customer_Code(context),
                           product_code,
                           ToolBox_Con.getPreference_Operation_Code(context)
                   ).toSqlQuery()
-                ).get(Sql_Act008_001.FORM_OPERATION_PROFILE);
+                ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
         if(hasFormXOperation.equals("0") ||hasFormXOperation.equals("null")){
             return false;
         }

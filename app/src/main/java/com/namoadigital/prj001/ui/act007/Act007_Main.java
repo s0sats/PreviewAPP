@@ -143,14 +143,25 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 stopPropagation = 1;
                 callAct006(context);
             } else {
-                String[] parts = bundle.getString(Constant.ACT007_CURRENTINDEX).split(":");
+                //19-06-17
+                //Add tratativa na reconstrução da pilha.
+                //Caso de exception,"reseta" pilha e exibe o home.
+                try {
+                    String[] parts = bundle.getString(Constant.ACT007_CURRENTINDEX).split(":");
 
-                currentIndex = Long.parseLong(parts[0]);
-                currentIndex2 = Long.parseLong(parts[1]);
+                    currentIndex = Long.parseLong(parts[0]);
+                    currentIndex2 = Long.parseLong(parts[1]);
 
-                mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
-                //
-                reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
+                    mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
+                    //
+                    reloadStack(bundle.getString(Constant.ACT007_MSTACKVALUES));
+                }catch (Exception e){
+                    currentIndex = 0;
+                    mket_product_search.setText("");
+                    //
+                    mStack.clear();
+                    btn_back.setVisibility(View.INVISIBLE);
+                }
             }
 
         } else {

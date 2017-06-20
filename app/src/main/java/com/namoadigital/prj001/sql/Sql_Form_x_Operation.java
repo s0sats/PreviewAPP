@@ -8,7 +8,7 @@ import com.namoadigital.prj001.database.Specification;
  * Created by d.luche on 12/05/2017.
  */
 
-public class Sql_Act008_001 implements Specification {
+public class Sql_Form_x_Operation implements Specification {
 
     public static final String FORM_OPERATION_PROFILE = "form_operation_profile";
 
@@ -16,7 +16,7 @@ public class Sql_Act008_001 implements Specification {
     private long product_code;
     private long operation_code;
 
-    public Sql_Act008_001(long customer_code, long product_code, long operation_code) {
+    public Sql_Form_x_Operation(long customer_code, long product_code, long operation_code) {
         this.customer_code = customer_code;
         this.product_code = product_code;
         this.operation_code = operation_code;

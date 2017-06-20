@@ -21,4 +21,6 @@ public interface Act020_Main_Presenter {
     void prepareAct009();
 
     void startDownloadServices();
+
+    boolean checkFormXOperationExists();
 }

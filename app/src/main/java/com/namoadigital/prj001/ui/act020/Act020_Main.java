@@ -24,6 +24,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
@@ -121,6 +122,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         transList.add("records_found_lbl");
         transList.add("progress_sync_title");
         transList.add("progress_sync_msg");
+        transList.add("alert_no_form_for_operation_ttl");
+        transList.add("alert_no_form_for_operation_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -144,6 +147,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         Constant.DB_VERSION_CUSTOM
                 ),
                 new Sync_ChecklistDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                new GE_Custom_Form_OperationDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -470,7 +478,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             progressDialog.dismiss();
             //
             mPresenter.prepareAct009();
-
         }else{
             mPresenter.getProductSerialList(ws_retorno);
             //

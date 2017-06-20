@@ -584,7 +584,7 @@ public class ToolBox_Inf {
         //
         mIntent.putExtras(bundle);
         //
-        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+        context.sendBroadcast(mIntent);
     }
 
     public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD) {
