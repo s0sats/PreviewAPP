@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,45 +79,206 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
         this.toSM_SOMapper = new CursorSM_SOMapper();
     }
 
-
     @Override
-    public void addUpdate(SM_SO item) {
+    public void addUpdate(SM_SO so) {
+        openDB();
 
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(so)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(so.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(so.getSo_prefix())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(so.getSo_code())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(so), sbWhere.toString(), null);
+            }
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
-    public void addUpdate(Iterable<SM_SO> items, boolean status) {
+    public void addUpdate(Iterable<SM_SO> sos, boolean status) {
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (SM_SO so: sos) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(so)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(so.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(so.getSo_prefix())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(so.getSo_code())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(so), sbWhere.toString(), null);
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
 
     }
 
     @Override
     public void addUpdate(String sQuery) {
+        openDB();
+
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
     public void remove(String sQuery) {
+        openDB();
+
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
     public SM_SO getByString(String sQuery) {
-        return null;
+        SM_SO so = null;
+
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                so = toSM_SOMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+
+        return so;
     }
 
     @Override
     public HMAux getByStringHM(String sQuery) {
-        return null;
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
     }
 
     @Override
     public List<SM_SO> query(String sQuery) {
-        return null;
+        List<SM_SO> sos = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                SM_SO uAux = toSM_SOMapper.map(cursor);
+                sos.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return sos;
+
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
+
+        ArrayList<HMAux> sos = new ArrayList<>();
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                sos.add(toHMAuxMapper.map(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return sos;
     }
 
     private class CursorSM_SOMapper implements Mapper<Cursor,SM_SO> {
@@ -347,21 +511,21 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             if(sm_so.getStatus() != null){
                 contentValues.put(STATUS,sm_so.getStatus());
             }
-            if(sm_so.getQuality_approval_user() > -1){
-                contentValues.put(QUALITY_APPROVAL_USER,sm_so.getQuality_approval_user());
-            }
+//            if(sm_so.getQuality_approval_user() > -1){
+//                contentValues.put(QUALITY_APPROVAL_USER,sm_so.getQuality_approval_user());
+//            }
             if(sm_so.getQuality_approval_date() != null){
                 contentValues.put(QUALITY_APPROVAL_DATE,sm_so.getQuality_approval_date());
             }
             if(sm_so.getComments() != null){
                 contentValues.put(COMMENTS,sm_so.getComments());
             }
-            if(sm_so.getSo_father_prefix() > -1){
-                contentValues.put(SO_FATHER_PREFIX,sm_so.getSo_father_prefix());
-            }
-            if(sm_so.getSo_father_code() > -1){
-                contentValues.put(SO_FATHER_CODE,sm_so.getSo_father_code());
-            }
+//            if(sm_so.getSo_father_prefix() > -1){
+//                contentValues.put(SO_FATHER_PREFIX,sm_so.getSo_father_prefix());
+//            }
+//            if(sm_so.getSo_father_code() > -1){
+//                contentValues.put(SO_FATHER_CODE,sm_so.getSo_father_code());
+//            }
             if(sm_so.getDeadline() != null){
                 contentValues.put(DEADLINE,sm_so.getDeadline());
             }
@@ -371,12 +535,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             if(sm_so.getClient_type() != null){
                 contentValues.put(CLIENT_TYPE,sm_so.getClient_type());
             }
-            if(sm_so.getClient_user() > -1){
-                contentValues.put(CLIENT_USER,sm_so.getClient_user());
-            }
-            if(sm_so.getClient_code() > -1){
-                contentValues.put(CLIENT_CODE,sm_so.getClient_code());
-            }
+//            if(sm_so.getClient_user() > -1){
+//                contentValues.put(CLIENT_USER,sm_so.getClient_user());
+//            }
+//            if(sm_so.getClient_code() > -1){
+//                contentValues.put(CLIENT_CODE,sm_so.getClient_code());
+//            }
             if(sm_so.getClient_id() != null){
                 contentValues.put(CLIENT_ID,sm_so.getClient_id());
             }
@@ -389,9 +553,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             if(sm_so.getClient_phone() != null){
                 contentValues.put(CLIENT_PHONE,sm_so.getClient_phone());
             }
-            if(sm_so.getClient_approval_image() > -1){
-                contentValues.put(CLIENT_APPROVAL_IMAGE,sm_so.getClient_approval_image());
-            }
+//            if(sm_so.getClient_approval_image() > -1){
+//                contentValues.put(CLIENT_APPROVAL_IMAGE,sm_so.getClient_approval_image());
+//            }
             if(sm_so.getClient_approval_date() != null){
                 contentValues.put(CLIENT_APPROVAL_DATE,sm_so.getClient_approval_date());
             }
