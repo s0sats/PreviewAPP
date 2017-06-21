@@ -76,6 +76,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_BADGE = "menu_badge";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_SERVICE = "menu_service";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
