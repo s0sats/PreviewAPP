@@ -10,4 +10,7 @@ public interface Act021_Main_View {
 
 
     void callAct005(Context context);
+
+    void callAct022(Context context);
+
 }

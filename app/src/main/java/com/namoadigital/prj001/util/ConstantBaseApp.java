@@ -42,6 +42,12 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT019 = "act019";
     public static final String ACT020 = "act020";
     public static final String ACT021 = "act021";
+    public static final String ACT022 = "act022";
+    public static final String ACT023 = "act023";
+    public static final String ACT024 = "act024";
+    public static final String ACT025 = "act025";
+    public static final String ACT026 = "act026";
+    public static final String ACT027 = "act027";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -62,6 +68,9 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT013_CUSTOM_FORM_DATA = "custom_form_data";
 
     public static final String ACT020_BACK_FLOW = "back_flow";
+
+    public static final String ACT022_REQUESTING_PROCESS = "requesting_process";
+    public static final String ACT022_MSTACKVALUES = "act022_mstackvalues";
 
     /**
      * DataBase Definition

@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -98,6 +100,12 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     }
 
     private void initActions() {
+        btn_load.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callAct022(context);
+            }
+        });
 
     }
 
@@ -109,6 +117,19 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         finish();
     }
 
+    @Override
+    public void callAct022(Context context) {
+        Intent mIntent = new Intent(context, Act022_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle == null){
+            bundle = new Bundle();
+        }
+        bundle.putString(Constant.ACT022_REQUESTING_PROCESS,Constant.MODULE_SO);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
 
     @Override
     public void onBackPressed() {
