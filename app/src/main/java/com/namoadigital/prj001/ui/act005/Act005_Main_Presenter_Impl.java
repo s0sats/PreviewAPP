@@ -83,7 +83,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] menuDesc = {
             "lbl_checklist",
-            "lbl_service",
+            "lbl_so",
             "lbl_schedule_data",
             "lbl_pending_data",
             "lbl_historic_data",
@@ -216,6 +216,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 case Act005_Main.MENU_ID_CHECKLIST:
                     mView.callAct006(context);
                     break;
+
+                case Act005_Main.MENU_ID_SERVICE:
+                    mView.callAct021(context);
+                    break;
+
                 case Act005_Main.MENU_ID_SCHEDULE_DATA:
                     mView.callAct016(context);
                     break;

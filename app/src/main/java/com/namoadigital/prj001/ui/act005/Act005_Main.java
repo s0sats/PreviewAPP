@@ -57,6 +57,7 @@ import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -186,6 +187,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("lbl_sync_data");
         transList.add("lbl_logout");
         transList.add("lbl_schedule_data");
+        transList.add("lbl_so");
         //toolbar
         transList.add("toolbar_enable_nfc");
         transList.add("toolbar_cancel_nfc");
@@ -792,6 +794,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void callAct018(Context context) {
         Intent mIntent = new Intent(context, Act018_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct021(Context context) {
+        Intent mIntent = new Intent(context, Act021_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mIntent);
         finish();

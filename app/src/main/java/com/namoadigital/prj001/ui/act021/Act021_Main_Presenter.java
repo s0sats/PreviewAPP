@@ -5,4 +5,7 @@ package com.namoadigital.prj001.ui.act021;
  */
 
 public interface Act021_Main_Presenter {
+
+
+    void onBackPressedClicked();
 }
