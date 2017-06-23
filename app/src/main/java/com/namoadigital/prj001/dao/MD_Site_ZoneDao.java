@@ -52,7 +52,7 @@ public class MD_Site_ZoneDao extends BaseDao implements Dao<MD_Site_Zone> {
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_site_zone.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site_zone.getSite_code())).append("'");
+                sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site_zone.getZone_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(ZONE_CODE).append(" = '").append(String.valueOf(md_site_zone.getSite_code())).append("'");
 
@@ -83,7 +83,7 @@ public class MD_Site_ZoneDao extends BaseDao implements Dao<MD_Site_Zone> {
                     StringBuilder sbWhere = new StringBuilder();
                     sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_site_zone.getCustomer_code())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site_zone.getSite_code())).append("'");
+                    sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site_zone.getZone_code())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(ZONE_CODE).append(" = '").append(String.valueOf(md_site_zone.getSite_code())).append("'");
 
@@ -107,9 +107,7 @@ public class MD_Site_ZoneDao extends BaseDao implements Dao<MD_Site_Zone> {
         openDB();
 
         try {
-
             db.execSQL(sQuery);
-
         } catch (Exception e) {
         } finally {
         }
