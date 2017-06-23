@@ -32,8 +32,8 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
-        this.toContentValuesMapper = new MD_OperationToContentValuesMapper();
-        this.toMD_SiteMapper = new CursorMD_OperationMapper();
+        this.toContentValuesMapper = new MD_SiteToContentValuesMapper();
+        this.toMD_SiteMapper = new CursorMD_SiteMapper();
     }
 
     @Override
@@ -231,7 +231,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
         return md_sites;
     }
 
-    private class CursorMD_OperationMapper implements Mapper<Cursor,MD_Site> {
+    private class CursorMD_SiteMapper implements Mapper<Cursor,MD_Site> {
         @Override
         public MD_Site map(Cursor cursor) {
             MD_Site md_site = new MD_Site();
@@ -245,7 +245,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
     }
 
-    private class MD_OperationToContentValuesMapper implements Mapper<MD_Site,ContentValues> {
+    private class MD_SiteToContentValuesMapper implements Mapper<MD_Site,ContentValues> {
         @Override
         public ContentValues map(MD_Site md_site) {
             ContentValues contentValues = new ContentValues();
