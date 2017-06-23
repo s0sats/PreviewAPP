@@ -226,7 +226,8 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
     public static final String PARAM_CHECKLIST ="N-FORM";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
-    public static final String PARAM_SO = "SM_SO";
+    public static final String PARAM_SO = "SO";
+    public static final String PARAM_SO_MOV = "SO_MOV";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";

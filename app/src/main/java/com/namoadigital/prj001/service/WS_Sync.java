@@ -26,11 +26,18 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_BrandDao;
+import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
+import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
+import com.namoadigital.prj001.dao.MD_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
+import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -51,6 +58,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
@@ -64,11 +72,16 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Operation_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Brand_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -195,6 +208,13 @@ public class WS_Sync extends IntentService {
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SCHEDULE = new ArrayList<>();
             dataPackage.setSCHEDULE(SCHEDULE);
+        }
+        //Verifica se customer possui acesso ao SO
+        //adiciona parametro no sincronismo.
+        if(ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SO) || ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SO) ){
+            //Assim como o Main, o array list é vazio.
+            ArrayList<String> SO = new ArrayList<>();
+            dataPackage.setOS(SO);
         }
 
         TSync_Env env =  new TSync_Env();
@@ -902,6 +922,48 @@ public class WS_Sync extends IntentService {
                     blobLocalDao.addUpdate(finalBlobs, false);
                 }
             }
+        }
+
+        //
+        //Processamento das tabelas do SO
+        //
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_OS)){
+            MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+
+            //apaga tabelas
+            siteZoneDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
+            siteZoneLocalDao.remove(new MD_Site_Zone_Local_Sql_Truncate().toSqlQuery());
+            segmentDao.remove(new MD_Segment_Sql_Truncate().toSqlQuery());
+            categoryPriceDao.remove(new MD_Category_Price_Sql_Truncate().toSqlQuery());
+            brandDao.remove(new MD_Brand_Sql_Truncate().toSqlQuery());
+            brandModelDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
+            brandColorDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
+
+            //
+            // Processamento Site Zone
+            //
+            File[] files_site_zone = ToolBox_Inf.getListOfFiles_v2("md_site_zone-");
+
+            for (File _file : files_site_zone) {
+
+                ArrayList<MD_Site_Zone> mdSiteZones = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Site_Zone>>() {
+                        }.getType()
+                );
+
+                siteZoneDao.addUpdate(mdSiteZones, false);
+            }
+
+
         }
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist ){
