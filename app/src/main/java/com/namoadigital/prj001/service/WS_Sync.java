@@ -31,6 +31,7 @@ import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
@@ -58,6 +59,7 @@ import com.namoadigital.prj001.model.MD_Brand_Color;
 import com.namoadigital.prj001.model.MD_Brand_Model;
 import com.namoadigital.prj001.model.MD_Category_Price;
 import com.namoadigital.prj001.model.MD_Operation;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
@@ -83,6 +85,7 @@ import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
@@ -943,6 +946,8 @@ public class WS_Sync extends IntentService {
             MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+
 
             //apaga tabelas
             siteZoneDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
@@ -952,6 +957,7 @@ public class WS_Sync extends IntentService {
             brandDao.remove(new MD_Brand_Sql_Truncate().toSqlQuery());
             brandModelDao.remove(new MD_Brand_Model_Sql_Truncate().toSqlQuery());
             brandColorDao.remove(new MD_Brand_Color_Sql_Truncate().toSqlQuery());
+            partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
 
             //
             // Processamento Site Zone
@@ -1077,6 +1083,24 @@ public class WS_Sync extends IntentService {
                 );
 
                 brandColorDao.addUpdate(mdBrandColors, false);
+            }
+
+            //
+            // Processamento Partner
+            //
+            File[] files_partner = ToolBox_Inf.getListOfFiles_v2("md_partner-");
+
+            for (File _file : files_partner) {
+
+                ArrayList<MD_Partner> mdPartners = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Partner>>() {
+                        }.getType()
+                );
+
+                partnerDao.addUpdate(mdPartners, false);
             }
 
         }
