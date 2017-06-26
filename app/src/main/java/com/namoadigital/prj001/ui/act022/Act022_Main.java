@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -372,7 +373,7 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         //MUDAR PARA
         //Intent mIntent = new Intent(context, Act023_Main.class);
         //APOS TESTE
-        Intent mIntent = new Intent(context, Act021_Main.class);
+        Intent mIntent = new Intent(context, Act023_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         Bundle bundle = new Bundle();
