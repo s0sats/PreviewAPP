@@ -192,6 +192,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
+        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SO)) {
+            data_package.add(DataPackage.DATA_PACKAGE_SO);
+        }
 
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);

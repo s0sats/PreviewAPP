@@ -53,12 +53,18 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Operation;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
+import com.namoadigital.prj001.model.MD_Brand;
+import com.namoadigital.prj001.model.MD_Brand_Color;
+import com.namoadigital.prj001.model.MD_Brand_Model;
+import com.namoadigital.prj001.model.MD_Category_Price;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
+import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
+import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
@@ -72,6 +78,8 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Operation_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
@@ -214,7 +222,7 @@ public class WS_Sync extends IntentService {
         if(ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SO) || ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SO) ){
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SO = new ArrayList<>();
-            dataPackage.setOS(SO);
+            dataPackage.setSO(SO);
         }
 
         TSync_Env env =  new TSync_Env();
@@ -927,7 +935,7 @@ public class WS_Sync extends IntentService {
         //
         //Processamento das tabelas do SO
         //
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_OS)){
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)){
             MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -942,8 +950,8 @@ public class WS_Sync extends IntentService {
             segmentDao.remove(new MD_Segment_Sql_Truncate().toSqlQuery());
             categoryPriceDao.remove(new MD_Category_Price_Sql_Truncate().toSqlQuery());
             brandDao.remove(new MD_Brand_Sql_Truncate().toSqlQuery());
-            brandModelDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
-            brandColorDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
+            brandModelDao.remove(new MD_Brand_Model_Sql_Truncate().toSqlQuery());
+            brandColorDao.remove(new MD_Brand_Color_Sql_Truncate().toSqlQuery());
 
             //
             // Processamento Site Zone
@@ -963,6 +971,113 @@ public class WS_Sync extends IntentService {
                 siteZoneDao.addUpdate(mdSiteZones, false);
             }
 
+            //
+            // Processamento Site Zone Local
+            //
+            File[] files_site_zone_local = ToolBox_Inf.getListOfFiles_v2("md_site_zone_local-");
+
+            for (File _file : files_site_zone_local) {
+
+                ArrayList<MD_Site_Zone_Local> mdSiteZoneLocals = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Site_Zone_Local>>() {
+                        }.getType()
+                );
+
+                siteZoneLocalDao.addUpdate(mdSiteZoneLocals, false);
+            }
+
+            //
+            // Processamento Segment
+            //
+            File[] files_segment = ToolBox_Inf.getListOfFiles_v2("md_segment-");
+
+            for (File _file : files_segment) {
+
+                ArrayList<MD_Segment> mdSegments = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Segment>>() {
+                        }.getType()
+                );
+
+                segmentDao.addUpdate(mdSegments, false);
+            }
+
+            //
+            // Processamento MD_Category_Price
+            //
+            File[] files_category_price = ToolBox_Inf.getListOfFiles_v2("md_category_price-");
+
+            for (File _file : files_category_price) {
+
+                ArrayList<MD_Category_Price> mdCategoryPrices = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Category_Price>>() {
+                        }.getType()
+                );
+
+                categoryPriceDao.addUpdate(mdCategoryPrices, false);
+            }
+
+            //
+            // Processamento Brand
+            //
+            File[] files_brand = ToolBox_Inf.getListOfFiles_v2("md_brand-");
+
+            for (File _file : files_brand) {
+
+                ArrayList<MD_Brand> mdBrands = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand>>() {
+                        }.getType()
+                );
+
+                brandDao.addUpdate(mdBrands, false);
+            }
+
+            //
+            // Processamento Brand Model
+            //
+            File[] files_brand_model = ToolBox_Inf.getListOfFiles_v2("md_brand_model-");
+
+            for (File _file : files_brand_model) {
+
+                ArrayList<MD_Brand_Model> mdBrandModels = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand_Model>>() {
+                        }.getType()
+                );
+
+                brandModelDao.addUpdate(mdBrandModels, false);
+            }
+
+            //
+            // Processamento Brand Color
+            //
+            File[] files_brand_color = ToolBox_Inf.getListOfFiles_v2("md_brand_color-");
+
+            for (File _file : files_brand_color) {
+
+                ArrayList<MD_Brand_Color> mdBrandColors = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand_Color>>() {
+                        }.getType()
+                );
+
+                brandColorDao.addUpdate(mdBrandColors, false);
+            }
 
         }
 

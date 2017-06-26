@@ -280,7 +280,7 @@ public class MD_Site_Zone_LocalDao extends BaseDao implements Dao<MD_Site_Zone_L
             }
 
             if(md_site_zone_local.getCapacity() > -1){
-                contentValues.put(CAPACITY,md_site_zone_local.getLocal_id());
+                contentValues.put(CAPACITY,md_site_zone_local.getCapacity());
             }
 
             return contentValues;

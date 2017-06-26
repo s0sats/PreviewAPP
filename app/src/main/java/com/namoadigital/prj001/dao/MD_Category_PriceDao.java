@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Category_Price;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,43 +40,195 @@ public class MD_Category_PriceDao extends BaseDao implements Dao<MD_Category_Pri
 
 
     @Override
-    public void addUpdate(MD_Category_Price item) {
+    public void addUpdate(MD_Category_Price md_category_price) {
+        openDB();
+
+        try {
+            if (db.insert(TABLE, null, toContentValuesMapper.map(md_category_price)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_category_price.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(md_category_price.getCategory_price_code())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(md_category_price), sbWhere.toString(), null);
+            }
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
 
     }
 
     @Override
-    public void addUpdate(Iterable<MD_Category_Price> items, boolean status) {
+    public void addUpdate(Iterable<MD_Category_Price> md_category_prices, boolean status) {
 
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (MD_Category_Price md_category_price :md_category_prices) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(md_category_price)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_category_price.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(md_category_price.getCategory_price_code())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(md_category_price), sbWhere.toString(), null);
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String sQuery) {
+        openDB();
 
+        try {
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
     public void remove(String sQuery) {
+        openDB();
 
+        try {
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
     public MD_Category_Price getByString(String sQuery) {
-        return null;
+        MD_Category_Price md_category_price = null;
+
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                md_category_price = toMD_Category_PriceMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return md_category_price;
     }
 
     @Override
     public HMAux getByStringHM(String sQuery) {
-        return null;
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
     }
 
     @Override
     public List<MD_Category_Price> query(String sQuery) {
-        return null;
+        List<MD_Category_Price> md_category_prices = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                MD_Category_Price uAux = toMD_Category_PriceMapper.map(cursor);
+                md_category_prices.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+        return md_category_prices;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
+        List<HMAux> md_category_prices = new ArrayList<>();
+
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                md_category_prices.add(toHMAuxMapper.map(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+        }
+
+        closeDB();
+
+
+        return md_category_prices;
     }
 
     private class CursoMD_Category_PriceMapper implements Mapper<Cursor,MD_Category_Price> {
