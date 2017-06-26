@@ -1692,6 +1692,38 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Verifica se conjunto de parametros passados existe para aquele customer
+     * @param context
+     * @param param  Array com constante dos parametros a serem buscados
+     * @return true or false;
+     */
+    public static boolean parameterExists(Context context, String[] param) {
+        try {
+            Ev_User_Customer_ParameterDao parameterDao
+                    = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+
+            for (int i = 0; i < param.length ; i++) {
+                Ev_User_Customer_Parameter parameter
+                        = parameterDao.getByString(
+                        new Ev_User_Customer_Parameter_Sql_002(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                param[i]
+                        ).toSqlQuery()
+                );
+
+                if (parameter != null) {
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Converte data enviada para o timezone do aparelho
      *
      * @param

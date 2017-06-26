@@ -105,16 +105,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_sair)
     };
 
-    String[] parameter = {
-            "",
-            "",
-            Constant.PARAM_SCHEDULE_CHECKLIST,
-            "",
-            "",
-            "",
-            "",
-            // "",
-            ""
+    String[][] parameter = {
+            {""},
+            {Constant.PARAM_SO, Constant.PARAM_SO_MOV},
+            {Constant.PARAM_SCHEDULE_CHECKLIST},
+            {""},
+            {""},
+            {""},
+            {""},
+            // {""},
+            {""}
     };
 
 
@@ -125,7 +125,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         for (int i = 0; i < menuId.length; i++) {
             //SÓ exibe item de menu se menu não requer param
             //ou se customer possui acesso ao param
-            boolean showMenu = parameter[i].equals("") || ToolBox_Inf.parameterExists(context, parameter[i]);
+            boolean showMenu = parameter[i][0].equals("") || ToolBox_Inf.parameterExists(context, parameter[i]);
             //
             if (showMenu) {
                 HMAux Aux = new HMAux();
