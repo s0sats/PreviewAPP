@@ -295,6 +295,11 @@
 
         <service android:name=".service.WS_Serial_Search" />
 
+        <receiver android:name=".receiver.WBR_SO_Search" />
+
+        <service android:name=".service.WS_SO_Search" />
+
+
     </application>
 
 </manifest>

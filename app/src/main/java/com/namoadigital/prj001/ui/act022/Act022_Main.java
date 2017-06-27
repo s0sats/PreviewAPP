@@ -375,14 +375,11 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         //APOS TESTE
         Intent mIntent = new Intent(context, Act023_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        Bundle bundle = new Bundle();
-        //bundle.putString(Constant.ACT007_CURRENTINDEX, String.valueOf(currentIndex) + ":" + String.valueOf(currentIndex2));
+        //
         bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
-        //bundle.putString(Constant.ACT007_MSTACKVALUES, getStackValues());
         bundle.putSerializable(Constant.ACT022_MSTACKVALUES, mStack);
         bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
-
+        //
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);
