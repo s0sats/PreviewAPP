@@ -22,6 +22,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
+import com.namoadigital.prj001.ui.act024.Act024_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -353,7 +354,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
                 showPD();
 
-                mPresenter.executeSoSearch(-1,"","2017.3|2017.14");
+                mPresenter.executeSoSearch(1,"x",null);
 
             }
         });
@@ -383,14 +384,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                         }.getType());
 
                 if(sos != null){
-                    String teste = "teste";
+                   mPresenter.defineForwardFlow(mLink);
                 }
-
-
-                int i = 0;
-
                 break;
-
         }
         progressDialog.dismiss();
 
@@ -411,7 +407,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     @Override
     public void callAct024(Context context, Bundle bundle) {
-
+        Intent mIntent = new Intent(context, Act024_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

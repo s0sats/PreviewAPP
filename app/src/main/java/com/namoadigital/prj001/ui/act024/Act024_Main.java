@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -33,6 +34,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     private Button btn_download;
     private Button btn_new;
     private String serialiazed_so_list;
+    private SO_Header_Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +101,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         //
         views.add(btn_download);
         views.add(btn_new);
+        //
+        mPresenter.getSoHeaderList(serialiazed_so_list);
 
     }
 
@@ -159,7 +163,13 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
 
     @Override
     public void loadSoHeaders(ArrayList<SM_SO> so_list) {
-
+        mAdapter = new SO_Header_Adapter(
+                context,
+                R.layout.act024_content_cell,
+                so_list
+        );
+        //
+        lv_so_headers.setAdapter(mAdapter);
 
     }
 

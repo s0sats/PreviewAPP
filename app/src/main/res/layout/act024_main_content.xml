@@ -23,18 +23,18 @@
             android:id="@+id/act024_lv_so_headers"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
             android:layout_weight="1"
             android:padding="5dp"
-            android:divider="@color/padrao_TRANSPARENT"/>
-
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="5dp"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="5dp">
         <Button
             android:id="@+id/act024_btn_download"
             android:layout_width="0dp"
@@ -54,7 +54,6 @@
             android:background="@drawable/btn_namoa_main_states"
             android:text="NEW"
             android:textColor="@color/padrao_WHITE"/>
-
 
     </LinearLayout>
 

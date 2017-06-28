@@ -26,7 +26,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     }
 
     @Override
-    public void defineForwardFlow() {
+    public void defineForwardFlow(Object param) {
 
         switch (requesting_process){
 
@@ -35,6 +35,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 break;
 
             case Constant.MODULE_SO:default:
+                bundle.putString(Constant.ACT023_SO_HEADER_LIST,(String) param);
                 mView.callAct024(context,bundle);
                 break;
 

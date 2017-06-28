@@ -27,6 +27,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String SO_PREFIX =  "so_prefix";
     public static final String SO_CODE = "so_code";
+    public static final String SO_ID = "so_id";
     public static final String SO_DESC = "so_desc";
     public static final String SO_SCN = "so_scn" ;
     public static final String PRODUCT_CODE = "product_code";
@@ -289,6 +290,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             so.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             so.setSo_prefix(cursor.getInt(cursor.getColumnIndex(SO_PREFIX)));
             so.setSo_code(cursor.getInt(cursor.getColumnIndex(SO_CODE)));
+            so.setSo_id(cursor.getString(cursor.getColumnIndex(SO_ID)));
             so.setSo_desc(cursor.getString(cursor.getColumnIndex(SO_DESC)));
             so.setSo_scn(cursor.getInt(cursor.getColumnIndex(SO_SCN)));
             so.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
@@ -429,6 +431,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             }
             if(sm_so.getSo_code() > -1){
                 contentValues.put(SO_CODE,sm_so.getSo_code());
+            }
+            if(sm_so.getSo_id() != null){
+                contentValues.put(SO_ID,sm_so.getSo_id());
             }
             if(sm_so.getSo_desc() != null){
                 contentValues.put(SO_DESC,sm_so.getSo_desc());

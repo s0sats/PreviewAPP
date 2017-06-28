@@ -3,46 +3,52 @@
     android:id="@+id/act024_content_cell_01_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/namoa_cell_8_states"
     android:orientation="vertical"
     android:padding="15dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        >
 
+        <TextView
+            android:id="@+id/act024_content_cell_tv_so_ttl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="SO"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/act024_content_cell_01_tv_hour_label"
+            android:gravity="center_vertical">
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Hora" />
+                android:src="@drawable/ic_file_download_black_24dp"
+                android:layout_gravity="right"
+                android:focusable="false"
+                />
 
-            <TextView
-                android:id="@+id/act024_content_cell_01_tv_hour"
-                android:layout_width="wrap_content"
+            <CheckBox
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="12:58" />
+                android:gravity="right|center_vertical"
+                android:buttonTint="@color/namoa_color_dark_blue"
+                android:focusable="false"
+                />
+
         </LinearLayout>
-
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/act024_content_cell_01_tv_so_ttl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SO"
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,7 +63,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/act024_content_cell_01_tv_so_code_label"
+                android:id="@+id/act024_content_cell_tv_so_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -67,7 +73,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="20dp"
+            android:layout_width="10dp"
             android:layout_height="0dp" />
 
         <LinearLayout
@@ -77,7 +83,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/act024_content_cell_01_tv_so_id_label"
+                android:id="@+id/act024_content_cell_tv_so_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -89,22 +95,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/act024_content_cell_01_tv_so_desc_lbl"
+        android:id="@+id/act024_content_cell_tv_so_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
         android:layout_weight="1"
         android:gravity="left"
-        android:layout_marginLeft="15dp"
         android:text="Desc" />
-
-
-    <TextView
-        android:id="@+id/act024_content_cell_01_tv_product_ttl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Product"
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -119,17 +116,17 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/act024_content_cell_01_tv_product_code_label"
+                android:id="@+id/act024_content_cell_tv_priority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:text="int.code" />
+                android:text="Priority" />
 
         </LinearLayout>
 
         <View
-            android:layout_width="20dp"
+            android:layout_width="10dp"
             android:layout_height="0dp" />
 
         <LinearLayout
@@ -139,25 +136,108 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/act024_content_cell_01_tv_product_id_label"
+                android:id="@+id/act024_content_cell_tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Ext.cod" />
+                android:text="Status" />
 
         </LinearLayout>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/act024_content_cell_01_tv_product_desc_lbl"
+        android:id="@+id/act024_content_cell_tv_deadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
         android:layout_weight="1"
         android:gravity="left"
+        android:text="Deadline" />
+
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_site"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:text="Desc" />
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Site" />
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_operation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Operation" />
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_contract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Contract" />
+
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_client"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Client" />
+
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_serial_ttl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Serial"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Product" />
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_serial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Serial" />
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_segment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Segment" />
+
+    <TextView
+        android:id="@+id/act024_content_cell_tv_category_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:text="Category price" />
 
 
 </LinearLayout>

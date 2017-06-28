@@ -17,6 +17,8 @@ public class SM_SO {
     @Expose
     private int so_code;
     @Expose
+    private String so_id;
+    @Expose
     private String so_desc;
     @Expose
     private int so_scn;
@@ -122,6 +124,14 @@ public class SM_SO {
 
     public void setSo_code(int so_code) {
         this.so_code = so_code;
+    }
+
+    public String getSo_id() {
+        return so_id;
+    }
+
+    public void setSo_id(String so_id) {
+        this.so_id = so_id;
     }
 
     public String getSo_desc() {
