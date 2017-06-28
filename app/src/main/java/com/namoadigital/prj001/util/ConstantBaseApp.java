@@ -72,6 +72,9 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT022_REQUESTING_PROCESS = "requesting_process";
     public static final String ACT022_MSTACKVALUES = "act022_mstackvalues";
 
+    public static final String ACT023_SO_HEADER_LIST = "so_header_list";
+
+
     /**
      * DataBase Definition
      */

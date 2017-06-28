@@ -107,6 +107,26 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             }
         });
 
+        btn_express.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callAct022T(context);
+            }
+        });
+
+    }
+
+    private void callAct022T(Context context) {
+        Intent mIntent = new Intent(context, Act022_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle == null){
+            bundle = new Bundle();
+        }
+        bundle.putString(Constant.ACT022_REQUESTING_PROCESS,Constant.MODULE_CHECKLIST);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

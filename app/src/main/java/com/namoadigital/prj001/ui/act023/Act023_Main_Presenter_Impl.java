@@ -47,6 +47,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
 
             case Constant.MODULE_CHECKLIST:
                 //mView.callAct008(context,product_code);
+                mView.callAct022(context);
                 break;
 
             case Constant.MODULE_SO:default:

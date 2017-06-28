@@ -28,12 +28,11 @@ public class Act022_Main_Presenter_Impl implements Act022_Main_Presenter {
     private MD_Product_GroupDao product_groupDao;
     private String requesting_process;
 
-    public Act022_Main_Presenter_Impl(Context context, Act022_Main_View mView, MD_ProductDao productDao, MD_Product_GroupDao product_groupDao, String requesting_process) {
+    public Act022_Main_Presenter_Impl(Context context, Act022_Main_View mView, MD_ProductDao productDao, MD_Product_GroupDao product_groupDao) {
         this.context = context;
         this.mView = mView;
         this.productDao = productDao;
         this.product_groupDao = product_groupDao;
-        this.requesting_process = requesting_process;
     }
 
     @Override
@@ -111,6 +110,11 @@ public class Act022_Main_Presenter_Impl implements Act022_Main_Presenter {
     }
 
     @Override
+    public void setRequesting_process(String requesting_process) {
+        this.requesting_process = requesting_process;
+    }
+
+    @Override
     public void onBtnHomeClicked() {
         setAdapterData(0, 0L, "");
     }
@@ -126,7 +130,7 @@ public class Act022_Main_Presenter_Impl implements Act022_Main_Presenter {
         switch (requesting_process){
 
             case Constant.MODULE_CHECKLIST:
-                mView.callAct008(context,product_code);
+                mView.callAct023(context,product_code);
                 break;
 
             case Constant.MODULE_SO:default:

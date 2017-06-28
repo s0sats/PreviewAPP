@@ -108,6 +108,13 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
 
         iniCurrentIndex();
         //
+        mPresenter = new Act022_Main_Presenter_Impl(
+                context,
+                this,
+                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        );
+        //
         mket_product_search = (MKEditTextNM) findViewById(R.id.act022_mket_product_search);
         mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
         //
@@ -126,15 +133,6 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         controls_sta.add(mket_product_search);
         //
         recoverIntentsInfo();
-        //
-        //
-        mPresenter = new Act022_Main_Presenter_Impl(
-                context,
-                this,
-                new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MD_Product_GroupDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                requesting_process
-        );
         //
         if (loadAdapter) {
             callSetAdapterData(mket_product_search.getText().toString().trim());
@@ -164,6 +162,8 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         if (bundle != null && bundle.containsKey(Constant.ACT022_REQUESTING_PROCESS)) {
             //
             requesting_process = bundle.getString(Constant.ACT022_REQUESTING_PROCESS);
+            //Seta valora do requesting_process no presenter.
+            mPresenter.setRequesting_process(requesting_process);
             //Se existe ACT022_MSTACKVALUES, significa que foi o clique de
             //voltar na proxima ela.
             if (bundle.containsKey(Constant.ACT022_MSTACKVALUES)) {
@@ -184,7 +184,10 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                         //
                         mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
                         //
-                        btn_back.setVisibility(View.VISIBLE);
+                        if(mStack.size() != 0){
+                            btn_back.setVisibility(View.VISIBLE);
+                        }
+
                     } catch (EmptyStackException stackExcep) {
                         resetSearch();
                     }catch (Exception e){

@@ -19,4 +19,6 @@ public interface Act022_Main_Presenter {
     void onBtnHomeClicked();
 
     void onBackPressedClicked();
+
+    void setRequesting_process(String requesting_process);
 }

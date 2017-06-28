@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -101,6 +102,8 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         );
 
         loadTranslation();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void loadTranslation() {
@@ -284,6 +287,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
             case Constant.MODULE_CHECKLIST:
                 ll_serial_full_desc.setVisibility(View.GONE);
                 ll_require_serial.setVisibility(View.VISIBLE);
+                btn_action.setText(hmAux_Trans.get("btn_create"));
                 break;
             case Constant.MODULE_SO:default:
                 ll_serial_full_desc.setVisibility(View.VISIBLE);
