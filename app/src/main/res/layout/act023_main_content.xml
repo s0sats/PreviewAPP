@@ -230,47 +230,29 @@
                         android:text="Location"
                         android:textSize="@dimen/font_size_item_md" />
 
-                    <TextView
-                        android:id="@+id/act023_tv_site"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_site"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="2dp"
+                        android:gravity="center_vertical"
+                        android:text="Site"
+                        />
+
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_site_zone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
+                        android:text="Zone"/>
 
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
-
-                    <TextView
-                        android:id="@+id/act023_tv_site_zone"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_site_zone_local"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
-                        android:hint="Zone"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
-
-                    <TextView
-                        android:id="@+id/act023_tv_site_zone_local"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
-                        android:hint="Local"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:text="Local"
+ />
 
                 </LinearLayout>
 
@@ -343,89 +325,51 @@
                         android:text="Properties"
                         android:textSize="@dimen/font_size_item_md" />
 
-                    <TextView
-                        android:id="@+id/act023_tv_brand"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_brand"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
-                        android:hint="Brand"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:layout_marginBottom="5dp" android:gravity="center_vertical"
+                        android:hint="Brand" />
 
-                    <TextView
-                        android:id="@+id/act023_tv_brand_model"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_brand_model"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
+                         android:gravity="center_vertical"
                         android:hint="Model"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+ />
 
-                    <TextView
-                        android:id="@+id/act023_tv_brand_color"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_brand_color"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
-                        android:hint="Color"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+                         android:hint="Color" />
 
-                    <TextView
-                        android:id="@+id/act023_tv_segment"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_segment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
                         android:gravity="center_vertical"
-                        android:hint="Segment"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:hint="Segment" />
 
-                    <TextView
-                        android:id="@+id/act023_tv_category_price"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_category_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
-                        android:hint="Category Price"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:hint="Category Price" />
 
-                    <TextView
-                        android:id="@+id/act023_tv_site_owner"
+                    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                        android:id="@+id/act023_ss_site_owner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/namoa_bottom_border_green"
-                        android:clickable="true"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:drawableTint="@color/namoa_dark_blue"
-                        android:gravity="center_vertical"
                         android:hint="Site Owner"
-                        android:minHeight="30dp"
-                        android:padding="10dp" />
+                        />
 
                 </LinearLayout>
 

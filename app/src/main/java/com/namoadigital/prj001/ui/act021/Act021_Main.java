@@ -123,7 +123,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         if(bundle == null){
             bundle = new Bundle();
         }
-        bundle.putString(Constant.ACT022_REQUESTING_PROCESS,Constant.MODULE_CHECKLIST);
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_CHECKLIST);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -145,7 +145,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         if(bundle == null){
             bundle = new Bundle();
         }
-        bundle.putString(Constant.ACT022_REQUESTING_PROCESS,Constant.MODULE_SO);
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_SO);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

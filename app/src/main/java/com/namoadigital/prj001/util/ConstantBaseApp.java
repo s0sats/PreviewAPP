@@ -14,8 +14,8 @@ public class ConstantBaseApp  extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "1.1.5";
-    public static final String PKG_CLEAN_APP = "7";
+    public static final String PRJ001_VERSION = "1.2.0";
+    public static final String PKG_CLEAN_APP = "8";
     //          ATUALIZAR ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -73,6 +73,11 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT022_MSTACKVALUES = "act022_mstackvalues";
 
     public static final String ACT023_SO_HEADER_LIST = "so_header_list";
+
+    public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";
+    public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
+    public static final String MAIN_PRODUCT_CODE = "main_product_code";
+    public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
 
 
     /**

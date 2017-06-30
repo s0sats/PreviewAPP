@@ -9,7 +9,7 @@ public class TSO_Search_Env {
     private String app_code;
     private String app_version;
     private String session_app;
-    private int product_code;
+    private Long product_code;
     private String serial_id;
     private String so_mult;
 
@@ -37,11 +37,11 @@ public class TSO_Search_Env {
         this.session_app = session_app;
     }
 
-    public int getProduct_code() {
+    public Long getProduct_code() {
         return product_code;
     }
 
-    public void setProduct_code(int product_code) {
+    public void setProduct_code(Long product_code) {
         this.product_code = product_code;
     }
 

@@ -42,7 +42,7 @@ public class WS_SO_Search extends IntentService {
 
         try {
 
-            int product_code = bundle.getInt(Constant.WS_SO_SEARCH_PRODUCT_CODE,-1);
+            Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE,-1L);
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID,"");
             String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT,"");
 
@@ -63,7 +63,7 @@ public class WS_SO_Search extends IntentService {
 
     }
 
-    private void processSO_Search(int product_code, String serial_id, String so_mult) {
+    private void processSO_Search(Long product_code, String serial_id, String so_mult) {
         //Seleciona traduções
         loadTranslation();
         //

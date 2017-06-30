@@ -17,9 +17,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act024.Act024_Main;
@@ -56,9 +62,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     private LinearLayout ll_serial_location;
     private TextView tv_serial_ttl;
     private TextView tv_serial_location_ttl;
-    private TextView tv_site;
-    private TextView tv_site_zone;
-    private TextView tv_site_zone_local;
+    private SearchableSpinner ss_site;
+    private SearchableSpinner ss_site_zone;
+    private SearchableSpinner ss_site_zone_local;
     private LinearLayout ll_serial_add_info;
     private TextView tv_serial_add_info_ttl;
     private TextView tv_info1;
@@ -66,14 +72,22 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     private TextView tv_info3;
     private TextView tv_serial_properties_ttl;
     private LinearLayout ll_serial_properties;
-    private TextView tv_brand;
-    private TextView tv_brand_model;
-    private TextView tv_brand_color;
-    private TextView tv_segment;
-    private TextView tv_category_price;
-    private TextView tv_site_owner;
+    private SearchableSpinner ss_brand;
+    private SearchableSpinner ss_brand_model;
+    private SearchableSpinner ss_brand_color;
+    private SearchableSpinner ss_segment;
+    private SearchableSpinner ss_category_price;
+    private SearchableSpinner ss_site_owner;
 
     private Button btn_action;
+
+    private MD_Product product;
+
+    private long product_code;
+    private int serial_required;
+    private int serial_allow_new;
+    //agendamento
+    private boolean isSchedule;
 
 
     @Override
@@ -148,8 +162,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         transList.add("segment_lbl");
         transList.add("category_price_lbl");
         transList.add("site_owner_lbl");
-        transList.add("btn_action_lbl");
         transList.add("btn_so_search");
+        transList.add("progress_so_search_ttl");
+        transList.add("progress_so_search_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -161,6 +176,8 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     }
 
     private void initVars() {
+        //Variavel q identifica se dados do produto são chamados do master data ou não.
+        isSchedule = false;
         //
         recoverIntentsInfo();
         //
@@ -168,7 +185,23 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 context,
                 this,
                 requesting_process,
-                bundle
+                bundle,
+                new Sync_ChecklistDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                new MD_ProductDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                product_code,
+                hmAux_Trans,
+                new GE_Custom_Form_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                isSchedule
         );
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act023_mket_serial);
@@ -180,10 +213,13 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_product_ttl.setTag("product_ttl");
         //
         tv_product_code_label = (TextView) findViewById(R.id.act023_tv_product_code_lbl);
+        tv_product_code_label.setTag("product_label");
         //
         tv_product_id_label = (TextView) findViewById(R.id.act023_tv_product_id_lbl);
+        tv_product_id_label.setTag("product_id_label");
         //
         tv_product_desc_value = (TextView) findViewById(R.id.act023_tv_product_desc_value);
+        tv_product_desc_value.setTag("product_desc_label");
         //
         ll_require_serial = (LinearLayout) findViewById(R.id.act023_ll_require_serial);
         //
@@ -207,14 +243,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_location_ttl = (TextView) findViewById(R.id.act023_tv_serial_location_ttl);
         tv_serial_location_ttl.setTag("serial_location_ttl");
         //
-        tv_site = (TextView) findViewById(R.id.act023_tv_site);
-        tv_site.setTag("site_lbl");
+        ss_site = (SearchableSpinner) findViewById(R.id.act023_ss_site);
+        ss_site.setTag("site_lbl");
         //
-        tv_site_zone = (TextView) findViewById(R.id.act023_tv_site_zone);
-        tv_site_zone.setTag("site_zone_lbl");
+        ss_site_zone = (SearchableSpinner) findViewById(R.id.act023_ss_site_zone);
+        ss_site_zone.setTag("site_zone_lbl");
         //
-        tv_site_zone_local = (TextView) findViewById(R.id.act023_tv_site_zone_local);
-        tv_site_zone_local.setTag("site_zone_local_lbl");
+        ss_site_zone_local = (SearchableSpinner) findViewById(R.id.act023_ss_site_zone_local);
+        ss_site_zone_local.setTag("site_zone_local_lbl");
         //
         ll_serial_add_info = (LinearLayout) findViewById(R.id.act023_ll_serial_add_info);
         //
@@ -235,48 +271,52 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_properties_ttl = (TextView) findViewById(R.id.act023_tv_serial_properties_ttl);
         tv_serial_properties_ttl.setTag("serial_properties_ttl");
         //
-        tv_brand = (TextView) findViewById(R.id.act023_tv_brand);
-        tv_brand.setTag("brand_lbl");
+        ss_brand = (SearchableSpinner) findViewById(R.id.act023_ss_brand);
+        ss_brand.setTag("brand_lbl");
         //
-        tv_brand_model = (TextView) findViewById(R.id.act023_tv_brand_model);
-        tv_brand_model.setTag("brand_model_lbl");
+        ss_brand_model = (SearchableSpinner) findViewById(R.id.act023_ss_brand_model);
+        ss_brand_model.setTag("brand_model_lbl");
         //
-        tv_brand_color = (TextView) findViewById(R.id.act023_tv_brand_color);
-        tv_brand_color.setTag("brand_color_lbl");
+        ss_brand_color = (SearchableSpinner) findViewById(R.id.act023_ss_brand_color);
+        ss_brand_color.setTag("brand_color_lbl");
         //
-        tv_segment = (TextView) findViewById(R.id.act023_tv_segment);
-        tv_segment.setTag("segment_lbl");
+        ss_segment = (SearchableSpinner) findViewById(R.id.act023_ss_segment);
+        ss_segment.setTag("segment_lbl");
         //
-        tv_category_price = (TextView) findViewById(R.id.act023_tv_category_price);
-        tv_category_price.setTag("category_price_lbl");
+        ss_category_price = (SearchableSpinner) findViewById(R.id.act023_ss_category_price);
+        ss_category_price.setTag("category_price_lbl");
         //
-        tv_site_owner = (TextView) findViewById(R.id.act023_tv_site_owner);
-        tv_site_owner.setTag("site_owner_lbl");
+        ss_site_owner = (SearchableSpinner) findViewById(R.id.act023_ss_site_owner);
+        ss_site_owner.setTag("site_owner_lbl");
         //
         btn_action = (Button) findViewById(R.id.act023_btn_action);
         btn_action.setTag("btn_action_lbl");
         //
         //Adiciona Views na lista de tradução
         views.add(tv_product_ttl);
+//        views.add(tv_product_code_label);
+//        views.add(tv_product_id_label);
+//        views.add(tv_product_desc_label);
         views.add(tv_required_lbl);
         views.add(tv_allow_new_lbl);
         views.add(tv_serial_ttl);
         views.add(tv_serial_location_ttl);
-        views.add(tv_site);
-        views.add(tv_site_zone);
-        views.add(tv_site_zone_local);
+        views.add(ss_site);
+        views.add(ss_site_zone);
+        views.add(ss_site_zone_local);
         views.add(tv_serial_add_info_ttl);
         views.add(tv_info1);
         views.add(tv_info2);
         views.add(tv_info3);
         views.add(tv_serial_properties_ttl);
-        views.add(tv_brand);
-        views.add(tv_brand_model);
-        views.add(tv_brand_color);
-        views.add(tv_segment);
-        views.add(tv_category_price);
-        views.add(tv_site_owner);
+        views.add(ss_brand);
+        views.add(ss_brand_model);
+        views.add(ss_brand_color);
+        views.add(ss_segment);
+        views.add(ss_category_price);
+        views.add(ss_site_owner);
         views.add(btn_action);
+
         //
         layoutConfiguration();
 
@@ -304,7 +344,34 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         bundle = getIntent().getExtras();
         //
         if(bundle != null){
-            requesting_process = bundle.getString(Constant.ACT022_REQUESTING_PROCESS,"");
+            if(bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)){
+                requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS,"");
+                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE,"0"));
+                isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE,false);
+            }else{
+                /**
+                 *
+                 *
+                 *
+                 *  TRATAR CASO NÃO RECEBA O PARAMETRO DE REQUESTING PROCESS
+                 *
+                 *
+                 *
+                 *
+                 */
+            }
+
+        }else{
+            /**
+             *
+             *
+             *
+             *  TRATAR CASO NÃO RECEBA BUNDLE
+             *
+             *
+             *
+             *
+             */
 
         }
 
@@ -346,25 +413,87 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     }
 
-    private void initActions() {
+    @Override
+    public void setProductValues(MD_Product md_product) {
+        product = md_product;
+        //
+        tv_product_code_label.setText(
+                hmAux_Trans.get("product_label")+" "+
+                        String.valueOf(md_product.getProduct_code())
 
+        );
+        tv_product_id_label.setText(
+                hmAux_Trans.get("product_id_label")+" "+
+                        md_product.getProduct_id());
+        tv_product_desc_value.setText(md_product.getProduct_desc());
+        //
+        serial_required = md_product.getRequire_serial();
+        serial_allow_new = md_product.getAllow_new_serial_cl();
+        //
+        tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
+        if( md_product.getRequire_serial() == 1){
+            tv_required_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+        }
+        //
+        tv_allow_new_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
+        if( md_product.getAllow_new_serial_cl() == 1){
+            tv_allow_new_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+        }
+    }
+
+    private void initActions() {
+        //
+        mPresenter.getProductInfo();
+        //
+        ss_site.setmEnabled(false);
+        //
+        ss_site_zone.setmEnabled(false);
+        //
         btn_action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                showPD();
-
-                mPresenter.executeSoSearch(1,"x",null);
-
+                mPresenter.validadeSerialFlow(
+                        mket_serial_id.getText().toString(),
+                        serial_required,
+                        serial_allow_new
+                );
             }
         });
 
     }
 
-    private void showPD() {
-        enableProgressDialog("SO","Consultando SO","cancel","ok");
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
+    @Override
+    public void fieldFocus() {
+        mket_serial_id.requestFocus();
+    }
+
+    @Override
+    public void showAlertDialog(String title, String msg) {
+
+        ToolBox.alertMSG(
+                context,
+                title,
+                msg,
+                null,
+                0
+        );
+
+    }
+
+    @Override
+    public void continueOffline() {
+
+    }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {

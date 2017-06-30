@@ -159,14 +159,14 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         bundle = getIntent().getExtras();
         //Sempre deve existir bundle, pois pelo menos o parametro
         //ACT022_REQUESTING_PROCESS deve existir
-        if (bundle != null && bundle.containsKey(Constant.ACT022_REQUESTING_PROCESS)) {
+        if (bundle != null && bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)) {
             //
-            requesting_process = bundle.getString(Constant.ACT022_REQUESTING_PROCESS);
+            requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS);
             //Seta valora do requesting_process no presenter.
             mPresenter.setRequesting_process(requesting_process);
             //Se existe ACT022_MSTACKVALUES, significa que foi o clique de
             //voltar na proxima ela.
-            if (bundle.containsKey(Constant.ACT022_MSTACKVALUES)) {
+            if (bundle.containsKey(Constant.MAIN_MSTACKVALUES)) {
                 if (mPresenter.getProductList().size() == 1) {
                     loadAdapter = false;
                     //callAct006(context);
@@ -176,7 +176,7 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                         //Por causa do Bug no Cast de ArrayList para Stack
                         //é necessario receber dados da pilha como ArrayList
                         //e depois adicionar todos na pilha usando addAll()
-                        ArrayList<HMAux> teste = (ArrayList<HMAux>) bundle.getSerializable(Constant.ACT022_MSTACKVALUES);
+                        ArrayList<HMAux> teste = (ArrayList<HMAux>) bundle.getSerializable(Constant.MAIN_MSTACKVALUES);
                         //
                         mStack.addAll(teste);
                         //Atualiza indice atual pegando o ultimo item da pilha
@@ -380,8 +380,8 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
-        bundle.putSerializable(Constant.ACT022_MSTACKVALUES, mStack);
-        bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
+        bundle.putSerializable(Constant.MAIN_MSTACKVALUES, mStack);
+        bundle.putString(Constant.MAIN_PRODUCT_CODE, product_code);
         //
         mIntent.putExtras(bundle);
 
