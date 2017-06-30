@@ -37,9 +37,12 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String COLOR_CODE = "color_code";
     public static final String SEGMENT_CODE = "color_code";
     public static final String CATEGORY_PRICE_CODE = "color_code";
+    public static final String ADD_INF1 = "add_inf1";
+    public static final String ADD_INF2 = "add_inf2";
+    public static final String ADD_INF3 = "add_inf3";
     public static final String UPDATE_REQUIRED = "color_code";
 
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, UPDATE_REQUIRED};
+    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1, ADD_INF2, ADD_INF3, UPDATE_REQUIRED};
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -251,10 +254,26 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             md_product_serial.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             md_product_serial.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
             md_product_serial.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
-            md_product_serial.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
-            md_product_serial.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
-            md_product_serial.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
-            md_product_serial.setSite_code_owner(cursor.getInt(cursor.getColumnIndex(SITE_CODE_OWNER)));
+            if(cursor.isNull(cursor.getColumnIndex(SITE_CODE))){
+                md_product_serial.setSite_code(null);
+            }else{
+                md_product_serial.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_CODE))){
+                md_product_serial.setZone_code(null);
+            }else{
+                md_product_serial.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LOCAL_CODE))){
+                md_product_serial.setLocal_code(null);
+            }else{
+                md_product_serial.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SITE_CODE_OWNER))){
+                md_product_serial.setSite_code_owner(null);
+            }else{
+                md_product_serial.setSite_code_owner(cursor.getInt(cursor.getColumnIndex(SITE_CODE_OWNER)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(BRAND_CODE))){
                 md_product_serial.setBrand_code(null);
             }else{
@@ -280,6 +299,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }else{
                 md_product_serial.setCategory_price_code(cursor.getInt(cursor.getColumnIndex(CATEGORY_PRICE_CODE)));
             }
+
+            md_product_serial.setAdd_inf1(cursor.getString(cursor.getColumnIndex(ADD_INF1)));
+            md_product_serial.setAdd_inf2(cursor.getString(cursor.getColumnIndex(ADD_INF2)));
+            md_product_serial.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
             md_product_serial.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
 
             return md_product_serial;
@@ -306,18 +329,27 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             if (md_product_serial.getSerial_id() != null){
                 contentValues.put(SERIAL_ID , md_product_serial.getSerial_id());
             }
-            if (md_product_serial.getSite_code() > -1){
-                contentValues.put(SITE_CODE, md_product_serial.getSite_code());
-            }
-            if (md_product_serial.getZone_code() > -1){
-                contentValues.put(ZONE_CODE, md_product_serial.getZone_code());
-            }
-            if (md_product_serial.getLocal_code() > -1){
-                contentValues.put(LOCAL_CODE, md_product_serial.getLocal_code());
-            }
-            if (md_product_serial.getSite_code_owner() > -1){
-                contentValues.put(SITE_CODE_OWNER, md_product_serial.getSite_code_owner());
-            }
+            contentValues.put(SITE_CODE, md_product_serial.getSite_code());
+            contentValues.put(ZONE_CODE, md_product_serial.getZone_code());
+            contentValues.put(LOCAL_CODE, md_product_serial.getLocal_code());
+            contentValues.put(SITE_CODE_OWNER, md_product_serial.getSite_code_owner());
+            contentValues.put(BRAND_CODE, md_product_serial.getBrand_code());
+            contentValues.put(MODEL_CODE, md_product_serial.getModel_code());
+            contentValues.put(COLOR_CODE, md_product_serial.getColor_code());
+            contentValues.put(SEGMENT_CODE, md_product_serial.getSegment_code());
+            contentValues.put(CATEGORY_PRICE_CODE, md_product_serial.getCategory_price_code());
+//            if (md_product_serial.getSite_code() > -1){
+//                contentValues.put(SITE_CODE, md_product_serial.getSite_code());
+//            }
+//            if (md_product_serial.getZone_code() > -1){
+//                contentValues.put(ZONE_CODE, md_product_serial.getZone_code());
+//            }
+//            if (md_product_serial.getLocal_code() > -1){
+//                contentValues.put(LOCAL_CODE, md_product_serial.getLocal_code());
+//            }
+//            if (md_product_serial.getSite_code_owner() > -1){
+//                contentValues.put(SITE_CODE_OWNER, md_product_serial.getSite_code_owner());
+//            }
 //            if (md_product_serial.getBrand_code() > -1){
 //                contentValues.put(BRAND_CODE, md_product_serial.getBrand_code());
 //            }
@@ -333,6 +365,16 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 //            if (md_product_serial.getCategory_price_code() > -1){
 //                contentValues.put(CATEGORY_PRICE_CODE, md_product_serial.getCategory_price_code());
 //            }
+            if (md_product_serial.getAdd_inf1() != null){
+                contentValues.put(ADD_INF1 , md_product_serial.getAdd_inf1());
+            }
+            if (md_product_serial.getAdd_inf2() != null){
+                contentValues.put(ADD_INF2 , md_product_serial.getAdd_inf2());
+            }
+            if (md_product_serial.getAdd_inf3() != null){
+                contentValues.put(ADD_INF3 , md_product_serial.getAdd_inf3());
+            }
+
             if (md_product_serial.getUpdate_required() > -1){
                 contentValues.put(UPDATE_REQUIRED, md_product_serial.getUpdate_required());
             }

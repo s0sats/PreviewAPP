@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.TSerial_Search_Env;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.model.TSerial_Search_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -29,6 +31,7 @@ public class WS_Serial_Search extends IntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_serial_search";
+    private Gson gson = new GsonBuilder().serializeNulls().create();
 
 
     public WS_Serial_Search() {
@@ -46,8 +49,9 @@ public class WS_Serial_Search extends IntentService {
             String product_code = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE);
             String product_id = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID);
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
+            boolean save_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS,false);
 
-            processWSSerialSearch(product_code, product_id,serial_id );
+            processWSSerialSearch(product_code, product_id,serial_id ,save_serial);
 
         }catch (Exception e) {
 
@@ -64,12 +68,10 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code,String product_id, String serial_id) {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, boolean save_serial) {
 
         //Seleciona traduções
         loadTranslation();
-
-        Gson gson = new GsonBuilder().serializeNulls().create();
 
         TSerial_Search_Env env  =  new TSerial_Search_Env();
 
@@ -87,12 +89,71 @@ public class WS_Serial_Search extends IntentService {
                 gson.toJson(env)
         );
 
+        boolean continueProcess = false;
+        if(save_serial){
+            continueProcess = saveSerial(resultado);
 
-        TSerial_Search_Rec rec = gson.fromJson(
+        }else{
+            TSerial_Search_Rec  rec = gson.fromJson(
+                    resultado,
+                    TSerial_Search_Rec.class
+            );
+            continueProcess = callProcessWSCheckValidation(rec);
+
+        }
+        if(!continueProcess){
+            return;
+        }
+
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
+
+    }
+
+    private boolean saveSerial(String resultado) {
+//
+//        String teste = "{\"customer_code\":\"1\",\"product_code\":\"23\",\"product_id\":\"btt1\",\"product_desc\":\"Teste Batata\",\"serial_code\":\"1\",\"serial_id\":\"qwer\",\"site_code\":\"15\",\"zone_code\":\"3\",\"local_code\":\"7\",\"add_inf1\":\"NAda\",\"add_inf2\":\"NAda2\",\"add_inf3\":\"NAda3\",\"site_code_owner\":\"14\",\"brand_code\":\"1\",\"model_code\":\"2\",\"color_code\":\"3\",\"segment_code\":\"3\",\"category_price_code\":\"1\"}";
+//
+//        MD_Product_Serial serial = gson.fromJson(teste, MD_Product_Serial.class);
+//
+////        String ig =  serial.getSerial_id();
+//
+//
+//        MD_Product_SerialDao serialDao =
+//                new MD_Product_SerialDao(
+//                        getApplicationContext(),
+//                        ToolBox_Con.customDBPath(
+//                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//        //Insere no banco os dados do Serial
+//        serialDao.addUpdate(serial);
+//
+//        return true;
+
+        TSerial_Search_Save_Rec rec = gson.fromJson(
                 resultado,
-                TSerial_Search_Rec.class
+                TSerial_Search_Save_Rec.class
         );
 
+        if(!callProcessWSCheckValidation(rec)){
+           return false;
+        }else{
+            //
+            MD_Product_SerialDao serialDao =
+                    new MD_Product_SerialDao(
+                            getApplicationContext(),
+                            ToolBox_Con.customDBPath(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+            //Insere no banco os dados do Serial
+            //serialDao.addUpdate(rec.getRecord(),false);//insere varios
+            serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
+        }
+        return true;
+    }
+
+    private boolean callProcessWSCheckValidation(TSerial_Search_Rec rec){
         if (!ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
                 rec.getValidation(),
@@ -100,15 +161,28 @@ public class WS_Serial_Search extends IntentService {
                 rec.getLink_url(),
                 1,
                 1
-                )
-        ) {
-            return;
+        )
+                ) {
+            return false;
         }
-
-
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
-
+        return true;
     }
+
+    private boolean callProcessWSCheckValidation(TSerial_Search_Save_Rec rec){
+        if (!ToolBox_Inf.processWSCheckValidation(
+                getApplicationContext(),
+                rec.getValidation(),
+                rec.getError_msg(),
+                rec.getLink_url(),
+                1,
+                1
+        )
+                ) {
+            return false;
+        }
+        return true;
+    }
+
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();

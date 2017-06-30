@@ -18,6 +18,10 @@ public interface Act023_Main_Presenter {
 
     void onBackPressedClicked();
 
+    void executeSerialSearch(Long product_code, String serial_id);
+
     void executeSoSearch(Long product_code, String serial_id);
+
+    void getSerialInfo(Long product_code, String serial_id);
 
 }

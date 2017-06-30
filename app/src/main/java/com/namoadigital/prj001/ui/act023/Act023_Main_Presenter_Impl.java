@@ -7,9 +7,12 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.util.Constant;
@@ -28,12 +31,13 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     private Sync_ChecklistDao syncChecklistDao;
     private MD_ProductDao mdProductDao;
     private Long product_code;
-    private boolean downloadStarted = false;
     private HMAux hmAux_Trans;
     private GE_Custom_Form_OperationDao formOperationDao;
+    private MD_Product_SerialDao serialDao;
     private boolean isSchedule;
+    private boolean downloadStarted = false;
 
-    public Act023_Main_Presenter_Impl(Context context, Act023_Main_View mView, String requesting_process, Bundle bundle, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule) {
+    public Act023_Main_Presenter_Impl(Context context, Act023_Main_View mView, String requesting_process, Bundle bundle, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, MD_Product_SerialDao serialDao, boolean isSchedule) {
         this.context = context;
         this.mView = mView;
         this.requesting_process = requesting_process;
@@ -43,6 +47,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         this.product_code = product_code;
         this.hmAux_Trans = hmAux_Trans;
         this.formOperationDao = formOperationDao;
+        this.serialDao = serialDao;
         this.isSchedule = isSchedule;
     }
 
@@ -119,6 +124,22 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 );
     }
 
+    @Override
+    public void getSerialInfo(Long product_code, String serial_id) {
+        //
+        HMAux md_product_serial = serialDao.getByStringHM(
+                new MD_Product_Serial_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        //
+
+        mView.setSerialValues(md_product_serial);
+
+    }
+
     private boolean isValidProduct(MD_Product md_product){
         //Erro, produto não encontrado
         if(md_product != null && md_product.getProduct_code() > 0){
@@ -157,7 +178,8 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                     hmAux_Trans.get("progress_so_search_msg")
             );
             //
-            executeSoSearch(product_code,serial);
+            executeSerialSearch(product_code,serial);
+            // executeSoSearch(product_code,serial);
 
         }else{
             mView.fieldFocus();
@@ -209,6 +231,23 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 break;
 
         }
+    }
+
+    @Override
+    public void executeSerialSearch(Long product_code, String serial_id) {
+        mView.setWs_process(Act023_Main.SO_WS_SEARCH_SERIAL);
+
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, "");
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS, true);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

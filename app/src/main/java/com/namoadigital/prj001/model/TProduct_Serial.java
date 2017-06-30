@@ -7,7 +7,7 @@ package com.namoadigital.prj001.model;
 public class TProduct_Serial {
 
     private long customer_code;
-    private long product_code;
+    private Long product_code;
     private String product_id;
     private String product_desc;
     private String serial_id;
@@ -20,11 +20,11 @@ public class TProduct_Serial {
         this.customer_code = customer_code;
     }
 
-    public long getProduct_code() {
+    public Long getProduct_code() {
         return product_code;
     }
 
-    public void setProduct_code(long product_code) {
+    public void setProduct_code(Long product_code) {
         this.product_code = product_code;
     }
 

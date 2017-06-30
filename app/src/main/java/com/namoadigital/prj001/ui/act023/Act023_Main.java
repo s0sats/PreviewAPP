@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,9 +25,13 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act024.Act024_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -41,6 +46,9 @@ import java.util.List;
  */
 
 public class Act023_Main extends Base_Activity implements Act023_Main_View {
+
+    public static final String SO_WS_SEARCH_SERIAL = "SO_WS_SEARCH_SERIAL";
+    public static final String SO_WS_SEARCH_SO = "SO_WS_SEARCH_SO";
 
     private Act023_Main_Presenter mPresenter;
     private Bundle bundle;
@@ -88,6 +96,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     private int serial_allow_new;
     //agendamento
     private boolean isSchedule;
+    private String ws_process;
 
 
     @Override
@@ -175,6 +184,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         );
     }
 
+    @Override
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
+    }
+
     private void initVars() {
         //Variavel q identifica se dados do produto são chamados do master data ou não.
         isSchedule = false;
@@ -198,6 +212,10 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 product_code,
                 hmAux_Trans,
                 new GE_Custom_Form_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                new MD_Product_SerialDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
@@ -323,15 +341,16 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     }
 
     private void layoutConfiguration() {
-        switch (requesting_process){
+        switch (requesting_process) {
 
             case Constant.MODULE_CHECKLIST:
                 ll_serial_full_desc.setVisibility(View.GONE);
                 ll_require_serial.setVisibility(View.VISIBLE);
                 btn_action.setText(hmAux_Trans.get("btn_create"));
                 break;
-            case Constant.MODULE_SO:default:
-                ll_serial_full_desc.setVisibility(View.VISIBLE);
+            case Constant.MODULE_SO:
+            default:
+                ll_serial_full_desc.setVisibility(View.GONE);
                 ll_require_serial.setVisibility(View.GONE);
                 btn_action.setText(hmAux_Trans.get("btn_so_search"));
                 break;
@@ -343,12 +362,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
         bundle = getIntent().getExtras();
         //
-        if(bundle != null){
-            if(bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)){
-                requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS,"");
-                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE,"0"));
-                isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE,false);
-            }else{
+        if (bundle != null) {
+            if (bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)) {
+                requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS, "");
+                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
+                isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE, false);
+            } else {
                 /**
                  *
                  *
@@ -361,7 +380,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                  */
             }
 
-        }else{
+        } else {
             /**
              *
              *
@@ -374,7 +393,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
              */
 
         }
-
 
 
     }
@@ -397,16 +415,16 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
         mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
         mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value =Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;
 
         //Aplica informações do rodapé -fim
 
@@ -418,26 +436,26 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         product = md_product;
         //
         tv_product_code_label.setText(
-                hmAux_Trans.get("product_label")+" "+
+                hmAux_Trans.get("product_label") + " " +
                         String.valueOf(md_product.getProduct_code())
 
         );
         tv_product_id_label.setText(
-                hmAux_Trans.get("product_id_label")+" "+
+                hmAux_Trans.get("product_id_label") + " " +
                         md_product.getProduct_id());
         tv_product_desc_value.setText(md_product.getProduct_desc());
         //
         serial_required = md_product.getRequire_serial();
         serial_allow_new = md_product.getAllow_new_serial_cl();
         //
-        tv_required_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
-        if( md_product.getRequire_serial() == 1){
-            tv_required_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+        tv_required_val.setText("(" + hmAux_Trans.get("NO").toUpperCase() + ")");
+        if (md_product.getRequire_serial() == 1) {
+            tv_required_val.setText("(" + hmAux_Trans.get("YES").toUpperCase() + ")");
         }
         //
-        tv_allow_new_val.setText("("+hmAux_Trans.get("NO").toUpperCase()+")");
-        if( md_product.getAllow_new_serial_cl() == 1){
-            tv_allow_new_val.setText("("+hmAux_Trans.get("YES").toUpperCase()+")");
+        tv_allow_new_val.setText("(" + hmAux_Trans.get("NO").toUpperCase() + ")");
+        if (md_product.getAllow_new_serial_cl() == 1) {
+            tv_allow_new_val.setText("(" + hmAux_Trans.get("YES").toUpperCase() + ")");
         }
     }
 
@@ -445,7 +463,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         mPresenter.getProductInfo();
         //
-        ss_site.setmEnabled(false);
+       // ss_site.setmEnabled(false);
         //
         ss_site_zone.setmEnabled(false);
         //
@@ -496,26 +514,77 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     }
 
     @Override
+    public void setSerialValues(HMAux md_product_serial) {
+
+        ll_serial_full_desc.setVisibility(View.VISIBLE);
+
+        HMAux hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_SiteDao.SITE_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_SiteDao.SITE_DESC));
+        ss_site.setmValue(hmAux);
+        MD_SiteDao siteDao =  new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ),
+                Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<HMAux> siteList = (ArrayList<HMAux>) siteDao.query_HM(
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        ss_site.setmOption(siteList);
+
+
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Site_ZoneDao.ZONE_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC));
+        ss_site_zone.setmValue(hmAux);
+
+        ss_site_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+                Toast.makeText(context,hmAux.get(SearchableSpinner.DESCRIPTION),Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
-        switch (requesting_process){
+        switch (requesting_process) {
 
             case Constant.MODULE_CHECKLIST:
                 //mView.callAct008(context,product_code);
                 break;
 
-            case Constant.MODULE_SO:default:
-                Gson gson = new GsonBuilder().serializeNulls().create();
-                ArrayList<SM_SO> sos = gson.fromJson(
-                        mLink,
-                        new TypeToken<ArrayList<SM_SO>>() {
-                        }.getType());
+            case Constant.MODULE_SO:
 
-                if(sos != null){
-                   mPresenter.defineForwardFlow(mLink);
+                if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
+                    mPresenter.getSerialInfo(product_code,mket_serial_id.getText().toString().trim());
                 }
+
+                if (ws_process.equals(SO_WS_SEARCH_SO)) {
+                    Gson gson = new GsonBuilder().serializeNulls().create();
+                    ArrayList<SM_SO> sos = gson.fromJson(
+                            mLink,
+                            new TypeToken<ArrayList<SM_SO>>() {
+                            }.getType());
+
+                    if (sos != null) {
+                        mPresenter.defineForwardFlow(mLink);
+                    }
+
+                }
+
                 break;
+            default:
+                break;
+
         }
         progressDialog.dismiss();
 
