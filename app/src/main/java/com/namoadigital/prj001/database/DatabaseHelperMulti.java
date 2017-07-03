@@ -62,6 +62,9 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
             script.append("create table if not exists [md_brand_models]([customer_code] int not null,[brand_code] int not null,[model_code] int not null,[model_id] text not null collate nocase,[model_desc] text not null collate nocase,constraint [pk_md_brand_models] primary key([customer_code],[brand_code],[model_code]));");
             script.append("create table if not exists [md_brand_colors]([customer_code] int not null,[brand_code] int not null,[color_code] int not null,[color_id] text not null collate nocase,[color_desc] text not null collate nocase,constraint [pk_md_brand_colors] primary key([customer_code],[brand_code],[color_code]));");
             script.append("create table if not exists [md_partners]([customer_code] int not null,[partner_code] int not null,[partner_id] text not null collate nocase,[partner_desc] text not null collate nocase,constraint [pk_md_partners] primary key([customer_code],[partner_code]));");
+            script.append("create table if not exists [md_product_brands]([customer_code] int not null,[product_code] int not null,[brand_code] int not null,constraint [pk_md_product_brands] primary key([customer_code],[product_code],[brand_code]));");
+            script.append("create table if not exists [md_product_segments]([customer_code] int not null,[product_code] int not null,[segment_code] int not null,constraint [pk_md_product_segments] primary key([customer_code],[product_code],[segment_code]));");
+            script.append("create table if not exists [md_product_category_prices]([customer_code] int not null,[product_code] int not null,[category_price_code] int not null,constraint [pk_md_product_category_prices] primary key([customer_code],[product_code],[category_price_code]));");
 
             //
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_PRJ001', 'APP PRJ 01');");
