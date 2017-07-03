@@ -8,10 +8,10 @@ import com.namoadigital.prj001.database.Specification;
  * Created by DANIEL.LUCHE on 26/01/2017.
  */
 
-public class MD_Site_Sql_003 implements Specification {
-    private Long s_customer_code;
+public class MD_Site_Sql_SS implements Specification {
+    private String s_customer_code;
 
-    public MD_Site_Sql_003(Long s_customer_code) {
+    public MD_Site_Sql_SS(String s_customer_code) {
         this.s_customer_code = s_customer_code;
     }
 

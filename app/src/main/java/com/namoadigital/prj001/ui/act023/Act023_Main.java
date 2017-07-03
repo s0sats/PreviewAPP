@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,14 +23,27 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.MD_BrandDao;
+import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
+import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
+import com.namoadigital.prj001.dao.MD_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Brand_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Category_Price_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act024.Act024_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -41,6 +53,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.dao.MD_Product_SerialDao.SITE_CODE_OWNER;
+
 /**
  * Created by d.luche on 22/06/2017.
  */
@@ -49,6 +63,8 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     public static final String SO_WS_SEARCH_SERIAL = "SO_WS_SEARCH_SERIAL";
     public static final String SO_WS_SEARCH_SO = "SO_WS_SEARCH_SO";
+
+    public static final String SITE_DESC_OWNER = "site_desc_owner";
 
     private Act023_Main_Presenter mPresenter;
     private Bundle bundle;
@@ -515,42 +531,198 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     @Override
     public void setSerialValues(HMAux md_product_serial) {
-
+        //
+        spinnersInitializer();
+        //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
-
+        //
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_SiteDao.SITE_CODE));
         hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_SiteDao.SITE_DESC));
+        //
         ss_site.setmValue(hmAux);
-        MD_SiteDao siteDao =  new MD_SiteDao(
-                context,
-                ToolBox_Con.customDBPath(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ),
-                Constant.DB_VERSION_CUSTOM
-        );
-        ArrayList<HMAux> siteList = (ArrayList<HMAux>) siteDao.query_HM(
-                new MD_Site_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-
-        ss_site.setmOption(siteList);
-
-
+        //
         hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Site_ZoneDao.ZONE_CODE));
         hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC));
         ss_site_zone.setmValue(hmAux);
-
-        ss_site_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(HMAux hmAux) {
-                Toast.makeText(context,hmAux.get(SearchableSpinner.DESCRIPTION),Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID));
+        ss_site_zone_local.setmValue(hmAux);
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_BrandDao.BRAND_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_BrandDao.BRAND_DESC));
+        ss_brand.setmValue(hmAux);
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Brand_ModelDao.MODEL_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC));
+        ss_brand_model.setmValue(hmAux);
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Brand_ColorDao.COLOR_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC));
+        ss_brand_color.setmValue(hmAux);
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_SegmentDao.SEGMENT_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_SegmentDao.SEGMENT_DESC));
+        ss_segment.setmValue(hmAux);
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_CODE));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC));
+        ss_category_price.setmValue(hmAux);
+        //
+        hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID,md_product_serial.get(SITE_CODE_OWNER));
+        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(SITE_DESC_OWNER));
+        ss_site_owner.setmValue(hmAux);
     }
+
+    private void spinnersInitializer() {
+        // Site
+        resetSiteSS();
+        // Site Zone
+        resetZoneSS();
+        // Site Zone Local
+        resetLocalSS();
+        // Site Brand
+        resetBrandSS();
+        // Site Brand Model
+        resetModelSS();
+        // Site Brand Color
+        resetColorSS();
+        // Segment
+        resetSegment();
+        // Category Price
+        resetCategoryPrice();
+        // Site Owner
+        resetSiteOwner();
+    }
+
+    private void resetSiteOwner() {
+        MD_SiteDao siteDao =  new MD_SiteDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> siteOwnerList = (ArrayList<HMAux>) siteDao.query_HM(
+                new MD_Site_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+        //
+        ss_site_owner.setmOption(siteOwnerList);
+    }
+
+    private void resetCategoryPrice() {
+        MD_Category_PriceDao categoryPriceDao =  new MD_Category_PriceDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> categoryPriceList = (ArrayList<HMAux>) categoryPriceDao.query_HM(
+                new MD_Category_Price_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        String.valueOf(product_code)
+                ).toSqlQuery()
+        );
+        //
+        ss_category_price.setmOption(categoryPriceList);
+    }
+
+    private void resetSegment() {
+        MD_SegmentDao segmentDao =  new MD_SegmentDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> segmentList = (ArrayList<HMAux>) segmentDao.query_HM(
+                new MD_Segment_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        String.valueOf(product_code)
+                ).toSqlQuery()
+        );
+        //
+        ss_segment.setmOption(segmentList);
+    }
+
+    private void resetColorSS() {
+        MD_Brand_ColorDao brandColorDao =  new MD_Brand_ColorDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> colorList = (ArrayList<HMAux>) brandColorDao.query_HM(
+                new MD_Brand_Color_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        String.valueOf(product_code),
+                        ss_brand.getmValue().get(SearchableSpinner.ID)
+                ).toSqlQuery()
+        );
+        //
+        ss_brand_color.setmOption(colorList);
+    }
+
+    private void resetModelSS() {
+        MD_Brand_ModelDao brandModelDao =  new MD_Brand_ModelDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> modelList = (ArrayList<HMAux>) brandModelDao.query_HM(
+                new MD_Brand_Model_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        String.valueOf(product_code),
+                        ss_brand.getmValue().get(SearchableSpinner.ID)
+                ).toSqlQuery()
+        );
+        //
+        ss_brand_model.setmOption(modelList);
+    }
+
+    private void resetBrandSS() {
+        MD_BrandDao brandDao =  new MD_BrandDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> brandList = (ArrayList<HMAux>) brandDao.query_HM(
+                new MD_Brand_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        String.valueOf(product_code)
+                ).toSqlQuery()
+        );
+        //
+        ss_brand.setmOption(brandList);
+    }
+
+
+    private void resetSiteSS(){
+        MD_SiteDao siteDao =  new MD_SiteDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        //
+        ArrayList<HMAux> siteList = (ArrayList<HMAux>) siteDao.query_HM(
+                new MD_Site_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+        //
+        ss_site.setmOption(siteList);
+    }
+
+    private void resetZoneSS(){
+        MD_Site_ZoneDao siteZoneDao =  new MD_Site_ZoneDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
+        ArrayList<HMAux> zoneList = (ArrayList<HMAux>) siteZoneDao.query_HM(
+                new MD_Site_Zone_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        ss_site.getmValue().get(SearchableSpinner.ID)
+                ).toSqlQuery()
+        );
+        //
+        ss_site_zone.setmOption(zoneList);
+    }
+
+    private void resetLocalSS() {
+        MD_Site_Zone_LocalDao  siteZoneLocalDao =  new MD_Site_Zone_LocalDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM) ;
+        //
+        ArrayList<HMAux> localList = (ArrayList<HMAux>) siteZoneLocalDao.query_HM(
+                new MD_Site_Zone_Local_Sql_SS(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        ss_site.getmValue().get(SearchableSpinner.ID),
+                        ss_site_zone.getmValue().get(SearchableSpinner.ID)
+                ).toSqlQuery()
+        );
+        //
+        ss_site_zone_local.setmOption(localList);
+    }
+
+
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
@@ -560,9 +732,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
             case Constant.MODULE_CHECKLIST:
                 //mView.callAct008(context,product_code);
+                progressDialog.dismiss();
                 break;
 
             case Constant.MODULE_SO:
+                progressDialog.dismiss();
 
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
                     mPresenter.getSerialInfo(product_code,mket_serial_id.getText().toString().trim());
@@ -580,13 +754,13 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                     }
 
                 }
-
                 break;
             default:
+                progressDialog.dismiss();
                 break;
 
         }
-        progressDialog.dismiss();
+
 
     }
 
