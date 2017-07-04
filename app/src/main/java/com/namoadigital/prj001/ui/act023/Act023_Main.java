@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -91,9 +92,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     private SearchableSpinner ss_site_zone_local;
     private LinearLayout ll_serial_add_info;
     private TextView tv_serial_add_info_ttl;
-    private TextView tv_info1;
-    private TextView tv_info2;
-    private TextView tv_info3;
+    private EditText et_info1;
+    private EditText et_info2;
+    private EditText et_info3;
     private TextView tv_serial_properties_ttl;
     private LinearLayout ll_serial_properties;
     private SearchableSpinner ss_brand;
@@ -291,14 +292,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_add_info_ttl = (TextView) findViewById(R.id.act023_tv_serial_add_info_ttl);
         tv_serial_add_info_ttl.setTag("serial_add_info_ttl");
         //
-        tv_info1 = (TextView) findViewById(R.id.act023_tv_info1);
-        tv_info1.setTag("add_info1_lbl");
+        et_info1 = (EditText) findViewById(R.id.act023_et_info1);
+        et_info1.setTag("add_info1_lbl");
         //
-        tv_info2 = (TextView) findViewById(R.id.act023_tv_info2);
-        tv_info2.setTag("add_info2_lbl");
+        et_info2 = (EditText) findViewById(R.id.act023_et_info2);
+        et_info2.setTag("add_info2_lbl");
         //
-        tv_info3 = (TextView) findViewById(R.id.act023_tv_info3);
-        tv_info3.setTag("add_info3_lbl");
+        et_info3 = (EditText) findViewById(R.id.act023_et_info3);
+        et_info3.setTag("add_info3_lbl");
         //
         ll_serial_properties = (LinearLayout) findViewById(R.id.act023_ll_serial_properties);
         //
@@ -339,9 +340,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         views.add(ss_site_zone);
         views.add(ss_site_zone_local);
         views.add(tv_serial_add_info_ttl);
-        views.add(tv_info1);
-        views.add(tv_info2);
-        views.add(tv_info3);
+        views.add(et_info1);
+        views.add(et_info2);
+        views.add(et_info3);
         views.add(tv_serial_properties_ttl);
         views.add(ss_brand);
         views.add(ss_brand_model);
@@ -493,6 +494,43 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 );
             }
         });
+        //
+        ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+                loadZoneSS(true);
+                //
+                loadLocalSS(true);
+            }
+        });
+        //
+        ss_site_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+                loadLocalSS(true);
+            }
+        });
+
+        //
+        ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+                //
+                loadModelSS(true);
+                //
+                loadColorSS(true);
+            }
+        });
+        //
+        ss_site_zone_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+                if(ss_site.getmValue().get(SearchableSpinner.ID).length() == 0){
+                    //DISPARA BUSCA POR SITE E ZONE E PREENCHE OS DADOS NO SPINNER
+                    //hmAuxa ja retorna dados site code e zone code
+                }
+            }
+        });
 
     }
 
@@ -532,79 +570,73 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     @Override
     public void setSerialValues(HMAux md_product_serial) {
         //
-        spinnersInitializer();
-        //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //
+        setSSmValue(ss_site,md_product_serial.get(MD_SiteDao.SITE_CODE),md_product_serial.get(MD_SiteDao.SITE_DESC));
+        //
+        setSSmValue(ss_site_zone,md_product_serial.get(MD_Site_ZoneDao.ZONE_CODE),md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC));
+        //
+        setSSmValue(ss_site_zone_local,md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_CODE),md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID));
+        //
+        setSSmValue(ss_brand,md_product_serial.get(MD_BrandDao.BRAND_CODE),md_product_serial.get(MD_BrandDao.BRAND_DESC));
+        //
+        setSSmValue(ss_brand_model,md_product_serial.get(MD_Brand_ModelDao.MODEL_CODE),md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC));
+        //
+        setSSmValue(ss_brand_color,md_product_serial.get(MD_Brand_ColorDao.COLOR_CODE),md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC));
+        //
+        setSSmValue(ss_segment,md_product_serial.get(MD_SegmentDao.SEGMENT_CODE),md_product_serial.get(MD_SegmentDao.SEGMENT_DESC));
+        //
+        setSSmValue(ss_category_price,md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_CODE),md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC));
+        //
+        setSSmValue(ss_site_owner,md_product_serial.get(SITE_CODE_OWNER),md_product_serial.get(SITE_DESC_OWNER));
+        //
+        et_info1.setText(md_product_serial.get(MD_Product_SerialDao.ADD_INF1));
+        //
+        et_info2.setText(md_product_serial.get(MD_Product_SerialDao.ADD_INF2));
+        //
+        et_info3.setText(md_product_serial.get(MD_Product_SerialDao.ADD_INF3));
+        //Chama metodo que carrea todas as listas do SS
+        spinnersInitializer();
+    }
+
+    private void setSSmValue(SearchableSpinner ss_component, String code, String desc) {
         HMAux hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_SiteDao.SITE_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_SiteDao.SITE_DESC));
-        //
-        ss_site.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Site_ZoneDao.ZONE_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC));
-        ss_site_zone.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID));
-        ss_site_zone_local.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_BrandDao.BRAND_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_BrandDao.BRAND_DESC));
-        ss_brand.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Brand_ModelDao.MODEL_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC));
-        ss_brand_model.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Brand_ColorDao.COLOR_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC));
-        ss_brand_color.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_SegmentDao.SEGMENT_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_SegmentDao.SEGMENT_DESC));
-        ss_segment.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_CODE));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC));
-        ss_category_price.setmValue(hmAux);
-        //
-        hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.ID,md_product_serial.get(SITE_CODE_OWNER));
-        hmAux.put(SearchableSpinner.DESCRIPTION,md_product_serial.get(SITE_DESC_OWNER));
-        ss_site_owner.setmValue(hmAux);
+        hmAux.put(SearchableSpinner.ID,code);
+        hmAux.put(SearchableSpinner.DESCRIPTION,desc);
+        ss_component.setmValue(hmAux);
     }
 
     private void spinnersInitializer() {
         // Site
-        resetSiteSS();
+        loadSiteSS(false);
         // Site Zone
-        resetZoneSS();
+        loadZoneSS(false);
         // Site Zone Local
-        resetLocalSS();
+        loadLocalSS(false);
         // Site Brand
-        resetBrandSS();
+        loadBrandSS(false);
         // Site Brand Model
-        resetModelSS();
+        loadModelSS(false);
         // Site Brand Color
-        resetColorSS();
+        loadColorSS(false);
         // Segment
-        resetSegment();
+        loadSegment(false);
         // Category Price
-        resetCategoryPrice();
+        loadCategoryPrice(false);
         // Site Owner
-        resetSiteOwner();
+        loadSiteOwner(false);
     }
 
-    private void resetSiteOwner() {
+    /**
+     * Carrega liaa que sera exibida no spinner.
+     * Se parameto true, apaga valor atual do spinner.
+     * @param reset_val
+     */
+    private void loadSiteOwner(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_site_owner,null,null);
+        }
+        //
         MD_SiteDao siteDao =  new MD_SiteDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> siteOwnerList = (ArrayList<HMAux>) siteDao.query_HM(
@@ -616,7 +648,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_site_owner.setmOption(siteOwnerList);
     }
 
-    private void resetCategoryPrice() {
+    private void loadCategoryPrice(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_category_price,null,null);
+        }
+        //
         MD_Category_PriceDao categoryPriceDao =  new MD_Category_PriceDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> categoryPriceList = (ArrayList<HMAux>) categoryPriceDao.query_HM(
@@ -629,7 +665,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_category_price.setmOption(categoryPriceList);
     }
 
-    private void resetSegment() {
+    private void loadSegment(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_segment,null,null);
+        }
+        //
         MD_SegmentDao segmentDao =  new MD_SegmentDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> segmentList = (ArrayList<HMAux>) segmentDao.query_HM(
@@ -642,7 +682,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_segment.setmOption(segmentList);
     }
 
-    private void resetColorSS() {
+    private void loadColorSS(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_brand_color,null,null);
+        }
+        //
         MD_Brand_ColorDao brandColorDao =  new MD_Brand_ColorDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> colorList = (ArrayList<HMAux>) brandColorDao.query_HM(
@@ -656,7 +700,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_brand_color.setmOption(colorList);
     }
 
-    private void resetModelSS() {
+    private void loadModelSS(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_brand_model,null,null);
+        }
+        //
         MD_Brand_ModelDao brandModelDao =  new MD_Brand_ModelDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> modelList = (ArrayList<HMAux>) brandModelDao.query_HM(
@@ -670,7 +718,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_brand_model.setmOption(modelList);
     }
 
-    private void resetBrandSS() {
+    private void loadBrandSS(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_brand,null,null);
+        }
+        //
         MD_BrandDao brandDao =  new MD_BrandDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> brandList = (ArrayList<HMAux>) brandDao.query_HM(
@@ -684,7 +736,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     }
 
 
-    private void resetSiteSS(){
+    private void loadSiteSS(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_site,null,null);
+        }
+
         MD_SiteDao siteDao =  new MD_SiteDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         //
         ArrayList<HMAux> siteList = (ArrayList<HMAux>) siteDao.query_HM(
@@ -696,7 +752,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_site.setmOption(siteList);
     }
 
-    private void resetZoneSS(){
+    private void loadZoneSS(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_site_zone,null,null);
+        }
+        //
         MD_Site_ZoneDao siteZoneDao =  new MD_Site_ZoneDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> zoneList = (ArrayList<HMAux>) siteZoneDao.query_HM(
                 new MD_Site_Zone_Sql_SS(
@@ -708,7 +768,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_site_zone.setmOption(zoneList);
     }
 
-    private void resetLocalSS() {
+    private void loadLocalSS(boolean reset_val){
+        if(reset_val){
+            setSSmValue(ss_site_zone_local,null,null);
+        }
+        //
         MD_Site_Zone_LocalDao  siteZoneLocalDao =  new MD_Site_Zone_LocalDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),Constant.DB_VERSION_CUSTOM) ;
         //
         ArrayList<HMAux> localList = (ArrayList<HMAux>) siteZoneLocalDao.query_HM(
@@ -722,8 +786,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_site_zone_local.setmOption(localList);
     }
 
-
-
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
@@ -732,11 +794,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
             case Constant.MODULE_CHECKLIST:
                 //mView.callAct008(context,product_code);
-                progressDialog.dismiss();
                 break;
 
             case Constant.MODULE_SO:
-                progressDialog.dismiss();
 
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
                     mPresenter.getSerialInfo(product_code,mket_serial_id.getText().toString().trim());
@@ -756,11 +816,10 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 }
                 break;
             default:
-                progressDialog.dismiss();
                 break;
 
         }
-
+        progressDialog.dismiss();
 
     }
 

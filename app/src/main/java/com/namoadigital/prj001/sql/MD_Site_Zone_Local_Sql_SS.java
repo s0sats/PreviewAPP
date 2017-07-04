@@ -29,7 +29,9 @@ public class MD_Site_Zone_Local_Sql_SS implements Specification {
                 .append(
                         " SELECT " +
                         "   local_code "+ SearchableSpinner.ID +", " +
-                        "   local_id "+ SearchableSpinner.DESCRIPTION +
+                        "   local_id "+ SearchableSpinner.DESCRIPTION +", " +
+                        "   site_code, " +
+                        "   zone_code " +
                         " FROM " +
                         MD_Site_Zone_LocalDao.TABLE +
                         " WHERE " +
@@ -40,7 +42,7 @@ public class MD_Site_Zone_Local_Sql_SS implements Specification {
                         ")  "+
                        " ORDER BY " +
                        "      local_id;")
-                .append(SearchableSpinner.ID + "#"+SearchableSpinner.DESCRIPTION )
+                .append(SearchableSpinner.ID + "#"+SearchableSpinner.DESCRIPTION+"#site_code#zone_code")
                 .toString().replace("'%null%'","null").replace("'null'","null");
     }
 }
