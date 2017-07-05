@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -28,21 +30,31 @@ public class MD_Site_Zone_Local_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "   local_code "+ SearchableSpinner.ID +", " +
-                        "   local_id "+ SearchableSpinner.DESCRIPTION +", " +
-                        "   site_code, " +
-                        "   zone_code " +
-                        " FROM " +
-                        MD_Site_Zone_LocalDao.TABLE +
-                        " WHERE " +
-                        MD_Site_Zone_LocalDao.CUSTOMER_CODE +" = '"+ customer_code +"' " +
-                        " and ('" + site_code  + "' IS NULL "+
-                        " or " + MD_Site_Zone_LocalDao.SITE_CODE +" = '"+ site_code +"' "+
-                        " and " + MD_Site_Zone_LocalDao.ZONE_CODE +" = '"+ zone_code +"'" +
-                        ")  "+
-                       " ORDER BY " +
-                       "      local_id;")
-                .append(SearchableSpinner.ID + "#"+SearchableSpinner.DESCRIPTION+"#site_code#zone_code")
+                        "   l.local_code "+ SearchableSpinner.ID +",\n " +
+                        "   l.local_id "+ SearchableSpinner.DESCRIPTION +",\n " +
+                        "   s.site_code,\n" +
+                        "   s.site_desc,\n" +
+                        "   z.zone_code,\n" +
+                        "   z.zone_desc \n" +
+                        " FROM \n" +
+                        MD_Site_Zone_LocalDao.TABLE + " l,\n"+
+                        MD_SiteDao.TABLE + " s,\n"+
+                        MD_Site_ZoneDao.TABLE + " z\n"+
+                        " WHERE \n" +
+                        "  l.customer_code = s.customer_code\n" +
+                        "  and l.site_code  = s.site_code\n" +
+                        "  \n" +
+                        "  and l.customer_code = z.customer_code\n" +
+                        "  and l.site_code = z.site_code\n" +
+                        "  and l.zone_code = z.zone_code" +
+                        "  and l.customer_code = '"+ customer_code +"' \n" +
+                        "  and ('" + site_code  + "' IS NULL \n"+
+                        "        or  l.site_code = '"+ site_code +"' \n"+
+                        "        and l.zone_code= '"+ zone_code +"' \n" +
+                        "       )  "+
+                       " ORDER BY\n" +
+                       "      l.local_id;")
+                .append(SearchableSpinner.ID + "#"+SearchableSpinner.DESCRIPTION+"#site_code#site_desc#zone_code#zone_desc")
                 .toString().replace("'%null%'","null").replace("'null'","null");
     }
 }

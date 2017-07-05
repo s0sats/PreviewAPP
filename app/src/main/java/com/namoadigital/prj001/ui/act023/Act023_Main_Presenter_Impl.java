@@ -10,6 +10,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
@@ -140,6 +141,20 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
 
     }
 
+    @Override
+    public void updateSerialInfo(MD_Product_Serial productSerial) {
+        //Salva dados alterados do S.O
+        serialDao.addUpdate(productSerial);
+        //Chama consulta de S.O informando qe o serial precisa ser alterado.
+        executeSoSearch(productSerial.getProduct_code(),productSerial.getSerial_id(),true);
+    }
+
+
+    @Override
+    public void callSoSearch(boolean save_serial) {
+
+    }
+
     private boolean isValidProduct(MD_Product md_product){
         //Erro, produto não encontrado
         if(md_product != null && md_product.getProduct_code() > 0){
@@ -174,8 +189,8 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         if(hasSerial(serial)){
 
             mView.showPD(
-                    hmAux_Trans.get("progress_so_search_ttl"),
-                    hmAux_Trans.get("progress_so_search_msg")
+                    hmAux_Trans.get("progress_serial_search_ttl"),
+                    hmAux_Trans.get("progress_serial_search_msg")
             );
             //
             executeSerialSearch(product_code,serial);
@@ -251,12 +266,19 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     }
 
     @Override
-    public void executeSoSearch(Long product_code, String serial_id) {
-
+    public void executeSoSearch(Long product_code, String serial_id, boolean save_serial) {
+        mView.setWs_process(Act023_Main.SO_WS_SEARCH_SO);
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_so_search_ttl"),
+                hmAux_Trans.get("progress_so_search_msg")
+        );
+        //
         Intent mIntent = new Intent(context, WBR_SO_Search.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.WS_SO_SEARCH_PRODUCT_CODE,product_code);
         bundle.putString(Constant.WS_SO_SEARCH_SERIAL_ID,serial_id);
+        bundle.putBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL,save_serial);
 
         mIntent.putExtras(bundle);
         //

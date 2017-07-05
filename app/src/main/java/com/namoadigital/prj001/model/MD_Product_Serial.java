@@ -23,6 +23,8 @@ public class MD_Product_Serial {
     private String add_inf2;
     private String add_inf3;
     private int update_required;
+    //SOMENTE PARA ENVIO NO WS
+    private int only_position;
 
     public long getCustomer_code() {
         return customer_code;
@@ -158,5 +160,13 @@ public class MD_Product_Serial {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getOnly_position() {
+        return only_position;
+    }
+
+    public void setOnly_position(int only_position) {
+        this.only_position = only_position;
     }
 }

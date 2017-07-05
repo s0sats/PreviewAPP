@@ -31,6 +31,7 @@ public class MD_Product_Serial_Sql_001 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
+                        "       p.customer_code,\n" +
                         "       p.product_code,\n" +
                         "       p.product_id,\n" +
                         "       p.product_desc,\n" +
@@ -46,7 +47,7 @@ public class MD_Product_Serial_Sql_001 implements Specification {
                         "       l.local_id,\n" +
                         "       so.site_code site_code_owner,\n" +
                         "       so.site_id site_id_owner,\n" +
-                        "       so.site_code site_desc_owner,\n" +
+                        "       so.site_desc site_desc_owner,\n" +
                         "       b.brand_code,\n" +
                         "       b.brand_id,\n" +
                         "       b.brand_desc,\n" +
@@ -93,7 +94,7 @@ public class MD_Product_Serial_Sql_001 implements Specification {
                         "    ps.customer_code = '"+customer_code+"'\n" +
                         "    and ps.product_code = '"+product_code+"'\n" +
                         "    and ps.serial_id = '"+serial_id+"';")
-                .append("product_code#product_id#product_desc#serial_code#serial_id#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#site_code site_code_owner#site_id site_id_owner#site_code site_desc_owner#brand_code#brand_id#brand_desc#model_code#model_id#model_desc#color_code#color_id#color_desc#segment_code#segment_id#segment_desc#category_price_code#category_price_id#category_price_desc#add_inf1#add_inf2#add_inf3")
+                .append("customer_code#product_code#product_id#product_desc#serial_code#serial_id#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#site_code_owner#site_id_owner#site_desc_owner#brand_code#brand_id#brand_desc#model_code#model_id#model_desc#color_code#color_id#color_desc#segment_code#segment_id#segment_desc#category_price_code#category_price_id#category_price_desc#add_inf1#add_inf2#add_inf3")
                 .toString();
     }
 }

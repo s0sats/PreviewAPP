@@ -1911,4 +1911,12 @@ public class ToolBox_Inf {
         return false;
     }
 
+    public static Integer mIntegerParse(String integer) {
+        try {
+            return Integer.parseInt(integer);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

@@ -165,6 +165,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String WS_SO_SEARCH_PRODUCT_CODE = "sosearchproductcode";
     public static final String WS_SO_SEARCH_SERIAL_ID = "sosearchserialid";
     public static final String WS_SO_SEARCH_SO_MULT = "sosearchmult";
+    public static final String WS_SO_SEARCH_SAVE_SERIAL = "so_search_save_serial";
 
     /**
      * WS Logout
