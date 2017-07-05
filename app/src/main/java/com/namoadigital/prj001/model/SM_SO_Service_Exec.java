@@ -10,21 +10,25 @@ import java.util.ArrayList;
 
 public class SM_SO_Service_Exec {
 
-    private long customer_code;
-    private int so_prefix;
-    private int so_code;
-    private int price_list_code;
-    private int pack_code;
-    private int category_price_code;
-    private int service_code;
+    private long customer_code; //pk
+    private int so_prefix; //pk
+    private int so_code; //pk
+    private int price_list_code; //pk
+    private int pack_code; //pk
+    private int pack_seq; //pk
+    private int category_price_code; //pk
+    private int service_code; //pk
+    private int service_seq; //pk
     @Expose
-    private int task_exec;
+    private int exec_code;
     @Expose
     private String status;
-    @Expose
-    private int last_update_user;
-    @Expose
-    private String last_update_date;
+
+    // Novos Criados Null
+    private Integer partner_code;
+    private String partner_id;
+    private String partner_desc;
+
     @Expose
     private ArrayList<SM_SO_Service_Exec_Task> task;
 
@@ -34,8 +38,11 @@ public class SM_SO_Service_Exec {
         this.so_code = -1;
         this.price_list_code = -1;
         this.pack_code = -1;
+        this.pack_seq = -1;
         this.category_price_code = -1;
         this.service_code = -1;
+        this.service_seq = -1;
+        this.exec_code = -1;
         this.task = new ArrayList<>();
     }
 
@@ -45,13 +52,13 @@ public class SM_SO_Service_Exec {
         this.so_code = service.getSo_code();
         this.price_list_code = service.getPrice_list_code();
         this.pack_code = service.getPack_code();
+        this.pack_seq = service.getPack_seq();
         this.category_price_code = service.getCategory_price_code();
         this.service_code = service.getService_code();
 
         for(int i =0; i < task.size();i++){
             task.get(i).setPK(this);
         }
-
     }
 
     public long getCustomer_code() {
@@ -94,6 +101,14 @@ public class SM_SO_Service_Exec {
         this.pack_code = pack_code;
     }
 
+    public int getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(int pack_seq) {
+        this.pack_seq = pack_seq;
+    }
+
     public int getCategory_price_code() {
         return category_price_code;
     }
@@ -110,12 +125,20 @@ public class SM_SO_Service_Exec {
         this.service_code = service_code;
     }
 
-    public int getTask_exec() {
-        return task_exec;
+    public int getService_seq() {
+        return service_seq;
     }
 
-    public void setTask_exec(int task_exec) {
-        this.task_exec = task_exec;
+    public void setService_seq(int service_seq) {
+        this.service_seq = service_seq;
+    }
+
+    public int getExec_code() {
+        return exec_code;
+    }
+
+    public void setExec_code(int exec_code) {
+        this.exec_code = exec_code;
     }
 
     public String getStatus() {
@@ -126,20 +149,28 @@ public class SM_SO_Service_Exec {
         this.status = status;
     }
 
-    public int getLast_update_user() {
-        return last_update_user;
+    public Integer getPartner_code() {
+        return partner_code;
     }
 
-    public void setLast_update_user(int last_update_user) {
-        this.last_update_user = last_update_user;
+    public void setPartner_code(Integer partner_code) {
+        this.partner_code = partner_code;
     }
 
-    public String getLast_update_date() {
-        return last_update_date;
+    public String getPartner_id() {
+        return partner_id;
     }
 
-    public void setLast_update_date(String last_update_date) {
-        this.last_update_date = last_update_date;
+    public void setPartner_id(String partner_id) {
+        this.partner_id = partner_id;
+    }
+
+    public String getPartner_desc() {
+        return partner_desc;
+    }
+
+    public void setPartner_desc(String partner_desc) {
+        this.partner_desc = partner_desc;
     }
 
     public ArrayList<SM_SO_Service_Exec_Task> getTask() {

@@ -25,11 +25,11 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
     public static final String TABLE = "sm_sos";
     public static final String CUSTOMER_CODE = "customer_code";
-    public static final String SO_PREFIX =  "so_prefix";
+    public static final String SO_PREFIX = "so_prefix";
     public static final String SO_CODE = "so_code";
     public static final String SO_ID = "so_id";
+    public static final String SO_SCN = "so_scn";
     public static final String SO_DESC = "so_desc";
-    public static final String SO_SCN = "so_scn" ;
     public static final String PRODUCT_CODE = "product_code";
     public static final String PRODUCT_ID = "product_id";
     public static final String PRODUCT_DESC = "product_desc";
@@ -70,13 +70,21 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
     public static final String CLIENT_EMAIL = "client_email";
     public static final String CLIENT_PHONE = "client_phone";
     public static final String CLIENT_APPROVAL_IMAGE = "client_approval_image";
+    public static final String CLIENT_APPROVAL_IMAGE_NAME = "client_approval_image_name";
+    public static final String CLIENT_APPROVAL_IMAGE_URL = "client_approval_image_url";
     public static final String CLIENT_APPROVAL_DATE = "client_approval_date";
     public static final String CLIENT_APPROVAL_FLAG = "client_approval_flag";
+    public static final String ORIGIN_CHANGE = "origin_change";
+    public static final String STARTED_FLAG = "started_flag";
+    public static final String EDIT_ORIGIN = "edit_origin";
+    public static final String EDIT_USER = "edit_user";
+    public static final String TOTAL_QTY_SERVICE = "total_qty_service";
+    public static final String TOTAL_PRICE = "total_price";
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
-        this.toContentValuesMapper = new SM_SOToContentValuesMapper() ;
+        this.toContentValuesMapper = new SM_SOToContentValuesMapper();
         this.toSM_SOMapper = new CursorSM_SOMapper();
     }
 
@@ -97,6 +105,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 db.update(TABLE, toContentValuesMapper.map(so), sbWhere.toString(), null);
             }
 
+            // Tenho que fazer algo com isso
+            // so.getSo_file().size();
+            // so.getPack().size();
+
         } catch (Exception e) {
         } finally {
         }
@@ -116,7 +128,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 db.delete(TABLE, null, null);
             }
 
-            for (SM_SO so: sos) {
+            for (SM_SO so : sos) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(so)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
                     sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(so.getCustomer_code())).append("'");
@@ -131,7 +143,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -165,12 +177,11 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             db.execSQL(sQuery);
 
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
         closeDB();
-
     }
 
     @Override
@@ -189,7 +200,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -218,7 +229,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -243,14 +254,13 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
         closeDB();
 
         return sos;
-
     }
 
     @Override
@@ -273,7 +283,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -282,17 +292,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
         return sos;
     }
 
-    private class CursorSM_SOMapper implements Mapper<Cursor,SM_SO> {
+    private class CursorSM_SOMapper implements Mapper<Cursor, SM_SO> {
         @Override
         public SM_SO map(Cursor cursor) {
-            SM_SO so =  new SM_SO();
+            SM_SO so = new SM_SO();
 
             so.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             so.setSo_prefix(cursor.getInt(cursor.getColumnIndex(SO_PREFIX)));
             so.setSo_code(cursor.getInt(cursor.getColumnIndex(SO_CODE)));
             so.setSo_id(cursor.getString(cursor.getColumnIndex(SO_ID)));
-            so.setSo_desc(cursor.getString(cursor.getColumnIndex(SO_DESC)));
             so.setSo_scn(cursor.getInt(cursor.getColumnIndex(SO_SCN)));
+            so.setSo_desc(cursor.getString(cursor.getColumnIndex(SO_DESC)));
             so.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
             so.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
             so.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
@@ -312,260 +322,369 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             so.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
             so.setContract_code(cursor.getInt(cursor.getColumnIndex(CONTRACT_CODE)));
             so.setContract_desc(cursor.getString(cursor.getColumnIndex(CONTRACT_DESC)));
-            if(cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_ERP))){
-                so.setContract_po_erp("");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_ERP))) {
+                so.setContract_po_erp(null);
+            } else {
                 so.setContract_po_erp(cursor.getString(cursor.getColumnIndex(CONTRACT_PO_ERP)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_CLIENT1))){
-                so.setContract_po_client1("");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_CLIENT1))) {
+                so.setContract_po_client1(null);
+            } else {
                 so.setContract_po_client1(cursor.getString(cursor.getColumnIndex(CONTRACT_PO_CLIENT1)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_CLIENT2))){
-                so.setContract_po_client2("");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_PO_CLIENT2))) {
+                so.setContract_po_client2(null);
+            } else {
                 so.setContract_po_client2(cursor.getString(cursor.getColumnIndex(CONTRACT_PO_CLIENT2)));
             }
+
             so.setPriority_code(cursor.getInt(cursor.getColumnIndex(PRIORITY_CODE)));
             so.setPriority_desc(cursor.getString(cursor.getColumnIndex(PRIORITY_DESC)));
             so.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
-            if(cursor.isNull(cursor.getColumnIndex(QUALITY_APPROVAL_USER))){
+
+            if (cursor.isNull(cursor.getColumnIndex(QUALITY_APPROVAL_USER))) {
                 so.setQuality_approval_user(null);
-            }else{
+            } else {
                 so.setQuality_approval_user(cursor.getInt(cursor.getColumnIndex(QUALITY_APPROVAL_USER)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(QUALITY_APPROVAL_DATE))){
-                so.setQuality_approval_date("1900-01-01 00:00:00 -00:00");
-            }else{
+            if (cursor.isNull(cursor.getColumnIndex(QUALITY_APPROVAL_DATE))) {
+                so.setQuality_approval_date(null);
+            } else {
                 so.setQuality_approval_date(cursor.getString(cursor.getColumnIndex(QUALITY_APPROVAL_DATE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(COMMENTS))){
-                so.setComments("");
-            }else{
+            if (cursor.isNull(cursor.getColumnIndex(COMMENTS))) {
+                so.setComments(null);
+            } else {
                 so.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(SO_FATHER_PREFIX))){
+
+            if (cursor.isNull(cursor.getColumnIndex(SO_FATHER_PREFIX))) {
                 so.setSo_father_prefix(null);
-            }else{
+            } else {
                 so.setSo_father_prefix(cursor.getInt(cursor.getColumnIndex(SO_FATHER_PREFIX)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(SO_FATHER_CODE))){
+
+            if (cursor.isNull(cursor.getColumnIndex(SO_FATHER_CODE))) {
                 so.setSo_father_code(null);
-            }else{
+            } else {
                 so.setSo_father_code(cursor.getInt(cursor.getColumnIndex(SO_FATHER_CODE)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(DEADLINE))){
-                so.setDeadline("1900-01-01 00:00:00 -00:00");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(DEADLINE))) {
+                so.setDeadline(null);
+            } else {
                 so.setDeadline(cursor.getString(cursor.getColumnIndex(DEADLINE)));
             }
+
             so.setOrigin(cursor.getString(cursor.getColumnIndex(ORIGIN)));
             so.setClient_type(cursor.getString(cursor.getColumnIndex(CLIENT_TYPE)));
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_USER))){
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_USER))) {
                 so.setClient_user(null);
-            }else{
+            } else {
                 so.setClient_user(cursor.getInt(cursor.getColumnIndex(CLIENT_USER)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_CODE))){
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_CODE))) {
                 so.setClient_code(null);
-            }else{
+            } else {
                 so.setClient_code(cursor.getInt(cursor.getColumnIndex(CLIENT_CODE)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_ID))){
-                so.setClient_id("");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_ID))) {
+                so.setClient_id(null);
+            } else {
                 so.setClient_id(cursor.getString(cursor.getColumnIndex(CLIENT_ID)));
             }
+
             so.setClient_name(cursor.getString(cursor.getColumnIndex(CLIENT_NAME)));
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_EMAIL))){
-                so.setClient_email("");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_EMAIL))) {
+                so.setClient_email(null);
+            } else {
                 so.setClient_email(cursor.getString(cursor.getColumnIndex(CLIENT_EMAIL)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_PHONE))){
-                so.setClient_phone("");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_PHONE))) {
+                so.setClient_phone(null);
+            } else {
                 so.setClient_phone(cursor.getString(cursor.getColumnIndex(CLIENT_PHONE)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE))){
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE))) {
                 so.setClient_approval_image(null);
-            }else{
+            } else {
                 so.setClient_approval_image(cursor.getInt(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE)));
             }
-            //
-            if(cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_DATE))){
-                so.setClient_approval_date("1900-01-01 00:00:00 -00:00");
-            }else{
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_NAME))) {
+                so.setClient_approval_image_name(null);
+            } else {
+                so.setClient_approval_image_name(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_NAME)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_URL))) {
+                so.setClient_approval_image_url(null);
+            } else {
+                so.setClient_approval_image_url(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_IMAGE_URL)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_DATE))) {
+                so.setClient_approval_date(null);
+            } else {
                 so.setClient_approval_date(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_DATE)));
             }
+
             so.setClient_approval_flag(cursor.getInt(cursor.getColumnIndex(CLIENT_APPROVAL_FLAG)));
+            so.setOrigin_change(cursor.getString(cursor.getColumnIndex(ORIGIN_CHANGE)));
+            so.setStarted_flag(cursor.getInt(cursor.getColumnIndex(STARTED_FLAG)));
+
+            if (cursor.isNull(cursor.getColumnIndex(EDIT_ORIGIN))) {
+                so.setEdit_origin(null);
+            } else {
+                so.setEdit_origin(cursor.getString(cursor.getColumnIndex(EDIT_ORIGIN)));
+            }
+
+            so.setEdit_user(cursor.getInt(cursor.getColumnIndex(EDIT_USER)));
+            so.setTotal_qty_service(cursor.getInt(cursor.getColumnIndex(TOTAL_QTY_SERVICE)));
+            so.setTotal_price(cursor.getDouble(cursor.getColumnIndex(TOTAL_PRICE)));
 
             return so;
         }
     }
 
-    private class SM_SOToContentValuesMapper implements Mapper<SM_SO,ContentValues> {
+    private class SM_SOToContentValuesMapper implements Mapper<SM_SO, ContentValues> {
         @Override
         public ContentValues map(SM_SO sm_so) {
             ContentValues contentValues = new ContentValues();
 
-            if(sm_so.getCustomer_code() > -1){
-                contentValues.put(CUSTOMER_CODE,sm_so.getCustomer_code());
+            if (sm_so.getCustomer_code() > -1) {
+                contentValues.put(CUSTOMER_CODE, sm_so.getCustomer_code());
             }
-            if(sm_so.getSo_prefix() > -1){
-                contentValues.put(SO_PREFIX,sm_so.getSo_prefix());
+
+            if (sm_so.getSo_prefix() > -1) {
+                contentValues.put(SO_PREFIX, sm_so.getSo_prefix());
             }
-            if(sm_so.getSo_code() > -1){
-                contentValues.put(SO_CODE,sm_so.getSo_code());
+
+            if (sm_so.getSo_code() > -1) {
+                contentValues.put(SO_CODE, sm_so.getSo_code());
             }
-            if(sm_so.getSo_id() != null){
-                contentValues.put(SO_ID,sm_so.getSo_id());
+
+            if (sm_so.getSo_id() != null) {
+                contentValues.put(SO_ID, sm_so.getSo_id());
             }
-            if(sm_so.getSo_desc() != null){
-                contentValues.put(SO_DESC,sm_so.getSo_desc());
+
+            if (sm_so.getSo_scn() > -1) {
+                contentValues.put(SO_SCN, sm_so.getSo_scn());
             }
-            if(sm_so.getSo_scn() > -1){
-                contentValues.put(SO_SCN,sm_so.getSo_scn());
+
+            if (sm_so.getSo_desc() != null) {
+                contentValues.put(SO_DESC, sm_so.getSo_desc());
             }
-            if(sm_so.getProduct_code() > -1){
-                contentValues.put(PRODUCT_CODE,sm_so.getProduct_code());
+
+            if (sm_so.getProduct_code() > -1) {
+                contentValues.put(PRODUCT_CODE, sm_so.getProduct_code());
             }
-            if(sm_so.getProduct_id() != null){
-                contentValues.put(PRODUCT_ID,sm_so.getProduct_id());
+
+            if (sm_so.getProduct_id() != null) {
+                contentValues.put(PRODUCT_ID, sm_so.getProduct_id());
             }
-            if(sm_so.getProduct_desc() != null){
-                contentValues.put(PRODUCT_DESC,sm_so.getProduct_desc());
+
+            if (sm_so.getProduct_desc() != null) {
+                contentValues.put(PRODUCT_DESC, sm_so.getProduct_desc());
             }
-            if(sm_so.getSerial_code() > -1){
-                contentValues.put(SERIAL_CODE,sm_so.getSerial_code());
+
+            if (sm_so.getSerial_code() > -1) {
+                contentValues.put(SERIAL_CODE, sm_so.getSerial_code());
             }
-            if(sm_so.getSerial_id() != null){
-                contentValues.put(SERIAL_ID,sm_so.getSerial_id());
+
+            if (sm_so.getSerial_id() != null) {
+                contentValues.put(SERIAL_ID, sm_so.getSerial_id());
             }
-            if(sm_so.getCategory_price_code() > -1){
-                contentValues.put(CATEGORY_PRICE_CODE,sm_so.getCategory_price_code());
+
+            if (sm_so.getCategory_price_code() > -1) {
+                contentValues.put(CATEGORY_PRICE_CODE, sm_so.getCategory_price_code());
             }
-            if(sm_so.getCategory_price_id() != null){
-                contentValues.put(CATEGORY_PRICE_ID,sm_so.getCategory_price_id());
+
+            if (sm_so.getCategory_price_id() != null) {
+                contentValues.put(CATEGORY_PRICE_ID, sm_so.getCategory_price_id());
             }
-            if(sm_so.getCategory_price_desc() != null){
-                contentValues.put(CATEGORY_PRICE_DESC,sm_so.getCategory_price_desc());
+
+            if (sm_so.getCategory_price_desc() != null) {
+                contentValues.put(CATEGORY_PRICE_DESC, sm_so.getCategory_price_desc());
             }
-            if(sm_so.getSegment_code() > -1){
-                contentValues.put(SEGMENT_CODE,sm_so.getSegment_code());
+
+            if (sm_so.getSegment_code() > -1) {
+                contentValues.put(SEGMENT_CODE, sm_so.getSegment_code());
             }
-            if(sm_so.getSegment_id() != null){
-                contentValues.put(SEGMENT_ID,sm_so.getSegment_id());
+
+            if (sm_so.getSegment_id() != null) {
+                contentValues.put(SEGMENT_ID, sm_so.getSegment_id());
             }
-            if(sm_so.getSegment_desc() != null){
-                contentValues.put(SEGMENT_DESC,sm_so.getSegment_desc());
+
+            if (sm_so.getSegment_desc() != null) {
+                contentValues.put(SEGMENT_DESC, sm_so.getSegment_desc());
             }
-            if(sm_so.getSite_code() > -1){
-                contentValues.put(SITE_CODE,sm_so.getSite_code());
+
+            if (sm_so.getSite_code() > -1) {
+                contentValues.put(SITE_CODE, sm_so.getSite_code());
             }
-            if(sm_so.getSite_id() != null){
-                contentValues.put(SITE_ID,sm_so.getSite_id());
+
+            if (sm_so.getSite_id() != null) {
+                contentValues.put(SITE_ID, sm_so.getSite_id());
             }
-            if(sm_so.getSite_desc() != null){
-                contentValues.put(SITE_DESC,sm_so.getSite_desc());
+
+            if (sm_so.getSite_desc() != null) {
+                contentValues.put(SITE_DESC, sm_so.getSite_desc());
             }
-            if(sm_so.getOperation_code() > -1){
-                contentValues.put(OPERATION_CODE,sm_so.getOperation_code());
+
+            if (sm_so.getOperation_code() > -1) {
+                contentValues.put(OPERATION_CODE, sm_so.getOperation_code());
             }
-            if(sm_so.getOperation_id() != null){
-                contentValues.put(OPERATION_ID,sm_so.getOperation_id());
+
+            if (sm_so.getOperation_id() != null) {
+                contentValues.put(OPERATION_ID, sm_so.getOperation_id());
             }
-            if(sm_so.getOperation_desc() != null){
-                contentValues.put(OPERATION_DESC,sm_so.getOperation_desc());
+
+            if (sm_so.getOperation_desc() != null) {
+                contentValues.put(OPERATION_DESC, sm_so.getOperation_desc());
             }
-            if(sm_so.getContract_code() > -1){
-                contentValues.put(CONTRACT_CODE,sm_so.getContract_code());
+
+            if (sm_so.getContract_code() > -1) {
+                contentValues.put(CONTRACT_CODE, sm_so.getContract_code());
             }
-            if(sm_so.getContract_desc() != null){
-                contentValues.put(CONTRACT_DESC,sm_so.getContract_desc());
+
+            if (sm_so.getContract_desc() != null) {
+                contentValues.put(CONTRACT_DESC, sm_so.getContract_desc());
             }
-            if(sm_so.getContract_po_erp() != null){
-                contentValues.put(CONTRACT_PO_ERP,sm_so.getContract_po_erp());
+
+            if (sm_so.getContract_po_erp() != null) {
+                contentValues.put(CONTRACT_PO_ERP, sm_so.getContract_po_erp());
             }
-            if(sm_so.getContract_po_client1() != null){
-                contentValues.put(CONTRACT_PO_CLIENT1,sm_so.getContract_po_client1());
+
+            if (sm_so.getContract_po_client1() != null) {
+                contentValues.put(CONTRACT_PO_CLIENT1, sm_so.getContract_po_client1());
             }
-            if(sm_so.getContract_po_client2() != null){
-                contentValues.put(CONTRACT_PO_CLIENT2,sm_so.getContract_po_client2());
+
+            if (sm_so.getContract_po_client2() != null) {
+                contentValues.put(CONTRACT_PO_CLIENT2, sm_so.getContract_po_client1());
             }
-            if(sm_so.getPriority_code() > -1){
-                contentValues.put(PRIORITY_CODE,sm_so.getPriority_code());
+
+            if (sm_so.getPriority_code() > -1) {
+                contentValues.put(PRIORITY_CODE, sm_so.getPriority_code());
             }
-            if(sm_so.getPriority_desc() != null){
-                contentValues.put(PRIORITY_DESC,sm_so.getPriority_desc());
+
+            if (sm_so.getPriority_desc() != null) {
+                contentValues.put(PRIORITY_DESC, sm_so.getPriority_desc());
             }
-            if(sm_so.getStatus() != null){
-                contentValues.put(STATUS,sm_so.getStatus());
+
+            if (sm_so.getStatus() != null) {
+                contentValues.put(STATUS, sm_so.getStatus());
             }
-//            if(sm_so.getQuality_approval_user() > -1){
-//                contentValues.put(QUALITY_APPROVAL_USER,sm_so.getQuality_approval_user());
-//            }
-            if(sm_so.getQuality_approval_date() != null){
-                contentValues.put(QUALITY_APPROVAL_DATE,sm_so.getQuality_approval_date());
+
+            if (sm_so.getQuality_approval_user() != null) {
+                contentValues.put(QUALITY_APPROVAL_USER, sm_so.getQuality_approval_user());
             }
-            if(sm_so.getComments() != null){
-                contentValues.put(COMMENTS,sm_so.getComments());
+
+            if (sm_so.getQuality_approval_date() != null) {
+                contentValues.put(QUALITY_APPROVAL_DATE, sm_so.getQuality_approval_date());
             }
-//            if(sm_so.getSo_father_prefix() > -1){
-//                contentValues.put(SO_FATHER_PREFIX,sm_so.getSo_father_prefix());
-//            }
-//            if(sm_so.getSo_father_code() > -1){
-//                contentValues.put(SO_FATHER_CODE,sm_so.getSo_father_code());
-//            }
-            if(sm_so.getDeadline() != null){
-                contentValues.put(DEADLINE,sm_so.getDeadline());
+
+            if (sm_so.getComments() != null) {
+                contentValues.put(COMMENTS, sm_so.getComments());
             }
-            if(sm_so.getOrigin() != null){
-                contentValues.put(ORIGIN,sm_so.getOrigin());
+
+            if (sm_so.getSo_father_prefix() != null) {
+                contentValues.put(SO_FATHER_PREFIX, sm_so.getSo_father_prefix());
             }
-            if(sm_so.getClient_type() != null){
-                contentValues.put(CLIENT_TYPE,sm_so.getClient_type());
+
+            if (sm_so.getSo_father_code() != null) {
+                contentValues.put(SO_FATHER_CODE, sm_so.getSo_father_code());
             }
-//            if(sm_so.getClient_user() > -1){
-//                contentValues.put(CLIENT_USER,sm_so.getClient_user());
-//            }
-//            if(sm_so.getClient_code() > -1){
-//                contentValues.put(CLIENT_CODE,sm_so.getClient_code());
-//            }
-            if(sm_so.getClient_id() != null){
-                contentValues.put(CLIENT_ID,sm_so.getClient_id());
+
+            if (sm_so.getDeadline() != null) {
+                contentValues.put(DEADLINE, sm_so.getDeadline());
             }
-            if(sm_so.getClient_name() != null){
-                contentValues.put(CLIENT_NAME,sm_so.getClient_name());
+
+            if (sm_so.getOrigin() != null) {
+                contentValues.put(ORIGIN, sm_so.getOrigin());
             }
-            if(sm_so.getClient_email() != null){
-                contentValues.put(CLIENT_EMAIL,sm_so.getClient_email());
+
+            if (sm_so.getClient_type() != null) {
+                contentValues.put(CLIENT_TYPE, sm_so.getClient_type());
             }
-            if(sm_so.getClient_phone() != null){
-                contentValues.put(CLIENT_PHONE,sm_so.getClient_phone());
+
+            if (sm_so.getClient_user() != null) {
+                contentValues.put(CLIENT_USER, sm_so.getClient_user());
             }
-//            if(sm_so.getClient_approval_image() > -1){
-//                contentValues.put(CLIENT_APPROVAL_IMAGE,sm_so.getClient_approval_image());
-//            }
-            if(sm_so.getClient_approval_date() != null){
-                contentValues.put(CLIENT_APPROVAL_DATE,sm_so.getClient_approval_date());
+
+            if (sm_so.getClient_code() > -1) {
+                contentValues.put(CLIENT_CODE, sm_so.getClient_code());
             }
-            if(sm_so.getClient_approval_flag() > -1){
-                contentValues.put(CLIENT_APPROVAL_FLAG,sm_so.getClient_approval_flag());
+
+            if (sm_so.getClient_id() != null) {
+                contentValues.put(CLIENT_ID, sm_so.getClient_id());
+            }
+
+            if (sm_so.getClient_name() != null) {
+                contentValues.put(CLIENT_NAME, sm_so.getClient_name());
+            }
+
+            if (sm_so.getClient_email() != null) {
+                contentValues.put(CLIENT_EMAIL, sm_so.getClient_email());
+            }
+
+            if (sm_so.getClient_phone() != null) {
+                contentValues.put(CLIENT_PHONE, sm_so.getClient_phone());
+            }
+
+            if (sm_so.getClient_approval_image() != null) {
+                contentValues.put(CLIENT_APPROVAL_IMAGE, sm_so.getClient_approval_image());
+            }
+
+            if (sm_so.getClient_approval_image_name() != null) {
+                contentValues.put(CLIENT_APPROVAL_IMAGE_NAME, sm_so.getClient_approval_image_name());
+            }
+
+            if (sm_so.getClient_approval_image_url() != null) {
+                contentValues.put(CLIENT_APPROVAL_IMAGE_URL, sm_so.getClient_approval_image_url());
+            }
+
+            if (sm_so.getClient_approval_date() != null) {
+                contentValues.put(CLIENT_APPROVAL_DATE, sm_so.getClient_approval_date());
+            }
+
+            if (sm_so.getClient_approval_flag() > -1) {
+                contentValues.put(CLIENT_APPROVAL_FLAG, sm_so.getClient_approval_flag());
+            }
+
+            if (sm_so.getOrigin_change() != null) {
+                contentValues.put(ORIGIN_CHANGE, sm_so.getOrigin_change());
+            }
+
+            if (sm_so.getStarted_flag() > -1) {
+                contentValues.put(STARTED_FLAG, sm_so.getStarted_flag());
+            }
+
+            if (sm_so.getEdit_origin() != null) {
+                contentValues.put(EDIT_ORIGIN, sm_so.getEdit_origin());
+            }
+
+            if (sm_so.getEdit_user() > -1) {
+                contentValues.put(EDIT_USER, sm_so.getEdit_user());
+            }
+
+            if (sm_so.getTotal_qty_service() > -1) {
+                contentValues.put(TOTAL_QTY_SERVICE, sm_so.getTotal_qty_service());
+            }
+
+            if (sm_so.getTotal_price() > -1) {
+                contentValues.put(TOTAL_PRICE, sm_so.getTotal_price());
             }
 
             return contentValues;

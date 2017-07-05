@@ -8,18 +8,24 @@ import com.google.gson.annotations.Expose;
 
 public class SM_SO_Service_Exec_Task_File {
 
+    private long customer_code; //pk
+    private int so_prefix; //pk
+    private int so_code; //pk
+    private int price_list_code; //pk
+    private int pack_code; //pk
+    private int pack_seq; //pk
+    private int category_price_code; //pk
+    private int service_code; //pk
+    private int service_seq; //pk
+    private int exec_code; //pk
+    private int task_code; //pk
 
-    private long customer_code;
-    private int so_prefix;
-    private int so_code;
-    private int price_list_code;
-    private int pack_code;
-    private int category_price_code;
-    private int service_code;
-    private int task_exec;
-    private int task_seq;
     @Expose
-    private int file_code;
+    private int file_code; //ok
+
+    // Novos Criados
+    private String file_name;
+    private String file_url;
 
     public SM_SO_Service_Exec_Task_File() {
         this.customer_code = -1;
@@ -27,22 +33,30 @@ public class SM_SO_Service_Exec_Task_File {
         this.so_code = -1;
         this.price_list_code = -1;
         this.pack_code = -1;
+        this.pack_seq = -1;
         this.category_price_code = -1;
         this.service_code = -1;
-        this.task_exec = -1;
-        this.task_seq = -1;
+        this.service_seq = -1;
+        this.exec_code = -1;
+        this.task_code = -1;
+        this.file_code = -1;
+        this.file_name = "";
+        this.file_url = "";
     }
 
-    public void setPK(SM_SO_Service_Exec_Task task){
+    public void setPK(SM_SO_Service_Exec_Task task) {
         this.customer_code = task.getCustomer_code();
         this.so_prefix = task.getSo_prefix();
         this.so_code = task.getSo_code();
         this.price_list_code = task.getPrice_list_code();
         this.pack_code = task.getPack_code();
+        this.pack_seq = task.getPack_seq();
         this.category_price_code = task.getCategory_price_code();
         this.service_code = task.getService_code();
-        this.task_exec = task.getTask_exec();
-        this.task_seq = task.getTask_seq();
+        this.service_seq = task.getService_seq();
+        this.exec_code = task.getExec_code();
+        this.task_code = task.getTask_code();
+
     }
 
     public long getCustomer_code() {
@@ -85,6 +99,14 @@ public class SM_SO_Service_Exec_Task_File {
         this.pack_code = pack_code;
     }
 
+    public int getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(int pack_seq) {
+        this.pack_seq = pack_seq;
+    }
+
     public int getCategory_price_code() {
         return category_price_code;
     }
@@ -101,20 +123,28 @@ public class SM_SO_Service_Exec_Task_File {
         this.service_code = service_code;
     }
 
-    public int getTask_exec() {
-        return task_exec;
+    public int getService_seq() {
+        return service_seq;
     }
 
-    public void setTask_exec(int task_exec) {
-        this.task_exec = task_exec;
+    public void setService_seq(int service_seq) {
+        this.service_seq = service_seq;
     }
 
-    public int getTask_seq() {
-        return task_seq;
+    public int getExec_code() {
+        return exec_code;
     }
 
-    public void setTask_seq(int task_seq) {
-        this.task_seq = task_seq;
+    public void setExec_code(int exec_code) {
+        this.exec_code = exec_code;
+    }
+
+    public int getTask_code() {
+        return task_code;
+    }
+
+    public void setTask_code(int task_code) {
+        this.task_code = task_code;
     }
 
     public int getFile_code() {
@@ -125,5 +155,19 @@ public class SM_SO_Service_Exec_Task_File {
         this.file_code = file_code;
     }
 
+    public String getFile_name() {
+        return file_name;
+    }
 
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getFile_url() {
+        return file_url;
+    }
+
+    public void setFile_url(String file_url) {
+        this.file_url = file_url;
+    }
 }

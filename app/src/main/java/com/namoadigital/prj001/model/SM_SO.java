@@ -11,17 +11,17 @@ import java.util.ArrayList;
 public class SM_SO {
 
     @Expose
-    private long customer_code;
+    private long customer_code; //pk
     @Expose
-    private int so_prefix;
+    private int so_prefix; //pk
     @Expose
-    private int so_code;
+    private int so_code; //pk
     @Expose
     private String so_id;
     @Expose
-    private String so_desc;
-    @Expose
     private int so_scn;
+    @Expose
+    private String so_desc;
     @Expose
     private int product_code;
     private String product_id;
@@ -49,14 +49,19 @@ public class SM_SO {
     @Expose
     private int contract_code;
     private String contract_desc;
+
+    // Null
     private String contract_po_erp;
     private String contract_po_client1;
     private String contract_po_client2;
+
     @Expose
     private int priority_code;
     private String priority_desc;
     @Expose
     private String status;
+
+    // Null
     @Expose
     private Integer quality_approval_user;
     @Expose
@@ -64,6 +69,8 @@ public class SM_SO {
     @Expose
     private String comments;
     @Expose
+
+    // Null
     private Integer so_father_prefix;
     @Expose
     private Integer so_father_code;
@@ -73,6 +80,8 @@ public class SM_SO {
     private String origin;
     @Expose
     private String client_type;
+
+    // Null
     @Expose
     private Integer client_user;
     @Expose
@@ -85,19 +94,47 @@ public class SM_SO {
     private String client_email;
     @Expose
     private String client_phone;
+
+    // Null
     @Expose
     private Integer client_approval_image;
+
+    // Novos Criados Null
+    @Expose
+    private String client_approval_image_name;
+    @Expose
+    private String client_approval_image_url;
+
     @Expose
     private String client_approval_date;
     @Expose
     private int client_approval_flag;
+
+    // Novos Criados
+    @Expose
+    private String origin_change;
+    @Expose
+    private int started_flag;
+    @Expose
+    private String edit_origin;
+    @Expose
+    private int edit_user;
+    @Expose
+    private int total_qty_service;
+    @Expose
+    private double total_price;
+
+    @Expose
+    private ArrayList<SM_SO_File> so_file = new ArrayList<>();
     @Expose
     private ArrayList<SM_SO_Pack> pack = new ArrayList<>();
-    @Expose
-    private ArrayList<SM_SO_File> so_attach = new ArrayList<>();
 
-    public void setPK(){
-        for(int i = 0; i < pack.size();i++){
+    public void setPK() {
+        for (int i = 0; i < so_file.size(); i++) {
+            so_file.get(i).setPK(this);
+        }
+        //
+        for (int i = 0; i < pack.size(); i++) {
             pack.get(i).setPK(this);
         }
     }
@@ -470,6 +507,22 @@ public class SM_SO {
         this.client_approval_image = client_approval_image;
     }
 
+    public String getClient_approval_image_name() {
+        return client_approval_image_name;
+    }
+
+    public void setClient_approval_image_name(String client_approval_image_name) {
+        this.client_approval_image_name = client_approval_image_name;
+    }
+
+    public String getClient_approval_image_url() {
+        return client_approval_image_url;
+    }
+
+    public void setClient_approval_image_url(String client_approval_image_url) {
+        this.client_approval_image_url = client_approval_image_url;
+    }
+
     public String getClient_approval_date() {
         return client_approval_date;
     }
@@ -486,19 +539,67 @@ public class SM_SO {
         this.client_approval_flag = client_approval_flag;
     }
 
+    public String getOrigin_change() {
+        return origin_change;
+    }
+
+    public void setOrigin_change(String origin_change) {
+        this.origin_change = origin_change;
+    }
+
+    public int getStarted_flag() {
+        return started_flag;
+    }
+
+    public void setStarted_flag(int started_flag) {
+        this.started_flag = started_flag;
+    }
+
+    public String getEdit_origin() {
+        return edit_origin;
+    }
+
+    public void setEdit_origin(String edit_origin) {
+        this.edit_origin = edit_origin;
+    }
+
+    public int getEdit_user() {
+        return edit_user;
+    }
+
+    public void setEdit_user(int edit_user) {
+        this.edit_user = edit_user;
+    }
+
+    public int getTotal_qty_service() {
+        return total_qty_service;
+    }
+
+    public void setTotal_qty_service(int total_qty_service) {
+        this.total_qty_service = total_qty_service;
+    }
+
+    public double getTotal_price() {
+        return total_price;
+    }
+
+    public void setTotal_price(double total_price) {
+        this.total_price = total_price;
+    }
+
+    public ArrayList<SM_SO_File> getSo_file() {
+        return so_file;
+    }
+
+    public void setSo_file(ArrayList<SM_SO_File> so_file) {
+        this.so_file = so_file;
+    }
+
     public ArrayList<SM_SO_Pack> getPack() {
         return pack;
     }
 
     public void setPack(ArrayList<SM_SO_Pack> pack) {
         this.pack = pack;
-    }
-
-    public ArrayList<SM_SO_File> getSo_attach() {
-        return so_attach;
-    }
-
-    public void setSo_attach(ArrayList<SM_SO_File> so_attach) {
-        this.so_attach = so_attach;
     }
 }

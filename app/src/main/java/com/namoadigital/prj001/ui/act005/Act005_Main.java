@@ -247,7 +247,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         ArrayList<SM_SO_Service_Exec_Task_File> taskAttachList = new ArrayList<>();
 
         taskAttachList.add(task_attach);
-        task.setTask_attach(taskAttachList);
+        //task.setTask_attach(taskAttachList);
         taskList.add(task);
 
         exec.setTask(taskList);
@@ -307,7 +307,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         so.setClient_approval_date("2017-06-13");
         so.setClient_approval_flag(0);
         so.setPack(packList);
-        so.setSo_attach(soFileList);
+        //so.setSo_attach(soFileList);
 
         ArrayList<SM_SO> soList = new ArrayList<>();
         soList.add(so);

@@ -9,13 +9,32 @@ import com.google.gson.annotations.Expose;
 public class SM_SO_File {
 
     @Expose
-    private long customer_code;
+    private long customer_code; //pk
     @Expose
-    private int so_prefix;
+    private int so_prefix; //pk
     @Expose
-    private int so_code;
+    private int so_code; //pk
     @Expose
-    private int file_code;
+    private int file_code; //pk
+
+    // Novos Criados
+    @Expose
+    private String file_name;
+    @Expose
+    private String file_url;
+
+    public SM_SO_File() {
+        this.customer_code = -1;
+        this.so_prefix = -1;
+        this.so_code = -1;
+        this.file_code = -1;
+    }
+
+    public void setPK(SM_SO so) {
+        this.customer_code = so.getCustomer_code();
+        this.so_prefix = so.getSo_prefix();
+        this.so_code = so.getSo_code();
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -49,5 +68,19 @@ public class SM_SO_File {
         this.file_code = file_code;
     }
 
+    public String getFile_name() {
+        return file_name;
+    }
 
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getFile_url() {
+        return file_url;
+    }
+
+    public void setFile_url(String file_url) {
+        this.file_url = file_url;
+    }
 }

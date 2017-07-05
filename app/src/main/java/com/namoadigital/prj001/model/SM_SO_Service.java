@@ -10,17 +10,26 @@ import java.util.ArrayList;
 
 public class SM_SO_Service {
 
-    private long customer_code;
-    private int so_prefix;
-    private int so_code;
-    private int price_list_code;
-    private int pack_code;
-    private int category_price_code;
+    private long customer_code; //pk
+    private int so_prefix; //pk
+    private int so_code; //pk
+    private int price_list_code; //pk
+    private int pack_code; //pk
+    private int pack_seq; //pk
+    private int category_price_code; //pk
     @Expose
-    private int service_code;
+    private int service_code; //pk
+
+    // Novos Criados
+    private int service_seq; //pk
     private String service_id;
     private String service_desc;
+
+    // Null
     private String service_oper_id;
+
+    // Novos Criados
+    private String status;
     @Expose
     private int qty;
     @Expose
@@ -31,20 +40,31 @@ public class SM_SO_Service {
     private int express;
     @Expose
     private int exec_time_standard;
+
+    // Null
     @Expose
-    private float price;
+    private Double price;
     @Expose
-    private Float cost;
+    private Double cost;
     @Expose
     private String exec_type;
     @Expose
     private int exec_seq_oper;
+
+    // Null
     @Expose
     private Integer approval_budget_user;
     @Expose
     private String approval_budget_date;
     @Expose
-    private int partner_code;
+    private Integer partner_code;
+
+    // Novos Criados Null
+    private String partner_id;
+    private String partner_desc;
+
+    private String require_approval;
+
     @Expose
     private ArrayList<SM_SO_Service_Exec> exec;
 
@@ -54,18 +74,22 @@ public class SM_SO_Service {
         this.so_code = -1;
         this.price_list_code = -1;
         this.pack_code = -1;
+        this.pack_seq = -1;
+        this.category_price_code = -1;
+        this.service_code = -1;
         this.exec = new ArrayList<>();
     }
 
-    public void setPK(SM_SO_Pack pack){
+    public void setPK(SM_SO_Pack pack) {
         this.customer_code = pack.getCustomer_code();
         this.so_prefix = pack.getSo_prefix();
         this.so_code = pack.getSo_code();
         this.price_list_code = pack.getPrice_list_code();
         this.pack_code = pack.getPack_code();
+        this.pack_seq = pack.getPack_seq();
 
-        for(int i = 0; i < exec.size(); i++){
-            exec.get(i);
+        for (int i = 0; i < exec.size(); i++) {
+            exec.get(i).setPK(this);
         }
     }
 
@@ -109,6 +133,14 @@ public class SM_SO_Service {
         this.pack_code = pack_code;
     }
 
+    public int getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(int pack_seq) {
+        this.pack_seq = pack_seq;
+    }
+
     public int getCategory_price_code() {
         return category_price_code;
     }
@@ -123,6 +155,14 @@ public class SM_SO_Service {
 
     public void setService_code(int service_code) {
         this.service_code = service_code;
+    }
+
+    public int getService_seq() {
+        return service_seq;
+    }
+
+    public void setService_seq(int service_seq) {
+        this.service_seq = service_seq;
     }
 
     public String getService_id() {
@@ -147,6 +187,14 @@ public class SM_SO_Service {
 
     public void setService_oper_id(String service_oper_id) {
         this.service_oper_id = service_oper_id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getQty() {
@@ -189,19 +237,19 @@ public class SM_SO_Service {
         this.exec_time_standard = exec_time_standard;
     }
 
-    public float getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public Float getCost() {
+    public Double getCost() {
         return cost;
     }
 
-    public void setCost(Float cost) {
+    public void setCost(Double cost) {
         this.cost = cost;
     }
 
@@ -237,12 +285,36 @@ public class SM_SO_Service {
         this.approval_budget_date = approval_budget_date;
     }
 
-    public int getPartner_code() {
+    public Integer getPartner_code() {
         return partner_code;
     }
 
-    public void setPartner_code(int partner_code) {
+    public void setPartner_code(Integer partner_code) {
         this.partner_code = partner_code;
+    }
+
+    public String getPartner_id() {
+        return partner_id;
+    }
+
+    public void setPartner_id(String partner_id) {
+        this.partner_id = partner_id;
+    }
+
+    public String getPartner_desc() {
+        return partner_desc;
+    }
+
+    public void setPartner_desc(String partner_desc) {
+        this.partner_desc = partner_desc;
+    }
+
+    public String getRequire_approval() {
+        return require_approval;
+    }
+
+    public void setRequire_approval(String require_approval) {
+        this.require_approval = require_approval;
     }
 
     public ArrayList<SM_SO_Service_Exec> getExec() {
