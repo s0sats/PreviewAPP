@@ -101,13 +101,10 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
         }
 
         closeDB();
-
-
     }
 
     @Override
     public void addUpdate(Iterable<SM_SO_Service_Exec_Task> sm_so_service_exec_tasks, boolean status) {
-
         openDB();
 
         try {
@@ -155,8 +152,6 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
         }
 
         closeDB();
-
-
     }
 
     @Override
@@ -271,7 +266,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        ArrayList<HMAux> sm_so_service_exec_task = new ArrayList<>();
+        ArrayList<HMAux> sm_so_service_exec_tasks = new ArrayList<>();
         openDB();
 
         String s_query_div[] = sQuery.split(";");
@@ -283,7 +278,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
             Cursor cursor = db.rawQuery(s_query_div[0], null);
 
             while (cursor.moveToNext()) {
-                sm_so_service_exec_task.add(toHMAuxMapper.map(cursor));
+                sm_so_service_exec_tasks.add(toHMAuxMapper.map(cursor));
             }
 
             cursor.close();
@@ -294,7 +289,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
         closeDB();
 
-        return sm_so_service_exec_task;
+        return sm_so_service_exec_tasks;
     }
 
 
@@ -366,6 +361,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
         @Override
         public ContentValues map(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
+
             ContentValues contentValues = new ContentValues();
 
             if (sm_so_service_exec_task.getCustomer_code() > -1) {

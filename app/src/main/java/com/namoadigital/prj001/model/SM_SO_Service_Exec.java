@@ -20,7 +20,7 @@ public class SM_SO_Service_Exec {
     private int service_code; //pk
     private int service_seq; //pk
     @Expose
-    private int exec_code;
+    private int exec_code; //pk
     @Expose
     private String status;
 

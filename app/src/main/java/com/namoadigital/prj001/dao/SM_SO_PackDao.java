@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,50 +48,245 @@ public class SM_SO_PackDao extends BaseDao implements Dao<SM_SO_Pack> {
     }
 
     @Override
-    public void addUpdate(SM_SO_Pack item) {
+    public void addUpdate(SM_SO_Pack sm_so_pack) {
+        openDB();
 
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(sm_so_pack)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_pack.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(sm_so_pack.getSo_prefix())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_pack.getSo_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(sm_so_pack.getPrice_list_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PACK_CODE).append(" = '").append(String.valueOf(sm_so_pack.getPack_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PACK_SEQ).append(" = '").append(String.valueOf(sm_so_pack.getPack_seq())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(sm_so_pack), sbWhere.toString(), null);
+            }
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
-    public void addUpdate(Iterable<SM_SO_Pack> items, boolean status) {
+    public void addUpdate(Iterable<SM_SO_Pack> sm_so_packs, boolean status) {
+        openDB();
 
+        try {
+
+            //db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (SM_SO_Pack sm_so_pack : sm_so_packs) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(sm_so_pack)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_pack.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(sm_so_pack.getSo_prefix())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_pack.getSo_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(sm_so_pack.getPrice_list_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(PACK_CODE).append(" = '").append(String.valueOf(sm_so_pack.getPack_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(PACK_SEQ).append(" = '").append(String.valueOf(sm_so_pack.getPack_seq())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(sm_so_pack), sbWhere.toString(), null);
+                }
+            }
+
+            //db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //db.endTransaction();
+        }
+
+        closeDB();
     }
 
     @Override
     public void addUpdate(String sQuery) {
+        openDB();
 
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
     public void remove(String sQuery) {
+        openDB();
 
+        try {
+
+            db.execSQL(sQuery);
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
     }
 
     @Override
     public SM_SO_Pack getByString(String sQuery) {
-        return null;
+        SM_SO_Pack sm_so_pack = null;
+
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                sm_so_pack = toSM_SO_PackMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+
+        return sm_so_pack;
     }
 
     @Override
     public HMAux getByStringHM(String sQuery) {
-        return null;
+        HMAux hmAux = null;
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return hmAux;
     }
 
     @Override
     public List<SM_SO_Pack> query(String sQuery) {
-        return null;
+        List<SM_SO_Pack> sm_so_packs = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(sQuery, null);
+
+            while (cursor.moveToNext()) {
+                SM_SO_Pack uAux = toSM_SO_PackMapper.map(cursor);
+                sm_so_packs.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return sm_so_packs;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
+        ArrayList<HMAux> sm_so_packs = new ArrayList<>();
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                sm_so_packs.add(toHMAuxMapper.map(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return sm_so_packs;
     }
 
 
     private class CursorSM_SO_PackMapper implements Mapper<Cursor, SM_SO_Pack> {
         @Override
         public SM_SO_Pack map(Cursor cursor) {
-            return null;
+
+            SM_SO_Pack sm_so_pack = new SM_SO_Pack();
+
+            sm_so_pack.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
+            sm_so_pack.setSo_prefix(cursor.getInt(cursor.getColumnIndex(SO_PREFIX)));
+            sm_so_pack.setSo_code(cursor.getInt(cursor.getColumnIndex(SO_CODE)));
+            sm_so_pack.setPrice_list_code(cursor.getInt(cursor.getColumnIndex(PRICE_LIST_CODE)));
+            sm_so_pack.setPrice_list_id(cursor.getString(cursor.getColumnIndex(PRICE_LIST_ID)));
+            sm_so_pack.setPrice_list_desc(cursor.getString(cursor.getColumnIndex(PRICE_LIST_DESC)));
+            sm_so_pack.setPack_code(cursor.getInt(cursor.getColumnIndex(PACK_CODE)));
+            sm_so_pack.setPack_seq(cursor.getInt(cursor.getColumnIndex(PACK_SEQ)));
+            sm_so_pack.setPack_id(cursor.getString(cursor.getColumnIndex(PACK_ID)));
+            sm_so_pack.setPack_desc(cursor.getString(cursor.getColumnIndex(PACK_DESC)));
+            sm_so_pack.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+
+            if (cursor.isNull(cursor.getColumnIndex(RULE))) {
+                sm_so_pack.setRule(null);
+            } else {
+                sm_so_pack.setRule(cursor.getString(cursor.getColumnIndex(RULE)));
+            }
+
+            sm_so_pack.setBilling_type(cursor.getString(cursor.getColumnIndex(BILLING_TYPE)));
+            sm_so_pack.setExpress(cursor.getInt(cursor.getColumnIndex(EXPRESS)));
+            sm_so_pack.setSelection_type(cursor.getString(cursor.getColumnIndex(SELECTION_TYPE)));
+
+            return sm_so_pack;
         }
     }
 
@@ -96,7 +294,70 @@ public class SM_SO_PackDao extends BaseDao implements Dao<SM_SO_Pack> {
 
         @Override
         public ContentValues map(SM_SO_Pack sm_so_pack) {
-            return null;
+
+            ContentValues contentValues = new ContentValues();
+
+            if (sm_so_pack.getCustomer_code() > -1) {
+                contentValues.put(CUSTOMER_CODE, sm_so_pack.getCustomer_code());
+            }
+
+            if (sm_so_pack.getSo_prefix() > -1) {
+                contentValues.put(SO_PREFIX, sm_so_pack.getSo_prefix());
+            }
+
+            if (sm_so_pack.getSo_code() > -1) {
+                contentValues.put(SO_CODE, sm_so_pack.getSo_code());
+            }
+
+            if (sm_so_pack.getPrice_list_code() > -1) {
+                contentValues.put(PRICE_LIST_CODE, sm_so_pack.getPrice_list_code());
+            }
+
+            if (sm_so_pack.getPrice_list_id() != null) {
+                contentValues.put(PRICE_LIST_ID, sm_so_pack.getPrice_list_id());
+            }
+
+            if (sm_so_pack.getPrice_list_desc() != null) {
+                contentValues.put(PRICE_LIST_DESC, sm_so_pack.getPrice_list_desc());
+            }
+
+            if (sm_so_pack.getPack_code() > -1) {
+                contentValues.put(PACK_CODE, sm_so_pack.getPack_code());
+            }
+
+            if (sm_so_pack.getPack_seq() > -1) {
+                contentValues.put(PACK_SEQ, sm_so_pack.getPack_seq());
+            }
+
+            if (sm_so_pack.getPack_id() != null) {
+                contentValues.put(PACK_ID, sm_so_pack.getPack_id());
+            }
+
+            if (sm_so_pack.getPack_desc() != null) {
+                contentValues.put(PACK_DESC, sm_so_pack.getPack_desc());
+            }
+
+            if (sm_so_pack.getStatus() != null) {
+                contentValues.put(STATUS, sm_so_pack.getStatus());
+            }
+
+            if (sm_so_pack.getRule() != null) {
+                contentValues.put(RULE, sm_so_pack.getRule());
+            }
+
+            if (sm_so_pack.getBilling_type() != null) {
+                contentValues.put(BILLING_TYPE, sm_so_pack.getBilling_type());
+            }
+
+            if (sm_so_pack.getExpress() > -1) {
+                contentValues.put(EXPRESS, sm_so_pack.getExpress());
+            }
+
+            if (sm_so_pack.getSelection_type() != null) {
+                contentValues.put(SELECTION_TYPE, sm_so_pack.getSelection_type());
+            }
+
+            return contentValues;
         }
     }
 }

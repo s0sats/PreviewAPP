@@ -57,9 +57,12 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
 
             //TABLES SO
             script.append("CREATE TABLE if not exists [sm_sos] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [so_id] text NOT NULL, [so_scn] int NOT NULL, [so_desc] text NOT NULL, [product_code] int NOT NULL, [product_id] text NOT NULL, [product_desc] text NOT NULL, [serial_code] int NOT NULL, [serial_id] text NOT NULL, [category_price_code] int NOT NULL, [category_price_id] text NOT NULL, [category_price_desc] text NOT NULL, [segment_code] int NOT NULL, [segment_id] text NOT NULL, [segment_desc] text NOT NULL, [site_code] int NOT NULL, [site_id] text NOT NULL, [site_desc] text NOT NULL, [operation_code] int NOT NULL, [operation_id] text NOT NULL, [operation_desc] text NOT NULL, [contract_code] int NOT NULL, [contract_desc] text NOT NULL, [contract_po_erp] text, [contract_po_client1] text, [contract_po_client2] text, [priority_code] int NOT NULL, [priority_desc] text NOT NULL, [status] text NOT NULL, [quality_approval_user] int, [quality_approval_date] text, [comments] text, [so_father_prefix] int, [so_father_code] int, [deadline] text, [origin] text NOT NULL, [client_type] text NOT NULL, [client_user] int, [client_code] int, [client_id] text, [client_name] text NOT NULL, [client_email] text, [client_phone] text, [client_approval_image] int, [client_approval_image_name] text, [client_approval_image_url] text, [client_approval_date] text, [client_approval_flag] int NOT NULL, [origin_change] text NOT NULL, [started_flag] int NOT NULL, [edit_origin] text NOT NULL, [edit_user] int NOT NULL, [total_qty_service] int NOT NULL, [total_price] real NOT NULL, PRIMARY KEY([customer_code],[so_prefix],[so_code]));");
+            script.append("CREATE TABLE if not exists [sm_so_files] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [file_code] int NOT NULL, [file_name] text NOT NULL, [file_url] text NOT NULL, PRIMARY KEY([customer_code],[so_prefix],[so_code],[file_code]));");
+            script.append("CREATE TABLE if not exists [sm_so_packs] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [price_list_code] int NOT NULL, [pack_code] int NOT NULL, [pack_seq] int NOT NULL, [price_list_id] text NOT NULL, [price_list_desc] text NOT NULL, [pack_id] text NOT NULL, [pack_desc] text NOT NULL, [status] text NOT NULL, [rule] text, [billing_type] text NOT NULL, [express] int, [selection_type] text NOT NULL, PRIMARY KEY([customer_code],[so_prefix],[so_code],[price_list_code],[pack_code],[pack_seq]));");
+            script.append("CREATE TABLE if not exists [sm_so_services] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [price_list_code] int NOT NULL, [pack_code] int NOT NULL, [pack_seq] int NOT NULL, [category_price_code] int NOT NULL, [service_code] int NOT NULL, [service_seq] int NOT NULL, [service_id] text NOT NULL, [service_desc] text NOT NULL, [service_oper_id[ text, [status] text NOT NULL, [qty[ int NOT NULL, [optional] int NOT NULL, [manual_price] int NOT NULL, [express] int NOT NULL, [exec_time_standard] int NOT NULL, [price] real NOT NULL, [cost] real NOT NULL, [exec_type] text NOT NULL, [exec_seq_oper] int NOT NULL, [approval_budget_user] int, [approval_budget_date] text, [partner_code] int, [partner_id] text, [partner_desc] text, [require_approval] text NOT NULL, PRIMARY KEY([customer_code],[so_prefix],[so_code],[price_list_code],[pack_code],[pack_seq],[category_price_code],[service_code],[service_seq]));");
+            script.append("CREATE TABLE if not exists [sm_so_service_execs] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [price_list_code] int NOT NULL, [pack_code] int NOT NULL, [pack_seq] int NOT NULL, [category_price_code] int NOT NULL, [service_code] int NOT NULL, [service_seq] int NOT NULL, [exec_code] int NOT NULL, [status] text NOT NULL, [partner_code] int, [partner_id] text, [partner_desc] text, PRIMARY KEY([customer_code],[so_prefix],[so_code],[price_list_code],[pack_code],[pack_seq],[category_price_code],[service_code],[service_seq],[exec_code]));");
+            script.append("CREATE TABLE if not exists [sm_so_service_exec_tasks] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [price_list_code] int NOT NULL, [pack_code] int NOT NULL, [pack_seq] int NOT NULL, [category_price_code] int NOT NULL, [service_code] int NOT NULL, [service_seq] int NOT NULL, [exec_code] int NOT NULL, [task_code] int NOT NULL, [task_seq] int NOT NULL, [task_user] int NOT NULL, [start_date] text NOT NULL, [end_date] text, [exec_time] int, [exec_time_format] text NOT NULL, [task_perc] int NOT NULL, [qty_people] int NOT NULL, [status] text NOT NULL, [site_code] int NOT NULL, [site_id] text NOT NULL, [site_desc] text NOT NULL, [zone_code] int NOT NULL, [zone_id] text NOT NULL, [zone_desc] text NOT NULL, [local_code] int NOT NULL, [local_id] text NOT NULL, [comments] text, PRIMARY KEY([customer_code],[so_prefix],[so_code],[price_list_code],[pack_code],[pack_seq],[category_price_code],[service_code],[service_seq],[exec_code],[task_code]));");
             script.append("CREATE TABLE if not exists [sm_so_service_exec_task_files]( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [price_list_code] int NOT NULL, [pack_code] int NOT NULL, [pack_seq] int NOT NULL, [category_price_code] int NOT NULL, [service_code] int NOT NULL, [service_seq] int NOT NULL, [exec_code] int NOT NULL, [task_code] int NOT NULL, [file_code] int NOT NULL, [file_name] text NOT NULL, [file_url] text NOT NULL, PRIMARY KEY([customer_code] ,[so_prefix] ,[so_code] ,[price_list_code] ,[pack_code] ,[pack_seq] ,[category_price_code] ,[service_code] ,[service_seq] ,[exec_code] ,[task_code] ,[file_code]));");
-            script.append("CREATE TABLE if not exists [sm_so_service_exec_tasks] ( [customer_code] int NOT NULL, [so_prefix] int NOT NULL, [so_code] int NOT NULL, [price_list_code] int NOT NULL, [pack_code] int NOT NULL, [pack_seq] int NOT NULL, [category_price_code] int NOT NULL, [service_code] int NOT NULL, [service_seq] int NOT NULL, [exec_code] int NOT NULL, [task_code] int NOT NULL, [task_seq] int NOT NULL, [task_user] int NOT NULL, [start_date] text NOT NULL, [end_date] text, [exec_time] int, [exec_time_format] text NOT NULL, [task_perc] int NOT NULL, [qty_people] int NOT NULL, [status] text NOT NULL, [site_code] int NOT NULL, [site_id] text NOT NULL, [site_desc] text NOT NULL, [zone_code] int NOT NULL, [zone_id] text NOT NULL, [zone_desc] text NOT NULL, [local_code] int NOT NULL, [local_id] text NOT NULL, [comments] text, PRIMARY KEY([customer_code],[so_prefix],[so_code],[price_list_code],[pack_code],[pack_seq],[category_price_code],[service_code],[service_seq],[exec_code],[task_code]) )");
-
 
             script.append("create table if not exists [md_segments]([customer_code] int not null,[segment_code] int not null,[segment_id] text not null collate nocase,[segment_desc] text not null collate nocase,constraint [pk_md_segments] primary key([customer_code],[segment_code]));");
             script.append("create table if not exists [md_category_prices]([customer_code] int not null,[category_price_code] int not null,[category_price_id] text not null collate nocase,[category_price_desc] text not null collate nocase,constraint [pk_md_category_prices] primary key([customer_code],[category_price_code]));");
@@ -67,7 +70,6 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
             script.append("create table if not exists [md_brand_models]([customer_code] int not null,[brand_code] int not null,[model_code] int not null,[model_id] text not null collate nocase,[model_desc] text not null collate nocase,constraint [pk_md_brand_models] primary key([customer_code],[brand_code],[model_code]));");
             script.append("create table if not exists [md_brand_colors]([customer_code] int not null,[brand_code] int not null,[color_code] int not null,[color_id] text not null collate nocase,[color_desc] text not null collate nocase,constraint [pk_md_brand_colors] primary key([customer_code],[brand_code],[color_code]));");
             script.append("create table if not exists [md_partners]([customer_code] int not null,[partner_code] int not null,[partner_id] text not null collate nocase,[partner_desc] text not null collate nocase,constraint [pk_md_partners] primary key([customer_code],[partner_code]));");
-
             //
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_PRJ001', 'APP PRJ 01');");
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
@@ -92,20 +94,51 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         StringBuilder script = new StringBuilder();
         //
-        script.append("drop table if exists ev_modules;");
-        script.append("drop table if exists ev_module_ress;");
-        script.append("drop table if exists ev_module_res_txts;");
-        script.append("drop table if exists ev_module_res_txt_transs;");
-        script.append("drop table if exists ge_custom_form_types;");
-        script.append("drop table if exists ge_custom_forms;");
-        script.append("drop table if exists ge_custom_form_fields;");
-        script.append("drop table if exists ge_custom_form_datas;");
-        script.append("drop table if exists ge_custom_form_data_fields;");
-        script.append("drop table if exists ge_custom_form_products;");
-        script.append("drop table if exists md_products;");
-        script.append("drop table if exists md_product_categorys;");
-        script.append("drop table if exists md_operations;");
-        script.append("drop table if exists md_sites;");
+        script.append("drop table if exists [ev_modules];");
+        script.append("drop table if exists [ev_module_ress];");
+        script.append("drop table if exists [ev_module_res_txts];");
+        script.append("drop table if exists [ev_module_res_txt_transs];");
+        script.append("drop table if exists [ge_custom_form_types];");
+
+        script.append("drop table if exists [ge_custom_forms];");
+        script.append("drop table if exists [ge_custom_form_fields];");
+
+        script.append("drop table if exists [ge_custom_forms_local];");
+        script.append("drop table if exists [ge_custom_form_fields_local];");
+        script.append("drop table if exists [ge_custom_form_blobs_local];");
+
+        script.append("drop table if exists [ge_custom_form_datas];");
+        script.append("drop table if exists [ge_custom_form_data_fields];");
+        script.append("drop table if exists [ge_custom_form_products];");
+        script.append("drop table if exists [ge_custom_form_blobs];");
+        script.append("drop table if exists [ge_custom_form_operations];");
+        script.append("drop table if exists [ge_files];");
+
+        script.append("drop table if exists [md_products];");
+        script.append("drop table if exists [md_product_groups];");
+        script.append("drop table if exists [md_product_group_products];");
+        script.append("drop table if exists [md_product_serials];");
+        script.append("drop table if exists [md_operations];");
+        script.append("drop table if exists [md_sites];");
+        script.append("drop table if exists [md_site_zones];");
+        script.append("drop table if exists [md_site_zone_locals];");
+        script.append("drop table if exists [sync_checklist];");
+
+        //TABLES SO
+        script.append("drop table if exists [sm_sos];");
+        script.append("drop table if exists [sm_so_files];");
+        script.append("drop table if exists [sm_so_packs];");
+        script.append("drop table if exists [sm_so_services];");
+        script.append("drop table if exists [sm_so_service_execs];");
+        script.append("drop table if exists [sm_so_service_exec_tasks];");
+        script.append("drop table if exists [sm_so_service_exec_task_files];");
+
+        script.append("drop table if exists [md_segments];");
+        script.append("drop table if exists [md_category_prices];");
+        script.append("drop table if exists [md_brands]([customer_code];");
+        script.append("drop table if exists [md_brand_models]([customer_code];");
+        script.append("drop table if exists [md_brand_colors]([customer_code];");
+        script.append("drop table if exists [md_partners]([customer_code];");
         //
         String[] scripts = script.toString().split(";");
         //
