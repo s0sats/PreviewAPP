@@ -28,6 +28,4 @@ public interface Act023_Main_Presenter {
 
     void updateSerialInfo(MD_Product_Serial productSerial);
 
-    void callSoSearch(boolean save_serial);
-
 }

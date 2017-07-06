@@ -32,9 +32,8 @@
             android:gravity="center_vertical|right"
             >
 
-
-
             <CheckBox
+                android:id="@+id/act024_content_cell_chk_download"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -45,6 +44,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"/>
             <ImageView
+                android:id="@+id/act024_content_cell_btn_single_download"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_file_download_black_24dp"

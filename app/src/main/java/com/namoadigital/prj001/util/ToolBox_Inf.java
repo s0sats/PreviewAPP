@@ -563,6 +563,15 @@ public class ToolBox_Inf {
         return text.toString();
     }
 
+    /**
+     * Usar o mesmo metodo do que do  Toolbox
+     * @param context
+     * @param type
+     * @param value
+     * @param link
+     * @param required
+     */
+    @Deprecated
     public static void sendBCStatus(Context context, String type, String value, String link, String required) {
         Intent mIntent = new Intent(Constant.SW_TYPE_BR);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);

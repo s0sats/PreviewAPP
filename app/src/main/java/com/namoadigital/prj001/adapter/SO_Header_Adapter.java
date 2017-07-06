@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -98,6 +100,10 @@ public class SO_Header_Adapter extends BaseAdapter {
         TextView tv_segment = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_segment);
         //
         TextView tv_category_price = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_category_price);
+        //
+        ImageView btn_download = (ImageView) convertView.findViewById(R.id.act024_content_cell_btn_single_download);
+        //
+        CheckBox chk_download = (CheckBox) convertView.findViewById(R.id.act024_content_cell_chk_download);
         //
         //Montagem dos dados na tela.
         //

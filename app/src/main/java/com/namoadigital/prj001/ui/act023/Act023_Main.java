@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act023;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +15,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -37,7 +35,8 @@ import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_SS;
@@ -194,12 +193,17 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         transList.add("segment_lbl");
         transList.add("category_price_lbl");
         transList.add("site_owner_lbl");
+        transList.add("btn_serial_search");
         transList.add("btn_so_search");
         transList.add("progress_so_search_ttl");
         transList.add("progress_so_search_msg");
         transList.add("progress_serial_search_ttl");
         transList.add("progress_serial_search_msg");
-
+        transList.add("alert_no_so_found_ttl");
+        transList.add("alert_no_so_found_msg");
+        transList.add("alert_save_serial_error_ttl");
+        transList.add("alert_save_serial_error_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -339,7 +343,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_site_owner.setTag("site_owner_lbl");
         //
         btn_action = (Button) findViewById(R.id.act023_btn_action);
-        btn_action.setTag("btn_action_lbl");
         //
         //Adiciona Views na lista de tradução
         views.add(tv_product_ttl);
@@ -375,7 +378,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         listnerSearchSerial = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mket_serial_id.setEnabled(false);
+                if(mket_serial_id.getText().toString().trim().length() > 0){
+                    mket_serial_id.setEnabled(false);
+                }
                 //
                 mPresenter.validadeSerialFlow(
                         mket_serial_id.getText().toString(),
@@ -393,7 +398,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                     buildSerialFull();
                     //
                     mPresenter.updateSerialInfo(serialObj);
-                }else{
+                } else {
                     mPresenter.executeSoSearch(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
                 }
             }
@@ -446,7 +451,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 ll_serial_full_desc.setVisibility(View.GONE);
                 ll_require_serial.setVisibility(View.GONE);
                 btn_action.setOnClickListener(listnerSearchSerial);
-                btn_action.setText(hmAux_Trans.get("btn_so_search"));
+                btn_action.setText(hmAux_Trans.get("btn_serial_search"));
                 break;
 
         }
@@ -680,7 +685,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         setSSmValue(ss_segment, md_product_serial.get(MD_SegmentDao.SEGMENT_CODE), md_product_serial.get(MD_SegmentDao.SEGMENT_DESC), true);
         serialProperties.add(ss_segment);
         //
-        setSSmValue(ss_category_price,md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_CODE),md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC),true);
+        setSSmValue(ss_category_price, md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_CODE), md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC), true);
         serialProperties.add(ss_category_price);
         //
         setSSmValue(ss_site_owner, md_product_serial.get(SITE_CODE_OWNER), md_product_serial.get(SITE_DESC_OWNER), true);
@@ -703,6 +708,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         spinnersInitializer();
     }
 
+    /**
+     * Monta HMAux para inserir no spinner
+     *
+     * @param ss_component
+     * @param code
+     * @param desc
+     * @param source_val
+     */
     private void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID, code);
@@ -713,8 +726,13 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         }
     }
 
+    /**
+     * Faz loop no arraylist de itens verificando se
+     * houve alteração de valor.
+     *
+     * @return
+     */
     private boolean checkSerialChanges() {
-
         for (int i = 0; i < serialProperties.size(); i++) {
             Object propertie = serialProperties.get(i);
             //Se for SearchableSpinner
@@ -723,7 +741,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                     serialInfoChanges = true;
                     return true;
                 }
-            }else{
+            } else {
                 //Se for EditText
                 if (propertie instanceof EditText) {
                     if (!((EditText) propertie).getText().toString().equals(((EditText) propertie).getTag().toString())) {
@@ -758,7 +776,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     }
 
     /**
-     * Carrega liaa que sera exibida no spinner.
+     * Carrega lista que sera exibida no spinner.
      * Se parameto true, apaga valor atual do spinner.
      *
      * @param reset_val
@@ -918,6 +936,49 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        switch (requesting_process) {
+
+            case Constant.MODULE_CHECKLIST:
+                //mView.callAct008(context,product_code);
+                break;
+
+            case Constant.MODULE_SO:
+                if (ws_process.equals(SO_WS_SEARCH_SO)) {
+                    //Valida retorno do save do serial
+                    //Se ok, segue para listagem de SO
+                    //Se erro, exibe msg de erro e no ok segue para lista de SO
+                    if(hmAux.get(WS_SO_Search.SERIAL_SAVE).equals("OK")){
+                        mPresenter.defineForwardFlow(hmAux.get(WS_SO_Search.SO_LIST));
+                    }else{
+                        final String soList = hmAux.get(WS_SO_Search.SO_LIST);
+                        String msg = hmAux_Trans.get("alert_save_serial_error_msg") +"\n"+ hmAux.get(WS_SO_Search.SERIAL_SAVE);
+                        //
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_save_serial_error_ttl"),
+                                msg,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mPresenter.defineForwardFlow(soList);
+                                    }
+                                },
+                                0
+                        );
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        progressDialog.dismiss();
+
+
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
@@ -932,19 +993,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
                     mPresenter.getSerialInfo(product_code, mket_serial_id.getText().toString().trim());
                     btn_action.setOnClickListener(listnerSearchSO);
-                }
-
-                if (ws_process.equals(SO_WS_SEARCH_SO)) {
-                    Gson gson = new GsonBuilder().serializeNulls().create();
-                    ArrayList<SM_SO> sos = gson.fromJson(
-                            mLink,
-                            new TypeToken<ArrayList<SM_SO>>() {
-                            }.getType());
-
-                    if (sos != null) {
-                        mPresenter.defineForwardFlow(mLink);
-                    }
-
+                    btn_action.setText(hmAux_Trans.get("btn_so_search"));
                 }
                 break;
             default:
@@ -974,6 +1023,33 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
         finish();
     }
 

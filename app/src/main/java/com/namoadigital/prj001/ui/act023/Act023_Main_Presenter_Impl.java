@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -11,6 +14,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
@@ -18,6 +22,9 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
 
 /**
  * Created by d.luche on 22/06/2017.
@@ -145,14 +152,12 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     public void updateSerialInfo(MD_Product_Serial productSerial) {
         //Salva dados alterados do S.O
         serialDao.addUpdate(productSerial);
-        //Chama consulta de S.O informando qe o serial precisa ser alterado.
-        executeSoSearch(productSerial.getProduct_code(),productSerial.getSerial_id(),true);
-    }
-
-
-    @Override
-    public void callSoSearch(boolean save_serial) {
-
+        if(ToolBox_Con.isOnline(context)) {
+            //Chama consulta de S.O informando qe o serial precisa ser alterado.
+            executeSoSearch(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     private boolean isValidProduct(MD_Product md_product){
@@ -188,13 +193,16 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
 
         if(hasSerial(serial)){
 
-            mView.showPD(
-                    hmAux_Trans.get("progress_serial_search_ttl"),
-                    hmAux_Trans.get("progress_serial_search_msg")
-            );
-            //
-            executeSerialSearch(product_code,serial);
-            // executeSoSearch(product_code,serial);
+            if(ToolBox_Con.isOnline(context)) {
+                mView.showPD(
+                        hmAux_Trans.get("progress_serial_search_ttl"),
+                        hmAux_Trans.get("progress_serial_search_msg")
+                );
+                //
+                executeSerialSearch(product_code, serial);
+            }else{
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
 
         }else{
             mView.fieldFocus();
@@ -224,12 +232,38 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 //mView.callAct008(context,product_code);
                 break;
 
-            case Constant.MODULE_SO:default:
-                bundle.putString(Constant.ACT023_SO_HEADER_LIST,(String) param);
-                mView.callAct024(context,bundle);
+            case Constant.MODULE_SO:
+                String soList = (String)param;
+                //
+                if(checkSoListExists(soList)){
+                    bundle.putString(Constant.ACT023_SO_HEADER_LIST,soList);
+                    mView.callAct024(context,bundle);
+                }else {
+                    //
+                    mView.showAlertDialog(
+                            hmAux_Trans.get("alert_no_so_found_ttl"),
+                            hmAux_Trans.get("alert_no_so_found_msg")
+                    );
+                }
+                break;
+
+            default:
                 break;
 
         }
+    }
+
+    private boolean checkSoListExists(String soList) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<SM_SO> sos = gson.fromJson(
+                soList,
+                new TypeToken<ArrayList<SM_SO>>() {
+                }.getType());
+        //
+        if(sos != null && sos.size() > 0){
+            return true;
+        }
+        return false;
     }
 
     @Override
