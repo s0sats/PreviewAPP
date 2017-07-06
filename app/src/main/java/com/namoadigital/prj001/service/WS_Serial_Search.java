@@ -138,17 +138,20 @@ public class WS_Serial_Search extends IntentService {
         if(!callProcessWSCheckValidation(rec)){
            return false;
         }else{
-            //
-            MD_Product_SerialDao serialDao =
-                    new MD_Product_SerialDao(
-                            getApplicationContext(),
-                            ToolBox_Con.customDBPath(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                            Constant.DB_VERSION_CUSTOM
-                    );
-            //Insere no banco os dados do Serial
-            //serialDao.addUpdate(rec.getRecord(),false);//insere varios
-            serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
+            if(rec.getRecord().size() > 0){
+                //
+                MD_Product_SerialDao serialDao =
+                        new MD_Product_SerialDao(
+                                getApplicationContext(),
+                                ToolBox_Con.customDBPath(
+                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+                //Insere no banco os dados do Serial
+                //serialDao.addUpdate(rec.getRecord(),false);//insere varios
+                serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
+            }
+
         }
         return true;
     }

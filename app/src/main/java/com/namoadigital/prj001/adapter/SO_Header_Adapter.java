@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ public class SO_Header_Adapter extends BaseAdapter {
     private List<SM_SO> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
+    private boolean[] checkedStatus;
+    private ISO_Header_Adapter delegate;
 
     public SO_Header_Adapter(Context context, int resource, List<SM_SO> source) {
         this.context = context;
@@ -40,8 +43,21 @@ public class SO_Header_Adapter extends BaseAdapter {
                 Constant.APP_MODULE,
                 "so_header_adapter"
         );
+        this.checkedStatus = new boolean[source.size()];
+        for (int i = 0; i < checkedStatus.length; i++) {
+            checkedStatus[i] = false;
+        }
         loadTranslation();
     }
+
+    public interface ISO_Header_Adapter{
+        void donwloadBtnClicked(SM_SO so);
+    }
+
+    public void setOnDownloadBtnClicked(ISO_Header_Adapter delegate){
+        this.delegate = delegate;
+    }
+
 
     @Override
     public int getCount() {
@@ -61,10 +77,10 @@ public class SO_Header_Adapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            convertView = mInflater.inflate(resource, parent, false);
         }
         //Resgata item do list view.
         SM_SO so = source.get(position);
@@ -109,38 +125,75 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
         //
-        tv_so_code.setText(hmAux_Trans.get("so_code_lbl")+ ": " + so.getSo_prefix() +"."+ so.getSo_code());
+        tv_so_code.setText(hmAux_Trans.get("so_code_lbl") + ": " + so.getSo_prefix() + "." + so.getSo_code());
         //
-        tv_so_id.setText(hmAux_Trans.get("so_id_lbl")+ ": " + so.getSo_id());
+        tv_so_id.setText(hmAux_Trans.get("so_id_lbl") + ": " + so.getSo_id());
         //
-        tv_so_desc.setText(hmAux_Trans.get("so_desc_lbl")+ ": " + so.getSo_desc());
+        tv_so_desc.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so.getSo_desc());
         //
-        tv_priority.setText(hmAux_Trans.get("priority_lbl")+ ": " + so.getPriority_desc() );
+        tv_priority.setText(hmAux_Trans.get("priority_lbl") + ": " + so.getPriority_desc());
         //
-        tv_status.setText(hmAux_Trans.get("status_lbl")+ ": " + so.getStatus() );
+        tv_status.setText(hmAux_Trans.get("status_lbl") + ": " + so.getStatus());
         //
-        tv_deadline.setText(hmAux_Trans.get("deadline_lbl")+ ": " + so.getDeadline() );
+        tv_deadline.setText(hmAux_Trans.get("deadline_lbl") + ": " + so.getDeadline());
         //
-        tv_site.setText(hmAux_Trans.get("site_lbl")+ ": " + so.getSite_id() + " - " + so.getSite_desc() );
+        tv_site.setText(hmAux_Trans.get("site_lbl") + ": " + so.getSite_id() + " - " + so.getSite_desc());
         //
-        tv_operation.setText(hmAux_Trans.get("operation_lbl")+ ": " + so.getOperation_id() + " - " + so.getOperation_desc() );
+        tv_operation.setText(hmAux_Trans.get("operation_lbl") + ": " + so.getOperation_id() + " - " + so.getOperation_desc());
         //
-        tv_contract.setText(hmAux_Trans.get("contract_lbl")+ ": " + so.getContract_code() + " - " + so.getContract_desc());
+        tv_contract.setText(hmAux_Trans.get("contract_lbl") + ": " + so.getContract_code() + " - " + so.getContract_desc());
         //
-        tv_client.setText(hmAux_Trans.get("client_lbl")+ ": " + so.getClient_name());
+        tv_client.setText(hmAux_Trans.get("client_lbl") + ": " + so.getClient_name());
         //
         tv_serial_ttl.setText(hmAux_Trans.get("serial_main_title"));
         //
-        tv_product.setText(hmAux_Trans.get("product_lbl")+ ": " + so.getProduct_id() + " - " + so.getProduct_desc());
+        tv_product.setText(hmAux_Trans.get("product_lbl") + ": " + so.getProduct_id() + " - " + so.getProduct_desc());
         //
-        tv_serial.setText(hmAux_Trans.get("serial_lbl")+ ": " + so.getSerial_id());
+        tv_serial.setText(hmAux_Trans.get("serial_lbl") + ": " + so.getSerial_id());
         //
-        tv_segment.setText(hmAux_Trans.get("segment_lbl")+ ": " + so.getSegment_id() + " - " + so.getSegment_desc());
+        tv_segment.setText(hmAux_Trans.get("segment_lbl") + ": " + so.getSegment_id() + " - " + so.getSegment_desc());
         //
-        tv_category_price.setText(hmAux_Trans.get("category_price_lbl")+ ": " + so.getCategory_price_id() + " - " + so.getCategory_price_desc());
-
+        tv_category_price.setText(hmAux_Trans.get("category_price_lbl") + ": " + so.getCategory_price_id() + " - " + so.getCategory_price_desc());
+        //
+        //Checkbox
+        chk_download.setTag(position);
+        //
+        chk_download.setOnCheckedChangeListener(chkListner);
+        //
+        chk_download.setChecked(checkedStatus[position]);
+        //
+        btn_download.setTag(position);
+        //
+        btn_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate != null) {
+                    delegate.donwloadBtnClicked(source.get((Integer) v.getTag()));
+                }
+            }
+        });
+        //
         return convertView;
     }
+
+    public ArrayList<SM_SO> getSoToDownload() {
+        ArrayList<SM_SO> downloadList = new ArrayList<>();
+        //
+        for (int i = 0; i < checkedStatus.length; i++) {
+            if (checkedStatus[i]) {
+                downloadList.add(source.get(i));
+            }
+        }
+        //
+        return downloadList;
+    }
+    //
+    private CompoundButton.OnCheckedChangeListener chkListner = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            checkedStatus[(int) buttonView.getTag()] = isChecked;
+        }
+    };
 
     private void loadTranslation() {
 

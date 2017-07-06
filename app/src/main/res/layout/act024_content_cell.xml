@@ -51,6 +51,7 @@
                 android:layout_gravity="center_vertical|left"
                 android:focusable="false"
                 android:padding="2dp"
+                android:background="@drawable/namoa_icon_bg_states"
                 />
 
 

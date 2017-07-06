@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -70,6 +71,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         List<String> transList = new ArrayList<String>();
         transList.add("act024_title");
         transList.add("btn_new");
+        transList.add("btn_download");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -170,6 +172,17 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         );
         //
         lv_so_headers.setAdapter(mAdapter);
+        //
+        mAdapter.setOnDownloadBtnClicked(new SO_Header_Adapter.ISO_Header_Adapter() {
+            @Override
+            public void donwloadBtnClicked(SM_SO so) {
+                ArrayList<SM_SO> teste = mAdapter.getSoToDownload();
+                //
+                int i = 0;
+                //
+                Toast.makeText(context,so.getSo_id(),Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
 

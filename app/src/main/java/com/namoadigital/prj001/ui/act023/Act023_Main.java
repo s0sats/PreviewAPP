@@ -367,7 +367,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         views.add(ss_segment);
         views.add(ss_category_price);
         views.add(ss_site_owner);
-        views.add(btn_action);
+        //views.add(btn_action);
         //
         layoutConfiguration();
 
@@ -661,6 +661,9 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     @Override
     public void setSerialValues(HMAux md_product_serial) {
+        //
+        btn_action.setOnClickListener(listnerSearchSO);
+        btn_action.setText(hmAux_Trans.get("btn_so_search"));
         //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //
@@ -992,8 +995,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
                     mPresenter.getSerialInfo(product_code, mket_serial_id.getText().toString().trim());
-                    btn_action.setOnClickListener(listnerSearchSO);
-                    btn_action.setText(hmAux_Trans.get("btn_so_search"));
                 }
                 break;
             default:
