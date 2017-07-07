@@ -121,8 +121,8 @@ public class SM_SO {
     private int edit_user;
     @Expose
     private int total_qty_service;
-    //@Expose
-   // private double total_price;
+    @Expose
+    private String total_price;
 
     @Expose
     private ArrayList<SM_SO_File> so_file = new ArrayList<>();
@@ -579,13 +579,13 @@ public class SM_SO {
         this.total_qty_service = total_qty_service;
     }
 
-//    public double getTotal_price() {
-//        return total_price;
-//    }
-//
-//    public void setTotal_price(double total_price) {
-//        this.total_price = total_price;
-//    }
+    public String getTotal_price() {
+        return total_price;
+    }
+
+    public void setTotal_price(String total_price) {
+        this.total_price = total_price;
+    }
 
     public ArrayList<SM_SO_File> getSo_file() {
         return so_file;

@@ -498,7 +498,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             so.setEdit_user(cursor.getInt(cursor.getColumnIndex(EDIT_USER)));
             so.setTotal_qty_service(cursor.getInt(cursor.getColumnIndex(TOTAL_QTY_SERVICE)));
-           // so.setTotal_price(cursor.getDouble(cursor.getColumnIndex(TOTAL_PRICE)));
+            so.setTotal_price(cursor.getString(cursor.getColumnIndex(TOTAL_PRICE)));
 
             return so;
         }
@@ -729,9 +729,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 contentValues.put(TOTAL_QTY_SERVICE, sm_so.getTotal_qty_service());
             }
 
-//            if (sm_so.getTotal_price() > -1) {
-//                contentValues.put(TOTAL_PRICE, sm_so.getTotal_price());
-//            }
+            if (sm_so.getTotal_price() != null) {
+                contentValues.put(TOTAL_PRICE, sm_so.getTotal_price());
+            }
 
             return contentValues;
         }
