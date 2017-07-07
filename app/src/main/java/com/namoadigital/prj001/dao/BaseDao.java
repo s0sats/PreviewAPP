@@ -12,7 +12,7 @@ import com.namoadigital.prj001.database.DatabaseHelperSingle;
 
 public class BaseDao {
 
-    private Context context;
+    protected Context context;
     protected SQLiteDatabase db;
 
     private String mDB_NAME;

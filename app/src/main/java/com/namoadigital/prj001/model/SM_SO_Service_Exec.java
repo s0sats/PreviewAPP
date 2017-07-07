@@ -55,6 +55,7 @@ public class SM_SO_Service_Exec {
         this.pack_seq = service.getPack_seq();
         this.category_price_code = service.getCategory_price_code();
         this.service_code = service.getService_code();
+        this.service_seq = service.getService_seq();
 
         for(int i =0; i < task.size();i++){
             task.get(i).setPK(this);

@@ -8,7 +8,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO_Pack;
+import com.namoadigital.prj001.model.SM_SO_Service;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -68,6 +71,14 @@ public class SM_SO_PackDao extends BaseDao implements Dao<SM_SO_Pack> {
                 sbWhere.append(PACK_SEQ).append(" = '").append(String.valueOf(sm_so_pack.getPack_seq())).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_pack), sbWhere.toString(), null);
+
+                SM_SO_ServiceDao sm_so_serviceDao = new SM_SO_ServiceDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                sm_so_serviceDao.addUpdate(sm_so_pack.getService(), false);
             }
 
         } catch (Exception e) {
@@ -107,6 +118,14 @@ public class SM_SO_PackDao extends BaseDao implements Dao<SM_SO_Pack> {
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_pack), sbWhere.toString(), null);
                 }
+
+                SM_SO_ServiceDao sm_so_serviceDao = new SM_SO_ServiceDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                sm_so_serviceDao.addUpdate(sm_so_pack.getService(), false);
             }
 
             //db.setTransactionSuccessful();
@@ -162,6 +181,23 @@ public class SM_SO_PackDao extends BaseDao implements Dao<SM_SO_Pack> {
 
             while (cursor.moveToNext()) {
                 sm_so_pack = toSM_SO_PackMapper.map(cursor);
+
+                if (sm_so_pack != null) {
+                    SM_SO_ServiceDao sm_so_serviceDao = new SM_SO_ServiceDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    sm_so_pack.setService((ArrayList<SM_SO_Service>) sm_so_serviceDao.query(new SM_SO_Service_Sql_002(
+                            sm_so_pack.getCustomer_code(),
+                            sm_so_pack.getSo_prefix(),
+                            sm_so_pack.getSo_code(),
+                            sm_so_pack.getPrice_list_code(),
+                            sm_so_pack.getPack_code(),
+                            sm_so_pack.getPack_seq()
+                    ).toSqlQuery()));
+                }
             }
 
             cursor.close();
@@ -215,6 +251,24 @@ public class SM_SO_PackDao extends BaseDao implements Dao<SM_SO_Pack> {
 
             while (cursor.moveToNext()) {
                 SM_SO_Pack uAux = toSM_SO_PackMapper.map(cursor);
+                //
+                if (uAux != null) {
+                    SM_SO_ServiceDao sm_so_serviceDao = new SM_SO_ServiceDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    uAux.setService((ArrayList<SM_SO_Service>) sm_so_serviceDao.query(new SM_SO_Service_Sql_002(
+                            uAux.getCustomer_code(),
+                            uAux.getSo_prefix(),
+                            uAux.getSo_code(),
+                            uAux.getPrice_list_code(),
+                            uAux.getPack_code(),
+                            uAux.getPack_seq()
+                    ).toSqlQuery()));
+                }
+                //
                 sm_so_packs.add(uAux);
             }
 

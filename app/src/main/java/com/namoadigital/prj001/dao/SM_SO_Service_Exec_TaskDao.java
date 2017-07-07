@@ -8,7 +8,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -95,6 +98,14 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task), sbWhere.toString(), null);
             }
 
+            SM_SO_Service_Exec_Task_FileDao sm_so_service_exec_task_fileDao = new SM_SO_Service_Exec_Task_FileDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            sm_so_service_exec_task_fileDao.addUpdate(sm_so_service_exec_task.getTask_file(), false);
+
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
@@ -142,6 +153,14 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task), sbWhere.toString(), null);
                 }
+
+                SM_SO_Service_Exec_Task_FileDao sm_so_service_exec_task_fileDao = new SM_SO_Service_Exec_Task_FileDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                sm_so_service_exec_task_fileDao.addUpdate(sm_so_service_exec_task.getTask_file(), false);
             }
 
             //db.setTransactionSuccessful();
@@ -197,6 +216,8 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
             while (cursor.moveToNext()) {
                 sm_so_service_exec_task = toSM_SO_Service_Exec_TaskMapper.map(cursor);
+
+
             }
 
             cursor.close();
@@ -250,6 +271,29 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
             while (cursor.moveToNext()) {
                 SM_SO_Service_Exec_Task uAux = toSM_SO_Service_Exec_TaskMapper.map(cursor);
+                //
+                if (uAux != null) {
+                    SM_SO_Service_Exec_Task_FileDao sm_so_service_exec_task_fileDao = new SM_SO_Service_Exec_Task_FileDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    uAux.setTask_file((ArrayList<SM_SO_Service_Exec_Task_File>) sm_so_service_exec_task_fileDao.query(new SM_SO_Service_Exec_Task_File_Sql_002(
+                            uAux.getCustomer_code(),
+                            uAux.getSo_prefix(),
+                            uAux.getSo_code(),
+                            uAux.getPrice_list_code(),
+                            uAux.getPack_code(),
+                            uAux.getPack_seq(),
+                            uAux.getCategory_price_code(),
+                            uAux.getService_code(),
+                            uAux.getService_seq(),
+                            uAux.getExec_code(),
+                            uAux.getTask_code()
+                    ).toSqlQuery()));
+                }
+                //
                 sm_so_service_exec_tasks.add(uAux);
             }
 
@@ -424,7 +468,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
                 contentValues.put(END_DATE, sm_so_service_exec_task.getEnd_date());
             }
 
-            if (sm_so_service_exec_task.getExec_time() > -1) {
+            if (sm_so_service_exec_task.getExec_time() != null) {
                 contentValues.put(EXEC_TIME, sm_so_service_exec_task.getExec_time());
             }
 

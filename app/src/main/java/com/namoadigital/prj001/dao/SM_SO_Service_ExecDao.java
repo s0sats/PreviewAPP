@@ -3,12 +3,16 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -77,6 +81,14 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec), sbWhere.toString(), null);
             }
 
+            SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            sm_so_service_exec_taskDao.addUpdate(sm_so_service_exec.getTask(), false);
+
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
@@ -123,6 +135,14 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec), sbWhere.toString(), null);
                 }
+
+                SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                sm_so_service_exec_taskDao.addUpdate(sm_so_service_exec.getTask(), false);
             }
 
             //db.setTransactionSuccessful();
@@ -178,6 +198,28 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
 
             while (cursor.moveToNext()) {
                 sm_so_service_exec = toSM_SO_Service_ExecMapper.map(cursor);
+
+                if (sm_so_service_exec != null) {
+                    SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    sm_so_service_exec.setTask((ArrayList<SM_SO_Service_Exec_Task>) sm_so_service_exec_taskDao.query(new SM_SO_Service_Exec_Task_Sql_002(
+                            sm_so_service_exec.getCustomer_code(),
+                            sm_so_service_exec.getSo_prefix(),
+                            sm_so_service_exec.getSo_code(),
+                            sm_so_service_exec.getPrice_list_code(),
+                            sm_so_service_exec.getPack_code(),
+                            sm_so_service_exec.getPack_seq(),
+                            sm_so_service_exec.getCategory_price_code(),
+                            sm_so_service_exec.getService_code(),
+                            sm_so_service_exec.getService_seq(),
+                            sm_so_service_exec.getExec_code()
+                    ).toSqlQuery()));
+                }
+
             }
 
             cursor.close();
@@ -187,7 +229,6 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
         }
 
         closeDB();
-
 
         return sm_so_service_exec;
     }
@@ -231,6 +272,30 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
 
             while (cursor.moveToNext()) {
                 SM_SO_Service_Exec uAux = toSM_SO_Service_ExecMapper.map(cursor);
+                //
+                if (uAux != null) {
+                    SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    uAux.setTask((ArrayList<SM_SO_Service_Exec_Task>) sm_so_service_exec_taskDao.query(new SM_SO_Service_Exec_Task_Sql_002(
+                            uAux.getCustomer_code(),
+                            uAux.getSo_prefix(),
+                            uAux.getSo_code(),
+                            uAux.getPrice_list_code(),
+                            uAux.getPack_code(),
+                            uAux.getPack_seq(),
+                            uAux.getCategory_price_code(),
+                            uAux.getService_code(),
+                            uAux.getService_seq(),
+                            uAux.getExec_code()
+                    ).toSqlQuery()));
+
+                    Log.d("TASKS", String.valueOf(uAux.getTask().size()));
+                }
+                //
                 sm_so_service_execs.add(uAux);
             }
 
@@ -365,7 +430,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
                 contentValues.put(STATUS, sm_so_service_exec.getStatus());
             }
 
-            if (sm_so_service_exec.getPartner_code() > -1) {
+            if (sm_so_service_exec.getPartner_code() !=  null) {
                 contentValues.put(PACK_CODE, sm_so_service_exec.getPartner_code());
             }
 

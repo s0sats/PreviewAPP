@@ -8,7 +8,12 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_File;
+import com.namoadigital.prj001.model.SM_SO_Pack;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -105,11 +110,23 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 db.update(TABLE, toContentValuesMapper.map(so), sbWhere.toString(), null);
             }
 
-            // Tenho que fazer algo com isso
-            // so.getSo_file().size();
-            // so.getPack().size();
+            SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            SM_SO_PackDao sm_so_packDao = new SM_SO_PackDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            sm_so_fileDao.addUpdate(so.getSo_file(), false);
+            sm_so_packDao.addUpdate(so.getPack(), false);
 
         } catch (Exception e) {
+            String resultado = e.toString();
         } finally {
         }
 
@@ -197,6 +214,35 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             while (cursor.moveToNext()) {
                 so = toSM_SOMapper.map(cursor);
             }
+
+            if (so != null) {
+                SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                so.setSo_file((ArrayList<SM_SO_File>) sm_so_fileDao.query(new SM_SO_File_Sql_002(
+                        so.getCustomer_code(),
+                        so.getSo_prefix(),
+                        so.getSo_code()
+                ).toSqlQuery()));
+
+                SM_SO_PackDao sm_so_packDao = new SM_SO_PackDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                so.setPack((ArrayList<SM_SO_Pack>) sm_so_packDao.query(new SM_SO_Pack_Sql_002(
+                        so.getCustomer_code(),
+                        so.getSo_prefix(),
+                        so.getSo_code()
+                ).toSqlQuery()));
+
+
+            }
+
 
             cursor.close();
         } catch (Exception e) {
@@ -623,7 +669,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 contentValues.put(CLIENT_USER, sm_so.getClient_user());
             }
 
-            if (sm_so.getClient_code() > -1) {
+            if (sm_so.getClient_code() != null) {
                 contentValues.put(CLIENT_CODE, sm_so.getClient_code());
             }
 

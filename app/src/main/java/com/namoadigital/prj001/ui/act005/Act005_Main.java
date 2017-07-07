@@ -59,6 +59,7 @@ import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.TesteDao;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -134,8 +135,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
-
+        //
+        // Hugo Pode Eliminar no Merge
+        TesteDao.Test_SM_SO_Daos(context);
     }
+
 
     private void iniSetup() {
 
@@ -329,37 +333,37 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private void initVars() {
 
-        /*
-        *
-        * Teste da função de exception
-        *
-        * apgar apos teste
-        * */
-        //geraTesteSO();
-
-        Gson gson = new GsonBuilder().serializeNulls().create();
-
-        String teste_so = "{\"so\":[{\"customer_code\":\"1\",\"so_prefix\":\"1\",\"so_code\":\"1\",\"so_desc\":\"1\",\"so_scn\":\"1\",\"product_code\":\"1\",\"product_id\":\"PROD1\",\"product_desc\":\"CARRO\",\"serial_code\":\"1\",\"serial_id\":\"1\",\"category_price_code\":\"8\",\"category_price_id\":\"03 Grandes\",\"category_price_desc\":\"Grandes\",\"segment_code\":\"3\",\"segment_id\":\"SEGMENT_003\",\"segment_desc\":\"SEGMENT DESC 003\",\"site_code\":\"15\",\"site_id\":\"15\",\"site_desc\":\"Predio Do Batata\",\"operation_code\":\"2\",\"operation_id\":\"2\",\"operation_desc\":\"MERCEDES\",\"contract_code\":\"1\",\"contract_desc\":\"Contract Desc 01\",\"contract_po_erp\":\"ERP_01\",\"contract_po_client1\":\"CLIENTE_1_01\",\"contract_po_client2\":\"CLIENTE_2_01\",\"priority_code\":\"1\",\"priority_desc\":\"p001\",\"status\":\"EDIT\",\"quality_approval_user\":\"1\",\"quality_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"comments\":null,\"so_father_prefix\":null,\"so_father_code\":null,\"deadline\":\"2017-06-13 15:32:49 -03:00\",\"origin\":\"APP\",\"client_type\":\"CLIENT\",\"client_user\":null,\"client_code\":\"1\",\"client_id\":\"1\",\"client_name\":\"CLIENTE NOME\",\"client_email\":\"cliente@email.com.br\",\"client_phone\":\"1231232131\",\"client_approval_image\":null,\"client_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"client_approval_flag\":\"0\"}]}";
-        SM_Env env = gson.fromJson(teste_so, SM_Env.class);
-
-        SM_SODao soDao = new SM_SODao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        soDao.addUpdate(env.getSo(), false);
-
-
-        SM_SO so_db = soDao.getByString(
-                new SM_SO_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        1,
-                        1
-                ).toSqlQuery()
-        );
-
-        int i = 0;
+//        /*
+//        *
+//        * Teste da função de exception
+//        *
+//        * apgar apos teste
+//        * */
+//        //geraTesteSO();
+//
+//        Gson gson = new GsonBuilder().serializeNulls().create();
+//
+//        String teste_so = "{\"so\":[{\"customer_code\":\"1\",\"so_prefix\":\"1\",\"so_code\":\"1\",\"so_desc\":\"1\",\"so_scn\":\"1\",\"product_code\":\"1\",\"product_id\":\"PROD1\",\"product_desc\":\"CARRO\",\"serial_code\":\"1\",\"serial_id\":\"1\",\"category_price_code\":\"8\",\"category_price_id\":\"03 Grandes\",\"category_price_desc\":\"Grandes\",\"segment_code\":\"3\",\"segment_id\":\"SEGMENT_003\",\"segment_desc\":\"SEGMENT DESC 003\",\"site_code\":\"15\",\"site_id\":\"15\",\"site_desc\":\"Predio Do Batata\",\"operation_code\":\"2\",\"operation_id\":\"2\",\"operation_desc\":\"MERCEDES\",\"contract_code\":\"1\",\"contract_desc\":\"Contract Desc 01\",\"contract_po_erp\":\"ERP_01\",\"contract_po_client1\":\"CLIENTE_1_01\",\"contract_po_client2\":\"CLIENTE_2_01\",\"priority_code\":\"1\",\"priority_desc\":\"p001\",\"status\":\"EDIT\",\"quality_approval_user\":\"1\",\"quality_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"comments\":null,\"so_father_prefix\":null,\"so_father_code\":null,\"deadline\":\"2017-06-13 15:32:49 -03:00\",\"origin\":\"APP\",\"client_type\":\"CLIENT\",\"client_user\":null,\"client_code\":\"1\",\"client_id\":\"1\",\"client_name\":\"CLIENTE NOME\",\"client_email\":\"cliente@email.com.br\",\"client_phone\":\"1231232131\",\"client_approval_image\":null,\"client_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"client_approval_flag\":\"0\"}]}";
+//        SM_Env env = gson.fromJson(teste_so, SM_Env.class);
+//
+//        SM_SODao soDao = new SM_SODao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        soDao.addUpdate(env.getSo(), false);
+//
+//
+//        SM_SO so_db = soDao.getByString(
+//                new SM_SO_Sql_001(
+//                        ToolBox_Con.getPreference_Customer_Code(context),
+//                        1,
+//                        1
+//                ).toSqlQuery()
+//        );
+//
+//        int i = 0;
         /*
         *
         * Fim do teste
