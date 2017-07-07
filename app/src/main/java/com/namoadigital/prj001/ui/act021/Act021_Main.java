@@ -1,14 +1,19 @@
 package com.namoadigital.prj001.ui.act021;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -27,6 +32,13 @@ import java.util.List;
  */
 
 public class Act021_Main extends Base_Activity implements Act021_Main_View {
+
+    public static final String NEW_OPT_ID = "new_opt_id";
+    public static final String NEW_OPT_LABEL = "new_opt_label";
+
+    public static final String NEW_OPT_TP_PRODUCT = "new_opt_tp_product";
+    public static final String NEW_OPT_TP_SERIAL= "new_opt_tp_serial";
+    public static final String NEW_OPT_TP_LOCATION = "new_opt_tp_location";
 
     private Act021_Main_Presenter mPresenter;
     private Button btn_load;
@@ -67,6 +79,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("btn_load_so");
         transList.add("btn_express_so");
         transList.add("btn_pendencies_so");
+        transList.add("alert_new_opt_ttl");
+        transList.add("alert_new_opt_product_lbl");
+        transList.add("alert_new_opt_serial_lbl");
+        transList.add("alert_new_opt_location_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -103,7 +119,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callAct022(context);
+                //callAct022(context);
+                showNewOptDialog();
             }
         });
 
@@ -114,6 +131,76 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             }
         });
 
+    }
+
+    private void showNewOptDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act006_dialog_new_opt, null);
+
+        /**
+         * Ini Vars
+         */
+
+        ListView lv_opt = (ListView) view.findViewById(R.id.act006_dialog_opt_lv_opt);
+
+        String[] from = {NEW_OPT_LABEL};
+        //int[] to = {android.R.id.text1};
+        int[] to = {R.id.namoa_custom_cell_3_tv_item};
+
+
+        lv_opt.setAdapter(
+                new SimpleAdapter(
+                        context,
+                        getNewOpts(),
+                        //android.R.layout.simple_list_item_1,
+                        R.layout.namoa_custom_cell_3,
+                        from,
+                        to
+                )
+        );
+
+        /**
+         * Ini Action
+         */
+
+        lv_opt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                mPresenter.defineFlow(item);
+
+            }
+        });
+
+        builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
+        builder.setView(view);
+        builder.setCancelable(true);
+
+        builder.show();
+    }
+
+    private List<HMAux> getNewOpts() {
+        List<HMAux> opts = new ArrayList<>();
+
+        HMAux aux =  new HMAux();
+        aux.put(NEW_OPT_ID, NEW_OPT_TP_PRODUCT);
+        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_product_lbl"));
+        opts.add(aux);
+
+        aux = new HMAux();
+        aux.put(NEW_OPT_ID, NEW_OPT_TP_SERIAL);
+        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_serial_lbl"));
+        opts.add(aux);
+
+        aux = new HMAux();
+        aux.put(NEW_OPT_ID, NEW_OPT_TP_LOCATION);
+        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_location_lbl"));
+        //opts.add(aux);
+
+        return opts;
     }
 
     private void callAct022T(Context context) {
@@ -149,6 +236,20 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void callAct025(Context context) {
+       /* Intent mIntent = new Intent(context, Act025_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle == null){
+            bundle = new Bundle();
+        }
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_SO);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();*/
     }
 
     @Override
