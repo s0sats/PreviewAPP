@@ -378,9 +378,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         listnerSearchSerial = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mket_serial_id.getText().toString().trim().length() > 0){
-                    mket_serial_id.setEnabled(false);
-                }
                 //
                 mPresenter.validadeSerialFlow(
                         mket_serial_id.getText().toString(),
@@ -661,6 +658,10 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     @Override
     public void setSerialValues(HMAux md_product_serial) {
+        //
+        //if(mket_serial_id.getText().toString().trim().length() > 0) {
+            mket_serial_id.setEnabled(false);
+        //}
         //
         btn_action.setOnClickListener(listnerSearchSO);
         btn_action.setText(hmAux_Trans.get("btn_so_search"));
@@ -992,8 +993,8 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 break;
 
             case Constant.MODULE_SO:
-
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
+                    //
                     mPresenter.getSerialInfo(product_code, mket_serial_id.getText().toString().trim());
                 }
                 break;

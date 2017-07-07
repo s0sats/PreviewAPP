@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.TSerial_Search_Env;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -110,26 +111,6 @@ public class WS_Serial_Search extends IntentService {
     }
 
     private boolean saveSerial(String resultado) {
-//
-//        String teste = "{\"customer_code\":\"1\",\"product_code\":\"23\",\"product_id\":\"btt1\",\"product_desc\":\"Teste Batata\",\"serial_code\":\"1\",\"serial_id\":\"qwer\",\"site_code\":\"15\",\"zone_code\":\"3\",\"local_code\":\"7\",\"add_inf1\":\"NAda\",\"add_inf2\":\"NAda2\",\"add_inf3\":\"NAda3\",\"site_code_owner\":\"14\",\"brand_code\":\"1\",\"model_code\":\"2\",\"color_code\":\"3\",\"segment_code\":\"3\",\"category_price_code\":\"1\"}";
-//
-//        MD_Product_Serial serial = gson.fromJson(teste, MD_Product_Serial.class);
-//
-////        String ig =  serial.getSerial_id();
-//
-//
-//        MD_Product_SerialDao serialDao =
-//                new MD_Product_SerialDao(
-//                        getApplicationContext(),
-//                        ToolBox_Con.customDBPath(
-//                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//        //Insere no banco os dados do Serial
-//        serialDao.addUpdate(serial);
-//
-//        return true;
-
         TSerial_Search_Save_Rec rec = gson.fromJson(
                 resultado,
                 TSerial_Search_Save_Rec.class
@@ -138,7 +119,12 @@ public class WS_Serial_Search extends IntentService {
         if(!callProcessWSCheckValidation(rec)){
            return false;
         }else{
-            if(rec.getRecord().size() > 0){
+            //Se Retorno Ok, porem nenhum serial encontrado,
+            //envia msg e cancel processamento
+            if(rec.getRecord().size() == 0) {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_found"), "", "0");
+                return false;
+            }else {
                 //
                 MD_Product_SerialDao serialDao =
                         new MD_Product_SerialDao(
@@ -150,8 +136,8 @@ public class WS_Serial_Search extends IntentService {
                 //Insere no banco os dados do Serial
                 //serialDao.addUpdate(rec.getRecord(),false);//insere varios
                 serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
-            }
 
+            }
         }
         return true;
     }
@@ -192,6 +178,7 @@ public class WS_Serial_Search extends IntentService {
 
         translist.add("msg_processing_list");
         translist.add("msg_receving_data");
+        translist.add("msg_no_serial_found");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
