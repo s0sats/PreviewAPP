@@ -16,4 +16,6 @@ public interface Act024_Main_View {
 
     void callAct005(Context context);
 
+    //void showMsg(String process);
+
 }

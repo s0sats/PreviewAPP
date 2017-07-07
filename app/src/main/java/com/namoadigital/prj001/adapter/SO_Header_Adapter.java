@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -117,6 +118,8 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         TextView tv_category_price = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_category_price);
         //
+        LinearLayout ll_download_optc = (LinearLayout) convertView.findViewById(R.id.act024_content_cell_ll_download_opt);
+        //
         ImageView btn_download = (ImageView) convertView.findViewById(R.id.act024_content_cell_btn_single_download);
         //
         CheckBox chk_download = (CheckBox) convertView.findViewById(R.id.act024_content_cell_chk_download);
@@ -173,6 +176,17 @@ public class SO_Header_Adapter extends BaseAdapter {
             }
         });
         //
+        /*
+        * Tratativas
+        *
+        */
+        //Se status da OS for edit ou stop, não exibe opções de download.
+        if(so.getStatus().equals(Constant.SO_STATUS_EDIT) || so.getStatus().equals(Constant.SO_STATUS_STOP) ){
+            ll_download_optc.setVisibility(View.GONE);
+        }else{
+            ll_download_optc.setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 

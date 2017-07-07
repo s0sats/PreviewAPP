@@ -185,8 +185,8 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_PRODUCT_CODE = "serial_search_product_code";
     public static final String WS_SERIAL_SEARCH_PRODUCT_ID = "serial_search_product_id";
     public static final String WS_SERIAL_SEARCH_SERIAL_ID = "serial_search_serial_id";
+    public static final String WS_SERIAL_SEARCH_EXACT = "ws_serial_search_exact";
     public static final String WS_SERIAL_SEARCH_SAVE_PROCESS = "ws_serial_search_save_process";
-
 
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";
@@ -251,6 +251,17 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String MODULE_SO = "MODULE_SO";
     public static final String MODULE_WM= "MODULE_WM";
     public static final String MODULE_TO= "MODULE_TO";
+
+    //Constantes Status da SO
+    public static final String SO_STATUS_EDIT = "EDIT";
+    public static final String SO_STATUS_STOP = "STOP";
+    public static final String SO_STATUS_PENDING = "PENDING";
+    public static final String SO_STATUS_PROCESS = "PROCESS";
+    public static final String SO_STATUS_WAITING_BUDGET = "WAITING_BUDGET";
+    public static final String SO_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
+    public static final String SO_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
+    public static final String SO_STATUS_DONE = "DONE";
+    public static final String SO_STATUS_CANCELLED = "CANCELLED";
 
 
 }

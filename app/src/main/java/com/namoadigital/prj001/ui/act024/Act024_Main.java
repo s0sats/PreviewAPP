@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.ui.act024;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
@@ -56,8 +58,6 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
-
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -72,6 +72,10 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         transList.add("act024_title");
         transList.add("btn_new");
         transList.add("btn_download");
+        transList.add("alert_download_mult_so_ttl");
+        transList.add("alert_download_mult_so_msg");
+        transList.add("alert_download_so_ttl");
+        transList.add("alert_download_so_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -160,6 +164,20 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     }
 
     private void initActions() {
+        //
+        btn_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                multDownloadConfirm();
+            }
+        });
+        //
+        btn_new.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
@@ -178,11 +196,60 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             public void donwloadBtnClicked(SM_SO so) {
                 ArrayList<SM_SO> teste = mAdapter.getSoToDownload();
                 //
-                int i = 0;
+                int i = teste.size();
                 //
-                Toast.makeText(context,so.getSo_id(),Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+    private void multDownloadConfirm(){
+        ArrayList<SM_SO> soToDownload = null;
+        if (mAdapter != null){
+            soToDownload = mAdapter.getSoToDownload();
+        }
+        //Se Existe lista de download.
+        if(soToDownload != null && soToDownload.size() > 0) {
+            final ArrayList<SM_SO> finalSoToDownload = soToDownload;
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (mAdapter != null) {
+                        mPresenter.downloadMultSo(finalSoToDownload);
+                    }
+                }
+            };
+            //
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_download_so_ttl"),
+                    hmAux_Trans.get("alert_download_mult_so_msg"),
+                    listener,
+                    0
+            );
+        }
+    }
+
+    private void singleDownloadConfirm(final SM_SO so){
+        if(so != null) {
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (mAdapter != null) {
+                        mPresenter.downloadSingleSo(so);
+                    }
+                }
+            };
+            //
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_download_so_ttl"),
+                    hmAux_Trans.get("alert_download_so_msg"),
+                    listener,
+                    0
+            );
+        }
+
 
     }
 

@@ -94,6 +94,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
             //
             mIntent.putExtras(bundle);
             //

@@ -46,6 +46,15 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
 
     }
 
+    @Override
+    public void downloadSingleSo(SM_SO so) {
+
+    }
+
+    @Override
+    public void downloadMultSo(ArrayList<SM_SO> download_list) {
+
+    }
 
     @Override
     public void onBackPressedClicked() {

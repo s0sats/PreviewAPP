@@ -80,6 +80,7 @@
     <string name="notification_msg_download">Favor não desligar conexões de rede.</string>
     <string name="generic_drawer_opened">Drawer Opened</string>
     <string name="generic_drawer_closed">Drawer Closed</string>
+    <string name="msg_device_code_not_found">Código do dispositivo não encontrado!\nÉ necessário um código de dispositivo para prosseguir. </string>
 
 
 </resources>

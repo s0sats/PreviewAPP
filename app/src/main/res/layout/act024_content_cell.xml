@@ -25,6 +25,7 @@
             android:layout_marginBottom="10dp"/>
 
         <LinearLayout
+            android:id="@+id/act024_content_cell_ll_download_opt"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -53,8 +54,6 @@
                 android:padding="2dp"
                 android:background="@drawable/namoa_icon_bg_states"
                 />
-
-
         </LinearLayout>
     </LinearLayout>
 

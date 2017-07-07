@@ -644,6 +644,11 @@ public class ToolBox_Inf {
                     sendBCStatus(context, "ERROR_1",context.getString(R.string.msg_nfc_card_blocked) /*context.getString(R.string.msg_user_canceled)*/, s_Link, "0");
                     return false;
 
+                case "DEVICE_CODE_REQUIRED":
+                    sendBCStatus(context, "ERROR_1",context.getString(R.string.msg_device_code_not_found), s_Link, "0");
+                    return false;
+
+
                 case "OK":
                     break;
                 default:
