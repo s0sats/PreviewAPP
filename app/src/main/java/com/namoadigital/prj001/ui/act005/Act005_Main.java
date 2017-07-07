@@ -59,6 +59,7 @@ import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.TesteDao;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -134,15 +135,18 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
-
+        //
+        // Hugo Pode Eliminar no Merge
+        TesteDao.Test_SM_SO_Daos(context);
     }
+
 
     private void iniSetup() {
 
         context = Act005_Main.this;
         //
         ToolBox_Inf.cleanningFormLocal(context);
-        Constant.DATEFORMATDT =  ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m","M").replaceAll("r","y");
+        Constant.DATEFORMATDT = ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m", "M").replaceAll("r", "y");
         fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
@@ -216,7 +220,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("support_dialog_ttl");
 
 
-
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -238,7 +241,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         SM_SO_Service service = new SM_SO_Service();
         SM_SO_Pack pack = new SM_SO_Pack();
         SM_SO_File so_attach = new SM_SO_File();
-        SM_SO so =  new SM_SO();
+        SM_SO so = new SM_SO();
 
         ArrayList<SM_SO_File> soFileList = new ArrayList<>();
         ArrayList<SM_SO_Pack> packList = new ArrayList<>();
@@ -248,7 +251,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         ArrayList<SM_SO_Service_Exec_Task_File> taskAttachList = new ArrayList<>();
 
         taskAttachList.add(task_attach);
-        task.setTask_attach(taskAttachList);
+        //task.setTask_attach(taskAttachList);
         taskList.add(task);
 
         exec.setTask(taskList);
@@ -308,7 +311,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         so.setClient_approval_date("2017-06-13");
         so.setClient_approval_flag(0);
         so.setPack(packList);
-        so.setSo_attach(soFileList);
+        //so.setSo_attach(soFileList);
 
         ArrayList<SM_SO> soList = new ArrayList<>();
         soList.add(so);
@@ -321,8 +324,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         String teste = gson.toJson(env);
         String teste2 = gsonNoExpose.toJson(env);
 
-        SM_Env resposta = gson.fromJson(teste2,SM_Env.class);
-        SM_Env respostaFull = gsonNoExpose.fromJson(teste2,SM_Env.class);
+        SM_Env resposta = gson.fromJson(teste2, SM_Env.class);
+        SM_Env respostaFull = gsonNoExpose.fromJson(teste2, SM_Env.class);
 
 
         teste += " ";
@@ -330,37 +333,37 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     private void initVars() {
 
-        /*
-        *
-        * Teste da função de exception
-        *
-        * apgar apos teste
-        * */
-        //geraTesteSO();
-
-        Gson gson = new GsonBuilder().serializeNulls().create();
-
-        String teste_so = "{\"so\":[{\"customer_code\":\"1\",\"so_prefix\":\"1\",\"so_code\":\"1\",\"so_desc\":\"1\",\"so_scn\":\"1\",\"product_code\":\"1\",\"product_id\":\"PROD1\",\"product_desc\":\"CARRO\",\"serial_code\":\"1\",\"serial_id\":\"1\",\"category_price_code\":\"8\",\"category_price_id\":\"03 Grandes\",\"category_price_desc\":\"Grandes\",\"segment_code\":\"3\",\"segment_id\":\"SEGMENT_003\",\"segment_desc\":\"SEGMENT DESC 003\",\"site_code\":\"15\",\"site_id\":\"15\",\"site_desc\":\"Predio Do Batata\",\"operation_code\":\"2\",\"operation_id\":\"2\",\"operation_desc\":\"MERCEDES\",\"contract_code\":\"1\",\"contract_desc\":\"Contract Desc 01\",\"contract_po_erp\":\"ERP_01\",\"contract_po_client1\":\"CLIENTE_1_01\",\"contract_po_client2\":\"CLIENTE_2_01\",\"priority_code\":\"1\",\"priority_desc\":\"p001\",\"status\":\"EDIT\",\"quality_approval_user\":\"1\",\"quality_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"comments\":null,\"so_father_prefix\":null,\"so_father_code\":null,\"deadline\":\"2017-06-13 15:32:49 -03:00\",\"origin\":\"APP\",\"client_type\":\"CLIENT\",\"client_user\":null,\"client_code\":\"1\",\"client_id\":\"1\",\"client_name\":\"CLIENTE NOME\",\"client_email\":\"cliente@email.com.br\",\"client_phone\":\"1231232131\",\"client_approval_image\":null,\"client_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"client_approval_flag\":\"0\"}]}";
-        SM_Env env = gson.fromJson(teste_so,SM_Env.class);
-
-        SM_SODao soDao = new SM_SODao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-                );
-
-        soDao.addUpdate(env.getSo(),false);
-
-
-        SM_SO so_db = soDao.getByString(
-                        new SM_SO_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                1,
-                                1
-                        ).toSqlQuery()
-        );
-
-        int i = 0;
+//        /*
+//        *
+//        * Teste da função de exception
+//        *
+//        * apgar apos teste
+//        * */
+//        //geraTesteSO();
+//
+//        Gson gson = new GsonBuilder().serializeNulls().create();
+//
+//        String teste_so = "{\"so\":[{\"customer_code\":\"1\",\"so_prefix\":\"1\",\"so_code\":\"1\",\"so_desc\":\"1\",\"so_scn\":\"1\",\"product_code\":\"1\",\"product_id\":\"PROD1\",\"product_desc\":\"CARRO\",\"serial_code\":\"1\",\"serial_id\":\"1\",\"category_price_code\":\"8\",\"category_price_id\":\"03 Grandes\",\"category_price_desc\":\"Grandes\",\"segment_code\":\"3\",\"segment_id\":\"SEGMENT_003\",\"segment_desc\":\"SEGMENT DESC 003\",\"site_code\":\"15\",\"site_id\":\"15\",\"site_desc\":\"Predio Do Batata\",\"operation_code\":\"2\",\"operation_id\":\"2\",\"operation_desc\":\"MERCEDES\",\"contract_code\":\"1\",\"contract_desc\":\"Contract Desc 01\",\"contract_po_erp\":\"ERP_01\",\"contract_po_client1\":\"CLIENTE_1_01\",\"contract_po_client2\":\"CLIENTE_2_01\",\"priority_code\":\"1\",\"priority_desc\":\"p001\",\"status\":\"EDIT\",\"quality_approval_user\":\"1\",\"quality_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"comments\":null,\"so_father_prefix\":null,\"so_father_code\":null,\"deadline\":\"2017-06-13 15:32:49 -03:00\",\"origin\":\"APP\",\"client_type\":\"CLIENT\",\"client_user\":null,\"client_code\":\"1\",\"client_id\":\"1\",\"client_name\":\"CLIENTE NOME\",\"client_email\":\"cliente@email.com.br\",\"client_phone\":\"1231232131\",\"client_approval_image\":null,\"client_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"client_approval_flag\":\"0\"}]}";
+//        SM_Env env = gson.fromJson(teste_so, SM_Env.class);
+//
+//        SM_SODao soDao = new SM_SODao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        soDao.addUpdate(env.getSo(), false);
+//
+//
+//        SM_SO so_db = soDao.getByString(
+//                new SM_SO_Sql_001(
+//                        ToolBox_Con.getPreference_Customer_Code(context),
+//                        1,
+//                        1
+//                ).toSqlQuery()
+//        );
+//
+//        int i = 0;
         /*
         *
         * Fim do teste
@@ -954,7 +957,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 new EV_User_Sql_001(
                         ToolBox_Con.getPreference_User_Code(getApplicationContext())
                 ).toSqlQuery()
-            );
+        );
 
         //
         //Menu Namoa logo
@@ -965,7 +968,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         //
         //Menu Habilita nfc
-        if(user.getNfc_blocked() == 1) {
+        if (user.getNfc_blocked() == 1) {
 //            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
 //            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
 
@@ -977,7 +980,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         //
         //Menu Cancela nfc
-        if(user.getExist_nfc() == 1) {
+        if (user.getExist_nfc() == 1) {
 //            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
 //            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
 
@@ -1017,7 +1020,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case TOOLBAR_ENABLE_NFC:
                 alertTitle = hmAux_Trans.get("alert_enable_nfc_ttl");
                 alertMsg = hmAux_Trans.get("alert_enable_nfc_msg");
-                listener =  new DialogInterface.OnClickListener() {
+                listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mPresenter.executeEnableNFC();
@@ -1028,7 +1031,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case TOOLBAR_CANCEL_NFC:
                 alertTitle = hmAux_Trans.get("alert_cancel_nfc_ttl");
                 alertMsg = hmAux_Trans.get("alert_cancel_nfc_msg");
-                listener =  new DialogInterface.OnClickListener() {
+                listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mPresenter.executeCancelNFC();
@@ -1053,7 +1056,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 return true;
         }
 
-        if(listener != null) {
+        if (listener != null) {
             ToolBox.alertMSG(
                     Act005_Main.this,
                     alertTitle,
@@ -1078,7 +1081,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
+        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);

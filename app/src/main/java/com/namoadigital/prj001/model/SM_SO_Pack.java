@@ -10,14 +10,28 @@ import java.util.ArrayList;
 
 public class SM_SO_Pack {
 
-    private long customer_code;
-    private int so_prefix;
-    private int so_code;
-    private int price_list_code;
+    private long customer_code; //pk
+    private int so_prefix; //pk
+    private int so_code; //pk
+    private int price_list_code; //pk
+
+    // Novo Criado
+    private String price_list_id;
+    private String price_list_desc;
+
     @Expose
-    private int pack_code;
+    private int pack_code; //pk
+
+    // Novo Criado
+    private int pack_seq; //pk
+
     private String pack_id;
     private String pack_desc;
+
+    // Novo Criado
+    private String status;
+
+    // Null
     @Expose
     private String rule;
     @Expose
@@ -29,19 +43,22 @@ public class SM_SO_Pack {
     @Expose
     private ArrayList<SM_SO_Service> service;
 
+
     public SM_SO_Pack() {
         this.customer_code = -1;
         this.so_prefix = -1;
         this.so_code = -1;
+        this.pack_code = -1;
+        this.pack_seq = -1;
         this.service = new ArrayList<>();
     }
 
-    public void setPK(SM_SO so){
+    public void setPK(SM_SO so) {
         this.customer_code = so.getCustomer_code();
         this.so_prefix = so.getSo_prefix();
         this.so_code = so.getSo_code();
 
-        for(int i=0; i < service.size();i++){
+        for (int i = 0; i < service.size(); i++) {
             service.get(i).setPK(this);
         }
     }
@@ -78,12 +95,36 @@ public class SM_SO_Pack {
         this.price_list_code = price_list_code;
     }
 
+    public String getPrice_list_id() {
+        return price_list_id;
+    }
+
+    public void setPrice_list_id(String price_list_id) {
+        this.price_list_id = price_list_id;
+    }
+
+    public String getPrice_list_desc() {
+        return price_list_desc;
+    }
+
+    public void setPrice_list_desc(String price_list_desc) {
+        this.price_list_desc = price_list_desc;
+    }
+
     public int getPack_code() {
         return pack_code;
     }
 
     public void setPack_code(int pack_code) {
         this.pack_code = pack_code;
+    }
+
+    public int getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(int pack_seq) {
+        this.pack_seq = pack_seq;
     }
 
     public String getPack_id() {
@@ -100,6 +141,14 @@ public class SM_SO_Pack {
 
     public void setPack_desc(String pack_desc) {
         this.pack_desc = pack_desc;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getRule() {

@@ -27,11 +27,11 @@ public class SM_SO_Sql_001 implements Specification {
                 .append(" SELECT\n" +
                         "      S.*\n" +
                         " FROM\n" +
-                        SM_SODao.TABLE +" S\n" +
+                        SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
-                        "    S.customer_code = '"+customer_code+"'\n" +
-                        "    AND S.so_prefix = '"+so_prefix+"'\n" +
-                        "    AND S.so_code = '"+so_code+"' ")
+                        "    S.customer_code =  '" + customer_code + "'\n" +
+                        "    AND S.so_prefix =  '" + so_prefix + "'\n" +
+                        "    AND S.so_code =    '" + so_code + "' ")
                 .toString();
     }
 }

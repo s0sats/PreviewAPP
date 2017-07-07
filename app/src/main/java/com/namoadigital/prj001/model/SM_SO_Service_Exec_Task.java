@@ -10,24 +10,38 @@ import java.util.ArrayList;
 
 public class SM_SO_Service_Exec_Task {
 
-    private long customer_code;
-    private int so_prefix;
-    private int so_code;
-    private int price_list_code;
-    private int pack_code;
-    private int category_price_code;
-    private int service_code;
-    private int task_exec;
+    private long customer_code; //pk
+    private int so_prefix; //pk
+    private int so_code; //pk
+    private int price_list_code; //pk
+    private int pack_code; //pk
+    private int pack_seq; //pk
+    private int category_price_code; //pk
+    private int service_code; //pk
+    private int service_seq; //pk
+    private int exec_code; //pk
+
+    // Novos Criados
+    private int task_code; //pk
+
     @Expose
     private int task_seq;
     @Expose
     private int task_user;
     @Expose
     private String start_date;
+
+    // Null
     @Expose
     private String end_date;
     @Expose
-    private int exec_time;
+    private Integer exec_time;
+
+    // Novos Criados
+    // Null
+    private String exec_time_format;
+    @Expose
+    private int task_perc;
     @Expose
     private int qty_people;
     @Expose
@@ -43,10 +57,12 @@ public class SM_SO_Service_Exec_Task {
     @Expose
     private int local_code;
     private String local_id;
+
+    // Null
     @Expose
     private String comments;
     @Expose
-    private ArrayList<SM_SO_Service_Exec_Task_File> task_attach;
+    private ArrayList<SM_SO_Service_Exec_Task_File> task_file;
 
     public SM_SO_Service_Exec_Task() {
         this.customer_code = -1;
@@ -54,24 +70,28 @@ public class SM_SO_Service_Exec_Task {
         this.so_code = -1;
         this.price_list_code = -1;
         this.pack_code = -1;
+        this.pack_seq = -1;
         this.category_price_code = -1;
         this.service_code = -1;
-        this.task_exec = -1;
-        this.task_attach = new ArrayList<>();
+        this.service_seq = -1;
+        this.exec_code = -1;
+        this.task_file = new ArrayList<>();
     }
 
-    public void setPK(SM_SO_Service_Exec exec){
+    public void setPK(SM_SO_Service_Exec exec) {
         this.customer_code = exec.getCustomer_code();
         this.so_prefix = exec.getSo_prefix();
         this.so_code = exec.getSo_code();
         this.price_list_code = exec.getPrice_list_code();
         this.pack_code = exec.getPack_code();
+        this.pack_seq = exec.getPack_seq();
         this.category_price_code = exec.getCategory_price_code();
         this.service_code = exec.getService_code();
-        this.task_exec = exec.getTask_exec();
+        this.service_seq = exec.getService_seq();
+        this.exec_code = exec.getExec_code();
 
-        for(int i=0; i < task_attach.size();i++){
-            task_attach.get(i);
+        for (int i = 0; i < task_file.size(); i++) {
+            task_file.get(i).setPK(this);
         }
     }
 
@@ -115,6 +135,14 @@ public class SM_SO_Service_Exec_Task {
         this.pack_code = pack_code;
     }
 
+    public int getPack_seq() {
+        return pack_seq;
+    }
+
+    public void setPack_seq(int pack_seq) {
+        this.pack_seq = pack_seq;
+    }
+
     public int getCategory_price_code() {
         return category_price_code;
     }
@@ -131,12 +159,28 @@ public class SM_SO_Service_Exec_Task {
         this.service_code = service_code;
     }
 
-    public int getTask_exec() {
-        return task_exec;
+    public int getService_seq() {
+        return service_seq;
     }
 
-    public void setTask_exec(int task_exec) {
-        this.task_exec = task_exec;
+    public void setService_seq(int service_seq) {
+        this.service_seq = service_seq;
+    }
+
+    public int getExec_code() {
+        return exec_code;
+    }
+
+    public void setExec_code(int exec_code) {
+        this.exec_code = exec_code;
+    }
+
+    public int getTask_code() {
+        return task_code;
+    }
+
+    public void setTask_code(int task_code) {
+        this.task_code = task_code;
     }
 
     public int getTask_seq() {
@@ -171,12 +215,28 @@ public class SM_SO_Service_Exec_Task {
         this.end_date = end_date;
     }
 
-    public int getExec_time() {
+    public Integer getExec_time() {
         return exec_time;
     }
 
-    public void setExec_time(int exec_time) {
+    public void setExec_time(Integer exec_time) {
         this.exec_time = exec_time;
+    }
+
+    public String getExec_time_format() {
+        return exec_time_format;
+    }
+
+    public void setExec_time_format(String exec_time_format) {
+        this.exec_time_format = exec_time_format;
+    }
+
+    public int getTask_perc() {
+        return task_perc;
+    }
+
+    public void setTask_perc(int task_perc) {
+        this.task_perc = task_perc;
     }
 
     public int getQty_people() {
@@ -267,11 +327,11 @@ public class SM_SO_Service_Exec_Task {
         this.comments = comments;
     }
 
-    public ArrayList<SM_SO_Service_Exec_Task_File> getTask_attach() {
-        return task_attach;
+    public ArrayList<SM_SO_Service_Exec_Task_File> getTask_file() {
+        return task_file;
     }
 
-    public void setTask_attach(ArrayList<SM_SO_Service_Exec_Task_File> task_attach) {
-        this.task_attach = task_attach;
+    public void setTask_file(ArrayList<SM_SO_Service_Exec_Task_File> task_file) {
+        this.task_file = task_file;
     }
 }
