@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial;
@@ -31,6 +32,7 @@ public class WS_SO_Search extends IntentService {
 
     public static final String SERIAL_SAVE = "serial_save";
     public static final String SO_LIST  = "so_list";
+    public static final String SO_LIST_QTY  = "so_list_qty";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -137,10 +139,18 @@ public class WS_SO_Search extends IntentService {
         if (so_mult.length() == 0) {
             hmAux.put(SO_LIST,gson.toJson(rec.getSo()));
         } else {
+            hmAux.put(SO_LIST,so_mult);
+            hmAux.put(SO_LIST_QTY, String.valueOf(rec.getSo().size()));
             //
             SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
+            for (SM_SO sm_so : rec.getSo()) {
+                sm_so.setPK();
+            }
+
             soDao.addUpdate(rec.getSo(), false);
+            //rec.getSo().get(0).setPK();
+            //soDao.addUpdate(rec.getSo().get(0));
         }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"),hmAux, "", "0");

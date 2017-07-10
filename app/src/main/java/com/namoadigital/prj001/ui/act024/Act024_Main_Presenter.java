@@ -16,6 +16,8 @@ public interface Act024_Main_Presenter {
 
     void downloadMultSo(ArrayList<SM_SO> download_list);
 
+    void executeSODownload(String product_code ,String serial_id , String so_list);
+
     void onBackPressedClicked();
 
 }

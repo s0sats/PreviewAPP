@@ -17,8 +17,12 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -76,7 +80,10 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         transList.add("alert_download_mult_so_msg");
         transList.add("alert_download_so_ttl");
         transList.add("alert_download_so_msg");
-
+        transList.add("alert_no_so_selected");
+        transList.add("progress_downloading_so_ttl");
+        transList.add("progress_downloading_so_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -225,7 +232,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
                     hmAux_Trans.get("alert_download_so_ttl"),
                     hmAux_Trans.get("alert_download_mult_so_msg"),
                     listener,
-                    0
+                    1
             );
         }
     }
@@ -246,10 +253,40 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
                     hmAux_Trans.get("alert_download_so_ttl"),
                     hmAux_Trans.get("alert_download_so_msg"),
                     listener,
-                    0
+                    1
             );
         }
+    }
 
+    @Override
+    public void showPD() {
+        enableProgressDialog(
+                hmAux_Trans.get("progress_downloading_so_ttl"),
+                hmAux_Trans.get("progress_downloading_so_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        progressDialog.dismiss();
+
+        if(hmAux.containsKey(WS_SO_Search.SO_LIST_QTY)){
+            if(hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")){
+                String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".","#").split("#");
+                //
+                HMAux hmAuxSO = new HMAux();
+                //
+                hmAuxSO.put(SM_SODao.SO_PREFIX,so[0]);
+                hmAuxSO.put(SM_SODao.SO_CODE,so[1]);
+                //
+                callAct027(context,hmAuxSO);
+
+            }
+
+        }
 
     }
 
@@ -259,6 +296,26 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void callAct026(Context context) {
+        Intent mIntent = new Intent(context, Act026_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+       // startActivity(mIntent);
+       // finish();
+    }
+
+    @Override
+    public void callAct027(Context context,HMAux so) {
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(SM_SODao.SO_PREFIX,so.get(SM_SODao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE,so.get(SM_SODao.SO_CODE));
+        mIntent.putExtras(bundle);
+        //startActivity(mIntent);
+       // finish();
     }
 
     @Override

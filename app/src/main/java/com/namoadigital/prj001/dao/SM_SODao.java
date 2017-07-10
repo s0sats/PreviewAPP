@@ -156,6 +156,21 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
                     db.update(TABLE, toContentValuesMapper.map(so), sbWhere.toString(), null);
                 }
+                //
+                SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                SM_SO_PackDao sm_so_packDao = new SM_SO_PackDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                sm_so_fileDao.addUpdate(so.getSo_file(), false);
+                sm_so_packDao.addUpdate(so.getPack(), false);
             }
 
             db.setTransactionSuccessful();
