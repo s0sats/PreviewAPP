@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act022;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,11 +16,13 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act023.Act023_Main;
@@ -199,11 +202,33 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                 resetSearch();
             }
         }else{
-
+            alertBundleNotFound();
         }
 
     }
 
+    private void alertBundleNotFound(){
+        //
+        Exception e = new Exception("Parameters " + Constant.MAIN_REQUESTING_PROCESS + " not found.");
+        //
+        ToolBox_Inf.registerException(getClass().getName(),e);
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(context, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mIntent);
+                        finish();
+                    }
+                },
+                0
+        );
+    }
     private void resetSearch() {
         //Se não significa que iniciou fluxo de busca de produto.
         iniCurrentIndex();

@@ -56,7 +56,7 @@ public class WS_SO_Search extends IntentService {
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
             String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");
             boolean save_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL, false);
-
+            //
             processSO_Search(product_code, serial_id, so_mult, save_serial);
 
         } catch (Exception e) {
@@ -147,10 +147,9 @@ public class WS_SO_Search extends IntentService {
             for (SM_SO sm_so : rec.getSo()) {
                 sm_so.setPK();
             }
-
+            //
             soDao.addUpdate(rec.getSo(), false);
-            //rec.getSo().get(0).setPK();
-            //soDao.addUpdate(rec.getSo().get(0));
+
         }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"),hmAux, "", "0");

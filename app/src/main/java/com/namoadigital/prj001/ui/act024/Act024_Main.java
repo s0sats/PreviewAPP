@@ -122,19 +122,19 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
 
-        if(bundle != null){
-            if(bundle.containsKey(Constant.ACT023_SO_HEADER_LIST)){
+        if (bundle != null) {
+            if (bundle.containsKey(Constant.ACT023_SO_HEADER_LIST)) {
                 serialiazed_so_list = bundle.getString(Constant.ACT023_SO_HEADER_LIST);
 
-            }else{
+            } else {
                 //Tratar quando lista de s.o não for enviado.
                 //Caixa de alerta e volta para menu?!?
+                alertBundleNotFound();
             }
-
-        }else{
+        } else {
             //Tratar caso não exista bundle
+            alertBundleNotFound();
         }
-
 
     }
 
@@ -156,16 +156,16 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
         mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
         mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value =Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;
 
         //Aplica informações do rodapé -fim
     }
@@ -178,6 +178,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
                 multDownloadConfirm();
             }
         });
+        //Como não exite criação de SO por hora, o btn fica apagado
+        btn_new.setVisibility(View.GONE);
         //
         btn_new.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +188,29 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             }
         });
 
+    }
+
+    private void alertBundleNotFound(){
+        //
+        Exception e = new Exception("Parameters " + Constant.ACT023_SO_HEADER_LIST + " not found");
+        //
+        ToolBox_Inf.registerException(getClass().getName(),e);
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(context, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mIntent);
+                        finish();
+                    }
+                },
+                0
+        );
     }
 
     @Override
@@ -200,45 +225,58 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         //
         mAdapter.setOnDownloadBtnClicked(new SO_Header_Adapter.ISO_Header_Adapter() {
             @Override
-            public void donwloadBtnClicked(SM_SO so) {
-                ArrayList<SM_SO> teste = mAdapter.getSoToDownload();
+            public void downloadBtnClicked(SM_SO so) {
+                ArrayList<SM_SO> so_list = new ArrayList<SM_SO>();
                 //
-                int i = teste.size();
+                so_list.add(so);
                 //
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_download_so_ttl"),
+                        hmAux_Trans.get("alert_download_mult_so_msg"),
+                        getClickListner(so_list),
+                        1
+                );
+
             }
         });
 
     }
 
-    private void multDownloadConfirm(){
+    private DialogInterface.OnClickListener getClickListner(final ArrayList<SM_SO> so_list) {
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mAdapter != null) {
+                    mPresenter.downloadMultSo(so_list);
+                }
+            }
+        };
+        //
+        return listener;
+    }
+
+    private void multDownloadConfirm() {
         ArrayList<SM_SO> soToDownload = null;
-        if (mAdapter != null){
+        if (mAdapter != null) {
             soToDownload = mAdapter.getSoToDownload();
         }
         //Se Existe lista de download.
-        if(soToDownload != null && soToDownload.size() > 0) {
-            final ArrayList<SM_SO> finalSoToDownload = soToDownload;
-            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (mAdapter != null) {
-                        mPresenter.downloadMultSo(finalSoToDownload);
-                    }
-                }
-            };
+        if (soToDownload != null && soToDownload.size() > 0) {
             //
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_download_so_ttl"),
-                    hmAux_Trans.get("alert_download_mult_so_msg"),
-                    listener,
+                   // hmAux_Trans.get("alert_download_mult_so_msg"),
+                    hmAux_Trans.get("alert_download_so_msg"),
+                    getClickListner(soToDownload),
                     1
             );
         }
     }
 
-    private void singleDownloadConfirm(final SM_SO so){
-        if(so != null) {
+    private void singleDownloadConfirm(final SM_SO so) {
+        if (so != null) {
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -273,17 +311,19 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         super.processCloseACT(mLink, mRequired, hmAux);
         progressDialog.dismiss();
 
-        if(hmAux.containsKey(WS_SO_Search.SO_LIST_QTY)){
-            if(hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")){
-                String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".","#").split("#");
+        if (hmAux.containsKey(WS_SO_Search.SO_LIST_QTY)) {
+            if (hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")) {
+                String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".", "#").split("#");
                 //
                 HMAux hmAuxSO = new HMAux();
                 //
-                hmAuxSO.put(SM_SODao.SO_PREFIX,so[0]);
-                hmAuxSO.put(SM_SODao.SO_CODE,so[1]);
+                hmAuxSO.put(SM_SODao.SO_PREFIX, so[0]);
+                hmAuxSO.put(SM_SODao.SO_CODE, so[1]);
                 //
-                callAct027(context,hmAuxSO);
+                callAct027(context, hmAuxSO);
 
+            }else{
+                callAct026(context);
             }
 
         }
@@ -302,20 +342,20 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     public void callAct026(Context context) {
         Intent mIntent = new Intent(context, Act026_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-       // startActivity(mIntent);
-       // finish();
+         startActivity(mIntent);
+         finish();
     }
 
     @Override
-    public void callAct027(Context context,HMAux so) {
+    public void callAct027(Context context, HMAux so) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(SM_SODao.SO_PREFIX,so.get(SM_SODao.SO_PREFIX));
-        bundle.putString(SM_SODao.SO_CODE,so.get(SM_SODao.SO_CODE));
+        bundle.putString(SM_SODao.SO_PREFIX, so.get(SM_SODao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE, so.get(SM_SODao.SO_CODE));
         mIntent.putExtras(bundle);
-        //startActivity(mIntent);
-       // finish();
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

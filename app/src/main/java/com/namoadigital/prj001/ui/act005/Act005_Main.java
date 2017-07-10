@@ -30,7 +30,6 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.SM_Env;
@@ -48,7 +47,6 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
-import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -59,7 +57,6 @@ import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.TesteDao;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -137,7 +134,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         startService(mIntent);
         //
         // Hugo Pode Eliminar no Merge
-        TesteDao.Test_SM_SO_Daos(this, context);
+       // TesteDao.Test_SM_SO_Daos(this, context);
     }
 
 

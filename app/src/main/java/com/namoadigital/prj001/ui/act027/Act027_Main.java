@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +16,8 @@ import android.view.View;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -35,6 +38,10 @@ public class Act027_Main extends Base_Activity {
 
     private FragmentManager fm;
     private Act027_Opc act027_opc;
+
+    private int so_prefix;
+    private int so_code;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,6 +144,9 @@ public class Act027_Main extends Base_Activity {
     }
 
     private void initVars() {
+        //
+        recoverIntentsInfo();
+        //
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act027_drawer);
 
@@ -171,6 +181,24 @@ public class Act027_Main extends Base_Activity {
         mDrawerToggle.syncState();
 
         act027_opc = (Act027_Opc)fm.findFragmentById(R.id.act027_opc);
+    }
+
+    private void recoverIntentsInfo() {
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+            if (bundle.containsKey(SM_SODao.SO_PREFIX)) {
+                so_prefix = Integer.valueOf(bundle.getString(SM_SODao.SO_PREFIX,"1900"));
+                so_code = Integer.valueOf(bundle.getString(SM_SODao.SO_CODE,"0"));
+
+            } else {
+                //Tratar quando lista de s.o não for enviado.
+                //Caixa de alerta e volta para menu?!?
+            }
+
+        } else {
+            //Tratar caso não exista bundle
+        }
     }
 
     private void iniUIFooter() {
@@ -239,4 +267,13 @@ public class Act027_Main extends Base_Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 }

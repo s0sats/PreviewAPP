@@ -45,6 +45,7 @@ import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act024.Act024_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -464,33 +465,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
                 isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE, false);
             } else {
-                /**
-                 *
-                 *
-                 *
-                 *  TRATAR CASO NÃO RECEBA O PARAMETRO DE REQUESTING PROCESS
-                 *
-                 *
-                 *
-                 *
-                 */
+                alertBundleNotFound();
             }
 
         } else {
-            /**
-             *
-             *
-             *
-             *  TRATAR CASO NÃO RECEBA BUNDLE
-             *
-             *
-             *
-             *
-             */
-
+            alertBundleNotFound();
         }
-
-
     }
 
     private void iniUIFooter() {
@@ -525,6 +505,29 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //Aplica informações do rodapé -fim
 
 
+    }
+
+    private void alertBundleNotFound(){
+        //
+        Exception e = new Exception("Parameters " + Constant.MAIN_REQUESTING_PROCESS + " not found.");
+        //
+        ToolBox_Inf.registerException(getClass().getName(),e);
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(context, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mIntent);
+                        finish();
+                    }
+                },
+                0
+        );
     }
 
     @Override

@@ -52,7 +52,7 @@ public class SO_Header_Adapter extends BaseAdapter {
     }
 
     public interface ISO_Header_Adapter{
-        void donwloadBtnClicked(SM_SO so);
+        void downloadBtnClicked(SM_SO so);
     }
 
     public void setOnDownloadBtnClicked(ISO_Header_Adapter delegate){
@@ -171,7 +171,7 @@ public class SO_Header_Adapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if (delegate != null) {
-                    delegate.donwloadBtnClicked(source.get((Integer) v.getTag()));
+                    delegate.downloadBtnClicked(source.get((Integer) v.getTag()));
                 }
             }
         });
