@@ -20,6 +20,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
+import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -64,6 +65,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     }
 
     private void iniSetup() {
+        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -119,7 +121,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //callAct022(context);
                 showNewOptDialog();
             }
         });
@@ -240,7 +241,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     @Override
     public void callAct025(Context context) {
-       /* Intent mIntent = new Intent(context, Act025_Main.class);
+        Intent mIntent = new Intent(context, Act025_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Bundle bundle = getIntent().getExtras();
         if(bundle == null){
@@ -249,7 +250,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_SO);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
-        finish();*/
+        finish();
     }
 
     @Override

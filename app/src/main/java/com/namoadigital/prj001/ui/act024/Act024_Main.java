@@ -83,6 +83,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         transList.add("alert_no_so_selected");
         transList.add("progress_downloading_so_ttl");
         transList.add("progress_downloading_so_msg");
+        transList.add("alert_no_so_founded_ttl");
+        transList.add("alert_no_so_founded_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -190,11 +192,11 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
 
     }
 
-    private void alertBundleNotFound(){
+    private void alertBundleNotFound() {
         //
         Exception e = new Exception("Parameters " + Constant.ACT023_SO_HEADER_LIST + " not found");
         //
-        ToolBox_Inf.registerException(getClass().getName(),e);
+        ToolBox_Inf.registerException(getClass().getName(), e);
         //
         ToolBox.alertMSG(
                 context,
@@ -239,6 +241,15 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
                 );
 
             }
+
+            @Override
+            public void refreshSelectedQty(int qty_selected) {
+                String textChange = hmAux_Trans.get("btn_download");
+                if (qty_selected > 0) {
+                    textChange += " (" + qty_selected + ") ";
+                }
+                btn_download.setText(textChange);
+            }
         });
 
     }
@@ -267,7 +278,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_download_so_ttl"),
-                   // hmAux_Trans.get("alert_download_mult_so_msg"),
+                    // hmAux_Trans.get("alert_download_mult_so_msg"),
                     hmAux_Trans.get("alert_download_so_msg"),
                     getClickListner(soToDownload),
                     1
@@ -322,7 +333,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
                 //
                 callAct027(context, hmAuxSO);
 
-            }else{
+            } else {
                 callAct026(context);
             }
 
@@ -330,6 +341,26 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
 
     }
 
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+
+    }
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
@@ -342,8 +373,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     public void callAct026(Context context) {
         Intent mIntent = new Intent(context, Act026_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-         startActivity(mIntent);
-         finish();
+        startActivity(mIntent);
+        finish();
     }
 
     @Override

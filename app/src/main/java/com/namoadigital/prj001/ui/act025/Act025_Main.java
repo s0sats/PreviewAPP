@@ -7,6 +7,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -72,6 +74,8 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
     }
 
     private void iniSetup() {
+        //context = Act025_Main.this;
+        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -144,23 +148,23 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
                 )
         );
         //
-        tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
+        tv_records = (TextView) findViewById(R.id.act025_tv_record_info);
         //
-        ll_records = (LinearLayout) findViewById(R.id.act020_ll_limit_exceeded);
+        ll_records = (LinearLayout) findViewById(R.id.act025_ll_limit_exceeded);
         //
-        tv_records_limit = (TextView) findViewById(R.id.act020_tv_record_limit);
+        tv_records_limit = (TextView) findViewById(R.id.act025_tv_record_limit);
         //
-        tv_records_count = (TextView) findViewById(R.id.act020_tv_record_count);
+        tv_records_count = (TextView) findViewById(R.id.act025_tv_record_count);
         //
-        lv_prod_serial_list = (ListView) findViewById(R.id.act020_lv_prod_serial);
+        lv_prod_serial_list = (ListView) findViewById(R.id.act025_lv_prod_serial);
         //
-        tv_no_result = (TextView) findViewById(R.id.act020_tv_no_result);
+        tv_no_result = (TextView) findViewById(R.id.act025_tv_no_result);
         tv_no_result.setText(hmAux_Trans.get("no_search_realized"));
         //
         /*
         * Drawer setup
         */
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.act020_drawer);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.act025_drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle(
                 Act025_Main.this,
@@ -192,7 +196,7 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
         //
         mDrawerToggle.syncState();
         //
-        fragFilters = (Act025_Frag_Filter) fm.findFragmentById(R.id.act020_frag_filter);
+        fragFilters = (Act025_Frag_Filter) fm.findFragmentById(R.id.act025_frag_filter);
         //
         fragFilters.setHmAux_Trans(hmAux_Trans);
         //
@@ -278,7 +282,7 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
-
+                //
                 mPresenter.defineFlow(productSerial);
             }
         });
@@ -350,7 +354,7 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
 
     @Override
     public void showQtyExceededMsg(long record_page, long record_count) {
-
+        //
         ll_records.setVisibility(View.VISIBLE);
 
         tv_records_limit.setText(
@@ -360,7 +364,7 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
         tv_records_count.setText(
                 hmAux_Trans.get("records_found_lbl") + " " + record_count
         );
-
+        //
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
@@ -373,5 +377,104 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
     @Override
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
+    }
+
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
+        if(!status){
+            if(progressDialog != null && progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_nfc_return"),
+                    value[0],
+                    null,
+                    0
+            );
+
+        }else{
+            fragFilters.cleanFields();
+            ToolBox_Inf.hideSoftKeyboard(Act025_Main.this);
+            //
+            switch (value[0]){
+                case PRODUCT:
+                    fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
+                    fragFilters.setProductCodeText(value[2]);
+                    mPresenter.executeSerialSearch(value[2],"","");
+                    break;
+                case SERIAL:
+                    fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
+                    fragFilters.setProductCodeText(value[2]);
+                    fragFilters.setSerialIdText(value[3]);
+                    mPresenter.executeSerialSearch(value[2],"", value[3]);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    @Override
+    protected void nfcDataError(boolean status, int id, String... value) {
+        super.nfcDataError(status, id, value);
+    }
+
+    @Override
+    protected void processCloseACT(String ws_retorno, String mRequired) {
+        super.processCloseACT(ws_retorno, mRequired);
+            //
+            mPresenter.getProductSerialList(ws_retorno);
+            //
+            progressDialog.dismiss();
+            //
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+
+    }
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return true;
     }
 }

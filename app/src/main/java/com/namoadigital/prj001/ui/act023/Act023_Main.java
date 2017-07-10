@@ -1009,6 +1009,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     }
 
+
     @Override
     public void callAct022(Context context) {
         Intent mIntent = new Intent(context, Act022_Main.class);
@@ -1037,6 +1038,19 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         super.processUpdateSoftware(mLink, mRequired);
 
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+
     }
 
     //Metodo chamado ao finalizar o download da atualização.

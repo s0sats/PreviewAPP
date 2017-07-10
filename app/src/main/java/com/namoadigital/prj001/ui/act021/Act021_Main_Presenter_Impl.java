@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act021;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.ui.act006.Act006_Main;
 
 /**
  * Created by d.luche on 21/06/2017.
@@ -24,14 +23,14 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     @Override
     public void defineFlow(HMAux item) {
 
-        switch (item.get(Act006_Main.NEW_OPT_ID)){
-            case Act006_Main.NEW_OPT_TP_PRODUCT:
+        switch (item.get(Act021_Main.NEW_OPT_ID)){
+            case Act021_Main.NEW_OPT_TP_PRODUCT:
                 mView.callAct022(context);
                 break;
-            case Act006_Main.NEW_OPT_TP_SERIAL:
+            case Act021_Main.NEW_OPT_TP_SERIAL:
                 mView.callAct025(context);
                 break;
-            case Act006_Main.NEW_OPT_TP_LOCATION:
+            case Act021_Main.NEW_OPT_TP_LOCATION:
             default:
                 break;
         }

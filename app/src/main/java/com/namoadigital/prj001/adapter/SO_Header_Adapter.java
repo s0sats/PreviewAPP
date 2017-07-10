@@ -53,6 +53,8 @@ public class SO_Header_Adapter extends BaseAdapter {
 
     public interface ISO_Header_Adapter{
         void downloadBtnClicked(SM_SO so);
+
+        void refreshSelectedQty(int qty_selected);
     }
 
     public void setOnDownloadBtnClicked(ISO_Header_Adapter delegate){
@@ -206,6 +208,16 @@ public class SO_Header_Adapter extends BaseAdapter {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             checkedStatus[(int) buttonView.getTag()] = isChecked;
+            //Ao clicar no checkbox, devolve a qtd de chk marcados.
+            int qtySelected = 0;
+            if (delegate != null) {
+                for (int i = 0; i < checkedStatus.length; i++) {
+                    if(checkedStatus[i]){
+                        qtySelected++;
+                    }
+                }
+                delegate.refreshSelectedQty(qtySelected);
+            }
         }
     };
 

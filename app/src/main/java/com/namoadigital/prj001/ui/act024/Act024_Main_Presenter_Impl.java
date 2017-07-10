@@ -44,10 +44,19 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
                 }.getType());
         //
         if (sos.size() == 0) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_no_so_founded_ttl"),
+                    hmAux_Trans.get("alert_no_so_founded_msg"),
+                    null,
+                    0
+            );
 
+        }else{
+            //
+            mView.loadSoHeaders(sos);
         }
-        //
-        mView.loadSoHeaders(sos);
+
 
     }
 
