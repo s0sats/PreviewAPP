@@ -139,11 +139,23 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
         try {
 
-            db.beginTransaction();
+            //db.beginTransaction();
 
             if (status) {
                 db.delete(TABLE, null, null);
             }
+
+            SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
+            SM_SO_PackDao sm_so_packDao = new SM_SO_PackDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
 
             for (SM_SO so : sos) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(so)) == -1) {
@@ -156,28 +168,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
                     db.update(TABLE, toContentValuesMapper.map(so), sbWhere.toString(), null);
                 }
-                //
-                SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-
-                SM_SO_PackDao sm_so_packDao = new SM_SO_PackDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
 
                 sm_so_fileDao.addUpdate(so.getSo_file(), false);
                 sm_so_packDao.addUpdate(so.getPack(), false);
+
             }
 
-            db.setTransactionSuccessful();
+            //db.setTransactionSuccessful();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            db.endTransaction();
+            //db.endTransaction();
         }
 
         closeDB();
@@ -513,7 +514,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             so.setEdit_user(cursor.getInt(cursor.getColumnIndex(EDIT_USER)));
             so.setTotal_qty_service(cursor.getInt(cursor.getColumnIndex(TOTAL_QTY_SERVICE)));
-            so.setTotal_price(cursor.getString(cursor.getColumnIndex(TOTAL_PRICE)));
+            so.setTotal_price(cursor.getDouble(cursor.getColumnIndex(TOTAL_PRICE)));
 
             return so;
         }
@@ -744,7 +745,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 contentValues.put(TOTAL_QTY_SERVICE, sm_so.getTotal_qty_service());
             }
 
-            if (sm_so.getTotal_price() != null) {
+            if (sm_so.getTotal_price() > -1) {
                 contentValues.put(TOTAL_PRICE, sm_so.getTotal_price());
             }
 

@@ -121,6 +121,12 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
                 db.delete(TABLE, null, null);
             }
 
+            SM_SO_Service_ExecDao sm_so_service_execDao = new SM_SO_Service_ExecDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
             for (SM_SO_Service sm_so_service : sm_so_services) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(sm_so_service)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
@@ -145,11 +151,11 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service), sbWhere.toString(), null);
                 }
 
-                SM_SO_Service_ExecDao sm_so_service_execDao = new SM_SO_Service_ExecDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
+//                SM_SO_Service_ExecDao sm_so_service_execDao = new SM_SO_Service_ExecDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
 
                 sm_so_service_execDao.addUpdate(sm_so_service.getExec(), false);
 

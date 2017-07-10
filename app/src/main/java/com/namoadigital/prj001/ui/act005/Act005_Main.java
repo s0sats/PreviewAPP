@@ -137,7 +137,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         startService(mIntent);
         //
         // Hugo Pode Eliminar no Merge
-        TesteDao.Test_SM_SO_Daos(context);
+        TesteDao.Test_SM_SO_Daos(this, context);
     }
 
 
