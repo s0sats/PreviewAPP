@@ -110,6 +110,12 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
                 db.delete(TABLE, null, null);
             }
 
+            SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
             for (SM_SO_Service_Exec sm_so_service_exec : sm_so_service_execs) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(sm_so_service_exec)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
@@ -136,11 +142,11 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec), sbWhere.toString(), null);
                 }
 
-                SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
+//                SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
 
                 sm_so_service_exec_taskDao.addUpdate(sm_so_service_exec.getTask(), false);
             }
