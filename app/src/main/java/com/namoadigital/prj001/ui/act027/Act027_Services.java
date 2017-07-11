@@ -7,8 +7,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act027_Services_Adapter;
+
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 10/07/17.
@@ -17,6 +22,13 @@ import com.namoadigital.prj001.R;
 public class Act027_Services extends Fragment {
 
     private Context context;
+
+    private ListView lv_services;
+    private ArrayList<HMAux> data;
+
+    public void setData(ArrayList<HMAux> data) {
+        this.data = data;
+    }
 
     @Nullable
     @Override
@@ -31,8 +43,27 @@ public class Act027_Services extends Fragment {
 
     }
 
-    private void iniVar(View view) {
+    private void setHMAuxScreen() {
+        if (data != null) {
+            lv_services.setAdapter(
+                    new Act027_Services_Adapter(
+                            getActivity(),
+                            R.layout.act027_services_content_adapter_cell,
+                            data
+                    )
+            );
+        }
+    }
 
+    @Override
+    public void onResume() {
+        setHMAuxScreen();
+        //
+        super.onResume();
+    }
+
+    private void iniVar(View view) {
+        lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
     }
 
     private void iniAction() {

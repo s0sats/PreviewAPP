@@ -16,11 +16,12 @@
         android:orientation="vertical"
         android:padding="5dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ListView
+            android:id="@+id/act027_services_content_lv_services"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="Services"
-            android:textSize="25sp"/>
+            android:textSize="25sp" />
 
     </LinearLayout>
 
