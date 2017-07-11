@@ -5,12 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.SM_Rec;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 
 import java.io.BufferedReader;
@@ -27,11 +23,11 @@ public class TesteDao {
 
     public static void Test_SM_SO_Daos(Activity act, Context context) {
 
-        SM_SODao sm_soDao = new SM_SODao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
+//        SM_SODao sm_soDao = new SM_SODao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
 //
 //        SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
 //                context,
@@ -69,24 +65,26 @@ public class TesteDao {
 //                Constant.DB_VERSION_CUSTOM
 //        );
 //
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-        Gson gsonNoExpose = new GsonBuilder().serializeNulls().create();
+//        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+//        Gson gsonNoExpose = new GsonBuilder().serializeNulls().create();
 //
 //
-        SM_Rec rec = gsonNoExpose.fromJson(
-                readLog(R.raw.os_list_namoa, context),
-                SM_Rec.class
-        );
-
-        rec.getSo().get(0).setPK();
-
-        sm_soDao.addUpdate(rec.getSo(), false);
+//        SM_Rec rec = gsonNoExpose.fromJson(
+//                readLog(R.raw.os_list_namoa, context),
+//                SM_Rec.class
+//        );
+//
+//        for (int i = 0; i < rec.getSo().size(); i++) {
+//            rec.getSo().get(i).setPK();
+//        }
+//
+//        sm_soDao.addUpdate(rec.getSo(), false);
 
         //sm_soDao.addUpdate(rec.getSo().get(0));
 
         //sm_soDao.addUpdate(rec.getSo(), false);
 
-        int i = 10;
+//        int i = 10;
 
 
 //        SM_SO sSO = sm_soDao.getByString(
@@ -98,10 +96,11 @@ public class TesteDao {
 //                ).toSqlQuery()
 //        );
 //
-//        HMAux hmAux = new HMAux();
+        HMAux hmAux = new HMAux();
+        hmAux.put(SM_SODao.SO_PREFIX, "2017");
+        hmAux.put(SM_SODao.SO_CODE, "30");
 
-
-        //callAct027(act, context, );
+        callAct027(act, context, hmAux);
 
     }
 
@@ -109,8 +108,8 @@ public class TesteDao {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(SM_SODao.SO_PREFIX,so.get(SM_SODao.SO_PREFIX));
-        bundle.putString(SM_SODao.SO_CODE,so.get(SM_SODao.SO_CODE));
+        bundle.putString(SM_SODao.SO_PREFIX, so.get(SM_SODao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE, so.get(SM_SODao.SO_CODE));
         mIntent.putExtras(bundle);
 
         act.startActivity(mIntent);
