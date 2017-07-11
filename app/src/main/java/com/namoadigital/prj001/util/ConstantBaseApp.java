@@ -77,6 +77,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";
     public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
     public static final String MAIN_PRODUCT_CODE = "main_product_code";
+    public static final String MAIN_SERIAL_ID = "main_serial_id";
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
 
 
@@ -249,6 +250,7 @@ public class ConstantBaseApp  extends ConstantBase {
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
+    public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
     public static final String MODULE_WM= "MODULE_WM";
     public static final String MODULE_TO= "MODULE_TO";
 

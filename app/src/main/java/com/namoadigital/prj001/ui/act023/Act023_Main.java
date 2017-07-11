@@ -48,6 +48,7 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act024.Act024_Main;
+import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -107,6 +108,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     private MD_Product product;
     private MD_Product_Serial serialObj;
     private long product_code;
+    private String bundle_serial_id;
     private int serial_required;
     private int serial_allow_new;
     //agendamento
@@ -445,6 +447,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 btn_action.setText(hmAux_Trans.get("btn_create"));
                 break;
             case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
             default:
                 ll_serial_full_desc.setVisibility(View.GONE);
                 ll_require_serial.setVisibility(View.GONE);
@@ -463,6 +466,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_PROCESS)) {
                 requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS, "");
                 product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
+                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
                 isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE, false);
             } else {
                 alertBundleNotFound();
@@ -507,11 +511,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     }
 
-    private void alertBundleNotFound(){
+    private void alertBundleNotFound() {
         //
         Exception e = new Exception("Parameters " + Constant.MAIN_REQUESTING_PROCESS + " not found.");
         //
-        ToolBox_Inf.registerException(getClass().getName(),e);
+        ToolBox_Inf.registerException(getClass().getName(), e);
         //
         ToolBox.alertMSG(
                 context,
@@ -624,6 +628,16 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 }
             }
         });
+
+        if (requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL)) {
+            mket_serial_id.setText(bundle_serial_id);
+            //
+            mPresenter.validadeSerialFlow(
+                    mket_serial_id.getText().toString(),
+                    serial_required,
+                    serial_allow_new
+            );
+        }
     }
 
     @Override
@@ -663,7 +677,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     public void setSerialValues(HMAux md_product_serial) {
         //
         //if(mket_serial_id.getText().toString().trim().length() > 0) {
-            mket_serial_id.setEnabled(false);
+        mket_serial_id.setEnabled(false);
         //}
         //
         btn_action.setOnClickListener(listnerSearchSO);
@@ -952,15 +966,16 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 break;
 
             case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
                 if (ws_process.equals(SO_WS_SEARCH_SO)) {
                     //Valida retorno do save do serial
                     //Se ok, segue para listagem de SO
                     //Se erro, exibe msg de erro e no ok segue para lista de SO
-                    if(hmAux.get(WS_SO_Search.SERIAL_SAVE).equals("OK")){
+                    if (hmAux.get(WS_SO_Search.SERIAL_SAVE).equals("OK")) {
                         mPresenter.defineForwardFlow(hmAux.get(WS_SO_Search.SO_LIST));
-                    }else{
+                    } else {
                         final String soList = hmAux.get(WS_SO_Search.SO_LIST);
-                        String msg = hmAux_Trans.get("alert_save_serial_error_msg") +"\n"+ hmAux.get(WS_SO_Search.SERIAL_SAVE);
+                        String msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmAux.get(WS_SO_Search.SERIAL_SAVE);
                         //
                         ToolBox.alertMSG(
                                 context,
@@ -996,6 +1011,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 break;
 
             case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
                     //
                     mPresenter.getSerialInfo(product_code, mket_serial_id.getText().toString().trim());
@@ -1028,6 +1044,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         Intent mIntent = new Intent(context, Act024_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct025(Context context) {
+        Intent mIntent = new Intent(context, Act025_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act025;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +27,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.TProduct_Serial;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -277,13 +281,16 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
         //Sincroniza icone do hambuguer
         mDrawerToggle.syncState();
         //
-
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
-                //
-                mPresenter.defineFlow(productSerial);
+                if(ToolBox_Con.isOnline(context)) {
+                    TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
+                    //
+                    mPresenter.defineFlow(productSerial);
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
             }
         });
     }
@@ -434,6 +441,25 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
             mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    @Override
+    public void callAct021(Context context) {
+        Intent mIntent = new Intent(context, Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct023(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act023_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle != null){
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
+
+    }
 
     //Tratativa SESSION NOT FOUND
     @Override
@@ -455,6 +481,13 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
         //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
         progressDialog.dismiss();
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

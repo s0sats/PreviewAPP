@@ -11,28 +11,13 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
-import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.GE_Custom_Form_Local;
-import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
-import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.sql.Sql_Act020_001;
-import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
-import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -108,11 +93,18 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
 
     @Override
     public void defineFlow(TProduct_Serial productSerial) {
-
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL);
+        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
+        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+        //
+        mView.callAct023(context,bundle);
     }
+
 
     @Override
     public void onBackPressedClicked() {
-       // mView.callAct006(context);
+        mView.callAct021(context);
     }
 }

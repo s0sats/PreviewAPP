@@ -67,6 +67,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 getNFormProductInfoFlow();
                 break;
             case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
                 getSOProductInfoFlow();
                 break;
             default:
@@ -177,6 +178,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
             case Constant.MODULE_CHECKLIST:
                 break;
             case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
                 serialSOFlow(serial);
                 break;
             default:
@@ -233,6 +235,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 break;
 
             case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
                 String soList = (String)param;
                 //
                 if(checkSoListExists(soList)){
@@ -274,8 +277,11 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 //mView.callAct008(context,product_code);
                 mView.callAct022(context);
                 break;
-
-            case Constant.MODULE_SO:default:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
+                mView.callAct025(context);
+                break;
+            case Constant.MODULE_SO:
+            default:
                 mView.callAct022(context);
                 break;
 
