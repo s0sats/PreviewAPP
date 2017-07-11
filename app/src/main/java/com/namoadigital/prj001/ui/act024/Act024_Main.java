@@ -220,7 +220,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         mAdapter = new SO_Header_Adapter(
                 context,
                 R.layout.act024_content_cell,
-                so_list
+                so_list,
+                SO_Header_Adapter.CONFIG_TYPE_DOWNLOAD
         );
         //
         lv_so_headers.setAdapter(mAdapter);

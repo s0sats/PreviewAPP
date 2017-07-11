@@ -26,16 +26,19 @@ import java.util.List;
  */
 
 public class SO_Header_Adapter extends BaseAdapter {
-
+    public static final String CONFIG_TYPE_DOWNLOAD ="download";
+    public static final String CONFIG_TYPE_EXIBITION ="exibition";
+    //
     private Context context;
     private int resource;
     private List<SM_SO> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
+    private String config_type;
     private boolean[] checkedStatus;
     private ISO_Header_Adapter delegate;
 
-    public SO_Header_Adapter(Context context, int resource, List<SM_SO> source) {
+    public SO_Header_Adapter(Context context, int resource, List<SM_SO> source,String config_type) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -44,6 +47,7 @@ public class SO_Header_Adapter extends BaseAdapter {
                 Constant.APP_MODULE,
                 "so_header_adapter"
         );
+        this.config_type = config_type;
         this.checkedStatus = new boolean[source.size()];
         for (int i = 0; i < checkedStatus.length; i++) {
             checkedStatus[i] = false;
@@ -182,11 +186,13 @@ public class SO_Header_Adapter extends BaseAdapter {
         * Tratativas
         *
         */
-        //Se status da OS for edit ou stop, não exibe opções de download.
-        if(so.getStatus().equals(Constant.SO_STATUS_EDIT) || so.getStatus().equals(Constant.SO_STATUS_STOP) ){
-            ll_download_optc.setVisibility(View.GONE);
-        }else{
-            ll_download_optc.setVisibility(View.VISIBLE);
+        if(config_type.equals(CONFIG_TYPE_DOWNLOAD)) {
+            //Se status da OS for edit ou stop, não exibe opções de download.
+            if (so.getStatus().equals(Constant.SO_STATUS_EDIT) || so.getStatus().equals(Constant.SO_STATUS_STOP)) {
+                ll_download_optc.setVisibility(View.GONE);
+            } else {
+                ll_download_optc.setVisibility(View.VISIBLE);
+            }
         }
 
         return convertView;
