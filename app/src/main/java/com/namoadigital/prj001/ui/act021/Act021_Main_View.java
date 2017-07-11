@@ -8,11 +8,14 @@ import android.content.Context;
 
 public interface Act021_Main_View {
 
+    void setPendencies(int qty);
 
     void callAct005(Context context);
 
     void callAct022(Context context);
 
     void callAct025(Context context);
+
+    void callAct026(Context context);
 
 }

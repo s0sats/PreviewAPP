@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act021_Main_Presenter {
 
+    void getPendencies();
 
     void defineFlow(HMAux hmAux);
 

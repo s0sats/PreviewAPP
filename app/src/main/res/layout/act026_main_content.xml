@@ -15,12 +15,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:padding="5dp">
 
-    </LinearLayout>
+        <ListView
+            android:id="@+id/act026_lv_so"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="4dp"/>
 
+    </LinearLayout>
     <include layout="@layout/footer_base" />
 
 </LinearLayout>

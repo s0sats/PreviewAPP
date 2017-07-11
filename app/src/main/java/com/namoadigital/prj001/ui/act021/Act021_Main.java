@@ -18,9 +18,11 @@ import android.widget.SimpleAdapter;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -45,6 +47,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     private Button btn_load;
     private Button btn_express;
     private Button btn_pendencies;
+    private int pendencies_qty;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,7 +103,14 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
         mPresenter = new Act021_Main_Presenter_Impl(
                 context,
-                this
+                this,
+                new SM_SODao(
+                        context,
+                        ToolBox_Con.customDBPath(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        ),
+                        Constant.DB_VERSION_CUSTOM
+                )
         );
         //
         btn_load = (Button) findViewById(R.id.act021_btn_load);
@@ -112,8 +122,9 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         views.add(btn_express);
         //
         btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
-        btn_pendencies.setTag("btn_pendencies_so");
-        views.add(btn_pendencies);
+        btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
+        //
+        mPresenter.getPendencies();
 
     }
 
@@ -132,6 +143,20 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             }
         });
 
+        btn_pendencies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callAct026(context);
+            }
+        });
+
+    }
+
+    @Override
+    public void setPendencies(int qty) {
+        pendencies_qty = qty;
+        String btn_text = hmAux_Trans.get("btn_pendencies_so") +" (" +pendencies_qty+")";
+        btn_pendencies.setText(btn_text);
     }
 
     private void showNewOptDialog() {
@@ -248,6 +273,17 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             bundle = new Bundle();
         }
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_SO);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct026(Context context) {
+        Intent mIntent = new Intent(context, Act026_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT021);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

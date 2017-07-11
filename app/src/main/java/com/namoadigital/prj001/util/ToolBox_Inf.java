@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -62,6 +64,7 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -1935,6 +1938,29 @@ public class ToolBox_Inf {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static void alertBundleNotFound(final Base_Activity act, HMAux hmAux_Trans) {
+        //
+        Exception e = new Exception("Bundle parameters not found.");
+        //
+        ToolBox_Inf.registerException(act.getClass().getName(),e);
+        //
+        ToolBox.alertMSG(
+                act,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(act, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        act.startActivity(mIntent);
+                        act.finish();
+                    }
+                },
+                0
+        );
     }
 
 }

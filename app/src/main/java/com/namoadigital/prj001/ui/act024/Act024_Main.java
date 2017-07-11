@@ -131,11 +131,11 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             } else {
                 //Tratar quando lista de s.o não for enviado.
                 //Caixa de alerta e volta para menu?!?
-                alertBundleNotFound();
+                ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
             }
         } else {
             //Tratar caso não exista bundle
-            alertBundleNotFound();
+            ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
         }
 
     }
@@ -190,29 +190,6 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             }
         });
 
-    }
-
-    private void alertBundleNotFound() {
-        //
-        Exception e = new Exception("Parameters " + Constant.ACT023_SO_HEADER_LIST + " not found");
-        //
-        ToolBox_Inf.registerException(getClass().getName(), e);
-        //
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_bundle_not_found_ttl"),
-                hmAux_Trans.get("alert_bundle_not_found_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent mIntent = new Intent(context, Act005_Main.class);
-                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(mIntent);
-                        finish();
-                    }
-                },
-                0
-        );
     }
 
     @Override
