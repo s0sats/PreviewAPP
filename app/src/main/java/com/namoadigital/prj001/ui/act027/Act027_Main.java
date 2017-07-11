@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -17,7 +19,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -29,7 +31,7 @@ import java.util.List;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act027_Main extends Base_Activity {
+public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc {
 
     private Context context;
 
@@ -38,10 +40,17 @@ public class Act027_Main extends Base_Activity {
 
     private FragmentManager fm;
     private Act027_Opc act027_opc;
+    private Act027_Services act027_services;
+    private Act027_Serial act027_serial;
+    private Act027_Header act027_header;
 
-    private int so_prefix;
-    private int so_code;
+    private Bundle bundle;
 
+    private long mCustomer_code;
+    private int mSO_PREFIX;
+    private int mSO_CODE;
+
+    private SM_SODao sm_soDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,6 +141,12 @@ public class Act027_Main extends Base_Activity {
 //
 //        transList.add("support_dialog_ttl");
 
+        sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -144,9 +159,6 @@ public class Act027_Main extends Base_Activity {
     }
 
     private void initVars() {
-        //
-        recoverIntentsInfo();
-        //
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act027_drawer);
 
@@ -177,27 +189,40 @@ public class Act027_Main extends Base_Activity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        recoverGetIntents();
+
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        act027_opc = (Act027_Opc)fm.findFragmentById(R.id.act027_opc);
+        act027_opc = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
+        act027_opc.setOnMenuOptionsSelected(this);
+        act027_opc.setData(sm_soDao.getByStringHM(
+                new SM_SO_Sql_002(
+                        mCustomer_code,
+                        mSO_PREFIX,
+                        mSO_CODE
+                ).toSqlQuery()
+        ));
+
+        act027_services = new Act027_Services();
+        act027_serial = new Act027_Serial();
+        act027_header = new Act027_Header();
+
+        setFrag(act027_services, "SERVICES");
+
+        mDrawerLayout.openDrawer(GravityCompat.START);
     }
 
-    private void recoverIntentsInfo() {
-        Bundle bundle = getIntent().getExtras();
-
+    private void recoverGetIntents() {
+        bundle = getIntent().getExtras();
         if (bundle != null) {
-            if (bundle.containsKey(SM_SODao.SO_PREFIX)) {
-                so_prefix = Integer.valueOf(bundle.getString(SM_SODao.SO_PREFIX,"1900"));
-                so_code = Integer.valueOf(bundle.getString(SM_SODao.SO_CODE,"0"));
-
-            } else {
-                //Tratar quando lista de s.o não for enviado.
-                //Caixa de alerta e volta para menu?!?
-            }
-
+            mCustomer_code = ToolBox_Con.getPreference_Customer_Code(context);
+            mSO_PREFIX = Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "-1"));
+            mSO_CODE = Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "-1"));
         } else {
-            //Tratar caso não exista bundle
+            mCustomer_code = ToolBox_Con.getPreference_Customer_Code(context);
+            mSO_PREFIX = -1;
+            mSO_CODE = -1;
         }
     }
 
@@ -258,22 +283,35 @@ public class Act027_Main extends Base_Activity {
             return true;
         }
 
-//        if (id == R.id.act11_action_settings) {
-//
-//
-//            return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //
-        Intent mIntent = new Intent(context, Act005_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
+    public void menuOptionsSelected(String type) {
+        switch (type.toUpperCase()) {
+            case "SERVICES":
+                setFrag(act027_services, "SERVICES");
+                break;
+            case "SERIAL":
+                setFrag(act027_serial, "SERIAL");
+                break;
+            case "HEADER":
+                setFrag(act027_header, "HEADER");
+                break;
+            default:
+                setFrag(act027_header, "HEADER");
+                break;
+        }
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
+
+    private <T extends Fragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act027_main_ll, type, sTag);
+            ft.commit();
+        }
+    }
+
 }
