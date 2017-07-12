@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act023;
+package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,10 +7,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
 
 /**
- * Created by d.luche on 22/06/2017.
+ * Created by neomatrix on 12/07/17.
  */
 
-public interface Act023_Main_View {
+public interface Act027_Serial_View {
 
     void setProductValues(MD_Product md_product);
 
@@ -20,7 +20,7 @@ public interface Act023_Main_View {
 
     void fieldFocus();
 
-    void showPD(String title , String msg);
+    void showPD(String title, String msg);
 
     void showAlertDialog(String title, String msg);
 

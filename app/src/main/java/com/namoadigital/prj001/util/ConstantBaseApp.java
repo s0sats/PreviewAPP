@@ -48,6 +48,11 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT025 = "act025";
     public static final String ACT026 = "act026";
     public static final String ACT027 = "act027";
+    public static final String ACT028 = "act028";
+    public static final String ACT029 = "act029";
+    public static final String ACT030 = "act030";
+    public static final String ACT031 = "act031";
+    public static final String ACT032 = "act032";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
