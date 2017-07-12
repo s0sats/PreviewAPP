@@ -269,7 +269,6 @@
                         android:text="Additional Info"
                         android:textSize="@dimen/font_size_item_md" />
 
-
                     <EditText
                         android:id="@+id/act027_serial_content_et_info1"
                         android:layout_width="match_parent"
