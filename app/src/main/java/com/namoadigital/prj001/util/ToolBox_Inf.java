@@ -205,7 +205,11 @@ public class ToolBox_Inf {
             return nocarrierID;
         }
 
-        return carrierID;
+        if (carrierID != null && !carrierID.trim().isEmpty()){
+            return carrierID;
+        } else {
+            return nocarrierID;
+        }
     }
 
     public static String getToken(Context context) {
