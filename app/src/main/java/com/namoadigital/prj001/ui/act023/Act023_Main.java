@@ -574,17 +574,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 }
             }
         });
-
-        //
-        ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(HMAux hmAux) {
-                //
-                loadModelSS(true);
-                //
-                loadColorSS(true);
-            }
-        });
         //
         ss_site_zone_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -600,8 +589,20 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                     loadZoneSS(true);
                     setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
                     //
+                    loadLocalSS(false);
+                    //
                     skip_validation = false;
                 }
+            }
+        });
+        //
+        ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+                //
+                loadModelSS(true);
+                //
+                loadColorSS(true);
             }
         });
 
@@ -734,7 +735,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
             Object propertie = serialProperties.get(i);
             //Se for SearchableSpinner
             if (propertie instanceof SearchableSpinner) {
-                if (!((SearchableSpinner) propertie).getmValue().get(SearchableSpinner.ID).equals(((SearchableSpinner) propertie).getTag().toString())) {
+                if (((SearchableSpinner) propertie).getmValue().get(SearchableSpinner.ID) == null || !((SearchableSpinner) propertie).getmValue().get(SearchableSpinner.ID).equals(((SearchableSpinner) propertie).getTag().toString())) {
                     serialInfoChanges = true;
                     return true;
                 }
