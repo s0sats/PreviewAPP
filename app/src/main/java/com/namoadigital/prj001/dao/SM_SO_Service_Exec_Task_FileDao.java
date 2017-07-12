@@ -38,6 +38,7 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
     public static final String TASK_CODE = "task_code";
     public static final String TASK_SEQ = "task_seq";
     public static final String FILE_CODE = "file_code";
+    public static final String FILE_TMP = "file_tmp";
     public static final String FILE_NAME = "file_name";
     public static final String FILE_URL = "file_url";
 
@@ -303,6 +304,7 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
             sm_so_service_exec_task_file.setExec_code(cursor.getInt(cursor.getColumnIndex(EXEC_CODE)));
             sm_so_service_exec_task_file.setTask_code(cursor.getInt(cursor.getColumnIndex(TASK_CODE)));
             sm_so_service_exec_task_file.setFile_code(cursor.getInt(cursor.getColumnIndex(FILE_CODE)));
+            sm_so_service_exec_task_file.setFile_tmp(cursor.getInt(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
             sm_so_service_exec_task_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
 
@@ -362,6 +364,10 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
 
             if (sm_so_service_exec_task_file.getFile_code() > -1) {
                 contentValues.put(FILE_CODE, sm_so_service_exec_task_file.getFile_code());
+            }
+
+            if (sm_so_service_exec_task_file.getFile_tmp() > -1) {
+                contentValues.put(FILE_TMP, sm_so_service_exec_task_file.getFile_tmp());
             }
 
             if (sm_so_service_exec_task_file.getFile_name() != null) {

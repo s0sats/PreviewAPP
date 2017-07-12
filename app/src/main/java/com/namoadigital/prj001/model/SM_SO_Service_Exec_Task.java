@@ -22,7 +22,9 @@ public class SM_SO_Service_Exec_Task {
     private int exec_code; //pk
 
     // Novos Criados
-    private int task_code; //pk
+    private int task_code; //pk #SQN
+    @Expose
+    private int task_tmp; //pk
 
     @Expose
     private int task_seq_oper;
@@ -181,6 +183,14 @@ public class SM_SO_Service_Exec_Task {
 
     public void setTask_code(int task_code) {
         this.task_code = task_code;
+    }
+
+    public int getTask_tmp() {
+        return task_tmp;
+    }
+
+    public void setTask_tmp(int task_tmp) {
+        this.task_tmp = task_tmp;
     }
 
     public int getTask_seq_oper() {

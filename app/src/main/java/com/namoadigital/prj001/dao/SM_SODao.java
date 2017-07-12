@@ -85,6 +85,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
     public static final String EDIT_USER = "edit_user";
     public static final String TOTAL_QTY_SERVICE = "total_qty_service";
     public static final String TOTAL_PRICE = "total_price";
+    public static final String ADD_INF1 = "add_inf1";
+    public static final String ADD_INF2 = "add_inf2";
+    public static final String ADD_INF3 = "add_inf3";
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -516,6 +519,24 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             so.setTotal_qty_service(cursor.getInt(cursor.getColumnIndex(TOTAL_QTY_SERVICE)));
             so.setTotal_price(cursor.getDouble(cursor.getColumnIndex(TOTAL_PRICE)));
 
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF1))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1(cursor.getString(cursor.getColumnIndex(ADD_INF1)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF2))) {
+                so.setAdd_inf2(null);
+            } else {
+                so.setAdd_inf2(cursor.getString(cursor.getColumnIndex(ADD_INF2)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF3))) {
+                so.setAdd_inf3(null);
+            } else {
+                so.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
+            }
+
             return so;
         }
     }
@@ -747,6 +768,18 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             if (sm_so.getTotal_price() > -1) {
                 contentValues.put(TOTAL_PRICE, sm_so.getTotal_price());
+            }
+
+            if (sm_so.getAdd_inf1() != null) {
+                contentValues.put(ADD_INF1, sm_so.getAdd_inf1());
+            }
+
+            if (sm_so.getAdd_inf2() != null) {
+                contentValues.put(ADD_INF2, sm_so.getAdd_inf2());
+            }
+
+            if (sm_so.getAdd_inf3() != null) {
+                contentValues.put(ADD_INF3, sm_so.getAdd_inf3());
             }
 
             return contentValues;

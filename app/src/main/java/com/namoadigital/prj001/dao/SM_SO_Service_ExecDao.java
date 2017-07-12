@@ -38,6 +38,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
     public static final String SERVICE_CODE = "service_code";
     public static final String SERVICE_SEQ = "service_seq";
     public static final String EXEC_CODE = "exec_code";
+    public static final String EXEC_TMP = "exec_tmp";
     public static final String STATUS = "status";
     public static final String PARTNER_CODE = "partner_code";
     public static final String PARTNER_ID = "partner_id";
@@ -361,6 +362,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
             sm_so_service_exec.setService_code(cursor.getInt(cursor.getColumnIndex(SERVICE_CODE)));
             sm_so_service_exec.setService_seq(cursor.getInt(cursor.getColumnIndex(SERVICE_SEQ)));
             sm_so_service_exec.setExec_code(cursor.getInt(cursor.getColumnIndex(EXEC_CODE)));
+            sm_so_service_exec.setExec_tmp(cursor.getInt(cursor.getColumnIndex(EXEC_TMP)));
             sm_so_service_exec.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
 
             if (cursor.isNull(cursor.getColumnIndex(PARTNER_CODE))) {
@@ -430,6 +432,10 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
 
             if (sm_so_service_exec.getExec_code() > -1) {
                 contentValues.put(EXEC_CODE, sm_so_service_exec.getExec_code());
+            }
+
+            if (sm_so_service_exec.getExec_tmp() > -1) {
+                contentValues.put(EXEC_TMP, sm_so_service_exec.getExec_tmp());
             }
 
             if (sm_so_service_exec.getStatus() !=  null) {

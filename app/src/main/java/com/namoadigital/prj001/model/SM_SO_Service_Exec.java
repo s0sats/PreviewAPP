@@ -20,7 +20,9 @@ public class SM_SO_Service_Exec {
     private int service_code; //pk
     private int service_seq; //pk
     @Expose
-    private int exec_code; //pk
+    private int exec_code; //pk #SQN
+    @Expose
+    private long exec_tmp; //pk
     @Expose
     private String status;
 
@@ -140,6 +142,14 @@ public class SM_SO_Service_Exec {
 
     public void setExec_code(int exec_code) {
         this.exec_code = exec_code;
+    }
+
+    public long getExec_tmp() {
+        return exec_tmp;
+    }
+
+    public void setExec_tmp(long exec_tmp) {
+        this.exec_tmp = exec_tmp;
     }
 
     public String getStatus() {

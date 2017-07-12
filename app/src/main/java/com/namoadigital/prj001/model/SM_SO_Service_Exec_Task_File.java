@@ -22,6 +22,8 @@ public class SM_SO_Service_Exec_Task_File {
 
     @Expose
     private int file_code; //ok
+    @Expose
+    private int file_tmp; //ok
 
     // Novos Criados
     private String file_name;
@@ -153,6 +155,14 @@ public class SM_SO_Service_Exec_Task_File {
 
     public void setFile_code(int file_code) {
         this.file_code = file_code;
+    }
+
+    public int getFile_tmp() {
+        return file_tmp;
+    }
+
+    public void setFile_tmp(int file_tmp) {
+        this.file_tmp = file_tmp;
     }
 
     public String getFile_name() {

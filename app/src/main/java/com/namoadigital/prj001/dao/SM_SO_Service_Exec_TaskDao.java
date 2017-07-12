@@ -39,6 +39,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
     public static final String SERVICE_CODE = "service_code";
     public static final String EXEC_CODE = "exec_code";
     public static final String TASK_CODE = "task_code";
+    public static final String TASK_TMP = "task_tmp";
     public static final String TASK_SEQ_OPER = "task_seq_oper";
     public static final String TASK_USER = "task_user";
     public static final String START_DATE = "start_date";
@@ -360,6 +361,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
             sm_so_service_exec_task.setService_seq(cursor.getInt(cursor.getColumnIndex(SERVICE_SEQ)));
             sm_so_service_exec_task.setExec_code(cursor.getInt(cursor.getColumnIndex(EXEC_CODE)));
             sm_so_service_exec_task.setTask_code(cursor.getInt(cursor.getColumnIndex(TASK_CODE)));
+            sm_so_service_exec_task.setTask_tmp(cursor.getInt(cursor.getColumnIndex(TASK_TMP)));
             sm_so_service_exec_task.setTask_seq_oper(cursor.getInt(cursor.getColumnIndex(TASK_SEQ_OPER)));
             sm_so_service_exec_task.setTask_user(cursor.getInt(cursor.getColumnIndex(TASK_USER)));
             sm_so_service_exec_task.setStart_date(cursor.getString(cursor.getColumnIndex(START_DATE)));
@@ -456,6 +458,10 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements Dao<SM_SO_Ser
 
             if (sm_so_service_exec_task.getTask_code() > -1) {
                 contentValues.put(TASK_CODE, sm_so_service_exec_task.getTask_code());
+            }
+
+            if (sm_so_service_exec_task.getTask_tmp() > -1) {
+                contentValues.put(TASK_TMP, sm_so_service_exec_task.getTask_tmp());
             }
 
             if (sm_so_service_exec_task.getTask_seq_oper() > -1) {

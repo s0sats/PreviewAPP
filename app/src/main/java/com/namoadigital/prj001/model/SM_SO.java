@@ -49,7 +49,6 @@ public class SM_SO {
     @Expose
     private int contract_code;
     private String contract_desc;
-
     // Null
     private String contract_po_erp;
     private String contract_po_client1;
@@ -68,9 +67,8 @@ public class SM_SO {
     private String quality_approval_date;
     @Expose
     private String comments;
-    @Expose
 
-    // Null
+    @Expose
     private Integer so_father_prefix;
     @Expose
     private Integer so_father_code;
@@ -123,7 +121,14 @@ public class SM_SO {
     private int total_qty_service;
     @Expose
     private double total_price;
-
+    @Expose
+    private String add_inf1;
+    @Expose
+    private String add_inf2;
+    @Expose
+    private String add_inf3;
+    @Expose
+    private String action;
     @Expose
     private ArrayList<SM_SO_File> so_file = new ArrayList<>();
     @Expose
@@ -585,6 +590,38 @@ public class SM_SO {
 
     public void setTotal_price(double total_price) {
         this.total_price = total_price;
+    }
+
+    public String getAdd_inf1() {
+        return add_inf1;
+    }
+
+    public void setAdd_inf1(String add_inf1) {
+        this.add_inf1 = add_inf1;
+    }
+
+    public String getAdd_inf2() {
+        return add_inf2;
+    }
+
+    public void setAdd_inf2(String add_inf2) {
+        this.add_inf2 = add_inf2;
+    }
+
+    public String getAdd_inf3() {
+        return add_inf3;
+    }
+
+    public void setAdd_inf3(String add_inf3) {
+        this.add_inf3 = add_inf3;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public ArrayList<SM_SO_File> getSo_file() {
