@@ -299,13 +299,13 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_location_ttl.setTag("serial_location_ttl");
         //
         ss_site = (SearchableSpinner) findViewById(R.id.act023_ss_site);
-        ss_site.setTag("site_lbl");
+        ss_site.setmLabel("site_lbl");
         //
         ss_site_zone = (SearchableSpinner) findViewById(R.id.act023_ss_site_zone);
-        ss_site_zone.setTag("site_zone_lbl");
+        ss_site_zone.setmLabel("site_zone_lbl");
         //
         ss_site_zone_local = (SearchableSpinner) findViewById(R.id.act023_ss_site_zone_local);
-        ss_site_zone_local.setTag("site_zone_local_lbl");
+        ss_site_zone_local.setmLabel("site_zone_local_lbl");
         //
         ll_serial_add_info = (LinearLayout) findViewById(R.id.act023_ll_serial_add_info);
         //
@@ -327,22 +327,22 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_properties_ttl.setTag("serial_properties_ttl");
         //
         ss_brand = (SearchableSpinner) findViewById(R.id.act023_ss_brand);
-        ss_brand.setTag("brand_lbl");
+        ss_brand.setmLabel("brand_lbl");
         //
         ss_brand_model = (SearchableSpinner) findViewById(R.id.act023_ss_brand_model);
-        ss_brand_model.setTag("brand_model_lbl");
+        ss_brand_model.setmLabel("brand_model_lbl");
         //
         ss_brand_color = (SearchableSpinner) findViewById(R.id.act023_ss_brand_color);
-        ss_brand_color.setTag("brand_color_lbl");
+        ss_brand_color.setmLabel("brand_color_lbl");
         //
         ss_segment = (SearchableSpinner) findViewById(R.id.act023_ss_segment);
-        ss_segment.setTag("segment_lbl");
+        ss_segment.setmLabel("segment_lbl");
         //
         ss_category_price = (SearchableSpinner) findViewById(R.id.act023_ss_category_price);
-        ss_category_price.setTag("category_price_lbl");
+        ss_category_price.setmLabel("category_price_lbl");
         //
         ss_site_owner = (SearchableSpinner) findViewById(R.id.act023_ss_site_owner);
-        ss_site_owner.setTag("site_owner_lbl");
+        ss_site_owner.setmLabel("site_owner_lbl");
         //
         btn_action = (Button) findViewById(R.id.act023_btn_action);
         //
@@ -355,20 +355,20 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         views.add(tv_allow_new_lbl);
         views.add(tv_serial_ttl);
         views.add(tv_serial_location_ttl);
-        views.add(ss_site);
-        views.add(ss_site_zone);
-        views.add(ss_site_zone_local);
-        views.add(tv_serial_add_info_ttl);
+//        views.add(ss_site);
+//        views.add(ss_site_zone);
+//        views.add(ss_site_zone_local);
+//        views.add(tv_serial_add_info_ttl);
         views.add(et_info1);
         views.add(et_info2);
         views.add(et_info3);
         views.add(tv_serial_properties_ttl);
-        views.add(ss_brand);
-        views.add(ss_brand_model);
-        views.add(ss_brand_color);
-        views.add(ss_segment);
-        views.add(ss_category_price);
-        views.add(ss_site_owner);
+//        views.add(ss_brand);
+//        views.add(ss_brand_model);
+//        views.add(ss_brand_color);
+//        views.add(ss_segment);
+//        views.add(ss_category_price);
+//        views.add(ss_site_owner);
         //views.add(btn_action);
         //
         layoutConfiguration();

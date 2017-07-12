@@ -39,7 +39,7 @@ public class SM_SO_Service {
     @Expose
     private int express;
     @Expose
-    private int exec_time_standard;
+    private int time_exec_standard;
 
     // Null
     @Expose
@@ -229,12 +229,12 @@ public class SM_SO_Service {
         this.express = express;
     }
 
-    public int getExec_time_standard() {
-        return exec_time_standard;
+    public int getTime_exec_standard() {
+        return time_exec_standard;
     }
 
-    public void setExec_time_standard(int exec_time_standard) {
-        this.exec_time_standard = exec_time_standard;
+    public void setTime_exec_standard(int time_exec_standard) {
+        this.time_exec_standard = time_exec_standard;
     }
 
     public Double getPrice() {

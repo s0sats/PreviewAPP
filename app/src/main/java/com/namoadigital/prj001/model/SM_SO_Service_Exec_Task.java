@@ -25,7 +25,7 @@ public class SM_SO_Service_Exec_Task {
     private int task_code; //pk
 
     @Expose
-    private int task_seq;
+    private int task_seq_oper;
     @Expose
     private int task_user;
     @Expose
@@ -183,12 +183,12 @@ public class SM_SO_Service_Exec_Task {
         this.task_code = task_code;
     }
 
-    public int getTask_seq() {
-        return task_seq;
+    public int getTask_seq_oper() {
+        return task_seq_oper;
     }
 
-    public void setTask_seq(int task_seq) {
-        this.task_seq = task_seq;
+    public void setTask_seq_oper(int task_seq_oper) {
+        this.task_seq_oper = task_seq_oper;
     }
 
     public int getTask_user() {

@@ -44,7 +44,7 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
     public static final String OPTIONAL = "optional";
     public static final String MANUAL_PRICE = "manual_price";
     public static final String EXPRESS = "express";
-    public static final String EXEC_TIME_STANDARD = "exec_time_standard";
+    public static final String TIME_EXEC_STANDARD = "time_exec_standard";
     public static final String PRICE = "price";
     public static final String COST = "cost";
     public static final String EXEC_TYPE = "exec_type";
@@ -381,7 +381,7 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
             sm_so_service.setOptional(cursor.getInt(cursor.getColumnIndex(OPTIONAL)));
             sm_so_service.setManual_price(cursor.getInt(cursor.getColumnIndex(MANUAL_PRICE)));
             sm_so_service.setExpress(cursor.getInt(cursor.getColumnIndex(EXPRESS)));
-            sm_so_service.setExec_time_standard(cursor.getInt(cursor.getColumnIndex(EXEC_TIME_STANDARD)));
+            sm_so_service.setTime_exec_standard(cursor.getInt(cursor.getColumnIndex(TIME_EXEC_STANDARD)));
 
             if (cursor.isNull(cursor.getColumnIndex(PRICE))) {
                 sm_so_service.setPrice(null);
@@ -509,8 +509,8 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
                 contentValues.put(EXPRESS, sm_so_service.getExpress());
             }
 
-            if (sm_so_service.getExec_time_standard() > -1) {
-                contentValues.put(EXEC_TIME_STANDARD, sm_so_service.getExec_time_standard());
+            if (sm_so_service.getTime_exec_standard() > -1) {
+                contentValues.put(TIME_EXEC_STANDARD, sm_so_service.getTime_exec_standard());
             }
 
             if (sm_so_service.getPrice() != null) {

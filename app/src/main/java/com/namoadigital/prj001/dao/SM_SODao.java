@@ -634,7 +634,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             }
 
             if (sm_so.getContract_po_client2() != null) {
-                contentValues.put(CONTRACT_PO_CLIENT2, sm_so.getContract_po_client1());
+                contentValues.put(CONTRACT_PO_CLIENT2, sm_so.getContract_po_client2());
             }
 
             if (sm_so.getPriority_code() > -1) {

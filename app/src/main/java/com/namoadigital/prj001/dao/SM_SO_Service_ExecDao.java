@@ -366,7 +366,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
             if (cursor.isNull(cursor.getColumnIndex(PARTNER_CODE))) {
                 sm_so_service_exec.setPartner_code(null);
             } else {
-                sm_so_service_exec.setPack_code(cursor.getInt(cursor.getColumnIndex(PARTNER_CODE)));
+                sm_so_service_exec.setPartner_code(cursor.getInt(cursor.getColumnIndex(PARTNER_CODE)));
             }
 
             if (cursor.isNull(cursor.getColumnIndex(PARTNER_ID))) {
@@ -437,7 +437,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements Dao<SM_SO_Service_
             }
 
             if (sm_so_service_exec.getPartner_code() !=  null) {
-                contentValues.put(PACK_CODE, sm_so_service_exec.getPartner_code());
+                contentValues.put(PARTNER_CODE, sm_so_service_exec.getPartner_code());
             }
 
             if (sm_so_service_exec.getPartner_id() != null) {

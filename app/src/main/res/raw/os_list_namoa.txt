@@ -298,7 +298,7 @@
 					"partner_desc": null,
 					"task": [{
 						"task_code": 1,
-						"task_seq": 1,
+						"task_seq_oper": 1,
 						"task_user": 10009,
 						"start_date": "2017-06-27 09:08:33 -03:00",
 						"end_date": "2017-06-29 09:08:33 -03:00",
@@ -326,7 +326,7 @@
 						}]
 					}, {
 						"task_code": 2,
-						"task_seq": 1,
+						"task_seq_oper": 1,
 						"task_user": 10009,
 						"start_date": "2017-06-27 09:08:33 -03:00",
 						"end_date": "2017-06-29 09:08:33 -03:00",
@@ -350,7 +350,7 @@
 						}]
 					}, {
 						"task_code": 3,
-						"task_seq": 1,
+						"task_seq_oper": 1,
 						"task_user": 10009,
 						"start_date": "2017-06-27 09:08:33 -03:00",
 						"end_date": "2017-06-29 09:08:33 -03:00",
@@ -381,7 +381,7 @@
 					"partner_desc": null,
 					"task": [{
 						"task_code": 1,
-						"task_seq": 1,
+						"task_seq_oper": 1,
 						"task_user": 10009,
 						"start_date": "2017-06-27 09:08:33 -03:00",
 						"end_date": "2017-06-29 09:08:33 -03:00",
