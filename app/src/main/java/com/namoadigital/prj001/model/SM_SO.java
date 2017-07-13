@@ -49,25 +49,18 @@ public class SM_SO {
     @Expose
     private int contract_code;
     private String contract_desc;
-    // Null
     private String contract_po_erp;
     private String contract_po_client1;
     private String contract_po_client2;
-
     @Expose
     private int priority_code;
     private String priority_desc;
-    @Expose
     private String status;
-
-    // Null
-    @Expose
     private Integer quality_approval_user;
-    @Expose
+    private String quality_approval_user_nick;
     private String quality_approval_date;
     @Expose
     private String comments;
-
     @Expose
     private Integer so_father_prefix;
     @Expose
@@ -78,8 +71,6 @@ public class SM_SO {
     private String origin;
     @Expose
     private String client_type;
-
-    // Null
     @Expose
     private Integer client_user;
     @Expose
@@ -92,34 +83,20 @@ public class SM_SO {
     private String client_email;
     @Expose
     private String client_phone;
-
-    // Null
-    @Expose
     private Integer client_approval_image;
-
-    // Novos Criados Null
-    @Expose
     private String client_approval_image_name;
-    @Expose
     private String client_approval_image_url;
-
-    @Expose
     private String client_approval_date;
-    @Expose
     private int client_approval_flag;
-
-    // Novos Criados
     @Expose
     private String origin_change;
-    @Expose
     private int started_flag;
     @Expose
     private String edit_origin;
     @Expose
     private int edit_user;
-    @Expose
+    private String edit_user_nick;
     private int total_qty_service;
-    @Expose
     private double total_price;
     @Expose
     private String add_inf1;
@@ -176,20 +153,20 @@ public class SM_SO {
         this.so_id = so_id;
     }
 
-    public String getSo_desc() {
-        return so_desc;
-    }
-
-    public void setSo_desc(String so_desc) {
-        this.so_desc = so_desc;
-    }
-
     public int getSo_scn() {
         return so_scn;
     }
 
     public void setSo_scn(int so_scn) {
         this.so_scn = so_scn;
+    }
+
+    public String getSo_desc() {
+        return so_desc;
+    }
+
+    public void setSo_desc(String so_desc) {
+        this.so_desc = so_desc;
     }
 
     public int getProduct_code() {
@@ -400,6 +377,14 @@ public class SM_SO {
         this.quality_approval_user = quality_approval_user;
     }
 
+    public String getQuality_approval_user_nick() {
+        return quality_approval_user_nick;
+    }
+
+    public void setQuality_approval_user_nick(String quality_approval_user_nick) {
+        this.quality_approval_user_nick = quality_approval_user_nick;
+    }
+
     public String getQuality_approval_date() {
         return quality_approval_date;
     }
@@ -574,6 +559,14 @@ public class SM_SO {
 
     public void setEdit_user(int edit_user) {
         this.edit_user = edit_user;
+    }
+
+    public String getEdit_user_nick() {
+        return edit_user_nick;
+    }
+
+    public void setEdit_user_nick(String edit_user_nick) {
+        this.edit_user_nick = edit_user_nick;
     }
 
     public int getTotal_qty_service() {

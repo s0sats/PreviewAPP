@@ -18,10 +18,13 @@ public class SM_SO_Service_Exec_Task_File_Sql_002 implements Specification {
     private int category_price_code;
     private int service_code;
     private int service_seq;
-    private int exec_code;
-    private int task_code;
+//    private int exec_code;
+//    private int task_code;
 
-    public SM_SO_Service_Exec_Task_File_Sql_002(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, int exec_code, int task_code) {
+    private long exec_tmp;
+    private long task_tmp;
+
+    public SM_SO_Service_Exec_Task_File_Sql_002(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp, long task_tmp) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
@@ -31,8 +34,8 @@ public class SM_SO_Service_Exec_Task_File_Sql_002 implements Specification {
         this.category_price_code = category_price_code;
         this.service_code = service_code;
         this.service_seq = service_seq;
-        this.exec_code = exec_code;
-        this.task_code = task_code;
+        this.exec_tmp = exec_tmp;
+        this.task_tmp = task_tmp;
     }
 
     @Override
@@ -54,8 +57,8 @@ public class SM_SO_Service_Exec_Task_File_Sql_002 implements Specification {
                         "    AND S.category_price_code =    '" + category_price_code + "'\n" +
                         "    AND S.service_code =           '" + service_code + "'\n" +
                         "    AND S.service_seq =            '" + service_seq + "'\n" +
-                        "    AND S.exec_code =              '" + exec_code + "'\n" +
-                        "    AND S.task_code =              '" + task_code + "' ")
+                        "    AND S.exec_tmp =               '" + exec_tmp + "'\n" +
+                        "    AND S.task_tmp =               '" + task_tmp + "' ")
                 .toString();
     }
 }

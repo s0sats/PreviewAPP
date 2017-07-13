@@ -8,19 +8,13 @@ import com.google.gson.annotations.Expose;
 
 public class SM_SO_File {
 
-    @Expose
+
     private long customer_code; //pk
-    @Expose
     private int so_prefix; //pk
-    @Expose
     private int so_code; //pk
     @Expose
     private int file_code; //pk
-
-    // Novos Criados
-    @Expose
     private String file_name;
-    @Expose
     private String file_url;
 
     public SM_SO_File() {

@@ -13,36 +13,24 @@ public class SM_SO_Pack {
     private long customer_code; //pk
     private int so_prefix; //pk
     private int so_code; //pk
+    @Expose
     private int price_list_code; //pk
-
-    // Novo Criado
     private String price_list_id;
     private String price_list_desc;
-
     @Expose
     private int pack_code; //pk
-
-    // Novo Criado
+    @Expose
     private int pack_seq; //pk
-
     private String pack_id;
     private String pack_desc;
-
-    // Novo Criado
+    @Expose
     private String status;
-
-    // Null
-    @Expose
     private String rule;
-    @Expose
     private String billing_type;
-    @Expose
     private int express;
-    @Expose
     private String selection_type;
     @Expose
     private ArrayList<SM_SO_Service> service;
-
 
     public SM_SO_Pack() {
         this.customer_code = -1;

@@ -16,55 +16,37 @@ public class SM_SO_Service {
     private int price_list_code; //pk
     private int pack_code; //pk
     private int pack_seq; //pk
+    @Expose
     private int category_price_code; //pk
     @Expose
     private int service_code; //pk
-
-    // Novos Criados
+    @Expose
     private int service_seq; //pk
     private String service_id;
     private String service_desc;
-
-    // Null
     private String service_oper_id;
-
-    // Novos Criados
+    @Expose
     private String status;
-    @Expose
     private int qty;
-    @Expose
     private int optional;
-    @Expose
     private int manual_price;
-    @Expose
     private int express;
-    @Expose
     private int time_exec_standard;
-
-    // Null
     @Expose
     private Double price;
-    @Expose
     private Double cost;
-    @Expose
     private String exec_type;
-    @Expose
     private int exec_seq_oper;
-
-    // Null
-    @Expose
     private Integer approval_budget_user;
-    @Expose
+    private String approval_budget_user_nick;
     private String approval_budget_date;
     @Expose
     private Integer partner_code;
-
-    // Novos Criados Null
     private String partner_id;
     private String partner_desc;
-
     private String require_approval;
-
+    @Expose
+    private String comments;
     @Expose
     private ArrayList<SM_SO_Service_Exec> exec;
 
@@ -277,6 +259,14 @@ public class SM_SO_Service {
         this.approval_budget_user = approval_budget_user;
     }
 
+    public String getApproval_budget_user_nick() {
+        return approval_budget_user_nick;
+    }
+
+    public void setApproval_budget_user_nick(String approval_budget_user_nick) {
+        this.approval_budget_user_nick = approval_budget_user_nick;
+    }
+
     public String getApproval_budget_date() {
         return approval_budget_date;
     }
@@ -315,6 +305,14 @@ public class SM_SO_Service {
 
     public void setRequire_approval(String require_approval) {
         this.require_approval = require_approval;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public ArrayList<SM_SO_Service_Exec> getExec() {

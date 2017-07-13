@@ -15,7 +15,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
-import com.namoadigital.prj001.receiver.WBR_Serial;
+import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -69,7 +69,7 @@ public class WS_SO_Search extends IntentService {
 
         } finally {
 
-            WBR_Serial.completeWakefulIntent(intent);
+            WBR_SO_Search.completeWakefulIntent(intent);
         }
 
     }

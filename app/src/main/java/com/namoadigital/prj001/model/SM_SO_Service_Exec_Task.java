@@ -19,24 +19,23 @@ public class SM_SO_Service_Exec_Task {
     private int category_price_code; //pk
     private int service_code; //pk
     private int service_seq; //pk
-    private int exec_code; //pk
+    private Integer exec_code; //pk
 
     // Novos Criados
-    private int task_code; //pk #SQN
     @Expose
-    private int task_tmp; //pk
-
+    private Integer task_code; //pk #SQN
+    private long exec_tmp; //pk
     @Expose
+    private long task_tmp; //pk
     private int task_seq_oper;
-    @Expose
     private int task_user;
+    private String task_user_nick;
     @Expose
     private String start_date;
 
     // Null
     @Expose
     private String end_date;
-    @Expose
     private Integer exec_time;
 
     // Novos Criados
@@ -48,15 +47,12 @@ public class SM_SO_Service_Exec_Task {
     private int qty_people;
     @Expose
     private String status;
-    @Expose
     private int site_code;
     private String site_id;
     private String site_desc;
-    @Expose
     private int zone_code;
     private String zone_id;
     private String zone_desc;
-    @Expose
     private int local_code;
     private String local_id;
 
@@ -91,6 +87,7 @@ public class SM_SO_Service_Exec_Task {
         this.service_code = exec.getService_code();
         this.service_seq = exec.getService_seq();
         this.exec_code = exec.getExec_code();
+        this.exec_tmp = exec.getExec_tmp();
 
         for (int i = 0; i < task_file.size(); i++) {
             task_file.get(i).setPK(this);
@@ -169,27 +166,35 @@ public class SM_SO_Service_Exec_Task {
         this.service_seq = service_seq;
     }
 
-    public int getExec_code() {
+    public Integer getExec_code() {
         return exec_code;
     }
 
-    public void setExec_code(int exec_code) {
+    public void setExec_code(Integer exec_code) {
         this.exec_code = exec_code;
     }
 
-    public int getTask_code() {
+    public Integer getTask_code() {
         return task_code;
     }
 
-    public void setTask_code(int task_code) {
+    public void setTask_code(Integer task_code) {
         this.task_code = task_code;
     }
 
-    public int getTask_tmp() {
+    public long getExec_tmp() {
+        return exec_tmp;
+    }
+
+    public void setExec_tmp(long exec_tmp) {
+        this.exec_tmp = exec_tmp;
+    }
+
+    public long getTask_tmp() {
         return task_tmp;
     }
 
-    public void setTask_tmp(int task_tmp) {
+    public void setTask_tmp(long task_tmp) {
         this.task_tmp = task_tmp;
     }
 
@@ -207,6 +212,14 @@ public class SM_SO_Service_Exec_Task {
 
     public void setTask_user(int task_user) {
         this.task_user = task_user;
+    }
+
+    public String getTask_user_nick() {
+        return task_user_nick;
+    }
+
+    public void setTask_user_nick(String task_user_nick) {
+        this.task_user_nick = task_user_nick;
     }
 
     public String getStart_date() {

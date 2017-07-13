@@ -17,11 +17,12 @@ import java.util.List;
 import static com.namoadigital.prj001.dao.SM_SO_PackDao.PACK_SEQ;
 import static com.namoadigital.prj001.dao.SM_SO_ServiceDao.SERVICE_SEQ;
 
+
 /**
  * Created by neomatrix on 05/07/17.
  */
 
-public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_SO_Service_Exec_Task_File> {
+public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<SM_SO_Service_Exec_Task_File> {
 
     private final Mapper<SM_SO_Service_Exec_Task_File, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, SM_SO_Service_Exec_Task_File> toSM_SO_Service_Exec_Task_FileMapper;
@@ -35,8 +36,9 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
     public static final String CATEGORY_PRICE_CODE = "category_price_code";
     public static final String SERVICE_CODE = "service_code";
     public static final String EXEC_CODE = "exec_code";
+    public static final String EXEC_TMP = "exec_tmp";
     public static final String TASK_CODE = "task_code";
-    public static final String TASK_SEQ = "task_seq";
+    public static final String TASK_TMP = "task_tmp";
     public static final String FILE_CODE = "file_code";
     public static final String FILE_TMP = "file_tmp";
     public static final String FILE_NAME = "file_name";
@@ -75,11 +77,11 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
                 sbWhere.append(" and ");
                 sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_seq())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXEC_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
+                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TASK_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
+                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(FILE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
+                sbWhere.append(FILE_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
 
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null);
@@ -126,11 +128,11 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
                     sbWhere.append(" and ");
                     sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_seq())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(EXEC_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
+                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(TASK_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
+                    sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(FILE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
+                    sbWhere.append(FILE_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
 
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null);
@@ -147,6 +149,102 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
         closeDB();
     }
 
+    @Override
+    public void addUpdateServer(SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file) {
+        openDB();
+
+        try {
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getSo_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getSo_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getPrice_list_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PACK_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getPack_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PACK_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getPack_seq())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getCategory_price_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SERVICE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_seq())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(EXEC_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TASK_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(FILE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
+
+
+            if (db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null) == 0) {
+                db.insert(TABLE, null, toContentValuesMapper.map(sm_so_service_exec_task_file));
+            }
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public void addUpdateServer(Iterable<SM_SO_Service_Exec_Task_File> sm_so_service_exec_task_files, boolean status) {
+        openDB();
+
+        try {
+
+            //db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : sm_so_service_exec_task_files) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getSo_prefix())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getSo_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getPrice_list_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PACK_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getPack_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PACK_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getPack_seq())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getCategory_price_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SERVICE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_seq())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(EXEC_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TASK_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(FILE_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
+
+
+                if (db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null) == 0) {
+                    db.insert(TABLE, null, toContentValuesMapper.map(sm_so_service_exec_task_file));
+                }
+            }
+
+            //db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //db.endTransaction();
+        }
+
+        closeDB();
+    }
 
     @Override
     public void addUpdate(String sQuery) {
@@ -304,7 +402,9 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
             sm_so_service_exec_task_file.setExec_code(cursor.getInt(cursor.getColumnIndex(EXEC_CODE)));
             sm_so_service_exec_task_file.setTask_code(cursor.getInt(cursor.getColumnIndex(TASK_CODE)));
             sm_so_service_exec_task_file.setFile_code(cursor.getInt(cursor.getColumnIndex(FILE_CODE)));
-            sm_so_service_exec_task_file.setFile_tmp(cursor.getInt(cursor.getColumnIndex(FILE_TMP)));
+            sm_so_service_exec_task_file.setExec_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
+            sm_so_service_exec_task_file.setTask_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
+            sm_so_service_exec_task_file.setFile_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
             sm_so_service_exec_task_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
 
@@ -366,6 +466,13 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements Dao<SM_S
                 contentValues.put(FILE_CODE, sm_so_service_exec_task_file.getFile_code());
             }
 
+            if (sm_so_service_exec_task_file.getExec_tmp() > -1) {
+                contentValues.put(EXEC_TMP, sm_so_service_exec_task_file.getExec_tmp());
+            }
+
+            if (sm_so_service_exec_task_file.getTask_tmp() > -1) {
+                contentValues.put(TASK_TMP, sm_so_service_exec_task_file.getTask_tmp());
+            }
             if (sm_so_service_exec_task_file.getFile_tmp() > -1) {
                 contentValues.put(FILE_TMP, sm_so_service_exec_task_file.getFile_tmp());
             }

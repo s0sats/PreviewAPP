@@ -20,13 +20,14 @@ public class SM_SO_Service_Exec {
     private int service_code; //pk
     private int service_seq; //pk
     @Expose
-    private int exec_code; //pk #SQN
+    private Integer exec_code; //pk #SQN
     @Expose
     private long exec_tmp; //pk
     @Expose
     private String status;
 
     // Novos Criados Null
+    @Expose
     private Integer partner_code;
     private String partner_id;
     private String partner_desc;
@@ -136,11 +137,11 @@ public class SM_SO_Service_Exec {
         this.service_seq = service_seq;
     }
 
-    public int getExec_code() {
+    public Integer getExec_code() {
         return exec_code;
     }
 
-    public void setExec_code(int exec_code) {
+    public void setExec_code(Integer exec_code) {
         this.exec_code = exec_code;
     }
 

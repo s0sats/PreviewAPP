@@ -50,11 +50,13 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
     public static final String EXEC_TYPE = "exec_type";
     public static final String EXEC_SEQ_OPER = "exec_seq_oper";
     public static final String APPROVAL_BUDGET_USER = "approval_budget_user";
+    public static final String APPROVAL_BUDGET_USER_NICK = "approval_budget_user_nick";
     public static final String APPROVAL_BUDGET_DATE = "approval_budget_date";
     public static final String PARTNER_CODE = "partner_code";
     public static final String PARTNER_ID = "partner_id";
     public static final String PARTNER_DESC = "partner_desc";
     public static final String REQUIRE_APPROVAL = "require_approval";
+    public static final String COMMENTS = "comments";
 
 
     public SM_SO_ServiceDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -404,6 +406,12 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
                 sm_so_service.setApproval_budget_user(cursor.getInt(cursor.getColumnIndex(APPROVAL_BUDGET_USER)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_BUDGET_USER_NICK))) {
+                sm_so_service.setApproval_budget_user_nick(null);
+            } else {
+                sm_so_service.setApproval_budget_user_nick(cursor.getString(cursor.getColumnIndex(APPROVAL_BUDGET_USER_NICK)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(APPROVAL_BUDGET_DATE))) {
                 sm_so_service.setApproval_budget_date(null);
             } else {
@@ -429,6 +437,12 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
             }
 
             sm_so_service.setRequire_approval(cursor.getString(cursor.getColumnIndex(REQUIRE_APPROVAL)));
+
+            if (cursor.isNull(cursor.getColumnIndex(COMMENTS))) {
+                sm_so_service.setComments(null);
+            } else {
+                sm_so_service.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
+            }
 
             return sm_so_service;
         }
@@ -533,6 +547,10 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
                 contentValues.put(APPROVAL_BUDGET_USER, sm_so_service.getApproval_budget_user());
             }
 
+            if (sm_so_service.getApproval_budget_user_nick() != null) {
+                contentValues.put(APPROVAL_BUDGET_USER_NICK, sm_so_service.getApproval_budget_user_nick());
+            }
+
             if (sm_so_service.getApproval_budget_date() != null) {
                 contentValues.put(APPROVAL_BUDGET_DATE, sm_so_service.getApproval_budget_date());
             }
@@ -551,6 +569,10 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
 
             if (sm_so_service.getRequire_approval() != null) {
                 contentValues.put(REQUIRE_APPROVAL, sm_so_service.getRequire_approval());
+            }
+
+            if (sm_so_service.getComments() != null) {
+                contentValues.put(COMMENTS, sm_so_service.getComments());
             }
 
             return contentValues;

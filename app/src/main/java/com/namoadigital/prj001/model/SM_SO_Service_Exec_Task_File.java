@@ -17,15 +17,15 @@ public class SM_SO_Service_Exec_Task_File {
     private int category_price_code; //pk
     private int service_code; //pk
     private int service_seq; //pk
-    private int exec_code; //pk
-    private int task_code; //pk
-
+    private int exec_code; //pk server
+    private long exec_tmp; //pk local
+    private int task_code; //pk server
+    private long task_tmp; //pk local
     @Expose
     private int file_code; //ok
     @Expose
-    private int file_tmp; //ok
-
-    // Novos Criados
+    private long file_tmp; //ok
+    @Expose
     private String file_name;
     private String file_url;
 
@@ -58,6 +58,8 @@ public class SM_SO_Service_Exec_Task_File {
         this.service_seq = task.getService_seq();
         this.exec_code = task.getExec_code();
         this.task_code = task.getTask_code();
+        this.exec_tmp = task.getExec_tmp();
+        this.task_tmp = task.getTask_tmp();
 
     }
 
@@ -141,12 +143,28 @@ public class SM_SO_Service_Exec_Task_File {
         this.exec_code = exec_code;
     }
 
+    public long getExec_tmp() {
+        return exec_tmp;
+    }
+
+    public void setExec_tmp(long exec_tmp) {
+        this.exec_tmp = exec_tmp;
+    }
+
     public int getTask_code() {
         return task_code;
     }
 
     public void setTask_code(int task_code) {
         this.task_code = task_code;
+    }
+
+    public long getTask_tmp() {
+        return task_tmp;
+    }
+
+    public void setTask_tmp(long task_tmp) {
+        this.task_tmp = task_tmp;
     }
 
     public int getFile_code() {
@@ -157,11 +175,11 @@ public class SM_SO_Service_Exec_Task_File {
         this.file_code = file_code;
     }
 
-    public int getFile_tmp() {
+    public long getFile_tmp() {
         return file_tmp;
     }
 
-    public void setFile_tmp(int file_tmp) {
+    public void setFile_tmp(long file_tmp) {
         this.file_tmp = file_tmp;
     }
 

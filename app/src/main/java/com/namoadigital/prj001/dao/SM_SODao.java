@@ -61,6 +61,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
     public static final String PRIORITY_DESC = "priority_desc";
     public static final String STATUS = "status";
     public static final String QUALITY_APPROVAL_USER = "quality_approval_user";
+    public static final String QUALITY_APPROVAL_USER_NICK = "quality_approval_user_nick";
     public static final String QUALITY_APPROVAL_DATE = "quality_approval_date";
     public static final String COMMENTS = "comments";
     public static final String SO_FATHER_PREFIX = "so_father_prefix";
@@ -83,6 +84,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
     public static final String STARTED_FLAG = "started_flag";
     public static final String EDIT_ORIGIN = "edit_origin";
     public static final String EDIT_USER = "edit_user";
+    public static final String EDIT_USER_NICK = "edit_user_nick";
     public static final String TOTAL_QTY_SERVICE = "total_qty_service";
     public static final String TOTAL_PRICE = "total_price";
     public static final String ADD_INF1 = "add_inf1";
@@ -416,6 +418,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 so.setQuality_approval_user(cursor.getInt(cursor.getColumnIndex(QUALITY_APPROVAL_USER)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(QUALITY_APPROVAL_USER_NICK))) {
+                so.setQuality_approval_user_nick(null);
+            } else {
+                so.setQuality_approval_user_nick(cursor.getString(cursor.getColumnIndex(QUALITY_APPROVAL_USER_NICK)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(QUALITY_APPROVAL_DATE))) {
                 so.setQuality_approval_date(null);
             } else {
@@ -516,6 +524,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             }
 
             so.setEdit_user(cursor.getInt(cursor.getColumnIndex(EDIT_USER)));
+            so.setEdit_user_nick(cursor.getString(cursor.getColumnIndex(EDIT_USER_NICK)));
             so.setTotal_qty_service(cursor.getInt(cursor.getColumnIndex(TOTAL_QTY_SERVICE)));
             so.setTotal_price(cursor.getDouble(cursor.getColumnIndex(TOTAL_PRICE)));
 
@@ -673,6 +682,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
             if (sm_so.getQuality_approval_user() != null) {
                 contentValues.put(QUALITY_APPROVAL_USER, sm_so.getQuality_approval_user());
             }
+            if (sm_so.getQuality_approval_user_nick() != null) {
+                contentValues.put(QUALITY_APPROVAL_USER_NICK, sm_so.getQuality_approval_user_nick());
+            }
 
             if (sm_so.getQuality_approval_date() != null) {
                 contentValues.put(QUALITY_APPROVAL_DATE, sm_so.getQuality_approval_date());
@@ -760,6 +772,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             if (sm_so.getEdit_user() > -1) {
                 contentValues.put(EDIT_USER, sm_so.getEdit_user());
+            }
+
+            if (sm_so.getEdit_user_nick() != null) {
+                contentValues.put(EDIT_USER_NICK, sm_so.getEdit_user_nick());
             }
 
             if (sm_so.getTotal_qty_service() > -1) {
