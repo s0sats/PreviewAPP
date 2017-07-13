@@ -363,6 +363,10 @@
 
         <service android:name=".service.WS_SO_Search" />
 
+        <receiver android:name=".receiver.WBR_SO_Serial_Save" />
+
+        <service android:name=".service.WS_SO_Serial_Save" />
+
 
     </application>
 

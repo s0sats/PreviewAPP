@@ -49,7 +49,6 @@ public class Act027_Header extends Fragment {
         iniAction();
         //
         return view;
-
     }
 
     private void setHMAuxScreen() {
