@@ -3,14 +3,14 @@ package com.namoadigital.prj001.ui.act028;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 
 /**
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act028_Main extends Base_Activity {
+public class Act028_Main extends Base_Activity_Frag {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

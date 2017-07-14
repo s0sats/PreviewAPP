@@ -15,11 +15,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -30,11 +32,13 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act023.Act023_Main.SO_WS_SEARCH_SERIAL;
+
 /**
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc {
+public class Act027_Main extends Base_Activity_Frag implements Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
     private Context context;
 
@@ -54,6 +58,7 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
     private int mSO_CODE;
 
     private SM_SODao sm_soDao;
+    private HMAux data;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,68 +86,13 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
         );
 
         loadTranslation();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-//        transList.add("drawer_change_customer_alert_ttl");
-//        transList.add("drawer_change_customer_alert_msg");
-//        transList.add("drawer_change_site_alert_ttl");
-//        transList.add("drawer_change_site_alert_msg");
-//        transList.add("drawer_change_operation_alert_ttl");
-//        transList.add("drawer_change_operation_alert_msg");
-//        transList.add("drawer_logout_alert_ttl");
-//        transList.add("drawer_logout_alert_msg");
-//        transList.add("alert_sync_ttl");
-//        transList.add("alert_sync_msg");
-//        transList.add("alert_exit_confirm_ttl");
-//        transList.add("alert_exit_confirm_msg");
-//        transList.add("alert_sync_finish_ttl");
-//        transList.add("alert_sync_finish_msg");
-//        transList.add("alert_send_finish_ttl");
-//        transList.add("alert_send_finish_msg");
-//        transList.add("drawer_sync_alert_ttl");
-//        transList.add("drawer_sync_alert_msg");
-//        transList.add("drawer_change_site_one_site_alert_ttl");
-//        transList.add("drawer_change_site_one_site_alert_msg");
-//        transList.add("drawer_change_operation_one_operation_alert_ttl");
-//        transList.add("drawer_change_operation_one_operation_alert_msg");
-//        transList.add("msg_start_sync");
-//        transList.add("msg_preparing_to_send_data");
-//        transList.add("logout_dialog_btn");
-//        transList.add("logout_dialog_ttl");
-//        transList.add("alert_logout_ttl");
-//        transList.add("alert_logout_msg");
-//        transList.add("lbl_sync_data");
-//        transList.add("lbl_logout");
-//        transList.add("lbl_schedule_data");
-//        transList.add("lbl_so");
-//
-//        transList.add("toolbar_enable_nfc");
-//        transList.add("toolbar_cancel_nfc");
-//        transList.add("toolbar_support");
-//        transList.add("alert_enable_nfc_ttl");
-//        transList.add("alert_enable_nfc_msg");
-//        transList.add("alert_cancel_nfc_ttl");
-//        transList.add("alert_cancel_nfc_msg");
-//        transList.add("alert_support_ttl");
-//        transList.add("alert_support_msg");
-//
-//        transList.add("progress_enable_nfc_ttl");
-//        transList.add("progress_enable_nfc_msg");
-//        transList.add("progress_cancel_nfc_ttl");
-//        transList.add("progress_cancel_nfc_msg");
-//        transList.add("progress_support_ttl");
-//        transList.add("progress_support_msg");
-//
-//        transList.add("alert_enable_nfc_finish_ttl");
-//        transList.add("alert_enable_nfc_finish_msg");
-//        transList.add("alert_cancel_nfc_finish_ttl");
-//        transList.add("alert_cancel_nfc_finish_msg");
-//        transList.add("alert_support_finish_ttl");
-//        transList.add("alert_support_finish_msg");
-//
-//        transList.add("support_dialog_ttl");
+        transList.add("act027_title");
 
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
@@ -192,7 +142,6 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
         transList.add("alert_no_so_found_msg");
         transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
-
 
         sm_soDao = new SM_SODao(
                 context,
@@ -249,13 +198,16 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
 
         act027_opc = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
         act027_opc.setOnMenuOptionsSelected(this);
-        act027_opc.setData(sm_soDao.getByStringHM(
+
+        data = sm_soDao.getByStringHM(
                 new SM_SO_Sql_002(
                         mCustomer_code,
                         mSO_PREFIX,
                         mSO_CODE
                 ).toSqlQuery()
-        ));
+        );
+
+        act027_opc.setData(data);
 
         act027_services = new Act027_Services();
         act027_services.setData((ArrayList<HMAux>) sm_soDao.query_HM(
@@ -265,7 +217,13 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
                         mSO_CODE
                 ).toSqlQuery()
         ));
+
         act027_serial = new Act027_Serial();
+        act027_serial.setBaInfra(this);
+        act027_serial.setBundle(bundle);
+        act027_serial.setHmAux_Trans(hmAux_Trans);
+        act027_serial.setData(data);
+
         act027_header = new Act027_Header();
         act027_header.setData(sm_soDao.getByStringHM(
                 new SM_SO_Sql_002(
@@ -322,7 +280,70 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
     }
 
     private void initActions() {
+    }
 
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+        switch (act027_serial.requesting_process) {
+
+            case Constant.MODULE_CHECKLIST:
+                //mView.callAct008(context,product_code);
+                break;
+
+            case Constant.MODULE_SO:
+            case Constant.MODULE_SO_SEARCH_SERIAL:
+                if (act027_serial.ws_process.equals(SO_WS_SEARCH_SERIAL)) {
+                    //
+                    act027_serial.getSerialInfo();
+                }
+                break;
+            default:
+                break;
+
+        }
+        progressDialog.dismiss();
+
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
     }
 
 
@@ -371,6 +392,11 @@ public class Act027_Main extends Base_Activity implements Act027_Opc.IAct027_Opc
         }
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void onItemClickListener(String type) {
+
     }
 
     private <T extends Fragment> void setFrag(T type, String sTag) {

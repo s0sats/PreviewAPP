@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 
@@ -18,7 +18,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
  * Created by neomatrix on 10/07/17.
  */
 
-public class Act027_Opc extends Fragment {
+public class Act027_Opc extends BaseFragment {
 
     private Context context;
 
