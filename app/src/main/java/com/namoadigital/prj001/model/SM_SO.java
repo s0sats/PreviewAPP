@@ -104,6 +104,7 @@ public class SM_SO {
     private String add_inf2;
     @Expose
     private String add_inf3;
+    private int update_required;
     @Expose
     private String action;
     @Expose
@@ -607,6 +608,14 @@ public class SM_SO {
 
     public void setAdd_inf3(String add_inf3) {
         this.add_inf3 = add_inf3;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 
     public String getAction() {

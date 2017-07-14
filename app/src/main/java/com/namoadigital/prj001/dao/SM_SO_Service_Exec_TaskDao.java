@@ -69,7 +69,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
     }
 
     @Override
-    public void addUpdate(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
+    public void addUpdateTmp(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
         openDB();
 
         try {
@@ -118,7 +118,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
     }
 
     @Override
-    public void addUpdate(Iterable<SM_SO_Service_Exec_Task> sm_so_service_exec_tasks, boolean status) {
+    public void addUpdateTmp(Iterable<SM_SO_Service_Exec_Task> sm_so_service_exec_tasks, boolean status) {
         openDB();
 
         try {
@@ -183,7 +183,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
     }
 
     @Override
-    public void addUpdateServer(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
+    public void addUpdate(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
         openDB();
 
         try {
@@ -233,7 +233,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
     }
 
     @Override
-    public void addUpdateServer(Iterable<SM_SO_Service_Exec_Task> sm_so_service_exec_tasks, boolean status) {
+    public void addUpdate(Iterable<SM_SO_Service_Exec_Task> sm_so_service_exec_tasks, boolean status) {
         openDB();
 
         try {

@@ -23,7 +23,7 @@ import java.util.List;
  * Created by d.luche on 20/06/2017.
  */
 
-public class SM_SODao extends BaseDao implements Dao<SM_SO> {
+public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_SO> {
 
     private final Mapper<SM_SO, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, SM_SO> toSM_SOMapper;
@@ -90,6 +90,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
     public static final String ADD_INF1 = "add_inf1";
     public static final String ADD_INF2 = "add_inf2";
     public static final String ADD_INF3 = "add_inf3";
+    public static final String UPDATE_REQUIRED = "update_required";
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -220,6 +221,40 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
         }
 
         closeDB();
+    }
+
+    @Override
+    public void removeFull(SM_SO sm_so) {
+        openDB();
+
+        try {
+
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SO_PREFIX).append(" = '").append(String.valueOf(sm_so.getSo_prefix())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so.getSo_code())).append("'");
+
+            db.beginTransaction();
+
+            db.delete(TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_FileDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_PackDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_ServiceDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_Service_ExecDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_Service_Exec_TaskDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_Service_Exec_Task_FileDao.TABLE, sbWhere.toString(), null);
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
+
     }
 
     @Override
@@ -546,6 +581,13 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
                 so.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+                so.setUpdate_required(0);
+            } else {
+                so.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            }
+
+
             return so;
         }
     }
@@ -796,6 +838,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO> {
 
             if (sm_so.getAdd_inf3() != null) {
                 contentValues.put(ADD_INF3, sm_so.getAdd_inf3());
+            }
+
+            if (sm_so.getUpdate_required() > -1) {
+                contentValues.put(UPDATE_REQUIRED, sm_so.getUpdate_required());
             }
 
             return contentValues;

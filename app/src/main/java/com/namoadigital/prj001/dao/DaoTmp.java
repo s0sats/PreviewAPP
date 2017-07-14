@@ -6,8 +6,8 @@ package com.namoadigital.prj001.dao;
 
 public interface DaoTmp<T> extends Dao<T> {
 
-    void addUpdateServer(T item);
+    void addUpdateTmp(T item);
 
-    void addUpdateServer(Iterable<T> items, boolean status);
+    void addUpdateTmp(Iterable<T> items, boolean status);
 
 }
