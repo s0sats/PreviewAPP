@@ -145,7 +145,11 @@ public class WS_SO_Search extends IntentService {
             SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             for (SM_SO sm_so : rec.getSo()) {
+                //Apaga SO completa
+                soDao.removeFull(sm_so);
+                //
                 sm_so.setPK();
+                //
             }
             //
             soDao.addUpdate(rec.getSo(), false);

@@ -167,7 +167,6 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
         openDB();
 
         try {
-
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_service_exec.getCustomer_code())).append("'");
             sbWhere.append(" and ");
@@ -228,7 +227,12 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                     Constant.DB_VERSION_CUSTOM
             );
 
+            long exec_tmp = 100;
+
             for (SM_SO_Service_Exec sm_so_service_exec : sm_so_service_execs) {
+                //Seta Tmp
+                sm_so_service_exec.setExec_tmp(exec_tmp);
+
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_service_exec.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
@@ -260,7 +264,15 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
 //                        Constant.DB_VERSION_CUSTOM
 //                );
 
+                //
+                for (int j = 0; j < sm_so_service_exec.getTask().size() ; j++) {
+                    SM_SO_Service_Exec_Task task = sm_so_service_exec.getTask().get(j);
+                    task.setPK(sm_so_service_exec);
+                }
+
                 sm_so_service_exec_taskDao.addUpdate(sm_so_service_exec.getTask(), false);
+                //Atualiza valor do exec_temp
+                exec_tmp++;
             }
 
             //db.setTransactionSuccessful();
@@ -335,7 +347,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                             sm_so_service_exec.getCategory_price_code(),
                             sm_so_service_exec.getService_code(),
                             sm_so_service_exec.getService_seq(),
-                            sm_so_service_exec.getExec_tmp()
+                            sm_so_service_exec.getExec_code()
                     ).toSqlQuery()));
 
                 }
@@ -410,7 +422,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                             uAux.getCategory_price_code(),
                             uAux.getService_code(),
                             uAux.getService_seq(),
-                            uAux.getExec_tmp()
+                            uAux.getExec_code()
                     ).toSqlQuery()));
 
                     Log.d("TASKS", String.valueOf(uAux.getTask().size()));

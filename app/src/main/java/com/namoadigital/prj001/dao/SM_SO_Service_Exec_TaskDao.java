@@ -249,8 +249,12 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM
             );
-
+            long task_tmp = 200;
+            //
             for (SM_SO_Service_Exec_Task sm_so_service_exec_task : sm_so_service_exec_tasks) {
+                //Seta temp
+                sm_so_service_exec_task.setTask_tmp(task_tmp);
+                //
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(sm_so_service_exec_task.getCustomer_code())).append("'");
                 sbWhere.append(" and ");
@@ -284,8 +288,15 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
 //                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
 //                        Constant.DB_VERSION_CUSTOM
 //                );
+                //
+                for (int j = 0; j < sm_so_service_exec_task.getTask_file().size() ; j++) {
+                    SM_SO_Service_Exec_Task_File task_file = sm_so_service_exec_task.getTask_file().get(j);
+                    task_file.setPK(sm_so_service_exec_task);
+                }
 
                 sm_so_service_exec_task_fileDao.addUpdate(sm_so_service_exec_task.getTask_file(), false);
+                //Atualiza valor do task_tmp
+                task_tmp ++;
             }
 
             //db.setTransactionSuccessful();
