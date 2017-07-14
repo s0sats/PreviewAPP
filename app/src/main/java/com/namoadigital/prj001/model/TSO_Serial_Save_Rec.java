@@ -12,7 +12,7 @@ public class TSO_Serial_Save_Rec {
     private String link_url;
     private String error_msg;
 
-    private ArrayList<SM_SO> so;
+    //private ArrayList<SM_SO> so;
     private ArrayList<Serial_Save_Return> serial_return;
 
 
@@ -48,13 +48,13 @@ public class TSO_Serial_Save_Rec {
         this.error_msg = error_msg;
     }
 
-    public ArrayList<SM_SO> getSo() {
-        return so;
-    }
-
-    public void setSo(ArrayList<SM_SO> so) {
-        this.so = so;
-    }
+//    public ArrayList<SM_SO> getSo() {
+//        return so;
+//    }
+//
+//    public void setSo(ArrayList<SM_SO> so) {
+//        this.so = so;
+//    }
 
     public ArrayList<Serial_Save_Return> getSerial_return() {
         return serial_return;

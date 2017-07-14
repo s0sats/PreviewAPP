@@ -11,8 +11,9 @@ public class TSO_Serial_Save_Env {
     private String app_code;
     private String app_version;
     private String session_app;
+    private String token;
 
-    private ArrayList<SM_SO> so;
+    //private ArrayList<SM_SO> so;
     private ArrayList<MD_Product_Serial> serial;
 
     public String getApp_code() {
@@ -39,13 +40,13 @@ public class TSO_Serial_Save_Env {
         this.session_app = session_app;
     }
 
-    public ArrayList<SM_SO> getSo() {
-        return so;
-    }
-
-    public void setSo(ArrayList<SM_SO> so) {
-        this.so = so;
-    }
+//    public ArrayList<SM_SO> getSo() {
+//        return so;
+//    }
+//
+//    public void setSo(ArrayList<SM_SO> so) {
+//        this.so = so;
+//    }
 
     public ArrayList<MD_Product_Serial> getSerial() {
         return serial;
@@ -53,5 +54,13 @@ public class TSO_Serial_Save_Env {
 
     public void setSerial(ArrayList<MD_Product_Serial> serial) {
         this.serial = serial;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

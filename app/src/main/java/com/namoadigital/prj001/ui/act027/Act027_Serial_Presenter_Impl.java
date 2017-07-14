@@ -16,6 +16,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -315,11 +316,10 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
                 hmAux_Trans.get("progress_so_search_msg")
         );
         //
-        Intent mIntent = new Intent(context, WBR_SO_Search.class);
+        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, product_code);
-        bundle.putString(Constant.WS_SO_SEARCH_SERIAL_ID, serial_id);
-        bundle.putBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL, save_serial);
+        bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, product_code);
+        bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, serial_id);
 
         mIntent.putExtras(bundle);
         //

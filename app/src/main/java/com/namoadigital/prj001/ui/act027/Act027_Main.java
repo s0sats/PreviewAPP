@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,12 +18,10 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -36,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.ui.act023.Act023_Main.SO_WS_SEARCH_SERIAL;
-import static com.namoadigital.prj001.ui.act023.Act023_Main.SO_WS_SEARCH_SO;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -289,42 +285,44 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Opc.IAct02
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        switch (act027_serial.requesting_process) {
 
-            case Constant.MODULE_CHECKLIST:
-                //mView.callAct008(context,product_code);
-                break;
+//        switch (act027_serial.requesting_process) {
+//
+//            case Constant.MODULE_CHECKLIST:
+//                //mView.callAct008(context,product_code);
+//                break;
+//
+//            case Constant.MODULE_SO:
+//            case Constant.MODULE_SO_SEARCH_SERIAL:
+//                if (act027_serial.ws_process.equals(SO_WS_SEARCH_SO)) {
+//                    //Valida retorno do save do serial
+//                    //Se ok, segue para listagem de SO
+//                    //Se erro, exibe msg de erro e no ok segue para lista de SO
+//                    if (hmAux.get(WS_SO_Search.SERIAL_SAVE).equals("OK")) {
+//                        act027_serial.mPresenter.defineForwardFlow(hmAux.get(WS_SO_Search.SO_LIST));
+//                    } else {
+//                        final String soList = hmAux.get(WS_SO_Search.SO_LIST);
+//                        String msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmAux.get(WS_SO_Search.SERIAL_SAVE);
+//                        //
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("alert_save_serial_error_ttl"),
+//                                msg,
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        act027_serial.mPresenter.defineForwardFlow(soList);
+//                                    }
+//                                },
+//                                0
+//                        );
+//                    }
+//                }
+//                break;
+//            default:
+//                break;
+//        }
 
-            case Constant.MODULE_SO:
-            case Constant.MODULE_SO_SEARCH_SERIAL:
-                if (act027_serial.ws_process.equals(SO_WS_SEARCH_SO)) {
-                    //Valida retorno do save do serial
-                    //Se ok, segue para listagem de SO
-                    //Se erro, exibe msg de erro e no ok segue para lista de SO
-                    if (hmAux.get(WS_SO_Search.SERIAL_SAVE).equals("OK")) {
-                        act027_serial.mPresenter.defineForwardFlow(hmAux.get(WS_SO_Search.SO_LIST));
-                    } else {
-                        final String soList = hmAux.get(WS_SO_Search.SO_LIST);
-                        String msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmAux.get(WS_SO_Search.SERIAL_SAVE);
-                        //
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_save_serial_error_ttl"),
-                                msg,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        act027_serial.mPresenter.defineForwardFlow(soList);
-                                    }
-                                },
-                                0
-                        );
-                    }
-                }
-                break;
-            default:
-                break;
-        }
         progressDialog.dismiss();
     }
 

@@ -10,9 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Env;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
@@ -31,8 +29,6 @@ import java.util.List;
 public class WS_SO_Serial_Save extends IntentService {
 
     public static final String SERIAL_SAVE = "serial_save";
-    public static final String SO_LIST = "so_list";
-    public static final String SO_LIST_QTY = "so_list_qty";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -52,12 +48,11 @@ public class WS_SO_Serial_Save extends IntentService {
         try {
 
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, -1L);
-            String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
-            String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");
-            boolean save_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL, false);
+
+            Long product_code = bundle.getLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
+            String serial_id = bundle.getString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
             //
-            processSO_Serial_Save(product_code, serial_id, so_mult, save_serial);
+            processSO_Serial_Save(product_code, serial_id);
 
         } catch (Exception e) {
 
@@ -73,22 +68,20 @@ public class WS_SO_Serial_Save extends IntentService {
         }
     }
 
-    private void processSO_Serial_Save(Long product_code, String serial_id, String so_mult, boolean save_serial) {
+    private void processSO_Serial_Save(Long product_code, String serial_id) {
         ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
 
-        if (save_serial) {
-            MD_Product_Serial serial = serialDao.getByString(
-                    new MD_Product_Serial_Sql_002(
-                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                            product_code,
-                            serial_id
-                    ).toSqlQuery()
-            );
-            //
-            serial.setOnly_position(1);
-            serialList.add(serial);
-        }
-        //Seleciona traduções
+        MD_Product_Serial serial = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        //
+        serial.setOnly_position(1);
+        serialList.add(serial);
+
         loadTranslation();
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -98,13 +91,20 @@ public class WS_SO_Serial_Save extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setToken("");
 
+        //env.setSo(new ArrayList<SM_SO>());
         env.setSerial(serialList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_checking_serial"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
+        //
+        String teste = gson.toJson(env).toString();
+
+
+        String url = Constant.WS_SO_SERIAL_SAVE;
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SO_SERIAL_SAVE,
+                "https://dev.namoadigital.com/ws/prj001/server_save_so.ws",
                 gson.toJson(env)
         );
         //
@@ -124,32 +124,16 @@ public class WS_SO_Serial_Save extends IntentService {
                 ) {
             return;
         }
-        HMAux hmAux = new HMAux();
-        //Se tentou salvar serial, valida retorno
-        if (save_serial) {
-            processSerialSaveRet(rec.getSerial_return().get(0), serialList.get(0), hmAux);
-        } else {
-            hmAux.put(SERIAL_SAVE, "OK");
-        }
-        //Tratativas especificas
-        //mudar tratativa pra so_mult.split(?) > 0
-        if (so_mult.length() == 0) {
-            hmAux.put(SO_LIST, gson.toJson(rec.getSo()));
-        } else {
-            hmAux.put(SO_LIST, so_mult);
-            hmAux.put(SO_LIST_QTY, String.valueOf(rec.getSo().size()));
-            //
-            SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            //
-            for (SM_SO sm_so : rec.getSo()) {
-                sm_so.setPK();
-            }
-            //
-            soDao.addUpdate(rec.getSo(), false);
 
+        HMAux hmAux = new HMAux();
+
+        processSerialSaveRet(rec.getSerial_return().get(0), serialList.get(0), hmAux);
+
+        if (hmAux.get(SERIAL_SAVE).equalsIgnoreCase("OK")) {
+            ToolBox.sendBCStatus(getApplicationContext(), "SAVE_OK", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+        } else {
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
         }
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"), hmAux, "", "0");
 
     }
 
@@ -170,7 +154,7 @@ public class WS_SO_Serial_Save extends IntentService {
 
         translist.add("msg_processing_list");
         translist.add("msg_error_on_save_serial");
-        translist.add("msg_checking_serial");
+        translist.add("msg_updating_serial");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
