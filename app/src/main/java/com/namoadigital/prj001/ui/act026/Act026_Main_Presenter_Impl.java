@@ -60,10 +60,12 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
 
-        if (requesting_act.equals(Constant.ACT021)){
-            mView.callAct021(context);
-        }else if (requesting_act.equals(Constant.ACT012)){
+        if (requesting_act.equals(Constant.ACT012)){
             mView.callAct012(context);
+        }else if (requesting_act.equals(Constant.ACT021)){
+            mView.callAct021(context);
+        }else{
+            mView.callAct021(context);
         }
     }
 }

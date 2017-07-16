@@ -88,6 +88,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("alert_new_opt_product_lbl");
         transList.add("alert_new_opt_serial_lbl");
         transList.add("alert_new_opt_location_lbl");
+        transList.add("alert_so_to_send_ttl");
+        transList.add("alert_so_to_send_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -110,7 +112,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         ),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                hmAux_Trans
         );
         //
         btn_load = (Button) findViewById(R.id.act021_btn_load);
@@ -132,7 +135,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showNewOptDialog();
+                //showNewOptDialog();
+                mPresenter.checkForSoToSend();
             }
         });
 
@@ -159,7 +163,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_pendencies.setText(btn_text);
     }
 
-    private void showNewOptDialog() {
+    @Override
+    public void showNewOptDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 

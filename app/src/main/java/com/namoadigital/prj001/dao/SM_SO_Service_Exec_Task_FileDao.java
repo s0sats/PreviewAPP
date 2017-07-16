@@ -203,9 +203,12 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
             if (status) {
                 db.delete(TABLE, null, null);
             }
+            //Define contador inicial para o criação do file_temp;
             long file_temp = 300;
             //
             for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : sm_so_service_exec_task_files) {
+                //Atualiza valor do file.
+                file_temp++;
                 //
                 sm_so_service_exec_task_file.setFile_tmp(file_temp);
                 StringBuilder sbWhere = new StringBuilder();
@@ -237,8 +240,6 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
                 if (db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null) == 0) {
                     db.insert(TABLE, null, toContentValuesMapper.map(sm_so_service_exec_task_file));
                 }
-                //Atualiza valor do file.
-                file_temp++;
             }
 
             //db.setTransactionSuccessful();

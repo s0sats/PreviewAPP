@@ -299,13 +299,16 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_location_ttl.setTag("serial_location_ttl");
         //
         ss_site = (SearchableSpinner) findViewById(R.id.act023_ss_site);
-        ss_site.setmLabel("site_lbl");
+        ss_site.setmLabel(hmAux_Trans.get("site_lbl"));
+        ss_site.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_zone = (SearchableSpinner) findViewById(R.id.act023_ss_site_zone);
-        ss_site_zone.setmLabel("site_zone_lbl");
+        ss_site_zone.setmLabel(hmAux_Trans.get("site_zone_lbl"));
+        ss_site_zone.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_zone_local = (SearchableSpinner) findViewById(R.id.act023_ss_site_zone_local);
-        ss_site_zone_local.setmLabel("site_zone_local_lbl");
+        ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
+        ss_site_zone_local.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ll_serial_add_info = (LinearLayout) findViewById(R.id.act023_ll_serial_add_info);
         //
@@ -327,22 +330,28 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         tv_serial_properties_ttl.setTag("serial_properties_ttl");
         //
         ss_brand = (SearchableSpinner) findViewById(R.id.act023_ss_brand);
-        ss_brand.setmLabel("brand_lbl");
+        ss_brand.setmLabel(hmAux_Trans.get("brand_lbl"));
+        ss_brand.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_brand_model = (SearchableSpinner) findViewById(R.id.act023_ss_brand_model);
-        ss_brand_model.setmLabel("brand_model_lbl");
+        ss_brand_model.setmLabel(hmAux_Trans.get("brand_model_lbl"));
+        ss_brand_model.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_brand_color = (SearchableSpinner) findViewById(R.id.act023_ss_brand_color);
-        ss_brand_color.setmLabel("brand_color_lbl");
+        ss_brand_color.setmLabel(hmAux_Trans.get("brand_color_lbl"));
+        ss_brand_color.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_segment = (SearchableSpinner) findViewById(R.id.act023_ss_segment);
-        ss_segment.setmLabel("segment_lbl");
+        ss_segment.setmLabel(hmAux_Trans.get("segment_lbl"));
+        ss_segment.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_category_price = (SearchableSpinner) findViewById(R.id.act023_ss_category_price);
-        ss_category_price.setmLabel("category_price_lbl");
+        ss_category_price.setmLabel(hmAux_Trans.get("category_price_lbl"));
+        ss_category_price.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_owner = (SearchableSpinner) findViewById(R.id.act023_ss_site_owner);
-        ss_site_owner.setmLabel("site_owner_lbl");
+        ss_site_owner.setmLabel(hmAux_Trans.get("site_owner_lbl"));
+        ss_site_owner.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         btn_action = (Button) findViewById(R.id.act023_btn_action);
         //

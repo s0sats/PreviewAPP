@@ -8,6 +8,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act021_Main_Presenter {
 
+    void checkForSoToSend();
+
     void getPendencies();
 
     void defineFlow(HMAux hmAux);

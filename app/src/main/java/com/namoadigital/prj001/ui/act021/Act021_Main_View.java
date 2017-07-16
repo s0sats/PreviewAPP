@@ -18,4 +18,6 @@ public interface Act021_Main_View {
 
     void callAct026(Context context);
 
+    void showNewOptDialog();
+
 }
