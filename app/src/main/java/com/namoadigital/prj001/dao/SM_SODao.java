@@ -79,7 +79,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String CLIENT_APPROVAL_IMAGE_NAME = "client_approval_image_name";
     public static final String CLIENT_APPROVAL_IMAGE_URL = "client_approval_image_url";
     public static final String CLIENT_APPROVAL_DATE = "client_approval_date";
-    public static final String CLIENT_APPROVAL_FLAG = "client_approval_flag";
+    public static final String CLIENT_APPROVAL_USER = "client_approval_user";
+    public static final String CLIENT_APPROVAL_USER_NICK = "client_approval_user_nick";
     public static final String ORIGIN_CHANGE = "origin_change";
     public static final String STARTED_FLAG = "started_flag";
     public static final String EDIT_ORIGIN = "edit_origin";
@@ -548,7 +549,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setClient_approval_date(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_DATE)));
             }
 
-            so.setClient_approval_flag(cursor.getInt(cursor.getColumnIndex(CLIENT_APPROVAL_FLAG)));
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_USER))) {
+                so.setClient_approval_user(null);
+            } else {
+                so.setClient_approval_user(cursor.getInt(cursor.getColumnIndex(CLIENT_APPROVAL_USER)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_USER_NICK))) {
+                so.setClient_approval_user_nick(null);
+            } else {
+                so.setClient_approval_user_nick(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_USER_NICK)));
+            }
+
             so.setOrigin_change(cursor.getString(cursor.getColumnIndex(ORIGIN_CHANGE)));
             so.setStarted_flag(cursor.getInt(cursor.getColumnIndex(STARTED_FLAG)));
 
@@ -558,8 +569,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setEdit_origin(cursor.getString(cursor.getColumnIndex(EDIT_ORIGIN)));
             }
 
-            so.setEdit_user(cursor.getInt(cursor.getColumnIndex(EDIT_USER)));
-            so.setEdit_user_nick(cursor.getString(cursor.getColumnIndex(EDIT_USER_NICK)));
+            if (cursor.isNull(cursor.getColumnIndex(EDIT_USER))) {
+                so.setEdit_user(null);
+            } else {
+                so.setEdit_user(cursor.getInt(cursor.getColumnIndex(EDIT_USER)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(EDIT_USER_NICK))) {
+                so.setEdit_user_nick(null);
+            } else {
+                so.setEdit_user_nick(cursor.getString(cursor.getColumnIndex(EDIT_USER_NICK)));
+            }
             so.setTotal_qty_service(cursor.getInt(cursor.getColumnIndex(TOTAL_QTY_SERVICE)));
             so.setTotal_price(cursor.getDouble(cursor.getColumnIndex(TOTAL_PRICE)));
 
@@ -796,8 +816,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(CLIENT_APPROVAL_DATE, sm_so.getClient_approval_date());
             }
 
-            if (sm_so.getClient_approval_flag() > -1) {
-                contentValues.put(CLIENT_APPROVAL_FLAG, sm_so.getClient_approval_flag());
+            if (sm_so.getClient_approval_user() != null) {
+                contentValues.put(CLIENT_APPROVAL_USER, sm_so.getClient_approval_user());
+            }
+
+            if (sm_so.getClient_approval_user_nick() != null) {
+                contentValues.put(CLIENT_APPROVAL_USER_NICK, sm_so.getClient_approval_user_nick());
             }
 
             if (sm_so.getOrigin_change() != null) {
@@ -812,7 +836,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(EDIT_ORIGIN, sm_so.getEdit_origin());
             }
 
-            if (sm_so.getEdit_user() > -1) {
+            if (sm_so.getEdit_user() != null) {
                 contentValues.put(EDIT_USER, sm_so.getEdit_user());
             }
 
