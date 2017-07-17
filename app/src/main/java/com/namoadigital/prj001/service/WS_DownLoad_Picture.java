@@ -7,11 +7,15 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.SM_SO_FileDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -35,7 +39,7 @@ public class WS_DownLoad_Picture extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
-            if(!ToolBox_Inf.isDownloadRunning()){
+            if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_Picture","true");
                 WBR_DownLoad_Picture.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
@@ -91,7 +95,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     }
 
                 } catch (JSONException e) {
-                    ToolBox_Inf.registerException(getClass().getName(),e);
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
                 //
                 if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get("custom_name").toLowerCase() + ".jpg")) {
@@ -132,14 +136,71 @@ public class WS_DownLoad_Picture extends IntentService {
 
             }
 
+            /**
+             *
+             * Download de files do S.O
+             *
+             */
+
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+                //
+                SM_SO_Service_Exec_Task_FileDao taskFileDao =
+                        new SM_SO_Service_Exec_Task_FileDao(
+                                getApplicationContext(),
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+                ArrayList<HMAux> so_file_list = new ArrayList<>();
+                //Adiciona lista de task files para download
+                so_file_list.addAll(taskFileDao.query_HM(
+                        new SM_SO_Service_Exec_Task_File_Sql_003(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                        )
+                );
+                //
+                for (HMAux hmAux : so_file_list) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(SM_SO_FileDao.FILE_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    taskFileDao.addUpdate(
+                            new SM_SO_Service_Exec_Task_File_Sql_004(
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.CUSTOMER_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SO_PREFIX),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SO_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.PRICE_LIST_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.PACK_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.PACK_SEQ),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.CATEGORY_PRICE_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SERVICE_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.SERVICE_SEQ),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.EXEC_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.TASK_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_FileDao.FILE_CODE),
+                                    hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + "jpg"
+                            ).toSqlQuery().toLowerCase()
+                    );
+                }
+            }
+            //fim SO
+
         } catch (Exception e) {
             String results = e.toString();
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             //Log.v("WS_DownLoad_Picture","false");
             WBR_DownLoad_Picture.IS_RUNNING = false;
             WBR_DownLoad_Picture.completeWakefulIntent(intent);
-            if(!ToolBox_Inf.isDownloadRunning()){
+            if (!ToolBox_Inf.isDownloadRunning()) {
                 ToolBox_Inf.cancelNotification(
                         getApplicationContext(),
                         Constant.NOTIFICATION_DOWNLOAD);

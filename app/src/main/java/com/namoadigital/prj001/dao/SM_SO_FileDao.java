@@ -30,6 +30,7 @@ public class SM_SO_FileDao extends BaseDao implements Dao<SM_SO_File> {
     public static final String FILE_CODE = "file_code";
     public static final String FILE_NAME = "file_name";
     public static final String FILE_URL = "file_url";
+    public static final String FILE_URL_LOCAL = "file_url_local";
 
     public SM_SO_FileDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -252,6 +253,7 @@ public class SM_SO_FileDao extends BaseDao implements Dao<SM_SO_File> {
             sm_so_file.setFile_code(cursor.getInt(cursor.getColumnIndex(FILE_CODE)));
             sm_so_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
             sm_so_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
+            sm_so_file.setFile_url_local(cursor.getString(cursor.getColumnIndex(FILE_URL_LOCAL)));
 
             return sm_so_file;
         }
@@ -286,6 +288,10 @@ public class SM_SO_FileDao extends BaseDao implements Dao<SM_SO_File> {
 
             if (sm_so_file.getFile_url() != null) {
                 contentValues.put(FILE_URL, sm_so_file.getFile_url());
+            }
+
+            if (sm_so_file.getFile_url_local() != null) {
+                contentValues.put(FILE_URL_LOCAL, sm_so_file.getFile_url_local());
             }
 
             return contentValues;
