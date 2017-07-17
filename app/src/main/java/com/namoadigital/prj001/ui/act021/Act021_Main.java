@@ -15,10 +15,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
@@ -88,6 +94,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("alert_new_opt_product_lbl");
         transList.add("alert_new_opt_serial_lbl");
         transList.add("alert_new_opt_location_lbl");
+        transList.add("alert_so_to_send_ttl");
+        transList.add("alert_so_to_send_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -110,7 +118,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         ),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                hmAux_Trans
         );
         //
         btn_load = (Button) findViewById(R.id.act021_btn_load);
@@ -132,14 +141,17 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showNewOptDialog();
+                //showNewOptDialog();
+                mPresenter.checkForSoToSend();
             }
         });
 
         btn_express.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callAct022T(context);
+                //callAct022T(context);
+                callTestsEnvSOExec();
+
             }
         });
 
@@ -152,6 +164,86 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     }
 
+    private void callTestsEnvSOExec() {
+        SM_SODao soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        SM_SO so = soDao.getByString(
+                new SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        2017,
+                        60
+                ).toSqlQuery()
+        );
+        //
+        ArrayList<SM_SO_Service_Exec_Task> taskList = new ArrayList<>();
+
+        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+        task.setTask_code(0);
+        task.setTask_seq_oper(1);
+        task.setTask_user(52);
+        task.setTask_perc(20);
+        task.setQty_people(2);
+        task.setStatus(Constant.SO_STATUS_DONE);
+        task.setSite_code(1);
+        task.setZone_code(2);
+        task.setLocal_code(4);
+        task.setStart_date("2017-07-14 13:53:40 -03:00");
+        task.setEnd_date("2017-07-14 14:53:40 -03:00");
+        task.setExec_time(60);
+        task.setComments("First app teste");
+        taskList.add(task);
+
+        SM_SO_Service_Exec_Task task2 = new SM_SO_Service_Exec_Task();
+        task2.setTask_code(0);
+        task2.setTask_seq_oper(1);
+        task2.setTask_user(52);
+        task2.setTask_perc(20);
+        task2.setQty_people(2);
+        task2.setStatus(Constant.SO_STATUS_PROCESS);
+        task2.setSite_code(1);
+        task2.setZone_code(2);
+        task2.setLocal_code(4);
+        task2.setStart_date("2017-07-14 13:53:40 -03:00");
+        task2.setComments("First app teste");
+        taskList.add(task2);
+        //
+        SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
+        exec.setExec_code(0);
+        exec.setStatus(Constant.SO_STATUS_PENDING);
+        exec.setPartner_code(3);
+        exec.setTask(taskList);
+        //
+        ArrayList<SM_SO_Service_Exec> execList = new ArrayList<>();
+        execList.addAll(so.getPack().get(0).getService().get(0).getExec());
+        execList.add(exec);
+        //
+        so.getPack().get(0).getService().get(0).setExec(execList);
+        //
+        so.setPK();
+        //
+        soDao.addUpdate(so);
+        //
+        SM_SO so_saved = soDao.getByString(
+                new SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        2017,
+                        60
+                ).toSqlQuery()
+        );
+
+        //
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+        //
+        String teste = gson.toJson(so_saved);
+        //
+        teste += "";
+
+    }
+
     @Override
     public void setPendencies(int qty) {
         pendencies_qty = qty;
@@ -159,7 +251,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_pendencies.setText(btn_text);
     }
 
-    private void showNewOptDialog() {
+    @Override
+    public void showNewOptDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 

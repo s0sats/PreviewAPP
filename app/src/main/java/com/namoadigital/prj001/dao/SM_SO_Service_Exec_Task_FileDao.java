@@ -14,9 +14,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.dao.SM_SO_PackDao.PACK_SEQ;
-import static com.namoadigital.prj001.dao.SM_SO_ServiceDao.SERVICE_SEQ;
-
 
 /**
  * Created by neomatrix on 05/07/17.
@@ -33,8 +30,10 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
     public static final String SO_CODE = "so_code";
     public static final String PRICE_LIST_CODE = "price_list_code";
     public static final String PACK_CODE = "pack_code";
+    public static final String PACK_SEQ = "pack_seq";
     public static final String CATEGORY_PRICE_CODE = "category_price_code";
     public static final String SERVICE_CODE = "service_code";
+    public static final String SERVICE_SEQ = "service_seq";
     public static final String EXEC_CODE = "exec_code";
     public static final String EXEC_TMP = "exec_tmp";
     public static final String TASK_CODE = "task_code";
@@ -43,6 +42,7 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
     public static final String FILE_TMP = "file_tmp";
     public static final String FILE_NAME = "file_name";
     public static final String FILE_URL = "file_url";
+    public static final String FILE_URL_LOCAL = "file_url_local";
 
     public SM_SO_Service_Exec_Task_FileDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -203,9 +203,12 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
             if (status) {
                 db.delete(TABLE, null, null);
             }
+            //Define contador inicial para o criação do file_temp;
             long file_temp = 300;
             //
             for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : sm_so_service_exec_task_files) {
+                //Atualiza valor do file.
+                file_temp++;
                 //
                 sm_so_service_exec_task_file.setFile_tmp(file_temp);
                 StringBuilder sbWhere = new StringBuilder();
@@ -237,8 +240,6 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
                 if (db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null) == 0) {
                     db.insert(TABLE, null, toContentValuesMapper.map(sm_so_service_exec_task_file));
                 }
-                //Atualiza valor do file.
-                file_temp++;
             }
 
             //db.setTransactionSuccessful();
@@ -412,6 +413,7 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
             sm_so_service_exec_task_file.setFile_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
             sm_so_service_exec_task_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
+            sm_so_service_exec_task_file.setFile_url_local(cursor.getString(cursor.getColumnIndex(FILE_URL_LOCAL)));
 
             return sm_so_service_exec_task_file;
         }
@@ -488,6 +490,9 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
 
             if (sm_so_service_exec_task_file.getFile_url() != null) {
                 contentValues.put(FILE_URL, sm_so_service_exec_task_file.getFile_url());
+            }
+            if (sm_so_service_exec_task_file.getFile_url_local() != null) {
+                contentValues.put(FILE_URL_LOCAL, sm_so_service_exec_task_file.getFile_url_local());
             }
 
             return contentValues;

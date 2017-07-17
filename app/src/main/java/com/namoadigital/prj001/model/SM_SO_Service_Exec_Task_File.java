@@ -28,6 +28,7 @@ public class SM_SO_Service_Exec_Task_File {
     @Expose
     private String file_name;
     private String file_url;
+    private String file_url_local;
 
     public SM_SO_Service_Exec_Task_File() {
         this.customer_code = -1;
@@ -44,6 +45,7 @@ public class SM_SO_Service_Exec_Task_File {
         this.file_code = -1;
         this.file_name = "";
         this.file_url = "";
+        this.file_url_local = "";
     }
 
     public void setPK(SM_SO_Service_Exec_Task task) {
@@ -197,5 +199,13 @@ public class SM_SO_Service_Exec_Task_File {
 
     public void setFile_url(String file_url) {
         this.file_url = file_url;
+    }
+
+    public String getFile_url_local() {
+        return file_url_local;
+    }
+
+    public void setFile_url_local(String file_url_local) {
+        this.file_url_local = file_url_local;
     }
 }

@@ -226,10 +226,12 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM
             );
-
+            //Define contador inicial para o criação do temp;
             long exec_tmp = 100;
 
             for (SM_SO_Service_Exec sm_so_service_exec : sm_so_service_execs) {
+                //Atualiza valor do exec_temp
+                exec_tmp++;
                 //Seta Tmp
                 sm_so_service_exec.setExec_tmp(exec_tmp);
 
@@ -271,8 +273,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                 }
 
                 sm_so_service_exec_taskDao.addUpdate(sm_so_service_exec.getTask(), false);
-                //Atualiza valor do exec_temp
-                exec_tmp++;
+
             }
 
             //db.setTransactionSuccessful();
@@ -422,7 +423,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                             uAux.getCategory_price_code(),
                             uAux.getService_code(),
                             uAux.getService_seq(),
-                            uAux.getExec_code()
+                            uAux.getExec_tmp()
                     ).toSqlQuery()));
 
                     Log.d("TASKS", String.valueOf(uAux.getTask().size()));

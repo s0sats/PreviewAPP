@@ -298,9 +298,11 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        progressDialog.dismiss();
 
         if (hmAux.containsKey(WS_SO_Search.SO_LIST_QTY)) {
+            //Dispara serviço de downloads
+            mPresenter.startDownloadServices();
+            //
             if (hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")) {
                 String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".", "#").split("#");
                 //
@@ -316,7 +318,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             }
 
         }
-
+        //
+        progressDialog.dismiss();
     }
 
     //Tratativa SESSION NOT FOUND
@@ -351,6 +354,9 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     public void callAct026(Context context) {
         Intent mIntent = new Intent(context, Act026_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT024);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

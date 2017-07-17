@@ -87,14 +87,15 @@ public class SM_SO {
     private String client_approval_image_name;
     private String client_approval_image_url;
     private String client_approval_date;
-    private int client_approval_flag;
+    private String client_approval_user_nick;
+    private int client_approval_user;
     @Expose
     private String origin_change;
     private int started_flag;
     @Expose
     private String edit_origin;
     @Expose
-    private int edit_user;
+    private Integer edit_user;
     private String edit_user_nick;
     private int total_qty_service;
     private double total_price;
@@ -522,12 +523,20 @@ public class SM_SO {
         this.client_approval_date = client_approval_date;
     }
 
-    public int getClient_approval_flag() {
-        return client_approval_flag;
+    public String getClient_approval_user_nick() {
+        return client_approval_user_nick;
     }
 
-    public void setClient_approval_flag(int client_approval_flag) {
-        this.client_approval_flag = client_approval_flag;
+    public void setClient_approval_user_nick(String client_approval_user_nick) {
+        this.client_approval_user_nick = client_approval_user_nick;
+    }
+
+    public Integer getClient_approval_user() {
+        return client_approval_user;
+    }
+
+    public void setClient_approval_user(Integer client_approval_user) {
+        this.client_approval_user = client_approval_user;
     }
 
     public String getOrigin_change() {
@@ -554,11 +563,11 @@ public class SM_SO {
         this.edit_origin = edit_origin;
     }
 
-    public int getEdit_user() {
+    public Integer getEdit_user() {
         return edit_user;
     }
 
-    public void setEdit_user(int edit_user) {
+    public void setEdit_user(Integer edit_user) {
         this.edit_user = edit_user;
     }
 

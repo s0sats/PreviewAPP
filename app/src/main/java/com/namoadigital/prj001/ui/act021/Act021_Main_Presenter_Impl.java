@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.ui.act021;
 
 import android.content.Context;
+import android.content.DialogInterface;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.SM_SO_Sql_004;
+import com.namoadigital.prj001.sql.Sql_Act021_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
@@ -17,12 +20,14 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     private Context context;
     private Act021_Main_View mView;
     private SM_SODao soDao;
+    private HMAux hmAux_Trans;
 
 
-    public Act021_Main_Presenter_Impl(Context context, Act021_Main_View mView, SM_SODao soDao) {
+    public Act021_Main_Presenter_Impl(Context context, Act021_Main_View mView, SM_SODao soDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.soDao = soDao;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
@@ -37,6 +42,34 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         int qty = Integer.parseInt(hmAux.get(SM_SO_Sql_004.PENDING_QTY));
         //
         mView.setPendencies(qty);
+    }
+
+    @Override
+    public void checkForSoToSend() {
+        //
+        HMAux hmAux = soDao.getByStringHM(
+                new Sql_Act021_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        int qty = Integer.parseInt(hmAux.get(Sql_Act021_001.UPDATE_REQUIRED_QTY));
+        if (qty == 0) {
+            mView.showNewOptDialog();
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_to_send_ttl"),
+                    hmAux_Trans.get("alert_so_to_send_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.callAct005(context);
+                        }
+                    },
+                    0
+            );
+        }
     }
 
     @Override

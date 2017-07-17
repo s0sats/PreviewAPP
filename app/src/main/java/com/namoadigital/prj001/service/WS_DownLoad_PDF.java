@@ -7,11 +7,14 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -113,9 +116,63 @@ public class WS_DownLoad_PDF extends IntentService {
 
             }
 
+            /**
+             *
+             * Download de files do Cabeçalho do S.O
+             *
+             */
+
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+
+                SM_SO_FileDao soFileDao =
+                        new SM_SO_FileDao(
+                                getApplicationContext(),
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+                ArrayList<HMAux> so_file_list = new ArrayList<>();
+                //Carrega lista de files do cabealho da SO
+                so_file_list.addAll(
+                        soFileDao.query_HM(
+                                new SM_SO_File_Sql_003(
+                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                ).toSqlQuery()
+                        )
+                );
+                //
+                String splitKey = "@#My#@Key#@";
+                for (HMAux hmAux : so_file_list) {
+                    String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
+                    String[] nameSplited = fileName.split(splitKey);
+                    String ext = "."+ nameSplited[nameSplited.length -1];
+
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ext)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(SM_SO_FileDao.FILE_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ext);
+                    }
+
+                    soFileDao.addUpdate(
+                            new SM_SO_File_Sql_004(
+                                    hmAux.get(SM_SO_FileDao.CUSTOMER_CODE),
+                                    hmAux.get(SM_SO_FileDao.SO_PREFIX),
+                                    hmAux.get(SM_SO_FileDao.SO_CODE),
+                                    hmAux.get(SM_SO_FileDao.FILE_CODE),
+                                    hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME) + ext
+                            ).toSqlQuery().toLowerCase()
+                    );
+                }
+            }
+
         } catch (Exception e) {
             String results = e.toString();
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
 
         } finally {
             WBR_DownLoad_PDF.IS_RUNNING = false;

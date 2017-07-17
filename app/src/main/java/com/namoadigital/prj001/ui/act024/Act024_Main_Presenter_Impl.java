@@ -10,6 +10,9 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.util.Constant;
 
@@ -52,7 +55,7 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
                     0
             );
 
-        }else{
+        } else {
             //
             mView.loadSoHeaders(sos);
         }
@@ -115,6 +118,24 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+
+    @Override
+    public void startDownloadServices() {
+
+        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
+
+        Bundle bundle = new Bundle();
+        mIntentPDF.putExtras(bundle);
+        mIntentPIC.putExtras(bundle);
+        mIntentLogo.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentPDF);
+        context.sendBroadcast(mIntentPIC);
+        context.sendBroadcast(mIntentLogo);
     }
 
     @Override
