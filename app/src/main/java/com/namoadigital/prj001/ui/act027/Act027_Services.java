@@ -13,6 +13,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act027_Services_Adapter;
+import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_004;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
@@ -27,12 +31,14 @@ public class Act027_Services extends BaseFragment {
     private ListView lv_services;
     private ArrayList<HMAux> data;
 
+    private SM_SO_ServiceDao sm_so_serviceDao;
+
     public void setData(ArrayList<HMAux> data) {
         this.data = data;
     }
 
     public interface IAct027_Services {
-        void onItemClickListener(String type);
+        void onItemClickListener(HMAux sService);
     }
 
     private IAct027_Services delegate;
@@ -59,7 +65,7 @@ public class Act027_Services extends BaseFragment {
             lv_services.setAdapter(
                     new Act027_Services_Adapter(
                             getActivity(),
-                            R.layout.act027_services_content_adapter_cell,
+                            R.layout.act027_services_content_adapter_cell_new,
                             data
                     )
             );
@@ -74,6 +80,14 @@ public class Act027_Services extends BaseFragment {
     }
 
     private void iniVar(View view) {
+        context = getActivity();
+
+        sm_so_serviceDao = new SM_SO_ServiceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
     }
 
@@ -83,8 +97,24 @@ public class Act027_Services extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                HMAux sData = (HMAux) parent.getItemAtPosition(position);
+
+                HMAux sService = sm_so_serviceDao.getByStringHM(
+                        new SM_SO_Service_Sql_004(
+                                Long.parseLong(sData.get("customer_code")),
+                                Integer.parseInt(sData.get("so_prefix")),
+                                Integer.parseInt(sData.get("so_code")),
+                                Integer.parseInt(sData.get("price_list_code")),
+                                Integer.parseInt(sData.get("pack_code")),
+                                Integer.parseInt(sData.get("pack_seq")),
+                                Integer.parseInt(sData.get("category_price_code")),
+                                Integer.parseInt(sData.get("service_code")),
+                                Integer.parseInt(sData.get("service_seq"))
+                        ).toSqlQuery()
+                );
+
                 if (delegate != null) {
-                    delegate.onItemClickListener("Hugo");
+                    delegate.onItemClickListener(sService);
                 }
 
             }

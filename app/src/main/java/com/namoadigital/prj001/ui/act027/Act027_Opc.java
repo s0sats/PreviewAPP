@@ -24,15 +24,26 @@ public class Act027_Opc extends BaseFragment {
 
     private HMAux data;
 
+    private String selection = "SERVICES";
+
     private LinearLayout ll_services;
     private LinearLayout ll_serial;
     private LinearLayout ll_header;
 
+    private TextView tv_prefix_code_label;
     private TextView tv_prefix_code_value;
+    private TextView tv_product_id_label;
     private TextView tv_product_id_value;
+
+    private TextView tv_desc_label;
     private TextView tv_desc_value;
+
+    private TextView tv_serial_label;
     private TextView tv_serial_value;
+
+    private TextView tv_deadline_label;
     private TextView tv_deadline_value;
+
     private TextView tv_status_value;
     private TextView tv_priority_value;
 
@@ -66,13 +77,44 @@ public class Act027_Opc extends BaseFragment {
 
     private void setHMAuxScreen() {
         if (data != null) {
+            tv_prefix_code_label.setText("Prefix / Code");
             tv_prefix_code_value.setText(data.get(SM_SODao.CUSTOMER_CODE) + " / " + data.get(SM_SODao.SO_CODE));
+            tv_product_id_label.setText("Product ID");
             tv_product_id_value.setText(data.get(SM_SODao.PRODUCT_ID));
-            tv_desc_value.setText(data.get(SM_SODao.PRIORITY_DESC));
+
+            tv_desc_label.setText("Product Description");
+            tv_desc_value.setText(data.get(SM_SODao.PRODUCT_DESC));
+
+            tv_serial_label.setText("Serial");
             tv_serial_value.setText(data.get(SM_SODao.SERIAL_ID));
+
+            tv_deadline_label.setText("DeadLine");
             tv_deadline_value.setText(data.get(SM_SODao.DEADLINE));
+
             tv_status_value.setText(data.get(SM_SODao.STATUS));
             tv_priority_value.setText(data.get(SM_SODao.PRIORITY_DESC));
+        }
+
+        changeTabColor();
+    }
+
+    private void changeTabColor() {
+        switch (selection.toUpperCase()){
+            case "SERVICES":
+                ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
+                ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                break;
+            case "SERIAL":
+                ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_serial.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
+                ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                break;
+            case "HEADER":
+                ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_header.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
+                break;
         }
     }
 
@@ -84,11 +126,21 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private void iniVar(View view) {
+        tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
         tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
+
+        tv_product_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_id_label);
         tv_product_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_id_value);
+
+        tv_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_desc_label);
         tv_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_desc_value);
-        tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_serial_value);
+
+        tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
+        tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
+
+        tv_deadline_label = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_label);
         tv_deadline_value = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_value);
+
         tv_status_value = (TextView) view.findViewById(R.id.act027_opc_tv_status_value);
         tv_priority_value = (TextView) view.findViewById(R.id.act027_opc_tv_priority_value);
 
@@ -128,6 +180,10 @@ public class Act027_Opc extends BaseFragment {
             if (delegate != null) {
                 delegate.menuOptionsSelected(type.toUpperCase());
             }
+
+            selection = type.toUpperCase();
+
+            changeTabColor();
         }
     };
 }

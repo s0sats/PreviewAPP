@@ -25,6 +25,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -38,7 +39,7 @@ import static com.namoadigital.prj001.ui.act023.Act023_Main.SO_WS_SEARCH_SERIAL;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act027_Main extends Base_Activity_Frag implements Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
+public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
     private Context context;
 
@@ -210,6 +211,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Opc.IAct02
         act027_opc.setData(data);
 
         act027_services = new Act027_Services();
+        act027_services.setOnItemClickListener(this);
         act027_services.setData((ArrayList<HMAux>) sm_soDao.query_HM(
                 new SM_SO_Service_Sql_003(
                         mCustomer_code,
@@ -395,7 +397,11 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Opc.IAct02
     }
 
     @Override
-    public void onItemClickListener(String type) {
+    public void onItemClickListener(HMAux type) {
+
+        bundle.putSerializable("data", type);
+
+        callAct028(context, bundle);
 
     }
 
@@ -417,4 +423,12 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Opc.IAct02
         finish();
     }
 
+    @Override
+    public void callAct028(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act028_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
 }

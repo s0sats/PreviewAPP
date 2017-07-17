@@ -5,17 +5,13 @@
     android:id="@+id/act027_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.act027.Act027_Main"
-    tools:showIn="@layout/act027_main">
+    tools:openDrawer="start">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:id="@+id/act027_main_ll"
@@ -24,7 +20,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-
         </LinearLayout>
 
         <include layout="@layout/footer_base" />
@@ -32,10 +27,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:clickable="false"
+        android:clickable="true"
         android:orientation="vertical">
 
         <fragment

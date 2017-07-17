@@ -9,6 +9,7 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act028.Act028_Main"
+    tools:openDrawer="start"
     tools:showIn="@layout/act028_main">
 
     <LinearLayout
@@ -24,7 +25,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-
         </LinearLayout>
 
         <include layout="@layout/footer_base" />
@@ -32,18 +32,18 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:clickable="false"
+        android:clickable="true"
         android:orientation="vertical">
 
-        <!--<fragment-->
-        <!--android:id="@+id/act027_opc"-->
-        <!--android:name="com.namoadigital.prj001.ui.act027.Act027_Opc"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--tools:layout="@layout/act027_opc_content" />-->
+        <fragment
+            android:id="@+id/act028_opc"
+            android:name="com.namoadigital.prj001.ui.act028.Act028_Opc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/act028_opc_content" />
 
     </LinearLayout>
 

@@ -61,20 +61,20 @@ public class Act027_Services_Adapter extends BaseAdapter {
         TextView tv_price_list_id_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_id_label);
         TextView tv_price_list_id_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_id_value);
 
-        TextView tv_price_list_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_desc_label);
+        //TextView tv_price_list_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_desc_label);
         TextView tv_price_list_desc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_desc_value);
 
         TextView tv_pack_id_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_id_label);
         TextView tv_pack_id_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_id_value);
 
-        TextView tv_pack_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_desc_label);
+        //TextView tv_pack_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_desc_label);
         TextView tv_pack_desc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_desc_value);
 
-        TextView tv_service_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_desc_label);
+        //TextView tv_service_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_desc_label);
         TextView service_desc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_desc_value);
 
-        TextView tv_status_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status_label);
-        TextView tv_qty_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_label);
+        //TextView tv_status_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status_label);
+        //TextView tv_qty_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_label);
 
         TextView tv_status_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status_value);
         TextView tv_qty_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_value);

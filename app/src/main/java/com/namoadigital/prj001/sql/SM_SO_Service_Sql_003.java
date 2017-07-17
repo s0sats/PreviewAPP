@@ -31,10 +31,15 @@ public class SM_SO_Service_Sql_003 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
+                        " S.CUSTOMER_CODE,\n" +
+                        " S.SO_PREFIX,\n" +
+                        " S.SO_CODE,\n" +
                         " S.PRICE_LIST_CODE,\n" +
                         " P.PACK_CODE,\n" +
                         " S.PACK_SEQ,\n" +
+                        " S.CATEGORY_PRICE_CODE,\n" +
                         " S.SERVICE_CODE,\n" +
+                        " S.SERVICE_SEQ,\n" +
                         " P.PRICE_LIST_ID,\n" +
                         " P.PRICE_LIST_DESC,\n" +
                         " P.PACK_ID,\n" +
@@ -58,7 +63,7 @@ public class SM_SO_Service_Sql_003 implements Specification {
                 //"    AND S.pack_code =              '" + pack_code + "'\n" +
                 //"    AND S.pack_seq =               '" + pack_seq + "' ")
                 .append(";")
-                .append("price_list_code#pack_code#pack_seq#service_code#price_list_id#price_list_desc#pack_id#pack_desc#service_desc#status#qty")
+                .append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#price_list_id#price_list_desc#pack_id#pack_desc#service_desc#status#qty")
                 .toString();
     }
 }
