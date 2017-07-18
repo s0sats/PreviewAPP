@@ -45,6 +45,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private boolean mDrawerStatus = true;
 
     private FragmentManager fm;
     private Act027_Opc act027_opc;
@@ -176,6 +177,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
+                mDrawerStatus = true;
+
                 ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
             }
@@ -183,6 +186,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+
+                mDrawerStatus = false;
 
                 ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
@@ -415,12 +420,16 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        //
-        Intent mIntent = new Intent(context, Act005_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
+        if (mDrawerStatus) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+            //
+            Intent mIntent = new Intent(context, Act005_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mIntent);
+            finish();
+        }
     }
 
     @Override
