@@ -22,6 +22,8 @@ public class TSO_Serial_Save_Rec {
     @Expose
     private ArrayList<So_Save_Return> so_return;
     @Expose
+    private ArrayList<SM_SO> so;
+    @Expose
     private So_From_To so_from_to;
 
     public String getApp() {
@@ -72,7 +74,15 @@ public class TSO_Serial_Save_Rec {
         this.so_from_to = so_from_to;
     }
 
-//    public ArrayList<SM_SO> getSo() {
+    public ArrayList<SM_SO> getSo() {
+        return so;
+    }
+
+    public void setSo(ArrayList<SM_SO> so) {
+        this.so = so;
+    }
+
+    //    public ArrayList<SM_SO> getSo() {
 //        return so;
 //    }
 //

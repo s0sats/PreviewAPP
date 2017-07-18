@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
@@ -111,7 +112,7 @@ public class WS_SO_Serial_Save extends IntentService {
 
         //
         //serial.setOnly_position(1);
-       // serialList.add(serial);
+        // serialList.add(serial);
         //
         loadTranslation();
         //
@@ -154,7 +155,7 @@ public class WS_SO_Serial_Save extends IntentService {
         }
 
         HMAux hmAux = new HMAux();
-        if(product_code != -1L) {
+        if (product_code != -1L) {
             processSerialSaveRet(rec.getSerial_return().get(0), serialList.get(0), hmAux);
 
             if (hmAux.get(SERIAL_SAVE).equalsIgnoreCase("OK")) {
@@ -164,8 +165,8 @@ public class WS_SO_Serial_Save extends IntentService {
             }
         }
         //
-        if(sos.size() > 0){
-            processSOSaveRet(rec,hmAux);
+        if (sos.size() > 0) {
+            processSOSaveRet(rec, hmAux);
         }
 
     }
@@ -174,37 +175,35 @@ public class WS_SO_Serial_Save extends IntentService {
         String so_list_ret = "";
         String so_list_status = "";
         //Processa de-para de task
-        if(ret.getSo_from_to() != null){
-           if(processFromTo(ret.getSo_from_to())){
-              int i = 0;
+        if (ret.getSo_from_to() != null) {
+            if (processFromTo(ret.getSo_from_to())) {
+                int i = 0;
+                soDao.addUpdate(ret.getSo(),false);
 
-            }else{
+            } else {
 
-           }
+            }
 
         }
-
-
-
-
-
 
 
         for (TSO_Serial_Save_Rec.So_Save_Return so_ret : ret.getSo_return()) {
-            so_list_ret += "#"+ so_ret.getSo_prefix()+"."+so_ret.getSo_code();
+            so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
             so_list_status += "#" + so_ret.getRet_status();
         }
 
-        hmAux.put(SO_RETURN_LIST,so_list_ret.substring(1,so_list_ret.length()));
-        hmAux.put(SO_RETURN_STATUS,so_list_status.substring(1,so_list_status.length()));
+        hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
+        hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
 
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-        
+
     }
 
     private boolean processFromTo(TSO_Serial_Save_Rec.So_From_To so_from_to) {
         SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        SM_SO_Service_Exec_Task_FileDao fileDao = new SM_SO_Service_Exec_Task_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+
         try {
             //
             for (SM_SO_Service_Exec_Task task : so_from_to.getTask()) {
@@ -224,8 +223,11 @@ public class WS_SO_Serial_Save extends IntentService {
                 execDao.addUpdateTmp(exec);
                 taskDao.addUpdateTmp(task);
             }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            //
+            fileDao.addUpdateTmp(so_from_to.getTask_file(),false);
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
             return false;
         }
