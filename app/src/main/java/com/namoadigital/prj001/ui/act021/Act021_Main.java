@@ -21,9 +21,16 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
@@ -150,7 +157,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
                 //callAct022T(context);
-                callTestsEnvSOExec();
+                //callTestsEnvSOExec();
+                callTestSoSave();
 
             }
         });
@@ -164,12 +172,49 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     }
 
+    private void callTestSoSave() {
+        enableProgressDialog(
+                "Teste Save SO",
+                "Testando Save SO",
+                "Cancel",
+                "OK"
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
+        bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
     private void callTestsEnvSOExec() {
         SM_SODao soDao = new SM_SODao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+
+        SM_SO_Service_ExecDao execDao  = new SM_SO_Service_ExecDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        SM_SO_Service_Exec_TaskDao taskDao  = new SM_SO_Service_Exec_TaskDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        SM_SO_Service_Exec_Task_FileDao fileDao  = new SM_SO_Service_Exec_Task_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         //
         SM_SO so = soDao.getByString(
                 new SM_SO_Sql_001(
@@ -178,6 +223,38 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                         60
                 ).toSqlQuery()
         );
+        so.setUpdate_required(1);
+        soDao.addUpdate(so);
+        //
+        //
+        SM_SO_Service service = so.getPack().get(0).getService().get(so.getPack().get(0).getService().size() -1) ;
+        //
+
+        //
+        SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
+        exec.setExec_code(0);
+        exec.setStatus(Constant.SO_STATUS_PENDING);
+        exec.setPartner_code(3);
+        exec.setPK(service);
+        //
+        long nExecTemp = Long.parseLong(execDao.getByStringHM(
+                new SM_SO_Service_Exec_Sql_003(
+                        exec.getCustomer_code(),
+                        exec.getSo_prefix(),
+                        exec.getSo_code(),
+                        exec.getPrice_list_code(),
+                        exec.getPack_code(),
+                        exec.getPack_seq(),
+                        exec.getCategory_price_code(),
+                        exec.getService_code(),
+                        exec.getService_seq()
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
+        //
+        exec.setExec_tmp(nExecTemp);
+        execDao.addUpdateTmp(exec);
+        //
+
         //
         ArrayList<SM_SO_Service_Exec_Task> taskList = new ArrayList<>();
 
@@ -189,7 +266,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         task.setTask_perc(100);
         task.setQty_people(2);
         task.setStatus(Constant.SO_STATUS_DONE);
-        task.setSite_code(1);
+        task.setSite_code(so.getSite_code());
         task.setSite_id("1");
         task.setSite_desc("1");
         task.setZone_code(2);
@@ -197,10 +274,31 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         task.setZone_desc("2");
         task.setLocal_code(4);
         task.setLocal_id("4");
-        task.setStart_date("2017-07-14 13:53:40 -03:00");
-        task.setEnd_date("2017-07-14 14:53:40 -03:00");
+        task.setStart_date("2017-07-14 13:53 -03:00");
+        task.setEnd_date("2017-07-14 14:53 -03:00");
         task.setExec_time(60);
         task.setComments("First app teste");
+        task.setPK(exec);
+        //
+        long nTaskTemp = Long.parseLong(execDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_Sql_003(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq(),
+                        task.getExec_tmp()
+
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
+
+        task.setTask_tmp(nTaskTemp);
+        taskDao.addUpdateTmp(task);
+
         taskList.add(task);
 
         SM_SO_Service_Exec_Task task2 = new SM_SO_Service_Exec_Task();
@@ -211,38 +309,52 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         task2.setTask_perc(100);
         task2.setQty_people(2);
         task2.setStatus(Constant.SO_STATUS_DONE);
-        task.setSite_code(1);
-        task.setSite_id("1");
-        task.setSite_desc("1");
-        task.setZone_code(2);
-        task.setZone_id("2");
-        task.setZone_desc("2");
-        task.setLocal_code(4);
-        task.setLocal_id("4");
-        task2.setStart_date("2017-07-14 13:53:40 -03:00");
-        task.setEnd_date("2017-07-15 13:53:40 -03:00");
-        task.setExec_time(1440);
+        task2.setSite_code(1);
+        task2.setSite_id("1");
+        task2.setSite_desc("1");
+        task2.setZone_code(2);
+        task2.setZone_id("2");
+        task2.setZone_desc("2");
+        task2.setLocal_code(4);
+        task2.setLocal_id("4");
+        task2.setStart_date("2017-07-14 13:53 -03:00");
+        task2.setEnd_date("2017-07-15 13:53 -03:00");
+        task2.setExec_time(1440);
         task2.setComments("Second app teste");
+
+        task2.setPK(exec);
+        //
+        nTaskTemp = 0;
+        nTaskTemp = Long.parseLong(execDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_Sql_003(
+                        task2.getCustomer_code(),
+                        task2.getSo_prefix(),
+                        task2.getSo_code(),
+                        task2.getPrice_list_code(),
+                        task2.getPack_code(),
+                        task2.getPack_seq(),
+                        task2.getCategory_price_code(),
+                        task2.getService_code(),
+                        task2.getService_seq(),
+                        task2.getExec_tmp()
+
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
+        task2.setTask_tmp(nTaskTemp);
+        taskDao.addUpdateTmp(task2);
         taskList.add(task2);
-        //
-        SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
-        exec.setExec_code(0);
-        exec.setStatus(Constant.SO_STATUS_PENDING);
-        exec.setPartner_code(3);
+
         exec.setTask(taskList);
-        //
-        int lastIdx = so.getPack().get(0).getService().size() -1 ;
-        //
-        ArrayList<SM_SO_Service_Exec> execList = new ArrayList<>();
-        execList.addAll(so.getPack().get(0).getService().get(lastIdx).getExec());
-        execList.add(exec);
-        //
-        so.getPack().get(0).getService().get(lastIdx).setExec(execList);
 
         //
-        so.setPK();
+        ArrayList<SM_SO_Service_Exec> execList = new ArrayList<>();
+        execList.addAll(service.getExec());
+        execList.add(exec);
+        so.getPack().get(0).getService().get(so.getPack().get(0).getService().size() -1).setExec(execList);
         //
-        soDao.addUpdate(so);
+        //so.setPK();
+        //
+        //soDao.addUpdate(so);
         //
         SM_SO so_saved = soDao.getByString(
                 new SM_SO_Sql_001(
@@ -337,6 +449,15 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //opts.add(aux);
 
         return opts;
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        int i = 0;
+
+        progressDialog.dismiss();
     }
 
     private void callAct022T(Context context) {

@@ -94,9 +94,9 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                 sbWhere.append(" and ");
                 sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task.getService_seq())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_code())).append("'");
+                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_tmp())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_code())).append("'");
+                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_tmp())).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task), sbWhere.toString(), null);
             }
@@ -156,9 +156,9 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                     sbWhere.append(" and ");
                     sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task.getService_seq())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_code())).append("'");
+                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_tmp())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_code())).append("'");
+                    sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_tmp())).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task), sbWhere.toString(), null);
                 }

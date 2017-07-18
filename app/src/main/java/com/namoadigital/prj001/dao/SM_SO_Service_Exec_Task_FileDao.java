@@ -77,11 +77,11 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
                 sbWhere.append(" and ");
                 sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_seq())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
+                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_tmp())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
+                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_tmp())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(FILE_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
+                sbWhere.append(FILE_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_tmp())).append("'");
 
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null);

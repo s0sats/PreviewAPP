@@ -22,9 +22,9 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
     private int category_price_code;
     private int service_code;
     private int service_seq;
-    private int exec_tmp;
+    private long exec_tmp;
 
-    public SM_SO_Service_Exec_Task_Sql_003(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, int exec_tmp) {
+    public SM_SO_Service_Exec_Task_Sql_003(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
