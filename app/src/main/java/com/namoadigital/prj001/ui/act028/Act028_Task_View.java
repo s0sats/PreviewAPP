@@ -5,4 +5,5 @@ package com.namoadigital.prj001.ui.act028;
  */
 
 public interface Act028_Task_View {
+
 }

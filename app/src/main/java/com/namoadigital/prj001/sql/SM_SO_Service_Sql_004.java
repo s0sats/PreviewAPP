@@ -41,9 +41,12 @@ public class SM_SO_Service_Sql_004 implements Specification {
                         "   from (\n" +
                         "            select \n" +
                         "            sss.*, \n" +
+                        "            pkk.pack_id, \n" +
+                        "            pkk.pack_desc, \n" +
                         "            ifnull(sss.partner_code,0) as partner_code_md1,  \n" +
                         "            ifnull(pr.partner_code,0) as partner_code_md2 \n" +
-                        "            from sm_so_services as sss left join md_partners as pr on sss.partner_code = pr.partner_code\n" +
+                        "            from sm_so_services as sss left join  md_partners as pr on sss.partner_code = pr.partner_code\n" +
+                        "                                       inner join sm_so_packs as pkk on sss.pack_code = pkk.pack_code\n" +
                         "        ) ")
                 .append(" as S WHERE\n" +
                         "    S.customer_code =              '" + customer_code + "'\n" +
@@ -56,7 +59,7 @@ public class SM_SO_Service_Sql_004 implements Specification {
                         "    AND S.service_code =           '" + service_code + "'\n" +
                         "    AND S.service_seq =            '" + service_seq + "' ")
                 .append(";")
-                .append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#service_id#service_desc#service_oper_id#status#qty#optional#manual_price#express#time_exec_standard#price#cost#exec_type#exec_seq_oper#approval_budget_user#approval_budget_date#partner_code#partner_id#partner_desc#require_approval#partner_code_md1#partner_code_md2#partner_restriction")
+                .append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#service_id#service_desc#service_oper_id#status#qty#optional#manual_price#express#time_exec_standard#price#cost#exec_type#exec_seq_oper#approval_budget_user#approval_budget_date#partner_code#partner_id#partner_desc#require_approval#partner_code_md1#partner_code_md2#partner_restriction#pack_id#pack_desc")
                 .toString();
     }
 }

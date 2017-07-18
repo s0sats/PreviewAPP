@@ -5,4 +5,5 @@ package com.namoadigital.prj001.ui.act028;
  */
 
 public class Act028_Task_Presenter_Impl implements Act028_Task_Presenter {
+
 }
