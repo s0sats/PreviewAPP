@@ -135,6 +135,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         // Hugo Pode Eliminar no Merge
        // TesteDao.Test_SM_SO_Daos(this, context);
+
+//        String s1 = new SM_SO_Service_Exec_Sql_003(1,2017,60,22,8,1,7,28,1).toSqlQuery();
+//        String s2 = new SM_SO_Service_Exec_Task_Sql_003(1,2017,60,22,8,1,7,28,1,0).toSqlQuery();
+//        String s3 = new SM_SO_Service_Exec_Task_File_Sql_005("1","2017","60","22","8","1","7","28","1","0","0").toSqlQuery();
+//
+//        s3 += ";";
+
     }
 
 

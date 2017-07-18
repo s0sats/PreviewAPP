@@ -184,13 +184,19 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
         task.setTask_code(0);
         task.setTask_seq_oper(1);
-        task.setTask_user(52);
-        task.setTask_perc(20);
+        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        task.setTask_perc(100);
         task.setQty_people(2);
         task.setStatus(Constant.SO_STATUS_DONE);
         task.setSite_code(1);
+        task.setSite_id("1");
+        task.setSite_desc("1");
         task.setZone_code(2);
+        task.setZone_id("2");
+        task.setZone_desc("2");
         task.setLocal_code(4);
+        task.setLocal_id("4");
         task.setStart_date("2017-07-14 13:53:40 -03:00");
         task.setEnd_date("2017-07-14 14:53:40 -03:00");
         task.setExec_time(60);
@@ -199,16 +205,24 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
         SM_SO_Service_Exec_Task task2 = new SM_SO_Service_Exec_Task();
         task2.setTask_code(0);
-        task2.setTask_seq_oper(1);
-        task2.setTask_user(52);
-        task2.setTask_perc(20);
+        task2.setTask_seq_oper(2);
+        task2.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        task2.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        task2.setTask_perc(100);
         task2.setQty_people(2);
-        task2.setStatus(Constant.SO_STATUS_PROCESS);
-        task2.setSite_code(1);
-        task2.setZone_code(2);
-        task2.setLocal_code(4);
+        task2.setStatus(Constant.SO_STATUS_DONE);
+        task.setSite_code(1);
+        task.setSite_id("1");
+        task.setSite_desc("1");
+        task.setZone_code(2);
+        task.setZone_id("2");
+        task.setZone_desc("2");
+        task.setLocal_code(4);
+        task.setLocal_id("4");
         task2.setStart_date("2017-07-14 13:53:40 -03:00");
-        task2.setComments("First app teste");
+        task.setEnd_date("2017-07-15 13:53:40 -03:00");
+        task.setExec_time(1440);
+        task2.setComments("Second app teste");
         taskList.add(task2);
         //
         SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
@@ -217,11 +231,14 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         exec.setPartner_code(3);
         exec.setTask(taskList);
         //
+        int lastIdx = so.getPack().get(0).getService().size() -1 ;
+        //
         ArrayList<SM_SO_Service_Exec> execList = new ArrayList<>();
-        execList.addAll(so.getPack().get(0).getService().get(0).getExec());
+        execList.addAll(so.getPack().get(0).getService().get(lastIdx).getExec());
         execList.add(exec);
         //
-        so.getPack().get(0).getService().get(0).setExec(execList);
+        so.getPack().get(0).getService().get(lastIdx).setExec(execList);
+
         //
         so.setPK();
         //
