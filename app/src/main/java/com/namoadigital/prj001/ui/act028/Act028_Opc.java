@@ -85,7 +85,6 @@ public class Act028_Opc extends BaseFragment {
         iniAction();
         //
         return view;
-
     }
 
     @Override
@@ -151,10 +150,9 @@ public class Act028_Opc extends BaseFragment {
                 }
             }
         });
-
     }
 
-    private void setHMAuxScreen() {
+    public void setHMAuxScreen() {
         if (data != null) {
             sm_so_service = sm_so_serviceDao.getByString(
                     new SM_SO_Service_Sql_001(
