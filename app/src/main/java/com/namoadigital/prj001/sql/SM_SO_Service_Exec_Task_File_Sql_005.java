@@ -13,19 +13,19 @@ public class SM_SO_Service_Exec_Task_File_Sql_005 implements Specification {
 
     public static final String NEXT_TMP = "next_tmp";
 
-    private String customer_code;
-    private String so_prefix;
-    private String so_code;
-    private String price_list_code;
-    private String pack_code;
-    private String pack_seq;
-    private String category_price_code;
-    private String service_code;
-    private String service_seq;
-    private String exec_tmp;
-    private String task_tmp;
+    private long customer_code;
+    private int so_prefix;
+    private int so_code;
+    private int price_list_code;
+    private int pack_code;
+    private int pack_seq;
+    private int category_price_code;
+    private int service_code;
+    private int service_seq;
+    private long exec_tmp;
+    private long task_tmp;
 
-    public SM_SO_Service_Exec_Task_File_Sql_005(String customer_code, String so_prefix, String so_code, String price_list_code, String pack_code, String pack_seq, String category_price_code, String service_code, String service_seq, String exec_tmp, String task_tmp) {
+    public SM_SO_Service_Exec_Task_File_Sql_005(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp, long task_tmp) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;

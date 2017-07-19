@@ -18,15 +18,18 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Env;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,8 +181,15 @@ public class WS_SO_Serial_Save extends IntentService {
         if (ret.getSo_from_to() != null) {
             if (processFromTo(ret.getSo_from_to())) {
                 int i = 0;
-                soDao.addUpdate(ret.getSo(),false);
-
+                //
+                if (ret.getSo() != null) {
+                    for (SM_SO so : ret.getSo()) {
+                        so.setPK();
+                        soDao.removeFull(so);
+                    }
+                    //
+                    soDao.addUpdate(ret.getSo(), false);
+                }
             } else {
 
             }
@@ -224,12 +234,64 @@ public class WS_SO_Serial_Save extends IntentService {
                 taskDao.addUpdateTmp(task);
             }
             //
-            fileDao.addUpdateTmp(so_from_to.getTask_file(),false);
+            for (SM_SO_Service_Exec_Task_File taskFile : so_from_to.getTask_file()) {
+                SM_SO_Service_Exec_Task_File auxFile =
+                        fileDao.getByString(
+                                new SM_SO_Service_Exec_Task_File_Sql_006(
+                                        taskFile.getCustomer_code(),
+                                        taskFile.getSo_prefix(),
+                                        taskFile.getSo_code(),
+                                        taskFile.getPrice_list_code(),
+                                        taskFile.getPack_code(),
+                                        taskFile.getPack_seq(),
+                                        taskFile.getCategory_price_code(),
+                                        taskFile.getService_code(),
+                                        taskFile.getService_seq(),
+                                        taskFile.getExec_tmp(),
+                                        taskFile.getTask_tmp(),
+                                        taskFile.getFile_tmp()
+                                ).toSqlQuery()
+                        );
+                String new_name = "sm_so_" +
+                        taskFile.getCustomer_code() + "_" +
+                        taskFile.getSo_prefix() + "_" +
+                        taskFile.getSo_code() + "_" +
+                        taskFile.getPrice_list_code() + "_" +
+                        taskFile.getPack_code() + "_" +
+                        taskFile.getPack_seq() + "_" +
+                        taskFile.getCategory_price_code() + "_" +
+                        taskFile.getService_code() + "_" +
+                        taskFile.getService_seq() + "_" +
+                        taskFile.getExec_code() + "_" +
+                        taskFile.getTask_code() + "_" +
+                        taskFile.getFile_code() + ".jpg";
+
+                if(!renameTaskFile(auxFile.getFile_name(),new_name)){
+                    return false;
+                }
+                fileDao.addUpdateTmp(taskFile);
+            }
 
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
             return false;
+        }
+        return true;
+    }
+
+    private boolean renameTaskFile(String file_name, String new_name) {
+
+        try {
+            File from = new File(Constant.CACHE_PATH + "/", file_name);
+            File to = new File(Constant.CACHE_PATH + "/", new_name);
+            //
+            from.renameTo(to);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            e.printStackTrace();
+            return false;
+
         }
         return true;
     }

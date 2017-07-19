@@ -55,6 +55,16 @@
                 android:padding="20dp"
                 android:textColor="@color/padrao_WHITE" />
 
+            <Button
+                android:id="@+id/act021_btn_testeWS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_1_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="WS SO SAVE"/>
+
         </LinearLayout>
 
 
