@@ -111,6 +111,20 @@ public class Act028_Task_List extends BaseFragment {
                 );
 
             }
+
+            switch (sm_so_service_exec.getStatus().toUpperCase()) {
+                case "PENDING":
+                    btn_new_task.setVisibility(View.VISIBLE);
+                    break;
+                case "PROCESS":
+                    btn_new_task.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    btn_new_task.setVisibility(View.GONE);
+                    break;
+            }
+
+
         } catch (Exception e) {
             String error_s = e.toString();
         }
@@ -122,6 +136,7 @@ public class Act028_Task_List extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> hmAux = (HashMap<String, String>) parent.getItemAtPosition(position);
+                hmAux.put("exec_status", sm_so_service_exec.getStatus());
 
                 if (delegate != null) {
                     delegate.menuTaksSelected(hmAux);

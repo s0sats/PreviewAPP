@@ -154,6 +154,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_task = new Act028_Task();
 
         mDrawerLayout.openDrawer(GravityCompat.START);
+
+        controls_frags.add(act028_task);
     }
 
     private void recoverGetIntents() {

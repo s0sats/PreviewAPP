@@ -84,6 +84,8 @@ public class Act028_Task extends BaseFragment {
         taskControl = (TaskControl) view.findViewById(R.id.act028_task_content_tc_task_value);
 
         setHMAuxScreen();
+
+        controls_task.add(taskControl);
     }
 
     private void iniAction() {
@@ -103,19 +105,55 @@ public class Act028_Task extends BaseFragment {
                 tv_task_tmp_label.setText("Task TMP");
                 tv_task_tmp_value.setText(data.get("task_tmp"));
 
-                taskControl.setmLabel("Task Lavel");
-                //taskControl.setmStatus(data.get("task_status"));
-                taskControl.setmStatus("EXEC");
-                taskControl.setmValue("30");
-                //taskControl.setmQty_People_label("Qty People");
-                //taskControl.setmQty_People(data.get("qty_people"));
-                //taskControl.setmQty_People("20");
-                //taskControl.setmEnabled(true);
 
+                switch (data.get("exec_status").toUpperCase()) {
+                    case "PENDING":
+                        processTaskStatus();
+                        break;
+                    case "PROCESS":
+                        processTaskStatus();
+                        break;
+                    default:
+                        taskControl.setEnabled(false);
+                        break;
+                }
+
+                taskControl.setmLabel("Task Lavel");
+                taskControl.setmValue(data.get("task_perc"));
+                taskControl.setmPerc(data.get("task_perc"));
+                taskControl.setmQty_People_label("Qty People");
+                taskControl.setmQty_People(data.get("qty_people"));
+                taskControl.setmDtStart(data.get("start_date"));
+                taskControl.setmDtEnd(data.get("end_date"));
+                taskControl.setmComments(data.get("comments"));
+                taskControl.setmImgPath("");
+                taskControl.setmMaxImages(5);
+                //
+                // Incluir fotos
             }
         } catch (Exception e) {
         }
 
+    }
+
+    private void processTaskStatus() {
+
+        if (data.get("task_user").toUpperCase().equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(getActivity()))) {
+
+            switch (data.get("task_status").toUpperCase()) {
+                case "PROCESS":
+                    taskControl.setmStatus("EXEC");
+                    taskControl.setEnabled(true);
+                    break;
+                default:
+                    taskControl.setmStatus(data.get("task_status").toUpperCase());
+                    taskControl.setEnabled(false);
+                    break;
+            }
+        } else {
+            taskControl.setmStatus(data.get("task_status").toUpperCase());
+            taskControl.setEnabled(false);
+        }
     }
 
 }
