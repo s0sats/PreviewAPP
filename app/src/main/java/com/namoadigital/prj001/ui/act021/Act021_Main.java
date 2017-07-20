@@ -33,6 +33,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
@@ -313,7 +314,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                         task.getExec_tmp()
 
                 ).toSqlQuery()
-        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
+        ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
 
         task.setTask_tmp(nTaskTemp);
         taskDao.addUpdateTmp(task);
