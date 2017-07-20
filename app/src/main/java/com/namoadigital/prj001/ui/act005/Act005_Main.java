@@ -56,6 +56,7 @@ import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act029.Act029_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -76,6 +77,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_SERVICE = "menu_service";
+    public static final String MENU_ID_SERIAL= "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
@@ -808,6 +810,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void callAct021(Context context) {
         Intent mIntent = new Intent(context, Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct029(Context context) {
+        Intent mIntent = new Intent(context, Act029_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mIntent);
         finish();

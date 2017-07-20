@@ -20,6 +20,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -1961,6 +1962,16 @@ public class ToolBox_Inf {
                 },
                 0
         );
+    }
+
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
+        HMAux hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID, code);
+        hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+        ss_component.setmValue(hmAux);
+        if (source_val) {
+            ss_component.setTag(code);
+        }
     }
 
 }

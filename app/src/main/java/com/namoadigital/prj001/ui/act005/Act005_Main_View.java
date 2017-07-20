@@ -28,6 +28,8 @@ public interface Act005_Main_View {
 
     void callAct021(Context context);
 
+    void callAct029(Context context);
+
     void showNoConnectionDialog();
 
     void closeApp();
