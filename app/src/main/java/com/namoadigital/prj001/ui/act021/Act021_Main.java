@@ -63,8 +63,11 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     private Button btn_express;
     private Button btn_pendencies;
     private int pendencies_qty;
-
+    //var de teste apagar após testar
     private Button btn_tst_so;
+    int prefix = 2017;
+    int code = 67;
+    int serviceIdx = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -197,6 +200,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
         bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
+        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX,prefix);
+        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
 
         mIntent.putExtras(bundle);
         //
@@ -227,10 +232,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-
-        int prefix = 2017;
-        int code = 67;
-        int serviceIdx = 0 ;
         //
         SM_SO so = soDao.getByString(
                 new SM_SO_Sql_001(
@@ -245,7 +246,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         //SM_SO_Service service = so.getPack().get(0).getService().get(so.getPack().get(0).getService().size() -1) ;
 
-        SM_SO_Service service = so.getPack().get(0).getService().get(serviceIdx) ;
+        SM_SO_Service service = so.getPack().get(1).getService().get(serviceIdx) ;
         //
 
         //
@@ -275,49 +276,49 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         execDao.addUpdateTmp(exec);
 
         ArrayList<SM_SO_Service_Exec_Task> taskList = new ArrayList<>();
-//        //YES_NO
-//        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
-//        task.setTask_code(0);
-//        task.setTask_seq_oper(1);
-//        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-//        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-//        task.setTask_perc(100);
-//        task.setQty_people(2);
-//        task.setStatus(Constant.SO_STATUS_DONE);
-//        task.setSite_code(so.getSite_code());
-//        task.setSite_id("1");
-//        task.setSite_desc("1");
-//        task.setZone_code(2);
-//        task.setZone_id("2");
-//        task.setZone_desc("2");
-//        task.setLocal_code(4);
-//        task.setLocal_id("4");
-//        task.setStart_date("2017-07-14 13:53 -03:00");
-//        task.setEnd_date("2017-07-14 14:53 -03:00");
-//        task.setExec_time(60);
-//        task.setComments("First app teste");
-//        task.setPK(exec);
-//        //
-//        long nTaskTemp = Long.parseLong(execDao.getByStringHM(
-//                new SM_SO_Service_Exec_Task_Sql_003(
-//                        task.getCustomer_code(),
-//                        task.getSo_prefix(),
-//                        task.getSo_code(),
-//                        task.getPrice_list_code(),
-//                        task.getPack_code(),
-//                        task.getPack_seq(),
-//                        task.getCategory_price_code(),
-//                        task.getService_code(),
-//                        task.getService_seq(),
-//                        task.getExec_tmp()
-//
-//                ).toSqlQuery()
-//        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
-//
-//        task.setTask_tmp(nTaskTemp);
-//        taskDao.addUpdateTmp(task);
-//
-//        taskList.add(task);
+        //YES_NO
+        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+        task.setTask_code(0);
+        task.setTask_seq_oper(1);
+        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        task.setTask_perc(100);
+        task.setQty_people(2);
+        task.setStatus(Constant.SO_STATUS_DONE);
+        task.setSite_code(so.getSite_code());
+        task.setSite_id("1");
+        task.setSite_desc("1");
+        task.setZone_code(2);
+        task.setZone_id("2");
+        task.setZone_desc("2");
+        task.setLocal_code(4);
+        task.setLocal_id("4");
+        task.setStart_date("2017-07-14 13:53 -03:00");
+        task.setEnd_date("2017-07-14 14:53 -03:00");
+        task.setExec_time(60);
+        task.setComments("First app teste");
+        task.setPK(exec);
+        //
+        long nTaskTemp = Long.parseLong(execDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_Sql_003(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq(),
+                        task.getExec_tmp()
+
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
+
+        task.setTask_tmp(nTaskTemp);
+        taskDao.addUpdateTmp(task);
+
+        taskList.add(task);
 
 //
 //        SM_SO_Service_Exec_Task task2 = new SM_SO_Service_Exec_Task();
@@ -364,49 +365,49 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 //        taskList.add(task2);
 
 
-       //START_STOP
-        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
-        task.setTask_code(0);
-        task.setTask_seq_oper(1);
-        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-        task.setTask_perc(10);
-        task.setQty_people(1);
-        task.setStatus(Constant.SO_STATUS_DONE);
-        task.setSite_code(so.getSite_code());
-        task.setSite_id("1");
-        task.setSite_desc("1");
-        task.setZone_code(2);
-        task.setZone_id("2");
-        task.setZone_desc("2");
-        task.setLocal_code(4);
-        task.setLocal_id("4");
-        task.setStart_date("2017-07-14 10:20 -03:00");
-        task.setEnd_date("2017-07-14 11:00 -03:00");
-        task.setExec_time(40);
-        task.setComments("É TRETAA,  EH TREETAAA");
-        task.setPK(exec);
-        //
-        long nTaskTemp = Long.parseLong(execDao.getByStringHM(
-                new SM_SO_Service_Exec_Task_Sql_003(
-                        task.getCustomer_code(),
-                        task.getSo_prefix(),
-                        task.getSo_code(),
-                        task.getPrice_list_code(),
-                        task.getPack_code(),
-                        task.getPack_seq(),
-                        task.getCategory_price_code(),
-                        task.getService_code(),
-                        task.getService_seq(),
-                        task.getExec_tmp()
-
-                ).toSqlQuery()
-        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
-
-        task.setTask_tmp(nTaskTemp);
-        taskDao.addUpdateTmp(task);
-
-        taskList.add(task);
+//       //START_STOP
+//        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+//        task.setTask_code(0);
+//        task.setTask_seq_oper(1);
+//        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+//        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+//        task.setTask_perc(10);
+//        task.setQty_people(1);
+//        task.setStatus(Constant.SO_STATUS_DONE);
+//        task.setSite_code(so.getSite_code());
+//        task.setSite_id("1");
+//        task.setSite_desc("1");
+//        task.setZone_code(2);
+//        task.setZone_id("2");
+//        task.setZone_desc("2");
+//        task.setLocal_code(4);
+//        task.setLocal_id("4");
+//        task.setStart_date("2017-07-14 10:20 -03:00");
+//        task.setEnd_date("2017-07-14 11:00 -03:00");
+//        task.setExec_time(40);
+//        task.setComments("É TRETAA,  EH TREETAAA");
+//        task.setPK(exec);
+//        //
+//        long nTaskTemp = Long.parseLong(execDao.getByStringHM(
+//                new SM_SO_Service_Exec_Task_Sql_003(
+//                        task.getCustomer_code(),
+//                        task.getSo_prefix(),
+//                        task.getSo_code(),
+//                        task.getPrice_list_code(),
+//                        task.getPack_code(),
+//                        task.getPack_seq(),
+//                        task.getCategory_price_code(),
+//                        task.getService_code(),
+//                        task.getService_seq(),
+//                        task.getExec_tmp()
+//
+//                ).toSqlQuery()
+//        ).get(SM_SO_Service_Exec_Task_Sql_003.NEXT_TMP));
+//
+//        task.setTask_tmp(nTaskTemp);
+//        taskDao.addUpdateTmp(task);
+//
+//        taskList.add(task);
 
         SM_SO_Service_Exec_Task_File file = new SM_SO_Service_Exec_Task_File();
         file.setFile_code(0);
@@ -434,6 +435,33 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
         file.setFile_tmp(nFileTemp);
         fileDao.addUpdateTmp(file);
+
+        SM_SO_Service_Exec_Task_File file2 = new SM_SO_Service_Exec_Task_File();
+        file2.setFile_code(0);
+        file2.setFile_name("so_teste2.jpg");
+        file2.setFile_url("");
+        file2.setFile_url_local("so_teste2.jpg");
+        file2.setPK(task);
+        //
+        long nFileTemp2 = Long.parseLong(execDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_File_Sql_005(
+                        file2.getCustomer_code(),
+                        file2.getSo_prefix(),
+                        file2.getSo_code(),
+                        file2.getPrice_list_code(),
+                        file2.getPack_code(),
+                        file2.getPack_seq(),
+                        file2.getCategory_price_code(),
+                        file2.getService_code(),
+                        file2.getService_seq(),
+                        file2.getExec_tmp(),
+                        file2.getTask_tmp()
+
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_File_Sql_005.NEXT_TMP));
+
+        file2.setFile_tmp(nFileTemp2);
+        fileDao.addUpdateTmp(file2);
 
 
       /* SM_SO_Service_Exec_Task task2 = new SM_SO_Service_Exec_Task();

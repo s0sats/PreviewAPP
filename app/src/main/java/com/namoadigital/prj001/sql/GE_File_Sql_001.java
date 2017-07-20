@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -36,6 +35,17 @@ public class GE_File_Sql_001 implements Specification {
                 .append(") ")
                 .append(" ")
                 .append(";")
+                /*.append("select\n" +
+                        " f.file_code,\n" +
+                        " ifnull(f.file_path_new,f.file_path) as file_path,\n" +
+                        " f.file_status,\n" +
+                        " f.file_date \n" +
+                        "from \n" +
+                        " ge_files f\n" +
+                        "where \n" +
+                        " file_status ='OPENED' \n" +
+                        "ORDER BY\n" +
+                        " Date(file_date)  ;")*/
                 .toString();
     }
 }

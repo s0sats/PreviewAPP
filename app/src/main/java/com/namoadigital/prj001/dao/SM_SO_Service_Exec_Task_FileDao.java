@@ -413,16 +413,12 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
             sm_so_service_exec_task_file.setFile_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
             if (cursor.isNull(cursor.getColumnIndex(FILE_URL))) {
-                //comentado para teste , descommentar essa porra depois
-                //sm_so_service_exec_task_file.setFile_url(null);
-                sm_so_service_exec_task_file.setFile_url("");
+                sm_so_service_exec_task_file.setFile_url(null);
             } else {
                 sm_so_service_exec_task_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
             }
             if (cursor.isNull(cursor.getColumnIndex(FILE_URL_LOCAL))) {
-                //comentado para teste , descommentar essa porra depois
-                //sm_so_service_exec_task_file.setFile_url_local(null);
-                sm_so_service_exec_task_file.setFile_url_local("");
+                sm_so_service_exec_task_file.setFile_url_local(null);
             } else {
                 sm_so_service_exec_task_file.setFile_url_local(cursor.getString(cursor.getColumnIndex(FILE_URL_LOCAL)));
             }
