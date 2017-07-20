@@ -65,11 +65,12 @@ public class WS_Upload_Img extends IntentService {
             );
             //
             for (GE_File geFile : geFiles) {
-                env.setFile_path(geFile.getFile_path());
+
+                env.setFile_path(geFile.getFile_path_new() != null ? geFile.getFile_path_new() : geFile.getFile_path());
                 //
                 String sResults = ToolBox_Inf.uploadFile(
                         gson.toJson(env),
-                        geFile.getFile_path()
+                        geFile.getFile_path_new() != null ? geFile.getFile_path_new() : geFile.getFile_path()
                 );
 
                 // Hugo Erro

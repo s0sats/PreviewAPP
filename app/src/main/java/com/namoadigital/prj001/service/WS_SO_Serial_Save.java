@@ -227,7 +227,7 @@ public class WS_SO_Serial_Save extends IntentService {
                         );
                         //
                         for (SM_SO_Service_Exec_Task_File taskFile :taskFileList) {
-                            File file = new File(Constant.CACHE_PATH + "/" + taskFile.getFile_name());
+                            File file = new File(Constant.CACHE_PATH_PHOTO + "/" + taskFile.getFile_name());
                             if(file.exists()){
                                 taskFile.setFile_url_local(taskFile.getFile_name());
                                 taskFileDao.addUpdate(taskFile);
