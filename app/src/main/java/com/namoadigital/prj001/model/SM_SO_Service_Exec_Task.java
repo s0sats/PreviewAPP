@@ -47,13 +47,13 @@ public class SM_SO_Service_Exec_Task {
     private int qty_people;
     @Expose
     private String status;
-    private int site_code;
+    private Integer site_code;
     private String site_id;
     private String site_desc;
-    private int zone_code;
+    private Integer zone_code;
     private String zone_id;
     private String zone_desc;
-    private int local_code;
+    private Integer local_code;
     private String local_id;
 
     // Null
@@ -278,11 +278,11 @@ public class SM_SO_Service_Exec_Task {
         this.status = status;
     }
 
-    public int getSite_code() {
+    public Integer getSite_code() {
         return site_code;
     }
 
-    public void setSite_code(int site_code) {
+    public void setSite_code(Integer site_code) {
         this.site_code = site_code;
     }
 
@@ -302,11 +302,11 @@ public class SM_SO_Service_Exec_Task {
         this.site_desc = site_desc;
     }
 
-    public int getZone_code() {
+    public Integer getZone_code() {
         return zone_code;
     }
 
-    public void setZone_code(int zone_code) {
+    public void setZone_code(Integer zone_code) {
         this.zone_code = zone_code;
     }
 
@@ -326,11 +326,11 @@ public class SM_SO_Service_Exec_Task {
         this.zone_desc = zone_desc;
     }
 
-    public int getLocal_code() {
+    public Integer getLocal_code() {
         return local_code;
     }
 
-    public void setLocal_code(int local_code) {
+    public void setLocal_code(Integer local_code) {
         this.local_code = local_code;
     }
 

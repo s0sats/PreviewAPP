@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 /**
@@ -8,12 +10,17 @@ import java.util.ArrayList;
 
 public class TSO_Serial_Save_Env {
 
+    @Expose
     private String app_code;
+    @Expose
     private String app_version;
+    @Expose
     private String session_app;
+    @Expose
     private String token;
-
-    //private ArrayList<SM_SO> so;
+    @Expose
+    private ArrayList<SM_SO> so;
+    @Expose
     private ArrayList<MD_Product_Serial> serial;
 
     public String getApp_code() {
@@ -40,13 +47,13 @@ public class TSO_Serial_Save_Env {
         this.session_app = session_app;
     }
 
-//    public ArrayList<SM_SO> getSo() {
-//        return so;
-//    }
-//
-//    public void setSo(ArrayList<SM_SO> so) {
-//        this.so = so;
-//    }
+    public ArrayList<SM_SO> getSo() {
+        return so;
+    }
+
+    public void setSo(ArrayList<SM_SO> so) {
+        this.so = so;
+    }
 
     public ArrayList<MD_Product_Serial> getSerial() {
         return serial;

@@ -77,7 +77,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                 sbWhere.append(" and ");
                 sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec.getService_seq())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec.getExec_code())).append("'");
+                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec.getExec_tmp())).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec), sbWhere.toString(), null);
             }
@@ -138,7 +138,7 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
                     sbWhere.append(" and ");
                     sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec.getService_seq())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec.getExec_code())).append("'");
+                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec.getExec_tmp())).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec), sbWhere.toString(), null);
                 }

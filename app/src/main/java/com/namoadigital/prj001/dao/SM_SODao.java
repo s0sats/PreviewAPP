@@ -92,6 +92,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String ADD_INF2 = "add_inf2";
     public static final String ADD_INF3 = "add_inf3";
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String TOKEN = "token";
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -352,6 +353,35 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             while (cursor.moveToNext()) {
                 SM_SO uAux = toSM_SOMapper.map(cursor);
+
+                if (uAux != null) {
+                    SM_SO_FileDao sm_so_fileDao = new SM_SO_FileDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    uAux.setSo_file((ArrayList<SM_SO_File>) sm_so_fileDao.query(new SM_SO_File_Sql_002(
+                            uAux.getCustomer_code(),
+                            uAux.getSo_prefix(),
+                            uAux.getSo_code()
+                    ).toSqlQuery()));
+
+                    SM_SO_PackDao sm_so_packDao = new SM_SO_PackDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    uAux.setPack((ArrayList<SM_SO_Pack>) sm_so_packDao.query(new SM_SO_Pack_Sql_002(
+                            uAux.getCustomer_code(),
+                            uAux.getSo_prefix(),
+                            uAux.getSo_code()
+                    ).toSqlQuery()));
+
+
+                }
+
                 sos.add(uAux);
             }
 
@@ -606,6 +636,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             } else {
                 so.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             }
+            //
+            so.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
 
             return so;
@@ -866,6 +898,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             if (sm_so.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, sm_so.getUpdate_required());
+            }
+            if (sm_so.getToken() != null) {
+                contentValues.put(TOKEN, sm_so.getToken());
             }
 
             return contentValues;

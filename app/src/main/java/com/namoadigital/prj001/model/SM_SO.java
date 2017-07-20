@@ -88,7 +88,7 @@ public class SM_SO {
     private String client_approval_image_url;
     private String client_approval_date;
     private String client_approval_user_nick;
-    private int client_approval_user;
+    private Integer client_approval_user;
     @Expose
     private String origin_change;
     private int started_flag;
@@ -108,6 +108,7 @@ public class SM_SO {
     private int update_required;
     @Expose
     private String action;
+    private String token;
     @Expose
     private ArrayList<SM_SO_File> so_file = new ArrayList<>();
     @Expose
@@ -633,6 +634,14 @@ public class SM_SO {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public ArrayList<SM_SO_File> getSo_file() {

@@ -94,9 +94,9 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                 sbWhere.append(" and ");
                 sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task.getService_seq())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_code())).append("'");
+                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_tmp())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_code())).append("'");
+                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_tmp())).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task), sbWhere.toString(), null);
             }
@@ -156,9 +156,9 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                     sbWhere.append(" and ");
                     sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task.getService_seq())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_code())).append("'");
+                    sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getExec_tmp())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_code())).append("'");
+                    sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task.getTask_tmp())).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task), sbWhere.toString(), null);
                 }
@@ -542,16 +542,53 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
             sm_so_service_exec_task.setQty_people(cursor.getInt(cursor.getColumnIndex(QTY_PEOPLE)));
             sm_so_service_exec_task.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
 
-            sm_so_service_exec_task.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
-            sm_so_service_exec_task.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
-            sm_so_service_exec_task.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            if (cursor.isNull(cursor.getColumnIndex(SITE_CODE))) {
+                sm_so_service_exec_task.setSite_code(null);
+            } else {
+                sm_so_service_exec_task.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
+            }
 
-            sm_so_service_exec_task.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
-            sm_so_service_exec_task.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
-            sm_so_service_exec_task.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            if (cursor.isNull(cursor.getColumnIndex(SITE_ID))) {
+                sm_so_service_exec_task.setSite_id(null);
+            } else {
+                sm_so_service_exec_task.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
+            }
 
-            sm_so_service_exec_task.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
-            sm_so_service_exec_task.setLocal_id(cursor.getString(cursor.getColumnIndex(LOCAL_ID)));
+            if (cursor.isNull(cursor.getColumnIndex(SITE_DESC))) {
+                sm_so_service_exec_task.setSite_desc(null);
+            } else {
+                sm_so_service_exec_task.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
+                sm_so_service_exec_task.setZone_code(null);
+            } else {
+                sm_so_service_exec_task.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_ID))) {
+                sm_so_service_exec_task.setZone_id(null);
+            } else {
+                sm_so_service_exec_task.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_DESC))) {
+                sm_so_service_exec_task.setZone_desc(null);
+            } else {
+                sm_so_service_exec_task.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(LOCAL_CODE))) {
+                sm_so_service_exec_task.setLocal_code(null);
+            } else {
+                sm_so_service_exec_task.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(LOCAL_ID))) {
+                sm_so_service_exec_task.setLocal_id(null);
+            } else {
+                sm_so_service_exec_task.setLocal_id(cursor.getString(cursor.getColumnIndex(LOCAL_ID)));
+            }
 
             if (cursor.isNull(cursor.getColumnIndex(COMMENTS))) {
                 sm_so_service_exec_task.setComments(null);
@@ -662,7 +699,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                 contentValues.put(STATUS, sm_so_service_exec_task.getStatus());
             }
 
-            if (sm_so_service_exec_task.getSite_code() > -1) {
+            if (sm_so_service_exec_task.getSite_code() != null) {
                 contentValues.put(SITE_CODE, sm_so_service_exec_task.getSite_code());
             }
 
@@ -674,7 +711,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                 contentValues.put(SITE_DESC, sm_so_service_exec_task.getSite_desc());
             }
 
-            if (sm_so_service_exec_task.getZone_code() > -1) {
+            if (sm_so_service_exec_task.getZone_code() != null) {
                 contentValues.put(ZONE_CODE, sm_so_service_exec_task.getZone_code());
             }
 
@@ -686,7 +723,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                 contentValues.put(ZONE_DESC, sm_so_service_exec_task.getZone_desc());
             }
 
-            if (sm_so_service_exec_task.getLocal_code() > -1) {
+            if (sm_so_service_exec_task.getLocal_code() != null) {
                 contentValues.put(LOCAL_CODE, sm_so_service_exec_task.getLocal_code());
             }
 

@@ -77,11 +77,11 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
                 sbWhere.append(" and ");
                 sbWhere.append(SERVICE_SEQ).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getService_seq())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_code())).append("'");
+                sbWhere.append(EXEC_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getExec_tmp())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_code())).append("'");
+                sbWhere.append(TASK_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getTask_tmp())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(FILE_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_code())).append("'");
+                sbWhere.append(FILE_TMP).append(" = '").append(String.valueOf(sm_so_service_exec_task_file.getFile_tmp())).append("'");
 
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_service_exec_task_file), sbWhere.toString(), null);
@@ -412,8 +412,16 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
             sm_so_service_exec_task_file.setTask_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
-            sm_so_service_exec_task_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
-            sm_so_service_exec_task_file.setFile_url_local(cursor.getString(cursor.getColumnIndex(FILE_URL_LOCAL)));
+            if (cursor.isNull(cursor.getColumnIndex(FILE_URL))) {
+                sm_so_service_exec_task_file.setFile_url(null);
+            } else {
+                sm_so_service_exec_task_file.setFile_url(cursor.getString(cursor.getColumnIndex(FILE_URL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(FILE_URL_LOCAL))) {
+                sm_so_service_exec_task_file.setFile_url_local(null);
+            } else {
+                sm_so_service_exec_task_file.setFile_url_local(cursor.getString(cursor.getColumnIndex(FILE_URL_LOCAL)));
+            }
 
             return sm_so_service_exec_task_file;
         }

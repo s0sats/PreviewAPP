@@ -179,6 +179,8 @@ public class ConstantBaseApp  extends ConstantBase {
      */
     public static final String WS_SO_SERIAL_SAVE_PRODUCT_CODE = "so_serial_save_product_code";
     public static final String WS_SO_SERIAL_SAVE_SERIAL_ID = "so_serial_save_serial_id";
+    public static final String WS_SO_SERIAL_SAVE_SO_PREFIX = "so_serial_save_product_code";
+    public static final String WS_SO_SERIAL_SAVE_SO_CODE = "so_serial_save_serial_id";
 
     /**
      * WS Logout
