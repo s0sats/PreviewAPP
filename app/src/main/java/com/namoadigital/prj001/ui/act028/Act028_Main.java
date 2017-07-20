@@ -1,24 +1,32 @@
 package com.namoadigital.prj001.ui.act028;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -32,7 +40,7 @@ import java.util.List;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act028_Main extends Base_Activity_Frag {
+public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View, Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List {
 
     private Context context;
 
@@ -41,15 +49,15 @@ public class Act028_Main extends Base_Activity_Frag {
     private boolean mDrawerStatus = true;
 
     private FragmentManager fm;
-
+    private Act028_Opc act028_opc;
+    private Act028_Task_List act028_task_list;
+    private Act028_Task act028_task;
 
     private Bundle bundle;
 
-    private long mCustomer_code;
-    private int mSO_PREFIX;
-    private int mSO_CODE;
-
     private HashMap<String, String> mData;
+
+    private HMAux partnerAux = new HMAux();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,12 +92,6 @@ public class Act028_Main extends Base_Activity_Frag {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act028_title");
-
-//        sm_soDao = new SM_SODao(
-//                context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM
-//        );
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -142,61 +144,27 @@ public class Act028_Main extends Base_Activity_Frag {
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-//        act027_opc = (Act027_Opc) fm.findFragmentById(act027_opc);
-//        act027_opc.setOnMenuOptionsSelected(this);
-//
-//        data = sm_soDao.getByStringHM(
-//                new SM_SO_Sql_002(
-//                        mCustomer_code,
-//                        mSO_PREFIX,
-//                        mSO_CODE
-//                ).toSqlQuery()
-//        );
-//
-//        act027_opc.setData(data);
-//
-//        act027_services = new Act027_Services();
-//        act027_services.setOnItemClickListener(this);
-//        act027_services.setData((ArrayList<HMAux>) sm_soDao.query_HM(
-//                new SM_SO_Service_Sql_003(
-//                        mCustomer_code,
-//                        mSO_PREFIX,
-//                        mSO_CODE
-//                ).toSqlQuery()
-//        ));
-//
-//        act027_serial = new Act027_Serial();
-//        act027_serial.setBaInfra(this);
-//        act027_serial.setBundle(bundle);
-//        act027_serial.setHmAux_Trans(hmAux_Trans);
-//        act027_serial.setData(data);
-//
-//        act027_header = new Act027_Header();
-//        act027_header.setData(sm_soDao.getByStringHM(
-//                new SM_SO_Sql_002(
-//                        mCustomer_code,
-//                        mSO_PREFIX,
-//                        mSO_CODE
-//                ).toSqlQuery()
-//        ));
-//
-//        setFrag(act027_services, "SERVICES");
+        act028_opc = (Act028_Opc) fm.findFragmentById(R.id.act028_opc);
+        act028_opc.setOnMenuOptionsSelected(this);
+        act028_opc.setData(mData);
+
+        act028_task_list = new Act028_Task_List();
+        act028_task_list.setOnTaskSelected(this);
+
+        act028_task = new Act028_Task();
 
         mDrawerLayout.openDrawer(GravityCompat.START);
+
+        controls_frags.add(act028_task);
     }
 
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
+
         if (bundle != null) {
-            mCustomer_code = ToolBox_Con.getPreference_Customer_Code(context);
-            mSO_PREFIX = Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "-1"));
-            mSO_CODE = Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "-1"));
             mData = (HashMap<String, String>) bundle.getSerializable("data");
         } else {
-            mCustomer_code = ToolBox_Con.getPreference_Customer_Code(context);
-            mSO_PREFIX = -1;
-            mSO_CODE = -1;
-            mData = new HMAux();
+            mData = new HashMap<>();
         }
     }
 
@@ -229,6 +197,43 @@ public class Act028_Main extends Base_Activity_Frag {
     }
 
     private void initActions() {
+
+    }
+
+    @Override
+    public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec) {
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        act028_task_list.setSm_so_service_exec(sm_so_service_exec);
+        act028_task_list.setHMAuxScreen();
+        //
+        setFrag(act028_task_list, "TASK_LIST");
+    }
+
+    @Override
+    public void newExec() {
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        showPartnerOptDialog();
+
+    }
+
+    @Override
+    public void menuTaksSelected(HashMap<String, String> data) {
+        act028_task.setData(data);
+        act028_task.setHMAuxScreen();
+        //
+        setFrag(act028_task, "TASK");
+    }
+
+    private <T extends Fragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act028_main_ll, type, sTag);
+            ft.commit();
+        }
     }
 
     @Override
@@ -275,5 +280,79 @@ public class Act028_Main extends Base_Activity_Frag {
             finish();
         }
     }
+
+    @Override
+    public void showPartnerOptDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Act028_Main.this);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
+
+        SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
+
+        ss_partner.setmLabel("Selecao de Partner");
+        ss_partner.setmTitle("Busca de Partner");
+
+        MD_PartnerDao md_partnerDao = new MD_PartnerDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
+
+                new MD_Partner_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        if (partners.size() > 0) {
+            HMAux hmAux = new HMAux();
+            hmAux.put("id", "0");
+            hmAux.put("description", "Select a Partner");
+
+            ss_partner.setmValue(hmAux);
+        }
+
+        ss_partner.setmOption(partners);
+
+        builder.setView(view);
+        builder.setCancelable(true);
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+
+                if (partnerAux.size() == 0) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+
+                    mDrawerToggle.syncState();
+                }
+
+            }
+        });
+
+        final AlertDialog show = builder.show();
+
+        ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+
+                partnerAux.clear();
+
+                partnerAux.putAll(hmAux);
+
+                if (partnerAux.size() == 0) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+
+                    mDrawerToggle.syncState();
+                }
+
+                show.dismiss();
+
+            }
+        });
+
+    }
+
 
 }

@@ -99,7 +99,7 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private void changeTabColor() {
-        switch (selection.toUpperCase()){
+        switch (selection.toUpperCase()) {
             case "SERVICES":
                 ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));

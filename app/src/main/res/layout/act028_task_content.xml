@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,19 +9,17 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp">
 
-
         <TextView
-            android:id="@+id/act028_opc_content_cell_tv_so_ttl"
+            android:id="@+id/act028_task_content_cell_tv_so_ttl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Service"
+            android:text="Task"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -39,7 +36,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_opc_content_tv_service_id_label"
+                    android:id="@+id/act028_task_content_tv_service_id_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -59,7 +56,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_opc_content_tv_service_id_value"
+                    android:id="@+id/act028_task_content_tv_service_id_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -78,13 +75,13 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/act028_opc_content_tv_desc_label"
+                android:id="@+id/act028_task_content_tv_desc_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Service Description" />
 
             <TextView
-                android:id="@+id/act028_opc_content_tv_desc_value"
+                android:id="@+id/act028_task_content_tv_desc_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="MARTELINHO 01 Full Description" />
@@ -105,12 +102,12 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_opc_content_tv_product_pack_id_label"
+                    android:id="@+id/act028_task_content_tv_task_tmp_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="Pack ID" />
+                    android:text="Task TMP" />
 
             </LinearLayout>
 
@@ -125,99 +122,12 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_opc_content_tv_product_pack_id_value"
+                    android:id="@+id/act028_task_content_tv_task_tmp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="LIMPEZA_FULL" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_pack_desc_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Pack Description" />
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_pack_desc_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="LIMPEZA FULL" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_partner_restriction_desc_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Partner Restriction" />
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_partner_restriction_desc_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Partner ID / Partner Desc" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_product_qty_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Quantity" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_product_qty_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="1" />
+                    android:text="201" />
 
             </LinearLayout>
 
@@ -232,24 +142,32 @@
         android:layout_marginTop="10dp"
         android:background="@color/namoa_color_light_blue3" />
 
-    <ListView
-        android:id="@+id/act028_opc_content_lv_execs"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <com.namoa_digital.namoa_library.ctls.TaskControl
+            android:id="@+id/act028_task_content_tc_task_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
-            android:id="@+id/act028_opc_content_content_btn_new_exec"
+            android:id="@+id/act028_task_content_btn_new_task"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_weight="1"
-            android:text="New Exec" />
+            android:text="Save Task" />
 
     </LinearLayout>
 
