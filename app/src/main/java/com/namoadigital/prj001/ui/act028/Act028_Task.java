@@ -142,8 +142,8 @@ public class Act028_Task extends BaseFragment {
                                 Integer.parseInt(data.get("category_price_code")),
                                 Integer.parseInt(data.get("service_code")),
                                 Integer.parseInt(data.get("service_seq")),
-                                Integer.parseInt(data.get("exec_tmp")),
-                                Integer.parseInt(data.get("task_tmp"))
+                                Long.parseLong(data.get("exec_tmp")),
+                                Long.parseLong(data.get("task_tmp"))
                         ).toSqlQuery()
 
                 );

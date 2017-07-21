@@ -221,9 +221,9 @@ public class TSO_Serial_Save_Rec {
 
     public class So_From_To{
         @Expose
-        private ArrayList<SM_SO_Service_Exec_Task> task;
+        private ArrayList<SM_SO_Service_Exec_Task> task = new ArrayList<>();
         @Expose
-        private ArrayList<SM_SO_Service_Exec_Task_File> task_file;
+        private ArrayList<SM_SO_Service_Exec_Task_File> task_file = new ArrayList<>();
 
         public ArrayList<SM_SO_Service_Exec_Task> getTask() {
             return task;

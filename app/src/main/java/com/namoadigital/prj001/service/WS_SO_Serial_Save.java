@@ -27,6 +27,7 @@ import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_007;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_006;
@@ -143,7 +144,7 @@ public class WS_SO_Serial_Save extends IntentService {
             sos.get(i).setOrigin_change(SO_ORIGIN_CHANGE_APP);
 
             //Gambi Remover
-            sos.get(i).setSo_scn(sos.get(i).getSo_scn() + 1);
+            //sos.get(i).setSo_scn(sos.get(i).getSo_scn() + 1);
         }
         //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
         Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
@@ -263,78 +264,103 @@ public class WS_SO_Serial_Save extends IntentService {
         GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
         try {
-            //
-            for (SM_SO_Service_Exec_Task task : so_from_to.getTask()) {
-                SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
-                exec.setCustomer_code(task.getCustomer_code());
-                exec.setSo_prefix(task.getSo_prefix());
-                exec.setSo_code(task.getSo_code());
-                exec.setPrice_list_code(task.getPrice_list_code());
-                exec.setPack_code(task.getPack_code());
-                exec.setPack_seq(task.getPack_seq());
-                exec.setCategory_price_code(task.getCategory_price_code());
-                exec.setService_code(task.getService_code());
-                exec.setService_seq(task.getService_seq());
-                exec.setExec_code(task.getExec_code());
-                exec.setExec_tmp(task.getExec_tmp());
+
+            if(so_from_to.getTask() != null){
                 //
-                execDao.addUpdateTmp(exec);
-                taskDao.addUpdateTmp(task);
-                //atualiza SCN na S.O
-                soDao.addUpdate(new SM_SO_Sql_006(
-                        task.getCustomer_code(),
-                        task.getSo_prefix(),
-                        task.getSo_code(),
-                        so_scn
-                ).toSqlQuery());
-
-            }
-            //
-            for (SM_SO_Service_Exec_Task_File taskFile : so_from_to.getTask_file()) {
-                SM_SO_Service_Exec_Task_File auxFile =
-                        taskFileDao.getByString(
-                                new SM_SO_Service_Exec_Task_File_Sql_006(
-                                        taskFile.getCustomer_code(),
-                                        taskFile.getSo_prefix(),
-                                        taskFile.getSo_code(),
-                                        taskFile.getPrice_list_code(),
-                                        taskFile.getPack_code(),
-                                        taskFile.getPack_seq(),
-                                        taskFile.getCategory_price_code(),
-                                        taskFile.getService_code(),
-                                        taskFile.getService_seq(),
-                                        taskFile.getExec_tmp(),
-                                        taskFile.getTask_tmp(),
-                                        taskFile.getFile_tmp()
-                                ).toSqlQuery()
-                        );
-                String new_name = "sm_so_" +
-                        taskFile.getCustomer_code() + "_" +
-                        taskFile.getSo_prefix() + "_" +
-                        taskFile.getSo_code() + "_" +
-                        taskFile.getPrice_list_code() + "_" +
-                        taskFile.getPack_code() + "_" +
-                        taskFile.getPack_seq() + "_" +
-                        taskFile.getCategory_price_code() + "_" +
-                        taskFile.getService_code() + "_" +
-                        taskFile.getService_seq() + "_" +
-                        taskFile.getExec_code() + "_" +
-                        taskFile.getTask_code() + "_" +
-                        taskFile.getFile_code() + ".jpg";
-
-                if(renameTaskFile(auxFile.getFile_name(),new_name)){
-                    //Atualiza path da imagem na lista de upload
-                    geFileDao.addUpdate(
-                            new GE_File_Sql_006(
-                                    auxFile.getFile_name().replace(".jpg","").replace(".png",""),
-                                    new_name
+                for (SM_SO_Service_Exec_Task task : so_from_to.getTask()) {
+                    SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
+                    exec.setCustomer_code(task.getCustomer_code());
+                    exec.setSo_prefix(task.getSo_prefix());
+                    exec.setSo_code(task.getSo_code());
+                    exec.setPrice_list_code(task.getPrice_list_code());
+                    exec.setPack_code(task.getPack_code());
+                    exec.setPack_seq(task.getPack_seq());
+                    exec.setCategory_price_code(task.getCategory_price_code());
+                    exec.setService_code(task.getService_code());
+                    exec.setService_seq(task.getService_seq());
+                    exec.setExec_code(task.getExec_code());
+                    exec.setExec_tmp(task.getExec_tmp());
+                    //
+                    execDao.addUpdateTmp(exec);
+                    //
+                    SM_SO_Service_Exec_Task taskOLD = taskDao.getByString(
+                            new SM_SO_Service_Exec_Task_Sql_005(
+                                    task.getCustomer_code(),
+                                    task.getSo_prefix(),
+                                    task.getSo_code(),
+                                    task.getPrice_list_code(),
+                                    task.getPack_code(),
+                                    task.getPack_seq(),
+                                    task.getCategory_price_code(),
+                                    task.getService_code(),
+                                    task.getService_seq(),
+                                    task.getExec_tmp(),
+                                    task.getTask_tmp()
                             ).toSqlQuery()
                     );
-                }else{
-                    return false;
+                    //
+                    task.setTask_seq_oper(taskOLD.getTask_seq_oper());
+                    //
+                    taskDao.addUpdateTmp(task);
+                    //atualiza SCN na S.O
+                    soDao.addUpdate(new SM_SO_Sql_006(
+                            task.getCustomer_code(),
+                            task.getSo_prefix(),
+                            task.getSo_code(),
+                            so_scn
+                    ).toSqlQuery());
+
                 }
-                taskFile.setFile_url_local(new_name);
-                taskFileDao.addUpdateTmp(taskFile);
+            }
+
+            if(so_from_to.getTask_file() != null){
+                //
+                for (SM_SO_Service_Exec_Task_File taskFile : so_from_to.getTask_file()) {
+                    SM_SO_Service_Exec_Task_File auxFile =
+                            taskFileDao.getByString(
+                                    new SM_SO_Service_Exec_Task_File_Sql_006(
+                                            taskFile.getCustomer_code(),
+                                            taskFile.getSo_prefix(),
+                                            taskFile.getSo_code(),
+                                            taskFile.getPrice_list_code(),
+                                            taskFile.getPack_code(),
+                                            taskFile.getPack_seq(),
+                                            taskFile.getCategory_price_code(),
+                                            taskFile.getService_code(),
+                                            taskFile.getService_seq(),
+                                            taskFile.getExec_tmp(),
+                                            taskFile.getTask_tmp(),
+                                            taskFile.getFile_tmp()
+                                    ).toSqlQuery()
+                            );
+                    String new_name = "sm_so_" +
+                            taskFile.getCustomer_code() + "_" +
+                            taskFile.getSo_prefix() + "_" +
+                            taskFile.getSo_code() + "_" +
+                            taskFile.getPrice_list_code() + "_" +
+                            taskFile.getPack_code() + "_" +
+                            taskFile.getPack_seq() + "_" +
+                            taskFile.getCategory_price_code() + "_" +
+                            taskFile.getService_code() + "_" +
+                            taskFile.getService_seq() + "_" +
+                            taskFile.getExec_code() + "_" +
+                            taskFile.getTask_code() + "_" +
+                            taskFile.getFile_code() + ".jpg";
+
+                    if(renameTaskFile(auxFile.getFile_name(),new_name)){
+                        //Atualiza path da imagem na lista de upload
+                        geFileDao.addUpdate(
+                                new GE_File_Sql_006(
+                                        auxFile.getFile_name().replace(".jpg","").replace(".png",""),
+                                        new_name
+                                ).toSqlQuery()
+                        );
+                    }else{
+                        return false;
+                    }
+                    taskFile.setFile_url_local(new_name);
+                    taskFileDao.addUpdateTmp(taskFile);
+                }
             }
 
         } catch (Exception e) {
