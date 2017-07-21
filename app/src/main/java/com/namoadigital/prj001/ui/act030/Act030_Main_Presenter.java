@@ -1,8 +1,22 @@
 package com.namoadigital.prj001.ui.act030;
 
+import com.namoadigital.prj001.model.TProduct_Serial;
+
 /**
  * Created by neomatrix on 03/07/17.
  */
 
 public interface Act030_Main_Presenter {
+
+    void getProductSerialList(String ws_result);
+
+    void onBackPressedClicked();
+
+    void executeSerialSearch(String product_code, String product_id,String serial_id);
+
+    void defineFlow(TProduct_Serial productSerial);
+
+    void checkSingleProduct();
+
+    boolean checkProductExists(String product_code, String product_id, String serial);
 }

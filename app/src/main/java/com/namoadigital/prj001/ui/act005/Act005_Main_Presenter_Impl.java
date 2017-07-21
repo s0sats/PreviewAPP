@@ -233,7 +233,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
 
                 case Act005_Main.MENU_ID_SERIAL:
-                    mView.callAct029(context);
+                    mView.callAct030(context);
                     break;
 
                 case Act005_Main.MENU_ID_PENDING_DATA:
