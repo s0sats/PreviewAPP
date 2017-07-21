@@ -166,10 +166,10 @@ public class WS_DownLoad_Picture extends IntentService {
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_FileDao.FILE_URL),
-                                Constant.CACHE_PATH + "/" + hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                                Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
                     }
                     //Atualiza campo com url local
                     taskFileDao.addUpdate(
@@ -186,7 +186,7 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(SM_SO_Service_Exec_Task_FileDao.EXEC_CODE),
                                     hmAux.get(SM_SO_Service_Exec_Task_FileDao.TASK_CODE),
                                     hmAux.get(SM_SO_Service_Exec_Task_FileDao.FILE_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + "jpg"
+                                    hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + ".jpg"
                             ).toSqlQuery().toLowerCase()
                     );
                 }

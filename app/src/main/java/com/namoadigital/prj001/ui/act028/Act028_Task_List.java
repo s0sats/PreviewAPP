@@ -10,12 +10,16 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Task_Adapter;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -88,35 +92,14 @@ public class Act028_Task_List extends BaseFragment {
         try {
 
             if (sm_so_service_exec != null) {
-                lv_tasks.setAdapter(
-
-                        new Act028_Task_Adapter(
-                                context,
-                                R.layout.act028_task_content_cell_01,
-                                sm_so_service_exec_taskDao.query_HM(
-                                        new SM_SO_Service_Exec_Task_Sql_003(
-                                                sm_so_service_exec.getCustomer_code(),
-                                                sm_so_service_exec.getSo_prefix(),
-                                                sm_so_service_exec.getSo_code(),
-                                                sm_so_service_exec.getPrice_list_code(),
-                                                sm_so_service_exec.getPack_code(),
-                                                sm_so_service_exec.getPack_seq(),
-                                                sm_so_service_exec.getCategory_price_code(),
-                                                sm_so_service_exec.getService_code(),
-                                                sm_so_service_exec.getService_seq(),
-                                                sm_so_service_exec.getExec_tmp()
-                                        ).toSqlQuery()
-                                )
-                        )
-                );
-
+                createTaskList();
             }
 
             switch (sm_so_service_exec.getStatus().toUpperCase()) {
-                case "PENDING":
+                case Constant.SO_STATUS_PENDING:
                     btn_new_task.setVisibility(View.VISIBLE);
                     break;
-                case "PROCESS":
+                case Constant.SO_STATUS_PROCESS:
                     btn_new_task.setVisibility(View.VISIBLE);
                     break;
                 default:
@@ -124,10 +107,33 @@ public class Act028_Task_List extends BaseFragment {
                     break;
             }
 
-
         } catch (Exception e) {
             String error_s = e.toString();
         }
+    }
+
+    private void createTaskList() {
+        lv_tasks.setAdapter(
+
+                new Act028_Task_Adapter(
+                        context,
+                        R.layout.act028_task_content_cell_01,
+                        sm_so_service_exec_taskDao.query_HM(
+                                new SM_SO_Service_Exec_Task_Sql_003(
+                                        sm_so_service_exec.getCustomer_code(),
+                                        sm_so_service_exec.getSo_prefix(),
+                                        sm_so_service_exec.getSo_code(),
+                                        sm_so_service_exec.getPrice_list_code(),
+                                        sm_so_service_exec.getPack_code(),
+                                        sm_so_service_exec.getPack_seq(),
+                                        sm_so_service_exec.getCategory_price_code(),
+                                        sm_so_service_exec.getService_code(),
+                                        sm_so_service_exec.getService_seq(),
+                                        sm_so_service_exec.getExec_tmp()
+                                ).toSqlQuery()
+                        )
+                )
+        );
     }
 
     private void iniAction() {
@@ -145,6 +151,93 @@ public class Act028_Task_List extends BaseFragment {
             }
         });
 
+        btn_new_task.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                HMAux dtAux = last_task_seq_oper();
+
+                SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+                task.setTask_code(0);
+
+                if (dtAux != null) {
+                    task.setTask_seq_oper(Integer.parseInt(dtAux.get("task_seq_oper") + 1));
+                } else {
+                    task.setTask_seq_oper(1);
+                }
+
+                task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+                task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+                task.setTask_perc(Integer.parseInt(dtAux.get("task_perc")));
+                task.setQty_people(1);
+                task.setStatus(Constant.SO_STATUS_PROCESS);
+
+                // Selecionar do cadastro do serial
+                //task.setSite_code(so.getSite_code());
+                //task.setSite_id("1");
+                //task.setSite_desc("1");
+                //task.setZone_code(2);
+                //task.setZone_id("2");
+                //task.setZone_desc("2");
+                //task.setLocal_code(4);
+                //task.setLocal_id("4");
+
+                task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                task.setEnd_date("");
+                //task.setExec_time(60);
+                task.setComments("");
+                //
+                task.setPK(sm_so_service_exec);
+                //
+                long nTaskTemp = Long.parseLong(sm_so_service_exec_taskDao.getByStringHM(
+                        new SM_SO_Service_Exec_Task_Sql_004(
+                                task.getCustomer_code(),
+                                task.getSo_prefix(),
+                                task.getSo_code(),
+                                task.getPrice_list_code(),
+                                task.getPack_code(),
+                                task.getPack_seq(),
+                                task.getCategory_price_code(),
+                                task.getService_code(),
+                                task.getService_seq(),
+                                task.getExec_tmp()
+
+                        ).toSqlQuery()
+                ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
+
+                task.setTask_tmp(nTaskTemp);
+                sm_so_service_exec_taskDao.addUpdateTmp(task);
+
+                createTaskList();
+            }
+        });
+
+    }
+
+    private HMAux last_task_seq_oper() {
+        HMAux aux = null;
+        int curTask_Seq_Oper = 0;
+
+        for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
+            aux = (HMAux) lv_tasks.getAdapter().getItem(i);
+            //
+            if (aux.get("status").equalsIgnoreCase(Constant.TASK_STATUS_DONE)) {
+                int perc = Integer.parseInt(aux.get("task_perc"));
+                int task_seq_oper = Integer.parseInt(aux.get("task_seq_oper"));
+
+                if (perc < 100) {
+                    if (curTask_Seq_Oper < task_seq_oper) {
+                        curTask_Seq_Oper = task_seq_oper;
+                    }
+                }
+            }
+        }
+
+        if (curTask_Seq_Oper == 0) {
+            return null;
+        } else {
+            return aux;
+        }
 
     }
 }
