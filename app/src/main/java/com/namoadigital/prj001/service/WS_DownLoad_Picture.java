@@ -186,7 +186,7 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(SM_SO_Service_Exec_Task_FileDao.EXEC_CODE),
                                     hmAux.get(SM_SO_Service_Exec_Task_FileDao.TASK_CODE),
                                     hmAux.get(SM_SO_Service_Exec_Task_FileDao.FILE_CODE),
-                                    hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + "jpg"
+                                    hmAux.get(SM_SO_Service_Exec_Task_File_Sql_003.FILE_LOCAL_NAME) + ".jpg"
                             ).toSqlQuery().toLowerCase()
                     );
                 }

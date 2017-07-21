@@ -5,4 +5,6 @@ package com.namoadigital.prj001.ui.act031;
  */
 
 public interface Act031_Main_Presenter {
+    void serialFlow(String serial);
 }
+
