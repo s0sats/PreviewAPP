@@ -7,9 +7,7 @@ import com.namoadigital.prj001.database.Specification;
  * Created by neomatrix on 06/07/17.
  */
 
-public class SM_SO_Service_Exec_Task_Sql_004 implements Specification {
-
-    public static final String NEXT_TMP = "next_tmp";
+public class SM_SO_Service_Exec_Task_Sql_005 implements Specification {
 
     private long customer_code;
     private int so_prefix;
@@ -20,9 +18,10 @@ public class SM_SO_Service_Exec_Task_Sql_004 implements Specification {
     private int category_price_code;
     private int service_code;
     private int service_seq;
-    private long exec_tmp;
+    private int exec_tmp;
+    private int task_tmp;
 
-    public SM_SO_Service_Exec_Task_Sql_004(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
+    public SM_SO_Service_Exec_Task_Sql_005(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, int exec_tmp, int task_tmp) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
@@ -33,6 +32,7 @@ public class SM_SO_Service_Exec_Task_Sql_004 implements Specification {
         this.service_code = service_code;
         this.service_seq = service_seq;
         this.exec_tmp = exec_tmp;
+        this.task_tmp = task_tmp;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SM_SO_Service_Exec_Task_Sql_004 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "     IFNULL(max(s.task_tmp),200) + 1 "+NEXT_TMP+" \n" +
+                        "      S.*\n" +
                         " FROM\n" +
                         SM_SO_Service_Exec_TaskDao.TABLE + " S\n" +
                         " WHERE\n" +
@@ -54,8 +54,8 @@ public class SM_SO_Service_Exec_Task_Sql_004 implements Specification {
                         "    AND S.category_price_code =    '" + category_price_code + "'\n" +
                         "    AND S.service_code =           '" + service_code + "'\n" +
                         "    AND S.service_seq =            '" + service_seq + "'\n" +
-                        "    AND S.exec_tmp =              '" + exec_tmp + "' ")
-                .append(";"+NEXT_TMP)
+                        "    AND S.exec_tmp =              '" + exec_tmp + "'\n" +
+                        "    AND S.task_tmp =              '" + task_tmp + "' ")
                 .toString();
     }
 }

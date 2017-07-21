@@ -301,7 +301,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         task.setPK(exec);
         //
         long nTaskTemp = Long.parseLong(execDao.getByStringHM(
-                new SM_SO_Service_Exec_Task_Sql_003(
+                new SM_SO_Service_Exec_Task_Sql_004(
                         task.getCustomer_code(),
                         task.getSo_prefix(),
                         task.getSo_code(),

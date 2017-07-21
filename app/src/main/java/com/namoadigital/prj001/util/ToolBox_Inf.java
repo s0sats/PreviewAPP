@@ -359,9 +359,6 @@ public class ToolBox_Inf {
         }
     }
 
-
-
-
     public static void deleteLocalImage(String sFile) {
         File file = new File(Constant.CACHE_PATH_PHOTO + "/" + sFile);
 
@@ -524,6 +521,14 @@ public class ToolBox_Inf {
         //
         from.renameTo(to);
     }
+
+    public static void renameDownloadFileInfPHOTO(String sName, String ext) {
+        File from = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ".tmp");
+        File to = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
+
 
     public static void renameDownloadFileInfV2(String path,String sName, String extOri, String extDest) {
         if(extOri == null || extOri.trim().length() == 0){

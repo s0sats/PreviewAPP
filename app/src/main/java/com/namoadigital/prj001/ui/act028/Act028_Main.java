@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -52,6 +52,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     private Act028_Opc act028_opc;
     private Act028_Task_List act028_task_list;
     private Act028_Task act028_task;
+
+    private LinearLayout ll_list;
+    private LinearLayout ll_task;
 
     private Bundle bundle;
 
@@ -144,18 +147,26 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        ll_list = (LinearLayout) findViewById(R.id.act028_main_llist);
+        ll_task = (LinearLayout) findViewById(R.id.act028_main_ltask);
+
         act028_opc = (Act028_Opc) fm.findFragmentById(R.id.act028_opc);
         act028_opc.setOnMenuOptionsSelected(this);
         act028_opc.setData(mData);
 
-        act028_task_list = new Act028_Task_List();
+        act028_task_list = (Act028_Task_List) fm.findFragmentById(R.id.act028_list);
+        act028_task_list.setBaInfra(this);
         act028_task_list.setOnTaskSelected(this);
 
-        act028_task = new Act028_Task();
+        act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
+        act028_task.setData(mData);
 
         mDrawerLayout.openDrawer(GravityCompat.START);
 
         controls_frags.add(act028_task);
+
+        ll_list.setVisibility(View.GONE);
+        ll_task.setVisibility(View.GONE);
     }
 
     private void recoverGetIntents() {
@@ -208,6 +219,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_task_list.setSm_so_service_exec(sm_so_service_exec);
         act028_task_list.setHMAuxScreen();
         //
+        ll_list.setVisibility(View.VISIBLE);
+        ll_task.setVisibility(View.GONE);
+        //
         setFrag(act028_task_list, "TASK_LIST");
     }
 
@@ -223,17 +237,22 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     @Override
     public void menuTaksSelected(HashMap<String, String> data) {
         act028_task.setData(data);
-        act028_task.setHMAuxScreen();
+        //act028_task.setHMAuxScreen();
+        //
+        ll_list.setVisibility(View.GONE);
+        ll_task.setVisibility(View.VISIBLE);
         //
         setFrag(act028_task, "TASK");
+        //
+        act028_task.setHMAuxScreen();
     }
 
     private <T extends Fragment> void setFrag(T type, String sTag) {
-        if (fm.findFragmentByTag(sTag) == null) {
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.act028_main_ll, type, sTag);
-            ft.commit();
-        }
+//        if (fm.findFragmentByTag(sTag) == null) {
+//            FragmentTransaction ft = fm.beginTransaction();
+//            ft.replace(R.id.act028_main_ll, type, sTag);
+//            ft.commit();
+//        }
     }
 
     @Override
@@ -279,6 +298,21 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             startActivity(mIntent);
             finish();
         }
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+        int i = 10;
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        int i = 10;
+
     }
 
     @Override

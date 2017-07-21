@@ -19,13 +19,37 @@
 
 
         <LinearLayout
-            android:id="@+id/act028_main_ll"
+            android:id="@+id/act028_main_llist"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <fragment
+                android:id="@+id/act028_list"
+                android:name="com.namoadigital.prj001.ui.act028.Act028_Task_List"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout="@layout/act028_opc_content" />
+
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_main_ltask"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <fragment
+                android:id="@+id/act028_lt"
+                android:name="com.namoadigital.prj001.ui.act028.Act028_Task"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout="@layout/act028_opc_content" />
+
+        </LinearLayout>
+
 
         <include layout="@layout/footer_base" />
 
