@@ -29,6 +29,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_005;
+import com.namoadigital.prj001.sql.SM_SO_Sql_006;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -208,7 +209,7 @@ public class WS_SO_Serial_Save extends IntentService {
         String so_list_status = "";
         //Processa de-para de task e Task File
         if (ret.getSo_from_to() != null) {
-            if (processFromTo(ret.getSo_from_to())) {
+            if (processFromTo(ret.getSo_from_to(),ret.getSo_return().get(0).getSo_scn())) {
                 //
                 if (ret.getSo() != null) {
                     //Var q indica se refresh da SO é full ou só De_Para
@@ -256,7 +257,7 @@ public class WS_SO_Serial_Save extends IntentService {
         }
     }
 
-    private boolean processFromTo(TSO_Serial_Save_Rec.So_From_To so_from_to) {
+    private boolean processFromTo(TSO_Serial_Save_Rec.So_From_To so_from_to, int so_scn) {
         SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
@@ -279,6 +280,14 @@ public class WS_SO_Serial_Save extends IntentService {
                 //
                 execDao.addUpdateTmp(exec);
                 taskDao.addUpdateTmp(task);
+                //atualiza SCN na S.O
+                soDao.addUpdate(new SM_SO_Sql_006(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        so_scn
+                ).toSqlQuery());
+
             }
             //
             for (SM_SO_Service_Exec_Task_File taskFile : so_from_to.getTask_file()) {
