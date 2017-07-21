@@ -155,6 +155,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_opc.setData(mData);
 
         act028_task_list = (Act028_Task_List) fm.findFragmentById(R.id.act028_list);
+        act028_task_list.setBaInfra(this);
         act028_task_list.setOnTaskSelected(this);
 
         act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
@@ -297,6 +298,21 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             startActivity(mIntent);
             finish();
         }
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+        int i = 10;
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        int i = 10;
+
     }
 
     @Override
