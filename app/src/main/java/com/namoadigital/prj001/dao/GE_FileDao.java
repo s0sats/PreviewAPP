@@ -237,7 +237,12 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             ge_file.setFile_code(cursor.getString(cursor.getColumnIndex(FILE_CODE)));
             ge_file.setFile_path(cursor.getString(cursor.getColumnIndex(FILE_PATH)));
-            ge_file.setFile_path_new(cursor.getString(cursor.getColumnIndex(FILE_PATH_NEW)));
+            if(cursor.isNull(cursor.getColumnIndex(FILE_PATH_NEW))){
+                ge_file.setFile_path_new(null);
+            }else{
+                ge_file.setFile_path_new(cursor.getString(cursor.getColumnIndex(FILE_PATH_NEW)));
+            }
+
             ge_file.setFile_status(cursor.getString(cursor.getColumnIndex(FILE_STATUS)));
             ge_file.setFile_date(cursor.getString(cursor.getColumnIndex(FILE_DATE)));
 

@@ -73,6 +73,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             Act005_Main.MENU_ID_CHECKLIST,
             Act005_Main.MENU_ID_SERVICE,
             Act005_Main.MENU_ID_SCHEDULE_DATA,
+            Act005_Main.MENU_ID_SERIAL,
             Act005_Main.MENU_ID_PENDING_DATA,
             Act005_Main.MENU_ID_HISTORIC_DATA,
             Act005_Main.MENU_ID_MESSAGES,
@@ -85,6 +86,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             "lbl_checklist",
             "lbl_so",
             "lbl_schedule_data",
+            "lbl_serial_data",
             "lbl_pending_data",
             "lbl_historic_data",
             "lbl_messages",
@@ -97,6 +99,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_n_form),
             String.valueOf(R.drawable.n_service_logo),
             String.valueOf(R.drawable.ic_calendario),
+            String.valueOf(R.drawable.ic_barcode_lib),
             String.valueOf(R.drawable.ic_pendente),
             String.valueOf(R.drawable.ic_historico),
             String.valueOf(R.drawable.ic_notificacao),
@@ -109,6 +112,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             {""},
             {Constant.PARAM_SO, Constant.PARAM_SO_MOV},
             {Constant.PARAM_SCHEDULE_CHECKLIST},
+            {Constant.PARAM_SO_MOV},
             {""},
             {""},
             {""},
@@ -226,6 +230,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                 case Act005_Main.MENU_ID_SCHEDULE_DATA:
                     mView.callAct016(context);
+                    break;
+
+                case Act005_Main.MENU_ID_SERIAL:
+                    mView.callAct030(context);
                     break;
 
                 case Act005_Main.MENU_ID_PENDING_DATA:
