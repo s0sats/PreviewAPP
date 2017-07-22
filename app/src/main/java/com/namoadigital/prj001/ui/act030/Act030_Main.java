@@ -121,6 +121,10 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("progress_sync_msg");
         transList.add("alert_no_form_for_operation_ttl");
         transList.add("alert_no_form_for_operation_msg");
+        transList.add("alert_product_not_found_ttl");
+        transList.add("alert_product_not_found_msg");
+        transList.add("alert_new_serial_ttl");
+        transList.add("alert_new_serial_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
