@@ -54,10 +54,11 @@ public class WS_SO_Search extends IntentService {
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, -1L);
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
-            String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");
+            String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");//Lista de SO a Serem Baixados. Act024
             boolean save_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL, false);
+            boolean create_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL, false);
             //
-            processSO_Search(product_code, serial_id, so_mult, save_serial);
+            processSO_Search(product_code, serial_id, so_mult, save_serial,create_serial);
 
         } catch (Exception e) {
 
@@ -74,7 +75,7 @@ public class WS_SO_Search extends IntentService {
 
     }
 
-    private void processSO_Search(Long product_code, String serial_id, String so_mult, boolean save_serial) {
+    private void processSO_Search(Long product_code, String serial_id, String so_mult, boolean save_serial, boolean create_serial) {
         ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
 
         if(save_serial) {
@@ -86,7 +87,7 @@ public class WS_SO_Search extends IntentService {
                     ).toSqlQuery()
             );
             //
-            serial.setOnly_position(1);
+            serial.setOnly_position(create_serial ? 0 : 1);
             serialList.add(serial);
         }
         //Seleciona traduções

@@ -29,6 +29,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act031.Act031_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -439,7 +440,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 
     @Override
     public void callAct031(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act030_Main.class);
+        Intent mIntent = new Intent(context, Act031_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         //
