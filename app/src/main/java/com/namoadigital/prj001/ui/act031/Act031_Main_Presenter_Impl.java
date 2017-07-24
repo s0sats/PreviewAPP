@@ -148,6 +148,19 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
     }
 
     @Override
+    public void saveNewSerialInfo(Long product_code, String serial_id) {
+        MD_Product_Serial productSerial = new MD_Product_Serial();
+        productSerial.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+        productSerial.setProduct_code(product_code);
+        productSerial.setSerial_code(0);
+        productSerial.setSerial_id(serial_id);
+        //
+        serialDao.addUpdate(productSerial);
+        //
+        getSerialInfo(product_code, serial_id);
+    }
+
+    @Override
     public void getSerialInfo(Long product_code, String serial_id) {
         HMAux md_product_serial = serialDao.getByStringHM(
                 new MD_Product_Serial_Sql_001(

@@ -203,7 +203,7 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_SERIAL_ID = "serial_search_serial_id";
     public static final String WS_SERIAL_SEARCH_EXACT = "ws_serial_search_exact";
     public static final String WS_SERIAL_SEARCH_SAVE_PROCESS = "ws_serial_search_save_process";
-    public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_save_process";
+    public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_new_process";
 
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";

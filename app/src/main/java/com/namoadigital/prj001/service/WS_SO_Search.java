@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -117,14 +118,19 @@ public class WS_SO_Search extends IntentService {
                 TSO_Search_Rec.class
         );
         //
-        if (!ToolBox_Inf.processWSCheckValidation(
-                getApplicationContext(),
-                rec.getValidation(),
-                rec.getError_msg(),
-                rec.getLink_url(),
-                1,
-                1
-        )
+        if (
+                !ToolBox_Inf.processWSCheckValidation(
+                        getApplicationContext(),
+                        rec.getValidation(),
+                        rec.getError_msg(),
+                        rec.getLink_url(),
+                        1,
+                        1)
+                        ||
+                        !ToolBox_Inf.processoOthersError(
+                                getApplicationContext(),
+                                getResources().getString(R.string.generic_error_lbl),
+                                rec.getError_msg())
                 ) {
             return;
         }
@@ -165,6 +171,7 @@ public class WS_SO_Search extends IntentService {
     private void processSerialSaveRet(TSO_Search_Rec.Serial_Save_Return serial_return, MD_Product_Serial serial, HMAux hmAux) {
 
         if(serial_return.getRet_status().toUpperCase().equals("OK")){
+            serial.setSerial_code(serial_return.getSerial_code());
             serial.setUpdate_required(0);
             serialDao.addUpdate(serial);
             hmAux.put(SERIAL_SAVE,"OK");

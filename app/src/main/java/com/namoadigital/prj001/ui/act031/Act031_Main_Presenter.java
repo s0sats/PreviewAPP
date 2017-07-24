@@ -24,5 +24,7 @@ public interface Act031_Main_Presenter {
 
     void updateSerialInfo(MD_Product_Serial productSerial);
 
+    void saveNewSerialInfo(Long product_code, String serial_id);
+
 }
 

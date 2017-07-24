@@ -46,6 +46,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
     public static final String PROGRESS_NFC = "progress_nfc";
+    public static final String NEW_SERIAL = "new_serial";
 
     private Act030_Main_Presenter mPresenter;
     private DrawerLayout mDrawerLayout;
@@ -61,6 +62,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
     private TProduct_Serial serial;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,6 +128,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("alert_product_not_found_msg");
         transList.add("alert_new_serial_ttl");
         transList.add("alert_new_serial_msg");
+        transList.add("alert_new_serial_not_allow_ttl");
+        transList.add("alert_new_serial_not_allow_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -138,6 +142,9 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     private void initVars() {
+        //
+        bundle = new Bundle();
+        //
         mPresenter = new Act030_Main_Presenter_Impl(
                 context,
                 this,
@@ -229,13 +236,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                         //
                         mPresenter.executeSerialSearch(product, product_id, serial);
                     }else{
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_product_not_found_ttl"),
-                                hmAux_Trans.get("alert_product_not_found_msg"),
-                                null,
-                                0
-                        );
+
                     }
                 } else {
                     ToolBox.alertMSG(
@@ -308,7 +309,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                 if (ToolBox_Con.isOnline(context)) {
                     TProduct_Serial productSerial = (TProduct_Serial) parent.getItemAtPosition(position);
                     //
-                    mPresenter.defineFlow(productSerial);
+                    mPresenter.defineFlow(productSerial,false);
                 } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
@@ -422,7 +423,8 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.defineFlow(serial);
+
+                        mPresenter.defineFlow(serial,true);
                     }
                 },
                 1

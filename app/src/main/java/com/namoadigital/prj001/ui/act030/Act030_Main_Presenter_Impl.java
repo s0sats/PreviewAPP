@@ -59,9 +59,9 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         mView.loadProductSerialList(rec.getRecord());
         //Se qtd de registro maior que o total retornado,
         //exibe msg para refinar a busca.
-        if(rec.getRecord_count() == 0){
+        if (rec.getRecord_count() == 0) {
             mView.showNewSerialMsg();
-        }else if (rec.getRecord_count() > rec.getRecord_page()){
+        } else if (rec.getRecord_count() > rec.getRecord_page()) {
             mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
         }
     }
@@ -73,7 +73,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
 
     @Override
     public void executeSerialSearch(String product_code, String product_id, String serial_id) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
             mView.showPD();
 
@@ -89,21 +89,28 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
             //
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
     @Override
-    public void defineFlow(TProduct_Serial productSerial) {
+    public void defineFlow(TProduct_Serial productSerial,boolean new_serial) {
         Bundle bundle = new Bundle();
         //
         bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
         bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+        if(new_serial){
+            bundle.putBoolean(Act030_Main.NEW_SERIAL, new_serial);
+        }
         //
-        mView.callAct031(context,bundle);
+        mView.callAct031(context, bundle);
     }
 
+    /**
+     * Verifica se o usr só possui acesso a um produto.
+     * Nessa caso, já coloca os dados do produto no drawer
+     */
     @Override
     public void checkSingleProduct() {
         List<MD_Product> listProducts =
@@ -111,37 +118,69 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         ).toSqlQuery()
                 );
-        if(listProducts != null && listProducts.size() == 1){
-            mView.setProductInfoToDrawer(listProducts.get(0));
+        if (listProducts != null && listProducts.size() == 1) {
+            if (productAllowNewSerial(listProducts.get(0))) {
+                mView.setProductInfoToDrawer(listProducts.get(0));
+            }
         }
     }
 
     @Override
-    public boolean checkProductExists(String product_code, String product_id,String serial) {
+    public boolean checkProductExists(String product_code, String product_id, String serial) {
 
         MD_Product md_product
                 = mdProductDao.getByString(
-                        new MD_Product_Sql_003(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code,
-                                product_id
-                        ).toSqlQuery()
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
 
         );
         //
-        if(md_product != null && md_product.getCustomer_code() > -1){
-            TProduct_Serial tProductSerial = new TProduct_Serial();
-            //
-            tProductSerial.setCustomer_code(md_product.getCustomer_code());
-            tProductSerial.setProduct_code(md_product.getProduct_code());
-            tProductSerial.setProduct_id(md_product.getProduct_id());
-            tProductSerial.setProduct_desc(md_product.getProduct_desc());
-            tProductSerial.setSerial_id(serial);
-            //
-            mView.setTProductSerial(tProductSerial);
-            return true;
+        if (md_product != null && md_product.getCustomer_code() > -1) {
+            if(productAllowNewSerial(md_product)){
+                TProduct_Serial tProductSerial = new TProduct_Serial();
+                //
+                tProductSerial.setCustomer_code(md_product.getCustomer_code());
+                tProductSerial.setProduct_code(md_product.getProduct_code());
+                tProductSerial.setProduct_id(md_product.getProduct_id());
+                tProductSerial.setProduct_desc(md_product.getProduct_desc());
+                tProductSerial.setSerial_id(serial);
+                //
+                mView.setTProductSerial(tProductSerial);
+                return true;
+            }else{
+                return false;
+            }
+
+        }else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_product_not_found_ttl"),
+                    hmAux_Trans.get("alert_product_not_found_msg"),
+                    null,
+                    0
+            );
+            return false;
         }
-        return false;
+
+
+    }
+
+    public boolean productAllowNewSerial(MD_Product md_product) {
+        if (md_product.getAllow_new_serial_cl() == 1) {
+            return true;
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_new_serial_not_allow_ttl"),
+                    hmAux_Trans.get("alert_new_serial_not_allow_msg"),
+                    null,
+                    0
+            );
+            return false;
+        }
 
     }
 }

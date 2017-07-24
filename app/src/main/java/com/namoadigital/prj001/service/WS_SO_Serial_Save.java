@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -172,18 +173,23 @@ public class WS_SO_Serial_Save extends IntentService {
                 TSO_Serial_Save_Rec.class
         );
         //
-        if (!ToolBox_Inf.processWSCheckValidation(
+        if (
+                !ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
                 rec.getValidation(),
                 rec.getError_msg(),
                 rec.getLink_url(),
                 1,
-                1
-        )
-                ) {
+                1)
+            ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
+        ) {
             return;
         }
-
+        //
         HMAux hmAux = new HMAux();
         if (serialList.size() > 0) {
             processSerialSaveRet(rec.getSerial_return().get(0), serialList.get(0), hmAux);
@@ -253,9 +259,30 @@ public class WS_SO_Serial_Save extends IntentService {
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
 
             } else {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), hmAux, "", "0");
             }
+        }else{
+            if (ret.getSo() != null) {
+                //Var q indica se refresh da SO é full ou só De_Para
+                so_full_refresh = 1;
+                for (SM_SO so : ret.getSo()) {
+                    so.setPK();
+                    //Apaga So do Banco
+                    soDao.removeFull(so);
+                    //Insere So novamente no banco
+                    soDao.addUpdate(so);
+                }
+            }
+
+            hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
+            hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
+            hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
+
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+
         }
+
+
     }
 
     private boolean processFromTo(TSO_Serial_Save_Rec.So_From_To so_from_to, int so_scn) {
@@ -298,8 +325,20 @@ public class WS_SO_Serial_Save extends IntentService {
                                     task.getTask_tmp()
                             ).toSqlQuery()
                     );
-                    //
+                    //Seta valores não retornados do server na task a ser inserida.
                     task.setTask_seq_oper(taskOLD.getTask_seq_oper());
+                    task.setTask_perc(taskOLD.getTask_perc());
+                    task.setQty_people(taskOLD.getQty_people());
+                    task.setStatus(taskOLD.getStatus());
+                    task.setSite_code(taskOLD.getSite_code());
+                    task.setSite_id(taskOLD.getSite_id());
+                    task.setSite_desc(taskOLD.getSite_desc());
+                    task.setZone_code(taskOLD.getZone_code());
+                    task.setZone_id(taskOLD.getZone_id());
+                    task.setZone_desc(taskOLD.getZone_desc());
+                    task.setLocal_code(taskOLD.getLocal_code());
+                    task.setLocal_id(taskOLD.getLocal_id());
+                    task.setComments(taskOLD.getComments());
                     //
                     taskDao.addUpdateTmp(task);
                     //atualiza SCN na S.O
