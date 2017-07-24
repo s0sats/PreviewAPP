@@ -56,6 +56,8 @@ public class Act028_Task_List extends BaseFragment {
 
     public interface IAct028_Task_List {
         void menuTaksSelected(HashMap<String, String> data);
+
+        void exec_task_tmp(String exec_tmp, String task_tmp);
     }
 
     private IAct028_Task_List delegate;
@@ -115,7 +117,6 @@ public class Act028_Task_List extends BaseFragment {
 
         try {
 
-
             switch (sm_so_service_exec.getStatus().toUpperCase()) {
                 case Constant.SO_STATUS_PENDING:
                     btn_new_task.setVisibility(View.VISIBLE);
@@ -160,6 +161,8 @@ public class Act028_Task_List extends BaseFragment {
                 )
         );
 
+        numberOfMyTasksProcess = 0;
+
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
@@ -175,7 +178,7 @@ public class Act028_Task_List extends BaseFragment {
         if (numberOfMyTasksProcess > 0) {
             btn_new_task.setVisibility(View.GONE);
         } else {
-            //btn_new_task.setVisibility(View.VISIBLE);
+            btn_new_task.setVisibility(View.VISIBLE);
         }
     }
 
@@ -261,7 +264,6 @@ public class Act028_Task_List extends BaseFragment {
 
                 createTaskList();
 
-
                 /**
                  * Calling WebService
                  */
@@ -277,15 +279,14 @@ public class Act028_Task_List extends BaseFragment {
                 soDao.addUpdate(so);
 
                 if (dtAux.get("exec_type").equalsIgnoreCase("START_STOP")) {
-                    callTestSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+                    callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
                 }
-
             }
         });
 
     }
 
-    private void callTestSoSave(int prefix, int code) {
+    private void callSoSave(int prefix, int code) {
         baInfra.enableProgressDialog(
                 "Teste Save SO",
                 "Testando Save SO",
@@ -396,6 +397,7 @@ public class Act028_Task_List extends BaseFragment {
                 partnerAux.putAll(hmAux);
 
                 if (partnerAux.size() == 0) {
+
                 }
 
                 show.dismiss();

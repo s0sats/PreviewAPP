@@ -23,7 +23,7 @@ public class Act027_Header extends BaseFragment {
 
     private HMAux data;
 
-    private HMAux hmAux_Trans;
+    //private HMAux hmAux_Trans;
 
     private TextView tv_product_code;
     private TextView tv_product_id;

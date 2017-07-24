@@ -26,6 +26,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.service.WS_SO_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -61,6 +62,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     private HashMap<String, String> mData;
 
     private HMAux partnerAux = new HMAux();
+
+    private HMAux exec_task_tmp = new HMAux();
+
+    private int index = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,6 +164,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_task_list.setOnTaskSelected(this);
 
         act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
+        act028_task.setBaInfra(this);
         act028_task.setData(mData);
 
         mDrawerLayout.openDrawer(GravityCompat.START);
@@ -222,6 +228,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         ll_list.setVisibility(View.VISIBLE);
         ll_task.setVisibility(View.GONE);
         //
+        index = 0;
+        //
         setFrag(act028_task_list, "TASK_LIST");
     }
 
@@ -242,9 +250,17 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         ll_list.setVisibility(View.GONE);
         ll_task.setVisibility(View.VISIBLE);
         //
+        index = 1;
+        //
         setFrag(act028_task, "TASK");
         //
         act028_task.setHMAuxScreen();
+    }
+
+    @Override
+    public void exec_task_tmp(String exec_tmp, String task_tmp) {
+        exec_task_tmp.put("exec_tmp", exec_tmp);
+        exec_task_tmp.put("task_tmp", task_tmp);
     }
 
     private <T extends Fragment> void setFrag(T type, String sTag) {
@@ -301,18 +317,37 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     }
 
     @Override
-    protected void processCloseACT(String mLink, String mRequired) {
-        super.processCloseACT(mLink, mRequired);
-
-        int i = 10;
-    }
-
-    @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        int i = 10;
+        if (!hmAux.get(WS_SO_Serial_Save.SO_RETURN_FULL_REFRESH).equals("0")) {
+            onBackPressed();
+        } else {
+            if (index == 0) {
+                disableProgressDialog();
+            } else {
+                index = 0;
+                //
+                ll_list.setVisibility(View.VISIBLE);
+                ll_task.setVisibility(View.GONE);
+                //
+                act028_task_list.setHMAuxScreen();
+                //
+                disableProgressDialog();
+            }
+        }
+    }
 
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        index = 0;
+
+        ll_list.setVisibility(View.VISIBLE);
+        ll_task.setVisibility(View.GONE);
+        //
+        act028_task_list.setHMAuxScreen();
     }
 
     @Override

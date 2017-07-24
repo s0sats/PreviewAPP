@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -79,8 +80,8 @@ public class WS_SO_Serial_Save extends IntentService {
             //
             Long product_code = bundle.getLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
             String serial_id = bundle.getString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
-            int so_prefix  = bundle.getInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, -1);
-            int so_code =  bundle.getInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, -1);
+            int so_prefix = bundle.getInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, -1);
+            int so_code = bundle.getInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, -1);
             //
             processSO_Serial_Save(product_code, serial_id, so_prefix, so_code);
 
@@ -104,7 +105,7 @@ public class WS_SO_Serial_Save extends IntentService {
         //
         loadTranslation();
         //Se existe product serial busca as informações
-        if(product_code != -1L && !serial_id.equals("")){
+        if (product_code != -1L && !serial_id.equals("")) {
             MD_Product_Serial serial = serialDao.getByString(
                     new MD_Product_Serial_Sql_002(
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
@@ -116,7 +117,7 @@ public class WS_SO_Serial_Save extends IntentService {
             serialList.add(serial);
         }
         //
-        if(so_prefix > -1 && so_code > -1) {
+        if (so_prefix > -1 && so_code > -1) {
             //
             SM_SO so = soDao.getByString(
                     new SM_SO_Sql_001(
@@ -126,10 +127,10 @@ public class WS_SO_Serial_Save extends IntentService {
                     ).toSqlQuery()
             );
             //Se consulta retornou uma SO, add no ArrayList a ser enviado .
-            if(so != null) {
+            if (so != null) {
                 sos.add(so);
             }
-        }else{
+        } else {
             //Se não existe so_prefix e code, busca todas SO's com update required = 1
             sos = (ArrayList<SM_SO>) soDao.query(
                     new SM_SO_Sql_005(
@@ -172,14 +173,30 @@ public class WS_SO_Serial_Save extends IntentService {
                 TSO_Serial_Save_Rec.class
         );
         //
+//        if (!ToolBox_Inf.processWSCheckValidation(
+//                getApplicationContext(),
+//                rec.getValidation(),
+//                rec.getError_msg(),
+//                rec.getLink_url(),
+//                1,
+//                1
+//        )
+//                ) {
+//            return;
+//        }
+
         if (!ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
                 rec.getValidation(),
                 rec.getError_msg(),
                 rec.getLink_url(),
                 1,
-                1
-        )
+                1)
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
                 ) {
             return;
         }
@@ -187,9 +204,9 @@ public class WS_SO_Serial_Save extends IntentService {
         HMAux hmAux = new HMAux();
         if (serialList.size() > 0) {
             processSerialSaveRet(rec.getSerial_return().get(0), serialList.get(0), hmAux);
-        }else{
+        } else {
             //Se não existe
-            hmAux.put(SERIAL_SAVE,"OK");
+            hmAux.put(SERIAL_SAVE, "OK");
         }
         //
         //
@@ -199,7 +216,7 @@ public class WS_SO_Serial_Save extends IntentService {
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
             }
-        }else{
+        } else {
             processSOSaveRet(rec, hmAux);
         }
 
@@ -210,7 +227,7 @@ public class WS_SO_Serial_Save extends IntentService {
         String so_list_status = "";
         //Processa de-para de task e Task File
         if (ret.getSo_from_to() != null) {
-            if (processFromTo(ret.getSo_from_to(),ret.getSo_return().get(0).getSo_scn())) {
+            if (processFromTo(ret.getSo_from_to(), ret.getSo_return().get(0).getSo_scn())) {
                 //
                 if (ret.getSo() != null) {
                     //Var q indica se refresh da SO é full ou só De_Para
@@ -231,9 +248,9 @@ public class WS_SO_Serial_Save extends IntentService {
                                 ).toSqlQuery()
                         );
                         //
-                        for (SM_SO_Service_Exec_Task_File taskFile :taskFileList) {
+                        for (SM_SO_Service_Exec_Task_File taskFile : taskFileList) {
                             File file = new File(Constant.CACHE_PATH_PHOTO + "/" + taskFile.getFile_name());
-                            if(file.exists()){
+                            if (file.exists()) {
                                 taskFile.setFile_url_local(taskFile.getFile_name());
                                 taskFileDao.addUpdate(taskFile);
                             }
@@ -265,7 +282,7 @@ public class WS_SO_Serial_Save extends IntentService {
 
         try {
 
-            if(so_from_to.getTask() != null){
+            if (so_from_to.getTask() != null) {
                 //
                 for (SM_SO_Service_Exec_Task task : so_from_to.getTask()) {
                     SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
@@ -300,6 +317,18 @@ public class WS_SO_Serial_Save extends IntentService {
                     );
                     //
                     task.setTask_seq_oper(taskOLD.getTask_seq_oper());
+                    task.setTask_perc(taskOLD.getTask_perc());
+                    task.setQty_people(taskOLD.getQty_people());
+                    task.setStatus(taskOLD.getStatus());
+                    task.setSite_code(taskOLD.getSite_code());
+                    task.setSite_id(taskOLD.getSite_id());
+                    task.setSite_desc(taskOLD.getSite_desc());
+                    task.setZone_code(taskOLD.getZone_code());
+                    task.setZone_id(taskOLD.getZone_id());
+                    task.setZone_desc(taskOLD.getZone_desc());
+                    task.setLocal_code(taskOLD.getLocal_code());
+                    task.setLocal_id(taskOLD.getLocal_id());
+                    task.setComments(taskOLD.getComments());
                     //
                     taskDao.addUpdateTmp(task);
                     //atualiza SCN na S.O
@@ -313,7 +342,7 @@ public class WS_SO_Serial_Save extends IntentService {
                 }
             }
 
-            if(so_from_to.getTask_file() != null){
+            if (so_from_to.getTask_file() != null) {
                 //
                 for (SM_SO_Service_Exec_Task_File taskFile : so_from_to.getTask_file()) {
                     SM_SO_Service_Exec_Task_File auxFile =
@@ -347,15 +376,15 @@ public class WS_SO_Serial_Save extends IntentService {
                             taskFile.getTask_code() + "_" +
                             taskFile.getFile_code() + ".jpg";
 
-                    if(renameTaskFile(auxFile.getFile_name(),new_name)){
+                    if (renameTaskFile(auxFile.getFile_name(), new_name)) {
                         //Atualiza path da imagem na lista de upload
                         geFileDao.addUpdate(
                                 new GE_File_Sql_006(
-                                        auxFile.getFile_name().replace(".jpg","").replace(".png",""),
+                                        auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
                                         new_name
                                 ).toSqlQuery()
                         );
-                    }else{
+                    } else {
                         return false;
                     }
                     taskFile.setFile_url_local(new_name);
@@ -378,7 +407,7 @@ public class WS_SO_Serial_Save extends IntentService {
             File to = new File(Constant.CACHE_PATH + "/", new_name);
             //
             from.renameTo(to);
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
             return false;

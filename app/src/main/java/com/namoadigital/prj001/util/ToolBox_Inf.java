@@ -1979,4 +1979,13 @@ public class ToolBox_Inf {
         }
     }
 
+    public static boolean processoOthersError(Context context,String error_msg_header , String error_msg) {
+        if(error_msg.length() > 0){
+            //ToolBox.sendBCStatus(context, "ERROR_1", error_msg_header + "\n" + error_msg, "", "0");
+            ToolBox.sendBCStatus(context, "CUSTOM_ERROR", error_msg_header + "\n" + error_msg, "", "0");
+            return false;
+        }
+        return true;
+    }
+
 }
