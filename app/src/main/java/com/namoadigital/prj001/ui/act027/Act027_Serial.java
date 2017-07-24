@@ -66,9 +66,11 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     private TextView tv_product_ttl;
     private TextView tv_product_code_label;
     private TextView tv_product_code_value;
+
     private TextView tv_product_id_label;
     private TextView tv_product_id_value;
     private TextView tv_product_desc_label;
+
     private TextView tv_product_desc_value;
     private MKEditTextNM mket_serial_id;
     private TextView tv_required_lbl;

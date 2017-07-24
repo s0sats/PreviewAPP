@@ -145,6 +145,43 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
 
+        // ACT027_Header Fragment
+        transList.add("so_id");
+        transList.add("so_desc");
+        transList.add("prefix_code");
+        transList.add("serial");
+        transList.add("category_price_id");
+        transList.add("category_price_desc");
+        transList.add("segment_id");
+        transList.add("segment_desc");
+        transList.add("site_id");
+        transList.add("site_desc");
+        transList.add("operation_id");
+        transList.add("operation_desc");
+        transList.add("deadline");
+        transList.add("status");
+        transList.add("priority_desc");
+        transList.add("contract_desc");
+        transList.add("contract_po_erp");
+        transList.add("contract_po_client1");
+        transList.add("contract_po_client2");
+        transList.add("quality_approval_user");
+        transList.add("quality_approval_user_nick");
+        transList.add("quality_approval_date");
+        transList.add("comments");
+        transList.add("client_type");
+        transList.add("client_user");
+        transList.add("client_code");
+        transList.add("client_id");
+        transList.add("client_name");
+        transList.add("client_email");
+        transList.add("client_phone");
+        transList.add("client_approval_date");
+        transList.add("client_approval_user");
+        transList.add("client_approval_user_nick");
+        transList.add("total_qty_service");
+        transList.add("total_price");
+
         sm_soDao = new SM_SODao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -217,6 +254,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
         act027_services = new Act027_Services();
         act027_services.setOnItemClickListener(this);
+        act027_services.setHmAux_Trans(hmAux_Trans);
         act027_services.setData((ArrayList<HMAux>) sm_soDao.query_HM(
                 new SM_SO_Service_Sql_003(
                         mCustomer_code,
@@ -232,6 +270,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         act027_serial.setData(data);
 
         act027_header = new Act027_Header();
+        act027_header.setHmAux_Trans(hmAux_Trans);
         act027_header.setData(sm_soDao.getByStringHM(
                 new SM_SO_Sql_002(
                         mCustomer_code,

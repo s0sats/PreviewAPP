@@ -187,11 +187,13 @@ public class Act028_Task_List extends BaseFragment {
                 HashMap<String, String> hmAux = (HashMap<String, String>) parent.getItemAtPosition(position);
                 hmAux.put("exec_status", sm_so_service_exec.getStatus());
 
-                callTestSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+                //callTestSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
 
-//                if (delegate != null) {
-//                    delegate.menuTaksSelected(hmAux);
-//                }
+                HMAux tt = last_task_seq_oper();
+
+                if (delegate != null) {
+                    delegate.menuTaksSelected(hmAux);
+                }
 
             }
         });
@@ -305,37 +307,39 @@ public class Act028_Task_List extends BaseFragment {
 
     private HMAux last_task_seq_oper() {
         HMAux aux = null;
+        HMAux auxTMP = null;
+
         int curTask_Seq_Oper = 0;
         numberOfValidTasks = 0;
 
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
-            aux = (HMAux) lv_tasks.getAdapter().getItem(i);
+            auxTMP = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
-            if (aux.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
+            if (auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
                     aux.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
                     ) {
 
                 numberOfValidTasks++;
 
             }
-            if (aux.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
-                int perc = Integer.parseInt(aux.get("task_perc"));
-                int task_seq_oper = Integer.parseInt(aux.get("task_seq_oper"));
+
+            if (auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
+                int perc = Integer.parseInt(auxTMP.get("task_perc"));
+                int task_seq_oper = Integer.parseInt(auxTMP.get("task_seq_oper"));
 
                 if (perc < 100) {
                     if (curTask_Seq_Oper < task_seq_oper) {
                         curTask_Seq_Oper = task_seq_oper;
+
+                        aux = auxTMP;
+
                     }
                 }
+            } else {
             }
         }
 
-        if (curTask_Seq_Oper == 0) {
-            return null;
-        } else {
-            return aux;
-        }
-
+        return aux;
     }
 
     public void showPartnerOptDialog() {
