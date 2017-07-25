@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
@@ -300,19 +301,39 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
     @Override
     public void onBackPressed() {
-        if (mDrawerStatus) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
+        if (index == 1) {
+            index = 0;
+            //
+            ll_list.setVisibility(View.VISIBLE);
+            ll_task.setVisibility(View.GONE);
+            //
+            act028_task_list.setHMAuxScreen();
         } else {
-            super.onBackPressed();
-            //
-            bundle.remove("data");
-            //
-            Intent mIntent = new Intent(context, Act027_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mIntent.putExtras(bundle);
-            //
-            startActivity(mIntent);
-            finish();
+            if (mDrawerStatus) {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                ToolBox.alertMSG(
+                        context,
+                        "Lista de Servicos",
+                        "Deseja voltar para a lista de Serviços?",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bundle.remove("data");
+                                //
+                                Intent mIntent = new Intent(context, Act027_Main.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mIntent.putExtras(bundle);
+                                //
+                                startActivity(mIntent);
+                                finish();
+
+                            }
+                        },
+                        1,
+                        false
+                );
+            }
         }
     }
 
@@ -348,6 +369,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         ll_task.setVisibility(View.GONE);
         //
         act028_task_list.setHMAuxScreen();
+
+        disableProgressDialog();
     }
 
     @Override

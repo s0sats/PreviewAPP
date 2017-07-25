@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act028;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -153,32 +154,71 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             @Override
             public void onClick(View v) {
 
-                sm_so_service_exec_task.setStatus(Constant.SO_STATUS_CANCELLED);
-                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
-                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
-                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
-                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
-                sm_so_service_exec_task.setComments(taskControl.getmComments());
-                //
-                //sm_so_service_exec_task.setPK(sm_so_service_exec);
-                //
-                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+                ToolBox.alertMSG(
+                        context,
+                        "Cancelamento de Task",
+                        "Deseja cancelar a Task?",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sm_so_service_exec_task.setStatus(Constant.SO_STATUS_CANCELLED);
+                                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
+                                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
+                                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
+                                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
+                                sm_so_service_exec_task.setComments(taskControl.getmComments());
+                                //
+                                //sm_so_service_exec_task.setPK(sm_so_service_exec);
+                                //
+                                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
 
-                /**
-                 * Calling WebService
-                 */
-                SM_SO so = soDao.getByString(
-                        new SM_SO_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                sm_so_service_exec_task.getSo_prefix(),
-                                sm_so_service_exec_task.getSo_code()
-                        ).toSqlQuery()
+                                /**
+                                 * Calling WebService
+                                 */
+                                SM_SO so = soDao.getByString(
+                                        new SM_SO_Sql_001(
+                                                ToolBox_Con.getPreference_Customer_Code(context),
+                                                sm_so_service_exec_task.getSo_prefix(),
+                                                sm_so_service_exec_task.getSo_code()
+                                        ).toSqlQuery()
+                                );
+
+                                so.setUpdate_required(1);
+                                soDao.addUpdate(so);
+
+                                callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
+                            }
+                        },
+                        1,
+                        false
                 );
 
-                so.setUpdate_required(1);
-                soDao.addUpdate(so);
-
-                callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
+//                sm_so_service_exec_task.setStatus(Constant.SO_STATUS_CANCELLED);
+//                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
+//                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
+//                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
+//                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
+//                sm_so_service_exec_task.setComments(taskControl.getmComments());
+//                //
+//                //sm_so_service_exec_task.setPK(sm_so_service_exec);
+//                //
+//                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+//
+//                /**
+//                 * Calling WebService
+//                 */
+//                SM_SO so = soDao.getByString(
+//                        new SM_SO_Sql_001(
+//                                ToolBox_Con.getPreference_Customer_Code(context),
+//                                sm_so_service_exec_task.getSo_prefix(),
+//                                sm_so_service_exec_task.getSo_code()
+//                        ).toSqlQuery()
+//                );
+//
+//                so.setUpdate_required(1);
+//                soDao.addUpdate(so);
+//
+//                callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
             }
         });
 
@@ -249,17 +289,19 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
                 taskControl.setmImgPath(sFiles.toString());
 
-                switch (data.get("exec_status").toUpperCase()) {
-                    case "PENDING":
-                        processTaskStatus();
-                        break;
-                    case "PROCESS":
-                        processTaskStatus();
-                        break;
-                    default:
-                        taskControl.setmEnabled(false);
-                        break;
-                }
+                processTaskStatus();
+
+//                switch (data.get("exec_status").toUpperCase()) {
+//                    case "PENDING":
+//                        processTaskStatus();
+//                        break;
+//                    case "PROCESS":
+//                        processTaskStatus();
+//                        break;
+//                    default:
+//                        taskControl.setmEnabled(false);
+//                        break;
+//                }
 
             }
         } catch (Exception e) {

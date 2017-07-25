@@ -64,6 +64,7 @@ public class Act028_Task_List extends BaseFragment {
 
     private int numberOfValidTasks = 0;
     private int numberOfMyTasksProcess = 0;
+    private int numberofMyTasksDONE_100 = 0;
 
     public void setOnTaskSelected(IAct028_Task_List delegate) {
         this.delegate = delegate;
@@ -162,6 +163,7 @@ public class Act028_Task_List extends BaseFragment {
         );
 
         numberOfMyTasksProcess = 0;
+        numberofMyTasksDONE_100 = 0;
 
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
@@ -175,11 +177,34 @@ public class Act028_Task_List extends BaseFragment {
             }
         }
 
-        if (numberOfMyTasksProcess > 0) {
+        for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
+            HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
+            //
+            if (auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
+                    auxHM.get("task_user").equalsIgnoreCase(
+                            ToolBox_Con.getPreference_User_Code(context)) &&
+
+                    auxHM.get("task_perc").equalsIgnoreCase("100")
+                    ) {
+
+                numberofMyTasksDONE_100++;
+            }
+        }
+
+        if (numberofMyTasksDONE_100 > 0) {
+            btn_new_task.setVisibility(View.GONE);
+        } else if (numberOfMyTasksProcess > 0) {
             btn_new_task.setVisibility(View.GONE);
         } else {
             btn_new_task.setVisibility(View.VISIBLE);
         }
+
+//        if (sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)){
+//            btn_new_task.setVisibility(View.GONE);
+//        } else {
+//            btn_new_task.setVisibility(View.VISIBLE);
+//        }
+
     }
 
     private void iniAction() {
