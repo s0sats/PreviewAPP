@@ -18,16 +18,21 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_008;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -47,6 +52,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
     private TaskControl taskControl;
 
     private Button btn_cancel_task;
+
+    private SM_SO_Service_Exec_Task_FileDao sm_so_service_exec_task_fileDao;
 
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
     private SM_SO_Service_Exec_Task sm_so_service_exec_task;
@@ -105,6 +112,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
                 sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
                 sm_so_service_exec_task.setComments(taskControl.getmComments());
+                sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
                 //
                 //sm_so_service_exec_task.setPK(sm_so_service_exec);
                 //
@@ -131,6 +139,12 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         );
 
         sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        sm_so_service_exec_task_fileDao = new SM_SO_Service_Exec_Task_FileDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -188,6 +202,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                                 sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
                                 sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
                                 sm_so_service_exec_task.setComments(taskControl.getmComments());
+                                sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
                                 //
                                 //sm_so_service_exec_task.setPK(sm_so_service_exec);
                                 //
@@ -363,6 +378,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
         sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
         sm_so_service_exec_task.setComments(taskControl.getmComments());
+        sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
         //
         //sm_so_service_exec_task.setPK(sm_so_service_exec);
         //
@@ -398,7 +414,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                     ).toSqlQuery()
             );
 
-            if (delegate != null){
+            if (delegate != null) {
                 delegate.exec_list_opc_update();
             }
         }
@@ -461,7 +477,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                     ).toSqlQuery()
             );
 
-            if (delegate != null){
+            if (delegate != null) {
                 delegate.exec_list_opc_update();
             }
         }
@@ -507,8 +523,88 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 null,
                 -1
         );
+    }
 
+    private ArrayList<SM_SO_Service_Exec_Task_File> recoverTaskFiles(ArrayList<SM_SO_Service_Exec_Task_File> task_files, String sFiles) {
+        ArrayList<SM_SO_Service_Exec_Task_File> data = new ArrayList<>();
+        //
+        if (!sFiles.isEmpty()) {
+            String[] sTask_files = sFiles.split("#");
 
+            for (int i = 0; i < task_files.size(); i++) {
+                if (ToolBox_Inf.verifyFileExists(task_files.get(i).getFile_name())) {
+                    data.add(task_files.get(i));
+                } else {
+                    sm_so_service_exec_task_fileDao.remove(
+                            new SM_SO_Service_Exec_Task_File_Sql_008(
+                                    task_files.get(i).getCustomer_code(),
+                                    task_files.get(i).getSo_prefix(),
+                                    task_files.get(i).getSo_code(),
+                                    task_files.get(i).getPrice_list_code(),
+                                    task_files.get(i).getPack_code(),
+                                    task_files.get(i).getPack_seq(),
+                                    task_files.get(i).getCategory_price_code(),
+                                    task_files.get(i).getService_code(),
+                                    task_files.get(i).getService_seq(),
+                                    task_files.get(i).getExec_tmp(),
+                                    task_files.get(i).getTask_tmp(),
+                                    task_files.get(i).getFile_tmp()
+                            ).toSqlQuery()
+                    );
+                }
+            }
+
+            for (int i = 0; i < sTask_files.length; i++) {
+
+                boolean bExists = false;
+
+                for (int j = 0; j < task_files.size(); j++) {
+                    if (sTask_files[i].equalsIgnoreCase(task_files.get(j).getFile_name())) {
+                        bExists = true;
+
+                        break;
+                    }
+
+                }
+
+                if (!bExists) {
+                    data.add(createFileTask(sm_so_service_exec_task, sTask_files[i]));
+                }
+            }
+
+        }
+        //
+        return data;
+    }
+
+    private SM_SO_Service_Exec_Task_File createFileTask(SM_SO_Service_Exec_Task sm_so_service_exec_task, String sTask_file) {
+        SM_SO_Service_Exec_Task_File task_file = new SM_SO_Service_Exec_Task_File();
+        //
+        task_file.setFile_code(0);
+
+        long nTask_fileTemp = Long.parseLong(sm_so_service_exec_task_fileDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_Sql_004(
+                        sm_so_service_exec_task.getCustomer_code(),
+                        sm_so_service_exec_task.getSo_prefix(),
+                        sm_so_service_exec_task.getSo_code(),
+                        sm_so_service_exec_task.getPrice_list_code(),
+                        sm_so_service_exec_task.getPack_code(),
+                        sm_so_service_exec_task.getPack_seq(),
+                        sm_so_service_exec_task.getCategory_price_code(),
+                        sm_so_service_exec_task.getService_code(),
+                        sm_so_service_exec_task.getService_seq(),
+                        sm_so_service_exec_task.getExec_tmp()
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
+
+        task_file.setFile_tmp(nTask_fileTemp);
+
+        task_file.setPK(sm_so_service_exec_task);
+        task_file.setFile_name(sTask_file);
+        task_file.setFile_url("");
+        task_file.setFile_url_local(sTask_file);
+        //
+        return task_file;
     }
 
 }

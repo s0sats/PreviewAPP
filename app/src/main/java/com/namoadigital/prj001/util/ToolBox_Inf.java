@@ -544,7 +544,10 @@ public class ToolBox_Inf {
 
     public static boolean verifyDownloadFileInf(String sName) {
         return verifyDownloadFileInf(sName, Constant.CACHE_PATH);
+    }
 
+    public static boolean verifyFileExists(String sName) {
+        return verifyDownloadFileInf(sName, Constant.CACHE_PATH_PHOTO);
     }
 
     public static boolean verifyDownloadFileInf(String sName, String path) {
@@ -578,6 +581,7 @@ public class ToolBox_Inf {
 
     /**
      * Usar o mesmo metodo do que do  Toolbox
+     *
      * @param context
      * @param type
      * @param value
@@ -1720,6 +1724,7 @@ public class ToolBox_Inf {
 
     /**
      * Verifica se conjunto de parametros passados existe para aquele customer
+     *
      * @param context
      * @param param   Array com constante dos parametros a serem buscados
      * @return true or false;
@@ -1979,8 +1984,8 @@ public class ToolBox_Inf {
         }
     }
 
-    public static boolean processoOthersError(Context context,String error_msg_header , String error_msg) {
-        if(error_msg != null && error_msg.length() > 0){
+    public static boolean processoOthersError(Context context, String error_msg_header, String error_msg) {
+        if (error_msg != null && error_msg.length() > 0) {
             //ToolBox.sendBCStatus(context, "ERROR_1", error_msg_header + "\n" + error_msg, "", "0");
             ToolBox.sendBCStatus(context, "CUSTOM_ERROR", error_msg_header + "\n" + error_msg, "", "0");
             return false;
