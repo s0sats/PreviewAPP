@@ -126,12 +126,12 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
     }
 
     @Override
-    public void executeSoSearch(Long product_code, String serial_id, boolean save_serial) {
+    public void executeSaveSerial(Long product_code, String serial_id, boolean save_serial) {
         mView.setWs_process(Act031_Main.SO_WS_SEARCH_SO);
         //
         mView.showPD(
-                hmAux_Trans.get("progress_so_search_ttl"),
-                hmAux_Trans.get("progress_so_search_msg")
+                hmAux_Trans.get("progress_serial_save_ttl"),
+                hmAux_Trans.get("progress_serial_save_msg")
         );
         //
         Intent mIntent = new Intent(context, WBR_SO_Search.class);
@@ -181,7 +181,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
         serialDao.addUpdate(productSerial);
         if(ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
-            executeSoSearch(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
+            executeSaveSerial(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
         }else{
             ToolBox_Inf.showNoConnectionDialog(context);
         }

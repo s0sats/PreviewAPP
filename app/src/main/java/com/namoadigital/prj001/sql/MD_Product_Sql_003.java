@@ -15,8 +15,8 @@ public class MD_Product_Sql_003 implements Specification {
 
     public MD_Product_Sql_003(long customer_code, String product_code, String product_id) {
         this.customer_code = customer_code;
-        this.product_code = product_code;
-        this.product_id = product_id;
+        this.product_code = product_code.trim().length() == 0 ? null : product_code.trim();
+        this.product_id = product_id.trim().length() == 0 ? null : product_id.trim();
     }
 
     @Override

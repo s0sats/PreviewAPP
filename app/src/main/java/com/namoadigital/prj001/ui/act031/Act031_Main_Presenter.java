@@ -18,7 +18,7 @@ public interface Act031_Main_Presenter {
 
     void executeSerialSearch(Long product_code, String serial_id);
 
-    void executeSoSearch(Long product_code, String serial_id, boolean save_serial);
+    void executeSaveSerial(Long product_code, String serial_id, boolean save_serial);
 
     void getSerialInfo(Long product_code, String serial_id);
 
