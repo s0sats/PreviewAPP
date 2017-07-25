@@ -413,8 +413,8 @@ public class WS_SO_Serial_Save extends IntentService {
     private boolean renameTaskFile(String file_name, String new_name) {
 
         try {
-            File from = new File(Constant.CACHE_PATH + "/", file_name);
-            File to = new File(Constant.CACHE_PATH + "/", new_name);
+            File from = new File(Constant.CACHE_PATH_PHOTO + "/", file_name);
+            File to = new File(Constant.CACHE_PATH_PHOTO + "/", new_name);
             //
             from.renameTo(to);
         } catch (Exception e) {

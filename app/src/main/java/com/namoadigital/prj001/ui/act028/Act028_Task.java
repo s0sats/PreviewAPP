@@ -12,26 +12,30 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.TaskControl;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_008;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -83,6 +87,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     public void setData(HashMap<String, String> data) {
         this.data = data;
+        //
+        tempValues.clear();
     }
 
     @Nullable
@@ -95,6 +101,18 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         iniAction();
         //
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        tempValues.put("qty", taskControl.getmQty_People());
+        tempValues.put("perc", taskControl.getmPerc());
+        tempValues.put("dts", taskControl.getmDtStart());
+        tempValues.put("dte", taskControl.getmDtEnd());
+        tempValues.put("comments", taskControl.getmComments());
+        tempValues.put("img", taskControl.getmImgPath());
     }
 
     @Override
@@ -117,6 +135,10 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 //sm_so_service_exec_task.setPK(sm_so_service_exec);
                 //
                 sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+
+                // Include Files to Upload
+                uploadFiles(sm_so_service_exec_task);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,6 +229,9 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                                 //sm_so_service_exec_task.setPK(sm_so_service_exec);
                                 //
                                 sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+
+                                // Include Files to Upload
+                                uploadFiles(sm_so_service_exec_task);
 
                                 /**
                                  * Calling WebService
@@ -317,10 +342,23 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                         }
 
                     }
-
                 }
 
                 taskControl.setmImgPath(sFiles.toString());
+
+                try {
+
+                    taskControl.setmValue(tempValues.get("perc"));
+                    taskControl.setmPerc(tempValues.get("perc"));
+                    taskControl.setmQty_People(tempValues.get("qty"));
+                    taskControl.setmDtStart(tempValues.get("dts"));
+                    taskControl.setmDtEnd(tempValues.get("dte"));
+                    taskControl.setmComments(tempValues.get("comments"));
+                    taskControl.setmImgPath(tempValues.get("img"));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 processTaskStatus();
 
@@ -384,6 +422,9 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         //
         sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
 
+        // Include Files to Upload
+        uploadFiles(sm_so_service_exec_task);
+
         /**
          * Calling WebService
          */
@@ -422,6 +463,34 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
     }
 
+    private void uploadFiles(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+
+        for (int i = 0; i < sm_so_service_exec_task.getTask_file().size(); i++) {
+            String sFile_v = sm_so_service_exec_task.getTask_file().get(i).getFile_name();
+
+            if (sFile_v.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_v.replace(".jpg", ""));
+                    geFile.setFile_path(sFile_v);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss"));
+
+                    geFiles.add(geFile);
+                }
+            }
+        }
+
+        geFileDao.addUpdate(geFiles, false);
+    }
+
     @Override
     public void informTaskStatus(String s, String s1) {
 
@@ -447,6 +516,9 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         //sm_so_service_exec_task.setPK(sm_so_service_exec);
         //
         sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+
+        // Include Files to Upload
+        uploadFiles(sm_so_service_exec_task);
 
         /**
          * Calling WebService
@@ -483,6 +555,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             }
         }
 
+        //
         callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
     }
 
@@ -584,7 +657,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         task_file.setFile_code(0);
 
         long nTask_fileTemp = Long.parseLong(sm_so_service_exec_task_fileDao.getByStringHM(
-                new SM_SO_Service_Exec_Task_Sql_004(
+                new SM_SO_Service_Exec_Task_File_Sql_005(
                         sm_so_service_exec_task.getCustomer_code(),
                         sm_so_service_exec_task.getSo_prefix(),
                         sm_so_service_exec_task.getSo_code(),
@@ -594,9 +667,10 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                         sm_so_service_exec_task.getCategory_price_code(),
                         sm_so_service_exec_task.getService_code(),
                         sm_so_service_exec_task.getService_seq(),
-                        sm_so_service_exec_task.getExec_tmp()
+                        sm_so_service_exec_task.getExec_tmp(),
+                        sm_so_service_exec_task.getTask_tmp()
                 ).toSqlQuery()
-        ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
+        ).get(SM_SO_Service_Exec_Task_File_Sql_005.NEXT_TMP));
 
         task_file.setFile_tmp(nTask_fileTemp);
 
@@ -604,6 +678,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         task_file.setFile_name(sTask_file);
         task_file.setFile_url("");
         task_file.setFile_url_local(sTask_file);
+        //
+        sm_so_service_exec_task_fileDao.addUpdateTmp(task_file);
         //
         return task_file;
     }

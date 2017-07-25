@@ -169,7 +169,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
 //                        Constant.DB_VERSION_CUSTOM
 //                );
 
-                sm_so_service_exec_task_fileDao.addUpdateTmp(sm_so_service_exec_task.getTask_file(), false);
+                sm_so_service_exec_task_fileDao.addUpdate(sm_so_service_exec_task.getTask_file(), false);
             }
 
             //db.setTransactionSuccessful();
