@@ -107,7 +107,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
                     Constant.DB_VERSION_CUSTOM
             );
 
-            sm_so_service_exec_task_fileDao.addUpdate(sm_so_service_exec_task.getTask_file(), false);
+            sm_so_service_exec_task_fileDao.addUpdateTmp(sm_so_service_exec_task.getTask_file(), false);
 
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -169,7 +169,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
 //                        Constant.DB_VERSION_CUSTOM
 //                );
 
-                sm_so_service_exec_task_fileDao.addUpdate(sm_so_service_exec_task.getTask_file(), false);
+                sm_so_service_exec_task_fileDao.addUpdateTmp(sm_so_service_exec_task.getTask_file(), false);
             }
 
             //db.setTransactionSuccessful();
@@ -254,7 +254,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
             //
             for (SM_SO_Service_Exec_Task sm_so_service_exec_task : sm_so_service_exec_tasks) {
                 //Atualiza valor do task_tmp
-                task_tmp ++;
+                task_tmp++;
                 //Seta temp
                 sm_so_service_exec_task.setTask_tmp(task_tmp);
                 //
@@ -292,7 +292,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
 //                        Constant.DB_VERSION_CUSTOM
 //                );
                 //
-                for (int j = 0; j < sm_so_service_exec_task.getTask_file().size() ; j++) {
+                for (int j = 0; j < sm_so_service_exec_task.getTask_file().size(); j++) {
                     SM_SO_Service_Exec_Task_File task_file = sm_so_service_exec_task.getTask_file().get(j);
                     task_file.setPK(sm_so_service_exec_task);
                 }

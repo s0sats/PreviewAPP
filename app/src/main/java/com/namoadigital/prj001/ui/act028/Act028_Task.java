@@ -118,7 +118,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 //
                 sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -442,6 +442,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
         sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
         sm_so_service_exec_task.setComments(taskControl.getmComments());
+        sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
         //
         //sm_so_service_exec_task.setPK(sm_so_service_exec);
         //
