@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act030;
 
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TProduct_Serial;
 
 /**
@@ -14,9 +15,11 @@ public interface Act030_Main_Presenter {
 
     void executeSerialSearch(String product_code, String product_id,String serial_id);
 
-    void defineFlow(TProduct_Serial productSerial);
+    void defineFlow(TProduct_Serial productSerial,boolean new_serial);
 
     void checkSingleProduct();
 
     boolean checkProductExists(String product_code, String product_id, String serial);
+
+    boolean productAllowNewSerial(MD_Product md_product);
 }

@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Env;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.model.TSerial_Search_Save_Rec;
@@ -51,9 +52,11 @@ public class WS_Serial_Search extends IntentService {
             String product_id = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID);
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
             boolean save_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS,false);
+            //Variavel que indica se é criação de serial(Act031)
+            boolean new_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS,false);
             int serial_exact = bundle.getInt(Constant.WS_SERIAL_SEARCH_EXACT,1);
 
-            processWSSerialSearch(product_code, product_id,serial_id ,save_serial,serial_exact);
+            processWSSerialSearch(product_code, product_id,serial_id ,save_serial,serial_exact,new_serial);
 
         }catch (Exception e) {
 
@@ -70,7 +73,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, boolean save_serial, int serial_exact) {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, boolean save_serial, int serial_exact, boolean new_serial) {
 
         //Seleciona traduções
         loadTranslation();
@@ -94,7 +97,7 @@ public class WS_Serial_Search extends IntentService {
 
         boolean continueProcess = false;
         if(save_serial){
-            continueProcess = saveSerial(resultado);
+            continueProcess = saveSerial(resultado,new_serial,product_code,serial_id);
 
         }else{
             TSerial_Search_Rec  rec = gson.fromJson(
@@ -112,33 +115,47 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private boolean saveSerial(String resultado) {
+    private boolean saveSerial(String resultado, boolean new_serial, String product_code, String serial_id) {
         TSerial_Search_Save_Rec rec = gson.fromJson(
                 resultado,
                 TSerial_Search_Save_Rec.class
         );
+        //
+        MD_Product_SerialDao serialDao =
+                new MD_Product_SerialDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
 
         if(!callProcessWSCheckValidation(rec)){
            return false;
         }else{
-            //Se Retorno Ok, porem nenhum serial encontrado,
-            //envia msg e cancel processamento
-            if(rec.getRecord().size() == 0) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_found"), "", "0");
-                return false;
-            }else {
-                //
-                MD_Product_SerialDao serialDao =
-                        new MD_Product_SerialDao(
-                                getApplicationContext(),
-                                ToolBox_Con.customDBPath(
-                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                Constant.DB_VERSION_CUSTOM
-                        );
-                //Insere no banco os dados do Serial
-                //serialDao.addUpdate(rec.getRecord(),false);//insere varios
-                serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
 
+            //Se Retorno Ok ,porem não é novo serial e nenhum serial encontrado ,
+            //envia msg e cancel processamento
+            if(!new_serial) {
+                if (rec.getRecord().size() == 0) {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_found"), "", "0");
+                    return false;
+                } else {
+                    //Insere no banco os dados do Serial
+                    //serialDao.addUpdate(rec.getRecord(),false);//insere varios
+                    serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
+
+                }
+            }else{
+                MD_Product_Serial productSerial = new MD_Product_Serial();
+                productSerial.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+                productSerial.setProduct_code(Long.parseLong(product_code));
+                productSerial.setSerial_code(0);
+                productSerial.setSerial_id(serial_id);
+                //Confirma site owner com o Jhon
+                productSerial.setSite_code_owner(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(getApplicationContext())));
+                productSerial.setUpdate_required(1);
+                //Insere no banco.
+                serialDao.addUpdate(productSerial);
             }
         }
         return true;

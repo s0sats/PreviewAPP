@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -54,10 +55,11 @@ public class WS_SO_Search extends IntentService {
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, -1L);
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
-            String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");
+            String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");//Lista de SO a Serem Baixados. Act024
             boolean save_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL, false);
+            boolean create_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL, false);
             //
-            processSO_Search(product_code, serial_id, so_mult, save_serial);
+            processSO_Search(product_code, serial_id, so_mult, save_serial,create_serial);
 
         } catch (Exception e) {
 
@@ -74,7 +76,7 @@ public class WS_SO_Search extends IntentService {
 
     }
 
-    private void processSO_Search(Long product_code, String serial_id, String so_mult, boolean save_serial) {
+    private void processSO_Search(Long product_code, String serial_id, String so_mult, boolean save_serial, boolean create_serial) {
         ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
 
         if(save_serial) {
@@ -86,7 +88,7 @@ public class WS_SO_Search extends IntentService {
                     ).toSqlQuery()
             );
             //
-            serial.setOnly_position(1);
+            serial.setOnly_position(create_serial ? 0 : 1);
             serialList.add(serial);
         }
         //Seleciona traduções
@@ -116,14 +118,19 @@ public class WS_SO_Search extends IntentService {
                 TSO_Search_Rec.class
         );
         //
-        if (!ToolBox_Inf.processWSCheckValidation(
-                getApplicationContext(),
-                rec.getValidation(),
-                rec.getError_msg(),
-                rec.getLink_url(),
-                1,
-                1
-        )
+        if (
+                !ToolBox_Inf.processWSCheckValidation(
+                        getApplicationContext(),
+                        rec.getValidation(),
+                        rec.getError_msg(),
+                        rec.getLink_url(),
+                        1,
+                        1)
+                        ||
+                        !ToolBox_Inf.processoOthersError(
+                                getApplicationContext(),
+                                getResources().getString(R.string.generic_error_lbl),
+                                rec.getError_msg())
                 ) {
             return;
         }
@@ -164,6 +171,7 @@ public class WS_SO_Search extends IntentService {
     private void processSerialSaveRet(TSO_Search_Rec.Serial_Save_Return serial_return, MD_Product_Serial serial, HMAux hmAux) {
 
         if(serial_return.getRet_status().toUpperCase().equals("OK")){
+            serial.setSerial_code(serial_return.getSerial_code());
             serial.setUpdate_required(0);
             serialDao.addUpdate(serial);
             hmAux.put(SERIAL_SAVE,"OK");
