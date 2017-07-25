@@ -122,15 +122,13 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("records_found_lbl");
         transList.add("progress_sync_title");
         transList.add("progress_sync_msg");
-        transList.add("alert_no_form_for_operation_ttl");
-        transList.add("alert_no_form_for_operation_msg");
         transList.add("alert_product_not_found_ttl");
         transList.add("alert_product_not_found_msg");
         transList.add("alert_new_serial_ttl");
         transList.add("alert_new_serial_msg");
         transList.add("alert_new_serial_not_allow_ttl");
         transList.add("alert_new_serial_not_allow_msg");
-
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -228,15 +226,13 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                 ) {
                     //Se tudo preenchido, valida se produto existe
                     if (mPresenter.checkProductExists(
-                            product.trim().length() == 0 ? null : product.trim(),
-                            product_id.trim().length() == 0 ? null : product_id.trim(),
+                            product.trim(),
+                            product_id.trim(),
                             serial.trim()
                             )
                     ) {
                         //
                         mPresenter.executeSerialSearch(product, product_id, serial);
-                    }else{
-
                     }
                 } else {
                     ToolBox.alertMSG(
@@ -416,19 +412,23 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
 
     @Override
     public void showNewSerialMsg() {
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_new_serial_ttl"),
-                hmAux_Trans.get("alert_new_serial_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        //Se nenhum serial encontrado e produto permite novo serial
+        //exibe caixa perguntando se deseja criar novo serial.
+        if(mPresenter.productAllowNewSerial(fragFilters.getProductCodeText(),fragFilters.getProductIdText())){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_new_serial_ttl"),
+                    hmAux_Trans.get("alert_new_serial_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                        mPresenter.defineFlow(serial,true);
-                    }
-                },
-                1
-        );
+                            mPresenter.defineFlow(serial, true);
+                        }
+                    },
+                    1
+            );
+        }
     }
 
     @Override
@@ -479,13 +479,18 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                 case PRODUCT:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
                     fragFilters.setProductCodeText(value[2]);
-                    mPresenter.executeSerialSearch(value[2], "", "");
+                    //mPresenter.executeSerialSearch(value[2], "", "");
                     break;
                 case SERIAL:
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
                     fragFilters.setProductCodeText(value[2]);
                     fragFilters.setSerialIdText(value[3]);
-                    mPresenter.executeSerialSearch(value[2], "", value[3]);
+                    if(fragFilters.getProductCodeText().length() > 0
+                       && fragFilters.getSerialIdText().length() > 0
+                    ){
+                        mPresenter.executeSerialSearch(value[2], "", value[3]);
+                    }
+
                     break;
 
                 default:

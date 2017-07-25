@@ -132,19 +132,31 @@ public class Act030_Frag_Filter extends Fragment {
     public void setProductCodeText(String text){
         mket_product.setText(text.toString());
     }
+    public String getProductCodeText(){
+        return mket_product.getText().toString().trim();
+    }
 
     public void setProductIdText(String text){
         mket_product_id.setText(text.toString());
+    }
+
+    public String getProductIdText(){
+       return mket_product_id.getText().toString().trim();
     }
 
     public void setSerialIdText(String text){
         mket_serial.setText(text.toString());
     }
 
+    public String getSerialIdText(){
+        return mket_serial.getText().toString().trim();
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
         setTranslation();
     }
+
 
     private void setTranslation() {
         tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));

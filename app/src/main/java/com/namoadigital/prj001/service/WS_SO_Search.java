@@ -106,7 +106,7 @@ public class WS_SO_Search extends IntentService {
         env.setSo_mult(so_mult);
         env.setSerial(serialList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", create_serial ? hmAux_Trans.get("msg_send_serial_data") : hmAux_Trans.get("msg_searching_sos"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SEARCH,
@@ -164,7 +164,7 @@ public class WS_SO_Search extends IntentService {
 
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"),hmAux, "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT",create_serial ? hmAux_Trans.get("msg_end_serial_save") : hmAux_Trans.get("msg_processing_list"),hmAux, "", "0");
 
     }
 
@@ -187,6 +187,8 @@ public class WS_SO_Search extends IntentService {
         translist.add("msg_processing_list");
         translist.add("msg_error_on_save_serial");
         translist.add("msg_searching_sos");
+        translist.add("msg_send_serial_data");
+        translist.add("msg_end_serial_save");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

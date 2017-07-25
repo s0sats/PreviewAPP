@@ -201,6 +201,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_save_serial_ok_msg");
         transList.add("alert_invalid_serial_local_ttl");
         transList.add("alert_invalid_serial_local_msg");
+        transList.add("alert_no_data_changes_ttl");
+        transList.add("alert_no_data_changes_msg");
+        transList.add("progress_serial_save_ttl");
+        transList.add("progress_serial_save_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -295,13 +299,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         tv_serial_add_info_ttl.setTag("serial_add_info_ttl");
         //
         et_info1 = (EditText) findViewById(R.id.act031_et_info1);
-        et_info1.setTag("add_info1_lbl");
         //
         et_info2 = (EditText) findViewById(R.id.act031_et_info2);
-        et_info2.setTag("add_info2_lbl");
         //
         et_info3 = (EditText) findViewById(R.id.act031_et_info3);
-        et_info3.setTag("add_info3_lbl");
         //
         ll_serial_properties = (LinearLayout) findViewById(R.id.act031_ll_serial_properties);
         //
@@ -340,9 +341,6 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         views.add(tv_allow_new_lbl);
         views.add(tv_serial_ttl);
         views.add(tv_serial_location_ttl);
-        views.add(et_info1);
-        views.add(et_info2);
-        views.add(et_info3);
         views.add(tv_serial_properties_ttl);
         //
         //spinnersInitializer();
@@ -467,7 +465,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                     buildSerialFull();
                      mPresenter.updateSerialInfo(serialObj);
                 } else {
-                     mPresenter.executeSoSearch(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
+                     mPresenter.executeSaveSerial(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
                 }
             }
         });*/
@@ -508,15 +506,22 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         listnerSearchSO = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mket_serial_id.setEnabled(false);
                 //validateSerialProperties esta comentado , mas seráa validação oficial no futuro.
                 //if(validateSerialProperties(serialProperties)) {
                 if(validadeSerialLocation()) {
                     if (checkSerialChanges(serialProperties)) {
                         buildSerialFull();
                         //
+                        serialObj.setSerial_id(mket_serial_id.getText().toString().trim());
+                        //
                         mPresenter.updateSerialInfo(serialObj);
                     } else {
-                        mPresenter.executeSoSearch(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
+                        //mPresenter.executeSaveSerial(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
+                        showAlertDialog(
+                                hmAux_Trans.get("alert_no_data_changes_ttl"),
+                                hmAux_Trans.get("alert_no_data_changes_msg")
+                        );
                     }
                 }else{
                     showAlertDialog(
@@ -724,7 +729,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //}
         //
         btn_action.setOnClickListener(listnerSearchSO);
-        btn_action.setText(hmAux_Trans.get("btn_so_search"));
+        btn_action.setText(hmAux_Trans.get("btn_action_lbl"));
         //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
 

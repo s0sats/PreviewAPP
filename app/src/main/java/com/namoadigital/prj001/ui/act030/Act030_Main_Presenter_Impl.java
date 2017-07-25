@@ -119,9 +119,9 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
                         ).toSqlQuery()
                 );
         if (listProducts != null && listProducts.size() == 1) {
-            if (productAllowNewSerial(listProducts.get(0))) {
+            //if (productAllowNewSerial(listProducts.get(0))) {
                 mView.setProductInfoToDrawer(listProducts.get(0));
-            }
+            //}
         }
     }
 
@@ -139,7 +139,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         );
         //
         if (md_product != null && md_product.getCustomer_code() > -1) {
-            if(productAllowNewSerial(md_product)){
+            //if(productAllowNewSerial(md_product)){
                 TProduct_Serial tProductSerial = new TProduct_Serial();
                 //
                 tProductSerial.setCustomer_code(md_product.getCustomer_code());
@@ -150,9 +150,9 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
                 //
                 mView.setTProductSerial(tProductSerial);
                 return true;
-            }else{
-                return false;
-            }
+//            }else{
+//                return false;
+//            }
 
         }else {
             ToolBox.alertMSG(
@@ -170,6 +170,33 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
 
     public boolean productAllowNewSerial(MD_Product md_product) {
         if (md_product.getAllow_new_serial_cl() == 1) {
+            return true;
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_new_serial_not_allow_ttl"),
+                    hmAux_Trans.get("alert_new_serial_not_allow_msg"),
+                    null,
+                    0
+            );
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean productAllowNewSerial(String product_code, String product_id) {
+        //
+        MD_Product md_product
+                = mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        if (md_product != null && md_product.getAllow_new_serial_cl() == 1) {
             return true;
         } else {
             ToolBox.alertMSG(

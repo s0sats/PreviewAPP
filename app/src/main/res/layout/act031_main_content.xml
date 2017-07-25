@@ -281,7 +281,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
-                        android:hint="Info1"
+                        android:hint=""
                         android:minHeight="30dp"
                         android:padding="10dp"
                         />
@@ -293,7 +293,7 @@
                         android:layout_marginBottom="5dp"
                         android:clickable="true"
                         android:gravity="center_vertical"
-                        android:hint="Info 2"
+                        android:hint=""
                         android:minHeight="30dp"
                         android:padding="10dp" />
 
@@ -303,7 +303,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
-                        android:hint="Info 3"
+                        android:hint=""
                         android:minHeight="30dp"
                         android:padding="10dp" />
 

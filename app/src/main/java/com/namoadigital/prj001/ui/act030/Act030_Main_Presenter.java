@@ -22,4 +22,6 @@ public interface Act030_Main_Presenter {
     boolean checkProductExists(String product_code, String product_id, String serial);
 
     boolean productAllowNewSerial(MD_Product md_product);
+
+    boolean productAllowNewSerial(String product_code, String product_id);
 }

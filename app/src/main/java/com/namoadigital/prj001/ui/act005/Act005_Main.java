@@ -198,6 +198,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("lbl_logout");
         transList.add("lbl_schedule_data");
         transList.add("lbl_so");
+        transList.add("lbl_serial_data");
         //toolbar
         transList.add("toolbar_enable_nfc");
         transList.add("toolbar_cancel_nfc");
