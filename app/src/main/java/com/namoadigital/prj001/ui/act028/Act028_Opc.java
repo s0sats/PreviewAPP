@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.ui.act028;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +13,24 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Exec_Adapter;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -37,6 +47,8 @@ public class Act028_Opc extends BaseFragment {
 
     private SM_SO_ServiceDao sm_so_serviceDao;
     private SM_SO_Service sm_so_service;
+
+    private SM_SO_Service_ExecDao sm_so_service_execDao;
 
     private TextView tv_service_id_label;
     private TextView tv_service_id_value;
@@ -103,6 +115,12 @@ public class Act028_Opc extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
 
+        sm_so_service_execDao = new SM_SO_Service_ExecDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         lv_execs = (ListView) view.findViewById(R.id.act028_opc_content_lv_execs);
 
         tv_service_id_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_service_id_label);
@@ -134,9 +152,16 @@ public class Act028_Opc extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SM_SO_Service_Exec sm_so_service_exec = (SM_SO_Service_Exec) parent.getItemAtPosition(position);
-                // Chamar Lista de Tasks
-                if (delegate != null) {
-                    delegate.menuOptionsSelected(sm_so_service_exec);
+
+                if (sm_so_service_exec.getPartner_code() == null) {
+
+                    handlePartnerDefinition(sm_so_service_exec);
+
+                } else {
+                    // Chamar Lista de Tasks
+                    if (delegate != null) {
+                        delegate.menuOptionsSelected(sm_so_service_exec);
+                    }
                 }
             }
         });
@@ -144,12 +169,170 @@ public class Act028_Opc extends BaseFragment {
         btn_new_exec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Chamar Caixa para selecao de partner
-                if (delegate != null) {
-                    delegate.newExec();
+
+                SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
+
+                sm_so_service_execNew.setExec_code(0);
+
+                sm_so_service_execNew.setPK(sm_so_service);
+
+                long nExecTemp = Long.parseLong(sm_so_service_execDao.getByStringHM(
+                        new SM_SO_Service_Exec_Sql_003(
+                                sm_so_service.getCustomer_code(),
+                                sm_so_service.getSo_prefix(),
+                                sm_so_service.getSo_code(),
+                                sm_so_service.getPrice_list_code(),
+                                sm_so_service.getPack_code(),
+                                sm_so_service.getPack_seq(),
+                                sm_so_service.getCategory_price_code(),
+                                sm_so_service.getService_code(),
+                                sm_so_service.getService_seq()
+
+                        ).toSqlQuery()
+                ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
+
+                sm_so_service_execNew.setExec_tmp(nExecTemp);
+                sm_so_service_execNew.setStatus(Constant.SO_STATUS_PROCESS);
+
+                if (sm_so_service.getPartner_code() == null) {
+                    handlePartnerDefinition(sm_so_service_execNew);
+                } else {
+                    sm_so_service_execNew.setPartner_code(sm_so_service.getPartner_code());
+                    sm_so_service_execNew.setPartner_id(sm_so_service.getPartner_id());
+                    sm_so_service_execNew.setPartner_desc(sm_so_service.getPartner_desc());
+                    //
+                    sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
+                    //
+                    if (delegate != null) {
+                        delegate.menuOptionsSelected(sm_so_service_execNew);
+                        setHMAuxScreen();
+                    }
                 }
             }
         });
+    }
+
+    private void handlePartnerDefinition(SM_SO_Service_Exec sm_so_service_exec) {
+        showPartnerOptDialog(sm_so_service_exec);
+    }
+
+    public void showPartnerOptDialog(final SM_SO_Service_Exec sm_so_service_exec) {
+        MD_PartnerDao md_partnerDao = new MD_PartnerDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
+
+                new MD_Partner_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        if (partners.size() == 1) {
+            sm_so_service_exec.setPartner_code(Integer.parseInt(partners.get(0).get("id")));
+            sm_so_service_exec.setPartner_id(partners.get(0).get("partner_id"));
+            sm_so_service_exec.setPartner_desc(partners.get(0).get("description"));
+            //
+            sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
+            //
+            if (delegate != null) {
+                delegate.menuOptionsSelected(sm_so_service_exec);
+                setHMAuxScreen();
+            }
+        } else {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
+
+            SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
+
+            final HMAux partnerAux = new HMAux();
+
+            ss_partner.setmLabel("Selecao de Partner");
+            ss_partner.setmTitle("Busca de Partner");
+
+            if (partners.size() > 0) {
+                HMAux hmAux = new HMAux();
+                hmAux.put("id", "0");
+                hmAux.put("description", "Select a Partner");
+
+                ss_partner.setmValue(hmAux);
+            }
+
+            ss_partner.setmOption(partners);
+
+            builder.setView(view);
+            builder.setCancelable(true);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+
+                    if (partnerAux.size() == 0) {
+
+                        ToolBox.alertMSG(
+                                context,
+                                "Partner da Execucao",
+                                "Não é possível prosseguir sem selecionar o Parceiro",
+                                null,
+                                -1,
+                                false
+                        );
+                    } else {
+                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
+                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
+                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
+                        //
+                        sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
+                        //
+                        if (delegate != null) {
+                            delegate.menuOptionsSelected(sm_so_service_exec);
+                            setHMAuxScreen();
+                        }
+                    }
+                }
+            });
+
+            final AlertDialog show = builder.show();
+
+            ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(HMAux hmAux) {
+
+                    partnerAux.clear();
+
+                    partnerAux.putAll(hmAux);
+
+                    if (partnerAux.size() == 0) {
+
+                        ToolBox.alertMSG(
+                                context,
+                                "Partner da Execucao",
+                                "Não é possível prosseguir sem selecionar o Parceiro",
+                                null,
+                                -1,
+                                false
+                        );
+                    } else {
+                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
+                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
+                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
+                        //
+                        sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
+                        if (delegate != null) {
+                            delegate.menuOptionsSelected(sm_so_service_exec);
+                            setHMAuxScreen();
+                        }
+
+                    }
+
+                    show.dismiss();
+                }
+            });
+        }
     }
 
     public void setHMAuxScreen() {

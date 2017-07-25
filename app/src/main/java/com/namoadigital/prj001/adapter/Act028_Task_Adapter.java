@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
 
@@ -56,10 +58,17 @@ public class Act028_Task_Adapter extends BaseAdapter {
         TextView tv_task_label = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_tmp_label);
         TextView tv_task_value = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_tmp_value);
         TextView tv_task_status = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_status);
+        ImageView iv_icon = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_ll_iv_icon);
 
         tv_task_label.setText("Task TMP");
         tv_task_value.setText(item.get("task_tmp"));
         tv_task_status.setText(item.get("task_status"));
+        //
+        if (item.get("task_user").equalsIgnoreCase(String.valueOf(ToolBox_Con.getPreference_User_Code(context)))){
+            iv_icon.setVisibility(View.VISIBLE);
+        } else {
+            iv_icon.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }

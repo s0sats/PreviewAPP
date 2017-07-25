@@ -38,11 +38,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     private Context context;
 
-    private TextView tv_service_id_label;
-    private TextView tv_service_id_value;
-
-    private TextView tv_service_desc_label;
-    private TextView tv_service_desc_value;
+    private TextView tv_exec_tmp_label;
+    private TextView tv_exec_tmp_value;
 
     private TextView tv_task_tmp_label;
     private TextView tv_task_tmp_value;
@@ -60,6 +57,15 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     private HashMap<String, String> data;
 
+    public interface IAct028_Task {
+        void exec_list_opc_update();
+    }
+
+    private IAct028_Task delegate;
+
+    public void setOnExec_List_Opc_Update(IAct028_Task delegate) {
+        this.delegate = delegate;
+    }
 
     public void changeData(HMAux newData) {
         if (data != null) {
@@ -89,6 +95,24 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         setHMAuxScreen();
         //
         super.onResume();
+    }
+
+    public void updateTaskOnLeave() {
+        try {
+            if (sm_so_service_exec_task != null && sm_so_service_exec_task.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
+                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
+                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
+                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
+                sm_so_service_exec_task.setComments(taskControl.getmComments());
+                //
+                //sm_so_service_exec_task.setPK(sm_so_service_exec);
+                //
+                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
     }
 
     private void iniVar(View view) {
@@ -130,11 +154,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 //
 //        );
 
-        tv_service_id_label = (TextView) view.findViewById(R.id.act028_task_content_tv_service_id_label);
-        tv_service_id_value = (TextView) view.findViewById(R.id.act028_task_content_tv_service_id_value);
-
-        tv_service_desc_label = (TextView) view.findViewById(R.id.act028_task_content_tv_desc_label);
-        tv_service_desc_value = (TextView) view.findViewById(R.id.act028_task_content_tv_desc_value);
+        tv_exec_tmp_label = (TextView) view.findViewById(R.id.act028_task_content_tv_exec_tmp_label);
+        tv_exec_tmp_value = (TextView) view.findViewById(R.id.act028_task_content_tv_exec_tmp_value);
 
         tv_task_tmp_label = (TextView) view.findViewById(R.id.act028_task_content_tv_task_tmp_label);
         tv_task_tmp_value = (TextView) view.findViewById(R.id.act028_task_content_tv_task_tmp_value);
@@ -246,11 +267,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
                 );
 
-                tv_service_id_label.setText("Service ID");
-                tv_service_id_value.setText(data.get("service_id"));
-
-                tv_service_desc_label.setText("Service Description");
-                tv_service_desc_value.setText(data.get("service_desc"));
+                tv_exec_tmp_label.setText("Exec TMP");
+                tv_exec_tmp_value.setText(data.get("exec_tmp"));
 
                 tv_task_tmp_label.setText("Task TMP");
                 tv_task_tmp_value.setText(data.get("task_tmp"));
@@ -379,6 +397,10 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                             sm_so_service_exec_task.getExec_tmp()
                     ).toSqlQuery()
             );
+
+            if (delegate != null){
+                delegate.exec_list_opc_update();
+            }
         }
 
         callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
@@ -438,6 +460,10 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                             sm_so_service_exec_task.getExec_tmp()
                     ).toSqlQuery()
             );
+
+            if (delegate != null){
+                delegate.exec_list_opc_update();
+            }
         }
 
         callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());

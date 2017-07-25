@@ -1,39 +1,37 @@
 package com.namoadigital.prj001.ui.act028;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Task_Adapter;
-import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
-import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -44,11 +42,25 @@ public class Act028_Task_List extends BaseFragment {
 
     private Context context;
 
+    private transient TextView tv_exec_tmp_label;
+    private transient TextView tv_exec_tmp_value;
+
+    private transient TextView tv_exec_type_label;
+    private transient TextView tv_exec_type_value;
+
+    private transient TextView tv_partner_id_label;
+    private transient TextView tv_partner_id_value;
+
+    private transient TextView tv_partner_desc_value;
+
     private transient ListView lv_tasks;
     private transient Button btn_new_task;
 
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
     private SM_SO_Service_Exec sm_so_service_exec;
+
+    private SM_SO_ServiceDao sm_so_serviceDao;
+    private SM_SO_Service sm_so_service;
 
     private SM_SODao soDao;
 
@@ -102,11 +114,28 @@ public class Act028_Task_List extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
 
+        sm_so_serviceDao = new SM_SO_ServiceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+
+        tv_exec_tmp_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_label);
+        tv_exec_tmp_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_value);
+
+        tv_exec_type_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_label);
+        tv_exec_type_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_value);
+
+        tv_partner_id_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_label);
+        tv_partner_id_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_value);
+
+        tv_partner_desc_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_desc_value);
 
         lv_tasks = (ListView) view.findViewById(R.id.act028_task_list_content_lv_tasks);
         btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_btn_new_task);
@@ -117,6 +146,30 @@ public class Act028_Task_List extends BaseFragment {
     public void setHMAuxScreen() {
 
         try {
+
+            sm_so_service = sm_so_serviceDao.getByString(
+                    new SM_SO_Service_Sql_001(
+                            sm_so_service_exec.getCustomer_code(),
+                            sm_so_service_exec.getSo_prefix(),
+                            sm_so_service_exec.getSo_code(),
+                            sm_so_service_exec.getPrice_list_code(),
+                            sm_so_service_exec.getPack_code(),
+                            sm_so_service_exec.getPack_seq(),
+                            sm_so_service_exec.getCategory_price_code(),
+                            sm_so_service_exec.getService_code(),
+                            sm_so_service_exec.getService_seq()
+                    ).toSqlQuery()
+            );
+
+            tv_exec_tmp_label.setText("Exec TMP");
+            tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
+
+            tv_exec_type_label.setText("Exec Type");
+            tv_exec_type_value.setText(sm_so_service.getExec_type());
+
+            tv_partner_id_label.setText("Partner ID");
+            tv_partner_id_value.setText(sm_so_service_exec.getPartner_id());
+            tv_partner_desc_value.setText(sm_so_service_exec.getPartner_desc());
 
             switch (sm_so_service_exec.getStatus().toUpperCase()) {
                 case Constant.SO_STATUS_PENDING:
@@ -243,7 +296,14 @@ public class Act028_Task_List extends BaseFragment {
 
                 task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
                 task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-                task.setTask_perc(Integer.parseInt(dtAux.get("task_perc")));
+
+                if (dtAux != null) {
+                    task.setTask_perc(Integer.parseInt(dtAux.get("task_perc")));
+                } else {
+                    task.setTask_perc(0);
+                }
+
+
                 task.setQty_people(1);
                 task.setStatus(Constant.SO_STATUS_PROCESS);
 
@@ -283,9 +343,9 @@ public class Act028_Task_List extends BaseFragment {
                 task.setTask_tmp(nTaskTemp);
                 sm_so_service_exec_taskDao.addUpdateTmp(task);
 
-                if (numberOfValidTasks == 0) {
-                    showPartnerOptDialog();
-                }
+//                if (numberOfValidTasks == 0) {
+//                    showPartnerOptDialog();
+//                }
 
                 createTaskList();
 
@@ -303,7 +363,7 @@ public class Act028_Task_List extends BaseFragment {
                 so.setUpdate_required(1);
                 soDao.addUpdate(so);
 
-                if (dtAux.get("exec_type").equalsIgnoreCase("START_STOP")) {
+                if (sm_so_service.getExec_type().equalsIgnoreCase("START_STOP")) {
                     callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
                 }
             }
@@ -342,7 +402,7 @@ public class Act028_Task_List extends BaseFragment {
             auxTMP = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
             if (auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
-                    aux.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                    auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
                     ) {
 
                 numberOfValidTasks++;
@@ -368,67 +428,67 @@ public class Act028_Task_List extends BaseFragment {
         return aux;
     }
 
-    public void showPartnerOptDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
-
-        SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
-
-        ss_partner.setmLabel("Selecao de Partner");
-        ss_partner.setmTitle("Busca de Partner");
-
-        MD_PartnerDao md_partnerDao = new MD_PartnerDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
-
-                new MD_Partner_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-
-        if (partners.size() > 0) {
-            HMAux hmAux = new HMAux();
-            hmAux.put("id", "0");
-            hmAux.put("description", "Select a Partner");
-
-            ss_partner.setmValue(hmAux);
-        }
-
-        ss_partner.setmOption(partners);
-
-        builder.setView(view);
-        builder.setCancelable(true);
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-
-            }
-        });
-
-        final AlertDialog show = builder.show();
-
-        ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(HMAux hmAux) {
-
-                partnerAux.clear();
-
-                partnerAux.putAll(hmAux);
-
-                if (partnerAux.size() == 0) {
-
-                }
-
-                show.dismiss();
-
-            }
-        });
-
-    }
+//    public void showPartnerOptDialog() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
+//
+//        SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
+//
+//        ss_partner.setmLabel("Selecao de Partner");
+//        ss_partner.setmTitle("Busca de Partner");
+//
+//        MD_PartnerDao md_partnerDao = new MD_PartnerDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
+//
+//                new MD_Partner_Sql_001(
+//                        ToolBox_Con.getPreference_Customer_Code(context)
+//                ).toSqlQuery()
+//        );
+//
+//        if (partners.size() > 0) {
+//            HMAux hmAux = new HMAux();
+//            hmAux.put("id", "0");
+//            hmAux.put("description", "Select a Partner");
+//
+//            ss_partner.setmValue(hmAux);
+//        }
+//
+//        ss_partner.setmOption(partners);
+//
+//        builder.setView(view);
+//        builder.setCancelable(true);
+//        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialog) {
+//
+//            }
+//        });
+//
+//        final AlertDialog show = builder.show();
+//
+//        ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(HMAux hmAux) {
+//
+//                partnerAux.clear();
+//
+//                partnerAux.putAll(hmAux);
+//
+//                if (partnerAux.size() == 0) {
+//
+//                }
+//
+//                show.dismiss();
+//
+//            }
+//        });
+//
+//    }
 }

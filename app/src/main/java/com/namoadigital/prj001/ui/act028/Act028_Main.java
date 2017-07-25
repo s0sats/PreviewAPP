@@ -42,7 +42,7 @@ import java.util.List;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View, Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List {
+public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View, Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
 
     private Context context;
 
@@ -167,6 +167,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
         act028_task.setBaInfra(this);
         act028_task.setData(mData);
+        act028_task.setOnExec_List_Opc_Update(this);
 
         mDrawerLayout.openDrawer(GravityCompat.START);
 
@@ -231,6 +232,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         //
         index = 0;
         //
+        act028_task.updateTaskOnLeave();
+        //
         setFrag(act028_task_list, "TASK_LIST");
     }
 
@@ -256,6 +259,11 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         setFrag(act028_task, "TASK");
         //
         act028_task.setHMAuxScreen();
+    }
+
+    @Override
+    public void exec_list_opc_update() {
+        act028_opc.setHMAuxScreen();
     }
 
     @Override
@@ -307,6 +315,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             ll_list.setVisibility(View.VISIBLE);
             ll_task.setVisibility(View.GONE);
             //
+            act028_task.updateTaskOnLeave();
+            //
             act028_task_list.setHMAuxScreen();
         } else {
             if (mDrawerStatus) {
@@ -342,7 +352,29 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         super.processCloseACT(mLink, mRequired, hmAux);
 
         if (!hmAux.get(WS_SO_Serial_Save.SO_RETURN_FULL_REFRESH).equals("0")) {
-            onBackPressed();
+
+            ToolBox.alertMSG(
+                    context,
+                    "Recarda da SO",
+                    "A SO precisa ser recarregada!",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            bundle.remove("data");
+                            //
+                            Intent mIntent = new Intent(context, Act027_Main.class);
+                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            mIntent.putExtras(bundle);
+                            //
+                            startActivity(mIntent);
+                            finish();
+
+                        }
+                    },
+                    -1,
+                    false
+            );
+
         } else {
             if (index == 0) {
                 disableProgressDialog();
@@ -369,6 +401,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         ll_task.setVisibility(View.GONE);
         //
         act028_task_list.setHMAuxScreen();
+        act028_task.setHMAuxScreen();
 
         disableProgressDialog();
     }
@@ -437,14 +470,14 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                     mDrawerLayout.openDrawer(GravityCompat.START);
 
                     mDrawerToggle.syncState();
+                } else {
+
                 }
 
                 show.dismiss();
-
             }
         });
 
     }
-
 
 }
