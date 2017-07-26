@@ -29,7 +29,7 @@ public class DatabaseHelperMulti extends SQLiteOpenHelper {
             script.append("create table if not exists [ev_module_ress] ([module_code] text not null DEFAULT '' COLLATE NOCASE, [resource_code] int not null, [resource_name] text not null DEFAULT '' COLLATE NOCASE, constraint pk_module_ress primary key(module_code,resource_code));");
             script.append("create table if not exists [ev_module_res_txts] ([module_code] text not null DEFAULT '' COLLATE NOCASE, [resource_code] int not null, [txt_code] text not null DEFAULT '' COLLATE NOCASE, [txt_ref] int not null, constraint pk_module_res_txts primary key(module_code,resource_code,txt_code));");
             script.append("create table if not exists [ev_module_res_txt_transs] ([module_code] text not null DEFAULT '' COLLATE NOCASE, [resource_code] int not null, [txt_code] text not null DEFAULT '' COLLATE NOCASE, [translate_code] int not null, [txt_value] text not null DEFAULT '' COLLATE NOCASE, constraint pk_module_res_txt_transs primary key(module_code,resource_code,txt_code,translate_code));");
-            script.append("create table if not exists [ev_profiles]([customer_code] INT NOT NULL,[menu_code] TEXT NOT NULL DEFAULT '' COLLATE NOCASE, [parameter_code] TEXT NOT NULL DEFAULT '' COLLATE NOCASE);");
+            script.append("create table if not exists [ev_profiles]([customer_code] INT NOT NULL,[menu_code] TEXT NOT NULL DEFAULT '' COLLATE NOCASE, [parameter_code] TEXT COLLATE NOCASE);");
 
             script.append("create table if not exists [ge_custom_form_types] ([customer_code] int not null, [custom_form_type] int not null, constraint pk_form_types primary key(customer_code,custom_form_type));");
 

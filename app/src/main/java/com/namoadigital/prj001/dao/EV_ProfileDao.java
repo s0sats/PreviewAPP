@@ -273,6 +273,8 @@ public class EV_ProfileDao extends BaseDao implements Dao<EV_Profile> {
                 contentValues.put(MENU_CODE, ev_profile.getMenu_code());
             }
 
+            contentValues.put(PARAMETER_CODE, ev_profile.getParameter_code());
+
             return contentValues;
         }
     }

@@ -241,7 +241,10 @@ public class WS_SO_Serial_Save extends IntentService {
                             File file = new File(Constant.CACHE_PATH_PHOTO + "/" + taskFile.getFile_name());
                             if (file.exists()) {
                                 taskFile.setFile_url_local(taskFile.getFile_name());
-                                taskFileDao.addUpdate(taskFile);
+                                taskFileDao.addUpdateTmp(taskFile);
+                            }else{
+                                Exception e = new Exception("SO_FULL_TASK_FILE_LOCAL_FILE_NOT_FOUND");
+                                ToolBox_Inf.registerException(getClass().getName(),e);
                             }
                         }
                     }
