@@ -175,18 +175,18 @@ public class WS_SO_Serial_Save extends IntentService {
         //
         if (
                 !ToolBox_Inf.processWSCheckValidation(
-                getApplicationContext(),
-                rec.getValidation(),
-                rec.getError_msg(),
-                rec.getLink_url(),
-                1,
-                1)
-            ||
-                !ToolBox_Inf.processoOthersError(
                         getApplicationContext(),
-                        getResources().getString(R.string.generic_error_lbl),
-                        rec.getError_msg())
-        ) {
+                        rec.getValidation(),
+                        rec.getError_msg(),
+                        rec.getLink_url(),
+                        1,
+                        1)
+                        ||
+                        !ToolBox_Inf.processoOthersError(
+                                getApplicationContext(),
+                                getResources().getString(R.string.generic_error_lbl),
+                                rec.getError_msg())
+                ) {
             return;
         }
         //
@@ -241,7 +241,10 @@ public class WS_SO_Serial_Save extends IntentService {
                             File file = new File(Constant.CACHE_PATH_PHOTO + "/" + taskFile.getFile_name());
                             if (file.exists()) {
                                 taskFile.setFile_url_local(taskFile.getFile_name());
-                                taskFileDao.addUpdate(taskFile);
+                                taskFileDao.addUpdateTmp(taskFile);
+                            } else {
+                                Exception e = new Exception("SO_FULL_TASK_FILE_LOCAL_FILE_NOT_FOUND");
+                                ToolBox_Inf.registerException(getClass().getName(), e);
                             }
                         }
                     }
@@ -261,7 +264,7 @@ public class WS_SO_Serial_Save extends IntentService {
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), hmAux, "", "0");
             }
-        }else{
+        } else {
             if (ret.getSo() != null) {
                 //Var q indica se refresh da SO é full ou só De_Para
                 so_full_refresh = 1;

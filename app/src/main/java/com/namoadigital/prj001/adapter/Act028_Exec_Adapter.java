@@ -7,9 +7,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,10 +27,21 @@ public class Act028_Exec_Adapter extends BaseAdapter {
     private int resource;
     private List<SM_SO_Service_Exec> source;
 
+    private String mResource_Code;
+    private HMAux hmAux_Trans;
+
     public Act028_Exec_Adapter(Context context, int resource, List<SM_SO_Service_Exec> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                "act028_exec_adapter"
+        );
+
+        loadTranslation();
     }
 
     @Override
@@ -57,10 +73,24 @@ public class Act028_Exec_Adapter extends BaseAdapter {
         TextView tv_exec_tmp_value = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_tmp_value);
         TextView tv_exec_status = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_status);
 
-        tv_exec_tmp_label.setText("Exec TMP");
+        tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
         tv_exec_tmp_value.setText(String.valueOf(item.getExec_tmp()));
         tv_exec_status.setText(item.getStatus());
 
         return convertView;
+    }
+
+    private void loadTranslation() {
+
+        List<String> translateList = new ArrayList<>();
+        translateList.add("exec_tmp_lbl");
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
     }
 }

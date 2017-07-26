@@ -159,15 +159,18 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_opc = (Act028_Opc) fm.findFragmentById(R.id.act028_opc);
         act028_opc.setOnMenuOptionsSelected(this);
         act028_opc.setData(mData);
+        act028_opc.setHmAux_Trans(hmAux_Trans);
 
         act028_task_list = (Act028_Task_List) fm.findFragmentById(R.id.act028_list);
         act028_task_list.setBaInfra(this);
         act028_task_list.setOnTaskSelected(this);
+        act028_task_list.setHmAux_Trans(hmAux_Trans);
 
         act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
         act028_task.setBaInfra(this);
         act028_task.setData(mData);
         act028_task.setOnExec_List_Opc_Update(this);
+        act028_task.setHmAux_Trans(hmAux_Trans);
 
         mDrawerLayout.openDrawer(GravityCompat.START);
 

@@ -26,6 +26,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_008;
@@ -68,6 +69,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     private HashMap<String, String> data;
 
+    private boolean sdAvoid = false;
+
     public interface IAct028_Task {
         void exec_list_opc_update();
     }
@@ -88,7 +91,14 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
     public void setData(HashMap<String, String> data) {
         this.data = data;
         //
-        tempValues.clear();
+        tempValues.put("qty", data.get("qty_people"));
+        tempValues.put("perc", data.get("task_perc"));
+        tempValues.put("dts", data.get("start_date"));
+        tempValues.put("dte", data.get("end_date"));
+        tempValues.put("comments", data.get("comments"));
+        tempValues.put("img", "");
+        //
+        sdAvoid = true;
     }
 
     @Nullable
@@ -331,14 +341,14 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
                 for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : sm_so_service_exec_task.getTask_file()) {
 
-                    if (!sm_so_service_exec_task_file.getFile_url_local().isEmpty()) {
+                    if (!sm_so_service_exec_task_file.getFile_name().isEmpty()) {
 
                         if (bFirst) {
-                            sFiles.append(sm_so_service_exec_task_file.getFile_url_local());
+                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
                             bFirst = false;
                         } else {
                             sFiles.append("#");
-                            sFiles.append(sm_so_service_exec_task_file.getFile_url_local());
+                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
                         }
 
                     }
@@ -354,7 +364,12 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                     taskControl.setmDtStart(tempValues.get("dts"));
                     taskControl.setmDtEnd(tempValues.get("dte"));
                     taskControl.setmComments(tempValues.get("comments"));
-                    taskControl.setmImgPath(tempValues.get("img"));
+
+                    if (sdAvoid) {
+                        sdAvoid = false;
+                    } else {
+                        taskControl.setmImgPath(tempValues.get("img"));
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -560,6 +575,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
     }
 
     private void callSoSave(int prefix, int code) {
+
         baInfra.enableProgressDialog(
                 "Teste Save SO",
                 "Testando Save SO",
@@ -577,6 +593,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+        //
+        activateUpload(context);
     }
 
     @Override
@@ -683,5 +701,15 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         //
         return task_file;
     }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
 
 }

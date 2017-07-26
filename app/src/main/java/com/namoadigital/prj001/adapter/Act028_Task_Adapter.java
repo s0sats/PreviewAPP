@@ -10,8 +10,11 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +27,21 @@ public class Act028_Task_Adapter extends BaseAdapter {
     private int resource;
     private List<HMAux> source;
 
+    private String mResource_Code;
+    private HMAux hmAux_Trans;
+
     public Act028_Task_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                "act028_task_adapter"
+        );
+
+        loadTranslation();
     }
 
     @Override
@@ -60,7 +74,7 @@ public class Act028_Task_Adapter extends BaseAdapter {
         TextView tv_task_status = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_status);
         ImageView iv_icon = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_ll_iv_icon);
 
-        tv_task_label.setText("Task TMP");
+        tv_task_label.setText(hmAux_Trans.get("task_tmp_lbl"));
         tv_task_value.setText(item.get("task_tmp"));
         tv_task_status.setText(item.get("task_status"));
         //
@@ -72,4 +86,20 @@ public class Act028_Task_Adapter extends BaseAdapter {
 
         return convertView;
     }
+
+    private void loadTranslation() {
+
+        List<String> translateList = new ArrayList<>();
+        translateList.add("task_tmp_lbl");
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+    }
+
+
 }

@@ -190,7 +190,6 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
         }
 
         closeDB();
-
     }
 
     @Override

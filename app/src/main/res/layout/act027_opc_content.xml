@@ -20,7 +20,7 @@
 
 
         <TextView
-            android:id="@+id/act027_content_cell_tv_so_ttl"
+            android:id="@+id/act027_opc_tv_so_ttl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="S.O"

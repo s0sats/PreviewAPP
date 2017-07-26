@@ -67,7 +67,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
         try {
 
-            db.beginTransaction();
+            //db.beginTransaction();
 
             if (status) {
                 db.delete(TABLE, null, null);
@@ -82,11 +82,11 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
                 }
             }
 
-            db.setTransactionSuccessful();
+            //db.setTransactionSuccessful();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
-            db.endTransaction();
+            //db.endTransaction();
         }
 
         closeDB();

@@ -408,9 +408,14 @@ public class SM_SO_Service_Exec_Task_FileDao extends BaseDao implements DaoTmp<S
             sm_so_service_exec_task_file.setExec_code(cursor.getInt(cursor.getColumnIndex(EXEC_CODE)));
             sm_so_service_exec_task_file.setTask_code(cursor.getInt(cursor.getColumnIndex(TASK_CODE)));
             sm_so_service_exec_task_file.setFile_code(cursor.getInt(cursor.getColumnIndex(FILE_CODE)));
-            sm_so_service_exec_task_file.setExec_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
-            sm_so_service_exec_task_file.setTask_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
+
+            sm_so_service_exec_task_file.setExec_tmp(cursor.getLong(cursor.getColumnIndex(EXEC_TMP)));
+            sm_so_service_exec_task_file.setTask_tmp(cursor.getLong(cursor.getColumnIndex(TASK_TMP)));
             sm_so_service_exec_task_file.setFile_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
+
+//            sm_so_service_exec_task_file.setExec_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
+//            sm_so_service_exec_task_file.setTask_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
+//            sm_so_service_exec_task_file.setFile_tmp(cursor.getLong(cursor.getColumnIndex(FILE_TMP)));
             sm_so_service_exec_task_file.setFile_name(cursor.getString(cursor.getColumnIndex(FILE_NAME)));
             if (cursor.isNull(cursor.getColumnIndex(FILE_URL))) {
                 sm_so_service_exec_task_file.setFile_url(null);

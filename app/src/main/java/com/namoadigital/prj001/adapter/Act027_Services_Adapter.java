@@ -11,7 +11,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +28,21 @@ public class Act027_Services_Adapter extends BaseAdapter {
     private int resource;
     private List<HMAux> source;
 
+    private String mResource_Code;
+    private HMAux hmAux_Trans;
+
     public Act027_Services_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
+
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                "act027_service_adapter"
+        );
+
+        loadTranslation();
     }
 
     @Override
@@ -55,6 +70,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         HMAux item = source.get(position);
 
+        TextView tv_service_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_ttl);
+
         TextView tv_plc_pc_ps_sc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_plc_pc_ps_sc_label);
         TextView tv_plc_pc_ps_sc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_plc_pc_ps_sc_value);
 
@@ -79,30 +96,45 @@ public class Act027_Services_Adapter extends BaseAdapter {
         TextView tv_status_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status_value);
         TextView tv_qty_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_value);
 
-        //tv_plc_pc_ps_sc_label.setText("");
+        tv_service_label.setText(hmAux_Trans.get("service_lbl"));
+
+        tv_plc_pc_ps_sc_label.setText(hmAux_Trans.get("plc_pc_ps_sc_lbl"));
         tv_plc_pc_ps_sc_value.setText(item.get(SM_SO_ServiceDao.PRICE_LIST_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_SEQ) + "/" + item.get(SM_SO_ServiceDao.SERVICE_CODE));
 
-        //tv_price_list_id_label.setText("");
+        tv_price_list_id_label.setText(hmAux_Trans.get("price_list_id_lbl"));
         tv_price_list_id_value.setText(item.get(SM_SO_PackDao.PRICE_LIST_ID));
 
-        //tv_price_list_desc_label.setText("");
         tv_price_list_desc_value.setText(item.get(SM_SO_PackDao.PRICE_LIST_DESC));
 
-        //tv_pack_id_label.setText("");
+        tv_pack_id_label.setText(hmAux_Trans.get("pack_id_lbl"));
         tv_pack_id_value.setText(item.get(SM_SO_PackDao.PACK_ID));
 
-        //tv_pack_desc_label.setText("");
         tv_pack_desc_value.setText(item.get(SM_SO_PackDao.PACK_DESC));
 
-        //tv_service_desc_label.setText("");
         service_desc_value.setText(item.get(SM_SO_ServiceDao.SERVICE_DESC));
-
-        //tv_status_label.setText("");
-        //tv_qty_label.setText("");
 
         tv_status_value.setText(item.get(SM_SO_ServiceDao.STATUS));
         tv_qty_value.setText(item.get(SM_SO_ServiceDao.QTY));
 
         return convertView;
     }
+
+    private void loadTranslation() {
+
+        List<String> translateList = new ArrayList<>();
+        translateList.add("service_lbl");
+        translateList.add("plc_pc_ps_sc_lbl");
+        translateList.add("price_list_id_lbl");
+        translateList.add("pack_id_lbl");
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+    }
+
+
 }

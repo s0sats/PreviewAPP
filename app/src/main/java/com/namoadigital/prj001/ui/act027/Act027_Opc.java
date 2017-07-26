@@ -30,6 +30,8 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_serial;
     private LinearLayout ll_header;
 
+    private TextView tv_so_label;
+
     private TextView tv_prefix_code_label;
     private TextView tv_prefix_code_value;
     private TextView tv_product_id_label;
@@ -46,6 +48,10 @@ public class Act027_Opc extends BaseFragment {
 
     private TextView tv_status_value;
     private TextView tv_priority_value;
+
+    private TextView tv_services_title;
+    private TextView tv_serial_title;
+    private TextView tv_header_title;
 
 
     public interface IAct027_Opc {
@@ -77,22 +83,29 @@ public class Act027_Opc extends BaseFragment {
 
     private void setHMAuxScreen() {
         if (data != null) {
-            tv_prefix_code_label.setText("Prefix / Code");
+
+            tv_so_label.setText(hmAux_Trans.get("so_lbl"));
+            tv_prefix_code_label.setText(hmAux_Trans.get("prefix_code_lbl"));
             tv_prefix_code_value.setText(data.get(SM_SODao.CUSTOMER_CODE) + " / " + data.get(SM_SODao.SO_CODE));
-            tv_product_id_label.setText("Product ID");
+            tv_product_id_label.setText(hmAux_Trans.get("product_id_lbl"));
             tv_product_id_value.setText(data.get(SM_SODao.PRODUCT_ID));
 
-            tv_desc_label.setText("Product Description");
+            tv_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
             tv_desc_value.setText(data.get(SM_SODao.PRODUCT_DESC));
 
-            tv_serial_label.setText("Serial");
+            tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
             tv_serial_value.setText(data.get(SM_SODao.SERIAL_ID));
 
-            tv_deadline_label.setText("DeadLine");
+            tv_deadline_label.setText(hmAux_Trans.get("deadline_lbl"));
             tv_deadline_value.setText(data.get(SM_SODao.DEADLINE));
 
             tv_status_value.setText(data.get(SM_SODao.STATUS));
             tv_priority_value.setText(data.get(SM_SODao.PRIORITY_DESC));
+
+            tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
+            tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
+            tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
+
         }
 
         changeTabColor();
@@ -126,6 +139,9 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private void iniVar(View view) {
+
+        tv_so_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_ttl);
+
         tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
         tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
 
@@ -147,6 +163,10 @@ public class Act027_Opc extends BaseFragment {
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
+        //
+        tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
+        tv_serial_title = (TextView) view.findViewById(R.id.act027_opc_tv_serial_title);
+        tv_header_title = (TextView) view.findViewById(R.id.act027_opc_tv_header_title);
         //
         setHMAuxScreen();
     }

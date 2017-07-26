@@ -96,6 +96,18 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         List<String> transList = new ArrayList<String>();
         transList.add("act027_title");
 
+
+        // ACT027_Opc Fragment
+        transList.add("so_lbl");
+        transList.add("prefix_code_lbl");
+        transList.add("product_id_lbl");
+        transList.add("product_description_lbl");
+        transList.add("serial_lbl");
+        transList.add("deadline_lbl");
+        transList.add("services_ll_lbl");
+        transList.add("serial_ll_lbl");
+        transList.add("header_ll_lbl");
+
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
         transList.add("alert_no_connection_msg");
@@ -241,6 +253,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
         act027_opc = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
         act027_opc.setOnMenuOptionsSelected(this);
+        act027_opc.setHmAux_Trans(hmAux_Trans);
 
         data = sm_soDao.getByStringHM(
                 new SM_SO_Sql_002(
