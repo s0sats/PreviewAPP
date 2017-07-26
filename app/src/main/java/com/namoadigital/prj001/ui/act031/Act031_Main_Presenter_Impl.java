@@ -30,17 +30,16 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
     private MD_ProductDao mdProductDao;
     private MD_Product_SerialDao serialDao;
     private long product_code;
-    private String bundle_serial_id;
+    private boolean new_serial;
 
-
-    public Act031_Main_Presenter_Impl(Context context, Act031_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao, long product_code, String bundle_serial_id) {
+    public Act031_Main_Presenter_Impl(Context context, Act031_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao, long product_code, boolean new_serial) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = mdProductDao;
         this.serialDao = serialDao;
         this.product_code = product_code;
-        this.bundle_serial_id = bundle_serial_id;
+        this.new_serial = new_serial;
     }
 
     /**
@@ -90,7 +89,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
         bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, "");
         bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
         bundle.putBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS, true);
-        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS, true);
+        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS, new_serial);
         bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
         //
         mIntent.putExtras(bundle);

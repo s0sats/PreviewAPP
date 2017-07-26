@@ -326,10 +326,13 @@ public class ToolBox_Inf {
         inputStream.close();
     }
 
-    public static String uploadFile(String json, String sFile) {
+    public static String uploadFile(String json, String sFile, String sNewName) {
         try {
+            //Como no processo de SO a foto pode mudar de nome,
+            //Verifica qual o nome o arquivo esta no momento.
+            String sRealFileName = sNewName != null ? sNewName : sFile;
             // Set your file path here
-            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sFile);
+            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sRealFileName);
 
             // Set your server page url (and the file title/description)
             HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD, json);
@@ -350,7 +353,6 @@ public class ToolBox_Inf {
 
             // Set your server page url (and the file title/description)
             HttpFileUpload hfu = new HttpFileUpload(ws_url, json);
-
             return hfu.Send_Now(fstrm, sFile);
 
         } catch (Exception e) {

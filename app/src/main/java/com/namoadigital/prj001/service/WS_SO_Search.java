@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -173,6 +174,9 @@ public class WS_SO_Search extends IntentService {
         if(serial_return.getRet_status().toUpperCase().equals("OK")){
             serial.setSerial_code(serial_return.getSerial_code());
             serial.setUpdate_required(0);
+            //Apaga Serial Criado temporariamente no banco
+            serialDao.remove(new MD_Product_Serial_Sql_003(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),serial.getProduct_code()).toSqlQuery());
+            //Insere o serial retornado do server
             serialDao.addUpdate(serial);
             hmAux.put(SERIAL_SAVE,"OK");
         }else{

@@ -233,7 +233,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                         Constant.DB_VERSION_CUSTOM
                 ),
                 product_code,
-                bundle_serial_id
+                new_serial
         );
         //
         serialProperties = new ArrayList<>();
