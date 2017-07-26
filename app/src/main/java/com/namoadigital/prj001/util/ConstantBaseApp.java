@@ -282,5 +282,9 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String SO_STATUS_DONE = "DONE";
     public static final String SO_STATUS_CANCELLED = "CANCELLED";
 
+    //
+    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
+    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
+
 
 }

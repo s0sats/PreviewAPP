@@ -27,6 +27,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.EV_ProfileDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
@@ -38,6 +39,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -54,6 +56,7 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
+import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
@@ -2019,6 +2022,40 @@ public class ToolBox_Inf {
             registerException(CLASS_NAME, e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Verifica se o item de profile passado existe
+     *
+     * @param context
+     * @param menu_code
+     * @param param_code
+     * @return
+     */
+    public static boolean profileExists(Context context, String menu_code , String param_code) {
+        try {
+            EV_ProfileDao evProfileDao
+                    = new EV_ProfileDao(context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM);
+            //
+            EV_Profile profile
+                    = evProfileDao.getByString(
+                    new EV_Profile_Sql_001(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            menu_code,
+                            param_code
+                    ).toSqlQuery()
+            );
+
+            if (profile != null) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return false;
     }
 
 }

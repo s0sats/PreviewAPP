@@ -15,6 +15,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.EV_ProfileDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
@@ -47,6 +48,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
@@ -77,6 +79,7 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
@@ -156,7 +159,7 @@ public class WS_Sync extends IntentService {
 
             ToolBox_Inf.registerException(getClass().getName(),e);
 
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
 
@@ -180,7 +183,7 @@ public class WS_Sync extends IntentService {
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-
+        EV_ProfileDao evProfileDao =  new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         DataPackage dataPackage = new DataPackage();
@@ -244,7 +247,7 @@ public class WS_Sync extends IntentService {
         env.setSession_app(session_app);
         env.setData_package(dataPackage);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SYNC,
@@ -272,19 +275,19 @@ public class WS_Sync extends IntentService {
         //
 
         if(rec.getZip() == null){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
             return;
         }
 
         //Inicia o processamento dos arquivos zip e atualiza tabelas.
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");
 
         ToolBox_Inf.downloadZip(rec.getZip(), Constant.ZIP_NAME_FULL);
 
         ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step1), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step1), "", "0");
 
         //Atualiza tabela de user
 
@@ -323,7 +326,7 @@ public class WS_Sync extends IntentService {
             moduleResDao.addUpdate(moduleRes, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step2), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step2), "", "0");
 
         File[] files_module_res_txt = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
 
@@ -340,7 +343,7 @@ public class WS_Sync extends IntentService {
             moduleResTxtDao.addUpdate(moduleResTxts, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step3), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step3), "", "0");
 
         File[] files_module_res_txt_trans = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
 
@@ -357,7 +360,25 @@ public class WS_Sync extends IntentService {
             moduleResTxtTransDao.addUpdate(moduleResTxtTrans, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
+        //limpa tabela de profile.
+        evProfileDao.remove(new EV_Profile_Sql_Truncate().toSqlQuery());
+
+        File[] files_ev_profile = ToolBox_Inf.getListOfFiles_v2("ev_profile-");
+
+        for (File _file : files_ev_profile) {
+
+            ArrayList<EV_Profile> ev_profiles = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<EV_Profile>>() {
+                    }.getType()
+            );
+
+            evProfileDao.addUpdate(ev_profiles, false);
+        }
+
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
         //
         // Tenta pegar tradução dos itens do WS
         //Seleciona traduções
@@ -1172,11 +1193,11 @@ public class WS_Sync extends IntentService {
         }
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist ){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
         }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN) && (!operationExist || !siteExist)){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
         }else{
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
