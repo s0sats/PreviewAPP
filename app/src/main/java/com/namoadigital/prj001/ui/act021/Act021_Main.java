@@ -32,13 +32,13 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
+import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -147,8 +147,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
         btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
-        //
+        //APAGAR
         btn_tst_so = (Button) findViewById(R.id.act021_btn_testeWS);
+        btn_tst_so.setVisibility(View.GONE);
+        //APAGAR
 
         mPresenter.getPendencies();
 
@@ -167,7 +169,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
                 //callAct022T(context);
-                callTestsEnvSOExec();
+              //  callTestsEnvSOExec();
+                callAct032(context);
 
 
             }
@@ -184,6 +187,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
                 callAct026(context);
+
             }
         });
 
@@ -685,6 +689,20 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         startActivity(mIntent);
         finish();
     }
+
+
+    public void callAct032(Context context) {
+        Intent mIntent = new Intent(context, Act032_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT021);
+        bundle.putString(Constant.SO_PARAM_STATUS,Constant.SO_STATUS_WAITING_CLIENT);
+        bundle.putString(Constant.SO_PARAM_CLIENT_TYPE,"CLIENT");
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
 
     @Override
     public void onBackPressed() {

@@ -29,6 +29,8 @@ public class Act032_Main extends Base_Activity implements Act032_Main_View {
 
     private Bundle bundle;
     private String mSignature;
+    private String mStatus;
+    private String mClientType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,14 +89,13 @@ public class Act032_Main extends Base_Activity implements Act032_Main_View {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-//            if (bundle.containsKey(Constant.MAIN_PRODUCT_CODE) && bundle.containsKey(Constant.MAIN_SERIAL_ID)) {
-//                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
-//                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
-//                new_serial = bundle.getBoolean(Act030_Main.NEW_SERIAL,false);
-//
-//            } else {
-//                ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
-//            }
+            if (bundle.containsKey(Constant.SO_PARAM_STATUS)) {
+                mStatus = bundle.getString(Constant.SO_PARAM_STATUS, "");
+                mClientType = bundle.getString(Constant.SO_PARAM_CLIENT_TYPE, "");
+
+            } else {
+                ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
+            }
 
         } else {
             ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
