@@ -7,7 +7,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
  * Created by neomatrix on 05/04/17.
  */
 
-public class ConstantBaseApp  extends ConstantBase {
+public class ConstantBaseApp extends ConstantBase {
 
 
     /**
@@ -117,7 +117,6 @@ public class ConstantBaseApp  extends ConstantBase {
 
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
-
 
 
     /**
@@ -258,17 +257,28 @@ public class ConstantBaseApp  extends ConstantBase {
 
     //Parametros de Permissões
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
-    public static final String PARAM_CHECKLIST ="N-FORM";// "CHECKLIST";
+    public static final String PARAM_CHECKLIST = "N-FORM";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
     public static final String PARAM_SO = "SO";
     public static final String PARAM_SO_MOV = "SO_MOV";
+    public static final String CLIENT_TYPE_CLIENT = "CLIENT";
+    public static final String CLIENT_TYPE_USER = "USER";
+
+
+    /**
+     * Parametros EV_PROFILE
+     */
+
+    public static final String PROFILE_MENU_SO = "PRJ001_SO";
+    public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
+    public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
-    public static final String MODULE_WM= "MODULE_WM";
-    public static final String MODULE_TO= "MODULE_TO";
+    public static final String MODULE_WM = "MODULE_WM";
+    public static final String MODULE_TO = "MODULE_TO";
 
 
     //Constantes Status da SO

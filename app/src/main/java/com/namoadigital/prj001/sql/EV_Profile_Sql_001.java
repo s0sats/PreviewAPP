@@ -17,7 +17,7 @@ public class EV_Profile_Sql_001 implements Specification {
     public EV_Profile_Sql_001(String customer_code, String menu_code, String parameter_code) {
         this.customer_code = customer_code;
         this.menu_code = menu_code;
-        this.parameter_code = parameter_code;
+        this.parameter_code = parameter_code == null || parameter_code.trim().length() == 0 ? null : parameter_code;
     }
 
     @Override
@@ -32,7 +32,12 @@ public class EV_Profile_Sql_001 implements Specification {
                         " WHERE\n " +
                         "      p.customer_code = '"+customer_code+"'\n " +
                         "      and p.menu_code = '"+menu_code+"'\n " +
-                        "      and p.parameter_code = '"+parameter_code+"'")
-                .toString();
+                        "      and ( \n" +
+                        "           ('"+parameter_code+"' is null AND p.parameter_code is null) \n" +
+                        "           or \n" +
+                        "           (p.parameter_code = '"+parameter_code+"' and p.parameter_code is not null) \n" +
+                        "      )")
+                .toString()
+                .replace("'null'","null");
     }
 }

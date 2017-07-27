@@ -447,7 +447,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 setFrag(act027_header, "HEADER");
                 break;
             case "APPROVAL":
-                callAct032(context);
+                callAct032(context, bundle);
                 break;
             default:
                 setFrag(act027_header, "HEADER");
@@ -498,15 +498,11 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         finish();
     }
 
-    private void callAct032(Context context) {
+    private void callAct032(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act032_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle mBundle =  new Bundle();
-        mBundle.putInt(Constant.SO_PARAM_PREFIX,mSO_PREFIX);
-        mBundle.putInt(Constant.SO_PARAM_PREFIX,mSO_CODE);
-        mBundle.putString(Constant.SO_PARAM_STATUS,data.get("status"));
-        mBundle.putString(Constant.SO_PARAM_CLIENT_TYPE,data.get("client_type"));
-        mIntent.putExtras(mBundle);
+        bundle.putSerializable("data", data);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

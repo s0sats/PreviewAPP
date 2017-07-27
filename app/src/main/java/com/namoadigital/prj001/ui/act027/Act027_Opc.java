@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 10/07/17.
@@ -72,10 +73,24 @@ public class Act027_Opc extends BaseFragment {
         toogleApprovalOpc();
     }
 
-    private void toogleApprovalOpc(){
-        if(data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT)){
+//    private void toogleApprovalOpc(){
+//        if(data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT)){
+//            ll_approval.setVisibility(View.VISIBLE);
+//        }else{
+//            ll_approval.setVisibility(View.GONE);
+//        }
+//
+//    }
+
+    private void toogleApprovalOpc() {
+        if (
+                (data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT) && data.get("client_type").equals("CLIENT") && ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT))
+                        ||
+                        (data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT) && data.get("client_type").equals("USER"))
+
+                ) {
             ll_approval.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             ll_approval.setVisibility(View.GONE);
         }
 
@@ -190,7 +205,7 @@ public class Act027_Opc extends BaseFragment {
         tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
         tv_serial_title = (TextView) view.findViewById(R.id.act027_opc_tv_serial_title);
         tv_header_title = (TextView) view.findViewById(R.id.act027_opc_tv_header_title);
-        tv_approval_title  = (TextView) view.findViewById(R.id.act027_opc_tv_approval_title);
+        tv_approval_title = (TextView) view.findViewById(R.id.act027_opc_tv_approval_title);
         //
         setHMAuxScreen();
     }
