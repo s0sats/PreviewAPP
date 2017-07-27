@@ -101,6 +101,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act028_title");
+        transList.add("alert_service_list_title");
+        transList.add("alert_service_list_msg");
+        transList.add("alert_so_list_title");
+        transList.add("alert_so_list_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -327,8 +331,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             } else {
                 ToolBox.alertMSG(
                         context,
-                        "Lista de Servicos",
-                        "Deseja voltar para a lista de Serviços?",
+                        hmAux_Trans.get("alert_service_list_title"),
+                        hmAux_Trans.get("alert_service_list_msg"),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -358,8 +362,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
             ToolBox.alertMSG(
                     context,
-                    "Recarda da SO",
-                    "A SO precisa ser recarregada!",
+                    hmAux_Trans.get("alert_so_list_title"),
+                    hmAux_Trans.get("alert_so_list_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

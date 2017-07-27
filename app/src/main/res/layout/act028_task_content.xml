@@ -144,7 +144,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_weight="1"
-            android:text="Cancel Task" />
+            android:background="@drawable/btn_namoa_main_states"
+            android:text="Cancel Task"
+            android:textColor="@color/padrao_WHITE" />
 
     </LinearLayout>
 

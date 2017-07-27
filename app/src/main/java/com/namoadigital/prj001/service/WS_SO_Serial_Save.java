@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Env;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -261,6 +262,10 @@ public class WS_SO_Serial_Save extends IntentService {
 
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
 
+                Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+                //Bundle bundle = new Bundle();
+                getApplicationContext().sendBroadcast(mIntentPIC);
+
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), hmAux, "", "0");
             }
@@ -282,6 +287,10 @@ public class WS_SO_Serial_Save extends IntentService {
             hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
 
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+
+            Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+            //Bundle bundle = new Bundle();
+            getApplicationContext().sendBroadcast(mIntentPIC);
 
         }
 

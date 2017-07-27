@@ -331,7 +331,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 taskControl.setmDtStart(data.get("start_date"));
                 taskControl.setmDtEnd(data.get("end_date"));
                 taskControl.setmComments(data.get("comments"));
-                taskControl.setmMaxImages(5);
+                taskControl.setmMaxImages(4);
                 taskControl.setmType(data.get("exec_type"));
                 taskControl.setOnInformTaskStatusListener(this);
 
