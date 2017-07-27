@@ -17,8 +17,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -32,14 +30,6 @@ import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
-import com.namoadigital.prj001.model.SM_Env;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.SM_SO_File;
-import com.namoadigital.prj001.model.SM_SO_Pack;
-import com.namoadigital.prj001.model.SM_SO_Service;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -134,15 +124,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         //
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
-        //
-        // Hugo Pode Eliminar no Merge
-       // TesteDao.Test_SM_SO_Daos(this, context);
-
-//        String s1 = new SM_SO_Service_Exec_Sql_003(1,2017,60,22,8,1,7,28,1).toSqlQuery();
-//        String s2 = new SM_SO_Service_Exec_Task_Sql_003(1,2017,60,22,8,1,7,28,1,0).toSqlQuery();
-//        String s3 = new SM_SO_Service_Exec_Task_File_Sql_005("1","2017","60","22","8","1","7","28","1","0","0").toSqlQuery();
-//
-//        s3 += ";";
 
     }
 
@@ -240,140 +221,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         ToolBox_Inf.libTranslation(getApplicationContext());
     }
 
-    private void geraTesteSO() {
-
-        SM_SO_Service_Exec_Task_File task_attach = new SM_SO_Service_Exec_Task_File();
-        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
-        SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
-        SM_SO_Service service = new SM_SO_Service();
-        SM_SO_Pack pack = new SM_SO_Pack();
-        SM_SO_File so_attach = new SM_SO_File();
-        SM_SO so = new SM_SO();
-
-        ArrayList<SM_SO_File> soFileList = new ArrayList<>();
-        ArrayList<SM_SO_Pack> packList = new ArrayList<>();
-        ArrayList<SM_SO_Service> serviceList = new ArrayList<>();
-        ArrayList<SM_SO_Service_Exec> execList = new ArrayList<>();
-        ArrayList<SM_SO_Service_Exec_Task> taskList = new ArrayList<>();
-        ArrayList<SM_SO_Service_Exec_Task_File> taskAttachList = new ArrayList<>();
-
-        taskAttachList.add(task_attach);
-        //task.setTask_attach(taskAttachList);
-        taskList.add(task);
-
-        exec.setTask(taskList);
-        execList.add(exec);
-
-        service.setExec(execList);
-        serviceList.add(service);
-        packList.add(pack);
-
-        pack.setService(serviceList);
-
-        so.setCustomer_code(1);
-        so.setSo_prefix(2017);
-        so.setSo_code(1);
-        so.setSo_desc("Teste So");
-        so.setSo_scn(1);
-        so.setProduct_code(15);
-        so.setProduct_id("btt");
-        so.setProduct_desc("Produto Batata");
-        so.setSerial_code(1);
-        so.setSerial_id("qwer");
-        so.setCategory_price_code(2);
-        so.setCategory_price_id("tbl_p_1");
-        so.setCategory_price_desc("Tabela de preço 1");
-        so.setSegment_code(5);
-        so.setSegment_id("Seg1");
-        so.setSegment_desc("Segmento 1");
-        so.setSite_code(15);
-        so.setSite_id("15");
-        so.setSite_desc("Predio do batata");
-        so.setOperation_code(10);
-        so.setOperation_id("10");
-        so.setOperation_desc("Chery");
-        so.setContract_code(1);
-        so.setContract_desc("Contrato alelui assinou");
-        so.setContract_po_erp("Sap");
-        so.setContract_po_client1("FDC154");
-        so.setContract_po_client2("");
-        so.setPriority_code(1);
-        so.setPriority_desc("ALTA");
-        so.setStatus("EDIT");
-        so.setQuality_approval_user(52);
-        so.setQuality_approval_date("2017-06-14");
-        so.setComments("TESTE");
-        so.setSo_father_prefix(null);
-        so.setSo_father_code(null);
-        so.setDeadline("2017-07-17");
-        so.setOrigin("APP");
-        so.setClient_type("CLIENT");
-        so.setClient_user(null);
-        so.setClient_code(1);
-        so.setClient_id("1");
-        so.setClient_name("CLIENTE NOME");
-        so.setClient_email("cliente@email.com.br");
-        so.setClient_phone("1231232131");
-        so.setClient_approval_image(null);
-        so.setClient_approval_date("2017-06-13");
-        so.setPack(packList);
-        //so.setSo_attach(soFileList);
-
-        ArrayList<SM_SO> soList = new ArrayList<>();
-        soList.add(so);
-        SM_Env env = new SM_Env();
-        env.setSo(soList);
-
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-        Gson gsonNoExpose = new GsonBuilder().serializeNulls().create();
-
-        String teste = gson.toJson(env);
-        String teste2 = gsonNoExpose.toJson(env);
-
-        SM_Env resposta = gson.fromJson(teste2, SM_Env.class);
-        SM_Env respostaFull = gsonNoExpose.fromJson(teste2, SM_Env.class);
-
-
-        teste += " ";
-    }
-
     private void initVars() {
-
-//        /*
-//        *
-//        * Teste da função de exception
-//        *
-//        * apgar apos teste
-//        * */
-//        //geraTesteSO();
-//
-//        Gson gson = new GsonBuilder().serializeNulls().create();
-//
-//        String teste_so = "{\"so\":[{\"customer_code\":\"1\",\"so_prefix\":\"1\",\"so_code\":\"1\",\"so_desc\":\"1\",\"so_scn\":\"1\",\"product_code\":\"1\",\"product_id\":\"PROD1\",\"product_desc\":\"CARRO\",\"serial_code\":\"1\",\"serial_id\":\"1\",\"category_price_code\":\"8\",\"category_price_id\":\"03 Grandes\",\"category_price_desc\":\"Grandes\",\"segment_code\":\"3\",\"segment_id\":\"SEGMENT_003\",\"segment_desc\":\"SEGMENT DESC 003\",\"site_code\":\"15\",\"site_id\":\"15\",\"site_desc\":\"Predio Do Batata\",\"operation_code\":\"2\",\"operation_id\":\"2\",\"operation_desc\":\"MERCEDES\",\"contract_code\":\"1\",\"contract_desc\":\"Contract Desc 01\",\"contract_po_erp\":\"ERP_01\",\"contract_po_client1\":\"CLIENTE_1_01\",\"contract_po_client2\":\"CLIENTE_2_01\",\"priority_code\":\"1\",\"priority_desc\":\"p001\",\"status\":\"EDIT\",\"quality_approval_user\":\"1\",\"quality_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"comments\":null,\"so_father_prefix\":null,\"so_father_code\":null,\"deadline\":\"2017-06-13 15:32:49 -03:00\",\"origin\":\"APP\",\"client_type\":\"CLIENT\",\"client_user\":null,\"client_code\":\"1\",\"client_id\":\"1\",\"client_name\":\"CLIENTE NOME\",\"client_email\":\"cliente@email.com.br\",\"client_phone\":\"1231232131\",\"client_approval_image\":null,\"client_approval_date\":\"2017-06-13 15:32:49 -03:00\",\"client_approval_flag\":\"0\"}]}";
-//        SM_Env env = gson.fromJson(teste_so, SM_Env.class);
-//
-//        SM_SODao soDao = new SM_SODao(
-//                context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM
-//        );
-//
-//        soDao.addUpdate(env.getSo(), false);
-//
-//
-//        SM_SO so_db = soDao.getByString(
-//                new SM_SO_Sql_001(
-//                        ToolBox_Con.getPreference_Customer_Code(context),
-//                        1,
-//                        1
-//                ).toSqlQuery()
-//        );
-//
-//        int i = 0;
-        /*
-        *
-        * Fim do teste
-        * */
 
         wsProcess = "";
 

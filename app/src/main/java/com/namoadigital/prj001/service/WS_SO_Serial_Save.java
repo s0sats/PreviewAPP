@@ -261,10 +261,8 @@ public class WS_SO_Serial_Save extends IntentService {
                 hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
 
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-
-                Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-                //Bundle bundle = new Bundle();
-                getApplicationContext().sendBroadcast(mIntentPIC);
+                //
+                startDownloadServices();
 
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), hmAux, "", "0");
@@ -287,13 +285,17 @@ public class WS_SO_Serial_Save extends IntentService {
             hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
 
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+            //
+            startDownloadServices();
+        }
 
-            Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-            //Bundle bundle = new Bundle();
-            getApplicationContext().sendBroadcast(mIntentPIC);
 
         }
 
+    private void startDownloadServices() {
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        //Bundle bundle = new Bundle();
+        getApplicationContext().sendBroadcast(mIntentPIC);
 
     }
 

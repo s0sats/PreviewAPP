@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by neomatrix on 10/07/17.
@@ -29,6 +30,7 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_services;
     private LinearLayout ll_serial;
     private LinearLayout ll_header;
+    private LinearLayout ll_approval;
 
     private TextView tv_so_label;
 
@@ -52,6 +54,7 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_services_title;
     private TextView tv_serial_title;
     private TextView tv_header_title;
+    private TextView tv_approval_title;
 
 
     public interface IAct027_Opc {
@@ -66,6 +69,16 @@ public class Act027_Opc extends BaseFragment {
 
     public void setData(HMAux data) {
         this.data = data;
+        toogleApprovalOpc();
+    }
+
+    private void toogleApprovalOpc(){
+        if(data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT)){
+            ll_approval.setVisibility(View.VISIBLE);
+        }else{
+            ll_approval.setVisibility(View.GONE);
+        }
+
     }
 
     @Nullable
@@ -117,16 +130,24 @@ public class Act027_Opc extends BaseFragment {
                 ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 break;
             case "SERIAL":
                 ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 break;
             case "HEADER":
                 ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
+                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+            case "APPROVAL":
+                ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_approval.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 break;
         }
     }
@@ -163,10 +184,13 @@ public class Act027_Opc extends BaseFragment {
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
+        ll_approval = (LinearLayout) view.findViewById(R.id.act027_opc_ll_approval);
+        ll_approval.setVisibility(View.GONE);
         //
         tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
         tv_serial_title = (TextView) view.findViewById(R.id.act027_opc_tv_serial_title);
         tv_header_title = (TextView) view.findViewById(R.id.act027_opc_tv_header_title);
+        tv_approval_title  = (TextView) view.findViewById(R.id.act027_opc_tv_approval_title);
         //
         setHMAuxScreen();
     }
@@ -175,6 +199,7 @@ public class Act027_Opc extends BaseFragment {
         ll_services.setOnClickListener(menuOnClickListener);
         ll_serial.setOnClickListener(menuOnClickListener);
         ll_header.setOnClickListener(menuOnClickListener);
+        ll_approval.setOnClickListener(menuOnClickListener);
     }
 
     private View.OnClickListener menuOnClickListener = new View.OnClickListener() {
@@ -191,6 +216,9 @@ public class Act027_Opc extends BaseFragment {
                     break;
                 case R.id.act027_opc_ll_header:
                     type = "header";
+                    break;
+                case R.id.act027_opc_ll_approval:
+                    type = "approval";
                     break;
                 default:
                     type = "services";

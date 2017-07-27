@@ -26,6 +26,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
+import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -445,6 +446,9 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             case "HEADER":
                 setFrag(act027_header, "HEADER");
                 break;
+            case "APPROVAL":
+                callAct032(context);
+                break;
             default:
                 setFrag(act027_header, "HEADER");
                 break;
@@ -452,6 +456,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
+
 
     @Override
     public void onItemClickListener(HMAux type) {
@@ -492,4 +497,18 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         startActivity(mIntent);
         finish();
     }
+
+    private void callAct032(Context context) {
+        Intent mIntent = new Intent(context, Act032_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle mBundle =  new Bundle();
+        mBundle.putInt(Constant.SO_PARAM_PREFIX,mSO_PREFIX);
+        mBundle.putInt(Constant.SO_PARAM_PREFIX,mSO_CODE);
+        mBundle.putString(Constant.SO_PARAM_STATUS,data.get("status"));
+        mBundle.putString(Constant.SO_PARAM_CLIENT_TYPE,data.get("client_type"));
+        mIntent.putExtras(mBundle);
+        startActivity(mIntent);
+        finish();
+    }
+
 }
