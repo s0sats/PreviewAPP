@@ -14,6 +14,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 10/07/17.
@@ -73,7 +74,12 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private void toogleApprovalOpc(){
-        if(data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT)){
+        if(
+            (data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT) && data.get("client_type").equals("CLIENT") && ToolBox_Inf.profileExists(getActivity(),Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT) )
+                ||
+            (data.get("status").equals(Constant.SO_STATUS_WAITING_CLIENT) && data.get("client_type").equals("USER"))
+
+        ){
             ll_approval.setVisibility(View.VISIBLE);
         }else{
             ll_approval.setVisibility(View.GONE);
