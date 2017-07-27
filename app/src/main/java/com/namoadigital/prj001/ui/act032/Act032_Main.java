@@ -117,6 +117,10 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         transList.add("deadline_lbl");
         transList.add("client_type_lbl");
         transList.add("client_name_lbl");
+        transList.add("alert_approval_title");
+        transList.add("alert_approval_msg");
+        transList.add("alert_nfc_title");
+        transList.add("alert_nfc_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -268,16 +272,16 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
             @Override
             public void onClick(View v) {
 
-                if (!data.get(SM_SODao.CLIENT_TYPE).equalsIgnoreCase(Constant.CLIENT_TYPE_USER)) {
+                if (data.get(SM_SODao.CLIENT_TYPE).equalsIgnoreCase(Constant.CLIENT_TYPE_USER)) {
 
                     ToolBox.alertMSG(
                             context,
-                            "Aprovacao",
-                            "Deseja mesmo aprovar a SO?",
+                            hmAux_Trans.get("alert_approval_title"),
+                            hmAux_Trans.get("alert_approval_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
+                                    processAproval();
                                 }
                             },
                             1,
@@ -295,6 +299,13 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
             @Override
             public void onClick(View v) {
                 setbNFCStatus(true);
+                //
+                enableProgressDialog(
+                        hmAux_Trans.get("alert_nfc_title"),
+                        hmAux_Trans.get("alert_nfc_msg"),
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        hmAux_Trans.get("sys_alert_btn_ok")
+                );
             }
         });
 
@@ -304,6 +315,10 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
 
             }
         });
+
+    }
+
+    private void processAproval() {
 
     }
 
@@ -322,7 +337,9 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
 
-
+        setbNFCStatus(false);
+        //
+        disableProgressDialog();
     }
 
     @Override
