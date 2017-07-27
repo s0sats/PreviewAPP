@@ -21,6 +21,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
+import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Env;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -251,7 +252,7 @@ public class WS_SO_Serial_Save extends IntentService {
                     }
                 }
                 //Monta String com dados das S.O enviadas para processamento
-                for (TSO_Serial_Save_Rec.So_Save_Return so_ret : ret.getSo_return()) {
+                for (SO_Save_Return so_ret : ret.getSo_return()) {
                     so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
                     so_list_status += "#" + so_ret.getRet_status();
                 }
@@ -294,7 +295,6 @@ public class WS_SO_Serial_Save extends IntentService {
 
     private void startDownloadServices() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        //Bundle bundle = new Bundle();
         getApplicationContext().sendBroadcast(mIntentPIC);
 
     }

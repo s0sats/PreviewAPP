@@ -20,7 +20,7 @@ public class TSO_Serial_Save_Rec {
     @Expose
     private ArrayList<Serial_Save_Return> serial_return;
     @Expose
-    private ArrayList<So_Save_Return> so_return;
+    private ArrayList<SO_Save_Return> so_return;
     @Expose
     private ArrayList<SM_SO> so;
     @Expose
@@ -58,11 +58,11 @@ public class TSO_Serial_Save_Rec {
         this.error_msg = error_msg;
     }
 
-    public ArrayList<So_Save_Return> getSo_return() {
+    public ArrayList<SO_Save_Return> getSo_return() {
         return so_return;
     }
 
-    public void setSo_return(ArrayList<So_Save_Return> so_return) {
+    public void setSo_return(ArrayList<SO_Save_Return> so_return) {
         this.so_return = so_return;
     }
 
@@ -146,7 +146,7 @@ public class TSO_Serial_Save_Rec {
         }
     }
 
-    public class So_Save_Return{
+   /* public class SO_Save_Return{
         @Expose
         private long customer_code;
         @Expose
@@ -217,7 +217,7 @@ public class TSO_Serial_Save_Rec {
         public void setRet_msg(String ret_msg) {
             this.ret_msg = ret_msg;
         }
-    }
+    }*/
 
     public class So_From_To{
         @Expose

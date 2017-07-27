@@ -273,6 +273,18 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
 
+    /**
+     *
+     * Parametros EV_PROFILE
+     *
+     */
+
+    public static final String PROFILE_MENU_SO = "PRJ001_SO";
+    public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
+    public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
+
+
+
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
