@@ -67,7 +67,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("act024_title");
+        transList.add("act026_title");
         transList.add("btn_new");
         transList.add("btn_download");
         transList.add("alert_download_mult_so_ttl");
