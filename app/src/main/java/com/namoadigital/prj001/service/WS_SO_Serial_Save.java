@@ -149,6 +149,9 @@ public class WS_SO_Serial_Save extends IntentService {
             //Gambi Remover
             //sos.get(i).setSo_scn(sos.get(i).getSo_scn() + 1);
         }
+        //
+        soDao.addUpdate(sos,false);
+        //
         //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
         Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
         //Gson de Retorno com inicilização padrão.
