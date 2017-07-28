@@ -171,6 +171,10 @@ public class Act028_Task_List extends BaseFragment {
             tv_partner_id_value.setText(sm_so_service_exec.getPartner_id());
             tv_partner_desc_value.setText(sm_so_service_exec.getPartner_desc());
 
+            if (sm_so_service_exec != null) {
+                createTaskList();
+            }
+
             switch (sm_so_service_exec.getStatus().toUpperCase()) {
                 case Constant.SO_STATUS_PENDING:
                     btn_new_task.setVisibility(View.VISIBLE);
@@ -183,9 +187,9 @@ public class Act028_Task_List extends BaseFragment {
                     break;
             }
 
-            if (sm_so_service_exec != null) {
-                createTaskList();
-            }
+//            if (sm_so_service_exec != null) {
+//                createTaskList();
+//            }
 
         } catch (Exception e) {
             String error_s = e.toString();
@@ -251,12 +255,6 @@ public class Act028_Task_List extends BaseFragment {
         } else {
             btn_new_task.setVisibility(View.VISIBLE);
         }
-
-//        if (sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)){
-//            btn_new_task.setVisibility(View.GONE);
-//        } else {
-//            btn_new_task.setVisibility(View.VISIBLE);
-//        }
 
     }
 

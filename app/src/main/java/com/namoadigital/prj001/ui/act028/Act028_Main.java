@@ -375,7 +375,6 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                             //
                             startActivity(mIntent);
                             finish();
-
                         }
                     },
                     -1,

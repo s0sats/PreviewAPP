@@ -4,12 +4,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -19,6 +24,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.service.WS_SO_Serial_Save;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -74,6 +80,10 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
     private Button btn_nfc;
     private Button btn_password;
 
+    private Handler handler;
+    private Runnable runnable;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +113,12 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
 
         setNFC_PARAMS_TECH_LOGIN(true);
 
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        handler = new Handler();
+        runnable = new Runnable() {
+            public void run() {
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("generic_nfc_timeout_msg"), "", "0");
+            }
+        };
     }
 
     private void loadTranslation() {
@@ -121,6 +136,10 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         transList.add("alert_approval_msg");
         transList.add("alert_nfc_title");
         transList.add("alert_nfc_msg");
+        transList.add("alert_no_signature_title");
+        transList.add("alert_no_signature_msg");
+
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -203,6 +222,25 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         tv_client_name_label.setText(hmAux_Trans.get("client_name_lbl"));
         tv_client_name_value.setText(data.get(SM_SODao.CLIENT_NAME));
 
+        switch (data.get(SM_SODao.CLIENT_TYPE).toUpperCase()) {
+            case Constant.CLIENT_TYPE_USER:
+                if (data.get(SM_SODao.CLIENT_USER).equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
+                    btn_approval.setVisibility(View.VISIBLE);
+                    btn_nfc.setVisibility(View.GONE);
+                    btn_password.setVisibility(View.GONE);
+                } else {
+                    btn_approval.setVisibility(View.GONE);
+                    btn_nfc.setVisibility(View.VISIBLE);
+                    btn_password.setVisibility(View.VISIBLE);
+                }
+
+                break;
+            default:
+                btn_approval.setVisibility(View.GONE);
+                btn_nfc.setVisibility(View.GONE);
+                btn_password.setVisibility(View.GONE);
+                break;
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -210,6 +248,12 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         //
         if (bundle != null) {
             data = (HashMap<String, String>) bundle.getSerializable("data");
+
+            mSignature = "s_" +
+                    "CC" + data.get(SM_SODao.CUSTOMER_CODE) +
+                    "_SP" + data.get(SM_SODao.SO_PREFIX) +
+                    "_SC" + data.get(SM_SODao.SO_CODE) +
+                    ".png";
         } else {
             ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
@@ -221,6 +265,7 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
             bundleN.putInt(ConstantBase.PID, -1);
             bundleN.putInt(ConstantBase.PTYPE, 0);
             bundleN.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + mSignature);
+            bundleN.putBoolean(ConstantBase.BLOCK_NAME, true);
 
             Intent mIntent = new Intent(context, SignaTure_Activity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -262,8 +307,6 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
         mVersion_Value = Constant.PRJ001_VERSION;
 
-        //Aplica informações do rodapé -fim
-
     }
 
     private void initActions() {
@@ -281,7 +324,7 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    processAproval();
+                                    mPresenter.onProcessApproval(data);
                                 }
                             },
                             1,
@@ -300,6 +343,8 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
             public void onClick(View v) {
                 setbNFCStatus(true);
                 //
+                handler.postDelayed(runnable, 15 * 1000);
+                //
                 enableProgressDialog(
                         hmAux_Trans.get("alert_nfc_title"),
                         hmAux_Trans.get("alert_nfc_msg"),
@@ -312,13 +357,9 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         btn_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                callPassWord();
             }
         });
-
-    }
-
-    private void processAproval() {
 
     }
 
@@ -336,15 +377,76 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
     @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
-
+        //
         setbNFCStatus(false);
         //
-        disableProgressDialog();
+        handler.removeCallbacks(runnable);
+        //
+        if (status) {
+            mPresenter.onProcessNFCPassWord(data, value[1], null);
+        }
     }
 
     @Override
     protected void getSignatueF(String mValue) {
-        super.getSignatueF(mValue);
+        mPresenter.onProcessSignature(data, mSignature);
+    }
+
+    private void callPassWord() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act032_dialog_password, null);
+
+        final TextView tv_password_title = (TextView) view.findViewById(R.id.act032_dialog_tv_password_title);
+        final EditText et_password = (EditText) view.findViewById(R.id.act032_dialog_et_password);
+
+        builder.setView(view);
+        builder.setCancelable(false);
+        builder.setNegativeButton("Cancelar", null);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                mPresenter.onProcessNFCPassWord(data, null, et_password.getText().toString());
+
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(et_password.getWindowToken(), 0);
+            }
+        });
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(et_password.getWindowToken(), 0);
+            }
+        });
+
+        AlertDialog show = builder.show();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    @Override
+    public void dismissPD() {
+        try {
+            disableProgressDialog();
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public void errorMsg(String title, String error) {
+        ToolBox.alertMSG(
+                context,
+                title,
+                error,
+                null,
+                -1
+        );
     }
 
     @Override
@@ -357,6 +459,47 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         //
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (!hmAux.get(WS_SO_Serial_Save.SO_RETURN_FULL_REFRESH).equals("0")) {
+
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_list_title"),
+                    hmAux_Trans.get("alert_so_list_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            bundle.remove("data");
+                            //
+                            Intent mIntent = new Intent(context, Act027_Main.class);
+                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            mIntent.putExtras(bundle);
+                            //
+                            startActivity(mIntent);
+                            finish();
+                        }
+                    },
+                    -1,
+                    false
+            );
+
+        } else {
+
+            disableProgressDialog();
+
+        }
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        disableProgressDialog();
     }
 
     @Override

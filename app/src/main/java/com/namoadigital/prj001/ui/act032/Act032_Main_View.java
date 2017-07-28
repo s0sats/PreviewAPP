@@ -9,4 +9,8 @@ import android.content.Context;
 public interface Act032_Main_View {
 
     void callAct027(Context context);
+
+    void dismissPD();
+
+    void errorMsg(String title, String error);
 }
