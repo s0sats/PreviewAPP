@@ -576,25 +576,30 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     private void callSoSave(int prefix, int code) {
 
-        baInfra.enableProgressDialog(
-                "Teste Save SO",
-                "Testando Save SO",
-                "Cancel",
-                "OK"
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
-        bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
-        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, prefix);
-        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
+        if (ToolBox_Con.isOnline(context)) {
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        //
-        activateUpload(context);
+            baInfra.enableProgressDialog(
+                    hmAux_Trans.get("alert_task_title"),
+                    hmAux_Trans.get("alert_so_list_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
+            bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
+            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, prefix);
+            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+            //
+            activateUpload(context);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override

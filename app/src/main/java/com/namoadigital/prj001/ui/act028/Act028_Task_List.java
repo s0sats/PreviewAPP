@@ -31,6 +31,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.HashMap;
 
@@ -370,23 +371,29 @@ public class Act028_Task_List extends BaseFragment {
     }
 
     private void callSoSave(int prefix, int code) {
-        baInfra.enableProgressDialog(
-                "Teste Save SO",
-                "Testando Save SO",
-                "Cancel",
-                "OK"
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
-        bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
-        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, prefix);
-        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        if (ToolBox_Con.isOnline(context)) {
+
+            baInfra.enableProgressDialog(
+                    hmAux_Trans.get("alert_task_title"),
+                    hmAux_Trans.get("alert_so_list_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
+            bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
+            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, prefix);
+            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     private HMAux last_task_seq_oper() {

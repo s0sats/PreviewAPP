@@ -364,6 +364,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                     context,
                     hmAux_Trans.get("alert_so_list_title"),
                     hmAux_Trans.get("alert_so_list_msg"),
+
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
