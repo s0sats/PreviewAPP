@@ -30,6 +30,7 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save_Mult;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
@@ -169,8 +170,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
                 //callAct022T(context);
-              //  callTestsEnvSOExec();
-                callAct032(context);
+                //callTestsEnvSOExec();
+              //  callAct032(context);
+                callTestSoSaveMult();
+
 
 
             }
@@ -203,10 +206,26 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
+       /* bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
         bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
         bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX,prefix);
-        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
+        bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);*/
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void callTestSoSaveMult() {
+        enableProgressDialog(
+                "Teste Save SO",
+                "Testando Save SO",
+                "Cancel",
+                "OK"
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Serial_Save_Mult.class);
+        Bundle bundle = new Bundle();
 
         mIntent.putExtras(bundle);
         //

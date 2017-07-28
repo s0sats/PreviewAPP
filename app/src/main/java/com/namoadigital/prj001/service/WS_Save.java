@@ -234,7 +234,7 @@ public class WS_Save extends IntentService {
     }
 
     private boolean checkSaveReturn(String save, String error_msg, String link_url) {
-
+        HMAux hmAuxRet = new HMAux();
         switch (save){
             case "OK":
             case"OK_DUP":
@@ -268,13 +268,19 @@ public class WS_Save extends IntentService {
 
                 //Dispara msg para fechar dialog
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
+                //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
+                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
                 return true;
 
             case "ERROR_TOKEN_EXCEPTION":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1",  hmAux_Trans.get("msg_error_token_excep"), "", "0");
+                //hmAuxRet.put(Constant.WS_SEND_RETURN, hmAux_Trans.get("msg_error_token_excep"));
+                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_error_token_excep"),hmAuxRet, "", "0");
                 return false;
             default:
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_save") + " \n" + error_msg ,"" , "0");
+                //hmAuxRet.put(Constant.WS_SEND_RETURN, hmAux_Trans.get("msg_error_save") + " \n" + error_msg);
+                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_error_save"),hmAuxRet, "", "0");
                 return false;
         }
 

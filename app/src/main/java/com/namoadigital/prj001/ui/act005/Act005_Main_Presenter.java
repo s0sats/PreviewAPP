@@ -23,4 +23,8 @@ public interface Act005_Main_Presenter {
     void executeSupport(String support_msg);
 
     void showSupportDialog();
+
+    void generateWsListProcess();
+
+    void executeNextProcess(String next_ws);
 }

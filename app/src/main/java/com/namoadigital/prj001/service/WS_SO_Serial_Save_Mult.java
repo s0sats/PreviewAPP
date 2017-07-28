@@ -39,6 +39,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ import java.util.List;
  * Created by d.luche on 27/06/2017.
  */
 
-public class WS_SO_Serial_Save extends IntentService {
+public class WS_SO_Serial_Save_Mult extends IntentService {
 
     public static final String SERIAL_SAVE = "serial_save";
     public static final String SO_ACTION_EXECUTION = "EXECUTION";
@@ -61,12 +62,12 @@ public class WS_SO_Serial_Save extends IntentService {
     private String mResource_Name = "WS_SO_Serial_Save";
     private MD_Product_SerialDao serialDao;
     private SM_SODao soDao;
-    SM_SO_Service_Exec_Task_FileDao taskFileDao;
+    private SM_SO_Service_Exec_Task_FileDao taskFileDao;
     private String token;
     private int so_full_refresh = 0;
 
-    public WS_SO_Serial_Save() {
-        super("WS_SO_Serial_Save");
+    public WS_SO_Serial_Save_Mult() {
+        super("WS_SO_Serial_Save_Mult");
     }
 
     @Override
@@ -101,11 +102,17 @@ public class WS_SO_Serial_Save extends IntentService {
         }
     }
 
-    private void processSO_Serial_Save(Long product_code, String serial_id, int so_prefix, int so_code) {
+    private void processSO_Serial_Save(Long product_code, String serial_id, int so_prefix, int so_code) throws IOException {
         ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
         ArrayList<SM_SO> sos = new ArrayList<>();
         //
         loadTranslation();
+        //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
+        Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+        //Gson de Retorno com inicilização padrão.
+        Gson gsonRec = new GsonBuilder().serializeNulls().create();
+
+
         //Se existe product serial busca as informações
         if (product_code != -1L && !serial_id.equals("")) {
             MD_Product_Serial serial = serialDao.getByString(
@@ -152,10 +159,8 @@ public class WS_SO_Serial_Save extends IntentService {
         //
         soDao.addUpdate(sos,false);
         //
-        //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
-        Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-        //Gson de Retorno com inicilização padrão.
-        Gson gsonRec = new GsonBuilder().serializeNulls().create();
+//        String json_token_content = gsonRec.toJson(sos);
+//        saveTokenSoAsFile(token,json_token_content);
         //
         TSO_Serial_Save_Env env = new TSO_Serial_Save_Env();
         //
@@ -165,6 +170,19 @@ public class WS_SO_Serial_Save extends IntentService {
         env.setToken(token);
         env.setSo(sos);
         env.setSerial(serialList);
+
+        String json_token_content = gsonRec.toJson(env);
+        saveTokenSoAsFile(token,json_token_content);
+
+        File nFile = new File(Constant.SUPPORT_PATH, token + ".json");
+
+
+        TSO_Serial_Save_Env nEnv = gsonEnv.fromJson(
+                ToolBox_Inf.getContents(nFile),
+                TSO_Serial_Save_Env.class
+        );
+
+        String teste = "";
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
         //
@@ -214,6 +232,11 @@ public class WS_SO_Serial_Save extends IntentService {
             processSOSaveRet(rec, hmAux);
         }
 
+    }
+
+    private void saveTokenSoAsFile(String token, String token_content) throws IOException {
+            File json_token = new File(Constant.SUPPORT_PATH, token + ".json");
+            ToolBox_Inf.writeIn(token_content, json_token);
     }
 
     private void processSOSaveRet(TSO_Serial_Save_Rec ret, HMAux hmAux) {
@@ -463,10 +486,6 @@ public class WS_SO_Serial_Save extends IntentService {
         translist.add("msg_receiving_so_data");
         translist.add("msg_processing_from_to_data");
         translist.add("msg_re_processing_so_data");
-        translist.add("msg_error_on_save_serial");
-        translist.add("msg_save_ok");
-        translist.add("msg_updating_serial");
-        translist.add("error_from_to_processing");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
@@ -83,6 +84,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String WS_PROCESS_ENABLE_NFC = "ws_process_enable_nfc";
     public static final String WS_PROCESS_CANCEL_NFC = "ws_process_cancel_nfc";
     public static final String WS_PROCESS_SUPPORT = "ws_process_support";
+    //
+    public static final String WS_PROCESS_SEND_N_FORM = "ws_process_send_n_form";
+    public static final String WS_PROCESS_SEND_SO = "ws_process_send_so";
+
+
+    public static final String WS_LIST_ITEM = "ws_list_item";
+    public static final String WS_LIST_ITEM_RETURN = "ws_list_item_return";
+    public static final String WS_LIST_ITEM_LABEL = "ws_list_item_label";
 
     //toolbar constants
     private static final int TOOLBAR_NAMOA_LOGO = 1;
@@ -106,6 +115,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private String alertMsg = "";
 
     private String wsProcess;
+    //
+    private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -243,6 +254,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         Constant.DB_VERSION_BASE
                 ),
                 new FCMMessageDao(
+                        context,
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
+                ),
+                new SM_SODao(
                         context,
                         Constant.DB_FULL_BASE,
                         Constant.DB_VERSION_BASE
@@ -579,6 +595,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    public void setWsProcessList(ArrayList<HMAux> wsProcessList) {
+        this.wsProcessList = wsProcessList;
+    }
+
+    @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -727,6 +748,61 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         }
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (!wsProcess.equals("")) {
+            int idx = getWsIdx(wsProcess);
+            if(idx != -1){
+                wsProcessList.get(idx).put(WS_LIST_ITEM_RETURN,hmAux.get("WS_Return"));
+                if(idx < wsProcessList.size() ){
+                    mPresenter.executeNextProcess(wsProcessList.get(idx).get(WS_LIST_ITEM));
+                }else if(idx == wsProcessList.size() ){
+                    progressDialog.dismiss();
+                    showSendStatusScore();
+                }
+            }
+        }else{
+            progressDialog.dismiss();
+        }
+
+    }
+
+    private void showSendStatusScore() {
+
+        //Atualiza menu e os badges
+        mPresenter.getMenuItens(hmAux_Trans);
+
+        String msg = "";
+        for (int i = 0; i < wsProcessList.size(); i++) {
+            msg += wsProcessList.get(i).get(WS_LIST_ITEM_LABEL) +" : " + wsProcessList.get(i).get(WS_LIST_ITEM_RETURN) +"\n";
+        }
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_send_return_ttl"),
+                msg,
+                null,
+                0
+        );
+
+    }
+
+    private int getWsIdx(String ws){
+        try {
+            for (int i = 0; i < wsProcessList.size(); i++) {
+                if (wsProcessList.get(i).get(WS_LIST_ITEM).equals(ws)) {
+                    return i;
+                }
+            }
+        }catch (Exception e){
+           ToolBox_Inf.registerException(getClass().getName(),e);
+            return -1;
+        }
+        return -1;
     }
 
     @Override
