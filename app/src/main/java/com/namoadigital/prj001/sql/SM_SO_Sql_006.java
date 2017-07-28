@@ -33,7 +33,7 @@ public class SM_SO_Sql_006 implements Specification {
                 .append(" UPDATE "+ SM_SODao.TABLE+" set\n" +
                         "   so_scn = '"+so_scn+"',\n" +
                         "   update_required = 0\n," +
-                        "   token = ''\n," +
+                        "   token = ''\n" +
                         " WHERE\n" +
                         "  customer_code = '"+customer_code+"'\n" +
                         "  and so_prefix = '"+so_prefix+"'\n" +
