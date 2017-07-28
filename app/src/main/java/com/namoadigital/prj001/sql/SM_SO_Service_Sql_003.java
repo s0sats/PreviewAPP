@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -62,6 +63,8 @@ public class SM_SO_Service_Sql_003 implements Specification {
                 //"    AND S.price_list_code =        '" + price_list_code + "'\n" +
                 //"    AND S.pack_code =              '" + pack_code + "'\n" +
                 //"    AND S.pack_seq =               '" + pack_seq + "' ")
+                .append(" ORDER BY \n")
+                .append(" " + SM_SO_ServiceDao.EXEC_SEQ_OPER)
                 .append(";")
                 .append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#price_list_id#price_list_desc#pack_id#pack_desc#service_desc#status#qty")
                 .toString();
