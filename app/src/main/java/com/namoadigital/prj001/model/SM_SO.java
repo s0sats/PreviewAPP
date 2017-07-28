@@ -89,6 +89,7 @@ public class SM_SO {
     private String client_approval_date;
     private String client_approval_user_nick;
     private Integer client_approval_user;
+    private String client_approval_type_sig;
     @Expose
     private String origin_change;
     private int started_flag;
@@ -538,6 +539,14 @@ public class SM_SO {
 
     public void setClient_approval_user(Integer client_approval_user) {
         this.client_approval_user = client_approval_user;
+    }
+
+    public String getClient_approval_type_sig() {
+        return client_approval_type_sig;
+    }
+
+    public void setClient_approval_type_sig(String client_approval_type_sig) {
+        this.client_approval_type_sig = client_approval_type_sig;
     }
 
     public String getOrigin_change() {

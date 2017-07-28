@@ -81,6 +81,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String CLIENT_APPROVAL_DATE = "client_approval_date";
     public static final String CLIENT_APPROVAL_USER = "client_approval_user";
     public static final String CLIENT_APPROVAL_USER_NICK = "client_approval_user_nick";
+    public static final String CLIENT_APPROVAL_TYPE_SIG = "client_approval_type_sig";
     public static final String ORIGIN_CHANGE = "origin_change";
     public static final String STARTED_FLAG = "started_flag";
     public static final String EDIT_ORIGIN = "edit_origin";
@@ -583,10 +584,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             } else {
                 so.setClient_approval_user(cursor.getInt(cursor.getColumnIndex(CLIENT_APPROVAL_USER)));
             }
+
             if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_USER_NICK))) {
                 so.setClient_approval_user_nick(null);
             } else {
                 so.setClient_approval_user_nick(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_USER_NICK)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_APPROVAL_TYPE_SIG))) {
+                so.setClient_approval_type_sig(null);
+            } else {
+                so.setClient_approval_type_sig(cursor.getString(cursor.getColumnIndex(CLIENT_APPROVAL_TYPE_SIG)));
             }
 
             so.setOrigin_change(cursor.getString(cursor.getColumnIndex(ORIGIN_CHANGE)));
@@ -779,6 +787,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(QUALITY_APPROVAL_USER_NICK, sm_so.getQuality_approval_user_nick());
             }
 
+            if (sm_so.getQuality_approval_user_nick() != null) {
+                contentValues.put(QUALITY_APPROVAL_USER_NICK, sm_so.getQuality_approval_user_nick());
+            }
+
             if (sm_so.getQuality_approval_date() != null) {
                 contentValues.put(QUALITY_APPROVAL_DATE, sm_so.getQuality_approval_date());
             }
@@ -853,6 +865,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             if (sm_so.getClient_approval_user_nick() != null) {
                 contentValues.put(CLIENT_APPROVAL_USER_NICK, sm_so.getClient_approval_user_nick());
+            }
+
+            if (sm_so.getClient_approval_type_sig() != null) {
+                contentValues.put(CLIENT_APPROVAL_TYPE_SIG, sm_so.getClient_approval_type_sig());
             }
 
             if (sm_so.getOrigin_change() != null) {

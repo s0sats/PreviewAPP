@@ -12,7 +12,7 @@ public interface Act032_Main_Presenter {
 
     void onProcessApproval(HashMap<String, String> data);
 
-    void onProcessSignature(HashMap<String, String> data, String sFile);
+    void onProcessSignature(HashMap<String, String> data, String sFile, String type_sig);
 
     void onProcessNFCPassWord(HashMap<String, String> data, String nfc, String password);
 

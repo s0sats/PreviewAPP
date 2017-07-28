@@ -4,15 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.sql.SM_SO_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Sql_008;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -74,7 +80,7 @@ public class Act032_Main_Presenter_Impl implements Act032_Main_Presenter {
     }
 
     @Override
-    public void onProcessSignature(HashMap<String, String> data, String sFile) {
+    public void onProcessSignature(HashMap<String, String> data, String sFile, String type_sig) {
 
         if (sFile.trim().length() != 0) {
 
@@ -88,8 +94,7 @@ public class Act032_Main_Presenter_Impl implements Act032_Main_Presenter {
                                 Integer.parseInt(data.get(SM_SODao.SO_CODE)),
                                 ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"),
                                 ssFile.getName(),
-                                ssFile.getName(),
-                                "USER"
+                                type_sig
                         ).toSqlQuery()
                 );
 
@@ -115,6 +120,9 @@ public class Act032_Main_Presenter_Impl implements Act032_Main_Presenter {
     }
 
     private void callApproval(int prefix, int code, String nfc, String password) {
+
+        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("ws_approval_msg"), "", "0");
+
         Intent mIntent = new Intent(context, WBR_SO_Approval.class);
         Bundle bundle = new Bundle();
 
@@ -127,6 +135,31 @@ public class Act032_Main_Presenter_Impl implements Act032_Main_Presenter {
 
         context.sendBroadcast(mIntent);
 
+    }
+
+    private void uploadFiles(String sFileName) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+
+
+        if (sFileName.endsWith(".png")) {
+            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFileName);
+            if (sFile.exists()) {
+                GE_File geFile = new GE_File();
+                geFile.setFile_code(sFileName.replace(".png", ""));
+                geFile.setFile_path(sFileName);
+                geFile.setFile_status("OPENED");
+                geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss"));
+
+                geFiles.add(geFile);
+            }
+
+            geFileDao.addUpdate(geFiles, false);
+        }
     }
 
     @Override

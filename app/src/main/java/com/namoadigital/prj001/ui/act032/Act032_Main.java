@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -24,6 +25,8 @@ import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Serial_Save;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -47,6 +50,8 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
     private String mSignature;
     private String mStatus;
     private String mClientType;
+
+    HMAux typeAux = new HMAux();
 
     private HashMap<String, String> data;
 
@@ -82,7 +87,6 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
 
     private Handler handler;
     private Runnable runnable;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,8 +142,11 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         transList.add("alert_nfc_msg");
         transList.add("alert_no_signature_title");
         transList.add("alert_no_signature_msg");
-
-
+        transList.add("btn_approval_lbl");
+        transList.add("btn_nfc_lbl");
+        transList.add("btn_password_lbl");
+        //
+        transList.add("msg_approval");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -194,8 +201,11 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         tv_client_name_value = (TextView) findViewById(R.id.act032_main_content_tv_client_name_value);
 
         btn_approval = (Button) findViewById(R.id.act032_main_content_btn_approval);
+        btn_approval.setText(hmAux_Trans.get("btn_approval_lbl"));
         btn_nfc = (Button) findViewById(R.id.act032_main_content_btn_nfc);
+        btn_nfc.setText(hmAux_Trans.get("btn_nfc_lbl"));
         btn_password = (Button) findViewById(R.id.act032_main_content_btn_password);
+        btn_password.setText(hmAux_Trans.get("btn_password_lbl"));
 
         // Move Data
         tv_so_label.setText(hmAux_Trans.get("so_lbl"));
@@ -257,6 +267,61 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         } else {
             ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
+    }
+
+    public void showType_SigDialog(final SM_SO_Service_Exec sm_so_service_exec) {
+
+        final ArrayList<HMAux> type_sigs = new ArrayList<>();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
+
+        SearchableSpinner ss_type_sig = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
+
+        typeAux.put("id", "CLIENT");
+        typeAux.put("description", "Client");
+
+        ss_type_sig.setmLabel("Selecao de Partner");
+        ss_type_sig.setmTitle("Busca de Partner");
+
+        HMAux hmAuxClient = new HMAux();
+        hmAuxClient.put("id", "CLIENT");
+        hmAuxClient.put("description", "Client");
+
+        HMAux hmAuxUser = new HMAux();
+        hmAuxClient.put("id", "USER");
+        hmAuxClient.put("description", "USER");
+
+        type_sigs.add(hmAuxClient);
+        type_sigs.add(hmAuxUser);
+
+        ss_type_sig.setmValue(typeAux);
+        ss_type_sig.setmOption(type_sigs);
+
+        builder.setView(view);
+        builder.setCancelable(true);
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                callSignature();
+            }
+        });
+
+        final AlertDialog show = builder.show();
+
+        ss_type_sig.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(HMAux hmAux) {
+
+                typeAux.clear();
+                typeAux.putAll(hmAux);
+
+                callSignature();
+
+            }
+        });
     }
 
     public void callSignature() {
@@ -389,7 +454,7 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
 
     @Override
     protected void getSignatueF(String mValue) {
-        mPresenter.onProcessSignature(data, mSignature);
+        mPresenter.onProcessSignature(data, mSignature, typeAux.get("id"));
     }
 
     private void callPassWord() {
@@ -480,6 +545,8 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
                             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mIntent.putExtras(bundle);
                             //
+                            activateUpload(context);
+                            //
                             startActivity(mIntent);
                             finish();
                         }
@@ -505,5 +572,14 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
     @Override
     public void onBackPressed() {
         mPresenter.onBackPressedAction();
+    }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }
