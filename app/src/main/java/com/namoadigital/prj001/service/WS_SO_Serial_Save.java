@@ -460,6 +460,10 @@ public class WS_SO_Serial_Save extends IntentService {
         translist.add("msg_receiving_so_data");
         translist.add("msg_processing_from_to_data");
         translist.add("msg_re_processing_so_data");
+        translist.add("msg_error_on_save_serial");
+        translist.add("msg_save_ok");
+        translist.add("msg_updating_serial");
+        translist.add("error_from_to_processing");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
