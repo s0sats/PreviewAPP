@@ -323,6 +323,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 tv_task_tmp_label.setText("Task TMP");
                 tv_task_tmp_value.setText(data.get("task_tmp"));
 
+                btn_cancel_task.setText(hmAux_Trans.get("btn_cancel_task"));
+
                 taskControl.setmLabel("Task Lavel");
                 taskControl.setmValue(data.get("task_perc"), false);
                 taskControl.setmPerc(data.get("task_perc"));
@@ -580,7 +582,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
             baInfra.enableProgressDialog(
                     hmAux_Trans.get("alert_task_title"),
-                    hmAux_Trans.get("alert_so_list_msg"),
+                    hmAux_Trans.get("alert_task_msg"),
                     hmAux_Trans.get("sys_alert_btn_cancel"),
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
@@ -615,7 +617,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
         ToolBox.alertMSG(
                 context,
-                s,
+                hmAux_Trans.get("task_title_error"),
                 s,
                 null,
                 -1

@@ -105,6 +105,14 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         transList.add("alert_service_list_msg");
         transList.add("alert_so_list_title");
         transList.add("alert_so_list_msg");
+        transList.add("alert_task_title");
+        transList.add("alert_task_msg");
+        transList.add("ss_partner_list_ttl");
+        transList.add("ss_partner_list_search_ttl");
+        transList.add("btn_new_exec");
+        transList.add("btn_new_task");
+        transList.add("btn_cancel_task");
+        transList.add("task_title_error");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

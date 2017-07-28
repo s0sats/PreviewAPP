@@ -166,7 +166,7 @@ public class WS_SO_Serial_Save extends IntentService {
         env.setSo(sos);
         env.setSerial(serialList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SERIAL_SAVE,

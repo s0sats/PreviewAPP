@@ -252,13 +252,13 @@ public class Act028_Opc extends BaseFragment {
 
             final HMAux partnerAux = new HMAux();
 
-            ss_partner.setmLabel("Selecao de Partner");
-            ss_partner.setmTitle("Busca de Partner");
+            ss_partner.setmLabel(hmAux_Trans.get("ss_partner_list_ttl"));
+            ss_partner.setmTitle(hmAux_Trans.get("ss_partner_list_search_ttl"));
 
             if (partners.size() > 0) {
                 HMAux hmAux = new HMAux();
                 hmAux.put("id", "0");
-                hmAux.put("description", "Select a Partner");
+                hmAux.put("description", hmAux_Trans.get("ss_partner_list_ttl"));
 
                 ss_partner.setmValue(hmAux);
             }
@@ -411,6 +411,7 @@ public class Act028_Opc extends BaseFragment {
                     btn_new_exec.setVisibility(View.VISIBLE);
                 }
             }
+            btn_new_exec.setText(hmAux_Trans.get("btn_new_exec"));
 
             lv_execs.setAdapter(
                     new Act028_Exec_Adapter(

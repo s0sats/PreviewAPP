@@ -144,7 +144,13 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         tv_status.setText(hmAux_Trans.get("status_lbl") + ": " + so.getStatus());
         //
-        tv_deadline.setText(hmAux_Trans.get("deadline_lbl") + ": " + so.getDeadline());
+        if(so.getDeadline() != null && so.getDeadline().length() > 0){
+            tv_deadline.setVisibility(View.VISIBLE);
+            tv_deadline.setText(hmAux_Trans.get("deadline_lbl") + ": " + so.getDeadline());
+        }else{
+            tv_deadline.setVisibility(View.GONE);
+            tv_deadline.setText("");
+        }
         //
         tv_site.setText(hmAux_Trans.get("site_lbl") + ": " + so.getSite_id() + " - " + so.getSite_desc());
         //

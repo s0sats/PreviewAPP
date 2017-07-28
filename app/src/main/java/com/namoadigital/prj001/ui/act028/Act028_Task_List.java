@@ -172,19 +172,25 @@ public class Act028_Task_List extends BaseFragment {
             tv_partner_id_value.setText(sm_so_service_exec.getPartner_id());
             tv_partner_desc_value.setText(sm_so_service_exec.getPartner_desc());
 
+            btn_new_task.setText(hmAux_Trans.get("btn_new_task"));
+
             if (sm_so_service_exec != null) {
                 createTaskList();
             }
 
             switch (sm_so_service_exec.getStatus().toUpperCase()) {
-                case Constant.SO_STATUS_PENDING:
-                    btn_new_task.setVisibility(View.VISIBLE);
-                    break;
-                case Constant.SO_STATUS_PROCESS:
-                    btn_new_task.setVisibility(View.VISIBLE);
+//                case Constant.SO_STATUS_PENDING:
+//                    btn_new_task.setVisibility(View.VISIBLE);
+//                    break;
+//                case Constant.SO_STATUS_PROCESS:
+//                    btn_new_task.setVisibility(View.VISIBLE);
+//                    break;
+                case Constant.SO_STATUS_CANCELLED:
+                case Constant.SO_STATUS_INCONSISTENT:
+                case Constant.SO_STATUS_NOT_EXECUTED:
+                    btn_new_task.setVisibility(View.GONE);
                     break;
                 default:
-                    btn_new_task.setVisibility(View.GONE);
                     break;
             }
 
