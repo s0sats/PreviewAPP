@@ -11,6 +11,11 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/namoa_color_light_blue3" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -40,12 +45,56 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/act027_opc_tv_so_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="SO ID" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_so_id_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="2017.1" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
                     android:id="@+id/act027_opc_tv_prefix_code_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="Prefix / Code" />
+                    android:text="SO Code" />
 
             </LinearLayout>
 
@@ -65,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="1.1.1 / 1" />
+                    android:text="2017 / 1" />
 
             </LinearLayout>
 
@@ -232,53 +281,45 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
             android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/act027_opc_tv_status_label"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:text="Status" />
 
-                <TextView
-                    android:id="@+id/act027_opc_tv_status_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="PENDING" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/act027_opc_tv_status_value"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:text="DONE" />
 
-                <TextView
-                    android:id="@+id/act027_opc_tv_priority_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="1" />
+        </LinearLayout>
 
-            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/act027_opc_tv_priority_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Priority" />
+
+            <TextView
+                android:id="@+id/act027_opc_tv_priority_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="STANDARD" />
 
         </LinearLayout>
 
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/namoa_color_light_blue3" />
 
     <LinearLayout
         android:layout_width="match_parent"

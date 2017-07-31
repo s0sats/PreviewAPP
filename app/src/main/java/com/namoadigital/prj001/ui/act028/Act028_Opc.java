@@ -20,13 +20,17 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Exec_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -72,7 +76,7 @@ public class Act028_Opc extends BaseFragment {
 
 
     public interface IAct028_Opc {
-        void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec);
+        void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status);
 
         void newExec();
     }
@@ -155,12 +159,23 @@ public class Act028_Opc extends BaseFragment {
 
                 if (sm_so_service_exec.getPartner_code() == null) {
 
-                    handlePartnerDefinition(sm_so_service_exec);
+                    if (data.get("full_status").equalsIgnoreCase("1")) {
+                        handlePartnerDefinition(sm_so_service_exec);
+                    } else {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_exec_blocked_title"),
+                                hmAux_Trans.get("alert_exec_blocked_msg"),
+                                null,
+                                -1,
+                                false
+                        );
+                    }
 
                 } else {
                     // Chamar Lista de Tasks
                     if (delegate != null) {
-                        delegate.menuOptionsSelected(sm_so_service_exec);
+                        delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                     }
                 }
             }
@@ -204,7 +219,7 @@ public class Act028_Opc extends BaseFragment {
                     sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
                     //
                     if (delegate != null) {
-                        delegate.menuOptionsSelected(sm_so_service_execNew);
+                        delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
                         setHMAuxScreen();
                     }
                 }
@@ -238,7 +253,7 @@ public class Act028_Opc extends BaseFragment {
             sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
             //
             if (delegate != null) {
-                delegate.menuOptionsSelected(sm_so_service_exec);
+                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                 setHMAuxScreen();
             }
         } else {
@@ -289,7 +304,7 @@ public class Act028_Opc extends BaseFragment {
                         sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
                         //
                         if (delegate != null) {
-                            delegate.menuOptionsSelected(sm_so_service_exec);
+                            delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                             setHMAuxScreen();
                         }
                     }
@@ -323,7 +338,7 @@ public class Act028_Opc extends BaseFragment {
                         //
                         sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
                         if (delegate != null) {
-                            delegate.menuOptionsSelected(sm_so_service_exec);
+                            delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                             setHMAuxScreen();
                         }
 
@@ -422,8 +437,77 @@ public class Act028_Opc extends BaseFragment {
 
             );
 
-            sm_so_service.getExec();
+            data.put(
+                    "full_status",
+                    verificarStatus_SO(sm_so_service.getSo_prefix(), sm_so_service.getSo_code(), sm_so_service) ? "1" : "0"
+            );
+
+            if (data.get("full_status").equalsIgnoreCase("0")) {
+                btn_new_exec.setVisibility(View.GONE);
+            } else {
+            }
         }
+    }
+
+    public boolean verificarStatus_SO(int so_prefix, int so_code, SM_SO_Service sm_so_service) {
+
+        SM_SODao sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        SM_SO sm_so = sm_soDao.getByString(
+
+                new SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        so_prefix,
+                        so_code
+                ).toSqlQuery()
+
+        );
+
+        if (
+                !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+                        !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+                ) {
+
+            return false;
+
+        } else {
+
+            for (SM_SO_Pack sm_so_pack : sm_so.getPack()) {
+
+                if ((sm_so_pack.getPrice_list_code() == sm_so_service.getPrice_list_code()) &&
+                        (sm_so_pack.getPack_code() == sm_so_service.getPack_code()) &&
+                        (sm_so_pack.getPack_seq() == sm_so_service.getPack_seq())
+
+                        ) {
+
+                    if (!sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+                            !sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+                            ) {
+                        return false;
+                    } else {
+
+                        if (!sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+                                !sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+                                ) {
+
+                            return false;
+
+                        } else {
+
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        return true;
     }
 
     private void changeTabColor() {

@@ -50,6 +50,24 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/act028_main_lempty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/act028_main_tv_no_exec_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Exec Selected"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
 
         <include layout="@layout/footer_base" />
 

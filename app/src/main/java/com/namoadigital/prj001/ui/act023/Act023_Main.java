@@ -524,12 +524,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         product = md_product;
         //
         tv_product_code_label.setText(
-                hmAux_Trans.get("product_label") + " " +
+                hmAux_Trans.get("product_lbl") + " " +
                         String.valueOf(md_product.getProduct_code())
 
         );
         tv_product_id_label.setText(
-                hmAux_Trans.get("product_id_label") + " " +
+                hmAux_Trans.get("product_id_lbl") + " " +
                         md_product.getProduct_id());
         tv_product_desc_value.setText(md_product.getProduct_desc());
         //
