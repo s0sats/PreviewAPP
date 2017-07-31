@@ -399,20 +399,30 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
         if (data.get("task_user").toUpperCase().equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(getActivity()))) {
 
-            switch (data.get("task_status").toUpperCase()) {
-                case "PROCESS":
+            if (data.get("full_status").equalsIgnoreCase("1")) {
 
-                    btn_cancel_task.setVisibility(View.VISIBLE);
+                switch (data.get("task_status").toUpperCase()) {
+                    case Constant.SO_STATUS_PROCESS:
 
-                    taskControl.setmStatus("EXEC");
-                    taskControl.setmEnabled(true);
-                    break;
-                default:
-                    btn_cancel_task.setVisibility(View.GONE);
+                        btn_cancel_task.setVisibility(View.VISIBLE);
 
-                    taskControl.setmStatus(data.get("task_status").toUpperCase());
-                    taskControl.setmEnabled(false);
-                    break;
+                        taskControl.setmStatus("EXEC");
+                        taskControl.setmEnabled(true);
+                        break;
+
+                    default:
+                        btn_cancel_task.setVisibility(View.GONE);
+
+                        taskControl.setmStatus(data.get("task_status").toUpperCase());
+                        taskControl.setmEnabled(false);
+                        break;
+                }
+            } else {
+                btn_cancel_task.setVisibility(View.GONE);
+
+                taskControl.setmStatus(data.get("task_status").toUpperCase());
+                taskControl.setmEnabled(false);
+
             }
 
         } else {

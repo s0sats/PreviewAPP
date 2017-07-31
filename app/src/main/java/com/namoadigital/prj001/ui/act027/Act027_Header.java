@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 10/07/17.
@@ -163,8 +164,16 @@ public class Act027_Header extends BaseFragment {
 
     private void setHMAuxScreen() {
         if (data != null) {
-            tv_product_code.setText(data.get(SM_SODao.PRODUCT_CODE));
-            tv_product_id.setText(data.get(SM_SODao.PRODUCT_ID));
+            tv_product_code.setText(
+                    hmAux_Trans.get("product_header_lbl") + " " +
+                            data.get(SM_SODao.PRODUCT_CODE)
+            );
+
+            tv_product_id.setText(
+                    hmAux_Trans.get("product_id_header_lbl") + " " +
+                            data.get(SM_SODao.PRODUCT_ID)
+            );
+
             tv_product_desc.setText(data.get(SM_SODao.PRODUCT_DESC));
 
             tv_so_id_title.setText(hmAux_Trans.get("so_id"));
@@ -173,11 +182,11 @@ public class Act027_Header extends BaseFragment {
             tv_so_desc_title.setText(hmAux_Trans.get("so_desc"));
             tv_so_desc.setText(data.get(SM_SODao.SO_DESC));
 
-            tv_prefix_code_title.setText(hmAux_Trans.get("prefix_code"));
-            tv_prefix_code.setText(data.get(SM_SODao.CUSTOMER_CODE) + " / " + data.get(SM_SODao.SO_CODE));
+            tv_prefix_code_title.setText(hmAux_Trans.get("so_code_lbl"));
+            tv_prefix_code.setText(data.get(SM_SODao.SO_PREFIX) + " / " + data.get(SM_SODao.SO_CODE));
 
             tv_serial_title.setText(hmAux_Trans.get("serial"));
-            tv_serial.setText(data.get(data.get(SM_SODao.SERIAL_ID)));
+            tv_serial.setText(data.get(SM_SODao.SERIAL_ID));
 
             tv_category_price_id_title.setText(hmAux_Trans.get("category_price_id"));
             tv_category_price_id.setText(data.get(SM_SODao.CATEGORY_PRICE_ID));
@@ -206,10 +215,10 @@ public class Act027_Header extends BaseFragment {
             tv_deadline_title.setText(hmAux_Trans.get("deadline"));
             tv_deadline.setText(data.get(SM_SODao.DEADLINE));
 
-            tv_status_title.setText(hmAux_Trans.get("status"));
-            tv_status_title.setText(data.get(SM_SODao.STATUS));
+            tv_status_title.setText(hmAux_Trans.get("status_lbl"));
+            tv_status.setText(data.get(SM_SODao.STATUS));
 
-            tv_priority_desc_title.setText(hmAux_Trans.get("priority_desc"));
+            tv_priority_desc_title.setText(hmAux_Trans.get("priority_lbl"));
             tv_priority_desc.setText(data.get(SM_SODao.PRIORITY_DESC));
 
             tv_contract_desc_title.setText(hmAux_Trans.get("contract_desc"));
@@ -231,7 +240,12 @@ public class Act027_Header extends BaseFragment {
             tv_quality_approval_user_nick.setText(data.get(SM_SODao.QUALITY_APPROVAL_USER_NICK));
 
             tv_quality_approval_date_title.setText(hmAux_Trans.get("quality_approval_date"));
-            tv_quality_approval_date.setText(data.get(SM_SODao.QUALITY_APPROVAL_DATE));
+            tv_quality_approval_date.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(data.get(SM_SODao.QUALITY_APPROVAL_DATE), ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                    )
+            );
 
             tv_comments_title.setText(hmAux_Trans.get("comments"));
             tv_comments.setText(data.get(SM_SODao.COMMENTS));
@@ -267,7 +281,12 @@ public class Act027_Header extends BaseFragment {
             //private TextView tv_client_approval_image_url;
 
             tv_client_approval_date_title.setText(hmAux_Trans.get("client_approval_date"));
-            tv_client_approval_date.setText(data.get(SM_SODao.CLIENT_APPROVAL_DATE));
+            tv_client_approval_date.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(data.get(SM_SODao.CLIENT_APPROVAL_DATE), ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                    )
+            );
 
             tv_client_approval_user_title.setText(hmAux_Trans.get("client_approval_user"));
             tv_client_approval_user.setText(data.get(SM_SODao.CLIENT_APPROVAL_USER));

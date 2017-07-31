@@ -35,6 +35,9 @@ public class Act027_Opc extends BaseFragment {
 
     private TextView tv_so_label;
 
+    private TextView tv_so_id_label;
+    private TextView tv_so_id_value;
+
     private TextView tv_prefix_code_label;
     private TextView tv_prefix_code_value;
     private TextView tv_product_id_label;
@@ -49,7 +52,10 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_deadline_label;
     private TextView tv_deadline_value;
 
+    private TextView tv_status_label;
     private TextView tv_status_value;
+
+    private TextView tv_priority_label;
     private TextView tv_priority_value;
 
     private TextView tv_services_title;
@@ -113,8 +119,13 @@ public class Act027_Opc extends BaseFragment {
         if (data != null) {
 
             tv_so_label.setText(hmAux_Trans.get("so_lbl"));
-            tv_prefix_code_label.setText(hmAux_Trans.get("prefix_code_lbl"));
-            tv_prefix_code_value.setText(data.get(SM_SODao.CUSTOMER_CODE) + " / " + data.get(SM_SODao.SO_CODE));
+
+            tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
+            tv_so_id_value.setText(data.get(SM_SODao.SO_ID));
+
+            tv_prefix_code_label.setText(hmAux_Trans.get("so_code_lbl"));
+            tv_prefix_code_value.setText(data.get(SM_SODao.SO_PREFIX) + " / " + data.get(SM_SODao.SO_CODE));
+
             tv_product_id_label.setText(hmAux_Trans.get("product_id_lbl"));
             tv_product_id_value.setText(data.get(SM_SODao.PRODUCT_ID));
 
@@ -125,9 +136,19 @@ public class Act027_Opc extends BaseFragment {
             tv_serial_value.setText(data.get(SM_SODao.SERIAL_ID));
 
             tv_deadline_label.setText(hmAux_Trans.get("deadline_lbl"));
-            tv_deadline_value.setText(data.get(SM_SODao.DEADLINE));
 
+
+            tv_deadline_value.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(data.get(SM_SODao.DEADLINE), ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                    )
+            );
+
+            tv_status_label.setText(hmAux_Trans.get("status_lbl"));
             tv_status_value.setText(data.get(SM_SODao.STATUS));
+
+            tv_priority_label.setText(hmAux_Trans.get("priority_lbl"));
             tv_priority_value.setText(data.get(SM_SODao.PRIORITY_DESC));
 
             tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
@@ -178,6 +199,9 @@ public class Act027_Opc extends BaseFragment {
 
         tv_so_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_ttl);
 
+        tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
+        tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
+
         tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
         tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
 
@@ -193,7 +217,10 @@ public class Act027_Opc extends BaseFragment {
         tv_deadline_label = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_label);
         tv_deadline_value = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_value);
 
+        tv_status_label = (TextView) view.findViewById(R.id.act027_opc_tv_status_label);
         tv_status_value = (TextView) view.findViewById(R.id.act027_opc_tv_status_value);
+
+        tv_priority_label = (TextView) view.findViewById(R.id.act027_opc_tv_priority_label);
         tv_priority_value = (TextView) view.findViewById(R.id.act027_opc_tv_priority_value);
 
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);

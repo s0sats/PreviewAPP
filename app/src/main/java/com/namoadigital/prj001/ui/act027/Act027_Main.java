@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -96,15 +98,24 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act027_title");
+        transList.add("alert_so_exit_title");
+        transList.add("alert_so_exit_msg");
 
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
-        transList.add("prefix_code_lbl");
+        transList.add("so_id_lbl");
+        transList.add("so_code_lbl");
+        transList.add("product_lbl");
         transList.add("product_id_lbl");
+        transList.add("product_header_lbl");
+        transList.add("product_id_header_lbl");
+
         transList.add("product_description_lbl");
         transList.add("serial_lbl");
         transList.add("deadline_lbl");
+        transList.add("status_lbl");
+        transList.add("priority_lbl");
         transList.add("services_ll_lbl");
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");
@@ -157,6 +168,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_no_so_found_msg");
         transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
+        transList.add("btn_serial_save");
 
         // ACT027_Header Fragment
         transList.add("so_id");
@@ -480,12 +492,25 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         if (mDrawerStatus) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
-            //
-            Intent mIntent = new Intent(context, Act005_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(mIntent);
-            finish();
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_exit_title"),
+                    hmAux_Trans.get("alert_so_exit_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent mIntent = new Intent(context, Act005_Main.class);
+                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            //
+                            startActivity(mIntent);
+                            finish();
+
+                        }
+                    },
+                    1,
+                    false
+            );
+
         }
     }
 

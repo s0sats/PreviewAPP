@@ -116,25 +116,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/namoa_bg_1"
                 android:padding="10dp"
-                android:text="2017 / 30"
-                android:textSize="@dimen/font_size_title_md" />
-
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_so_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="SO Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_so_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="2017 / 30"
+                android:text="2017.30"
                 android:textSize="@dimen/font_size_title_md" />
 
             <TextView
@@ -142,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:text="Prefix / Code"
+                android:text="SO Code"
                 android:textSize="@dimen/font_size_title_lib" />
 
             <TextView
@@ -153,6 +135,24 @@
                 android:padding="10dp"
                 android:text="2017 / 30"
                 android:textSize="@dimen/font_size_title_md" />
+
+            <TextView
+            android:id="@+id/act027_header_content_tv_so_desc_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:text="SO Desc"
+            android:textSize="@dimen/font_size_title_lib" />
+
+            <TextView
+            android:id="@+id/act027_header_content_tv_so_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/namoa_bg_1"
+            android:padding="10dp"
+            android:text="SO Desc"
+            android:textSize="@dimen/font_size_title_md" />
+
 
             <TextView
                 android:id="@+id/act027_header_content_tv_serial_title"

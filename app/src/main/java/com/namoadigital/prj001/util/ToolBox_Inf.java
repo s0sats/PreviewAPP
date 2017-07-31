@@ -1801,6 +1801,52 @@ public class ToolBox_Inf {
         return calendar.getTimeInMillis();
     }
 
+    public static long dateToMilliseconds(String date_tmz, String type) {
+        String sFormat = "";
+
+        if (type.equalsIgnoreCase("SECOND")) {
+            sFormat = "yyyy-MM-dd HH:mm Z";
+        } else {
+            sFormat = "yyyy-MM-dd HH:mm:ss Z";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sFormat);
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(date_tmz));
+            return calendar.getTimeInMillis();
+        } catch (ParseException e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return 0L;
+        }
+    }
+
+    public static String millisecondsToString(long mils, String format) {
+
+        String sResults = "";
+
+        if (mils == 0L) {
+            return "";
+        }
+
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTimeInMillis(mils);
+        if (format == null || format.equalsIgnoreCase("")) {
+            format = "dd-MM-yyyy";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+        try {
+            sResults = sdf.format(ca1.getTime());
+        } catch (Exception var7) {
+            sResults = "00:00 01-01-1900";
+        }
+
+        return sResults;
+    }
+
     public static void copyFile(File file, File dir) throws IOException {
         File newFile = new File(dir, file.getName());
         FileChannel outputChannel = null;
@@ -2032,7 +2078,7 @@ public class ToolBox_Inf {
      * @param param_code
      * @return
      */
-    public static boolean profileExists(Context context, String menu_code , String param_code) {
+    public static boolean profileExists(Context context, String menu_code, String param_code) {
         try {
             EV_ProfileDao evProfileDao
                     = new EV_ProfileDao(context,

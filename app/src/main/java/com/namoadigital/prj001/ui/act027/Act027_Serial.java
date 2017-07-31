@@ -29,6 +29,7 @@ import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -227,20 +228,22 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         tv_serial_location_ttl = (TextView) view.findViewById(R.id.act027_serial_content_tv_serial_location_ttl);
         tv_serial_location_ttl.setTag("serial_location_ttl");
+        tv_serial_location_ttl.setText(hmAux_Trans.get("serial_location_ttl"));
         //
         ss_site = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site);
-        ss_site.setmLabel("site_lbl");
+        ss_site.setmLabel(hmAux_Trans.get("site_lbl"));
         //
         ss_site_zone = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_zone);
-        ss_site_zone.setmLabel("site_zone_lbl");
+        ss_site_zone.setmLabel(hmAux_Trans.get("site_zone_lbl"));
         //
         ss_site_zone_local = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_zone_local);
-        ss_site_zone_local.setmLabel("site_zone_local_lbl");
+        ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
         //
         ll_serial_add_info = (LinearLayout) view.findViewById(R.id.act027_serial_content_ll_serial_add_info);
         //
         tv_serial_add_info_ttl = (TextView) view.findViewById(R.id.act027_serial_content_tv_serial_add_info_ttl);
         tv_serial_add_info_ttl.setTag("serial_add_info_ttl");
+        tv_serial_add_info_ttl.setText(hmAux_Trans.get("serial_add_info_ttl"));
         //
         et_info1 = (EditText) view.findViewById(R.id.act027_serial_content_et_info1);
         et_info1.setTag("add_info1_lbl");
@@ -255,24 +258,25 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         tv_serial_properties_ttl = (TextView) view.findViewById(R.id.act027_serial_content_tv_serial_properties_ttl);
         tv_serial_properties_ttl.setTag("serial_properties_ttl");
+        tv_serial_properties_ttl.setText(hmAux_Trans.get("serial_properties_ttl"));
         //
         ss_brand = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_brand);
-        ss_brand.setmLabel("brand_lbl");
+        ss_brand.setmLabel(hmAux_Trans.get("brand_lbl"));
         //
         ss_brand_model = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_brand_model);
-        ss_brand_model.setmLabel("brand_model_lbl");
+        ss_brand_model.setmLabel(hmAux_Trans.get("brand_model_lbl"));
         //
         ss_brand_color = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_brand_color);
-        ss_brand_color.setmLabel("brand_color_lbl");
+        ss_brand_color.setmLabel(hmAux_Trans.get("brand_color_lbl"));
         //
         ss_segment = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_segment);
-        ss_segment.setmLabel("segment_lbl");
+        ss_segment.setmLabel(hmAux_Trans.get("segment_lbl"));
         //
         ss_category_price = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_category_price);
-        ss_category_price.setmLabel("category_price_lbl");
+        ss_category_price.setmLabel(hmAux_Trans.get("category_price_lbl"));
         //
         ss_site_owner = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_owner);
-        ss_site_owner.setmLabel("site_owner_lbl");
+        ss_site_owner.setmLabel(hmAux_Trans.get("site_owner_lbl"));
         //
         btn_action = (Button) view.findViewById(R.id.act027_serial_content_btn_action);
         //
@@ -502,13 +506,16 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         product = md_product;
         //
         tv_product_code_label.setText(
-                hmAux_Trans.get("product_label") + " " +
-                        String.valueOf(md_product.getProduct_code())
-
+                hmAux_Trans.get("product_header_lbl") + " " +
+                        data.get(SM_SODao.PRODUCT_CODE)
         );
+
         tv_product_id_label.setText(
-                hmAux_Trans.get("product_id_label") + " " +
-                        md_product.getProduct_id());
+                hmAux_Trans.get("product_id_header_lbl") + " " +
+                        data.get(SM_SODao.PRODUCT_ID)
+        );
+
+
         tv_product_desc_value.setText(md_product.getProduct_desc());
         //
         serial_required = md_product.getRequire_serial();
@@ -535,7 +542,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //}
         //
         btn_action.setOnClickListener(listnerSaveSerial);
-        btn_action.setText(hmAux_Trans.get("btn_so_search"));
         //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //

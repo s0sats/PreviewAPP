@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -57,6 +58,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
     private LinearLayout ll_list;
     private LinearLayout ll_task;
+    private LinearLayout ll_empty;
 
     private Bundle bundle;
 
@@ -65,6 +67,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     private HMAux partnerAux = new HMAux();
 
     private HMAux exec_task_tmp = new HMAux();
+
+    private TextView tv_no_exec_selected;
 
     private int index = 0;
 
@@ -105,6 +109,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         transList.add("alert_service_list_msg");
         transList.add("alert_so_list_title");
         transList.add("alert_so_list_msg");
+        transList.add("no_exec_selected_lbl");
+        transList.add("alert_exec_blocked_title");
+        transList.add("alert_exec_blocked_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -159,6 +166,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
         ll_list = (LinearLayout) findViewById(R.id.act028_main_llist);
         ll_task = (LinearLayout) findViewById(R.id.act028_main_ltask);
+        ll_empty = (LinearLayout) findViewById(R.id.act028_main_lempty);
+
+        tv_no_exec_selected = (TextView) findViewById(R.id.act028_main_tv_no_exec_selected);
 
         act028_opc = (Act028_Opc) fm.findFragmentById(R.id.act028_opc);
         act028_opc.setOnMenuOptionsSelected(this);
@@ -182,6 +192,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
         ll_list.setVisibility(View.GONE);
         ll_task.setVisibility(View.GONE);
+        ll_empty.setVisibility(View.VISIBLE);
+
+        tv_no_exec_selected.setText(hmAux_Trans.get("no_exec_selected_lbl"));
     }
 
     private void recoverGetIntents() {
@@ -227,15 +240,16 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     }
 
     @Override
-    public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec) {
+    public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status) {
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
-        act028_task_list.setSm_so_service_exec(sm_so_service_exec);
+        act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
         act028_task_list.setHMAuxScreen();
         //
         ll_list.setVisibility(View.VISIBLE);
         ll_task.setVisibility(View.GONE);
+        ll_empty.setVisibility(View.GONE);
         //
         index = 0;
         //
@@ -260,6 +274,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         //
         ll_list.setVisibility(View.GONE);
         ll_task.setVisibility(View.VISIBLE);
+        ll_empty.setVisibility(View.GONE);
         //
         index = 1;
         //
@@ -271,6 +286,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     @Override
     public void exec_list_opc_update() {
         act028_opc.setHMAuxScreen();
+        act028_task_list.setHMAuxScreen();
     }
 
     @Override

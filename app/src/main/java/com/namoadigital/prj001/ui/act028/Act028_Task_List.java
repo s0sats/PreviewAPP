@@ -67,6 +67,8 @@ public class Act028_Task_List extends BaseFragment {
 
     private HMAux partnerAux = new HMAux();
 
+    private String full_status;
+
     public interface IAct028_Task_List {
         void menuTaksSelected(HashMap<String, String> data);
 
@@ -83,8 +85,9 @@ public class Act028_Task_List extends BaseFragment {
         this.delegate = delegate;
     }
 
-    public void setSm_so_service_exec(SM_SO_Service_Exec sm_so_service_exec) {
+    public void setSm_so_service_exec(SM_SO_Service_Exec sm_so_service_exec, String full_status) {
         this.sm_so_service_exec = sm_so_service_exec;
+        this.full_status = full_status;
     }
 
     @Nullable
@@ -176,16 +179,21 @@ public class Act028_Task_List extends BaseFragment {
                 createTaskList();
             }
 
-            switch (sm_so_service_exec.getStatus().toUpperCase()) {
-                case Constant.SO_STATUS_PENDING:
-                    btn_new_task.setVisibility(View.VISIBLE);
-                    break;
-                case Constant.SO_STATUS_PROCESS:
-                    btn_new_task.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    btn_new_task.setVisibility(View.GONE);
-                    break;
+            if (full_status.equalsIgnoreCase("1")) {
+
+                switch (sm_so_service_exec.getStatus().toUpperCase()) {
+                    case Constant.SO_STATUS_PENDING:
+                        btn_new_task.setVisibility(View.VISIBLE);
+                        break;
+                    case Constant.SO_STATUS_PROCESS:
+                        btn_new_task.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        btn_new_task.setVisibility(View.GONE);
+                        break;
+                }
+            } else {
+                btn_new_task.setVisibility(View.GONE);
             }
 
 //            if (sm_so_service_exec != null) {
@@ -266,6 +274,7 @@ public class Act028_Task_List extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> hmAux = (HashMap<String, String>) parent.getItemAtPosition(position);
                 hmAux.put("exec_status", sm_so_service_exec.getStatus());
+                hmAux.put("full_status", full_status);
 
                 //callTestSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
 
