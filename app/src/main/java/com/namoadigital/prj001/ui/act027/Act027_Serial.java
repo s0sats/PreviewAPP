@@ -344,6 +344,10 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                     //
                     mPresenter.updateSerialInfo(serialObj);
                 } else {
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_no_data_changes_ttl"),
+                            hmAux_Trans.get("alert_no_data_changes_msg")
+                    );
                 }
             }
         };
