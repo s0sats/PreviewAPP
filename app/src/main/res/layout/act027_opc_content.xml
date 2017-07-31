@@ -201,7 +201,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="DeadLine" />
+                    android:text="DeadLine"
+                    />
 
             </LinearLayout>
 
@@ -246,7 +247,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="PENDING" />
+                    android:text="PENDING"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 

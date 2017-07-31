@@ -128,6 +128,36 @@ public class Act027_Opc extends BaseFragment {
             tv_deadline_value.setText(data.get(SM_SODao.DEADLINE));
 
             tv_status_value.setText(data.get(SM_SODao.STATUS));
+            //
+            switch (data.get(SM_SODao.STATUS)){
+                case Constant.SO_STATUS_PENDING :
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_light_blue_9));
+                    break;
+                case Constant.SO_STATUS_PROCESS :
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_yellow_2));
+                    break;
+                case Constant.SO_STATUS_DONE :
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_green_2));
+                    break;
+                case Constant.SO_STATUS_CANCELLED :
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_gray_4));
+                    break;
+                case Constant.SO_STATUS_BLOCKED :
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_black));
+                    break;
+                case Constant.SO_STATUS_WAITING_BUDGET:
+                case Constant.SO_STATUS_WAITING_QUALITY:
+                case Constant.SO_STATUS_WAITING_CLIENT:
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_brown));
+                    break;
+                case Constant.SO_STATUS_EDIT:
+                    tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_pink_1));
+                    break;
+                default:
+                    break;
+
+            }
+
             tv_priority_value.setText(data.get(SM_SODao.PRIORITY_DESC));
 
             tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));

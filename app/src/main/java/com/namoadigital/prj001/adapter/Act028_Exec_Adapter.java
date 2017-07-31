@@ -76,6 +76,32 @@ public class Act028_Exec_Adapter extends BaseAdapter {
         tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
         tv_exec_tmp_value.setText(String.valueOf(item.getExec_tmp()));
         tv_exec_status.setText(item.getStatus());
+        /*
+        * Tratativa de cor por Status
+        * */
+
+        switch (item.getStatus()){
+            case Constant.SO_STATUS_PENDING :
+                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS :
+                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE :
+                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED :
+                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_NOT_EXECUTED :
+                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+                break;
+            case Constant.SO_STATUS_INCONSISTENT :
+                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
 
         return convertView;
     }
