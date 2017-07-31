@@ -206,6 +206,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("client_approval_user_nick");
         transList.add("total_qty_service");
         transList.add("total_price");
+        transList.add("alert_no_data_changes_ttl");
+        transList.add("alert_no_data_changes_msg");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -352,6 +354,12 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     }
 
     private void initActions() {
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
     }
 
     @Override

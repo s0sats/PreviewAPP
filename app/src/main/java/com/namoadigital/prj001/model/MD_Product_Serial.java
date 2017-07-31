@@ -1,29 +1,49 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by neomatrix on 8/9/16.
  */
 
 public class MD_Product_Serial {
 
+    @Expose
     private long customer_code;
+    @Expose
     private long product_code;
+    @Expose
     private long serial_code;
+    @Expose
     private String serial_id;
+    @Expose
     private Integer site_code;
+    @Expose
     private Integer zone_code;
+    @Expose
     private Integer local_code;
+    @Expose
     private Integer site_code_owner;
+    @Expose
     private Integer brand_code;
+    @Expose
     private Integer model_code;
+    @Expose
     private Integer color_code;
+    @Expose
     private Integer segment_code;
+    @Expose
     private Integer category_price_code;
+    @Expose
     private String add_inf1;
+    @Expose
     private String add_inf2;
+    @Expose
     private String add_inf3;
+    @Expose
     private int update_required;
     //SOMENTE PARA ENVIO NO WS
+    @Expose
     private int only_position;
 
     public long getCustomer_code() {

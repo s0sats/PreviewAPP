@@ -72,7 +72,8 @@
                     android:padding="1dp"
                     android:text="Status"
                     android:textColor="@color/lib_custom_cell_font_color"
-                    android:textSize="@dimen/font_size_title" />
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 

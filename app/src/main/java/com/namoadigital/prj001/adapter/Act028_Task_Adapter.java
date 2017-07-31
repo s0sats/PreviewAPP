@@ -83,6 +83,31 @@ public class Act028_Task_Adapter extends BaseAdapter {
         } else {
             iv_icon.setVisibility(View.INVISIBLE);
         }
+        /*
+        * Tratativa de cor do Status
+        * */
+        switch (item.get("task_status")){
+            case Constant.SO_STATUS_PENDING :
+                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS :
+                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE :
+                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED :
+                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_NOT_EXECUTED :
+                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+                break;
+            case Constant.SO_STATUS_INCONSISTENT :
+                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
 
         return convertView;
     }

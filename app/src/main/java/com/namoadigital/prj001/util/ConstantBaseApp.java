@@ -302,6 +302,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_STATUS_CANCELLED = "CANCELLED";
     public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
     public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
+    public static final String SO_STATUS_BLOCKED = "STOP";
 
 
 
