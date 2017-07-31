@@ -294,7 +294,8 @@
                 android:id="@+id/act027_opc_tv_status_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DONE" />
+                android:text="DONE"
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
