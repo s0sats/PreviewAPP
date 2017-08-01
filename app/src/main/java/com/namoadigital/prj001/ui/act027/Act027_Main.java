@@ -208,6 +208,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("total_price");
         transList.add("alert_no_data_changes_ttl");
         transList.add("alert_no_data_changes_msg");
+        transList.add("progress_save_serial_ttl");
+        transList.add("progress_save_serial_msg");
 
         sm_soDao = new SM_SODao(
                 context,

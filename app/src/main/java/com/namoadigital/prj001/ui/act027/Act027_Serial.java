@@ -895,4 +895,11 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 product_code,
                 mket_serial_id.getText().toString().trim());
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        mket_serial_id.setText(data.get("serial_id"));
+    }
 }

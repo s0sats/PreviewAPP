@@ -312,8 +312,8 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
         mView.setWs_process(Act023_Main.SO_WS_SEARCH_SO);
         //
         mView.showPD(
-                hmAux_Trans.get("progress_so_search_ttl"),
-                hmAux_Trans.get("progress_so_search_msg")
+                hmAux_Trans.get("progress_save_serial_ttl"),
+                hmAux_Trans.get("progress_save_serial_msg")
         );
         //
         Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
