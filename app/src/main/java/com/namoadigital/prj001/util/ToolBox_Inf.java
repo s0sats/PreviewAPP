@@ -149,6 +149,11 @@ public class ToolBox_Inf {
             dirSupport.mkdir();
         }
 
+        File dirToken = new File(Constant.TOKEN_PATH);
+        if (!dirToken.exists()) {
+            dirToken.mkdir();
+        }
+
     }
 
     public static String md5(String s) {
@@ -455,6 +460,25 @@ public class ToolBox_Inf {
                     return true;
                 }
 
+                return false;
+            }
+        });
+        //
+        if (files != null) {
+            Arrays.sort(files);
+        }
+        //
+        return files;
+    }
+
+    public static File[] getListOfFiles_v5(String path, final String prefix) {
+        File fileList = new File(path);
+        File[] files = fileList.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                if (filename.startsWith(prefix)) {
+                    return true;
+                }
                 return false;
             }
         });
