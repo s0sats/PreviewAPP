@@ -210,6 +210,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_no_data_changes_msg");
         transList.add("progress_save_serial_ttl");
         transList.add("progress_save_serial_msg");
+        transList.add("searchable_spinner_lbl");
 
         sm_soDao = new SM_SODao(
                 context,

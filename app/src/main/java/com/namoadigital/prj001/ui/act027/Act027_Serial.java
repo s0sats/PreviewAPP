@@ -232,12 +232,15 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         ss_site = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site);
         ss_site.setmLabel(hmAux_Trans.get("site_lbl"));
+        ss_site.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_zone = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_zone);
         ss_site_zone.setmLabel(hmAux_Trans.get("site_zone_lbl"));
+        ss_site_zone.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_zone_local = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_zone_local);
         ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
+        ss_site_zone_local.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ll_serial_add_info = (LinearLayout) view.findViewById(R.id.act027_serial_content_ll_serial_add_info);
         //
@@ -262,21 +265,27 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         ss_brand = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_brand);
         ss_brand.setmLabel(hmAux_Trans.get("brand_lbl"));
+        ss_brand.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_brand_model = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_brand_model);
         ss_brand_model.setmLabel(hmAux_Trans.get("brand_model_lbl"));
+        ss_brand_model.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_brand_color = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_brand_color);
         ss_brand_color.setmLabel(hmAux_Trans.get("brand_color_lbl"));
+        ss_brand_color.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_segment = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_segment);
         ss_segment.setmLabel(hmAux_Trans.get("segment_lbl"));
+        ss_segment.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_category_price = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_category_price);
         ss_category_price.setmLabel(hmAux_Trans.get("category_price_lbl"));
+        ss_category_price.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_owner = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_owner);
         ss_site_owner.setmLabel(hmAux_Trans.get("site_owner_lbl"));
+        ss_site_owner.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         btn_action = (Button) view.findViewById(R.id.act027_serial_content_btn_action);
         //
@@ -901,5 +910,9 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         super.onResume();
         //
         mket_serial_id.setText(data.get("serial_id"));
+        //
+        mPresenter.getProductInfo();
+        //
+        getSerialInfo();
     }
 }
