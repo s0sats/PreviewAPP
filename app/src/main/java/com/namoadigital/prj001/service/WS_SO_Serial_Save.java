@@ -284,8 +284,14 @@ public class WS_SO_Serial_Save extends IntentService {
                 }
             }
 
-            hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
-            hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
+            //Monta String com dados das S.O enviadas para processamento
+            for (SO_Save_Return so_ret : ret.getSo_return()) {
+                so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
+                so_list_status += "#" + so_ret.getRet_status();
+            }
+
+            hmAux.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(1, so_list_ret.length()) :"." );
+            hmAux.put(SO_RETURN_STATUS,  so_list_ret.length() > 0 ? so_list_status.substring(1, so_list_status.length()) :"." );
             hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
 
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");

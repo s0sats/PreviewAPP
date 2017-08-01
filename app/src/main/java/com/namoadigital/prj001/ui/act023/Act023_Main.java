@@ -262,19 +262,19 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act023_mket_serial);
         mket_serial_id.setmNFC(true);
         controls_sta.add(mket_serial_id);
-        mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
+       // mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
         //
         tv_product_ttl = (TextView) findViewById(R.id.act023_tv_product_ttl);
-        tv_product_ttl.setTag("product_ttl");
+        tv_product_ttl.setText("product_ttl");
         //
         tv_product_code_label = (TextView) findViewById(R.id.act023_tv_product_code_lbl);
-        tv_product_code_label.setTag("product_label");
+        tv_product_code_label.setText(hmAux_Trans.get("product_label"));
         //
         tv_product_id_label = (TextView) findViewById(R.id.act023_tv_product_id_lbl);
-        tv_product_id_label.setTag("product_id_label");
+        tv_product_id_label.setText(hmAux_Trans.get("product_id_label"));
         //
         tv_product_desc_value = (TextView) findViewById(R.id.act023_tv_product_desc_value);
-        tv_product_desc_value.setTag("product_desc_label");
+        tv_product_desc_value.setText(hmAux_Trans.get("product_desc_label"));
         //
         ll_require_serial = (LinearLayout) findViewById(R.id.act023_ll_require_serial);
         //
@@ -524,12 +524,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         product = md_product;
         //
         tv_product_code_label.setText(
-                hmAux_Trans.get("product_lbl") + " " +
+                hmAux_Trans.get("product_label") + " " +
                         String.valueOf(md_product.getProduct_code())
 
         );
         tv_product_id_label.setText(
-                hmAux_Trans.get("product_id_lbl") + " " +
+                hmAux_Trans.get("product_id_label") + " " +
                         md_product.getProduct_id());
         tv_product_desc_value.setText(md_product.getProduct_desc());
         //

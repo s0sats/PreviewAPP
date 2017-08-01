@@ -193,7 +193,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         mket_serial_id.setmBARCODE(false);
 
         controls_sta.add(mket_serial_id);
-        mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
+        //mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
         //
         tv_product_ttl = (TextView) view.findViewById(R.id.act027_serial_content_tv_product_ttl);
         tv_product_ttl.setTag("product_ttl");
