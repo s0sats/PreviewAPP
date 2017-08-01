@@ -185,10 +185,10 @@ public class Act028_Task_List extends BaseFragment {
 
                 switch (sm_so_service_exec.getStatus().toUpperCase()) {
                     case Constant.SO_STATUS_PENDING:
-                        btn_new_task.setVisibility(View.VISIBLE);
+                        //btn_new_task.setVisibility(View.VISIBLE);
                         break;
                     case Constant.SO_STATUS_PROCESS:
-                        btn_new_task.setVisibility(View.VISIBLE);
+                        //btn_new_task.setVisibility(View.VISIBLE);
                         break;
                     default:
                         btn_new_task.setVisibility(View.GONE);
