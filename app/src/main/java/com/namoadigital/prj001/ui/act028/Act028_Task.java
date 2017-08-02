@@ -93,8 +93,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         //
         tempValues.put("qty", data.get("qty_people"));
         tempValues.put("perc", data.get("task_perc"));
-        tempValues.put("dts", data.get("start_date"));
-        tempValues.put("dte", data.get("end_date"));
+        tempValues.put("dts", data.get("start_date_local"));
+        tempValues.put("dte", data.get("end_date_local"));
         tempValues.put("comments", data.get("comments"));
         tempValues.put("img", "");
         //
@@ -134,21 +134,22 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     public void updateTaskOnLeave() {
         try {
-            if (sm_so_service_exec_task != null && sm_so_service_exec_task.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
-                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
-                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
-                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
-                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
-                sm_so_service_exec_task.setComments(taskControl.getmComments());
-                sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
-                //
-                //sm_so_service_exec_task.setPK(sm_so_service_exec);
-                //
-                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+            if (taskControl != null && taskControl.ismEnabled()) {
+                if (sm_so_service_exec_task != null && sm_so_service_exec_task.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+                    sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
+                    sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
+                    sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
+                    sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
+                    sm_so_service_exec_task.setComments(taskControl.getmComments());
+                    sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
+                    //
+                    //sm_so_service_exec_task.setPK(sm_so_service_exec);
+                    //
+                    sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
 
-                // Include Files to Upload
-                uploadFiles(sm_so_service_exec_task);
-
+                    // Include Files to Upload
+                    uploadFiles(sm_so_service_exec_task);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -330,8 +331,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 taskControl.setmPerc(data.get("task_perc"));
                 taskControl.setmQty_People_label("Qty People");
                 taskControl.setmQty_People(data.get("qty_people"), false);
-                taskControl.setmDtStart(data.get("start_date"));
-                taskControl.setmDtEnd(data.get("end_date"));
+                taskControl.setmDtStart(data.get("start_date_local"));
+                taskControl.setmDtEnd(data.get("end_date_local"));
                 taskControl.setmComments(data.get("comments"));
                 taskControl.setmMaxImages(4);
                 taskControl.setmType(data.get("exec_type"));

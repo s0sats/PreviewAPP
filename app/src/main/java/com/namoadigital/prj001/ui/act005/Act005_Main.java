@@ -68,7 +68,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_SERVICE = "menu_service";
-    public static final String MENU_ID_SERIAL= "menu_serial";
+    public static final String MENU_ID_SERIAL = "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
@@ -230,6 +230,9 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         //Carrega traduções da biblioteca
         ToolBox_Inf.libTranslation(getApplicationContext());
+
+        Constant.DATEFORMATDT = ToolBox_Inf.nlsDateFormat(context);
+        Constant.DATEFORMATDTH = ToolBox_Inf.nlsDateFormat(context) + " HH:mm";
     }
 
     private void initVars() {
@@ -756,16 +759,16 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         if (!wsProcess.equals("")) {
             int idx = getWsIdx(wsProcess);
-            if(idx != -1){
-                wsProcessList.get(idx).put(WS_LIST_ITEM_RETURN,hmAux.get("WS_Return"));
-                if(idx < wsProcessList.size() ){
+            if (idx != -1) {
+                wsProcessList.get(idx).put(WS_LIST_ITEM_RETURN, hmAux.get("WS_Return"));
+                if (idx < wsProcessList.size()) {
                     mPresenter.executeNextProcess(wsProcessList.get(idx).get(WS_LIST_ITEM));
-                }else if(idx == wsProcessList.size() ){
+                } else if (idx == wsProcessList.size()) {
                     progressDialog.dismiss();
                     showSendStatusScore();
                 }
             }
-        }else{
+        } else {
             progressDialog.dismiss();
         }
 
@@ -778,7 +781,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         String msg = "";
         for (int i = 0; i < wsProcessList.size(); i++) {
-            msg += wsProcessList.get(i).get(WS_LIST_ITEM_LABEL) +" : " + wsProcessList.get(i).get(WS_LIST_ITEM_RETURN) +"\n";
+            msg += wsProcessList.get(i).get(WS_LIST_ITEM_LABEL) + " : " + wsProcessList.get(i).get(WS_LIST_ITEM_RETURN) + "\n";
         }
         //
         ToolBox.alertMSG(
@@ -791,15 +794,15 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     }
 
-    private int getWsIdx(String ws){
+    private int getWsIdx(String ws) {
         try {
             for (int i = 0; i < wsProcessList.size(); i++) {
                 if (wsProcessList.get(i).get(WS_LIST_ITEM).equals(ws)) {
                     return i;
                 }
             }
-        }catch (Exception e){
-           ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             return -1;
         }
         return -1;

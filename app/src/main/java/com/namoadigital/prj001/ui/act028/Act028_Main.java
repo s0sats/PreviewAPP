@@ -437,6 +437,26 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         disableProgressDialog();
     }
 
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
     @Override
     public void showPartnerOptDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Act028_Main.this);

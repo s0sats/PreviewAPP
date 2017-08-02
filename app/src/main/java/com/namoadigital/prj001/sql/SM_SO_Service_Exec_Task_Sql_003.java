@@ -37,7 +37,13 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("select S.service_id, S.service_desc, S.status as service_status, S.exec_type, T.*, T.status as task_status\n" +
+                .append("select S.service_id, S.service_desc, S.status as service_status, S.exec_type, T.*, T.status as task_status,\n" +
+
+                        "strftime('%Y-%m-%d %H:%M',T.start_date,'localtime') start_date_local,\n" +
+                        "strftime('%Y-%m-%d %H:%M',T.end_date,'localtime') end_date_local\n" +
+
+                        "\n" +
+
                         "\n" +
                         "from SM_SO_Services as S, SM_SO_Service_Exec_Tasks as T\n" +
                         "\n" +
@@ -77,7 +83,7 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
                         "    exec_tmp DESC, " +
                         "    task_tmp DESC, " +
                         "    task_seq_oper DESC")
-                .append(";service_id#service_desc#service_status#exec_type#task_status#customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#exec_tmp#task_tmp#task_seq_oper#task_user#task_user_nick#start_date#end_date#exec_time#exec_time_format#task_perc#qty_people#status#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#comments")
+                .append(";service_id#service_desc#service_status#exec_type#task_status#customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#exec_tmp#task_tmp#task_seq_oper#task_user#task_user_nick#start_date#start_date_local#end_date#end_date_local#exec_time#exec_time_format#task_perc#qty_people#status#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#comments")
                 .toString();
     }
 }
