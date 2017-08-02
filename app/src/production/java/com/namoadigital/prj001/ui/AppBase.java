@@ -26,6 +26,11 @@ import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 
 
 /**
@@ -45,12 +50,19 @@ public class AppBase extends Application {
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
         SUPPORT_PATH = DB_PATH + "/support";
+        TOKEN_PATH = DB_PATH + "/token";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
         SUPPORT_NAME = "support.zip";
         SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
+
+        TOKEN_SO_PREFIX = "so_token_";
+        TOKEN_SERIAL_PREFIX = "serial_token_";
+
+        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
 
         CACHE_PATH = DB_PATH + "/CC_CACHE";
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";

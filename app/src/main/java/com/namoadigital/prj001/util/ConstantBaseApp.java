@@ -111,6 +111,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String IMG_PATH;
     public static String THU_PATH;
     public static String SUPPORT_PATH;
+    public static String TOKEN_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -118,6 +119,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
 
+    public static String TOKEN_SO_PREFIX;
+    public static String TOKEN_SERIAL_PREFIX;
+
+    public static String TOKEN_SO_NAME_FULL;
+    public static String TOKEN_SERIAL_NAME_FULL;
 
     /**
      * SM_SO_Service Login Parameter
@@ -181,6 +187,14 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SO_SERIAL_SAVE_SERIAL_ID = "so_serial_save_serial_id";
     public static final String WS_SO_SERIAL_SAVE_SO_PREFIX = "so_serial_save_product_code";
     public static final String WS_SO_SERIAL_SAVE_SO_CODE = "so_serial_save_serial_id";
+    //As 4 constantes não serão mais utilizadas após processo de save so offline
+
+    /**
+     * SO Save
+     */
+    public static final String WS_SO_SAVE_SO_ACTION = "ws_so_save_so_action";
+    public static final String SO_ACTION_EXECUTION = "EXECUTION";
+
 
     /**
      * WS Logout
