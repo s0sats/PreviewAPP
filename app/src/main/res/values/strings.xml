@@ -81,5 +81,6 @@
     <string name="notification_msg_download">Please do not turn off the network conection</string>
     <string name="generic_drawer_opened">Drawer Opened</string>
     <string name="generic_drawer_closed">Drawer Closed</string>
+    <string name="msg_device_code_not_found">Device code not found! A Device code is required to proceed.</string>
 
 </resources>

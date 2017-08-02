@@ -49,10 +49,10 @@ public class Act006_Adapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            convertView = mInflater.inflate(resource, parent, false);
 
         }
         //Resgata HmAux com as informações
@@ -73,11 +73,11 @@ public class Act006_Adapter extends BaseAdapter {
         tvItem.setText(item.get(Act006_Main.LIST_LABEL));
 
         //Define cor do fundo
-        if(item.get(Act006_Main.LIST_OPT).equals("new")){
+        if (item.get(Act006_Main.LIST_OPT).equals("new")) {
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_3_states);
             llBackground.setBackground(llDrawable);
 
-        }else{
+        } else {
             Drawable llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_2_states);
             llBackground.setBackground(llDrawable);
         }

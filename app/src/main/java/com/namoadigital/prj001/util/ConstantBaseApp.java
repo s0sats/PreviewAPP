@@ -7,16 +7,16 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
  * Created by neomatrix on 05/04/17.
  */
 
-public class ConstantBaseApp  extends ConstantBase {
+public class ConstantBaseApp extends ConstantBase {
 
 
     /**
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "1.1.6";
-    public static final String PKG_CLEAN_APP = "8";
-    //          ATUALIZAR ESSA VAR NOS APP BASE PKG_CLEAN
+    public static final String PRJ001_VERSION = "2.0.5";
+    public static final String PKG_CLEAN_APP = "14";
+    //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
      * UI Module
@@ -41,6 +41,18 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT018 = "act018";
     public static final String ACT019 = "act019";
     public static final String ACT020 = "act020";
+    public static final String ACT021 = "act021";
+    public static final String ACT022 = "act022";
+    public static final String ACT023 = "act023";
+    public static final String ACT024 = "act024";
+    public static final String ACT025 = "act025";
+    public static final String ACT026 = "act026";
+    public static final String ACT027 = "act027";
+    public static final String ACT028 = "act028";
+    public static final String ACT029 = "act029";
+    public static final String ACT030 = "act030";
+    public static final String ACT031 = "act031";
+    public static final String ACT032 = "act032";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -61,6 +73,19 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String ACT013_CUSTOM_FORM_DATA = "custom_form_data";
 
     public static final String ACT020_BACK_FLOW = "back_flow";
+
+    public static final String ACT022_REQUESTING_PROCESS = "requesting_process";
+    public static final String ACT022_MSTACKVALUES = "act022_mstackvalues";
+
+    public static final String ACT023_SO_HEADER_LIST = "so_header_list";
+
+    public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";
+    public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
+    public static final String MAIN_PRODUCT_CODE = "main_product_code";
+    public static final String MAIN_SERIAL_ID = "main_serial_id";
+    public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
+    public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
+
 
     /**
      * DataBase Definition
@@ -92,7 +117,6 @@ public class ConstantBaseApp  extends ConstantBase {
 
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
-
 
 
     /**
@@ -142,6 +166,23 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String GS_SERIAL_ID = "serialserialid";
 
     /**
+     * SO Search WS
+     */
+    public static final String WS_SO_SEARCH_PRODUCT_CODE = "sosearchproductcode";
+    public static final String WS_SO_SEARCH_SERIAL_ID = "sosearchserialid";
+    public static final String WS_SO_SEARCH_SO_MULT = "sosearchmult";
+    public static final String WS_SO_SEARCH_SAVE_SERIAL = "so_search_save_serial";
+    public static final String WS_SO_SEARCH_CREATE_SERIAL = "so_search_create_serial";
+
+    /**
+     * SO Serial Save
+     */
+    public static final String WS_SO_SERIAL_SAVE_PRODUCT_CODE = "so_serial_save_product_code";
+    public static final String WS_SO_SERIAL_SAVE_SERIAL_ID = "so_serial_save_serial_id";
+    public static final String WS_SO_SERIAL_SAVE_SO_PREFIX = "so_serial_save_product_code";
+    public static final String WS_SO_SERIAL_SAVE_SO_CODE = "so_serial_save_serial_id";
+
+    /**
      * WS Logout
      */
     public static final String WS_LOGOUT_CUSTOMER_LIST = "logoutcustomerlist";
@@ -159,7 +200,15 @@ public class ConstantBaseApp  extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_PRODUCT_CODE = "serial_search_product_code";
     public static final String WS_SERIAL_SEARCH_PRODUCT_ID = "serial_search_product_id";
     public static final String WS_SERIAL_SEARCH_SERIAL_ID = "serial_search_serial_id";
+    public static final String WS_SERIAL_SEARCH_EXACT = "ws_serial_search_exact";
+    public static final String WS_SERIAL_SEARCH_SAVE_PROCESS = "ws_serial_search_save_process";
+    public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_new_process";
 
+    /**
+     * Retorno dos Ws de Envio
+     */
+
+    public static final String WS_SEND_RETURN = "ws_send_return";
 
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";
@@ -214,15 +263,54 @@ public class ConstantBaseApp  extends ConstantBase {
 
     //Parametros de Permissões
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
-    public static final String PARAM_CHECKLIST ="N-FORM";// "CHECKLIST";
+    public static final String PARAM_CHECKLIST = "N-FORM";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
-    public static final String PARAM_SO = "SM_SO";
+    public static final String PARAM_SO = "SO";
+    public static final String PARAM_SO_MOV = "SO_MOV";
+    public static final String CLIENT_TYPE_CLIENT = "CLIENT";
+    public static final String CLIENT_TYPE_USER = "USER";
+
+    /**
+     *
+     * Parametros EV_PROFILE
+     *
+     */
+
+    public static final String PROFILE_MENU_SO = "PRJ001_SO";
+    public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
+    public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
+
+
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
-    public static final String MODULE_WM= "MODULE_WM";
-    public static final String MODULE_TO= "MODULE_TO";
+    public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
+    public static final String MODULE_WM = "MODULE_WM";
+    public static final String MODULE_TO = "MODULE_TO";
+
+
+    //Constantes Status da SO
+    public static final String SO_STATUS_EDIT = "EDIT";
+    public static final String SO_STATUS_STOP = "STOP";
+    public static final String SO_STATUS_PENDING = "PENDING";
+    public static final String SO_STATUS_PROCESS = "PROCESS";
+    public static final String SO_STATUS_WAITING_BUDGET = "WAITING_BUDGET";
+    public static final String SO_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
+    public static final String SO_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
+    public static final String SO_STATUS_DONE = "DONE";
+    public static final String SO_STATUS_CANCELLED = "CANCELLED";
+    public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
+    public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
+    public static final String SO_STATUS_BLOCKED = "STOP";
+
+
+
+    //
+    public static final String SO_PARAM_PREFIX = "SO_PARAM_PREFIX";
+    public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
+    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
+    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
 
 
 }

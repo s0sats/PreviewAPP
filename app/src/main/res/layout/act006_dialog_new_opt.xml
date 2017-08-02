@@ -20,18 +20,14 @@
             android:padding="2dp"
             android:text="MSg"
             android:textSize="@dimen/font_size_title_md"
-            android:visibility="gone"
+            android:visibility="gone" />
 
-            />
-
-           <ListView
-               android:id="@+id/act006_dialog_opt_lv_opt"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:dividerHeight="5dp"
-               android:divider="@color/padrao_TRANSPARENT"
-
-               />
+        <ListView
+            android:id="@+id/act006_dialog_opt_lv_opt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="5dp" />
 
 
     </LinearLayout>

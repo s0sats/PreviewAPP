@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,11 +20,14 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.EV_ProfileDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
@@ -35,6 +39,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -51,6 +56,7 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
+import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
@@ -62,6 +68,7 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -99,7 +106,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class ToolBox_Inf {
 
-    private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf" ;
+    private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf";
 
     public static void mkDirectory() {
         File dirDB = new File(Constant.DB_PATH);
@@ -205,7 +212,7 @@ public class ToolBox_Inf {
             return nocarrierID;
         }
 
-        if (carrierID != null && !carrierID.trim().isEmpty()){
+        if (carrierID != null && !carrierID.trim().isEmpty()) {
             return carrierID;
         } else {
             return nocarrierID;
@@ -322,10 +329,13 @@ public class ToolBox_Inf {
         inputStream.close();
     }
 
-    public static String uploadFile(String json, String sFile) {
+    public static String uploadFile(String json, String sFile, String sNewName) {
         try {
+            //Como no processo de SO a foto pode mudar de nome,
+            //Verifica qual o nome o arquivo esta no momento.
+            String sRealFileName = sNewName != null ? sNewName : sFile;
             // Set your file path here
-            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sFile);
+            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sRealFileName);
 
             // Set your server page url (and the file title/description)
             HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD, json);
@@ -334,7 +344,7 @@ public class ToolBox_Inf {
 
         } catch (Exception e) {
             String error = e.toString();
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "Error: " + e.toString();
         }
     }
@@ -346,18 +356,14 @@ public class ToolBox_Inf {
 
             // Set your server page url (and the file title/description)
             HttpFileUpload hfu = new HttpFileUpload(ws_url, json);
-
             return hfu.Send_Now(fstrm, sFile);
 
         } catch (Exception e) {
             String error = e.toString();
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "Error: " + e.toString();
         }
     }
-
-
-
 
     public static void deleteLocalImage(String sFile) {
         File file = new File(Constant.CACHE_PATH_PHOTO + "/" + sFile);
@@ -407,7 +413,7 @@ public class ToolBox_Inf {
             zis.close();
 
         } catch (IOException e) {
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return false;
         }
 
@@ -435,7 +441,7 @@ public class ToolBox_Inf {
             }
             zos.close();
         } catch (IOException ioe) {
-            ToolBox_Inf.registerException(CLASS_NAME,ioe);
+            ToolBox_Inf.registerException(CLASS_NAME, ioe);
             Log.e("ZIP", ioe.getMessage());
         }
     }
@@ -477,7 +483,7 @@ public class ToolBox_Inf {
                 input.close();
             }
         } catch (IOException ex) {
-            ToolBox_Inf.registerException(CLASS_NAME,ex);
+            ToolBox_Inf.registerException(CLASS_NAME, ex);
             ex.printStackTrace();
         }
 
@@ -504,10 +510,10 @@ public class ToolBox_Inf {
     }
 
     public static void deleteDownloadFileInf(String sName) {
-        deleteDownloadFileInf(sName,Constant.CACHE_PATH );
+        deleteDownloadFileInf(sName, Constant.CACHE_PATH);
     }
 
-    public static void deleteDownloadFileInf(String sName,String path) {
+    public static void deleteDownloadFileInf(String sName, String path) {
         File file = new File(path + "/" + sName);
 
         if (file.exists()) {
@@ -522,8 +528,16 @@ public class ToolBox_Inf {
         from.renameTo(to);
     }
 
-    public static void renameDownloadFileInfV2(String path,String sName, String extOri, String extDest) {
-        if(extOri == null || extOri.trim().length() == 0){
+    public static void renameDownloadFileInfPHOTO(String sName, String ext) {
+        File from = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ".tmp");
+        File to = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
+
+
+    public static void renameDownloadFileInfV2(String path, String sName, String extOri, String extDest) {
+        if (extOri == null || extOri.trim().length() == 0) {
             extOri = ".tmp";
         }
 
@@ -534,8 +548,11 @@ public class ToolBox_Inf {
     }
 
     public static boolean verifyDownloadFileInf(String sName) {
-        return verifyDownloadFileInf(sName,Constant.CACHE_PATH);
+        return verifyDownloadFileInf(sName, Constant.CACHE_PATH);
+    }
 
+    public static boolean verifyFileExists(String sName) {
+        return verifyDownloadFileInf(sName, Constant.CACHE_PATH_PHOTO);
     }
 
     public static boolean verifyDownloadFileInf(String sName, String path) {
@@ -560,13 +577,23 @@ public class ToolBox_Inf {
 
             br.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
 
         }
 
         return text.toString();
     }
 
+    /**
+     * Usar o mesmo metodo do que do  Toolbox
+     *
+     * @param context
+     * @param type
+     * @param value
+     * @param link
+     * @param required
+     */
+    @Deprecated
     public static void sendBCStatus(Context context, String type, String value, String link, String required) {
         Intent mIntent = new Intent(Constant.SW_TYPE_BR);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -636,13 +663,18 @@ public class ToolBox_Inf {
                     }
 
                 case "NFC_BLOCKED":
-                    sendBCStatus(context, "ERROR_1",context.getString(R.string.msg_nfc_card_blocked) /*context.getString(R.string.msg_user_canceled)*/, s_Link, "0");
+                    sendBCStatus(context, "ERROR_1", context.getString(R.string.msg_nfc_card_blocked) /*context.getString(R.string.msg_user_canceled)*/, s_Link, "0");
                     return false;
+
+                case "DEVICE_CODE_REQUIRED":
+                    sendBCStatus(context, "ERROR_1", context.getString(R.string.msg_device_code_not_found), s_Link, "0");
+                    return false;
+
 
                 case "OK":
                     break;
                 default:
-                    sendBCStatus(context, "ERROR_1",context.getString(R.string.msg_unespected_error), s_Link, "0");
+                    sendBCStatus(context, "ERROR_1", context.getString(R.string.msg_unespected_error), s_Link, "0");
                     return false;
             }
         }
@@ -1557,11 +1589,11 @@ public class ToolBox_Inf {
             case Constant.NOTIFICATION_DOWNLOAD:
                 animation = R.drawable.download_animation;
                 title = context.getString(R.string.notification_ttl_download);
-                if(hmAux_Trans.containsKey("notification_ttl_download")){
-                    title =  hmAux_Trans.get("notification_ttl_download");
+                if (hmAux_Trans.containsKey("notification_ttl_download")) {
+                    title = hmAux_Trans.get("notification_ttl_download");
                 }
                 msg = context.getString(R.string.notification_msg_download);
-                if(hmAux_Trans.containsKey("notification_msg_download")){
+                if (hmAux_Trans.containsKey("notification_msg_download")) {
                     msg = hmAux_Trans.get("notification_msg_download");
                 }
                 break;
@@ -1696,6 +1728,39 @@ public class ToolBox_Inf {
     }
 
     /**
+     * Verifica se conjunto de parametros passados existe para aquele customer
+     *
+     * @param context
+     * @param param   Array com constante dos parametros a serem buscados
+     * @return true or false;
+     */
+    public static boolean parameterExists(Context context, String[] param) {
+        try {
+            Ev_User_Customer_ParameterDao parameterDao
+                    = new Ev_User_Customer_ParameterDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+
+            for (int i = 0; i < param.length; i++) {
+                Ev_User_Customer_Parameter parameter
+                        = parameterDao.getByString(
+                        new Ev_User_Customer_Parameter_Sql_002(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                param[i]
+                        ).toSqlQuery()
+                );
+
+                if (parameter != null) {
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Converte data enviada para o timezone do aparelho
      *
      * @param
@@ -1709,7 +1774,7 @@ public class ToolBox_Inf {
             // calendar.setTime(sdf.parse("2017-04-13 12:24:46 +0000"));
             calendar.setTime(sdf.parse(date_tmz));
         } catch (ParseException e) {
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             e.printStackTrace();
         }
 
@@ -1729,11 +1794,57 @@ public class ToolBox_Inf {
         try {
             calendar.setTime(sdf.parse(date_tmz));
         } catch (ParseException e) {
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             e.printStackTrace();
         }
 
         return calendar.getTimeInMillis();
+    }
+
+    public static long dateToMilliseconds(String date_tmz, String type) {
+        String sFormat = "";
+
+        if (type.equalsIgnoreCase("SECOND")) {
+            sFormat = "yyyy-MM-dd HH:mm Z";
+        } else {
+            sFormat = "yyyy-MM-dd HH:mm:ss Z";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sFormat);
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(date_tmz));
+            return calendar.getTimeInMillis();
+        } catch (ParseException e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return 0L;
+        }
+    }
+
+    public static String millisecondsToString(long mils, String format) {
+
+        String sResults = "";
+
+        if (mils == 0L) {
+            return "";
+        }
+
+        Calendar ca1 = Calendar.getInstance();
+        ca1.setTimeInMillis(mils);
+        if (format == null || format.equalsIgnoreCase("")) {
+            format = "dd-MM-yyyy";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+        try {
+            sResults = sdf.format(ca1.getTime());
+        } catch (Exception var7) {
+            sResults = "00:00 01-01-1900";
+        }
+
+        return sResults;
     }
 
     public static void copyFile(File file, File dir) throws IOException {
@@ -1798,13 +1909,13 @@ public class ToolBox_Inf {
         }
     }
 
-    public static void writeIn(String data , File file) throws IOException {
-        FileWriter writer =  new FileWriter(file,true);
+    public static void writeIn(String data, File file) throws IOException {
+        FileWriter writer = new FileWriter(file, true);
         writer.append(data);
         writer.close();
     }
 
-    public static String getDateHourStr(){
+    public static String getDateHourStr() {
         //
         SimpleDateFormat formater = new SimpleDateFormat("yyyyMMdd");
         String curr_date = formater.format(new Date());
@@ -1819,21 +1930,21 @@ public class ToolBox_Inf {
 
     public static void registerException(String local, Exception exception) {
 
-        File exception_file = new File(Constant.SUPPORT_PATH,"excep_" + getDateHourStr() + ".txt");
+        File exception_file = new File(Constant.SUPPORT_PATH, "excep_" + getDateHourStr() + ".txt");
 
         try {
 
-            StackTraceElement[] stackTrace =  exception.getStackTrace();
+            StackTraceElement[] stackTrace = exception.getStackTrace();
             String traceString = "";
             String erro = "";
 
-            for (StackTraceElement trace: stackTrace ) {
+            for (StackTraceElement trace : stackTrace) {
                 traceString += trace.toString() + "\n ";
             }
 
-            erro = "Local:\n "+ local+ ";\nException:\n "+ exception.toString() +";\nTrace:\n"+ traceString +";";
+            erro = "Local:\n " + local + ";\nException:\n " + exception.toString() + ";\nTrace:\n" + traceString + ";";
 
-            ToolBox_Inf.writeIn(erro,exception_file);
+            ToolBox_Inf.writeIn(erro, exception_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1846,38 +1957,148 @@ public class ToolBox_Inf {
         }
     }
 
-    public static void clearFilesByPrefix(String path,String prefix) {
+    public static void clearFilesByPrefix(String path, String prefix) {
         //File fileList = new File(Constant.CACHE_PATH);
         File fileList = new File(path);
         //
         if (fileList.isDirectory()) {
             String[] children = fileList.list();
             for (int i = 0; i < children.length; i++) {
-                if(children[i].startsWith(prefix)){
+                if (children[i].startsWith(prefix)) {
                     try {
                         new File(fileList, children[i]).delete();
-                    }catch (Exception e){
-                        ToolBox_Inf.registerException(CLASS_NAME,e);
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(CLASS_NAME, e);
                     }
                 }
             }
         }
     }
 
-    public static boolean verifyImgIntegrity(String path, String file_name){
+    public static boolean verifyImgIntegrity(String path, String file_name) {
 
-        File file =  new File(path +"/"+ file_name);
+        File file = new File(path + "/" + file_name);
 
-        if(file.isFile()){
+        if (file.isFile()) {
             try {
                 Bitmap tmpImg = BitmapFactory.decodeFile(path + "/" + file_name);
                 if (tmpImg != null) {
                     return true;
                 }
-            }catch (Exception e){
-                registerException(CLASS_NAME,e);
+            } catch (Exception e) {
+                registerException(CLASS_NAME, e);
                 return false;
             }
+        }
+
+        return false;
+    }
+
+    public static Integer mIntegerParse(String integer) {
+        try {
+            return Integer.parseInt(integer);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void alertBundleNotFound(final Base_Activity act, HMAux hmAux_Trans) {
+        //
+        Exception e = new Exception("Bundle parameters not found.");
+        //
+        ToolBox_Inf.registerException(act.getClass().getName(), e);
+        //
+        ToolBox.alertMSG(
+                act,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(act, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        act.startActivity(mIntent);
+                        act.finish();
+                    }
+                },
+                0
+        );
+    }
+
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
+        HMAux hmAux = new HMAux();
+        hmAux.put(SearchableSpinner.ID, code);
+        hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+        ss_component.setmValue(hmAux);
+        if (source_val) {
+            ss_component.setTag(code);
+        }
+    }
+
+    public static boolean processoOthersError(Context context, String error_msg_header, String error_msg) {
+        if (error_msg != null && error_msg.length() > 0) {
+            //ToolBox.sendBCStatus(context, "ERROR_1", error_msg_header + "\n" + error_msg, "", "0");
+            ToolBox.sendBCStatus(context, "CUSTOM_ERROR", error_msg_header + "\n" + error_msg, "", "0");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param ss_component
+     * @param code         - Codigo interno do server(code)
+     * @param desc         - Descrição do item
+     * @param source_val   - Seta esse code, como valor default no sppiner
+     * @param acceptNull   - Seta tag indicanda se spinner aceita valor null
+     */
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, boolean acceptNull) {
+        try {
+            HMAux hmAux = new HMAux();
+            hmAux.put(SearchableSpinner.ID, code);
+            hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+            ss_component.setmValue(hmAux);
+            //
+            if (source_val) {
+                ss_component.setTag(code);
+            }
+            //
+            ss_component.setTag(R.id.SS_NULLS_ACCEPT, String.valueOf(acceptNull));
+            //
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Verifica se o item de profile passado existe
+     *
+     * @param context
+     * @param menu_code
+     * @param param_code
+     * @return
+     */
+    public static boolean profileExists(Context context, String menu_code, String param_code) {
+        try {
+            EV_ProfileDao evProfileDao
+                    = new EV_ProfileDao(context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM);
+            //
+            EV_Profile profile
+                    = evProfileDao.getByString(
+                    new EV_Profile_Sql_001(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            menu_code,
+                            param_code
+                    ).toSqlQuery()
+            );
+
+            if (profile != null) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
         }
 
         return false;

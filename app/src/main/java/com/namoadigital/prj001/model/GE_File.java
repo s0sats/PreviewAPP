@@ -8,6 +8,7 @@ public class GE_File {
 
     private String file_code;
     private String file_path;
+    private String file_path_new;
     private String file_status;
     private String file_date;
 
@@ -25,6 +26,14 @@ public class GE_File {
 
     public void setFile_path(String file_path) {
         this.file_path = file_path;
+    }
+
+    public String getFile_path_new() {
+        return file_path_new;
+    }
+
+    public void setFile_path_new(String file_path_new) {
+        this.file_path_new = file_path_new;
     }
 
     public String getFile_status() {

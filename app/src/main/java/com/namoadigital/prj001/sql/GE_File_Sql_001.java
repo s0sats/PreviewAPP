@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -36,6 +35,7 @@ public class GE_File_Sql_001 implements Specification {
                 .append(") ")
                 .append(" ")
                 .append(";")
+
                 .toString();
     }
 }

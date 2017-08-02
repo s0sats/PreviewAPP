@@ -15,6 +15,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.EV_ProfileDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
@@ -26,16 +27,28 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_BrandDao;
+import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
+import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
+import com.namoadigital.prj001.dao.MD_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_BrandDao;
+import com.namoadigital.prj001.dao.MD_Product_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SegmentDao;
+import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
+import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob;
@@ -46,15 +59,27 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_Custom_Form_Operation;
 import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
+import com.namoadigital.prj001.model.MD_Brand;
+import com.namoadigital.prj001.model.MD_Brand_Color;
+import com.namoadigital.prj001.model.MD_Brand_Model;
+import com.namoadigital.prj001.model.MD_Category_Price;
 import com.namoadigital.prj001.model.MD_Operation;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Brand;
+import com.namoadigital.prj001.model.MD_Product_Category_Price;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
+import com.namoadigital.prj001.model.MD_Product_Segment;
+import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
+import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
@@ -64,11 +89,22 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Operation_Sql_Trucate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Brand_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Brand_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -123,7 +159,7 @@ public class WS_Sync extends IntentService {
 
             ToolBox_Inf.registerException(getClass().getName(),e);
 
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
 
@@ -147,7 +183,7 @@ public class WS_Sync extends IntentService {
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-
+        EV_ProfileDao evProfileDao =  new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         DataPackage dataPackage = new DataPackage();
@@ -196,6 +232,13 @@ public class WS_Sync extends IntentService {
             ArrayList<String> SCHEDULE = new ArrayList<>();
             dataPackage.setSCHEDULE(SCHEDULE);
         }
+        //Verifica se customer possui acesso ao SO
+        //adiciona parametro no sincronismo.
+        if(ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
+            //Assim como o Main, o array list é vazio.
+            ArrayList<String> SO = new ArrayList<>();
+            dataPackage.setSO(SO);
+        }
 
         TSync_Env env =  new TSync_Env();
 
@@ -204,7 +247,7 @@ public class WS_Sync extends IntentService {
         env.setSession_app(session_app);
         env.setData_package(dataPackage);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SYNC,
@@ -232,19 +275,19 @@ public class WS_Sync extends IntentService {
         //
 
         if(rec.getZip() == null){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
             return;
         }
 
         //Inicia o processamento dos arquivos zip e atualiza tabelas.
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");
 
         ToolBox_Inf.downloadZip(rec.getZip(), Constant.ZIP_NAME_FULL);
 
         ToolBox_Inf.unpackZip("", Constant.ZIP_NAME);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step1), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step1), "", "0");
 
         //Atualiza tabela de user
 
@@ -283,7 +326,7 @@ public class WS_Sync extends IntentService {
             moduleResDao.addUpdate(moduleRes, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step2), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step2), "", "0");
 
         File[] files_module_res_txt = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
 
@@ -300,7 +343,7 @@ public class WS_Sync extends IntentService {
             moduleResTxtDao.addUpdate(moduleResTxts, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step3), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step3), "", "0");
 
         File[] files_module_res_txt_trans = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
 
@@ -317,7 +360,25 @@ public class WS_Sync extends IntentService {
             moduleResTxtTransDao.addUpdate(moduleResTxtTrans, false);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
+        //limpa tabela de profile.
+        evProfileDao.remove(new EV_Profile_Sql_Truncate().toSqlQuery());
+
+        File[] files_ev_profile = ToolBox_Inf.getListOfFiles_v2("ev_profile-");
+
+        for (File _file : files_ev_profile) {
+
+            ArrayList<EV_Profile> ev_profiles = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<EV_Profile>>() {
+                    }.getType()
+            );
+
+            evProfileDao.addUpdate(ev_profiles, false);
+        }
+
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
         //
         // Tenta pegar tradução dos itens do WS
         //Seleciona traduções
@@ -904,12 +965,239 @@ public class WS_Sync extends IntentService {
             }
         }
 
+        //
+        //Processamento das tabelas do SO
+        //
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)){
+            MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_BrandDao productBrandDao  = new MD_Product_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_SegmentDao productSegmentDao = new MD_Product_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_Product_Category_PriceDao productCategoryPriceDao = new MD_Product_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+
+            //apaga tabelas
+            siteZoneDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
+            siteZoneLocalDao.remove(new MD_Site_Zone_Local_Sql_Truncate().toSqlQuery());
+            segmentDao.remove(new MD_Segment_Sql_Truncate().toSqlQuery());
+            categoryPriceDao.remove(new MD_Category_Price_Sql_Truncate().toSqlQuery());
+            brandDao.remove(new MD_Brand_Sql_Truncate().toSqlQuery());
+            brandModelDao.remove(new MD_Brand_Model_Sql_Truncate().toSqlQuery());
+            brandColorDao.remove(new MD_Brand_Color_Sql_Truncate().toSqlQuery());
+            partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
+            productBrandDao.remove(new MD_Product_Brand_Sql_Truncate().toSqlQuery());
+            productSegmentDao.remove(new MD_Product_Segment_Sql_Truncate().toSqlQuery());
+            productCategoryPriceDao.remove(new MD_Product_Category_Price_Sql_Truncate().toSqlQuery());
+
+            //
+            // Processamento Site Zone
+            //
+            File[] files_site_zone = ToolBox_Inf.getListOfFiles_v2("md_site_zone-");
+
+            for (File _file : files_site_zone) {
+
+                ArrayList<MD_Site_Zone> mdSiteZones = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Site_Zone>>() {
+                        }.getType()
+                );
+
+                siteZoneDao.addUpdate(mdSiteZones, false);
+            }
+
+            //
+            // Processamento Site Zone Local
+            //
+            File[] files_site_zone_local = ToolBox_Inf.getListOfFiles_v2("md_site_zone_local-");
+
+            for (File _file : files_site_zone_local) {
+
+                ArrayList<MD_Site_Zone_Local> mdSiteZoneLocals = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Site_Zone_Local>>() {
+                        }.getType()
+                );
+
+                siteZoneLocalDao.addUpdate(mdSiteZoneLocals, false);
+            }
+
+            //
+            // Processamento Segment
+            //
+            File[] files_segment = ToolBox_Inf.getListOfFiles_v2("md_segment-");
+
+            for (File _file : files_segment) {
+
+                ArrayList<MD_Segment> mdSegments = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Segment>>() {
+                        }.getType()
+                );
+
+                segmentDao.addUpdate(mdSegments, false);
+            }
+
+            //
+            // Processamento MD_Category_Price
+            //
+            File[] files_category_price = ToolBox_Inf.getListOfFiles_v2("md_category_price-");
+
+            for (File _file : files_category_price) {
+
+                ArrayList<MD_Category_Price> mdCategoryPrices = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Category_Price>>() {
+                        }.getType()
+                );
+
+                categoryPriceDao.addUpdate(mdCategoryPrices, false);
+            }
+
+            //
+            // Processamento Brand
+            //
+            File[] files_brand = ToolBox_Inf.getListOfFiles_v2("md_brand-");
+
+            for (File _file : files_brand) {
+
+                ArrayList<MD_Brand> mdBrands = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand>>() {
+                        }.getType()
+                );
+
+                brandDao.addUpdate(mdBrands, false);
+            }
+
+            //
+            // Processamento Brand Model
+            //
+            File[] files_brand_model = ToolBox_Inf.getListOfFiles_v2("md_brand_model-");
+
+            for (File _file : files_brand_model) {
+
+                ArrayList<MD_Brand_Model> mdBrandModels = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand_Model>>() {
+                        }.getType()
+                );
+
+                brandModelDao.addUpdate(mdBrandModels, false);
+            }
+
+            //
+            // Processamento Brand Color
+            //
+            File[] files_brand_color = ToolBox_Inf.getListOfFiles_v2("md_brand_color-");
+
+            for (File _file : files_brand_color) {
+
+                ArrayList<MD_Brand_Color> mdBrandColors = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Brand_Color>>() {
+                        }.getType()
+                );
+
+                brandColorDao.addUpdate(mdBrandColors, false);
+            }
+
+            //
+            // Processamento Partner
+            //
+            File[] files_partner = ToolBox_Inf.getListOfFiles_v2("md_partner-");
+
+            for (File _file : files_partner) {
+
+                ArrayList<MD_Partner> mdPartners = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Partner>>() {
+                        }.getType()
+                );
+
+                partnerDao.addUpdate(mdPartners, false);
+            }
+
+            //
+            // Processamento Product Brand
+            //
+            File[] files_product_brand = ToolBox_Inf.getListOfFiles_v2("md_product_brand-");
+
+            for (File _file : files_product_brand) {
+
+                ArrayList<MD_Product_Brand> mdProductBrands = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Brand>>() {
+                        }.getType()
+                );
+
+                productBrandDao.addUpdate(mdProductBrands, false);
+            }
+            //
+            // Processamento Product Segment
+            //
+            File[] files_product_segment = ToolBox_Inf.getListOfFiles_v2("md_product_segment-");
+
+            for (File _file : files_product_segment) {
+
+                ArrayList<MD_Product_Segment> mdProductSegments = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Segment>>() {
+                        }.getType()
+                );
+
+                productSegmentDao.addUpdate(mdProductSegments, false);
+            }
+            //
+            // Processamento Product Segment
+            //
+            File[] files_product_category_price = ToolBox_Inf.getListOfFiles_v2("md_product_category_price-");
+
+            for (File _file : files_product_category_price) {
+
+                ArrayList<MD_Product_Category_Price> mdProductCategoryPrices  = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Category_Price>>() {
+                        }.getType()
+                );
+
+                productCategoryPriceDao.addUpdate(mdProductCategoryPrices, false);
+            }
+
+        }
+
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist ){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
         }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN) && (!operationExist || !siteExist)){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
         }else{
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);

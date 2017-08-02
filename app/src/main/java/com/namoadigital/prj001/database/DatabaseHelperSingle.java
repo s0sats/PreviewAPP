@@ -51,9 +51,11 @@ public class DatabaseHelperSingle extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         StringBuilder script = new StringBuilder();
         //
-        script.append("drop table if exists parametros;");
-        script.append("drop table if exists ev_users;");
-        script.append("drop table if exists ev_user_customers;");
+        script.append("drop table if exists [parametros];");
+        script.append("drop table if exists [ev_users];");
+        script.append("drop table if exists [ev_user_customers];");
+        script.append("drop table if exists [ev_user_customer_parameters];");
+        script.append("drop table if exists [fcmmessages];");
         //
         String[] scripts = script.toString().split(";");
         //

@@ -13,6 +13,7 @@ public class TSerial_Search_Env {
     private String product_id;
     private String serial_code;
     private String serial_id;
+    private int serial_exact;
 
     public String getApp_code() {
         return app_code;
@@ -68,5 +69,13 @@ public class TSerial_Search_Env {
 
     public void setSerial_id(String serial_id) {
         this.serial_id = serial_id;
+    }
+
+    public int getSerial_exact() {
+        return serial_exact;
+    }
+
+    public void setSerial_exact(int serial_exact) {
+        this.serial_exact = serial_exact;
     }
 }

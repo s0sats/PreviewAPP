@@ -25,6 +25,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
     public static final String TABLE = "ge_files";
     public static final String FILE_CODE = "file_code";
     public static final String FILE_PATH = "file_path";
+    public static final String FILE_PATH_NEW = "file_path_new";
     public static final String FILE_STATUS = "file_status";
     public static final String FILE_DATE = "file_date";
 
@@ -66,7 +67,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
         try {
 
-            db.beginTransaction();
+            //db.beginTransaction();
 
             if (status) {
                 db.delete(TABLE, null, null);
@@ -81,11 +82,11 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
                 }
             }
 
-            db.setTransactionSuccessful();
+            //db.setTransactionSuccessful();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
-            db.endTransaction();
+            //db.endTransaction();
         }
 
         closeDB();
@@ -236,6 +237,12 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             ge_file.setFile_code(cursor.getString(cursor.getColumnIndex(FILE_CODE)));
             ge_file.setFile_path(cursor.getString(cursor.getColumnIndex(FILE_PATH)));
+            if(cursor.isNull(cursor.getColumnIndex(FILE_PATH_NEW))){
+                ge_file.setFile_path_new(null);
+            }else{
+                ge_file.setFile_path_new(cursor.getString(cursor.getColumnIndex(FILE_PATH_NEW)));
+            }
+
             ge_file.setFile_status(cursor.getString(cursor.getColumnIndex(FILE_STATUS)));
             ge_file.setFile_date(cursor.getString(cursor.getColumnIndex(FILE_DATE)));
 
@@ -255,6 +262,9 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
             if (ge_file.getFile_path() != null) {
                 contentValues.put(FILE_PATH, ge_file.getFile_path());
             }
+
+            contentValues.put(FILE_PATH_NEW, ge_file.getFile_path_new());
+
             if (ge_file.getFile_status() != null) {
                 contentValues.put(FILE_STATUS, ge_file.getFile_status());
             }

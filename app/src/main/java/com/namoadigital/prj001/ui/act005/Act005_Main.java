@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
@@ -45,6 +46,8 @@ import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -64,6 +67,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String MENU_BADGE = "menu_badge";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_SERVICE = "menu_service";
+    public static final String MENU_ID_SERIAL= "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
     public static final String MENU_ID_PENDING_DATA = "menu_pending_data";
     public static final String MENU_ID_HISTORIC_DATA = "menu_id_historic_data";
@@ -79,6 +84,14 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public static final String WS_PROCESS_ENABLE_NFC = "ws_process_enable_nfc";
     public static final String WS_PROCESS_CANCEL_NFC = "ws_process_cancel_nfc";
     public static final String WS_PROCESS_SUPPORT = "ws_process_support";
+    //
+    public static final String WS_PROCESS_SEND_N_FORM = "ws_process_send_n_form";
+    public static final String WS_PROCESS_SEND_SO = "ws_process_send_so";
+
+
+    public static final String WS_LIST_ITEM = "ws_list_item";
+    public static final String WS_LIST_ITEM_RETURN = "ws_list_item_return";
+    public static final String WS_LIST_ITEM_LABEL = "ws_list_item_label";
 
     //toolbar constants
     private static final int TOOLBAR_NAMOA_LOGO = 1;
@@ -102,6 +115,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     private String alertMsg = "";
 
     private String wsProcess;
+    //
+    private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,12 +138,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
     }
 
+
     private void iniSetup() {
 
         context = Act005_Main.this;
         //
         ToolBox_Inf.cleanningFormLocal(context);
-        Constant.DATEFORMATDT =  ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m","M").replaceAll("r","y");
+        Constant.DATEFORMATDT = ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m", "M").replaceAll("r", "y");
         fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
@@ -173,6 +189,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("lbl_sync_data");
         transList.add("lbl_logout");
         transList.add("lbl_schedule_data");
+        transList.add("lbl_so");
+        transList.add("lbl_serial_data");
         //toolbar
         transList.add("toolbar_enable_nfc");
         transList.add("toolbar_cancel_nfc");
@@ -199,7 +217,6 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_support_finish_msg");
         //alert support
         transList.add("support_dialog_ttl");
-
 
 
         //
@@ -237,6 +254,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                         Constant.DB_VERSION_BASE
                 ),
                 new FCMMessageDao(
+                        context,
+                        Constant.DB_FULL_BASE,
+                        Constant.DB_VERSION_BASE
+                ),
+                new SM_SODao(
                         context,
                         Constant.DB_FULL_BASE,
                         Constant.DB_VERSION_BASE
@@ -573,6 +595,11 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    public void setWsProcessList(ArrayList<HMAux> wsProcessList) {
+        this.wsProcessList = wsProcessList;
+    }
+
+    @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -651,6 +678,22 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     }
 
     @Override
+    public void callAct021(Context context) {
+        Intent mIntent = new Intent(context, Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct030(Context context) {
+        Intent mIntent = new Intent(context, Act030_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void closeApp() {
 
         ToolBox.alertMSG(
@@ -705,6 +748,61 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         }
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (!wsProcess.equals("")) {
+            int idx = getWsIdx(wsProcess);
+            if(idx != -1){
+                wsProcessList.get(idx).put(WS_LIST_ITEM_RETURN,hmAux.get("WS_Return"));
+                if(idx < wsProcessList.size() ){
+                    mPresenter.executeNextProcess(wsProcessList.get(idx).get(WS_LIST_ITEM));
+                }else if(idx == wsProcessList.size() ){
+                    progressDialog.dismiss();
+                    showSendStatusScore();
+                }
+            }
+        }else{
+            progressDialog.dismiss();
+        }
+
+    }
+
+    private void showSendStatusScore() {
+
+        //Atualiza menu e os badges
+        mPresenter.getMenuItens(hmAux_Trans);
+
+        String msg = "";
+        for (int i = 0; i < wsProcessList.size(); i++) {
+            msg += wsProcessList.get(i).get(WS_LIST_ITEM_LABEL) +" : " + wsProcessList.get(i).get(WS_LIST_ITEM_RETURN) +"\n";
+        }
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_send_return_ttl"),
+                msg,
+                null,
+                0
+        );
+
+    }
+
+    private int getWsIdx(String ws){
+        try {
+            for (int i = 0; i < wsProcessList.size(); i++) {
+                if (wsProcessList.get(i).get(WS_LIST_ITEM).equals(ws)) {
+                    return i;
+                }
+            }
+        }catch (Exception e){
+           ToolBox_Inf.registerException(getClass().getName(),e);
+            return -1;
+        }
+        return -1;
     }
 
     @Override
@@ -797,7 +895,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 new EV_User_Sql_001(
                         ToolBox_Con.getPreference_User_Code(getApplicationContext())
                 ).toSqlQuery()
-            );
+        );
 
         //
         //Menu Namoa logo
@@ -808,7 +906,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         //
         //Menu Habilita nfc
-        if(user.getNfc_blocked() == 1) {
+        if (user.getNfc_blocked() == 1) {
 //            Drawable nfc_icon = getDrawable(R.drawable.ic_nfc);
 //            nfc_icon.setColorFilter(getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
 
@@ -820,7 +918,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         //
         //Menu Cancela nfc
-        if(user.getExist_nfc() == 1) {
+        if (user.getExist_nfc() == 1) {
 //            Drawable nfc_icon2 = getDrawable(R.drawable.ic_nfc);
 //            nfc_icon2.setColorFilter(getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
 
@@ -860,7 +958,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case TOOLBAR_ENABLE_NFC:
                 alertTitle = hmAux_Trans.get("alert_enable_nfc_ttl");
                 alertMsg = hmAux_Trans.get("alert_enable_nfc_msg");
-                listener =  new DialogInterface.OnClickListener() {
+                listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mPresenter.executeEnableNFC();
@@ -871,7 +969,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
             case TOOLBAR_CANCEL_NFC:
                 alertTitle = hmAux_Trans.get("alert_cancel_nfc_ttl");
                 alertMsg = hmAux_Trans.get("alert_cancel_nfc_msg");
-                listener =  new DialogInterface.OnClickListener() {
+                listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mPresenter.executeCancelNFC();
@@ -896,7 +994,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                 return true;
         }
 
-        if(listener != null) {
+        if (listener != null) {
             ToolBox.alertMSG(
                     Act005_Main.this,
                     alertTitle,
@@ -921,7 +1019,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
+        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);

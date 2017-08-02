@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,10 @@ public interface Act005_Main_View {
 
     void callAct018(Context context);
 
+    void callAct021(Context context);
+
+    void callAct030(Context context);
+
     void showNoConnectionDialog();
 
     void closeApp();
@@ -33,5 +38,7 @@ public interface Act005_Main_View {
     void setWsProcess(String ws_called);
 
     void callLoginProcess();
+
+    void setWsProcessList(ArrayList<HMAux> wsProcessList);
 
 }

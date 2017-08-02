@@ -58,6 +58,25 @@
     <color name="namoa_color_disabled_gray">#ADADAD</color>
     <color name="namoa_icon_color">#044C60</color>
     <color name="namoa_icon_pressed_color">#33000000</color>
+    <!-- Novas S.O -->
+    <!-- border-->
+    <color name="namoa_color_pink_1">#ff1493</color>
+    <!--Normal Bg -->
+    <color name="namoa_color_pink_2">#ffd0e9</color>
+    <!--Pressed Bg -->
+    <color name="namoa_color_pink_3">#ffa1d3</color>
+    <color name="namoa_color_yellow_2">#FFD700</color>
+    <color name="namoa_color_orange_2">#EEAD0E</color>
+    <color name="namoa_color_green_2">#9ACD32</color>
+    <color name="namoa_color_light_blue_9">#3C93A9 </color>
+    <color name="namoa_color_gray_4">#808080</color>
+    <color name="namoa_color_red">#FF0000</color>
+    <color name="namoa_color_black">#000000</color>
+    <color name="namoa_color_purple_3">#800080</color>
+    <color name="namoa_color_brown">#A52A2A</color>
+
+
+
 
     <!-- Cores WEB -->
     <color name="main_bar_background"> #a3ca55 </color>

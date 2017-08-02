@@ -11,12 +11,12 @@ public class DataPackage {
 
     public  static final String DATA_PACKAGE_MAIN = "MAIN";
     public  static final String DATA_PACKAGE_CHECKLIST = "CHECKLIST";
-    public  static final String DATA_PACKAGE_OS = "OS";
+    public  static final String DATA_PACKAGE_SO = "SO";
     public  static final String DATA_PACKAGE_SCHEDULE = "SCHEDULE";
 
     private ArrayList<String> MAIN;
     private ArrayList<Long> CHECKLIST;
-    private ArrayList<String> OS;
+    private ArrayList<String> SO;
     private ArrayList<String> SCHEDULE;
 
     public DataPackage() {
@@ -38,12 +38,12 @@ public class DataPackage {
         this.CHECKLIST = CHECKLIST;
     }
 
-    public ArrayList<String> getOS() {
-        return OS;
+    public ArrayList<String> getSO() {
+        return SO;
     }
 
-    public void setOS(ArrayList<String> OS) {
-        this.OS = OS;
+    public void setSO(ArrayList<String> SO) {
+        this.SO = SO;
     }
 
     public ArrayList<String> getSCHEDULE() {
