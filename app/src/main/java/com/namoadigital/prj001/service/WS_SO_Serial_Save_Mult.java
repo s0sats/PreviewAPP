@@ -32,6 +32,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_006;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -60,8 +61,14 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     private MD_Product_SerialDao serialDao;
     private SM_SODao soDao;
     private SM_SO_Service_Exec_Task_FileDao taskFileDao;
+    String so_action="";
+    //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
+    private Gson gsonEnv;
+    //Gson de Retorno com inicilização padrão.
+    private Gson gsonRec;
     //private String token;
     private int so_full_refresh = 0;
+    private boolean so_re_send = false;
 
     public WS_SO_Serial_Save_Mult() {
         super("WS_SO_Serial_Save_Mult");
@@ -78,7 +85,10 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             taskFileDao = new SM_SO_Service_Exec_Task_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
-            String so_action = bundle.getString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION );
+            so_action = bundle.getString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION );
+            //
+            gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+            gsonRec = new GsonBuilder().serializeNulls().create();
             //
             processSO_Serial_Save(so_action);
 
@@ -101,21 +111,26 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
         ArrayList<SM_SO> sos = new ArrayList<>();
         //
         loadTranslation();
-        //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
-        Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-        //Gson de Retorno com inicilização padrão.
-        Gson gsonRec = new GsonBuilder().serializeNulls().create();
         //Lista arquivos de token de SO
         File[] files = checkSoTokenToSend();
         //
         if(files != null && files.length > 0 ){
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_so_from_token"), "", "0");
+            //
+            so_re_send = true;
+            //
             TSO_Serial_Save_Env env =
                     gsonEnv.fromJson(
                             ToolBox_Inf.getContents(files[0]),
                             TSO_Serial_Save_Env.class
                     );
+            //analisar necessida das 3 linhas abaixo
+           /* env.setApp_code(Constant.PRJ001_CODE);
+            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));*/
 
         }else{
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_so_data"), "", "0");
             //Gera token
             String token = ToolBox_Inf.getToken(getApplicationContext());
             //
@@ -144,74 +159,21 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             //
             String json_token_content = gsonRec.toJson(env);
             File jsonToken = saveTokenSoAsFile(token,json_token_content);
-            //
-            if(checksumJsonToken(json_token_content, jsonToken)){
-
-            /*
-            *
-            *
-            *
-            *
-            *  CONTINUAR DAQUI
-            *
-            *
-            *
-            *
-            *
-            *
-            *
-            * */
-
-            }
-            //
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
-            //
-            String resultado = ToolBox_Con.connWebService(
-                    Constant.WS_SO_SERIAL_SAVE,
-                    gsonEnv.toJson(env)
-            );
-            //
-            TSO_Serial_Save_Rec rec = gsonRec.fromJson(
-                    resultado,
-                    TSO_Serial_Save_Rec.class
-            );
-            //
-            if (
-                    !ToolBox_Inf.processWSCheckValidation(
-                            getApplicationContext(),
-                            rec.getValidation(),
-                            rec.getError_msg(),
-                            rec.getLink_url(),
-                            1,
-                            1)
-                            ||
-                            !ToolBox_Inf.processoOthersError(
-                                    getApplicationContext(),
-                                    getResources().getString(R.string.generic_error_lbl),
-                                    rec.getError_msg())
-                    ) {
+            //Valida se checksum do json de envio e do arquivo são iguais.
+            //Em caso seja falso, emite msg para o usr e aborta processamento
+            if(!checksumJsonToken(json_token_content, jsonToken)){
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }
-            //
-            HMAux hmAux = new HMAux();
-            if (serialList.size() > 0) {
-                processSerialSaveRet(rec.getSerial_return().get(0), serialList.get(0), hmAux);
-            } else {
-                //Se não existe
-                hmAux.put(SERIAL_SAVE, "OK");
-            }
-            //
-            //
-            if (sos.size() == 0) {
-                if (hmAux.get(SERIAL_SAVE).equalsIgnoreCase("OK")) {
-                    ToolBox.sendBCStatus(getApplicationContext(), "SAVE_OK", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-                } else {
-                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-                }
-            } else {
-                processSOSaveRet(rec, hmAux);
+            //Seta update required para 0
+            //Trocar para sql com update?!
+            for (int i = 0; i < sos.size(); i++) {
+                sos.get(i).setUpdate_required(0);
+                //
+                soDao.addUpdate(sos.get(i));
             }
 
+            callSO_Save_WS(env);
 
         }
 
@@ -224,6 +186,44 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
 //        String json_token_content = gsonRec.toJson(sos);
 //        saveTokenSoAsFile(token,json_token_content);
 
+
+    }
+
+    private void callSO_Save_WS(TSO_Serial_Save_Env env) {
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
+        //
+        String resultado = ToolBox_Con.connWebService(
+                Constant.WS_SO_SERIAL_SAVE,
+                gsonEnv.toJson(env)
+        );
+        //
+        TSO_Serial_Save_Rec rec = gsonRec.fromJson(
+                resultado,
+                TSO_Serial_Save_Rec.class
+        );
+        //
+        if (
+                !ToolBox_Inf.processWSCheckValidation(
+                        getApplicationContext(),
+                        rec.getValidation(),
+                        rec.getError_msg(),
+                        rec.getLink_url(),
+                        1,
+                        1)
+                        ||
+                        !ToolBox_Inf.processoOthersError(
+                                getApplicationContext(),
+                                getResources().getString(R.string.generic_error_lbl),
+                                rec.getError_msg())
+                ) {
+            return;
+        }
+
+        //
+        HMAux hmAux = new HMAux();
+        //
+        processSOSaveRet(rec, hmAux);
 
     }
 
@@ -248,6 +248,65 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     private void processSOSaveRet(TSO_Serial_Save_Rec ret, HMAux hmAux) {
         String so_list_ret = "";
         String so_list_status = "";
+        ArrayList<HMAux> erroList = new ArrayList<>();
+        //gera extrato basead no serve e seta update_required nas S.Os com erro.
+        //Monta String com dados das S.O enviadas para processamento
+        for (SO_Save_Return so_ret : ret.getSo_return()) {
+            so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
+            so_list_status += "#" + so_ret.getRet_status();
+            //
+            if(!so_ret.getRet_status().toUpperCase().equals("OK")){
+                soDao.addUpdate(
+                        new SM_SO_Sql_009(
+                                so_ret.getCustomer_code(),
+                                so_ret.getSo_prefix(),
+                                so_ret.getSo_code()
+                        ).toSqlQuery()
+
+                );
+//                HMAux auxErro = new HMAux();
+//                auxErro.put(SM_SODao.CUSTOMER_CODE, String.valueOf(so_ret.getCustomer_code()));
+//                auxErro.put(SM_SODao.SO_PREFIX, String.valueOf(so_ret.getSo_prefix()));
+//                auxErro.put(SM_SODao.SO_CODE, String.valueOf(so_ret.getSo_code()));
+//                erroList.add(auxErro);
+            }
+
+        }
+
+        /*
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *  Continuar daqui item 8.3 do doc de entendimento
+        *  Seria possivel tratar esse item no loop acima?
+        *  No loop acima, caso flag re_send true, verifica se so_return.update = 1 e se for ja atualiza na SO
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        *
+        * */
+
         //Processa de-para de task e Task File
         if (ret.getSo_from_to() != null) {
             if (processFromTo(ret.getSo_from_to(), ret.getSo_return().get(0).getSo_scn())) {
@@ -283,11 +342,7 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                         }
                     }
                 }
-                //Monta String com dados das S.O enviadas para processamento
-                for (SO_Save_Return so_ret : ret.getSo_return()) {
-                    so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
-                    so_list_status += "#" + so_ret.getRet_status();
-                }
+
 
                 hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
                 hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
@@ -488,10 +543,12 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
+        translist.add("msg_preparing_so_data");
         translist.add("msg_sending_so_data");
         translist.add("msg_receiving_so_data");
         translist.add("msg_processing_from_to_data");
         translist.add("msg_re_processing_so_data");
+        translist.add("msg_token_file_error");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
