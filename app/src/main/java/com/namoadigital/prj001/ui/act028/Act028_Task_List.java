@@ -412,6 +412,7 @@ public class Act028_Task_List extends BaseFragment {
         HMAux auxTMP = null;
 
         int curTask_Seq_Oper = 0;
+        int finalTask_Seq_Oper = 0;
         numberOfValidTasks = 0;
 
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
@@ -425,6 +426,10 @@ public class Act028_Task_List extends BaseFragment {
 
             }
 
+            if (finalTask_Seq_Oper < Integer.parseInt(auxTMP.get("task_seq_oper"))) {
+                finalTask_Seq_Oper = Integer.parseInt(auxTMP.get("task_seq_oper"));
+            }
+
             if (auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
                 int perc = Integer.parseInt(auxTMP.get("task_perc"));
                 int task_seq_oper = Integer.parseInt(auxTMP.get("task_seq_oper"));
@@ -434,12 +439,13 @@ public class Act028_Task_List extends BaseFragment {
                         curTask_Seq_Oper = task_seq_oper;
 
                         aux = auxTMP;
-
                     }
                 }
             } else {
             }
         }
+
+        aux.put("task_seq_oper", String.valueOf(finalTask_Seq_Oper));
 
         return aux;
     }
