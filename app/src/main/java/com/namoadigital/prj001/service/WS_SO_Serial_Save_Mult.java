@@ -31,8 +31,8 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_005;
-import com.namoadigital.prj001.sql.SM_SO_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.SM_SO_Sql_010;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -61,7 +61,7 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     private MD_Product_SerialDao serialDao;
     private SM_SODao soDao;
     private SM_SO_Service_Exec_Task_FileDao taskFileDao;
-    String so_action="";
+    String so_action = "";
     //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
     private Gson gsonEnv;
     //Gson de Retorno com inicilização padrão.
@@ -69,6 +69,7 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     //private String token;
     private int so_full_refresh = 0;
     private boolean so_re_send = false;
+    private String file_to_del = "";
 
     public WS_SO_Serial_Save_Mult() {
         super("WS_SO_Serial_Save_Mult");
@@ -80,12 +81,12 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-           // token = ToolBox_Inf.getToken(getApplicationContext());
+            // token = ToolBox_Inf.getToken(getApplicationContext());
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             taskFileDao = new SM_SO_Service_Exec_Task_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
-            so_action = bundle.getString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION );
+            so_action = bundle.getString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
             //
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
@@ -114,8 +115,10 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
         //Lista arquivos de token de SO
         File[] files = checkSoTokenToSend();
         //
-        if(files != null && files.length > 0 ){
+        if (files != null && files.length > 0) {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_loading_so_from_token"), "", "0");
+            //
+            file_to_del = files[0].getName();
             //
             so_re_send = true;
             //
@@ -125,11 +128,13 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                             TSO_Serial_Save_Env.class
                     );
             //analisar necessida das 3 linhas abaixo
-           /* env.setApp_code(Constant.PRJ001_CODE);
+            env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
-            env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));*/
+            env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+           //
+           callSO_Save_WS(env);
 
-        }else{
+        } else {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_so_data"), "", "0");
             //Gera token
             String token = ToolBox_Inf.getToken(getApplicationContext());
@@ -158,10 +163,12 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             env.setSerial(serialList);
             //
             String json_token_content = gsonRec.toJson(env);
-            File jsonToken = saveTokenSoAsFile(token,json_token_content);
+            File jsonToken = saveTokenSoAsFile(token, json_token_content);
+            //
+            file_to_del = jsonToken.getName();
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
-            if(!checksumJsonToken(json_token_content, jsonToken)){
+            if (!checksumJsonToken(json_token_content, jsonToken)) {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }
@@ -174,22 +181,11 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             }
 
             callSO_Save_WS(env);
-
         }
-
-
-
-
-        //
-       // soDao.addUpdate(sos,false);
-        //
-//        String json_token_content = gsonRec.toJson(sos);
-//        saveTokenSoAsFile(token,json_token_content);
-
 
     }
 
-    private void callSO_Save_WS(TSO_Serial_Save_Env env) {
+    private void callSO_Save_WS(TSO_Serial_Save_Env env) throws IOException {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
         //
@@ -219,11 +215,8 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                 ) {
             return;
         }
-
         //
-        HMAux hmAux = new HMAux();
-        //
-        processSOSaveRet(rec, hmAux);
+        processSOSaveRet(rec);
 
     }
 
@@ -236,18 +229,19 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     }
 
     private File[] checkSoTokenToSend() {
-        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,Constant.TOKEN_SO_PREFIX);
+        return ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
     }
 
     private File saveTokenSoAsFile(String token, String token_content) throws IOException {
-            File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX + token + ".json");
-            ToolBox_Inf.writeIn(token_content, json_token);
+        File json_token = new File(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX + token + ".json");
+        ToolBox_Inf.writeIn(token_content, json_token);
         return json_token;
     }
 
-    private void processSOSaveRet(TSO_Serial_Save_Rec ret, HMAux hmAux) {
+    private void processSOSaveRet(TSO_Serial_Save_Rec ret) throws IOException {
         String so_list_ret = "";
         String so_list_status = "";
+        String so_list_full_reload = "";
         ArrayList<HMAux> erroList = new ArrayList<>();
         //gera extrato basead no serve e seta update_required nas S.Os com erro.
         //Monta String com dados das S.O enviadas para processamento
@@ -255,7 +249,7 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
             so_list_status += "#" + so_ret.getRet_status();
             //
-            if(!so_ret.getRet_status().toUpperCase().equals("OK")){
+            if (!so_ret.getRet_status().toUpperCase().equals("OK")) {
                 soDao.addUpdate(
                         new SM_SO_Sql_009(
                                 so_ret.getCustomer_code(),
@@ -273,43 +267,16 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
 
         }
 
+
         /*
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
         *  Continuar daqui item 8.3 do doc de entendimento
         *  Seria possivel tratar esse item no loop acima?
         *  No loop acima, caso flag re_send true, verifica se so_return.update = 1 e se for ja atualiza na SO
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
-        *
         * */
 
         //Processa de-para de task e Task File
         if (ret.getSo_from_to() != null) {
-            if (processFromTo(ret.getSo_from_to(), ret.getSo_return().get(0).getSo_scn())) {
+            if (processFromTo(ret.getSo_from_to(), ret.getSo_return())) {
                 //
                 if (ret.getSo() != null) {
                     //Var q indica se refresh da SO é full ou só De_Para
@@ -342,18 +309,24 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                         }
                     }
                 }
+                //Após processamento , apaga arquivo de token
+                if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
+                    if(so_re_send){
+                        //Reseta var de re transmissão.
+                        so_re_send = false;
+                        //
+                        processSO_Serial_Save(so_action);
+                    }else{
+                        callFinishProcessing(so_list_ret,so_list_status);
+                    }
+                }else{
 
+                    //VERIFICAR O QUYE FAZER NESSE CASO.
 
-                hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
-                hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
-                hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
-
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-                //
-                startDownloadServices();
+                }
 
             } else {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), hmAux, "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), "", "0");
             }
         } else {
             if (ret.getSo() != null) {
@@ -367,18 +340,46 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                     soDao.addUpdate(so);
                 }
             }
+            //Após processamento , apaga arquivo de token
+            if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
+                if(so_re_send){
+                    //Reseta var de re transmissão.
+                    so_re_send = false;
+                    //
+                    processSO_Serial_Save(so_action);
+                }else{
+                    callFinishProcessing(so_list_ret,so_list_status);
+                }
+            }else{
 
-            hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
-            hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
-            hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
+                //VERIFICAR O QUYE FAZER NESSE CASO.
 
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-            //
-            startDownloadServices();
+            }
         }
+    }
+
+    private void callFinishProcessing(String so_list_ret, String so_list_status) {
+        HMAux hmAux = new HMAux();
+        hmAux.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(1, so_list_ret.length()) :"." );
+        hmAux.put(SO_RETURN_STATUS,  so_list_status.length() > 0 ? so_list_status.substring(1, so_list_status.length()) :"" );
+        hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
+        //
+        startDownloadServices();
+    }
 
 
+    private boolean deleteFile(String path,String name) {
+        File file = new File(path +"/"+ name );
+
+        if(file.exists()){
+           return file.delete();
+        }else{
+            return false;
         }
+    }
+
 
     private void startDownloadServices() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
@@ -386,7 +387,7 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
 
     }
 
-    private boolean processFromTo(TSO_Serial_Save_Rec.So_From_To so_from_to, int so_scn) {
+    private boolean processFromTo(TSO_Serial_Save_Rec.So_From_To so_from_to, ArrayList<SO_Save_Return> so_save_returns) {
         SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
@@ -396,110 +397,175 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             if (so_from_to.getTask() != null) {
                 //
                 for (SM_SO_Service_Exec_Task task : so_from_to.getTask()) {
-                    SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
-                    exec.setCustomer_code(task.getCustomer_code());
-                    exec.setSo_prefix(task.getSo_prefix());
-                    exec.setSo_code(task.getSo_code());
-                    exec.setPrice_list_code(task.getPrice_list_code());
-                    exec.setPack_code(task.getPack_code());
-                    exec.setPack_seq(task.getPack_seq());
-                    exec.setCategory_price_code(task.getCategory_price_code());
-                    exec.setService_code(task.getService_code());
-                    exec.setService_seq(task.getService_seq());
-                    exec.setExec_code(task.getExec_code());
-                    exec.setExec_tmp(task.getExec_tmp());
+                    SO_Save_Return soReturn = getSoReturn(so_save_returns, task.getCustomer_code(), task.getSo_prefix(), task.getSo_code());
+                    int update_required = 0;
+                    boolean update_required_change = false;
                     //
-                    execDao.addUpdateTmp(exec);
-                    //
-                    SM_SO_Service_Exec_Task taskOLD = taskDao.getByString(
-                            new SM_SO_Service_Exec_Task_Sql_005(
-                                    task.getCustomer_code(),
-                                    task.getSo_prefix(),
-                                    task.getSo_code(),
-                                    task.getPrice_list_code(),
-                                    task.getPack_code(),
-                                    task.getPack_seq(),
-                                    task.getCategory_price_code(),
-                                    task.getService_code(),
-                                    task.getService_seq(),
-                                    task.getExec_tmp(),
-                                    task.getTask_tmp()
-                            ).toSqlQuery()
-                    );
-                    //Seta valores não retornados do server na task a ser inserida.
-                    task.setTask_seq_oper(taskOLD.getTask_seq_oper());
-                    task.setTask_perc(taskOLD.getTask_perc());
-                    task.setQty_people(taskOLD.getQty_people());
-                    task.setStatus(taskOLD.getStatus());
-                    task.setSite_code(taskOLD.getSite_code());
-                    task.setSite_id(taskOLD.getSite_id());
-                    task.setSite_desc(taskOLD.getSite_desc());
-                    task.setZone_code(taskOLD.getZone_code());
-                    task.setZone_id(taskOLD.getZone_id());
-                    task.setZone_desc(taskOLD.getZone_desc());
-                    task.setLocal_code(taskOLD.getLocal_code());
-                    task.setLocal_id(taskOLD.getLocal_id());
-                    task.setComments(taskOLD.getComments());
-                    //
-                    taskDao.addUpdateTmp(task);
-                    //atualiza SCN na S.O
-                    soDao.addUpdate(new SM_SO_Sql_006(
-                            task.getCustomer_code(),
-                            task.getSo_prefix(),
-                            task.getSo_code(),
-                            so_scn
-                    ).toSqlQuery());
+                    if (soReturn != null) {
+                        SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
+                        exec.setCustomer_code(task.getCustomer_code());
+                        exec.setSo_prefix(task.getSo_prefix());
+                        exec.setSo_code(task.getSo_code());
+                        exec.setPrice_list_code(task.getPrice_list_code());
+                        exec.setPack_code(task.getPack_code());
+                        exec.setPack_seq(task.getPack_seq());
+                        exec.setCategory_price_code(task.getCategory_price_code());
+                        exec.setService_code(task.getService_code());
+                        exec.setService_seq(task.getService_seq());
+                        exec.setExec_code(task.getExec_code());
+                        exec.setExec_tmp(task.getExec_tmp());
+                        //
+                        execDao.addUpdateTmp(exec);
+                        //
+                        SM_SO_Service_Exec_Task taskOLD = taskDao.getByString(
+                                new SM_SO_Service_Exec_Task_Sql_005(
+                                        task.getCustomer_code(),
+                                        task.getSo_prefix(),
+                                        task.getSo_code(),
+                                        task.getPrice_list_code(),
+                                        task.getPack_code(),
+                                        task.getPack_seq(),
+                                        task.getCategory_price_code(),
+                                        task.getService_code(),
+                                        task.getService_seq(),
+                                        task.getExec_tmp(),
+                                        task.getTask_tmp()
+                                ).toSqlQuery()
+                        );
+                        //Seta valores não retornados do server na task a ser inserida.
+                        task.setTask_seq_oper(taskOLD.getTask_seq_oper());
+                        task.setTask_perc(taskOLD.getTask_perc());
+                        task.setQty_people(taskOLD.getQty_people());
+                        task.setStatus(taskOLD.getStatus());
+                        task.setSite_code(taskOLD.getSite_code());
+                        task.setSite_id(taskOLD.getSite_id());
+                        task.setSite_desc(taskOLD.getSite_desc());
+                        task.setZone_code(taskOLD.getZone_code());
+                        task.setZone_id(taskOLD.getZone_id());
+                        task.setZone_desc(taskOLD.getZone_desc());
+                        task.setLocal_code(taskOLD.getLocal_code());
+                        task.setLocal_id(taskOLD.getLocal_id());
+                        task.setComments(taskOLD.getComments());
+                        //
+                        taskDao.addUpdateTmp(task);
+                        //Valida se é re_send para saber qual será update_required
+                        if (so_re_send) {
+                            if (soReturn.getSo_update() == 1) {
+                                update_required = 1;
+                                update_required_change = true;
+                            } else {
+                                update_required_change = false;
+                            }
 
+                        } else {
+                            update_required = 0;
+                            update_required_change = true;
+                        }
+
+                        //atualiza SCN e update_required na S.O
+                        soDao.addUpdate(new SM_SO_Sql_010(
+                                task.getCustomer_code(),
+                                task.getSo_prefix(),
+                                task.getSo_code(),
+                                soReturn.getSo_scn(),
+                                update_required_change,
+                                update_required
+                        ).toSqlQuery());
+                    } else {
+                        //seta update required para 1
+                        soDao.addUpdate(new SM_SO_Sql_009(
+                                task.getCustomer_code(),
+                                task.getSo_prefix(),
+                                task.getSo_code()
+                        ).toSqlQuery());
+                    }
                 }
             }
 
             if (so_from_to.getTask_file() != null) {
                 //
                 for (SM_SO_Service_Exec_Task_File taskFile : so_from_to.getTask_file()) {
-                    SM_SO_Service_Exec_Task_File auxFile =
-                            taskFileDao.getByString(
-                                    new SM_SO_Service_Exec_Task_File_Sql_006(
-                                            taskFile.getCustomer_code(),
-                                            taskFile.getSo_prefix(),
-                                            taskFile.getSo_code(),
-                                            taskFile.getPrice_list_code(),
-                                            taskFile.getPack_code(),
-                                            taskFile.getPack_seq(),
-                                            taskFile.getCategory_price_code(),
-                                            taskFile.getService_code(),
-                                            taskFile.getService_seq(),
-                                            taskFile.getExec_tmp(),
-                                            taskFile.getTask_tmp(),
-                                            taskFile.getFile_tmp()
+
+                    SO_Save_Return soReturn = getSoReturn(so_save_returns, taskFile.getCustomer_code(), taskFile.getSo_prefix(), taskFile.getSo_code());
+                    int update_required = 0;
+                    boolean update_required_change = false;
+                    //
+                    if (soReturn != null) {
+                        SM_SO_Service_Exec_Task_File auxFile =
+                                taskFileDao.getByString(
+                                        new SM_SO_Service_Exec_Task_File_Sql_006(
+                                                taskFile.getCustomer_code(),
+                                                taskFile.getSo_prefix(),
+                                                taskFile.getSo_code(),
+                                                taskFile.getPrice_list_code(),
+                                                taskFile.getPack_code(),
+                                                taskFile.getPack_seq(),
+                                                taskFile.getCategory_price_code(),
+                                                taskFile.getService_code(),
+                                                taskFile.getService_seq(),
+                                                taskFile.getExec_tmp(),
+                                                taskFile.getTask_tmp(),
+                                                taskFile.getFile_tmp()
+                                        ).toSqlQuery()
+                                );
+                        String new_name = "sm_so_" +
+                                taskFile.getCustomer_code() + "_" +
+                                taskFile.getSo_prefix() + "_" +
+                                taskFile.getSo_code() + "_" +
+                                taskFile.getPrice_list_code() + "_" +
+                                taskFile.getPack_code() + "_" +
+                                taskFile.getPack_seq() + "_" +
+                                taskFile.getCategory_price_code() + "_" +
+                                taskFile.getService_code() + "_" +
+                                taskFile.getService_seq() + "_" +
+                                taskFile.getExec_code() + "_" +
+                                taskFile.getTask_code() + "_" +
+                                taskFile.getFile_code() + ".jpg";
+
+                        if (renameTaskFile(auxFile.getFile_name(), new_name)) {
+                            //Atualiza path da imagem na lista de upload
+                            geFileDao.addUpdate(
+                                    new GE_File_Sql_006(
+                                            auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
+                                            new_name
                                     ).toSqlQuery()
                             );
-                    String new_name = "sm_so_" +
-                            taskFile.getCustomer_code() + "_" +
-                            taskFile.getSo_prefix() + "_" +
-                            taskFile.getSo_code() + "_" +
-                            taskFile.getPrice_list_code() + "_" +
-                            taskFile.getPack_code() + "_" +
-                            taskFile.getPack_seq() + "_" +
-                            taskFile.getCategory_price_code() + "_" +
-                            taskFile.getService_code() + "_" +
-                            taskFile.getService_seq() + "_" +
-                            taskFile.getExec_code() + "_" +
-                            taskFile.getTask_code() + "_" +
-                            taskFile.getFile_code() + ".jpg";
+                        } else {
+                            return false;
+                        }
+                        taskFile.setFile_url_local(new_name);
+                        taskFileDao.addUpdateTmp(taskFile);
+                        //Valida se é re_send para saber qual será update_required
+                        if (so_re_send) {
+                            if (soReturn.getSo_update() == 1) {
+                                update_required = 1;
+                                update_required_change = true;
+                            } else {
+                                update_required_change = false;
+                            }
 
-                    if (renameTaskFile(auxFile.getFile_name(), new_name)) {
-                        //Atualiza path da imagem na lista de upload
-                        geFileDao.addUpdate(
-                                new GE_File_Sql_006(
-                                        auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
-                                        new_name
-                                ).toSqlQuery()
-                        );
+                        } else {
+                            update_required = 0;
+                            update_required_change = true;
+                        }
+
+                        //atualiza SCN e update_required na S.O
+                        soDao.addUpdate(new SM_SO_Sql_010(
+                                taskFile.getCustomer_code(),
+                                taskFile.getSo_prefix(),
+                                taskFile.getSo_code(),
+                                soReturn.getSo_scn(),
+                                update_required_change,
+                                update_required
+                        ).toSqlQuery());
                     } else {
-                        return false;
+                        //seta update required para 1
+                        soDao.addUpdate(new SM_SO_Sql_009(
+                                taskFile.getCustomer_code(),
+                                taskFile.getSo_prefix(),
+                                taskFile.getSo_code()
+                        ).toSqlQuery());
                     }
-                    taskFile.setFile_url_local(new_name);
-                    taskFileDao.addUpdateTmp(taskFile);
                 }
             }
 
@@ -509,6 +575,22 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             return false;
         }
         return true;
+    }
+
+    private SO_Save_Return getSoReturn(ArrayList<SO_Save_Return> so_save_returns, long customer_code, int so_prefix, int so_code) {
+        SO_Save_Return so_save_return = null; //new SO_Save_Return();
+
+        for (SO_Save_Return soReturn : so_save_returns) {
+            if (soReturn.getCustomer_code() == customer_code &&
+                    soReturn.getSo_prefix() == so_prefix &&
+                    soReturn.getSo_code() == so_code) {
+                so_save_return = soReturn;
+                break;
+            }
+
+        }
+
+        return so_save_return;
     }
 
     private boolean renameTaskFile(String file_name, String new_name) {
