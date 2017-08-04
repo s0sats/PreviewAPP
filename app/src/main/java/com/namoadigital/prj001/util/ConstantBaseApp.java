@@ -85,6 +85,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_SERIAL_ID = "main_serial_id";
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
+    //Constante de concatenação
+    public static final String MAIN_CONCAT_STRING = "@#$N@M0@$#@";
+    public static final String MAIN_CONCAT_STRING_2 = "$#@n@m0@@#$";
 
 
     /**
@@ -325,6 +328,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
     public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
     public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
+
+
+
 
 
 }
