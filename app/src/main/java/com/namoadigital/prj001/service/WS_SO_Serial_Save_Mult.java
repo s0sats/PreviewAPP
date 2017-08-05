@@ -131,8 +131,8 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
             env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-           //
-           callSO_Save_WS(env);
+            //
+            callSO_Save_WS(env);
 
         } else {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_so_data"), "", "0");
@@ -310,16 +310,16 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                     }
                 }
                 //Após processamento , apaga arquivo de token
-                if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
-                    if(so_re_send){
+                if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                    if (so_re_send) {
                         //Reseta var de re transmissão.
                         so_re_send = false;
                         //
                         processSO_Serial_Save(so_action);
-                    }else{
-                        callFinishProcessing(so_list_ret,so_list_status);
+                    } else {
+                        callFinishProcessing(so_list_ret, so_list_status);
                     }
-                }else{
+                } else {
 
                     //VERIFICAR O QUYE FAZER NESSE CASO.
 
@@ -341,16 +341,16 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
                 }
             }
             //Após processamento , apaga arquivo de token
-            if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
-                if(so_re_send){
+            if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                if (so_re_send) {
                     //Reseta var de re transmissão.
                     so_re_send = false;
                     //
                     processSO_Serial_Save(so_action);
-                }else{
-                    callFinishProcessing(so_list_ret,so_list_status);
+                } else {
+                    callFinishProcessing(so_list_ret, so_list_status);
                 }
-            }else{
+            } else {
 
                 //VERIFICAR O QUYE FAZER NESSE CASO.
 
@@ -360,8 +360,8 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
 
     private void callFinishProcessing(String so_list_ret, String so_list_status) {
         HMAux hmAux = new HMAux();
-        hmAux.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(1, so_list_ret.length()) :"." );
-        hmAux.put(SO_RETURN_STATUS,  so_list_status.length() > 0 ? so_list_status.substring(1, so_list_status.length()) :"" );
+        hmAux.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(1, so_list_ret.length()) : ".");
+        hmAux.put(SO_RETURN_STATUS, so_list_status.length() > 0 ? so_list_status.substring(1, so_list_status.length()) : "");
         hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(so_full_refresh));
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
@@ -370,12 +370,12 @@ public class WS_SO_Serial_Save_Mult extends IntentService {
     }
 
 
-    private boolean deleteFile(String path,String name) {
-        File file = new File(path +"/"+ name );
+    private boolean deleteFile(String path, String name) {
+        File file = new File(path + "/" + name);
 
-        if(file.exists()){
-           return file.delete();
-        }else{
+        if (file.exists()) {
+            return file.delete();
+        } else {
             return false;
         }
     }

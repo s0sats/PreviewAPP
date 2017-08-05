@@ -318,6 +318,9 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
                 );
 
+                // Tirar só Teste
+                sm_so_service_exec_taskDao.updateStatusOffLine(sm_so_service_exec_task);
+
                 tv_exec_tmp_label.setText("Exec TMP");
                 tv_exec_tmp_value.setText(data.get("exec_tmp"));
 
@@ -589,6 +592,8 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
     private void callSoSave(int prefix, int code) {
 
+        processStatusUpdateOffLine();
+
         if (ToolBox_Con.isOnline(context)) {
 
             baInfra.enableProgressDialog(
@@ -613,6 +618,12 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
+
+    private void processStatusUpdateOffLine() {
+
+        sm_so_service_exec_taskDao.updateStatusOffLine(sm_so_service_exec_task);
+
     }
 
     @Override
