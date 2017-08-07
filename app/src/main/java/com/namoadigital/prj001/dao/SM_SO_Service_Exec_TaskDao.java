@@ -427,7 +427,6 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             db.execSQL(sbCommand.toString());
             rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
 
-
             if (rows != 0) {
                 // Update Service
                 sbCommand = new StringBuilder();

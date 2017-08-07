@@ -86,8 +86,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
     //Constante de concatenação
-    public static final String MAIN_CONCAT_STRING = "@#$N@M0@$#@";
-    public static final String MAIN_CONCAT_STRING_2 = "$#@n@m0@@#$";
+    public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
+    public static final String MAIN_CONCAT_STRING_2 = "##@n@m0@@##";
 
 
     /**

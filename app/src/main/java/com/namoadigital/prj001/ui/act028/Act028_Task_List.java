@@ -24,7 +24,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
-import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
@@ -372,11 +372,19 @@ public class Act028_Task_List extends BaseFragment {
                 so.setUpdate_required(1);
                 soDao.addUpdate(so);
 
+                processStatusUpdateOffLine(task);
+
                 if (sm_so_service.getExec_type().equalsIgnoreCase("START_STOP")) {
                     callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
                 }
             }
         });
+
+    }
+
+    private void processStatusUpdateOffLine(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
+
+        sm_so_service_exec_taskDao.updateStatusOffLine(sm_so_service_exec_task);
 
     }
 
@@ -391,12 +399,10 @@ public class Act028_Task_List extends BaseFragment {
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
             //
-            Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
+            Intent mIntent = new Intent(context, WBR_SO_Save.class);
             Bundle bundle = new Bundle();
-            bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
-            bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
-            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, prefix);
-            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
+            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+
 
             mIntent.putExtras(bundle);
             //

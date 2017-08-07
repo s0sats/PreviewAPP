@@ -25,7 +25,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
-import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
@@ -72,7 +72,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
     private boolean sdAvoid = false;
 
     public interface IAct028_Task {
-        void exec_list_opc_update();
+        void exec_list_opc_update(String sFlag);
     }
 
     private IAct028_Task delegate;
@@ -319,7 +319,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                 );
 
                 // Tirar só Teste
-                sm_so_service_exec_taskDao.updateStatusOffLine(sm_so_service_exec_task);
+                // sm_so_service_exec_taskDao.updateStatusOffLine(sm_so_service_exec_task);
 
                 tv_exec_tmp_label.setText("Exec TMP");
                 tv_exec_tmp_value.setText(data.get("exec_tmp"));
@@ -487,7 +487,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             );
 
             if (delegate != null) {
-                delegate.exec_list_opc_update();
+                delegate.exec_list_opc_update("");
             }
         }
 
@@ -582,7 +582,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             );
 
             if (delegate != null) {
-                delegate.exec_list_opc_update();
+                delegate.exec_list_opc_update("");
             }
         }
 
@@ -603,12 +603,9 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
             //
-            Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
+            Intent mIntent = new Intent(context, WBR_SO_Save.class);
             Bundle bundle = new Bundle();
-            bundle.putLong(Constant.WS_SO_SERIAL_SAVE_PRODUCT_CODE, -1L);
-            bundle.putString(Constant.WS_SO_SERIAL_SAVE_SERIAL_ID, "");
-            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_PREFIX, prefix);
-            bundle.putInt(Constant.WS_SO_SERIAL_SAVE_SO_CODE, code);
+            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
 
             mIntent.putExtras(bundle);
             //
@@ -616,6 +613,10 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             //
             activateUpload(context);
         } else {
+            if (delegate != null) {
+                delegate.exec_list_opc_update("UI");
+            }
+
             //ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
