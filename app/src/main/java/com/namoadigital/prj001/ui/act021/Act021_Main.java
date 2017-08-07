@@ -20,7 +20,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save_Mult;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
@@ -205,7 +205,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                 "OK"
         );
         //
-        Intent mIntent = new Intent(context, WBR_SO_Serial_Save_Mult.class);
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
         Bundle bundle = new Bundle();
 
         mIntent.putExtras(bundle);

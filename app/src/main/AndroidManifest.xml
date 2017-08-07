@@ -371,9 +371,9 @@
 
         <service android:name=".service.WS_SO_Approval" />
 
-        <receiver android:name=".receiver.WBR_SO_Serial_Save_Mult" />
+        <receiver android:name=".receiver.WBR_SO_Save" />
 
-        <service android:name=".service.WS_SO_Serial_Save_Mult" />
+        <service android:name=".service.WS_SO_Save" />
 
     </application>
 
