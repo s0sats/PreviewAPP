@@ -52,7 +52,7 @@ public class WS_SO_Save extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "WS_SO_Serial_Save";
+    private String mResource_Name = "ws_so_save";
     private SM_SODao soDao;
     private SM_SO_Service_Exec_Task_FileDao taskFileDao;
     private String so_action = "";
@@ -194,6 +194,8 @@ public class WS_SO_Save extends IntentService {
                 gsonEnv.toJson(env)
         );
         //
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
+        //
         TSO_Save_Rec rec = gsonRec.fromJson(
                 resultado,
                 TSO_Save_Rec.class
@@ -305,6 +307,7 @@ public class WS_SO_Save extends IntentService {
                 //Após processamento , apaga arquivo de token
                 if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
                     if(so_re_send){
+                        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
                         //Reseta var de re transmissão.
                         so_re_send = false;
                         //
@@ -337,6 +340,7 @@ public class WS_SO_Save extends IntentService {
             //Após processamento , apaga arquivo de token
             if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
                 if(so_re_send){
+                    ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
                     //Reseta var de re transmissão.
                     so_re_send = false;
                     //
@@ -378,6 +382,8 @@ public class WS_SO_Save extends IntentService {
     }
 
     private boolean processFromTo(TSO_Save_Rec.So_From_To so_from_to, ArrayList<SO_Save_Return> so_save_returns) {
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_from_to_data"), "", "0");
+        //
         SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
@@ -604,6 +610,7 @@ public class WS_SO_Save extends IntentService {
         List<String> translist = new ArrayList<>();
         //
         translist.add("msg_preparing_so_data");
+        translist.add("msg_loading_so_from_token");
         translist.add("msg_sending_so_data");
         translist.add("msg_receiving_so_data");
         translist.add("msg_processing_from_to_data");
