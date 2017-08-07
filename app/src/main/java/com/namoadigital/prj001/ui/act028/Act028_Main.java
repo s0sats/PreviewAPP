@@ -18,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -28,7 +31,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
-import com.namoadigital.prj001.service.WS_SO_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -382,43 +384,162 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        if (!hmAux.get(WS_SO_Serial_Save.SO_RETURN_FULL_REFRESH).equals("0")) {
+        String so[] = hmAux.get("ListSo").split("@#$N@M0@$#@");
 
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_so_list_title"),
-                    hmAux_Trans.get("alert_so_list_msg"),
+        String so_current_reload = hmAux.get(mData.get("customer_code") + "." + mData.get("so_prefix") + "." + mData.get("so_code"));
 
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            bundle.remove("data");
-                            //
-                            Intent mIntent = new Intent(context, Act027_Main.class);
-                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            mIntent.putExtras(bundle);
-                            //
-                            startActivity(mIntent);
-                            finish();
-                        }
-                    },
-                    -1,
-                    false
-            );
 
+        if (so != null && so.length > 0) {
+            showResults(so, so_current_reload);
         } else {
-            if (index == 0) {
-                disableProgressDialog();
-            } else {
-                index = 0;
-                //
-                ll_list.setVisibility(View.VISIBLE);
-                ll_task.setVisibility(View.GONE);
-                //
-                act028_task_list.setHMAuxScreen();
-                //
-                disableProgressDialog();
+            refreshUI();
+        }
+
+
+//        if (!hmAux.get(WS_SO_Serial_Save.SO_RETURN_FULL_REFRESH).equals("0")) {
+//
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_so_list_title"),
+//                    hmAux_Trans.get("alert_so_list_msg"),
+//
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            bundle.remove("data");
+//                            //
+//                            Intent mIntent = new Intent(context, Act027_Main.class);
+//                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            mIntent.putExtras(bundle);
+//                            //
+//                            startActivity(mIntent);
+//                            finish();
+//                        }
+//                    },
+//                    -1,
+//                    false
+//            );
+//
+//        } else {
+//            if (index == 0) {
+//                disableProgressDialog();
+//            } else {
+//                index = 0;
+//                //
+//                ll_list.setVisibility(View.VISIBLE);
+//                ll_task.setVisibility(View.GONE);
+//                //
+//                act028_task_list.setHMAuxScreen();
+//                //
+//                disableProgressDialog();
+//            }
+//        }
+    }
+
+    private void showResults(String[] so, String so_current_reload) {
+        ArrayList<HMAux> sos = new ArrayList<>();
+        for (int i = 0; i < so.length; i++) {
+            String fields[] = so[i].split("$#@n@m0@@#$");
+            //
+            HMAux mHmAux = new HMAux();
+            mHmAux.put("label", fields[0]);
+            mHmAux.put("status", fields[1]);
+            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+            //
+            sos.add(mHmAux);
+        }
+        //
+        showNewOptDialog(sos, so_current_reload);
+    }
+
+    public void showNewOptDialog(List<HMAux> sos, final String so_current_reload) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act006_dialog_new_opt, null);
+
+        /**
+         * Ini Vars
+         */
+
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        String[] from = {"final_status"};
+        int[] to = {R.id.namoa_custom_cell_3_tv_item};
+
+
+        lv_results.setAdapter(
+                new SimpleAdapter(
+                        context,
+                        sos,
+                        R.layout.namoa_custom_cell_3,
+                        from,
+                        to
+                )
+        );
+
+        builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        builder.show();
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                refreshUI();
+
+                if (so_current_reload.equalsIgnoreCase("1")) {
+
+                    ToolBox.alertMSG(
+                            context,
+                            "SO Reload",
+                            "A SO Precisa ser Recarregada!!!",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    bundle.remove("data");
+                                    //
+                                    Intent mIntent = new Intent(context, Act027_Main.class);
+                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    mIntent.putExtras(bundle);
+                                    //
+                                    startActivity(mIntent);
+                                    finish();
+                                }
+                            },
+                            -1,
+                            false
+                    );
+
+                } else {
+                    show.dismiss();
+                }
             }
+        });
+    }
+
+    private void refreshUI() {
+        if (index == 0) {
+            disableProgressDialog();
+        } else {
+            index = 0;
+            //
+            ll_list.setVisibility(View.VISIBLE);
+            ll_task.setVisibility(View.GONE);
+            //
+            act028_task_list.setHMAuxScreen();
+            //
+            disableProgressDialog();
         }
     }
 

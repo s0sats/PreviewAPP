@@ -616,7 +616,7 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             //
             activateUpload(context);
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
+            //ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 

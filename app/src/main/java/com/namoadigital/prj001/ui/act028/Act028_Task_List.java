@@ -31,7 +31,6 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.HashMap;
 
@@ -403,7 +402,7 @@ public class Act028_Task_List extends BaseFragment {
             //
             context.sendBroadcast(mIntent);
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
+            //ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
