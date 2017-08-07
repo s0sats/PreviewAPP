@@ -473,6 +473,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+
+                                    show.dismiss();
+
                                     bundle.remove("data");
                                     //
                                     Intent mIntent = new Intent(context, Act027_Main.class);

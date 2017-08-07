@@ -277,10 +277,6 @@ public class Act028_Task_List extends BaseFragment {
                 hmAux.put("exec_status", sm_so_service_exec.getStatus());
                 hmAux.put("full_status", full_status);
 
-                //callTestSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
-
-                HMAux tt = last_task_seq_oper();
-
                 if (delegate != null) {
                     delegate.menuTaksSelected(hmAux);
                 }
@@ -450,7 +446,9 @@ public class Act028_Task_List extends BaseFragment {
             }
         }
 
-        aux.put("task_seq_oper", String.valueOf(finalTask_Seq_Oper));
+        if (aux != null) {
+            aux.put("task_seq_oper", String.valueOf(finalTask_Seq_Oper));
+        }
 
         return aux;
     }
