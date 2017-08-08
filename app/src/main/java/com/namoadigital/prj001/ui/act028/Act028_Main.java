@@ -394,7 +394,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         String so_current_reload = hmAux.get(mData.get("customer_code") + "." + mData.get("so_prefix") + "." + mData.get("so_code"));
 
 
-        if (so != null && so.length > 1) {
+        if (so != null) {
             disableProgressDialog();
             //
             showResults(so, so_current_reload);
@@ -415,6 +415,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             mHmAux.put("final_status", fields[0] + " / " + fields[1]);
             //
             sos.add(mHmAux);
+        }
+        if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+            return;
         }
         //
         showNewOptDialog(sos, so_current_reload);
@@ -518,15 +521,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
 
-//        index = 0;
-//
-//        ll_list.setVisibility(View.VISIBLE);
-//        ll_task.setVisibility(View.GONE);
-//        //
-//        act028_task_list.setHMAuxScreen();
-//        act028_task.setHMAuxScreen();
-//
-//        disableProgressDialog();
+        refreshUI();
+
     }
 
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
