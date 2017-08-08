@@ -518,15 +518,15 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
 
-        index = 0;
-
-        ll_list.setVisibility(View.VISIBLE);
-        ll_task.setVisibility(View.GONE);
-        //
-        act028_task_list.setHMAuxScreen();
-        act028_task.setHMAuxScreen();
-
-        disableProgressDialog();
+//        index = 0;
+//
+//        ll_list.setVisibility(View.VISIBLE);
+//        ll_task.setVisibility(View.GONE);
+//        //
+//        act028_task_list.setHMAuxScreen();
+//        act028_task.setHMAuxScreen();
+//
+//        disableProgressDialog();
     }
 
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA

@@ -17,14 +17,17 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Task_Adapter;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
@@ -63,6 +66,8 @@ public class Act028_Task_List extends BaseFragment {
     private SM_SO_Service sm_so_service;
 
     private SM_SODao soDao;
+
+    private MD_PartnerDao partnerDao;
 
     private HMAux partnerAux = new HMAux();
 
@@ -110,6 +115,12 @@ public class Act028_Task_List extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
+
+        partnerDao = new MD_PartnerDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
 
         soDao = new SM_SODao(
                 context,
@@ -197,9 +208,17 @@ public class Act028_Task_List extends BaseFragment {
                 btn_new_task.setVisibility(View.GONE);
             }
 
-//            if (sm_so_service_exec != null) {
-//                createTaskList();
-//            }
+            // Partner Restriction
+            MD_Partner md_partner = partnerDao.getByString(
+                    new MD_Partner_Sql_002(
+                            sm_so_service_exec.getCustomer_code(),
+                            sm_so_service_exec.getPartner_code()
+                    ).toSqlQuery()
+            );
+
+            if (md_partner == null) {
+                btn_new_task.setVisibility(View.GONE);
+            }
 
         } catch (Exception e) {
             String error_s = e.toString();

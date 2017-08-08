@@ -288,15 +288,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CLIENT_TYPE_USER = "USER";
 
     /**
-     *
      * Parametros EV_PROFILE
-     *
      */
 
     public static final String PROFILE_MENU_SO = "PRJ001_SO";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
-
 
 
     //Modulos
@@ -316,11 +313,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
     public static final String SO_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
     public static final String SO_STATUS_DONE = "DONE";
+    public static final String SO_STATUS_WAINTING_SYNC = "WAINTING_SYNC";
     public static final String SO_STATUS_CANCELLED = "CANCELLED";
     public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
     public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
     public static final String SO_STATUS_BLOCKED = "STOP";
-
 
 
     //
@@ -328,9 +325,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
     public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
     public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
-
-
-
 
 
 }

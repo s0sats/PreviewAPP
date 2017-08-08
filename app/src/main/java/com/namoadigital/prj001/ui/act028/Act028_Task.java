@@ -525,6 +525,11 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
     @Override
     public void informTaskStatus(String s, String s1) {
 
+        String st = s1;
+
+        // Cancelar
+
+
     }
 
     @Override
@@ -594,6 +599,10 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
 
         processStatusUpdateOffLine();
 
+        if (delegate != null) {
+            delegate.exec_list_opc_update("UI");
+        }
+
         if (ToolBox_Con.isOnline(context)) {
 
             baInfra.enableProgressDialog(
@@ -613,9 +622,9 @@ public class Act028_Task extends BaseFragment implements TaskControl.ITaskContro
             //
             activateUpload(context);
         } else {
-            if (delegate != null) {
-                delegate.exec_list_opc_update("UI");
-            }
+//            if (delegate != null) {
+//                delegate.exec_list_opc_update("UI");
+//            }
 
             //ToolBox_Inf.showNoConnectionDialog(context);
         }

@@ -493,6 +493,9 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     private <T extends Fragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();
+
+            //ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+
             ft.replace(R.id.act027_main_ll, type, sTag);
             ft.commit();
         }

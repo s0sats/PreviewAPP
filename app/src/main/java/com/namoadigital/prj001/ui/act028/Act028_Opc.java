@@ -28,9 +28,12 @@ import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_Status_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_Status_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -218,6 +221,8 @@ public class Act028_Opc extends BaseFragment {
                     //
                     sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
                     //
+                    setOffLineStatus(sm_so_service_execNew);
+                    //
                     if (delegate != null) {
                         delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
                         setHMAuxScreen();
@@ -225,6 +230,38 @@ public class Act028_Opc extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void setOffLineStatus(SM_SO_Service_Exec sm_so_service_execNew) {
+        // Updata Status Service
+        sm_so_service_execDao.addUpdate(new SM_SO_Service_Sql_Status_001(
+                sm_so_service_execNew.getCustomer_code(),
+                sm_so_service_execNew.getSo_prefix(),
+                sm_so_service_execNew.getSo_code(),
+                sm_so_service_execNew.getPrice_list_code(),
+                sm_so_service_execNew.getPack_code(),
+                sm_so_service_execNew.getPack_seq(),
+                sm_so_service_execNew.getCategory_price_code(),
+                sm_so_service_execNew.getService_code(),
+                sm_so_service_execNew.getService_seq()
+        ).toSqlQuery());
+
+        // Updata Status Pack
+        sm_so_service_execDao.addUpdate(new SM_SO_Pack_Sql_Status_001(
+                sm_so_service_execNew.getCustomer_code(),
+                sm_so_service_execNew.getSo_prefix(),
+                sm_so_service_execNew.getSo_code(),
+                sm_so_service_execNew.getPrice_list_code(),
+                sm_so_service_execNew.getPack_code(),
+                sm_so_service_execNew.getPack_seq()
+        ).toSqlQuery());
+
+        // Updata Status SO
+        sm_so_service_execDao.addUpdate(new SM_SO_Sql_Status_001(
+                sm_so_service_execNew.getCustomer_code(),
+                sm_so_service_execNew.getSo_prefix(),
+                sm_so_service_execNew.getSo_code()
+        ).toSqlQuery());
     }
 
     private void handlePartnerDefinition(SM_SO_Service_Exec sm_so_service_exec) {
@@ -303,6 +340,8 @@ public class Act028_Opc extends BaseFragment {
                         //
                         sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
                         //
+                        setOffLineStatus(sm_so_service_exec);
+                        //
                         if (delegate != null) {
                             delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                             setHMAuxScreen();
@@ -337,6 +376,9 @@ public class Act028_Opc extends BaseFragment {
                         sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
                         //
                         sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
+                        //
+                        setOffLineStatus(sm_so_service_exec);
+                        //
                         if (delegate != null) {
                             delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                             setHMAuxScreen();

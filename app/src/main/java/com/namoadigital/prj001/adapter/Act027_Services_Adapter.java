@@ -139,7 +139,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
             default:
-                tv_status_value.setTextColor(null);
+                tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
         }
         //

@@ -422,7 +422,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             sbCommand.append(" and ");
             sbCommand.append(TASK_PERC).append(" = '100'");
 
-            sbCommand.append("  ) != 0");
+            sbCommand.append("  ) != 0 ");
 
             db.execSQL(sbCommand.toString());
             rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
@@ -486,9 +486,9 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
                 sbCommand.append(STATUS).append(" = '");
                 sbCommand.append(Constant.SO_STATUS_DONE);
                 sbCommand.append("' ");
-                sbCommand.append("  ) = '");
+                sbCommand.append("  ) = ");
                 sbCommand.append(sm_so_service.getQty());
-                sbCommand.append("' ");
+                sbCommand.append(" ");
 
                 db.execSQL(sbCommand.toString());
                 rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
@@ -537,22 +537,22 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
                 sbCommand.append(" and ");
                 sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
                 sbCommand.append(" and ");
-                sbCommand.append(PACK_SEQ).append(" != '").append(String.valueOf(task.getPack_seq())).append("'");
+                sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
                 sbCommand.append(" and ");
 
                 sbCommand.append(" ( ");
-                sbCommand.append(STATUS).append(" != '");
+                sbCommand.append(STATUS).append(" = '");
                 sbCommand.append(Constant.SO_STATUS_PENDING);
                 sbCommand.append("' ");
 
                 sbCommand.append(" or ");
 
-                sbCommand.append(STATUS).append(" != '");
+                sbCommand.append(STATUS).append(" = '");
                 sbCommand.append(Constant.SO_STATUS_PROCESS);
                 sbCommand.append("' ");
                 sbCommand.append(" ) ");
 
-                sbCommand.append("  ) = '0'");
+                sbCommand.append("  ) = 0 ");
 
                 db.execSQL(sbCommand.toString());
                 rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
@@ -567,7 +567,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append(Constant.SO_STATUS_WAINTING_SYNC);
                 sbCommand.append("' ");
 
                 sbCommand.append(" WHERE ");
@@ -589,22 +589,22 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
                 sbCommand.append(" and ");
                 sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
                 sbCommand.append(" and ");
-                sbCommand.append(SO_CODE).append(" != '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
                 sbCommand.append(" and ");
 
                 sbCommand.append(" ( ");
-                sbCommand.append(STATUS).append(" != '");
+                sbCommand.append(STATUS).append(" = '");
                 sbCommand.append(Constant.SO_STATUS_PENDING);
                 sbCommand.append("' ");
 
                 sbCommand.append(" or ");
 
-                sbCommand.append(STATUS).append(" != '");
+                sbCommand.append(STATUS).append(" = '");
                 sbCommand.append(Constant.SO_STATUS_PROCESS);
                 sbCommand.append("' ");
                 sbCommand.append(" ) ");
 
-                sbCommand.append("  ) != '0'");
+                sbCommand.append("  ) = 0");
 
                 db.execSQL(sbCommand.toString());
             }

@@ -209,6 +209,7 @@ public class Act027_Opc extends BaseFragment {
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                break;
             case "APPROVAL":
                 ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
