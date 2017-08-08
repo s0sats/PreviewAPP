@@ -114,7 +114,7 @@ public class WS_SO_Approval extends IntentService {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SO_SERIAL_SAVE,
+                Constant.WS_SO_SAVE,
                 gson.toJson(env)
         );
         //

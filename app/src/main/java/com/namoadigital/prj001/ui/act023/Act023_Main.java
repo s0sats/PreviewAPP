@@ -64,7 +64,7 @@ import static com.namoadigital.prj001.dao.MD_Product_SerialDao.SITE_CODE_OWNER;
 public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     public static final String SO_WS_SEARCH_SERIAL = "SO_WS_SEARCH_SERIAL";
-    public static final String SO_WS_SEARCH_SO = "SO_WS_SEARCH_SO";
+    public static final String SO_WS_SEARCH_SO = "SO_WS_SEARCH_SAVE";
 
     public static final String SITE_DESC_OWNER = "site_desc_owner";
 
@@ -442,6 +442,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         serialObj.setSite_code_owner(ToolBox_Inf.mIntegerParse(ss_site_owner.getmValue().get(SearchableSpinner.ID)));
         //
         serialObj.setUpdate_required(1);
+        serialObj.setOnly_position(1);
         //
     }
 
@@ -1079,6 +1080,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ToolBox_Con.cleanPreferences(context);
 
         finish();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
     }
 
     @Override

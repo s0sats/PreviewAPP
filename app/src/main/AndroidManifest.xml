@@ -375,6 +375,11 @@
 
         <service android:name=".service.WS_SO_Save" />
 
+        <receiver android:name=".receiver.WBR_Serial_Save" />
+
+        <service android:name=".service.WS_Serial_Save" />
+
+
     </application>
 
 </manifest>

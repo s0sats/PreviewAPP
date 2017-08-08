@@ -169,7 +169,7 @@ public class WS_SO_Serial_Save extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SO_SERIAL_SAVE,
+                Constant.WS_SO_SAVE,
                 gsonEnv.toJson(env)
         );
         //

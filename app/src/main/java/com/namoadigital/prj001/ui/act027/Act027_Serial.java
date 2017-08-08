@@ -390,6 +390,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         serialObj.setSite_code_owner(ToolBox_Inf.mIntegerParse(ss_site_owner.getmValue().get(SearchableSpinner.ID)));
         //
         serialObj.setUpdate_required(1);
+        serialObj.setOnly_position(1);
     }
 
 

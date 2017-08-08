@@ -9,7 +9,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -126,19 +126,19 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
 
     @Override
     public void executeSaveSerial(Long product_code, String serial_id, boolean save_serial) {
-        mView.setWs_process(Act031_Main.SO_WS_SEARCH_SO);
+        mView.setWs_process(Act031_Main.SO_WS_SEARCH_SAVE);
         //
         mView.showPD(
                 hmAux_Trans.get("progress_serial_save_ttl"),
                 hmAux_Trans.get("progress_serial_save_msg")
         );
         //
-        Intent mIntent = new Intent(context, WBR_SO_Search.class);
+        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.WS_SO_SEARCH_PRODUCT_CODE,product_code);
-        bundle.putString(Constant.WS_SO_SEARCH_SERIAL_ID,serial_id);
-        bundle.putBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL,save_serial);
-        bundle.putBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL,true);
+//        bundle.putLong(Constant.WS_SO_SEARCH_PRODUCT_CODE,product_code);
+//        bundle.putString(Constant.WS_SO_SEARCH_SERIAL_ID,serial_id);
+//        bundle.putBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL,save_serial);
+//        bundle.putBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL,true);
         //
         mIntent.putExtras(bundle);
         //

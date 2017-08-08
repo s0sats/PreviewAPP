@@ -44,7 +44,7 @@ public class MD_Product_Serial {
     private int update_required;
     //SOMENTE PARA ENVIO NO WS
     @Expose
-    private int only_position;
+    private Integer only_position;
 
     public long getCustomer_code() {
         return customer_code;
@@ -182,11 +182,11 @@ public class MD_Product_Serial {
         this.update_required = update_required;
     }
 
-    public int getOnly_position() {
+    public Integer getOnly_position() {
         return only_position;
     }
 
-    public void setOnly_position(int only_position) {
+    public void setOnly_position(Integer only_position) {
         this.only_position = only_position;
     }
 }

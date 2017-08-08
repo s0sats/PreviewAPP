@@ -41,8 +41,9 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String ADD_INF2 = "add_inf2";
     public static final String ADD_INF3 = "add_inf3";
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String ONLY_POSITION = "only_position";
 
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1, ADD_INF2, ADD_INF3, UPDATE_REQUIRED};
+    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1, ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED};
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -304,6 +305,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             md_product_serial.setAdd_inf2(cursor.getString(cursor.getColumnIndex(ADD_INF2)));
             md_product_serial.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
             md_product_serial.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            if(cursor.isNull(cursor.getColumnIndex(ONLY_POSITION))) {
+                md_product_serial.setOnly_position(null);
+            }else{
+                md_product_serial.setOnly_position(cursor.getInt(cursor.getColumnIndex(ONLY_POSITION)));
+            }
 
             return md_product_serial;
         }
@@ -378,6 +384,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             if (md_product_serial.getUpdate_required() > -1){
                 contentValues.put(UPDATE_REQUIRED, md_product_serial.getUpdate_required());
             }
+            contentValues.put(ONLY_POSITION, md_product_serial.getOnly_position());
 
             return contentValues;
         }

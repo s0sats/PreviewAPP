@@ -61,7 +61,7 @@ import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
 public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     public static final String SO_WS_SEARCH_SERIAL = "SO_WS_SEARCH_SERIAL";
-    public static final String SO_WS_SEARCH_SO = "SO_WS_SEARCH_SO";
+    public static final String SO_WS_SEARCH_SAVE = "SO_WS_SEARCH_SAVE";
 
     private Act031_Main_Presenter mPresenter;
     private ScrollView sv_serial;
@@ -843,6 +843,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         serialObj.setSite_code_owner(ToolBox_Inf.mIntegerParse(ss_site_owner.getmValue().get(SearchableSpinner.ID)));
         //
         serialObj.setUpdate_required(1);
+        serialObj.setOnly_position(0);
         //
     }
 
@@ -853,7 +854,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         progressDialog.dismiss();
         //
-        if (ws_process.equals(SO_WS_SEARCH_SO)) {
+        if (ws_process.equals(SO_WS_SEARCH_SAVE)) {
 
             String ttl = "";
             String msg = "";
@@ -891,6 +892,13 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         progressDialog.dismiss();
 
     }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
     /**
      * Carrega lista que sera exibida no spinner.
      * Se parameto true, apaga valor atual do spinner.
