@@ -123,6 +123,7 @@ public class WS_SO_Save extends IntentService {
             env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+            env.setReprocess(1);
            //
            callSO_Save_WS(env);
 
@@ -152,6 +153,7 @@ public class WS_SO_Save extends IntentService {
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setToken(token);
             env.setSo(sos);
+            env.setReprocess(0);
             //
             String json_token_content = gsonRec.toJson(env);
             File jsonToken = saveTokenSoAsFile(token, json_token_content);
@@ -395,7 +397,6 @@ public class WS_SO_Save extends IntentService {
                 for (SM_SO_Service_Exec_Task task : so_from_to.getTask()) {
                     SO_Save_Return soReturn = getSoReturn(so_save_returns, task.getCustomer_code(), task.getSo_prefix(), task.getSo_code());
                     int update_required = 0;
-                    boolean update_required_change = false;
                     //
                     if (soReturn != null) {
                         SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
@@ -447,26 +448,39 @@ public class WS_SO_Save extends IntentService {
                         //Valida se é re_send para saber qual será update_required
                         if (so_re_send) {
                             if (soReturn.getSo_update() == 1) {
-                                update_required = 1;
-                                update_required_change = true;
+                                //Atualiza só update_required para 1
+                                soDao.addUpdate(new SM_SO_Sql_009(
+                                        task.getCustomer_code(),
+                                        task.getSo_prefix(),
+                                        task.getSo_code()
+                                ).toSqlQuery());
+
+
                             } else {
-                                update_required_change = false;
+                                //atualiza só SCN da S.O
+                                soDao.addUpdate(new SM_SO_Sql_010(
+                                        task.getCustomer_code(),
+                                        task.getSo_prefix(),
+                                        task.getSo_code(),
+                                        soReturn.getSo_scn(),
+                                        false,
+                                        update_required
+                                ).toSqlQuery());
                             }
 
                         } else {
                             update_required = 0;
-                            update_required_change = true;
+                            //atualiza SCN e update_required na S.O
+                            soDao.addUpdate(new SM_SO_Sql_010(
+                                    task.getCustomer_code(),
+                                    task.getSo_prefix(),
+                                    task.getSo_code(),
+                                    soReturn.getSo_scn(),
+                                    true,
+                                    update_required
+                            ).toSqlQuery());
                         }
 
-                        //atualiza SCN e update_required na S.O
-                        soDao.addUpdate(new SM_SO_Sql_010(
-                                task.getCustomer_code(),
-                                task.getSo_prefix(),
-                                task.getSo_code(),
-                                soReturn.getSo_scn(),
-                                update_required_change,
-                                update_required
-                        ).toSqlQuery());
                     } else {
                         //seta update required para 1
                         soDao.addUpdate(new SM_SO_Sql_009(
@@ -484,7 +498,6 @@ public class WS_SO_Save extends IntentService {
 
                     SO_Save_Return soReturn = getSoReturn(so_save_returns, taskFile.getCustomer_code(), taskFile.getSo_prefix(), taskFile.getSo_code());
                     int update_required = 0;
-                    boolean update_required_change = false;
                     //
                     if (soReturn != null) {
                         SM_SO_Service_Exec_Task_File auxFile =
@@ -534,26 +547,38 @@ public class WS_SO_Save extends IntentService {
                         //Valida se é re_send para saber qual será update_required
                         if (so_re_send) {
                             if (soReturn.getSo_update() == 1) {
-                                update_required = 1;
-                                update_required_change = true;
+                                //Atualiza só update_required para 1
+                                soDao.addUpdate(new SM_SO_Sql_009(
+                                        taskFile.getCustomer_code(),
+                                        taskFile.getSo_prefix(),
+                                        taskFile.getSo_code()
+                                ).toSqlQuery());
+
+
                             } else {
-                                update_required_change = false;
+                                //atualiza só SCN da S.O
+                                soDao.addUpdate(new SM_SO_Sql_010(
+                                        taskFile.getCustomer_code(),
+                                        taskFile.getSo_prefix(),
+                                        taskFile.getSo_code(),
+                                        soReturn.getSo_scn(),
+                                        false,
+                                        update_required
+                                ).toSqlQuery());
                             }
 
                         } else {
                             update_required = 0;
-                            update_required_change = true;
+                            //atualiza SCN e update_required na S.O
+                            soDao.addUpdate(new SM_SO_Sql_010(
+                                    taskFile.getCustomer_code(),
+                                    taskFile.getSo_prefix(),
+                                    taskFile.getSo_code(),
+                                    soReturn.getSo_scn(),
+                                    true,
+                                    update_required
+                            ).toSqlQuery());
                         }
-
-                        //atualiza SCN e update_required na S.O
-                        soDao.addUpdate(new SM_SO_Sql_010(
-                                taskFile.getCustomer_code(),
-                                taskFile.getSo_prefix(),
-                                taskFile.getSo_code(),
-                                soReturn.getSo_scn(),
-                                update_required_change,
-                                update_required
-                        ).toSqlQuery());
                     } else {
                         //seta update required para 1
                         soDao.addUpdate(new SM_SO_Sql_009(

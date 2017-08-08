@@ -20,8 +20,8 @@ public class TSO_Save_Env {
     private String token;
     @Expose
     private ArrayList<SM_SO> so;
-    /*@Expose
-    private*/
+    @Expose
+    private int reprocess;
 
     public String getApp_code() {
         return app_code;
@@ -61,5 +61,13 @@ public class TSO_Save_Env {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getReprocess() {
+        return reprocess;
+    }
+
+    public void setReprocess(int reprocess) {
+        this.reprocess = reprocess;
     }
 }
