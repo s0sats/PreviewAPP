@@ -38,6 +38,7 @@ import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Category_Price_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
@@ -49,6 +50,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.namoadigital.prj001.dao.MD_Product_SerialDao.SITE_CODE_OWNER;
 import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
@@ -856,26 +858,60 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         if (ws_process.equals(SO_WS_SEARCH_SAVE)) {
 
-            String ttl = "";
-            String msg = "";
-            //Valida retorno do save do serial
-            //Se erro, exibe msg de erro
-            if (hmAux.get(WS_SO_Search.SERIAL_SAVE).equals("OK")) {
-                sv_serial.smoothScrollTo(0,0);
-                ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
-                msg = hmAux_Trans.get("alert_save_serial_ok_msg");
-            } else {
-                ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
-                msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmAux.get(WS_SO_Search.SERIAL_SAVE);
+            if(hmAux.size() > 0){
+                ArrayList<HMAux> returnList = new ArrayList<>();
+                String ttl = "";
+                String msg = "";
+                //
+                for (Map.Entry<String, String> item : hmAux.entrySet() ) {
+                    HMAux aux = new HMAux();
+                    String[] pk =  item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                    String status = item.getValue();
+
+                    MD_ProductDao productDao = new MD_ProductDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    MD_Product mdProduct = productDao.getByString(
+                            new MD_Product_Sql_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Long.parseLong(pk[0])
+                            ).toSqlQuery()
+                    );
+                    //
+                    if(mdProduct != null){
+                        aux.put("value_1",mdProduct.getProduct_code()+ " - " + mdProduct.getProduct_id() + " - " +  mdProduct.getProduct_desc());
+                    }
+                    aux.put("value_2",pk[1]);
+                    aux.put("value_3",status);
+                    returnList.add(aux);
+                    //
+                    if(serialObj.getProduct_code() == Long.parseLong(pk[0])
+                        && serialObj.getSerial_id().equals(pk[1])
+                        ){
+
+                        if(status.equals("OK")){
+                            sv_serial.smoothScrollTo(0,0);
+                            ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
+                            msg = hmAux_Trans.get("alert_save_serial_ok_msg");
+                        }else{
+                            ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
+                            msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmAux.get(WS_SO_Search.SERIAL_SAVE);
+
+                        }
+                    }
+                }
+                //
+                ToolBox.alertMSG(
+                        context,
+                        ttl,
+                        msg,
+                        null,
+                        0
+                );
             }
-            //
-            ToolBox.alertMSG(
-                    context,
-                    ttl,
-                    msg,
-                    null,
-                    0
-            );
         }
 
     }
