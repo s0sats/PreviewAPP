@@ -567,7 +567,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_WAINTING_SYNC);
+                sbCommand.append(Constant.SO_STATUS_WAITING_SYNC);
                 sbCommand.append("' ");
 
                 sbCommand.append(" WHERE ");

@@ -313,7 +313,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
     public static final String SO_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
     public static final String SO_STATUS_DONE = "DONE";
-    public static final String SO_STATUS_WAINTING_SYNC = "WAINTING_SYNC";
+    public static final String SO_STATUS_WAITING_SYNC = "WAITING_SYNC";
     public static final String SO_STATUS_CANCELLED = "CANCELLED";
     public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
     public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";

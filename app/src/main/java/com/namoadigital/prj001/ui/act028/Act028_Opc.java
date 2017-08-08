@@ -28,10 +28,8 @@ import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_Status_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Service_Sql_Status_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
 import com.namoadigital.prj001.util.Constant;
@@ -233,28 +231,28 @@ public class Act028_Opc extends BaseFragment {
     }
 
     private void setOffLineStatus(SM_SO_Service_Exec sm_so_service_execNew) {
-        // Updata Status Service
-        sm_so_service_execDao.addUpdate(new SM_SO_Service_Sql_Status_001(
-                sm_so_service_execNew.getCustomer_code(),
-                sm_so_service_execNew.getSo_prefix(),
-                sm_so_service_execNew.getSo_code(),
-                sm_so_service_execNew.getPrice_list_code(),
-                sm_so_service_execNew.getPack_code(),
-                sm_so_service_execNew.getPack_seq(),
-                sm_so_service_execNew.getCategory_price_code(),
-                sm_so_service_execNew.getService_code(),
-                sm_so_service_execNew.getService_seq()
-        ).toSqlQuery());
-
-        // Updata Status Pack
-        sm_so_service_execDao.addUpdate(new SM_SO_Pack_Sql_Status_001(
-                sm_so_service_execNew.getCustomer_code(),
-                sm_so_service_execNew.getSo_prefix(),
-                sm_so_service_execNew.getSo_code(),
-                sm_so_service_execNew.getPrice_list_code(),
-                sm_so_service_execNew.getPack_code(),
-                sm_so_service_execNew.getPack_seq()
-        ).toSqlQuery());
+//        // Updata Status Service
+//        sm_so_service_execDao.addUpdate(new SM_SO_Service_Sql_Status_001(
+//                sm_so_service_execNew.getCustomer_code(),
+//                sm_so_service_execNew.getSo_prefix(),
+//                sm_so_service_execNew.getSo_code(),
+//                sm_so_service_execNew.getPrice_list_code(),
+//                sm_so_service_execNew.getPack_code(),
+//                sm_so_service_execNew.getPack_seq(),
+//                sm_so_service_execNew.getCategory_price_code(),
+//                sm_so_service_execNew.getService_code(),
+//                sm_so_service_execNew.getService_seq()
+//        ).toSqlQuery());
+//
+//        // Updata Status Pack
+//        sm_so_service_execDao.addUpdate(new SM_SO_Pack_Sql_Status_001(
+//                sm_so_service_execNew.getCustomer_code(),
+//                sm_so_service_execNew.getSo_prefix(),
+//                sm_so_service_execNew.getSo_code(),
+//                sm_so_service_execNew.getPrice_list_code(),
+//                sm_so_service_execNew.getPack_code(),
+//                sm_so_service_execNew.getPack_seq()
+//        ).toSqlQuery());
 
         // Updata Status SO
         sm_so_service_execDao.addUpdate(new SM_SO_Sql_Status_001(
