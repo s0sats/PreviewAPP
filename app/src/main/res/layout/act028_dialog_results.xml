@@ -14,14 +14,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/act028_dialog_tv_select"
+            android:id="@+id/act028_dialog_tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:padding="2dp"
-            android:text="MSg"
-            android:textSize="@dimen/font_size_title_md"
-            android:visibility="gone" />
+            android:text="SO Results"
+            android:textSize="@dimen/font_size_title_md" />
 
         <ListView
             android:id="@+id/act028_dialog_lv_results"

@@ -123,6 +123,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         transList.add("no_exec_selected_lbl");
         transList.add("alert_exec_blocked_title");
         transList.add("alert_exec_blocked_msg");
+        transList.add("alert_results_ttl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -434,8 +435,12 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
          * Ini Vars
          */
 
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
         ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
         Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
         String[] from = {"final_status"};
         int[] to = {R.id.namoa_custom_cell_3_tv_item};
@@ -451,7 +456,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                 )
         );
 
-        builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
         builder.setView(view);
         builder.setCancelable(false);
 
