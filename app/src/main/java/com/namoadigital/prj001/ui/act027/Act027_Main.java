@@ -477,6 +477,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 break;
         }
 
+
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
