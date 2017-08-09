@@ -417,11 +417,36 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             //
             sos.add(mHmAux);
         }
+
         if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
-            return;
+            if (so_current_reload.equalsIgnoreCase("1")) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_so_list_title"),
+                        hmAux_Trans.get("alert_so_list_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bundle.remove("data");
+                                //
+                                Intent mIntent = new Intent(context, Act027_Main.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mIntent.putExtras(bundle);
+                                //
+                                startActivity(mIntent);
+                                finish();
+                            }
+                        },
+                        -1,
+                        false
+                );
+            } else {
+                return;
+            }
+        }else {
+            //
+            showNewOptDialog(sos, so_current_reload);
         }
-        //
-        showNewOptDialog(sos, so_current_reload);
     }
 
     public void showNewOptDialog(List<HMAux> sos, final String so_current_reload) {
