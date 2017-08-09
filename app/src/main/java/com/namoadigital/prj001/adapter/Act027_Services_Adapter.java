@@ -107,7 +107,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
         tv_service_label.setText(hmAux_Trans.get("service_lbl"));
 
         tv_plc_pc_ps_sc_label.setText(hmAux_Trans.get("plc_pc_ps_sc_lbl"));
-        tv_plc_pc_ps_sc_value.setText(item.get(SM_SO_ServiceDao.PRICE_LIST_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_SEQ) + "/" + item.get(SM_SO_ServiceDao.SERVICE_CODE));
+        //tv_plc_pc_ps_sc_value.setText(item.get(SM_SO_ServiceDao.PRICE_LIST_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_SEQ) + "/" + item.get(SM_SO_ServiceDao.SERVICE_CODE));
+        tv_plc_pc_ps_sc_value.setText(item.get(SM_SO_ServiceDao.EXEC_SEQ_OPER));
 
         tv_price_list_id_label.setText(hmAux_Trans.get("price_list_id_lbl"));
         tv_price_list_id_value.setText(item.get(SM_SO_PackDao.PRICE_LIST_ID));
