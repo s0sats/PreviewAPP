@@ -21,7 +21,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -29,6 +28,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.service.WS_SO_Save;
@@ -443,8 +443,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             } else {
                 return;
             }
-        }else {
-            //
+        } else {
             showNewOptDialog(sos, so_current_reload);
         }
     }
@@ -472,12 +471,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
 
         lv_results.setAdapter(
-                new SimpleAdapter(
+                new Act028_Results_Adapter(
                         context,
-                        sos,
-                        R.layout.namoa_custom_cell_3,
-                        from,
-                        to
+                        R.layout.act028_results_adapter_cell,
+                        sos
                 )
         );
 

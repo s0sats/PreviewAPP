@@ -47,7 +47,8 @@ public class SM_SO_Service_Sql_003 implements Specification {
                         " P.PACK_DESC,\n" +
                         " S.SERVICE_DESC,\n" +
                         " S.STATUS,\n" +
-                        " S.QTY\n" +
+                        " S.QTY,\n" +
+                        " S.EXEC_SEQ_OPER \n" +
                         "\n" +
                         " from SM_SO_Packs as P inner join SM_SO_Services as S on P.customer_code = S.customer_code and \n" +
                         " P.so_prefix = S.so_prefix and \n" +
@@ -66,7 +67,7 @@ public class SM_SO_Service_Sql_003 implements Specification {
                 .append(" ORDER BY \n")
                 .append(" " + SM_SO_ServiceDao.EXEC_SEQ_OPER)
                 .append(";")
-                .append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#price_list_id#price_list_desc#pack_id#pack_desc#service_desc#status#qty")
+                .append("customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#price_list_id#price_list_desc#pack_id#pack_desc#service_desc#status#qty#exec_seq_oper")
                 .toString();
     }
 }
