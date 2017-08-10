@@ -48,7 +48,7 @@ public class SM_SO_Service_Sql_003 implements Specification {
                         " S.SERVICE_DESC,\n" +
                         " S.STATUS,\n" +
                         " S.QTY,\n" +
-                        " S.EXEC_SEQ_OPER \n" +
+                        " S.EXEC_SEQ_OPER\n" +
                         "\n" +
                         " from SM_SO_Packs as P inner join SM_SO_Services as S on P.customer_code = S.customer_code and \n" +
                         " P.so_prefix = S.so_prefix and \n" +
