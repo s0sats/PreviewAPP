@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -21,6 +24,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
@@ -882,10 +886,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                     );
                     //
                     if(mdProduct != null){
-                        aux.put("value_1",mdProduct.getProduct_code()+ " - " + mdProduct.getProduct_id() + " - " +  mdProduct.getProduct_desc());
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1,mdProduct.getProduct_code()+ " - " + mdProduct.getProduct_id() + " - " +  mdProduct.getProduct_desc());
                     }
-                    aux.put("value_2",pk[1]);
-                    aux.put("value_3",status);
+                    aux.put(Generic_Results_Adapter.VALUE_ITEM_2,pk[1]);
+                    aux.put(Generic_Results_Adapter.VALUE_ITEM_3,status);
                     returnList.add(aux);
                     //
                     if(serialObj.getProduct_code() == Long.parseLong(pk[0])
@@ -904,16 +908,51 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                     }
                 }
                 //
-                ToolBox.alertMSG(
-                        context,
-                        ttl,
-                        msg,
-                        null,
-                        0
-                );
+                showSerialResults(returnList);
+                //
+//                ToolBox.alertMSG(
+//                        context,
+//                        ttl,
+//                        msg,
+//                        null,
+//                        0
+//                );
             }
         }
 
+    }
+
+    private void showSerialResults(ArrayList<HMAux> returnList) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        R.layout.act028_results_adapter_cell,
+                        returnList,
+                        Generic_Results_Adapter.CONFIG_3_ITENS,
+                        hmAux_Trans
+                )
+        );
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
     }
 
     //RETORNO DO WS_Search_Serial
