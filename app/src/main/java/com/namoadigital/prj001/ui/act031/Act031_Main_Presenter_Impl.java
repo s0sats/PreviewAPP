@@ -12,7 +12,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
-import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -221,7 +220,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
                         msg = hmAux_Trans.get("alert_save_serial_ok_msg");
                     } else {
                         ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
-                        msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmSaveResult.get(WS_SO_Search.SERIAL_SAVE);
+                        msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + status;
 
                     }
                 }

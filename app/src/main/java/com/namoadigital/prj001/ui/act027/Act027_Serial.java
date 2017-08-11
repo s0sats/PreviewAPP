@@ -1,15 +1,16 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -18,7 +19,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
@@ -30,7 +31,6 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
@@ -41,9 +41,6 @@ import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
-import com.namoadigital.prj001.ui.act022.Act022_Main;
-import com.namoadigital.prj001.ui.act024.Act024_Main;
-import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -106,18 +103,12 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     private int serial_required;
     private int serial_allow_new;
     //agendamento
-    private boolean isSchedule;
-    public String ws_process;
     private boolean skip_validation = false;
     private boolean serialInfoChanges = false;
     private ArrayList<Object> serialProperties;
     //
 
     private Button btn_action;
-    //Listners do btnAction
-//    private View.OnClickListener listnerSearchSerial;
-//    private View.OnClickListener listnerSearchSO;
-//    private View.OnClickListener listnerGoToNForm;
 
     private View.OnClickListener listnerSaveSerial;
 
@@ -148,37 +139,22 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void iniVar(View view) {
         context = getActivity();
-
-        //Variavel q identifica se dados do produto são chamados do master data ou não.
-        //isSchedule = false;
         //
         recoverIntentsInfo();
         //
         mPresenter = new Act027_Serial_Presenter_Impl(
                 context,
                 this,
-                requesting_process,
-                bundle,
-                new Sync_ChecklistDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
                 new MD_ProductDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
                 product_code,
                 hmAux_Trans,
-                new GE_Custom_Form_OperationDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM),
                 new MD_Product_SerialDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
-                isSchedule,
                 data
         );
         //
@@ -319,35 +295,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     }
 
     private void iniListners() {
-//        //Listner busca Serial.
-//        listnerSearchSerial = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //
-//                mPresenter.validadeSerialFlow(
-//                        mket_serial_id.getText().toString(),
-//                        serial_required,
-//                        serial_allow_new
-//                );
-//            }
-//        };
-//        //Listner busca so
-//        listnerSearchSO = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //
-//                if (checkSerialChanges()) {
-//                    buildSerialFull();
-//                    //
-//                    mPresenter.updateSerialInfo(serialObj);
-//                } else {
-//                    mPresenter.executeSoSearch(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
-//                }
-//            }
-//        };
-//        //Listner para fluxo do N-form
-//        listnerGoToNForm = null;
-
         listnerSaveSerial = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -461,16 +408,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         });
 
         getSerialInfo();
-
-//        if (requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL)) {
-//            mket_serial_id.setText(bundle_serial_id);
-//            //
-//            mPresenter.validadeSerialFlow(
-//                    mket_serial_id.getText().toString(),
-//                    serial_required,
-//                    serial_allow_new
-//            );
-//        }
     }
 
     private void recoverIntentsInfo() {
@@ -479,7 +416,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 requesting_process = bundle.getString(Constant.MAIN_REQUESTING_PROCESS, "");
                 product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
                 bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
-                isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE, false);
             } else {
 
                 //ToolBox_Inf.alertBundleNotFound((Base_Activity) getActivity(), hmAux_Trans);
@@ -491,25 +427,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     }
 
     private void layoutConfiguration() {
-//        switch (requesting_process) {
-//
-//            case Constant.MODULE_CHECKLIST:
-//                ll_serial_full_desc.setVisibility(View.GONE);
-//                ll_require_serial.setVisibility(View.VISIBLE);
-//                btn_action.setOnClickListener(listnerGoToNForm);
-//                btn_action.setText(hmAux_Trans.get("btn_create"));
-//                break;
-//            case Constant.MODULE_SO:
-//            case Constant.MODULE_SO_SEARCH_SERIAL:
-//            default:
-//                ll_serial_full_desc.setVisibility(View.GONE);
-//                ll_require_serial.setVisibility(View.GONE);
-//                btn_action.setOnClickListener(listnerSearchSerial);
-//                btn_action.setText(hmAux_Trans.get("btn_serial_save"));
-//                break;
-//
-//        }
-
         btn_action.setOnClickListener(listnerSaveSerial);
         btn_action.setText(hmAux_Trans.get("btn_serial_save"));
 
@@ -605,11 +522,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     }
 
     @Override
-    public void setWs_process(String ws_process) {
-
-    }
-
-    @Override
     public void fieldFocus() {
         mket_serial_id.requestFocus();
     }
@@ -636,42 +548,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 0
         );
     }
-
-    @Override
-    public void continueOffline() {
-
-    }
-
-    @Override
-    public void callAct022(Context context) {
-        Intent mIntent = new Intent(context, Act022_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //
-        bundle.remove(Constant.ACT007_PRODUCT_CODE);
-        //
-        mIntent.putExtras(bundle);
-        //
-        startActivity(mIntent);
-        getActivity().finish();
-    }
-
-    @Override
-    public void callAct024(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act024_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        getActivity().finish();
-    }
-
-    @Override
-    public void callAct025(Context context) {
-        Intent mIntent = new Intent(context, Act025_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        getActivity().finish();
-    }
-
 
     /**
      * Monta HMAux para inserir no spinner
@@ -904,6 +780,72 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         mPresenter.getSerialInfo(
                 product_code,
                 mket_serial_id.getText().toString().trim());
+    }
+
+    public void callProcessSerialSaveResult(String product_code, String serial_id, HMAux hmSaveResult){
+        mPresenter.processSerialSaveResult(product_code, serial_id, hmSaveResult);
+    }
+
+    @Override
+    public void showSingleResultMsg(String ttl, String msg) {
+        //
+        //sv_serial.smoothScrollTo(0,0);
+        //
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
+
+    }
+
+    @Override
+    public void showSerialResults(ArrayList<HMAux> returnList) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+        //
+        tv_title.setVisibility(View.GONE);
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("dialog_result_product_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("dialog_result_serial_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_3,hmAux_Trans.get("dialog_result_msg_lbl"));
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        returnList,
+                        Generic_Results_Adapter.CONFIG_3_ITENS,
+                        hmAux_Trans
+                )
+        );
+
+        builder.setTitle(hmAux_Trans.get("dialog_results_ttl"));
+        builder.setView(view);
+        //builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
+
     }
 
     @Override

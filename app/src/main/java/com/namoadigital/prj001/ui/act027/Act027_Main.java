@@ -36,8 +36,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act023.Act023_Main.SO_WS_SEARCH_SERIAL;
-
 /**
  * Created by neomatrix on 03/07/17.
  */
@@ -211,6 +209,14 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("progress_save_serial_ttl");
         transList.add("progress_save_serial_msg");
         transList.add("searchable_spinner_lbl");
+        //
+        transList.add("alert_save_serial_return_ttl");
+        transList.add("alert_no_serial_return_msg");
+        transList.add("alert_save_serial_ok_msg");
+        transList.add("alert_save_serial_error_msg");
+        transList.add("dialog_result_product_lbl");
+        transList.add("dialog_result_serial_lbl");
+        transList.add("dialog_result_msg_lbl");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -366,10 +372,20 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        progressDialog.dismiss();
+        //
+        act027_serial.callProcessSerialSaveResult(data.get(SM_SODao.PRODUCT_CODE),data.get(SM_SODao.SERIAL_ID),hmAux);
+
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-
-        switch (act027_serial.requesting_process) {
+        progressDialog.dismiss();
+       /* switch (act027_serial.requesting_process) {
 
             case Constant.MODULE_CHECKLIST:
                 //mView.callAct008(context,product_code);
@@ -386,7 +402,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 break;
 
         }
-        progressDialog.dismiss();
+        */
 
     }
 
