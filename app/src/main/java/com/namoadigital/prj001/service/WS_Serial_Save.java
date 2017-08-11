@@ -92,11 +92,13 @@ public class WS_Serial_Save extends IntentService {
             env.setApp_code(Constant.PRJ001_CODE);
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+            //Carrega lista de Serial
+            serialList = env.getSerial();
             //
             callSerial_Save_WS(env);
 
         } else {
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_so_data"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
             //Gera token
             String token = ToolBox_Inf.getToken(getApplicationContext());
             //
@@ -177,6 +179,8 @@ public class WS_Serial_Save extends IntentService {
     }
 
     private void processSerialSaveRet(TSerial_Save_Rec rec) throws IOException {
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
+        //
         HMAux hmAuxRet = new HMAux();
         //
         for (MD_Product_Serial serialAux : serialList) {
@@ -205,7 +209,7 @@ public class WS_Serial_Save extends IntentService {
                 serialAux.setUpdate_required(1);
                 serialDao.addUpdate(serialAux);
                 //
-                hmAuxRet.put(hmKey,serialSaveReturn.getRet_status());
+                hmAuxRet.put(hmKey, String.valueOf(serialSaveReturn != null ? serialSaveReturn.getRet_msg():hmAux_Trans.get("msg_no_return_found")));
             }
 
         }
@@ -237,7 +241,7 @@ public class WS_Serial_Save extends IntentService {
             if(serial_return.get(i).getCustomer_code() == customer_code
                && serial_return.get(i).getProduct_code() == product_code
                &&(serial_return.get(i).getSerial_code() == serial_code
-                  || ( serial_code == 0 && String.valueOf(serial_return.get(i).getSerial_code()).equals(serial_id) )
+                  || ( serial_code == 0 && serial_return.get(i).getSerial_id().equals(serial_id) )
                   )
             ){
                 serialSaveReturn = serial_return.get(i);
@@ -281,15 +285,16 @@ public class WS_Serial_Save extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
+        translist.add("msg_preparing_serial_data");
         translist.add("msg_sending_serial_data");
         translist.add("msg_receiving_serial_data");
         translist.add("msg_re_processing_serial_data");
         translist.add("msg_save_ok");
         translist.add("msg_updating_serial");
-        translist.add("error_from_to_processing");
         translist.add("msg_loading_serial_from_token");
         translist.add("msg_token_file_error");
         translist.add("msg_no_serial_to_update");
+        translist.add("msg_no_return_found");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

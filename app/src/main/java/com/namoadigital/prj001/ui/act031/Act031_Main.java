@@ -37,12 +37,10 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.MD_Brand_Color_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Model_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Brand_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Category_Price_Sql_SS;
-import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
@@ -54,7 +52,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.namoadigital.prj001.dao.MD_Product_SerialDao.SITE_CODE_OWNER;
 import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
@@ -211,6 +208,12 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_no_data_changes_msg");
         transList.add("progress_serial_save_ttl");
         transList.add("progress_serial_save_msg");
+        //
+        transList.add("dialog_results_ttl");
+        transList.add("dialog_result_product_lbl");
+        transList.add("dialog_result_serial_lbl");
+        transList.add("dialog_result_msg_lbl");
+        transList.add("alert_no_serial_return_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -862,67 +865,29 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         if (ws_process.equals(SO_WS_SEARCH_SAVE)) {
 
-            if(hmAux.size() > 0){
-                ArrayList<HMAux> returnList = new ArrayList<>();
-                String ttl = "";
-                String msg = "";
-                //
-                for (Map.Entry<String, String> item : hmAux.entrySet() ) {
-                    HMAux aux = new HMAux();
-                    String[] pk =  item.getKey().split(Constant.MAIN_CONCAT_STRING);
-                    String status = item.getValue();
-
-                    MD_ProductDao productDao = new MD_ProductDao(
-                            context,
-                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                            Constant.DB_VERSION_CUSTOM
-                    );
-                    //
-                    MD_Product mdProduct = productDao.getByString(
-                            new MD_Product_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    Long.parseLong(pk[0])
-                            ).toSqlQuery()
-                    );
-                    //
-                    if(mdProduct != null){
-                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1,mdProduct.getProduct_code()+ " - " + mdProduct.getProduct_id() + " - " +  mdProduct.getProduct_desc());
-                    }
-                    aux.put(Generic_Results_Adapter.VALUE_ITEM_2,pk[1]);
-                    aux.put(Generic_Results_Adapter.VALUE_ITEM_3,status);
-                    returnList.add(aux);
-                    //
-                    if(serialObj.getProduct_code() == Long.parseLong(pk[0])
-                        && serialObj.getSerial_id().equals(pk[1])
-                        ){
-
-                        if(status.equals("OK")){
-                            sv_serial.smoothScrollTo(0,0);
-                            ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
-                            msg = hmAux_Trans.get("alert_save_serial_ok_msg");
-                        }else{
-                            ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
-                            msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmAux.get(WS_SO_Search.SERIAL_SAVE);
-
-                        }
-                    }
-                }
-                //
-                showSerialResults(returnList);
-                //
-//                ToolBox.alertMSG(
-//                        context,
-//                        ttl,
-//                        msg,
-//                        null,
-//                        0
-//                );
+            if(hmAux.size() > 0) {
+              mPresenter.processSerialSaveResult(serialObj.getProduct_code(),serialObj.getSerial_id(),hmAux);
             }
         }
 
     }
 
-    private void showSerialResults(ArrayList<HMAux> returnList) {
+    @Override
+    public void showSingleResultMsg(String ttl, String msg) {
+        //
+        sv_serial.smoothScrollTo(0,0);
+        //
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
+    }
+
+    @Override
+    public void showSerialResults(ArrayList<HMAux> returnList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         //
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -934,25 +899,39 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
         TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
         ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+        //
+        tv_title.setVisibility(View.GONE);
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("dialog_result_product_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("dialog_result_serial_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_3,hmAux_Trans.get("dialog_result_msg_lbl"));
 
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         //
         lv_results.setAdapter(
                 new Generic_Results_Adapter(
                         context,
-                        R.layout.act028_results_adapter_cell,
                         returnList,
                         Generic_Results_Adapter.CONFIG_3_ITENS,
                         hmAux_Trans
                 )
         );
 
-        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setTitle(hmAux_Trans.get("dialog_results_ttl"));
         builder.setView(view);
-        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
+        //builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
         builder.setCancelable(false);
-
+        //
         final AlertDialog show = builder.show();
+        //
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
+
     }
 
     //RETORNO DO WS_Search_Serial

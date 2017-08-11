@@ -37,19 +37,12 @@ public class Generic_Results_Adapter extends BaseAdapter {
     //private String mResource_Code;
     private HMAux hmAux_Trans;
 
-    public Generic_Results_Adapter(Context context, int resource, List<HMAux> source, String config, HMAux hmAux_Trans) {
+    public Generic_Results_Adapter(Context context, List<HMAux> source, String config, HMAux hmAux_Trans) {
         this.context = context;
-        this.resource = resource;
+        this.resource = R.layout.generic_results_adapter_cell;
         this.source = source;
         this.config = config;
         this.hmAux_Trans = hmAux_Trans;
-       /* this.mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                Constant.APP_MODULE,
-                "generic_results_adapter"
-        );*/
-
-        //loadTranslation();
     }
 
     @Override
@@ -77,22 +70,23 @@ public class Generic_Results_Adapter extends BaseAdapter {
 
         HMAux item = source.get(position);
 
-        TextView tv_ttl = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_ttl);
-        ImageView iv_flag = (ImageView) convertView.findViewById(R.id.act028_results_adapter_cell_iv_flag);
+        TextView tv_ttl = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_ttl);
+        ImageView iv_flag = (ImageView) convertView.findViewById(R.id.generic_results_adapter_cell_iv_flag);
 
-        TextView tv_item1_ttl = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_prod_ttl);
-        TextView tv_item1_value = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_prod_value);
+        TextView tv_item1_ttl = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_prod_ttl);
+        TextView tv_item1_value = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_prod_value);
 
-        TextView tv_item2_ttl = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_serial_ttl);
-        TextView tv_item2_value = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_serial_value);
+        TextView tv_item2_ttl = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_serial_ttl);
+        TextView tv_item2_value = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_serial_value);
 
-        TextView tv_item3_ttl = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_msg_ttl);
-        TextView tv_item3_value = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_msg_value);
+        TextView tv_item3_ttl = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_msg_ttl);
+        TextView tv_item3_value = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_msg_value);
 
         switch (config){
             case CONFIG_3_ITENS:
                 default:
                     tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
+                    tv_ttl.setVisibility(View.GONE);
                     iv_flag.setVisibility(View.GONE);
                     //
                     tv_item1_ttl.setText(hmAux_Trans.get(LABEL_ITEM_1));

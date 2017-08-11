@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act031;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
 /**
@@ -25,6 +26,8 @@ public interface Act031_Main_Presenter {
     void updateSerialInfo(MD_Product_Serial productSerial);
 
     void saveNewSerialInfo(Long product_code, String serial_id);
+
+    void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult);
 
 }
 

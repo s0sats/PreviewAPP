@@ -5,17 +5,22 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -120,11 +125,6 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
     }
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct030(context);
-    }
-
-    @Override
     public void executeSaveSerial(Long product_code, String serial_id, boolean save_serial) {
         mView.setWs_process(Act031_Main.SO_WS_SEARCH_SAVE);
         //
@@ -185,4 +185,67 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
+
+    @Override
+    public void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult) {
+        if (hmSaveResult.size() > 0) {
+            ArrayList<HMAux> returnList = new ArrayList<>();
+            String ttl = "";
+            String msg = "";
+            //
+            for (Map.Entry<String, String> item : hmSaveResult.entrySet()) {
+                HMAux aux = new HMAux();
+                String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                String status = item.getValue();
+
+                MD_Product mdProduct = mdProductDao.getByString(
+                        new MD_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Long.parseLong(pk[0])
+                        ).toSqlQuery()
+                );
+                //
+                if (mdProduct != null) {
+                    aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
+                }
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_2, pk[1]);
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_3, status);
+                returnList.add(aux);
+                //
+                if (product_code == Long.parseLong(pk[0])
+                        && serial_id.equals(pk[1])
+                        ) {
+
+                    if (status.equals("OK")) {
+                        ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
+                        msg = hmAux_Trans.get("alert_save_serial_ok_msg");
+                    } else {
+                        ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
+                        msg = hmAux_Trans.get("alert_save_serial_error_msg") + "\n" + hmSaveResult.get(WS_SO_Search.SERIAL_SAVE);
+
+                    }
+                }
+            }
+            //Atualiza dados dos serial na tela e spinners
+            getSerialInfo(product_code, serial_id);
+            //
+            //if(returnList.size() == 1){
+             if(returnList.size() == 1){
+                mView.showSingleResultMsg(ttl,msg);
+            }else{
+                mView.showSerialResults(returnList);
+            }
+        }else{
+            mView.showSingleResultMsg(
+                    hmAux_Trans.get("alert_save_serial_return_ttl"),
+                    hmAux_Trans.get("alert_no_serial_return_msg")
+            );
+        }
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct030(context);
+    }
+
 }
