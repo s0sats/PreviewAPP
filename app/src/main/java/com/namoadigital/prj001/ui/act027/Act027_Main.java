@@ -393,7 +393,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
-                if (act027_serial.ws_process.equals(SO_WS_SEARCH_SERIAL)) {
+                if (act027_serial.ws_process.equals(WS_SEARCH_SERIAL)) {
                     //
                     act027_serial.getSerialInfo();
                 }

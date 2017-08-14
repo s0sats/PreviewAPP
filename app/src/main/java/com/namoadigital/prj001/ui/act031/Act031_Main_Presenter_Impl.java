@@ -84,7 +84,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
     }
 
     public void executeSerialSearch(Long product_code, String serial_id) {
-        mView.setWs_process(Act031_Main.SO_WS_SEARCH_SERIAL);
+        mView.setWs_process(Act031_Main.WS_SEARCH_SERIAL);
 
         Intent mIntent = new Intent(context, WBR_Serial_Search.class);
         Bundle bundle = new Bundle();
@@ -125,7 +125,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter{
 
     @Override
     public void executeSaveSerial(Long product_code, String serial_id, boolean save_serial) {
-        mView.setWs_process(Act031_Main.SO_WS_SEARCH_SAVE);
+        mView.setWs_process(Act031_Main.WS_SAVE_SERIAL);
         //
         mView.showPD(
                 hmAux_Trans.get("progress_serial_save_ttl"),

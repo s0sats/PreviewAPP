@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.model;
 
-import java.util.ArrayList;
-
 /**
  * Created by d.luche on 27/06/2017.
  */
@@ -14,7 +12,6 @@ public class TSO_Search_Env {
     private Long product_code;
     private String serial_id;
     private String so_mult;
-    private ArrayList<MD_Product_Serial> serial;
 
     public String getApp_code() {
         return app_code;
@@ -64,11 +61,4 @@ public class TSO_Search_Env {
         this.so_mult = so_mult;
     }
 
-    public ArrayList<MD_Product_Serial> getSerial() {
-        return serial;
-    }
-
-    public void setSerial(ArrayList<MD_Product_Serial> serial) {
-        this.serial = serial;
-    }
 }

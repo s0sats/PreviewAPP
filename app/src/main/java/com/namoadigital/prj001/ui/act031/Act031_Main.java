@@ -63,8 +63,8 @@ import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
 
 public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
-    public static final String SO_WS_SEARCH_SERIAL = "SO_WS_SEARCH_SERIAL";
-    public static final String SO_WS_SEARCH_SAVE = "SO_WS_SEARCH_SAVE";
+    public static final String WS_SEARCH_SERIAL = "WS_SEARCH_SERIAL";
+    public static final String WS_SAVE_SERIAL = "WS_SAVE_SERIAL";
 
     private Act031_Main_Presenter mPresenter;
     private ScrollView sv_serial;
@@ -863,7 +863,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         progressDialog.dismiss();
         //
-        if (ws_process.equals(SO_WS_SEARCH_SAVE)) {
+        if (ws_process.equals(WS_SAVE_SERIAL)) {
 
             if(hmAux.size() > 0) {
               mPresenter.processSerialSaveResult(serialObj.getProduct_code(),serialObj.getSerial_id(),hmAux);
@@ -939,7 +939,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
 
-        if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
+        if (ws_process.equals(WS_SEARCH_SERIAL)) {
             mPresenter.getSerialInfo(product_code, mket_serial_id.getText().toString().trim());
         }
 
