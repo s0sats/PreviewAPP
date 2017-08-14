@@ -875,7 +875,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     @Override
     public void showSingleResultMsg(String ttl, String msg) {
         //
-        sv_serial.smoothScrollTo(0,0);
+        sv_serial.fullScroll(ScrollView.FOCUS_UP);
         //
         ToolBox.alertMSG(
                 context,

@@ -205,7 +205,8 @@
                 android:padding="10dp"
                 android:textSize="@dimen/font_size_title"
                 app:mNFC="false"
-                app:mOCR="false" />
+                app:mOCR="false"
+                app:mBARCODE="false"/>
 
             <LinearLayout
                 android:id="@+id/act031_ll_serial_full_desc"

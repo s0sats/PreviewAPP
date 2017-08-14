@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -61,6 +62,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     public Act027_Serial_Presenter mPresenter;
     private Bundle bundle;
     public String requesting_process = "";
+    private ScrollView sv_serial;
     private TextView tv_product_ttl;
     private TextView tv_product_code_label;
     private TextView tv_product_code_value;
@@ -163,6 +165,8 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         serialProperties = new ArrayList<>();
         //
         serialObj = new MD_Product_Serial();
+        //
+        sv_serial = (ScrollView) view.findViewById(R.id.act027_serial_content_sv_serial);
         //
         mket_serial_id = (MKEditTextNM) view.findViewById(R.id.act027_serial_content_mket_serial);
         mket_serial_id.setmNFC(false);
@@ -789,7 +793,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     @Override
     public void showSingleResultMsg(String ttl, String msg) {
         //
-        //sv_serial.smoothScrollTo(0,0);
+        sv_serial.fullScroll(ScrollView.FOCUS_UP);
         //
         ToolBox.alertMSG(
                 context,
