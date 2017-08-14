@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.TSerial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -108,7 +109,7 @@ public class WS_Serial_Save extends IntentService {
                     ).toSqlQuery()
             );
             //Se lista vazia, dispara msg de erro.
-            if(serialList == null || serialList.size() == 0){
+            if (serialList == null || serialList.size() == 0) {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_to_update"), "", "0");
                 return;
             }
@@ -184,9 +185,9 @@ public class WS_Serial_Save extends IntentService {
         HMAux hmAuxRet = new HMAux();
         //
         for (MD_Product_Serial serialAux : serialList) {
-            String hmKey = serialAux.getProduct_code()+Constant.MAIN_CONCAT_STRING+serialAux.getSerial_id();
+            String hmKey = serialAux.getProduct_code() + Constant.MAIN_CONCAT_STRING + serialAux.getSerial_id();
             //
-            hmAuxRet.put(hmKey,"");
+            hmAuxRet.put(hmKey, "");
             //
             TSerial_Save_Rec.Serial_Save_Return serialSaveReturn =
                     getSaveReturn(
@@ -199,32 +200,40 @@ public class WS_Serial_Save extends IntentService {
             if (serialSaveReturn != null
                     //Verificar se esse && existe
                     && serialSaveReturn.getRet_status().toUpperCase().equals("OK")
-                    ){
+                    ) {
+                //Se serial code = 0, apaga o registro do banco de insere o novo ja com serial_code
+                if (serialAux.getSerial_code() == 0) {
+                    serialDao.remove(new MD_Product_Serial_Sql_003(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    serialAux.getProduct_code()
+                            ).toSqlQuery()
+                    );
+                }
                 serialAux.setSerial_code(serialSaveReturn.getSerial_code());
                 serialDao.addUpdate(serialAux);
                 //
-                hmAuxRet.put(hmKey,serialSaveReturn.getRet_status());
-            }else{
+                hmAuxRet.put(hmKey, serialSaveReturn.getRet_status());
+            } else {
                 //Setar para atualização novamente
                 serialAux.setUpdate_required(1);
                 serialDao.addUpdate(serialAux);
                 //
-                hmAuxRet.put(hmKey, String.valueOf(serialSaveReturn != null ? serialSaveReturn.getRet_msg():hmAux_Trans.get("msg_no_return_found")));
+                hmAuxRet.put(hmKey, String.valueOf(serialSaveReturn != null ? serialSaveReturn.getRet_msg() : hmAux_Trans.get("msg_no_return_found")));
             }
 
         }
         //Após processamento , apaga arquivo de token
-        if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
-            if(so_re_send){
+        if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+            if (so_re_send) {
                 ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_serial_data"), "", "0");
                 //Reseta var de re transmissão.
                 so_re_send = false;
                 //
                 processWS_Serial_Save();
-            }else{
+            } else {
                 callFinishProcessing(hmAuxRet);
             }
-        }else {
+        } else {
             //Ver como tratar , se for pra tratar
         }
     }
@@ -237,13 +246,13 @@ public class WS_Serial_Save extends IntentService {
     private TSerial_Save_Rec.Serial_Save_Return getSaveReturn(ArrayList<TSerial_Save_Rec.Serial_Save_Return> serial_return, long customer_code, long product_code, long serial_code, String serial_id) {
         TSerial_Save_Rec.Serial_Save_Return serialSaveReturn = null;
         //
-        for (int i = 0; i < serial_return.size() ; i++) {
-            if(serial_return.get(i).getCustomer_code() == customer_code
-               && serial_return.get(i).getProduct_code() == product_code
-               &&(serial_return.get(i).getSerial_code() == serial_code
-                  || ( serial_code == 0 && serial_return.get(i).getSerial_id().equals(serial_id) )
-                  )
-            ){
+        for (int i = 0; i < serial_return.size(); i++) {
+            if (serial_return.get(i).getCustomer_code() == customer_code
+                    && serial_return.get(i).getProduct_code() == product_code
+                    && (serial_return.get(i).getSerial_code() == serial_code
+                    || (serial_code == 0 && serial_return.get(i).getSerial_id().equals(serial_id))
+            )
+                    ) {
                 serialSaveReturn = serial_return.get(i);
                 break;
             }
@@ -252,16 +261,15 @@ public class WS_Serial_Save extends IntentService {
         return serialSaveReturn;
     }
 
-    private boolean deleteFile(String path,String name) {
-        File file = new File(path +"/"+ name );
+    private boolean deleteFile(String path, String name) {
+        File file = new File(path + "/" + name);
 
-        if(file.exists()){
+        if (file.exists()) {
             return file.delete();
-        }else{
+        } else {
             return false;
         }
     }
-
 
 
     private File saveTokenSerialAsFile(String token, String token_content) throws IOException {

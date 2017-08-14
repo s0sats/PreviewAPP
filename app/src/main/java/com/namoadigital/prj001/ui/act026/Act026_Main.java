@@ -37,6 +37,8 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
     private ListView lv_so;
     private SO_Header_Adapter mAdapter;
     private String requesting_act;
+    private String product_code;
+    private String serial_id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,7 +112,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
         //
-        mPresenter.getSOList();
+        mPresenter.getSOList(product_code, serial_id);
     }
 
     private void recoverIntentsInfo() {
@@ -118,7 +120,9 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_ACT)) {
-                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT005);
+                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+                product_code = bundle.getString(Constant.MAIN_PRODUCT_CODE, null);
+                serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, null);
 
             } else {
                 //Tratar quando lista de s.o não for enviado.

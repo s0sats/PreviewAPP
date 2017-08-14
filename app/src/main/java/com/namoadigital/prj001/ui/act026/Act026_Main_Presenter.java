@@ -8,7 +8,7 @@ import com.namoadigital.prj001.model.SM_SO;
 
 public interface Act026_Main_Presenter {
 
-    void getSOList();
+    void getSOList(String product_code, String serial_id);
 
     void defineForwardFlow(SM_SO so);
 

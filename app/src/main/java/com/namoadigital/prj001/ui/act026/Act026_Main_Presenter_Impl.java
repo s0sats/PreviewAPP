@@ -33,11 +33,13 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
     }
 
     @Override
-    public void getSOList() {
+    public void getSOList(String product_code, String serial_id) {
 
         List<SM_SO> soList = soDao.query(
                     new SM_SO_Sql_003(
-                            ToolBox_Con.getPreference_Customer_Code(context)
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            product_code,
+                            serial_id
                     ).toSqlQuery()
         );
         //

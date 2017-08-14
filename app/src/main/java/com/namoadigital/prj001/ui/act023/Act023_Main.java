@@ -1117,6 +1117,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         bundle.remove(Constant.MAIN_REQUESTING_PROCESS);
         bundle.remove(Constant.MAIN_IS_SCHEDULE);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT023);
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);

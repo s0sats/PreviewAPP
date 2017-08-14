@@ -12,6 +12,7 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -319,6 +320,12 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
 
     @Override
     public void executeSerialSave() {
+        mView.setWs_process(Act023_Main.SO_WS_SERIAL_SAVE);
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_serial_search_ttl"),
+                hmAux_Trans.get("progress_serial_search_msg")
+        );
         //
         Intent mIntent = new Intent(context, WBR_Serial_Save.class);
         Bundle bundle = new Bundle();
@@ -420,8 +427,8 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                     String[] so_prefix_code = so_download_result.get(WS_SO_Search.SO_PREFIX_CODE).split(Constant.MAIN_CONCAT_STRING);
                     Bundle bundleSingleSO = new Bundle();
                     //
-                    bundleSingleSO.putString(Constant.SO_PARAM_PREFIX, so_prefix_code[0]);
-                    bundleSingleSO.putString(Constant.SO_PARAM_CODE, so_prefix_code[1]);
+                    bundleSingleSO.putString(SM_SODao.SO_PREFIX, so_prefix_code[0]);
+                    bundleSingleSO.putString(SM_SODao.SO_CODE, so_prefix_code[1]);
                     //
                     mView.callAct027(context, bundleSingleSO);
                 } else {

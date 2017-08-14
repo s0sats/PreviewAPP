@@ -304,7 +304,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             mPresenter.startDownloadServices();
             //
             if (hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")) {
-                String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".", "#").split("#");
+                String so[] = hmAux.get(WS_SO_Search.SO_PREFIX_CODE).replace(".", "#").split("#");
                 //
                 HMAux hmAuxSO = new HMAux();
                 //
