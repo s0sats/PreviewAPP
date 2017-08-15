@@ -243,7 +243,7 @@ public class Act027_Opc_New extends BaseFragment {
 
                 tv_deadline_value.setText(
                         ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline(), ""),
+                                ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline() != null ? mSm_so.getDeadline() : "" , ""),
                                 ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
                         )
                 );
@@ -286,6 +286,8 @@ public class Act027_Opc_New extends BaseFragment {
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
+
+                changeTabColor();
             }
         }
     }

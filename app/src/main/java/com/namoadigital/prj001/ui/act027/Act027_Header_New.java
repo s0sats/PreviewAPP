@@ -362,7 +362,7 @@ public class Act027_Header_New extends BaseFragment {
                 tv_contract_po_client2.setText(mSm_so.getContract_po_client2());
 
                 tv_quality_approval_user_title.setText(hmAux_Trans.get("quality_approval_user"));
-                tv_quality_approval_user.setText(String.valueOf(mSm_so.getQuality_approval_user()));
+                tv_quality_approval_user.setText(mSm_so.getQuality_approval_user() != null ? String.valueOf(mSm_so.getQuality_approval_user()) : "");
 
                 tv_quality_approval_user_nick_title.setText(hmAux_Trans.get("quality_approval_user_nick"));
                 tv_quality_approval_user_nick.setText(mSm_so.getQuality_approval_user_nick());
@@ -370,7 +370,7 @@ public class Act027_Header_New extends BaseFragment {
                 tv_quality_approval_date_title.setText(hmAux_Trans.get("quality_approval_date"));
                 tv_quality_approval_date.setText(
                         ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so.getQuality_approval_date(), ""),
+                                ToolBox_Inf.dateToMilliseconds(mSm_so.getQuality_approval_date() != null ? mSm_so.getQuality_approval_date() : "", ""),
                                 ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
                         )
                 );
@@ -385,7 +385,7 @@ public class Act027_Header_New extends BaseFragment {
                 tv_client_user.setText(String.valueOf(mSm_so.getClient_user()));
 
                 tv_client_code_title.setText(hmAux_Trans.get("client_code"));
-                tv_client_code.setText(mSm_so.getClient_code());
+                tv_client_code.setText(mSm_so.getClient_code() != null ? String.valueOf(mSm_so.getClient_code()) : "");
 
                 tv_client_id_title.setText(hmAux_Trans.get("client_id"));
                 tv_client_id.setText(mSm_so.getClient_id());
@@ -402,13 +402,13 @@ public class Act027_Header_New extends BaseFragment {
                 tv_client_approval_date_title.setText(hmAux_Trans.get("client_approval_date"));
                 tv_client_approval_date.setText(
                         ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so.getClient_approval_date(), ""),
+                                ToolBox_Inf.dateToMilliseconds(mSm_so.getClient_approval_date() != null ? mSm_so.getClient_approval_date() : "", ""),
                                 ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
                         )
                 );
 
                 tv_client_approval_user_title.setText(hmAux_Trans.get("client_approval_user"));
-                tv_client_approval_user.setText(String.valueOf(mSm_so.getClient_approval_user()));
+                tv_client_approval_user.setText(mSm_so.getClient_approval_user() != null ? String.valueOf(mSm_so.getClient_approval_user()) : "");
 
                 tv_client_approval_user_nick_title.setText(hmAux_Trans.get("client_approval_user_nick"));
                 tv_client_approval_user_nick.setText(mSm_so.getClient_approval_user_nick());

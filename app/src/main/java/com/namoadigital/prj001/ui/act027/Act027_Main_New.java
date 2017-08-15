@@ -266,7 +266,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
         mDrawerToggle.syncState();
 
         // Drawer Opc
-        act027_opc_new = (Act027_Opc_New) fm.findFragmentById(R.id.act027_opc_new);
+        act027_opc_new = (Act027_Opc_New) fm.findFragmentById(R.id.act027_opc);
         // Dialog Acess
         act027_opc_new.setBaInfra(this);
         // Translation Access
@@ -275,6 +275,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
         act027_opc_new.setmSm_so(sm_so);
         //
         act027_opc_new.setOnMenuOptionsSelected(this);
+
         // Services
         act027_services_new = new Act027_Services_New();
         // Dialog Acess
@@ -283,6 +284,8 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
         act027_services_new.setHmAux_Trans(hmAux_Trans);
         // SO Acess
         act027_services_new.setmSm_so(sm_so);
+        //
+        act027_services_new.setOnServiceSelectedListener(this);
 
         // Serial
         act027_serial_new = new Act027_Serial_New();
@@ -317,6 +320,8 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
         } else {
             sm_so = null;
         }
+
+        int i = 10;
     }
 
     private SM_SO loadSM_SO(long customer_code, int so_prefix, int so_code) {
@@ -328,7 +333,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
                 ).toSqlQuery()
         );
 
-        return sm_so;
+        return mSm_so;
     }
 
     private void iniUIFooter() {

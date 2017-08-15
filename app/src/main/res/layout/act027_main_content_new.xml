@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/act027_main_new_ll"
+            android:id="@+id/act027_main_ll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -34,7 +34,7 @@
         android:orientation="vertical">
 
         <fragment
-            android:id="@+id/act027_opc_new"
+            android:id="@+id/act027_opc"
             android:name="com.namoadigital.prj001.ui.act027.Act027_Opc_New"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
