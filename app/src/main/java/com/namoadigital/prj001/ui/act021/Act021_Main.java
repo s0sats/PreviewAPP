@@ -20,7 +20,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
@@ -135,7 +134,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
         //APAGAR
         btn_tst_so = (Button) findViewById(R.id.act021_btn_testeWS);
-        btn_tst_so.setVisibility(View.VISIBLE);
+        btn_tst_so.setVisibility(View.GONE);
         //APAGAR
 
         mPresenter.getPendencies();
@@ -165,7 +164,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_tst_so.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callTestSoSaveMult();
+            //    callTestSoSaveMult();
             }
         });
 
@@ -196,22 +195,22 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         );
 
     }
-
-    private void callTestSoSaveMult() {
-        enableProgressDialog(
-                "Teste Save SO",
-                "Testando Save SO",
-                "Cancel",
-                "OK"
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_SO_Save.class);
-        Bundle bundle = new Bundle();
-
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
+//
+//    private void callTestSoSaveMult() {
+//        enableProgressDialog(
+//                "Teste Save SO",
+//                "Testando Save SO",
+//                "Cancel",
+//                "OK"
+//        );
+//        //
+//        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+//        Bundle bundle = new Bundle();
+//
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//    }
 
     @Override
     public void setPendencies(int qty) {

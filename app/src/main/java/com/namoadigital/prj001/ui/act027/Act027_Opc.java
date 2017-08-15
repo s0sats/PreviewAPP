@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,6 +35,8 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_approval;
 
     private TextView tv_so_label;
+
+    private ImageView iv_so_sync;
 
     private TextView tv_so_id_label;
     private TextView tv_so_id_value;
@@ -66,6 +69,8 @@ public class Act027_Opc extends BaseFragment {
 
     public interface IAct027_Opc {
         void menuOptionsSelected(String type);
+
+        void soSyncClick();
     }
 
     private IAct027_Opc delegate;
@@ -230,6 +235,8 @@ public class Act027_Opc extends BaseFragment {
 
         tv_so_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_ttl);
 
+        iv_so_sync = (ImageView) view.findViewById(R.id.act027_opc_iv_sync_so);
+
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
 
@@ -273,6 +280,15 @@ public class Act027_Opc extends BaseFragment {
         ll_serial.setOnClickListener(menuOnClickListener);
         ll_header.setOnClickListener(menuOnClickListener);
         ll_approval.setOnClickListener(menuOnClickListener);
+        //
+        iv_so_sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate != null) {
+                    delegate.soSyncClick();
+                }
+            }
+        });
     }
 
     private View.OnClickListener menuOnClickListener = new View.OnClickListener() {
