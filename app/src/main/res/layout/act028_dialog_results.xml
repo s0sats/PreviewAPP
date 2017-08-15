@@ -34,10 +34,13 @@
 
     <Button
         android:id="@+id/act028_dialog_btn_ok"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/btn_width_default"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Ok" />
+        android:background="@drawable/btn_namoa_main_states"
+        android:textColor="@color/padrao_WHITE"
+        android:text="Ok"
+        />
 
 
 </LinearLayout>

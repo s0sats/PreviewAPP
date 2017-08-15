@@ -14,7 +14,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -174,7 +173,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
         lv_so.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SM_SO so = (SM_SO) parent.getItemAtPosition(position);
+                HMAux so = (HMAux) parent.getItemAtPosition(position);
                 //
                 mPresenter.defineForwardFlow(so);
 
@@ -185,7 +184,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
     }
 
     @Override
-    public void loadSOList(List<SM_SO> soList) {
+    public void loadSOList(List<HMAux> soList) {
         //
         mAdapter = new SO_Header_Adapter(
                 context,

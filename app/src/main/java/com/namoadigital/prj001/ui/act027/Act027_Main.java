@@ -247,6 +247,10 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_so_sync_param_error_msg");
         transList.add("progress_so_save_ttl");
         transList.add("progress_so_save_msg");
+        transList.add("alert_so_list_title");
+        transList.add("msg_so_save_ok");
+        transList.add("msg_starting_sync");
+        transList.add("alert_results_ttl");
 
         sm_soDao = new SM_SODao(
                 context,

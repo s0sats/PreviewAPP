@@ -38,7 +38,7 @@ public class Act028_Results_Adapter extends BaseAdapter {
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 Constant.APP_MODULE,
-                "act028_task_adapter"
+                "act028_results_adapter"
         );
 
         loadTranslation();
@@ -99,7 +99,7 @@ public class Act028_Results_Adapter extends BaseAdapter {
     private void loadTranslation() {
 
         List<String> translateList = new ArrayList<>();
-        translateList.add("task_tmp_lbl");
+        translateList.add("adapter_so_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

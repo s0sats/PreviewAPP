@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
@@ -39,7 +37,7 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
 
     @Override
     public void getSoHeaderList(String so_list) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
+      /*  Gson gson = new GsonBuilder().serializeNulls().create();
         //
         ArrayList<SM_SO> sos = gson.fromJson(
                 so_list,
@@ -59,7 +57,7 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
             //
             mView.loadSoHeaders(sos);
         }
-
+*/
 
     }
 
@@ -76,17 +74,17 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
     }
 
     @Override
-    public void downloadMultSo(ArrayList<SM_SO> download_list) {
+    public void downloadMultSo(ArrayList<HMAux> download_list) {
         String product_code = "";
         String serial_id = "";
         String so_list = "";
         if (download_list.size() > 0) {
             //Seta params usados na chamada do WS
-            product_code = String.valueOf(download_list.get(0).getProduct_code());
-            serial_id = download_list.get(0).getSerial_id();
+            product_code = download_list.get(0).get(SM_SODao.PRODUCT_CODE);
+            serial_id = download_list.get(0).get(SM_SODao.SERIAL_ID);
             //gera lista de SO no formato esperado pelo server.
-            for (SM_SO so : download_list) {
-                so_list += "|" + so.getSo_prefix() + "." + so.getSo_code();
+            for (HMAux so : download_list) {
+                so_list += "|" + so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE);
             }
             //Elimina primeiro pipe
             so_list = so_list.substring(1, so_list.length());

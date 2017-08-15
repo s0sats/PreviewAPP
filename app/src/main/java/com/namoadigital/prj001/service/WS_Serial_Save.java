@@ -250,7 +250,7 @@ public class WS_Serial_Save extends IntentService {
             if (serial_return.get(i).getCustomer_code() == customer_code
                     && serial_return.get(i).getProduct_code() == product_code
                     && (serial_return.get(i).getSerial_code() == serial_code
-                    || (serial_code == 0 && serial_return.get(i).getSerial_id().equals(serial_id))
+                    || (serial_code == 0 && serial_return.get(i).getSerial_id().equalsIgnoreCase(serial_id))
             )
                     ) {
                 serialSaveReturn = serial_return.get(i);

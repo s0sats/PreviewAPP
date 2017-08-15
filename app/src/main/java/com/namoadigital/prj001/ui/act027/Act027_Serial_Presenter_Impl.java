@@ -150,7 +150,7 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
                 returnList.add(aux);
                 //
                 if (product_code.equals(pk[0])
-                        && serial_id.equals(pk[1])
+                        && serial_id.equalsIgnoreCase(pk[1])
                         ) {
 
                     if (status.equals("OK")) {

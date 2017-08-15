@@ -193,7 +193,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     }
 
     @Override
-    public void loadSoHeaders(ArrayList<SM_SO> so_list) {
+    public void loadSoHeaders(ArrayList<HMAux> so_list) {
         mAdapter = new SO_Header_Adapter(
                 context,
                 R.layout.act024_content_cell,
@@ -205,8 +205,8 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
         //
         mAdapter.setOnDownloadBtnClicked(new SO_Header_Adapter.ISO_Header_Adapter() {
             @Override
-            public void downloadBtnClicked(SM_SO so) {
-                ArrayList<SM_SO> so_list = new ArrayList<SM_SO>();
+            public void downloadBtnClicked(HMAux so) {
+                ArrayList<HMAux> so_list = new ArrayList<HMAux>();
                 //
                 so_list.add(so);
                 //
@@ -232,7 +232,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
 
     }
 
-    private DialogInterface.OnClickListener getClickListner(final ArrayList<SM_SO> so_list) {
+    private DialogInterface.OnClickListener getClickListner(final ArrayList<HMAux> so_list) {
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -246,7 +246,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
     }
 
     private void multDownloadConfirm() {
-        ArrayList<SM_SO> soToDownload = null;
+        ArrayList<HMAux> soToDownload = null;
         if (mAdapter != null) {
             soToDownload = mAdapter.getSoToDownload();
         }
@@ -303,19 +303,19 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
             //Dispara serviço de downloads
             mPresenter.startDownloadServices();
             //
-            if (hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")) {
-                String so[] = hmAux.get(WS_SO_Search.SO_PREFIX_CODE).replace(".", "#").split("#");
-                //
-                HMAux hmAuxSO = new HMAux();
-                //
-                hmAuxSO.put(SM_SODao.SO_PREFIX, so[0]);
-                hmAuxSO.put(SM_SODao.SO_CODE, so[1]);
-                //
-                callAct027(context, hmAuxSO);
-
-            } else {
-                callAct026(context);
-            }
+//            if (hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")) {
+//                String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".", "#").split("#");
+//                //
+//                HMAux hmAuxSO = new HMAux();
+//                //
+//                hmAuxSO.put(SM_SODao.SO_PREFIX, so[0]);
+//                hmAuxSO.put(SM_SODao.SO_CODE, so[1]);
+//                //
+//                callAct027(context, hmAuxSO);
+//
+//            } else {
+//                callAct026(context);
+//            }
 
         }
         //

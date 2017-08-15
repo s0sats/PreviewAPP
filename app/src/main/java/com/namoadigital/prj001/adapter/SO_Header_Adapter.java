@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -31,14 +31,15 @@ public class SO_Header_Adapter extends BaseAdapter {
     //
     private Context context;
     private int resource;
-    private List<SM_SO> source;
+    //private List<SM_SO> source;
+    private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private String config_type;
     private boolean[] checkedStatus;
     private ISO_Header_Adapter delegate;
 
-    public SO_Header_Adapter(Context context, int resource, List<SM_SO> source,String config_type) {
+    public SO_Header_Adapter(Context context, int resource, List<HMAux> source,String config_type) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -56,7 +57,7 @@ public class SO_Header_Adapter extends BaseAdapter {
     }
 
     public interface ISO_Header_Adapter{
-        void downloadBtnClicked(SM_SO so);
+        void downloadBtnClicked(HMAux so);
 
         void refreshSelectedQty(int qty_selected);
     }
@@ -90,7 +91,7 @@ public class SO_Header_Adapter extends BaseAdapter {
             convertView = mInflater.inflate(resource, parent, false);
         }
         //Resgata item do list view.
-        SM_SO so = source.get(position);
+        HMAux so = source.get(position);
         //
         TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_so_ttl);
         //SO Prefix.SO_code
@@ -134,41 +135,41 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
         //
-        tv_so_code.setText(hmAux_Trans.get("so_code_lbl") + ": " + so.getSo_prefix() + "." + so.getSo_code());
+        tv_so_code.setText(hmAux_Trans.get("so_code_lbl") + ": " + so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
         //
-        tv_so_id.setText(hmAux_Trans.get("so_id_lbl") + ": " + so.getSo_id());
+        tv_so_id.setText(hmAux_Trans.get("so_id_lbl") + ": " + so.get(SM_SODao.SO_ID));
         //
-        tv_so_desc.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so.getSo_desc());
+        tv_so_desc.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so.get(SM_SODao.SO_DESC));
         //
-        tv_priority.setText(hmAux_Trans.get("priority_lbl") + ": " + so.getPriority_desc());
+        tv_priority.setText(hmAux_Trans.get("priority_lbl") + ": " + so.get(SM_SODao.PRIORITY_DESC));
         //
-        tv_status.setText(hmAux_Trans.get("status_lbl") + ": " + so.getStatus());
+        tv_status.setText(hmAux_Trans.get("status_lbl") + ": " + so.get(SM_SODao.STATUS));
         //
-        if(so.getDeadline() != null && so.getDeadline().length() > 0){
+        if(so.get(SM_SODao.DEADLINE) != null && so.get(SM_SODao.DEADLINE).length() > 0){
             tv_deadline.setVisibility(View.VISIBLE);
-            tv_deadline.setText(hmAux_Trans.get("deadline_lbl") + ": " + so.getDeadline());
+            tv_deadline.setText(hmAux_Trans.get("deadline_lbl") + ": " + so.get(SM_SODao.DEADLINE));
         }else{
             tv_deadline.setVisibility(View.GONE);
             tv_deadline.setText("");
         }
         //
-        tv_site.setText(hmAux_Trans.get("site_lbl") + ": " + so.getSite_id() + " - " + so.getSite_desc());
+        tv_site.setText(hmAux_Trans.get("site_lbl") + ": " +so.get(SM_SODao.SITE_ID) + " - " + so.get(SM_SODao.SITE_DESC));
         //
-        tv_operation.setText(hmAux_Trans.get("operation_lbl") + ": " + so.getOperation_id() + " - " + so.getOperation_desc());
+        tv_operation.setText(hmAux_Trans.get("operation_lbl") + ": " + so.get(SM_SODao.OPERATION_ID) + " - " + so.get(SM_SODao.OPERATION_DESC));
         //
-        tv_contract.setText(hmAux_Trans.get("contract_lbl") + ": " + so.getContract_code() + " - " + so.getContract_desc());
+        tv_contract.setText(hmAux_Trans.get("contract_lbl") + ": " + so.get(SM_SODao.CONTRACT_CODE)+ " - " + so.get(SM_SODao.CONTRACT_DESC));
         //
-        tv_client.setText(hmAux_Trans.get("client_lbl") + ": " + so.getClient_name());
+        tv_client.setText(hmAux_Trans.get("client_lbl") + ": " + so.get(SM_SODao.CLIENT_NAME));
         //
         tv_serial_ttl.setText(hmAux_Trans.get("serial_main_title"));
         //
-        tv_product.setText(hmAux_Trans.get("product_lbl") + ": " + so.getProduct_id() + " - " + so.getProduct_desc());
+        tv_product.setText(hmAux_Trans.get("product_lbl") + ": " + so.get(SM_SODao.PRODUCT_ID) + " - " + so.get(SM_SODao.PRODUCT_DESC));
         //
-        tv_serial.setText(hmAux_Trans.get("serial_lbl") + ": " + so.getSerial_id());
+        tv_serial.setText(hmAux_Trans.get("serial_lbl") + ": " + so.get(SM_SODao.SERIAL_ID));
         //
-        tv_segment.setText(hmAux_Trans.get("segment_lbl") + ": " + so.getSegment_id() + " - " + so.getSegment_desc());
+        tv_segment.setText(hmAux_Trans.get("segment_lbl") + ": " + so.get(SM_SODao.SEGMENT_ID) + " - " + so.get(SM_SODao.SEGMENT_DESC));
         //
-        tv_category_price.setText(hmAux_Trans.get("category_price_lbl") + ": " + so.getCategory_price_id() + " - " + so.getCategory_price_desc());
+        tv_category_price.setText(hmAux_Trans.get("category_price_lbl") + ": " + so.get(SM_SODao.CATEGORY_PRICE_ID) + " - " + so.get(SM_SODao.CATEGORY_PRICE_DESC));
         //
         //Checkbox
         chk_download.setTag(position);
@@ -194,7 +195,7 @@ public class SO_Header_Adapter extends BaseAdapter {
         */
         if(config_type.equals(CONFIG_TYPE_DOWNLOAD)) {
             //Se status da OS for edit ou stop, não exibe opções de download.
-            if (so.getStatus().equals(Constant.SO_STATUS_EDIT) || so.getStatus().equals(Constant.SO_STATUS_STOP)) {
+            if (so.get(SM_SODao.STATUS).equals(Constant.SO_STATUS_EDIT) || so.get(SM_SODao.STATUS).equals(Constant.SO_STATUS_STOP)) {
                 ll_download_optc.setVisibility(View.GONE);
             } else {
                 ll_download_optc.setVisibility(View.VISIBLE);
@@ -204,8 +205,8 @@ public class SO_Header_Adapter extends BaseAdapter {
         return convertView;
     }
 
-    public ArrayList<SM_SO> getSoToDownload() {
-        ArrayList<SM_SO> downloadList = new ArrayList<>();
+    public ArrayList<HMAux> getSoToDownload() {
+        ArrayList<HMAux> downloadList = new ArrayList<>();
         //
         for (int i = 0; i < checkedStatus.length; i++) {
             if (checkedStatus[i]) {

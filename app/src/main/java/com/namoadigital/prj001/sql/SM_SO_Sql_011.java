@@ -1,0 +1,47 @@
+package com.namoadigital.prj001.sql;
+
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
+
+import java.util.Arrays;
+
+/**
+ * Created by d.luche on 21/06/2017.
+ */
+
+public class SM_SO_Sql_011 implements Specification {
+
+    private long customer_code;
+    private String product_code;
+    private String serial_id;
+    private String filter = " ";
+    private String fields = Arrays.toString(SM_SODao.columns).replace("[","").replace("]","").replace(",","#").replace(" ","");
+
+    public SM_SO_Sql_011(long customer_code, String product_code, String serial_id) {
+        this.customer_code = customer_code;
+        this.product_code = product_code;
+        this.serial_id = serial_id;
+        if(product_code != null && serial_id != null){
+            filter += " AND s.product_code = '"+product_code+"' \n"+
+                      " AND s.serial_id = '"+serial_id+"' \n";
+        }
+    }
+
+    @Override
+    public String toSqlQuery() {
+        StringBuilder sb = new StringBuilder();
+
+        return sb
+                .append(" SELECT\n" +
+                        "      S.*\n" +
+                        " FROM\n" +
+                        SM_SODao.TABLE + " S\n" +
+                        " WHERE\n" +
+                        "    S.customer_code =  '" + customer_code + "'\n" +
+                            filter +
+                        "    AND s.status not in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"');")
+                .append(fields)
+                .toString();
+    }
+}

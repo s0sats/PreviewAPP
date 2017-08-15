@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -150,6 +151,13 @@ public class WS_SO_Search extends IntentService {
 
     private void callFinishProcessing(HMAux hmAux) {
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_so_download"), hmAux, "", "0");
+        //
+        startDownloadServices();
+    }
+
+    private void startDownloadServices() {
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        getApplicationContext().sendBroadcast(mIntentPIC);
     }
 
     private void loadTranslation() {
