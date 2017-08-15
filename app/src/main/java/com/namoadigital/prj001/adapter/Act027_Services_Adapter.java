@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.sql.Act027_Services_Adapter_Sql_001;
+import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -49,6 +51,16 @@ public class Act027_Services_Adapter extends BaseAdapter {
         loadTranslation();
     }
 
+    public interface IAct027_Services_Adapter {
+        void serviceSelected(HMAux item, String selection_type);
+    }
+
+    private IAct027_Services_Adapter delegate;
+
+    public void setOnServiceSelectedListener(IAct027_Services_Adapter delegate) {
+        this.delegate = delegate;
+    }
+
     @Override
     public int getCount() {
         return source.size();
@@ -77,6 +89,9 @@ public class Act027_Services_Adapter extends BaseAdapter {
         LinearLayout ll_bg = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
 
         TextView tv_service_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_ttl);
+
+        Button btn_ex = (Button) convertView.findViewById(R.id.act027_services_content_cell_btn_ex);
+        Button btn_no = (Button) convertView.findViewById(R.id.act027_services_content_cell_btn_no);
 
         ImageView iv_flag = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_flag);
 
@@ -129,7 +144,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         * Modificações dluche
         * Add Flag em serviço que ja possui execução.
         * */
-        switch (item.get(SM_SO_ServiceDao.STATUS)){
+        switch (item.get(SM_SO_ServiceDao.STATUS)) {
             case Constant.SO_STATUS_PENDING:
                 tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
@@ -144,29 +159,53 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 break;
         }
         //
+        btn_ex.setTag(item);
+        btn_ex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HMAux item = (HMAux) v.getTag();
+                //
+                if (delegate != null) {
+                    delegate.serviceSelected(item, Act027_Main_New.SELECTION_EXPRESS);
+                }
+            }
+        });
+        //
+        btn_no.setTag(item);
+        btn_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HMAux item = (HMAux) v.getTag();
+                //
+                if (delegate != null) {
+                    delegate.serviceSelected(item, Act027_Main_New.SELECTION_NORMAL);
+                }
+            }
+        });
+        //
         SM_SO_Service_ExecDao execDao =
                 new SM_SO_Service_ExecDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 );
-        String setFlag =  execDao.getByStringHM(
-                            new Act027_Services_Adapter_Sql_001(
-                                item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
-                                item.get(SM_SO_ServiceDao.SO_PREFIX),
-                                item.get(SM_SO_ServiceDao.SO_CODE),
-                                item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
-                                item.get(SM_SO_ServiceDao.PACK_CODE),
-                                item.get(SM_SO_ServiceDao.PACK_SEQ),
-                                item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
-                                item.get(SM_SO_ServiceDao.SERVICE_CODE),
-                                item.get(SM_SO_ServiceDao.SERVICE_SEQ)
+        String setFlag = execDao.getByStringHM(
+                new Act027_Services_Adapter_Sql_001(
+                        item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
+                        item.get(SM_SO_ServiceDao.SO_PREFIX),
+                        item.get(SM_SO_ServiceDao.SO_CODE),
+                        item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
+                        item.get(SM_SO_ServiceDao.PACK_CODE),
+                        item.get(SM_SO_ServiceDao.PACK_SEQ),
+                        item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
+                        item.get(SM_SO_ServiceDao.SERVICE_CODE),
+                        item.get(SM_SO_ServiceDao.SERVICE_SEQ)
 
-                            ).toSqlQuery()
-                        ).get(Act027_Services_Adapter_Sql_001.SET_FLAG);
-        if(setFlag != null && !setFlag.equals("0")){
+                ).toSqlQuery()
+        ).get(Act027_Services_Adapter_Sql_001.SET_FLAG);
+        if (setFlag != null && !setFlag.equals("0")) {
             iv_flag.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             iv_flag.setVisibility(View.GONE);
         }
 
