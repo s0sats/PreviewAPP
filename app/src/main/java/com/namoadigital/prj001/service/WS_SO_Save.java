@@ -249,12 +249,16 @@ public class WS_SO_Save extends IntentService {
         //Gera extrato baseada no serve e seta update_required nas S.Os com erro.
         //Monta HMaux ja inserindo as S.O e setando full_refresh como 0
         for (SO_Save_Return so_ret : ret.getSo_return()) {
-            String so_pk = so_ret.getCustomer_code() + "." + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
+            String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
             //
             hmAuxRet.put(so_pk,"0");
             //
             so_list_ret += Constant.MAIN_CONCAT_STRING + so_pk
                          + Constant.MAIN_CONCAT_STRING_2 + so_ret.getRet_status();
+            //
+            if(!so_ret.getRet_status().equalsIgnoreCase("OK")){
+                so_list_ret +=  ":\n" + so_ret.getRet_msg() ;
+            }
             //
             if (!so_ret.getRet_status().toUpperCase().equals("OK")) {
                 soDao.addUpdate(
@@ -277,7 +281,7 @@ public class WS_SO_Save extends IntentService {
                 if (ret.getSo() != null) {
                     for (SM_SO so : ret.getSo()) {
                         //Se S.O Full, atualiza hmAux de full_refresh
-                        hmAuxRet.put(so.getCustomer_code()+"."+so.getSo_prefix()+"."+so.getSo_code(),"1");
+                        hmAuxRet.put(so.getSo_prefix()+"."+so.getSo_code(),"1");
                         //
                         so.setPK();
                         //Apaga So do Banco
@@ -331,7 +335,7 @@ public class WS_SO_Save extends IntentService {
 
                 for (SM_SO so : ret.getSo()) {
                     //Se S.O Full, atualiza hmAux de full_refresh
-                    hmAuxRet.put(so.getCustomer_code()+"."+so.getSo_prefix()+"."+so.getSo_code(),"1");
+                    hmAuxRet.put(so.getSo_prefix()+"."+so.getSo_code(),"1");
                     so.setPK();
                     //Apaga So do Banco
                     soDao.removeFull(so);
@@ -398,7 +402,7 @@ public class WS_SO_Save extends IntentService {
                     SO_Save_Return soReturn = getSoReturn(so_save_returns, task.getCustomer_code(), task.getSo_prefix(), task.getSo_code());
                     int update_required = 0;
                     //
-                    if (soReturn != null) {
+                    if (soReturn != null && soReturn.getRet_status().equalsIgnoreCase("OK")) {
                         SM_SO_Service_Exec exec = new SM_SO_Service_Exec();
                         exec.setCustomer_code(task.getCustomer_code());
                         exec.setSo_prefix(task.getSo_prefix());
@@ -499,7 +503,7 @@ public class WS_SO_Save extends IntentService {
                     SO_Save_Return soReturn = getSoReturn(so_save_returns, taskFile.getCustomer_code(), taskFile.getSo_prefix(), taskFile.getSo_code());
                     int update_required = 0;
                     //
-                    if (soReturn != null) {
+                    if (soReturn != null && soReturn.getRet_status().equalsIgnoreCase("OK")) {
                         SM_SO_Service_Exec_Task_File auxFile =
                                 taskFileDao.getByString(
                                         new SM_SO_Service_Exec_Task_File_Sql_006(
