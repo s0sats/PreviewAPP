@@ -392,7 +392,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
         String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
-        String so_current_reload = hmAux.get(mData.get("customer_code") + "." + mData.get("so_prefix") + "." + mData.get("so_code"));
+        String so_current_reload = hmAux.get(mData.get("so_prefix") + "." + mData.get("so_code"));
 
 
         if (so != null) {
