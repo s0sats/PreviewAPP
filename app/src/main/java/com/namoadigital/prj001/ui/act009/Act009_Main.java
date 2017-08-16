@@ -106,8 +106,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
-            back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW,false);
+            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+            back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
         } else {
 //
 //
@@ -135,9 +135,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
+        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
+        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
+        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
         mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
         mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
         mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
@@ -161,7 +161,6 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
             }
         });
-
     }
 
     private void addFormTypeInfoToBundle(HMAux item) {
@@ -179,7 +178,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public void loadForm_Types(List<HMAux> form_types) {
 
-        if(form_types.size() > 0) {
+        if (form_types.size() > 0) {
             //
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
@@ -196,13 +195,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             //
             lv_form_types.setAdapter(mAdapter);
 
-        }else{
+        } else {
             //Se lista vazia exibe alert e volta pra tela anterior
             List<String> transList = new ArrayList<>();
             transList.add("alert_ttl_no_form_found");
             transList.add("alert_msg_no_form_found");
 
-            HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code, transList);
+            HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code, transList);
             ToolBox.alertMSG(
                     Act009_Main.this,
                     alertTrans.get("alert_ttl_no_form_found"),

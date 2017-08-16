@@ -312,7 +312,6 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             }
 
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -320,7 +319,6 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
         }
 
         closeDB();
-
 
         return so;
     }
