@@ -2128,4 +2128,12 @@ public class ToolBox_Inf {
         return false;
     }
 
+    public static String getColumnsToHmAux(String[] columns){
+        if(columns.length > 0){
+            return Arrays.toString(columns).replace("[","").replace("]","").replace(",","#").replace(" ","");
+        }else{
+            return "";
+        }
+    }
+
 }

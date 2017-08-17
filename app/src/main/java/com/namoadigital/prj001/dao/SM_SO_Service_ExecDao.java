@@ -44,6 +44,11 @@ public class SM_SO_Service_ExecDao extends BaseDao implements DaoTmp<SM_SO_Servi
     public static final String PARTNER_ID = "partner_id";
     public static final String PARTNER_DESC = "partner_desc";
 
+    public static final String[] columns = {
+            CUSTOMER_CODE,SO_PREFIX,SO_CODE,PRICE_LIST_CODE,PACK_CODE,PACK_SEQ,CATEGORY_PRICE_CODE,SERVICE_CODE,SERVICE_SEQ,
+            EXEC_CODE,EXEC_TMP,STATUS,PARTNER_CODE,PARTNER_ID,PARTNER_DESC
+    };
+
     public SM_SO_Service_ExecDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 

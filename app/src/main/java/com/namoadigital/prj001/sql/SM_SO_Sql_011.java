@@ -3,8 +3,7 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
-
-import java.util.Arrays;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by d.luche on 21/06/2017.
@@ -16,7 +15,7 @@ public class SM_SO_Sql_011 implements Specification {
     private String product_code;
     private String serial_id;
     private String filter = " ";
-    private String fields = Arrays.toString(SM_SODao.columns).replace("[","").replace("]","").replace(",","#").replace(" ","");
+    private String fields = ToolBox_Inf.getColumnsToHmAux(SM_SODao.columns);
 
     public SM_SO_Sql_011(long customer_code, String product_code, String serial_id) {
         this.customer_code = customer_code;
