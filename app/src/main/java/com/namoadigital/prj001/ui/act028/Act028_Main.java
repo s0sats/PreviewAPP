@@ -33,7 +33,6 @@ import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
-import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -88,6 +87,37 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         initVars();
         iniUIFooter();
         initActions();
+    }
+
+    public void setDrawerState(boolean isEnabled) {
+        if (isEnabled) {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            mDrawerLayout.openDrawer(GravityCompat.START);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+
+            mDrawerStatus = true;
+
+            mDrawerToggle.syncState();
+
+        } else {
+
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+
+            mDrawerStatus = false;
+
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+
+            mDrawerToggle.syncState();
+        }
     }
 
     private void iniSetup() {
@@ -199,7 +229,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         act028_task.setOnExec_List_Opc_Update(this);
         act028_task.setHmAux_Trans(hmAux_Trans);
 
-        mDrawerLayout.openDrawer(GravityCompat.START);
+        //mDrawerLayout.openDrawer(GravityCompat.START);
 
         controls_frags.add(act028_task);
 
@@ -430,7 +460,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                             public void onClick(DialogInterface dialog, int which) {
                                 bundle.remove("data");
                                 //
-                                Intent mIntent = new Intent(context, Act027_Main.class);
+                                Intent mIntent = new Intent(context, Act027_Main_New.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtras(bundle);
                                 //
@@ -509,7 +539,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
 
                                     bundle.remove("data");
                                     //
-                                    Intent mIntent = new Intent(context, Act027_Main.class);
+                                    Intent mIntent = new Intent(context, Act027_Main_New.class);
                                     mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     mIntent.putExtras(bundle);
                                     //
@@ -615,9 +645,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
             public void onDismiss(DialogInterface dialog) {
 
                 if (partnerAux.size() == 0) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-
-                    mDrawerToggle.syncState();
+                    // Hugo
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
+//
+//                    mDrawerToggle.syncState();
                 }
 
             }
@@ -634,9 +665,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                 partnerAux.putAll(hmAux);
 
                 if (partnerAux.size() == 0) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-
-                    mDrawerToggle.syncState();
+                    // Hugo
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
+//
+//                    mDrawerToggle.syncState();
                 } else {
 
                 }

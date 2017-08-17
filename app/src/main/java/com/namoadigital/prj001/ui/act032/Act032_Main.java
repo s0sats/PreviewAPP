@@ -28,7 +28,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Serial_Save;
-import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -44,6 +44,10 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
  */
 
 public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_View {
+
+    public static final String WS_PROCESS_SERIAL = "WS_PROCESS_SERIAL";
+    public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
+    public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
 
     private Bundle bundle;
 
@@ -518,7 +522,7 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
     public void callAct027(Context context) {
         bundle.remove("data");
         //
-        Intent mIntent = new Intent(context, Act027_Main.class);
+        Intent mIntent = new Intent(context, Act027_Main_New.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         //
@@ -541,7 +545,7 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
                         public void onClick(DialogInterface dialog, int which) {
                             bundle.remove("data");
                             //
-                            Intent mIntent = new Intent(context, Act027_Main.class);
+                            Intent mIntent = new Intent(context, Act027_Main_New.class);
                             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mIntent.putExtras(bundle);
                             //

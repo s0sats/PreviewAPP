@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * Created by neomatrix on 03/07/17.
+ * Created by neomatrix on 17/08/17.
  */
 
-public interface Act027_Main_View {
+public interface Act027_Main_View_New {
 
     void callAct028(Context context, Bundle bundle);
 

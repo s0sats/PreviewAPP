@@ -34,6 +34,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
@@ -44,15 +45,14 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_SAVE;
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_SYNC;
-
+import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SAVE;
+import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SYNC;
 
 /**
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_View, Act027_Opc_New.IAct027_Opc, Act027_Services_New.IAct027_Services {
+public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_View_New, Act027_Opc_New.IAct027_Opc, Act027_Services_New.IAct027_Services {
 
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
@@ -727,27 +727,27 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
 
     @Override
     public void soSyncClick() {
-//        ToolBox.alertMSG(
-//                context,
-//                hmAux_Trans.get("alert_so_sync_ttl"),
-//                hmAux_Trans.get("alert_so_sync_msg"),
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //Seta S.O como update required.
-//                        sm_soDao.addUpdate(
-//                                new SM_SO_Sql_009(
-//                                        ToolBox_Con.getPreference_Customer_Code(context),
-//                                        mSm_so.getSo_prefix(),
-//                                        mSm_so.getSo_code()
-//                                ).toSqlQuery()
-//                        );
-//                        //
-//                        executeSoSave();
-//                    }
-//                },
-//                1
-//        );
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_so_sync_ttl"),
+                hmAux_Trans.get("alert_so_sync_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Seta S.O como update required.
+                        sm_soDao.addUpdate(
+                                new SM_SO_Sql_009(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        mSm_so.getSo_prefix(),
+                                        mSm_so.getSo_code()
+                                ).toSqlQuery()
+                        );
+                        //
+                        executeSoSave();
+                    }
+                },
+                1
+        );
 
         refreshUI();
     }

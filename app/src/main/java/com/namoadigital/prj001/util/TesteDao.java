@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class TesteDao {
     }
 
     public static void callAct027(Activity act, Context context, HMAux so) {
-        Intent mIntent = new Intent(context, Act027_Main.class);
+        Intent mIntent = new Intent(context, Act027_Main_New.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(SM_SODao.SO_PREFIX, so.get(SM_SODao.SO_PREFIX));

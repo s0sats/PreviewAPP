@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -99,34 +98,6 @@ public class Act027_Services_New extends BaseFragment {
     }
 
     private void iniAction() {
-
-
-        lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                HMAux sData = (HMAux) parent.getItemAtPosition(position);
-
-                HMAux sService = sm_so_serviceDao.getByStringHM(
-                        new SM_SO_Service_Sql_004(
-                                Long.parseLong(sData.get("customer_code")),
-                                Integer.parseInt(sData.get("so_prefix")),
-                                Integer.parseInt(sData.get("so_code")),
-                                Integer.parseInt(sData.get("price_list_code")),
-                                Integer.parseInt(sData.get("pack_code")),
-                                Integer.parseInt(sData.get("pack_seq")),
-                                Integer.parseInt(sData.get("category_price_code")),
-                                Integer.parseInt(sData.get("service_code")),
-                                Integer.parseInt(sData.get("service_seq"))
-                        ).toSqlQuery()
-                );
-
-                if (delegate != null) {
-                    delegate.onServiceSelected(sService);
-                }
-
-            }
-        });
     }
 
     public void loadDataToScreen() {
@@ -175,8 +146,6 @@ public class Act027_Services_New extends BaseFragment {
                             default:
                                 break;
                         }
-
-
                     }
                 });
 
@@ -186,9 +155,8 @@ public class Act027_Services_New extends BaseFragment {
     }
 
     public void loadScreenToData() {
-        if (bStatus) {
-
-        }
+//        if (bStatus) {
+//        }
     }
 
     private void serviceExpress(HMAux item) {

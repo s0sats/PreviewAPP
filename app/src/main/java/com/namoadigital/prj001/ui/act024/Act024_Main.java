@@ -22,7 +22,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
-import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -363,7 +363,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
 
     @Override
     public void callAct027(Context context, HMAux so) {
-        Intent mIntent = new Intent(context, Act027_Main.class);
+        Intent mIntent = new Intent(context, Act027_Main_New.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(SM_SODao.SO_PREFIX, so.get(SM_SODao.SO_PREFIX));

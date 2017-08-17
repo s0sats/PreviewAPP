@@ -134,7 +134,7 @@ public class Act027_Serial_New extends BaseFragment implements Act027_Serial_Vie
 
         bStatus = true;
 
-        View view = inflater.inflate(R.layout.act027_serial_content_new, container, false);
+        View view = inflater.inflate(R.layout.act027_serial_content, container, false);
         //
         iniVar(view);
         iniAction();
