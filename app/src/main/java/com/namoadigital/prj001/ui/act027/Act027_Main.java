@@ -564,11 +564,11 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     }
 
     private void refreshUI() {
-        finish();
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
+        finish();
     }
 
     @Override
