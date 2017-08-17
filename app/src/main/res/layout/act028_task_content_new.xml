@@ -36,12 +36,12 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_task_list_content_tv_exec_tmp_value"
+                    android:id="@+id/act028_task_list_content_tv_exec_task_tmp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="101" />
+                    android:text="101 / 201" />
 
             </LinearLayout>
 
@@ -61,14 +61,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="PROCESSING"
+                    android:text="DONE"
                     android:textStyle="bold"/>
 
             </LinearLayout>
 
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/act028_opc_content_cell_ll_exec"
+            android:id="@+id/act028_opc_content_cell_ll_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -76,46 +76,20 @@
             android:layout_marginLeft="15dp">
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_exec_lbl"
+                android:id="@+id/act028_opc_content_cell_tv_task_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Exec_Code"
+                android:text="Task_Code"
                 android:textSize="@dimen/font_size_item_md"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_exec_val"
+                android:id="@+id/act028_opc_content_cell_tv_task_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="1" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act028_opc_content_cell_ll_partner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_marginLeft="15dp">
-
-            <TextView
-                android:id="@+id/act028_opc_content_cell_tv_partner_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Partner"
-                android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/act028_opc_content_cell_tv_partner_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Partner_id - Partner Desc" />
 
         </LinearLayout>
 
@@ -146,7 +120,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -154,14 +127,17 @@
         android:layout_marginTop="10dp"
         android:background="@color/namoa_color_light_blue3" />
 
-    <ListView
-        android:id="@+id/act028_task_list_content_lv_tasks"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <com.namoa_digital.namoa_library.ctls.TaskControl
+            android:id="@+id/act028_task_content_tc_task_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    </ListView>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -169,14 +145,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/act028_task_list_content_btn_new_task"
+            android:id="@+id/act028_task_content_btn_cancel_task"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:background="@drawable/btn_namoa_main_states"
-            android:textColor="@color/padrao_WHITE"
             android:layout_weight="1"
-            android:text="New Task" />
+            android:background="@drawable/btn_namoa_main_states"
+            android:text="Cancel Task"
+            android:textColor="@color/padrao_WHITE" />
 
     </LinearLayout>
 

@@ -32,6 +32,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
+import com.namoadigital.prj001.sql.Sql_Act028_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -471,8 +472,25 @@ public class Act028_Opc extends BaseFragment {
             lv_execs.setAdapter(
                     new Act028_Exec_Adapter(
                             getActivity(),
-                            R.layout.act028_opc_content_cell_01,
-                            sm_so_service.getExec()
+                            R.layout.act028_opc_content_cell_02,
+                            //sm_so_service.getExec()
+                            new SM_SO_Service_ExecDao(
+                                    context,
+                                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    Constant.DB_VERSION_CUSTOM
+                            ).query_HM(
+                                    new Sql_Act028_001(
+                                            sm_so_service.getCustomer_code(),
+                                            sm_so_service.getSo_prefix(),
+                                            sm_so_service.getSo_code(),
+                                            sm_so_service.getPrice_list_code(),
+                                            sm_so_service.getPack_code(),
+                                            sm_so_service.getPack_seq(),
+                                            sm_so_service.getCategory_price_code(),
+                                            sm_so_service.getService_code(),
+                                            sm_so_service.getService_seq()
+                                    ).toSqlQuery()
+                            )
                     )
 
             );
