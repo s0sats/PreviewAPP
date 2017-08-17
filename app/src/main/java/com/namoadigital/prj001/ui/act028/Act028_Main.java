@@ -34,6 +34,7 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -370,7 +371,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
                             public void onClick(DialogInterface dialog, int which) {
                                 bundle.remove("data");
                                 //
-                                Intent mIntent = new Intent(context, Act027_Main.class);
+                                Intent mIntent = new Intent(context, Act027_Main_New.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtras(bundle);
                                 //

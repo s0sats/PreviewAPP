@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.namoadigital.prj001.adapter.Act027_Services_Adapter;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -99,32 +101,32 @@ public class Act027_Services_New extends BaseFragment {
     private void iniAction() {
 
 
-//        lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                HMAux sData = (HMAux) parent.getItemAtPosition(position);
-//
-//                HMAux sService = sm_so_serviceDao.getByStringHM(
-//                        new SM_SO_Service_Sql_004(
-//                                Long.parseLong(sData.get("customer_code")),
-//                                Integer.parseInt(sData.get("so_prefix")),
-//                                Integer.parseInt(sData.get("so_code")),
-//                                Integer.parseInt(sData.get("price_list_code")),
-//                                Integer.parseInt(sData.get("pack_code")),
-//                                Integer.parseInt(sData.get("pack_seq")),
-//                                Integer.parseInt(sData.get("category_price_code")),
-//                                Integer.parseInt(sData.get("service_code")),
-//                                Integer.parseInt(sData.get("service_seq"))
-//                        ).toSqlQuery()
-//                );
-//
-//                if (delegate != null) {
-//                    delegate.onItemClickListener(sService);
-//                }
-//
-//            }
-//        });
+        lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                HMAux sData = (HMAux) parent.getItemAtPosition(position);
+
+                HMAux sService = sm_so_serviceDao.getByStringHM(
+                        new SM_SO_Service_Sql_004(
+                                Long.parseLong(sData.get("customer_code")),
+                                Integer.parseInt(sData.get("so_prefix")),
+                                Integer.parseInt(sData.get("so_code")),
+                                Integer.parseInt(sData.get("price_list_code")),
+                                Integer.parseInt(sData.get("pack_code")),
+                                Integer.parseInt(sData.get("pack_seq")),
+                                Integer.parseInt(sData.get("category_price_code")),
+                                Integer.parseInt(sData.get("service_code")),
+                                Integer.parseInt(sData.get("service_seq"))
+                        ).toSqlQuery()
+                );
+
+                if (delegate != null) {
+                    delegate.onServiceSelected(sService);
+                }
+
+            }
+        });
     }
 
     public void loadDataToScreen() {
@@ -145,15 +147,29 @@ public class Act027_Services_New extends BaseFragment {
 
                 adp.setOnServiceSelectedListener(new Act027_Services_Adapter.IAct027_Services_Adapter() {
                     @Override
-                    public void serviceSelected(HMAux item, String selection_type) {
+                    public void serviceSelected(HMAux sData, String selection_type) {
+
+                        HMAux sService = sm_so_serviceDao.getByStringHM(
+                                new SM_SO_Service_Sql_004(
+                                        Long.parseLong(sData.get("customer_code")),
+                                        Integer.parseInt(sData.get("so_prefix")),
+                                        Integer.parseInt(sData.get("so_code")),
+                                        Integer.parseInt(sData.get("price_list_code")),
+                                        Integer.parseInt(sData.get("pack_code")),
+                                        Integer.parseInt(sData.get("pack_seq")),
+                                        Integer.parseInt(sData.get("category_price_code")),
+                                        Integer.parseInt(sData.get("service_code")),
+                                        Integer.parseInt(sData.get("service_seq"))
+                                ).toSqlQuery()
+                        );
 
                         switch (selection_type) {
                             case Act027_Main_New.SELECTION_EXPRESS:
-                                serviceExpress(item);
+                                serviceExpress(sData);
                                 break;
                             case Act027_Main_New.SELECTION_NORMAL:
                                 if (delegate != null) {
-                                    delegate.onServiceSelected(item);
+                                    delegate.onServiceSelected(sService);
                                 }
                                 break;
                             default:

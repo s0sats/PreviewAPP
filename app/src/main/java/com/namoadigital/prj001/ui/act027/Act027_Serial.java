@@ -347,7 +347,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
 
     private void iniAction() {
-        // Hugo
         mPresenter.getProductInfo();
         //
         ss_brand.setmEnabled(false);
@@ -434,7 +433,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     private void layoutConfiguration() {
         btn_action.setOnClickListener(listnerSaveSerial);
         btn_action.setText(hmAux_Trans.get("btn_serial_save"));
-
     }
 
     @Override

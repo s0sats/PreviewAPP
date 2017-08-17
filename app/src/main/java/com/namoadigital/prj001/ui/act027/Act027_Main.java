@@ -395,6 +395,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         mVersion_Value = Constant.PRJ001_VERSION;
     }
 
+
+
     private void initActions() {
     }
 
