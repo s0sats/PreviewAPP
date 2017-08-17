@@ -216,6 +216,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
     @Override
     public void callAct027(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act027_Main_New.class);
+        //Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

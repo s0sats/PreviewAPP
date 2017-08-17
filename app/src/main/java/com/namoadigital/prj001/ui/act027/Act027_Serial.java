@@ -60,6 +60,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     private Context context;
 
     public Act027_Serial_Presenter mPresenter;
+
     private Bundle bundle;
     public String requesting_process = "";
     private ScrollView sv_serial;
@@ -526,11 +527,6 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     }
 
     @Override
-    public void fieldFocus() {
-        mket_serial_id.requestFocus();
-    }
-
-    @Override
     public void showPD(String title, String msg) {
         if (baInfra != null) {
             baInfra.enableProgressDialog(
@@ -786,7 +782,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 mket_serial_id.getText().toString().trim());
     }
 
-    public void callProcessSerialSaveResult(String product_code, String serial_id, HMAux hmSaveResult){
+    public void callProcessSerialSaveResult(String product_code, String serial_id, HMAux hmSaveResult) {
         mPresenter.processSerialSaveResult(product_code, serial_id, hmSaveResult);
     }
 
@@ -823,9 +819,9 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         tv_title.setVisibility(View.GONE);
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
-        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_1,hmAux_Trans.get("dialog_result_product_lbl"));
-        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_2,hmAux_Trans.get("dialog_result_serial_lbl"));
-        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_3,hmAux_Trans.get("dialog_result_msg_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_1, hmAux_Trans.get("dialog_result_product_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_2, hmAux_Trans.get("dialog_result_serial_lbl"));
+        hmAux_Trans.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("dialog_result_msg_lbl"));
         //
         lv_results.setAdapter(
                 new Generic_Results_Adapter(

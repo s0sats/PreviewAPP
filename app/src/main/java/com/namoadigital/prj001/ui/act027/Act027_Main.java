@@ -450,6 +450,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 //
                 executeSoSync(mSO_PREFIX,mSO_CODE);
             }else{
+                progressDialog.dismiss();
+
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_so_list_title"),
@@ -510,6 +512,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             }
         });
     }
+
     private void processSoDownloadResult(HMAux so_download_result) {
         if (so_download_result.containsKey(WS_SO_Search.SO_PREFIX_CODE) && so_download_result.containsKey(WS_SO_Search.SO_LIST_QTY)) {
             if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 0) {

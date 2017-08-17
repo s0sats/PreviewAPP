@@ -69,7 +69,6 @@ public class Act027_Opc extends BaseFragment {
 
     public interface IAct027_Opc {
         void menuOptionsSelected(String type);
-
         void soSyncClick();
     }
 

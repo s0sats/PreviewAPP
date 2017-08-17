@@ -15,8 +15,6 @@ public interface Act027_Serial_View {
 
     void setSerialValues(HMAux md_product_serial);
 
-    void fieldFocus();
-
     void showPD(String title, String msg);
 
     void showAlertDialog(String title, String msg);

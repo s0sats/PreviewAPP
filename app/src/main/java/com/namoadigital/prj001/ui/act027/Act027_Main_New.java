@@ -485,6 +485,15 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
     }
 
     @Override
+    public void soSyncClick() {
+        Toast.makeText(
+                context,
+                "soSyncClick",
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    @Override
     public void onServiceSelected(HMAux sService) {
 //        bundle.putSerializable("data", sService);
 //        callAct028(context, bundle);
