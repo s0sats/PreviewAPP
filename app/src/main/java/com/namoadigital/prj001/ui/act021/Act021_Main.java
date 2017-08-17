@@ -302,7 +302,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }
@@ -310,7 +310,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     @Override
     public void callAct022(Context context) {
         Intent mIntent = new Intent(context, Act022_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = getIntent().getExtras();
         if(bundle == null){
             bundle = new Bundle();
@@ -324,7 +324,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     @Override
     public void callAct025(Context context) {
         Intent mIntent = new Intent(context, Act025_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = getIntent().getExtras();
         if(bundle == null){
             bundle = new Bundle();
@@ -338,7 +338,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     @Override
     public void callAct026(Context context) {
         Intent mIntent = new Intent(context, Act026_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT021);
         mIntent.putExtras(bundle);

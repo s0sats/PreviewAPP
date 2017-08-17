@@ -683,7 +683,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void callAct021(Context context) {
         Intent mIntent = new Intent(context, Act021_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }
@@ -691,7 +691,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     @Override
     public void callAct030(Context context) {
         Intent mIntent = new Intent(context, Act030_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }
