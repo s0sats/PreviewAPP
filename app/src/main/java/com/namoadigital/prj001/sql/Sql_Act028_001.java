@@ -7,6 +7,8 @@ import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import static android.icu.text.MessagePattern.ArgType.SELECT;
+
 /**
  * Created by d.luche on 25/05/2017.
  *
@@ -19,6 +21,7 @@ public class Sql_Act028_001 implements Specification {
     public static final String SUM_EXEC_TIME = "SUM_EXEC_TIME";
     public static final String QTY_COMMENT = "QTY_COMMENT";
     public static final String QTY_FILES = "QTY_FILES";
+    public static final String MY_TASK = "MY_TASK";
 
     private long customer_code;
     private int so_prefix;
@@ -29,9 +32,10 @@ public class Sql_Act028_001 implements Specification {
     private int category_price_code;
     private int service_code;
     private int service_seq;
+    private String user_code;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(SM_SO_Service_ExecDao.columns);
 
-    public Sql_Act028_001(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq) {
+    public Sql_Act028_001(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, String user_code) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
@@ -41,6 +45,7 @@ public class Sql_Act028_001 implements Specification {
         this.category_price_code = category_price_code;
         this.service_code = service_code;
         this.service_seq = service_seq;
+        this.user_code = user_code;
     }
 
     @Override
@@ -57,7 +62,8 @@ public class Sql_Act028_001 implements Specification {
                         "             MAX(IFNULL(X.TASK_PERC,0)) "+TASK_PERC+",\n" +
                         "             MAX(IFNULL(T.SUM_EXEC_TIME,0)) "+SUM_EXEC_TIME+",\n" +
                         "             MAX(IFNULL(T.QTY_COMMENT,0)) "+QTY_COMMENT+",\n" +
-                        "             MAX(IFNULL(T.QTY_FILES,0)) "+QTY_FILES+"\n" +
+                        "             MAX(IFNULL(T.QTY_FILES,0)) "+QTY_FILES+"\n," +
+                        "             MAX(IFNULL(T.MY_TASK,0)) "+MY_TASK+"\n" +
                         "      FROM (SELECT T.EXEC_CODE,\n" +
                         "                   MAX((CASE WHEN T.STATUS IN ('DONE','NOT_EXECUTED') THEN T.TASK_SEQ_OPER ELSE NULL END)) MAX_TASK_SEQ_OPER,\n" +
                         "                   SUM((CASE WHEN T.STATUS IN ('DONE','NOT_EXECUTED') THEN T.EXEC_TIME ELSE 0 END)) SUM_EXEC_TIME,\n" +
@@ -74,7 +80,21 @@ public class Sql_Act028_001 implements Specification {
                         "                              AND F.SERVICE_CODE = T.SERVICE_CODE\n" +
                         "                              AND F.SERVICE_SEQ = T.SERVICE_SEQ\n" +
                         "                              AND F.EXEC_CODE = T.EXEC_CODE\n" +
-                        "                              AND F.TASK_CODE = T.TASK_CODE)) QTY_FILES\n" +
+                        "                              AND F.TASK_CODE = T.TASK_CODE)) QTY_FILES," +
+                        "                       (SELECT COUNT(1)" +
+                        "                        FROM "+ SM_SO_Service_Exec_TaskDao.TABLE+" TT\n" +
+                        "                        WHERE TT.CUSTOMER_CODE = T.CUSTOMER_CODE\n" +
+                        "                              AND TT.SO_PREFIX = T.SO_PREFIX\n" +
+                        "                              AND TT.SO_CODE = T.SO_CODE\n" +
+                        "                              AND TT.PRICE_LIST_CODE = T.PRICE_LIST_CODE\n" +
+                        "                              AND TT.PACK_CODE = T.PACK_CODE\n" +
+                        "                              AND TT.PACK_SEQ = T.PACK_SEQ\n" +
+                        "                              AND TT.CATEGORY_PRICE_CODE = T.CATEGORY_PRICE_CODE\n" +
+                        "                              AND TT.SERVICE_CODE = T.SERVICE_CODE\n" +
+                        "                              AND TT.SERVICE_SEQ = T.SERVICE_SEQ\n" +
+                        "                              AND TT.EXEC_CODE = T.EXEC_CODE\n" +
+                        "                              AND TT.TASK_CODE = T.TASK_CODE\n" +
+                        "                              AND TT.TASK_USER = '"+user_code+"') MY_TASK\n"+
                         "            FROM "+ SM_SO_Service_Exec_TaskDao.TABLE+" T\n" +
                         "            WHERE T.CUSTOMER_CODE = '"+customer_code+"'\n" +
                         "                  AND T.SO_PREFIX = '"+so_prefix+"'\n" +
@@ -113,7 +133,7 @@ public class Sql_Act028_001 implements Specification {
                         "        AND E.CATEGORY_PRICE_CODE = '"+category_price_code+"'\n" +
                         "        AND E.SERVICE_CODE = '"+service_code+"'\n" +
                         "        AND E.SERVICE_SEQ = '"+service_seq+"'\n;")
-                .append(HmAuxFields+"#"+TASK_PERC+"#"+SUM_EXEC_TIME+"#"+QTY_COMMENT+"#"+QTY_FILES)
+                .append(HmAuxFields+"#"+TASK_PERC+"#"+SUM_EXEC_TIME+"#"+QTY_COMMENT+"#"+QTY_FILES+"#"+MY_TASK)
                 .toString();
     }
 }

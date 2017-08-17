@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.sql.Sql_Act028_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -96,10 +97,43 @@ public class Act028_Exec_Adapter extends BaseAdapter {
         //tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
         tv_exec_tmp_val.setText(String.valueOf(item.get(SM_SO_Service_ExecDao.EXEC_TMP)));
         tv_exec_status.setText(item.get(SM_SO_Service_ExecDao.STATUS));
+        //
+        if(item.get(Sql_Act028_001.MY_TASK) != null
+                && !item.get(Sql_Act028_001.MY_TASK).equals("0")
+                && !item.get(Sql_Act028_001.MY_TASK).equals("")
+
+                ){
+            iv_usr.setVisibility(View.VISIBLE);
+        }else {
+            iv_usr.setVisibility(View.GONE);
+        }
+        //
+        if(item.get(Sql_Act028_001.TASK_PERC) != null){
+            iv_percent.setVisibility(View.VISIBLE);
+            tv_percent_val.setText(item.get(Sql_Act028_001.TASK_PERC) + " %");
+        }else{
+            iv_percent.setVisibility(View.INVISIBLE);
+            tv_percent_val.setText("");
+        }
+        //
+        if(item.get(Sql_Act028_001.SUM_EXEC_TIME) != null){
+            iv_sum_time.setVisibility(View.VISIBLE);
+            tv_sum_time_val.setText(item.get(Sql_Act028_001.SUM_EXEC_TIME));
+        }else{
+            iv_sum_time.setVisibility(View.INVISIBLE);
+            tv_sum_time_val.setText("");
+        }
+
+        /*if(item.get(Sql_Act028_001.SUM_EXEC_TIME) != null ){
+
+        }*/
+
+        tv_comment_val.setText(item.get(Sql_Act028_001.QTY_COMMENT));
+        tv_gallery_val.setText(item.get(Sql_Act028_001.QTY_FILES));
+
         /*
         * Tratativa de cor por Status
         * */
-
         switch (item.get(SM_SO_Service_ExecDao.STATUS)){
             case Constant.SO_STATUS_PENDING :
                 tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
@@ -118,6 +152,8 @@ public class Act028_Exec_Adapter extends BaseAdapter {
                 break;
             case Constant.SO_STATUS_INCONSISTENT :
                 tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                ll_line2.setVisibility(View.GONE);
+                ll_line3.setVisibility(View.GONE);
                 break;
             default:
                 break;

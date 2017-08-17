@@ -28,6 +28,7 @@ import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
@@ -157,8 +158,25 @@ public class Act028_Opc extends BaseFragment {
         lv_execs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SM_SO_Service_Exec sm_so_service_exec = (SM_SO_Service_Exec) parent.getItemAtPosition(position);
+                //SM_SO_Service_Exec sm_so_service_exec = (SM_SO_Service_Exec) parent.getItemAtPosition(position);
+                HMAux hmAuxExec = (HMAux) parent.getItemAtPosition(position);
+                //Seleciona dados completos da exec selecionada
+                SM_SO_Service_Exec sm_so_service_exec = sm_so_service_execDao.getByString(
+                        new SM_SO_Service_Exec_Sql_001(
+                                Long.parseLong(hmAuxExec.get(SM_SO_Service_ExecDao.CUSTOMER_CODE)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SO_PREFIX)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SO_CODE)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.PRICE_LIST_CODE)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.PACK_CODE)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.PACK_SEQ)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.CATEGORY_PRICE_CODE)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SERVICE_CODE)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SERVICE_SEQ)),
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.EXEC_CODE))
 
+                        ).toSqlQuery()
+                );
+                //
                 if (sm_so_service_exec.getPartner_code() == null) {
 
                     if (data.get("full_status").equalsIgnoreCase("1")) {
@@ -488,7 +506,8 @@ public class Act028_Opc extends BaseFragment {
                                             sm_so_service.getPack_seq(),
                                             sm_so_service.getCategory_price_code(),
                                             sm_so_service.getService_code(),
-                                            sm_so_service.getService_seq()
+                                            sm_so_service.getService_seq(),
+                                            ToolBox_Con.getPreference_User_Code(context)
                                     ).toSqlQuery()
                             )
                     )

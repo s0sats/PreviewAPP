@@ -140,16 +140,16 @@ public class Act028_Task_List extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        tv_exec_tmp_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_label);
+        //tv_exec_tmp_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_label);
         tv_exec_tmp_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_value);
 
-        tv_exec_type_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_label);
-        tv_exec_type_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_value);
-
-        tv_partner_id_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_label);
-        tv_partner_id_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_value);
-
-        tv_partner_desc_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_desc_value);
+//        tv_exec_type_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_label);
+//        tv_exec_type_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_value);
+//
+//        tv_partner_id_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_label);
+//        tv_partner_id_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_value);
+//
+//        tv_partner_desc_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_desc_value);
 
         lv_tasks = (ListView) view.findViewById(R.id.act028_task_list_content_lv_tasks);
         btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_btn_new_task);
