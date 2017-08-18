@@ -151,7 +151,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         if (item.get(Sql_Act027_001.SET_FLAG) != null && !item.get(Sql_Act027_001.SET_FLAG).equals("0")) {
             iv_flag.setVisibility(View.VISIBLE);
         } else {
-            iv_flag.setVisibility(View.GONE);
+            iv_flag.setVisibility(View.INVISIBLE);
         }
         //
         if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
