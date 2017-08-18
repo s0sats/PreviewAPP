@@ -46,7 +46,7 @@ import java.util.List;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View, Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
+public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
 
     private Context context;
 
@@ -603,7 +603,6 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         finish();
     }
 
-    @Override
     public void showPartnerOptDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Act028_Main.this);
 
