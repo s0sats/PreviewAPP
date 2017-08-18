@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
 import com.namoadigital.prj001.sql.Sql_Act028_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +77,38 @@ public class Act028_Opc extends BaseFragment {
     private TextView tv_qty_label;
     private TextView tv_qty_value;
 
+    //new
+
+
+    private TextView tv_service_lbl;
+    private TextView tv_service_val;
+
+    private TextView tv_pack_lbl;
+    private TextView tv_pack_val;
+
+    private TextView tv_zone_lbl;
+    private TextView tv_zone_val;
+
+    private LinearLayout ll_comment;
+    private TextView tv_comment_lbl;
+    private TextView tv_comment_val;
+
+    private LinearLayout ll_partner;
+    private TextView tv_partner_lbl;
+    private TextView tv_partner_val;
+
+    private TextView tv_exec_type_lbl;
+    private TextView tv_exec_type_val;
+
+    private TextView tv_status;
+
+    private TextView tv_qty_total_lbl;
+    private TextView tv_qty_total_val;
+
+    private TextView tv_optional_lbl;
+    private TextView tv_optional_val;
+
+
     private Button btn_new_exec;
 
 
@@ -98,7 +132,7 @@ public class Act028_Opc extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.act028_opc_content, container, false);
+        View view = inflater.inflate(R.layout.act028_opc_content_new, container, false);
         //
         iniVar(view);
         iniAction();
@@ -130,7 +164,7 @@ public class Act028_Opc extends BaseFragment {
 
         lv_execs = (ListView) view.findViewById(R.id.act028_opc_content_lv_execs);
 
-        tv_service_id_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_service_id_label);
+        /*tv_service_id_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_service_id_label);
         tv_service_id_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_service_id_value);
 
         tv_service_desc_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_desc_label);
@@ -146,7 +180,36 @@ public class Act028_Opc extends BaseFragment {
         tv_partiner_restriction_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_partner_restriction_desc_value);
 
         tv_qty_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_qty_label);
-        tv_qty_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_qty_value);
+        tv_qty_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_qty_value);*/
+
+        tv_service_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_service_lbl);
+        tv_service_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_service_val);
+
+        tv_pack_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_pack_lbl);
+        tv_pack_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_pack_val);
+
+        tv_zone_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_zone_lbl);
+        tv_zone_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_zone_val);
+
+        ll_comment = (LinearLayout) view.findViewById(R.id.act028_opc_content_cell_ll_comment);
+        tv_comment_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_comment_lbl);
+        tv_comment_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_comment_val);
+
+        ll_partner = (LinearLayout) view.findViewById(R.id.act028_opc_content_cell_ll_partner);
+        tv_partner_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_partner_lbl);
+        tv_partner_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_partner_val);
+
+        tv_exec_type_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_type_exec_lbl);
+        tv_exec_type_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_type_exec_val);
+
+        tv_status = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_status);
+
+        tv_qty_total_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_qty_lbl);
+        tv_qty_total_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_qty_val);
+
+        tv_optional_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_lbl);
+        tv_optional_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_val);
+
 
         btn_new_exec = (Button) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
 
@@ -426,7 +489,7 @@ public class Act028_Opc extends BaseFragment {
                     ).toSqlQuery()
             );
 
-            tv_service_id_label.setText("Service ID");
+            /*tv_service_id_label.setText("Service ID");
             tv_service_id_value.setText(sm_so_service.getService_id());
 
             tv_service_desc_label.setText("Service Description");
@@ -442,9 +505,44 @@ public class Act028_Opc extends BaseFragment {
             tv_partiner_restriction_value.setText(data.get("partner_id") + " / " + data.get("partner_desc"));
 
             tv_qty_label.setText("Quantity");
-            tv_qty_value.setText(String.valueOf(sm_so_service.getQty()));
+            tv_qty_value.setText(String.valueOf(sm_so_service.getQty()));*/
 
-            if (data.get("pack_id").equals("")) {
+            tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+            tv_service_val.setText(sm_so_service.getService_id() +" - "+ sm_so_service.getService_desc() );
+
+            tv_pack_lbl.setText(hmAux_Trans.get("pack_lbl"));
+            tv_pack_val.setText(data.get("pack_id") +" - "+ data.get("pack_desc"));
+
+            tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
+            tv_zone_val.setText(data.get("zone_id") +" - "+ data.get("zone_desc"));
+
+            ll_comment.setVisibility(sm_so_service.getComments() != null && sm_so_service.getComments().length() > 0 ? View.VISIBLE : View.GONE);
+            tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
+            tv_comment_val.setText(sm_so_service.getComments());
+
+            ll_partner.setVisibility(sm_so_service.getPartner_code() != null ? View.VISIBLE : View.GONE);
+            tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
+            tv_partner_val.setText(sm_so_service.getPartner_id() +" - "+ sm_so_service.getPartner_desc());
+
+            tv_exec_type_lbl.setText(hmAux_Trans.get("exec_type_lbl"));
+            tv_exec_type_val.setText(hmAux_Trans.get(sm_so_service.getExec_type()));
+
+            tv_status.setText(hmAux_Trans.get(sm_so_service.getStatus()).toUpperCase());
+            ToolBox_Inf.setServiceStatusColor(context,tv_status,sm_so_service.getStatus());
+
+            tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
+            tv_qty_total_val.setText("calc done / " +sm_so_service.getQty());
+
+            /*if(sm_so_service.getOptional() == 1) {
+                tv_optional_lbl.setText(hmAux_Trans.get("optional_lbl"));
+                tv_optional_lbl.setVisibility(View.VISIBLE);
+            }else{
+                tv_optional_lbl.setText("");
+                tv_optional_lbl.setVisibility(View.GONE);
+            }*/
+            //tv_optional_val.setText(sm_so_service.getOptional());
+
+            /*if (data.get("pack_id").equals("")) {
                 tv_pack_id_label.setVisibility(View.GONE);
                 tv_pack_id_value.setVisibility(View.GONE);
 
@@ -456,15 +554,15 @@ public class Act028_Opc extends BaseFragment {
 
                 tv_pack_desc_label.setVisibility(View.VISIBLE);
                 tv_pack_desc_value.setVisibility(View.VISIBLE);
-            }
+            }*/
 
-            if (data.get("partner_restriction").equals("0")) {
+            /*if (data.get("partner_restriction").equals("0")) {
                 tv_partiner_restriction_label.setVisibility(View.GONE);
                 tv_partiner_restriction_value.setVisibility(View.GONE);
             } else {
                 tv_partiner_restriction_label.setVisibility(View.VISIBLE);
                 tv_partiner_restriction_value.setVisibility(View.VISIBLE);
-            }
+            }*/
 
             int qty = 0;
 

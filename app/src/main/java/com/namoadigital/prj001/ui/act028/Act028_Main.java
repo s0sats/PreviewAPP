@@ -159,6 +159,12 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         transList.add("exec_code_lbl");
         transList.add("partner_lbl");
         transList.add("service_lbl");
+        transList.add("pack_lbl");
+        transList.add("zone_lbl");
+        transList.add("comment_lbl");
+        transList.add("exec_type_lbl");
+        transList.add("qty_total_lbl");
+        transList.add("optional_lbl");
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(

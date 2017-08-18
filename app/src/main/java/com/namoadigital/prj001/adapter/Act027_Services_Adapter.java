@@ -137,14 +137,17 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         service_desc_value.setText(item.get(SM_SO_ServiceDao.SERVICE_DESC));
 
-        tv_status_value.setText(item.get(SM_SO_ServiceDao.STATUS));
+        tv_status_value.setText(hmAux_Trans.get(item.get(SM_SO_ServiceDao.STATUS)).toUpperCase());
+        //chama metodo que define a cor do status
+        ToolBox_Inf.setServiceStatusColor(context, tv_status_value, item.get(SM_SO_ServiceDao.STATUS) );
+
         tv_qty_value.setText(item.get(SM_SO_ServiceDao.QTY));
 
         /*
         * Modificações dluche
         * Add Flag em serviço que ja possui execução.
         * */
-        switch (item.get(SM_SO_ServiceDao.STATUS)) {
+       /* switch (item.get(SM_SO_ServiceDao.STATUS)) {
             case Constant.SO_STATUS_PENDING:
                 tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
@@ -157,7 +160,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
             default:
                 tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-        }
+        }*/
         //
         btn_ex.setTag(item);
         btn_ex.setOnClickListener(new View.OnClickListener() {
