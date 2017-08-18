@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -109,7 +109,8 @@ public class Act028_Opc extends BaseFragment {
     private TextView tv_optional_val;
 
 
-    private Button btn_new_exec;
+    private ImageView btn_new_exec;
+    private ImageView btn_not_exec;
 
 
     public interface IAct028_Opc {
@@ -210,8 +211,9 @@ public class Act028_Opc extends BaseFragment {
         tv_optional_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_lbl);
         tv_optional_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_val);
 
+        btn_new_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
 
-        btn_new_exec = (Button) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
+        btn_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
 
         setHMAuxScreen();
     }
@@ -533,13 +535,14 @@ public class Act028_Opc extends BaseFragment {
             tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
             tv_qty_total_val.setText("calc done / " +sm_so_service.getQty());
 
-            /*if(sm_so_service.getOptional() == 1) {
-                tv_optional_lbl.setText(hmAux_Trans.get("optional_lbl"));
-                tv_optional_lbl.setVisibility(View.VISIBLE);
+            tv_optional_lbl.setText(hmAux_Trans.get("optional_lbl"));
+            tv_optional_val.setText(sm_so_service.getOptional() == 1 ? hmAux_Trans.get("YES") : hmAux_Trans.get("NO") );
+
+            if(sm_so_service.getOptional() == 1) {
+                btn_not_exec.setVisibility(View.VISIBLE);
             }else{
-                tv_optional_lbl.setText("");
-                tv_optional_lbl.setVisibility(View.GONE);
-            }*/
+                btn_not_exec.setVisibility(View.GONE);
+            }
             //tv_optional_val.setText(sm_so_service.getOptional());
 
             /*if (data.get("pack_id").equals("")) {
@@ -583,7 +586,7 @@ public class Act028_Opc extends BaseFragment {
                     btn_new_exec.setVisibility(View.VISIBLE);
                 }
             }
-            btn_new_exec.setText(hmAux_Trans.get("btn_new_exec"));
+            //btn_new_exec.setText(hmAux_Trans.get("btn_new_exec"));
 
             lv_execs.setAdapter(
                     new Act028_Exec_Adapter(

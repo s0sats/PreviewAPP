@@ -96,7 +96,7 @@ public class Act028_Exec_Adapter extends BaseAdapter {
 
         //tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
         tv_exec_tmp_val.setText(String.valueOf(item.get(SM_SO_Service_ExecDao.EXEC_TMP)));
-        tv_exec_status.setText(hmAux_Trans.get(item.get(SM_SO_Service_ExecDao.STATUS)).toUpperCase());
+        tv_exec_status.setText(hmAux_Trans.get(item.get(SM_SO_Service_ExecDao.STATUS)));
         ToolBox_Inf.setExecStatusColor(context,tv_exec_status,item.get(SM_SO_Service_ExecDao.STATUS));
         //
         if(item.get(SM_SO_Service_ExecDao.STATUS).equals(Constant.SO_STATUS_INCONSISTENT)){

@@ -58,6 +58,12 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
     public static final String REQUIRE_APPROVAL = "require_approval";
     public static final String COMMENTS = "comments";
 
+    public static final String[] columns = {
+            CUSTOMER_CODE,SO_PREFIX,SO_CODE,PRICE_LIST_CODE,PACK_CODE,PACK_SEQ,CATEGORY_PRICE_CODE,SERVICE_CODE,SERVICE_SEQ,
+            SERVICE_ID,SERVICE_DESC,SERVICE_OPER_ID,STATUS,QTY,OPTIONAL,MANUAL_PRICE,EXPRESS,TIME_EXEC_STANDARD,PRICE,COST,
+            EXEC_TYPE,EXEC_SEQ_OPER,APPROVAL_BUDGET_USER,APPROVAL_BUDGET_USER_NICK,APPROVAL_BUDGET_DATE,PARTNER_CODE,
+            PARTNER_ID,PARTNER_DESC,REQUIRE_APPROVAL,COMMENTS
+    };
 
     public SM_SO_ServiceDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
