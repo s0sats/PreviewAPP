@@ -155,6 +155,11 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Main_View,
         transList.add("alert_exec_blocked_title");
         transList.add("alert_exec_blocked_msg");
         transList.add("alert_results_ttl");
+        //
+        transList.add("exec_code_lbl");
+        transList.add("partner_lbl");
+        transList.add("service_lbl");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

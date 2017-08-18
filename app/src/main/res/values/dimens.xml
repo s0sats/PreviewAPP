@@ -6,6 +6,7 @@
 
     <dimen name="font_size_title">15sp</dimen>
     <dimen name="font_size_item">12sp</dimen>
+    <dimen name="font_size_sub_item">10sp</dimen>
 
     <dimen name="font_size_title_md">18sp</dimen>
     <dimen name="font_size_item_md">16sp</dimen>

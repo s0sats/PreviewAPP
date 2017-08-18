@@ -76,7 +76,7 @@
             android:layout_marginLeft="15dp">
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_exec_lbl"
+                android:id="@+id/act028_task_list_content_tv_exec_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Exec_Code"
@@ -84,7 +84,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_exec_val"
+                android:id="@+id/act028_task_list_content_tv_exec_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -94,7 +94,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/act028_opc_content_cell_ll_partner"
+            android:id="@+id/act028_task_list_content_ll_partner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -102,7 +102,7 @@
             android:layout_marginLeft="15dp">
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_partner_lbl"
+                android:id="@+id/act028_task_list_content_tv_partner_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Partner"
@@ -110,7 +110,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_partner_val"
+                android:id="@+id/act028_task_list_content_tv_partner_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -120,7 +120,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/act028_opc_content_cell_ll_service"
+            android:id="@+id/act028_task_list_content_ll_service"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -128,7 +128,7 @@
             android:layout_marginLeft="15dp">
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_service_lbl"
+                android:id="@+id/act028_task_list_content_tv_service_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Service"
@@ -136,7 +136,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_service_val"
+                android:id="@+id/act028_task_list_content_tv_service_val"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

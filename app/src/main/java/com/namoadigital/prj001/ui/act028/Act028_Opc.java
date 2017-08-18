@@ -490,7 +490,7 @@ public class Act028_Opc extends BaseFragment {
             lv_execs.setAdapter(
                     new Act028_Exec_Adapter(
                             getActivity(),
-                            R.layout.act028_opc_content_cell_02,
+                            R.layout.act028_opc_content_cell_03,
                             //sm_so_service.getExec()
                             new SM_SO_Service_ExecDao(
                                     context,

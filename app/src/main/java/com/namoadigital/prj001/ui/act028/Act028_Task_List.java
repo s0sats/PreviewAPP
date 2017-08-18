@@ -45,16 +45,14 @@ public class Act028_Task_List extends BaseFragment {
 
     private Context context;
 
-    private transient TextView tv_exec_tmp_label;
     private transient TextView tv_exec_tmp_value;
-
-    private transient TextView tv_exec_type_label;
-    private transient TextView tv_exec_type_value;
-
-    private transient TextView tv_partner_id_label;
-    private transient TextView tv_partner_id_value;
-
-    private transient TextView tv_partner_desc_value;
+    private transient TextView tv_exec_status;
+    private transient TextView tv_exec_code_lbl;
+    private transient TextView tv_exec_code_val;
+    private transient TextView tv_partner_lbl;
+    private transient TextView tv_partner_val;
+    private transient TextView tv_service_lbl;
+    private transient TextView tv_service_val;
 
     private transient ListView lv_tasks;
     private transient Button btn_new_task;
@@ -142,14 +140,17 @@ public class Act028_Task_List extends BaseFragment {
 
         //tv_exec_tmp_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_label);
         tv_exec_tmp_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_tmp_value);
+        //
+        tv_exec_status = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_status);
 
-//        tv_exec_type_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_label);
-//        tv_exec_type_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_type_value);
-//
-//        tv_partner_id_label = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_label);
-//        tv_partner_id_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_id_value);
-//
-//        tv_partner_desc_value = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_desc_value);
+        tv_exec_code_lbl =  (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_lbl);
+        tv_exec_code_val = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_val);
+
+        tv_partner_lbl = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_lbl);
+        tv_partner_val = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_val);
+
+        tv_service_lbl = (TextView) view.findViewById(R.id.act028_task_list_content_tv_service_lbl);
+        tv_service_val = (TextView) view.findViewById(R.id.act028_task_list_content_tv_service_val);
 
         lv_tasks = (ListView) view.findViewById(R.id.act028_task_list_content_lv_tasks);
         btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_btn_new_task);
@@ -175,15 +176,18 @@ public class Act028_Task_List extends BaseFragment {
                     ).toSqlQuery()
             );
 
-            tv_exec_tmp_label.setText("Exec TMP");
             tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
+            tv_exec_status.setText(sm_so_service_exec.getStatus());
+            setExecStatusColor(tv_exec_status,sm_so_service_exec.getStatus());
 
-            tv_exec_type_label.setText("Exec Type");
-            tv_exec_type_value.setText(sm_so_service.getExec_type());
+            tv_exec_code_lbl.setText(hmAux_Trans.get("exec_code_lbl"));
+            tv_exec_code_val.setText(String.valueOf(sm_so_service_exec.getExec_code()));
 
-            tv_partner_id_label.setText("Partner ID");
-            tv_partner_id_value.setText(sm_so_service_exec.getPartner_id());
-            tv_partner_desc_value.setText(sm_so_service_exec.getPartner_desc());
+            tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
+            tv_partner_val.setText(sm_so_service_exec.getPartner_id() +" - "+ sm_so_service_exec.getPartner_desc());
+
+            tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+            tv_service_val.setText(sm_so_service.getService_id() +" - "+ sm_so_service.getService_desc());
 
             btn_new_task.setText(hmAux_Trans.get("btn_new_task"));
 
@@ -471,4 +475,35 @@ public class Act028_Task_List extends BaseFragment {
 
         return aux;
     }
+
+    private void setExecStatusColor(TextView tv_status, String status){
+                /*
+        * Tratativa de cor por Status
+        * */
+        switch (status){
+            case Constant.SO_STATUS_PENDING :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_NOT_EXECUTED :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+                break;
+            case Constant.SO_STATUS_INCONSISTENT :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
+
+
+    }
+
 }

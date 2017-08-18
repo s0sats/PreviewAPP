@@ -110,7 +110,7 @@ public class Act028_Exec_Adapter extends BaseAdapter {
         //
         if(item.get(Sql_Act028_001.TASK_PERC) != null){
             iv_percent.setVisibility(View.VISIBLE);
-            tv_percent_val.setText(item.get(Sql_Act028_001.TASK_PERC) + " %");
+            tv_percent_val.setText(item.get(Sql_Act028_001.TASK_PERC) + "%");
         }else{
             iv_percent.setVisibility(View.INVISIBLE);
             tv_percent_val.setText("");
@@ -123,10 +123,6 @@ public class Act028_Exec_Adapter extends BaseAdapter {
             iv_sum_time.setVisibility(View.INVISIBLE);
             tv_sum_time_val.setText("");
         }
-
-        /*if(item.get(Sql_Act028_001.SUM_EXEC_TIME) != null ){
-
-        }*/
 
         tv_comment_val.setText(item.get(Sql_Act028_001.QTY_COMMENT));
         tv_gallery_val.setText(item.get(Sql_Act028_001.QTY_FILES));
