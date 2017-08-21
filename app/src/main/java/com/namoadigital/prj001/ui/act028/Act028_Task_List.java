@@ -34,6 +34,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.HashMap;
 
@@ -178,10 +179,10 @@ public class Act028_Task_List extends BaseFragment {
 
             tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
             tv_exec_status.setText(sm_so_service_exec.getStatus());
-            setExecStatusColor(tv_exec_status,sm_so_service_exec.getStatus());
+            ToolBox_Inf.setExecStatusColor(context,tv_exec_status,sm_so_service_exec.getStatus());
 
             tv_exec_code_lbl.setText(hmAux_Trans.get("exec_code_lbl"));
-            tv_exec_code_val.setText(String.valueOf(sm_so_service_exec.getExec_code()));
+            tv_exec_code_val.setText( sm_so_service_exec.getExec_code() == 0 ? " " : String.valueOf(sm_so_service_exec.getExec_code()));
 
             tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
             tv_partner_val.setText(sm_so_service_exec.getPartner_id() +" - "+ sm_so_service_exec.getPartner_desc());
@@ -474,36 +475,6 @@ public class Act028_Task_List extends BaseFragment {
         }
 
         return aux;
-    }
-
-    private void setExecStatusColor(TextView tv_status, String status){
-                /*
-        * Tratativa de cor por Status
-        * */
-        switch (status){
-            case Constant.SO_STATUS_PENDING :
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_PROCESS :
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
-            case Constant.SO_STATUS_DONE :
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED :
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            case Constant.SO_STATUS_NOT_EXECUTED :
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
-                break;
-            case Constant.SO_STATUS_INCONSISTENT :
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
-                break;
-            default:
-                break;
-        }
-
-
     }
 
 }

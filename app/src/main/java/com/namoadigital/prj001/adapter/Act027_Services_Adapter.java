@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,8 +13,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
-import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
-import com.namoadigital.prj001.sql.Act027_Services_Adapter_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act027_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -88,79 +86,90 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         LinearLayout ll_bg = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
 
-        TextView tv_service_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_ttl);
-
-        Button btn_ex = (Button) convertView.findViewById(R.id.act027_services_content_cell_btn_ex);
-        Button btn_no = (Button) convertView.findViewById(R.id.act027_services_content_cell_btn_no);
-
+        TextView exec_seq_oper =  (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_exec_seq_oper);
+        ImageView iv_express = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_btn_express);
+        ImageView iv_normal = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_btn_normal);
         ImageView iv_flag = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_flag);
 
-        TextView tv_plc_pc_ps_sc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_plc_pc_ps_sc_label);
-        TextView tv_plc_pc_ps_sc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_plc_pc_ps_sc_value);
+        TextView tv_pack_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_lbl);
+        TextView tv_pack_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_val);
 
-        TextView tv_price_list_id_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_id_label);
-        TextView tv_price_list_id_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_id_value);
+        TextView tv_zone_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_zone_lbl);
+        TextView tv_zone_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_zone_val);
 
-        //TextView tv_price_list_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_desc_label);
-        TextView tv_price_list_desc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_price_list_desc_value);
+        TextView tv_service_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_lbl);
+        TextView tv_service_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_val);
 
-        TextView tv_pack_id_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_id_label);
-        TextView tv_pack_id_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_id_value);
+        LinearLayout ll_comment = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_comment);
+        TextView tv_comment_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_comment_lbl);
+        TextView tv_comment_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_comment_val);
 
-        //TextView tv_pack_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_desc_label);
-        TextView tv_pack_desc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_desc_value);
+        LinearLayout ll_partner = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_partner);
+        TextView tv_partner_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_partner_lbl);
+        TextView tv_partner_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_partner_val);
 
-        //TextView tv_service_desc_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_desc_label);
-        TextView service_desc_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_desc_value);
+        TextView tv_status_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status);
 
-        //TextView tv_status_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status_label);
-        //TextView tv_qty_label = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_label);
+        TextView tv_qty_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_lbl);
+        TextView tv_qty_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_val);
 
-        TextView tv_status_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_status_value);
-        TextView tv_qty_value = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_qty_value);
+        //Seta valores
+        exec_seq_oper.setText(item.get(SM_SO_ServiceDao.EXEC_SEQ_OPER));
 
-        tv_service_label.setText(hmAux_Trans.get("service_lbl"));
+        tv_pack_lbl.setText(hmAux_Trans.get("pack_id_lbl"));
+        tv_pack_val.setText(item.get(SM_SO_PackDao.PACK_ID) +" - "+ item.get(SM_SO_PackDao.PACK_DESC));
 
-        tv_plc_pc_ps_sc_label.setText(hmAux_Trans.get("plc_pc_ps_sc_lbl"));
-        //tv_plc_pc_ps_sc_value.setText(item.get(SM_SO_ServiceDao.PRICE_LIST_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_CODE) + "." + item.get(SM_SO_ServiceDao.PACK_SEQ) + "/" + item.get(SM_SO_ServiceDao.SERVICE_CODE));
-        tv_plc_pc_ps_sc_value.setText(item.get(SM_SO_ServiceDao.EXEC_SEQ_OPER));
+        tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
+        //tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) +" - "+ item.get(SM_SO_ServiceDao.ZONE_DESC));
 
-        tv_price_list_id_label.setText(hmAux_Trans.get("price_list_id_lbl"));
-        tv_price_list_id_value.setText(item.get(SM_SO_PackDao.PRICE_LIST_ID));
+        tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+        tv_service_val.setText(item.get(SM_SO_ServiceDao.SERVICE_ID) +" - "+item.get(SM_SO_ServiceDao.SERVICE_DESC));
 
-        tv_price_list_desc_value.setText(item.get(SM_SO_PackDao.PRICE_LIST_DESC));
+        if(item.get(SM_SO_ServiceDao.COMMENTS) != null && item.get(SM_SO_ServiceDao.COMMENTS).length() > 0){
+            ll_comment.setVisibility(View.VISIBLE);
+            tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
+            tv_comment_val.setText(item.get(SM_SO_ServiceDao.COMMENTS));
+        }else{
+            ll_comment.setVisibility(View.GONE);
+            tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
+            tv_comment_val.setText("");
+        }
 
-        tv_pack_id_label.setText(hmAux_Trans.get("pack_id_lbl"));
-        tv_pack_id_value.setText(item.get(SM_SO_PackDao.PACK_ID));
+        if(item.get(SM_SO_ServiceDao.PARTNER_CODE) != null && item.get(SM_SO_ServiceDao.PARTNER_CODE).length() > 0 ){
+            ll_partner.setVisibility(View.VISIBLE);
+            tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
+            tv_partner_val.setText(item.get(SM_SO_ServiceDao.PARTNER_ID) +" - " +item.get(SM_SO_ServiceDao.PARTNER_DESC));
+        }else{
+            ll_partner.setVisibility(View.GONE);
+            tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
+            tv_partner_val.setText("");
+        }
 
-        tv_pack_desc_value.setText(item.get(SM_SO_PackDao.PACK_DESC));
+        tv_status_value.setText(hmAux_Trans.get(item.get(SM_SO_ServiceDao.STATUS)));
+        //chama metodo que define a cor do status
+        ToolBox_Inf.setServiceStatusColor(context, tv_status_value, item.get(SM_SO_ServiceDao.STATUS) );
 
-        service_desc_value.setText(item.get(SM_SO_ServiceDao.SERVICE_DESC));
+        tv_qty_lbl.setText(hmAux_Trans.get("qty_lbl"));
+        tv_qty_val.setText(item.get(Sql_Act027_001.QTY_DONE) +" / " +item.get(SM_SO_ServiceDao.QTY));
 
-        tv_status_value.setText(item.get(SM_SO_ServiceDao.STATUS));
-        tv_qty_value.setText(item.get(SM_SO_ServiceDao.QTY));
-
-        /*
-        * Modificações dluche
-        * Add Flag em serviço que ja possui execução.
-        * */
-        switch (item.get(SM_SO_ServiceDao.STATUS)) {
-            case Constant.SO_STATUS_PENDING:
-                tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_DONE:
-                tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED:
-                tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            default:
-                tv_status_value.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
+        //Icones
+        //Flag
+        if (item.get(Sql_Act027_001.SET_FLAG) != null && !item.get(Sql_Act027_001.SET_FLAG).equals("0")) {
+            iv_flag.setVisibility(View.VISIBLE);
+        } else {
+            iv_flag.setVisibility(View.INVISIBLE);
         }
         //
-        btn_ex.setTag(item);
-        btn_ex.setOnClickListener(new View.OnClickListener() {
+        if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
+            iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
+        }else{
+            iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
+            //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_stop_circle_black_24px));
+        }
+
+
+        iv_express.setTag(item);
+        iv_express.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HMAux item = (HMAux) v.getTag();
@@ -171,8 +180,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
             }
         });
         //
-        btn_no.setTag(item);
-        btn_no.setOnClickListener(new View.OnClickListener() {
+        iv_normal.setTag(item);
+        iv_normal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HMAux item = (HMAux) v.getTag();
@@ -182,32 +191,32 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 }
             }
         });
-        //
-        SM_SO_Service_ExecDao execDao =
-                new SM_SO_Service_ExecDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-        String setFlag = execDao.getByStringHM(
-                new Act027_Services_Adapter_Sql_001(
-                        item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
-                        item.get(SM_SO_ServiceDao.SO_PREFIX),
-                        item.get(SM_SO_ServiceDao.SO_CODE),
-                        item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
-                        item.get(SM_SO_ServiceDao.PACK_CODE),
-                        item.get(SM_SO_ServiceDao.PACK_SEQ),
-                        item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
-                        item.get(SM_SO_ServiceDao.SERVICE_CODE),
-                        item.get(SM_SO_ServiceDao.SERVICE_SEQ)
-
-                ).toSqlQuery()
-        ).get(Act027_Services_Adapter_Sql_001.SET_FLAG);
-        if (setFlag != null && !setFlag.equals("0")) {
-            iv_flag.setVisibility(View.VISIBLE);
-        } else {
-            iv_flag.setVisibility(View.GONE);
-        }
+//        //
+//        SM_SO_Service_ExecDao execDao =
+//                new SM_SO_Service_ExecDao(
+//                        context,
+//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                        Constant.DB_VERSION_CUSTOM
+//                );
+//        String setFlag = execDao.getByStringHM(
+//                new Act027_Services_Adapter_Sql_001(
+//                        item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
+//                        item.get(SM_SO_ServiceDao.SO_PREFIX),
+//                        item.get(SM_SO_ServiceDao.SO_CODE),
+//                        item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
+//                        item.get(SM_SO_ServiceDao.PACK_CODE),
+//                        item.get(SM_SO_ServiceDao.PACK_SEQ),
+//                        item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
+//                        item.get(SM_SO_ServiceDao.SERVICE_CODE),
+//                        item.get(SM_SO_ServiceDao.SERVICE_SEQ)
+//
+//                ).toSqlQuery()
+//        ).get(Act027_Services_Adapter_Sql_001.SET_FLAG);
+//        if (setFlag != null && !setFlag.equals("0")) {
+//            iv_flag.setVisibility(View.VISIBLE);
+//        } else {
+//            iv_flag.setVisibility(View.GONE);
+//        }
 
         return convertView;
     }
@@ -219,6 +228,10 @@ public class Act027_Services_Adapter extends BaseAdapter {
         translateList.add("plc_pc_ps_sc_lbl");
         translateList.add("price_list_id_lbl");
         translateList.add("pack_id_lbl");
+        translateList.add("zone_lbl");
+        translateList.add("comment_lbl");
+        translateList.add("partner_lbl");
+        translateList.add("qty_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

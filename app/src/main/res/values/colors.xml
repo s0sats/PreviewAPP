@@ -73,6 +73,7 @@
     <color name="namoa_color_red">#FF0000</color>
     <color name="namoa_color_black">#000000</color>
     <color name="namoa_color_purple_3">#800080</color>
+    <color name="namoa_color_purple_3_alpha">#55800080</color>
     <color name="namoa_color_brown">#A52A2A</color>
 
 

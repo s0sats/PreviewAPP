@@ -96,7 +96,15 @@ public class Act028_Exec_Adapter extends BaseAdapter {
 
         //tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
         tv_exec_tmp_val.setText(String.valueOf(item.get(SM_SO_Service_ExecDao.EXEC_TMP)));
-        tv_exec_status.setText(item.get(SM_SO_Service_ExecDao.STATUS));
+        tv_exec_status.setText(hmAux_Trans.get(item.get(SM_SO_Service_ExecDao.STATUS)));
+        ToolBox_Inf.setExecStatusColor(context,tv_exec_status,item.get(SM_SO_Service_ExecDao.STATUS));
+        //
+        if(item.get(SM_SO_Service_ExecDao.STATUS).equals(Constant.SO_STATUS_INCONSISTENT)){
+            ll_line2.setVisibility(View.GONE);
+            ll_line3.setVisibility(View.GONE);
+        }else{
+            ll_line2.setVisibility(View.VISIBLE);
+        }
         //
         if(item.get(Sql_Act028_001.MY_TASK) != null
                 && !item.get(Sql_Act028_001.MY_TASK).equals("0")
@@ -126,34 +134,6 @@ public class Act028_Exec_Adapter extends BaseAdapter {
 
         tv_comment_val.setText(item.get(Sql_Act028_001.QTY_COMMENT));
         tv_gallery_val.setText(item.get(Sql_Act028_001.QTY_FILES));
-
-        /*
-        * Tratativa de cor por Status
-        * */
-        switch (item.get(SM_SO_Service_ExecDao.STATUS)){
-            case Constant.SO_STATUS_PENDING :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_PROCESS :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
-            case Constant.SO_STATUS_DONE :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            case Constant.SO_STATUS_NOT_EXECUTED :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
-                break;
-            case Constant.SO_STATUS_INCONSISTENT :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
-                ll_line2.setVisibility(View.GONE);
-                ll_line3.setVisibility(View.GONE);
-                break;
-            default:
-                break;
-        }
 
         return convertView;
     }

@@ -318,6 +318,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
     public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
     public static final String SO_STATUS_BLOCKED = "STOP";
+    public static final String SO_SERVICE_TYPE_YES_NO = "YES_NO";
+    public static final String SO_SERVICE_TYPE_START_STOP = "START_STOP";
 
 
     //

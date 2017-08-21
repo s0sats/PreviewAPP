@@ -15,8 +15,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act027_Services_Adapter;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_004;
+import com.namoadigital.prj001.sql.Sql_Act027_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -108,7 +108,12 @@ public class Act027_Services_New extends BaseFragment {
                         getActivity(),
                         R.layout.act027_services_content_adapter_cell_new,
                         sm_so_serviceDao.query_HM(
-                                new SM_SO_Service_Sql_003(
+                                /*new SM_SO_Service_Sql_003(
+                                        mSm_so.getCustomer_code(),
+                                        mSm_so.getSo_prefix(),
+                                        mSm_so.getSo_code()
+                                ).toSqlQuery()*/
+                                new Sql_Act027_001(
                                         mSm_so.getCustomer_code(),
                                         mSm_so.getSo_prefix(),
                                         mSm_so.getSo_code()

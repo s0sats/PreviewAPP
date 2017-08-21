@@ -19,6 +19,7 @@ import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -2134,6 +2135,54 @@ public class ToolBox_Inf {
         }else{
             return "";
         }
+    }
+
+    public static void setServiceStatusColor(Context context, TextView tv_status, String status) {
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            default:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+        }
+    }
+
+
+    public static void setExecStatusColor(Context context, TextView tv_status, String status){
+                /*
+        * Tratativa de cor por Status
+        * */
+        switch (status){
+            case Constant.SO_STATUS_PENDING :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_NOT_EXECUTED :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+                break;
+            case Constant.SO_STATUS_INCONSISTENT :
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
+
+
     }
 
 }
