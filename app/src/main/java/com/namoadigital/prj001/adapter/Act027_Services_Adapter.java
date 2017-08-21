@@ -97,6 +97,9 @@ public class Act027_Services_Adapter extends BaseAdapter {
         TextView tv_zone_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_zone_lbl);
         TextView tv_zone_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_zone_val);
 
+        TextView tv_service_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_lbl);
+        TextView tv_service_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_service_val);
+
         LinearLayout ll_comment = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_comment);
         TextView tv_comment_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_comment_lbl);
         TextView tv_comment_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_comment_val);
@@ -118,6 +121,9 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
         //tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) +" - "+ item.get(SM_SO_ServiceDao.ZONE_DESC));
+
+        tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+        tv_service_val.setText(item.get(SM_SO_ServiceDao.SERVICE_ID) +" - "+item.get(SM_SO_ServiceDao.SERVICE_DESC));
 
         if(item.get(SM_SO_ServiceDao.COMMENTS) != null && item.get(SM_SO_ServiceDao.COMMENTS).length() > 0){
             ll_comment.setVisibility(View.VISIBLE);

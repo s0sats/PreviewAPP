@@ -159,6 +159,31 @@
 
     </LinearLayout>
 
+
+    <LinearLayout
+        android:id="@+id/act027_services_content_cell_ll_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/act027_services_content_cell_tv_service_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Service"
+            android:textSize="@dimen/font_size_item_md"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/act027_services_content_cell_tv_service_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="17 - Lavagem" />
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/act027_services_content_cell_ll_comment"
         android:layout_width="match_parent"
