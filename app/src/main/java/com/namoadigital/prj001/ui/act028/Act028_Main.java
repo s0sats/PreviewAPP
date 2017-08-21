@@ -89,37 +89,6 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         initActions();
     }
 
-    public void setDrawerState(boolean isEnabled) {
-        if (isEnabled) {
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
-            mDrawerToggle.setDrawerIndicatorEnabled(true);
-            mDrawerLayout.openDrawer(GravityCompat.START);
-
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-
-            mDrawerStatus = true;
-
-            mDrawerToggle.syncState();
-
-        } else {
-
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().setHomeButtonEnabled(false);
-
-            mDrawerStatus = false;
-
-            mDrawerToggle.setDrawerIndicatorEnabled(false);
-
-            mDrawerToggle.syncState();
-        }
-    }
-
     private void iniSetup() {
         context = Act028_Main.this;
 
@@ -284,9 +253,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     private void initActions() {
-
     }
 
+    // falta
     @Override
     public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status) {
 
@@ -306,6 +275,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         setFrag(act028_task_list, "TASK_LIST");
     }
 
+
+    // falta
     @Override
     public void newExec() {
 
@@ -315,6 +286,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
     }
 
+    // falta
     @Override
     public void menuTaksSelected(HashMap<String, String> data) {
         act028_task.setData(data);
@@ -331,6 +303,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         act028_task.setHMAuxScreen();
     }
 
+    // falta
     @Override
     public void exec_list_opc_update(String UI) {
         act028_opc.setHMAuxScreen();
@@ -341,6 +314,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         }
     }
 
+    // falta
     @Override
     public void exec_task_tmp(String exec_tmp, String task_tmp) {
         exec_task_tmp.put("exec_tmp", exec_tmp);

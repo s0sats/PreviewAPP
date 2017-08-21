@@ -27,6 +27,8 @@ public class Act027_Opc_New extends BaseFragment {
 
     private SM_SO mSm_so;
 
+    private boolean partner_restriction = false;
+
     private String SELECTION_TYPE = Act027_Main_New.SELECTION_SERVICES;
 
     private LinearLayout ll_services;

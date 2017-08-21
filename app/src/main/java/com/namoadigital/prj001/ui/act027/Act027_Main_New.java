@@ -28,6 +28,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
@@ -36,7 +37,7 @@ import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act028.Act028_Main;
+import com.namoadigital.prj001.ui.act028.Act028_Main_New;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -322,6 +323,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
         setFrag(act027_services_new, "SERVICES");
     }
 
+    //region Recover Intent Parameters
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
 
@@ -335,7 +337,6 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
             mSm_so = null;
         }
 
-        int i = 10;
     }
 
     private SM_SO loadSM_SO(long customer_code, int so_prefix, int so_code) {
@@ -349,6 +350,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
 
         return mSm_so;
     }
+    //endregion
 
     private void iniUIFooter() {
         iniFooter();
@@ -754,6 +756,15 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
 
     @Override
     public void onServiceSelected(HMAux sService) {
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PACK_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.PACK_SEQ));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE, sService.get(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_CODE, sService.get(SM_SO_Service_Exec_TaskDao.SERVICE_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.EXEC_TMP, sService.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.TASK_TMP, sService.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
+
         bundle.putSerializable("data", sService);
 
         callAct028(context, bundle);
@@ -761,7 +772,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
 
     @Override
     public void callAct028(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act028_Main.class);
+        Intent mIntent = new Intent(context, Act028_Main_New.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

@@ -20,9 +20,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.dao.SM_SO_PackDao.PACK_SEQ;
-import static com.namoadigital.prj001.dao.SM_SO_ServiceDao.SERVICE_SEQ;
-
 /**
  * Created by neomatrix on 05/07/17.
  */
@@ -38,8 +35,10 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
     public static final String SO_CODE = "so_code";
     public static final String PRICE_LIST_CODE = "price_list_code";
     public static final String PACK_CODE = "pack_code";
+    public static final String PACK_SEQ = "pack_seq";
     public static final String CATEGORY_PRICE_CODE = "category_price_code";
     public static final String SERVICE_CODE = "service_code";
+    public static final String SERVICE_SEQ = "service_seq";
     public static final String EXEC_CODE = "exec_code";
     public static final String TASK_CODE = "task_code";
     public static final String EXEC_TMP = "exec_tmp";
