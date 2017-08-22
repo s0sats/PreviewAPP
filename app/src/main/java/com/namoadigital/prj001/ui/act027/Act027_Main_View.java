@@ -7,7 +7,7 @@ import android.os.Bundle;
  * Created by neomatrix on 17/08/17.
  */
 
-public interface Act027_Main_View_New {
+public interface Act027_Main_View {
 
     void callAct028(Context context, Bundle bundle);
 

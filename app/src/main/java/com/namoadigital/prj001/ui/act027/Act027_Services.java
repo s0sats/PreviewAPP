@@ -24,7 +24,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Services_New extends BaseFragment {
+public class Act027_Services extends BaseFragment {
 
     private boolean bStatus;
 
@@ -140,10 +140,10 @@ public class Act027_Services_New extends BaseFragment {
                         );
 
                         switch (selection_type) {
-                            case Act027_Main_New.SELECTION_EXPRESS:
+                            case Act027_Main.SELECTION_EXPRESS:
                                 serviceExpress(sData);
                                 break;
-                            case Act027_Main_New.SELECTION_NORMAL:
+                            case Act027_Main.SELECTION_NORMAL:
                                 if (delegate != null) {
                                     delegate.onServiceSelected(sService);
                                 }

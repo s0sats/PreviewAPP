@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by neomatrix on 12/07/17.
  */
 
-public interface Act027_Serial_View_New {
+public interface Act027_Serial_View {
 
     void setProductValues(MD_Product md_product);
 

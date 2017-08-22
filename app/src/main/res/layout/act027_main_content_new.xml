@@ -35,7 +35,7 @@
 
         <fragment
             android:id="@+id/act027_opc"
-            android:name="com.namoadigital.prj001.ui.act027.Act027_Opc_New"
+            android:name="com.namoadigital.prj001.ui.act027.Act027_Opc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/act027_opc_content_new" />

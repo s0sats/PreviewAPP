@@ -53,7 +53,7 @@ import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SYNC;
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_View_New, Act027_Opc_New.IAct027_Opc, Act027_Services_New.IAct027_Services {
+public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
@@ -71,10 +71,10 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
 
     private FragmentManager fm;
 
-    private Act027_Opc_New act027_opc_new;
-    private Act027_Services_New act027_services_new;
-    private Act027_Serial_New act027_serial_new;
-    private Act027_Header_New act027_header_new;
+    private Act027_Opc act027_opc_;
+    private Act027_Services act027_services_;
+    private Act027_Serial act027_serial_;
+    private Act027_Header act027_header_;
 
     private SM_SODao sm_soDao;
     private SM_SO mSm_so;
@@ -96,7 +96,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
     }
 
     private void iniSetup() {
-        context = Act027_Main_New.this;
+        context = Act027_Main.this;
 
         fm = getSupportFragmentManager();
 
@@ -247,7 +247,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
                 findViewById(R.id.act027_drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle(
-                Act027_Main_New.this,
+                Act027_Main.this,
                 mDrawerLayout,
                 R.string.act005_drawer_opened,
                 R.string.act005_drawer_closed
@@ -257,9 +257,9 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                act027_opc_new.loadDataToScreen();
+                act027_opc_.loadDataToScreen();
 
-                ActivityCompat.invalidateOptionsMenu(Act027_Main_New.this);
+                ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
             }
 
@@ -267,7 +267,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 
-                ActivityCompat.invalidateOptionsMenu(Act027_Main_New.this);
+                ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
             }
         };
@@ -281,46 +281,46 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
         mDrawerToggle.syncState();
 
         // Drawer Opc
-        act027_opc_new = (Act027_Opc_New) fm.findFragmentById(R.id.act027_opc);
+        act027_opc_ = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
         // Dialog Acess
-        act027_opc_new.setBaInfra(this);
+        act027_opc_.setBaInfra(this);
         // Translation Access
-        act027_opc_new.setHmAux_Trans(hmAux_Trans);
+        act027_opc_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-        act027_opc_new.setmSm_so(mSm_so);
+        act027_opc_.setmSm_so(mSm_so);
         //
-        act027_opc_new.setOnMenuOptionsSelected(this);
+        act027_opc_.setOnMenuOptionsSelected(this);
 
         // Services
-        act027_services_new = new Act027_Services_New();
+        act027_services_ = new Act027_Services();
         // Dialog Acess
-        act027_services_new.setBaInfra(this);
+        act027_services_.setBaInfra(this);
         // Translation Access
-        act027_services_new.setHmAux_Trans(hmAux_Trans);
+        act027_services_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-        act027_services_new.setmSm_so(mSm_so);
+        act027_services_.setmSm_so(mSm_so);
         //
-        act027_services_new.setOnServiceSelectedListener(this);
+        act027_services_.setOnServiceSelectedListener(this);
 
         // Serial
-        act027_serial_new = new Act027_Serial_New();
+        act027_serial_ = new Act027_Serial();
         // Dialog Acess
-        act027_serial_new.setBaInfra(this);
+        act027_serial_.setBaInfra(this);
         // Translation Access
-        act027_serial_new.setHmAux_Trans(hmAux_Trans);
+        act027_serial_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-        act027_serial_new.setmSm_so(mSm_so);
+        act027_serial_.setmSm_so(mSm_so);
 
         // header
-        act027_header_new = new Act027_Header_New();
+        act027_header_ = new Act027_Header();
         // Dialog Acess
-        act027_header_new.setBaInfra(this);
+        act027_header_.setBaInfra(this);
         // Translation Access
-        act027_header_new.setHmAux_Trans(hmAux_Trans);
+        act027_header_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-        act027_header_new.setmSm_so(mSm_so);
+        act027_header_.setmSm_so(mSm_so);
 
-        setFrag(act027_services_new, "SERVICES");
+        setFrag(act027_services_, "SERVICES");
     }
 
     //region Recover Intent Parameters
@@ -404,7 +404,7 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
             setWs_process("");
             processSoSave(hmAux);
         } else {
-            act027_serial_new.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_id(), hmAux);
+            act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_id(), hmAux);
             progressDialog.dismiss();
         }
     }
@@ -477,17 +477,17 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
                 mSm_so.getSo_code()
         );
 
-        act027_opc_new.setmSm_so(mSm_so);
-        act027_opc_new.loadDataToScreen();
+        act027_opc_.setmSm_so(mSm_so);
+        act027_opc_.loadDataToScreen();
 
-        act027_services_new.setmSm_so(mSm_so);
-        act027_services_new.loadDataToScreen();
+        act027_services_.setmSm_so(mSm_so);
+        act027_services_.loadDataToScreen();
 
-        act027_serial_new.setmSm_so(mSm_so);
-        act027_serial_new.loadDataToScreen();
+        act027_serial_.setmSm_so(mSm_so);
+        act027_serial_.loadDataToScreen();
 
-        act027_header_new.setmSm_so(mSm_so);
-        act027_header_new.loadDataToScreen();
+        act027_header_.setmSm_so(mSm_so);
+        act027_header_.loadDataToScreen();
     }
 
     private void processSoSave(HMAux hmAux) {
@@ -707,20 +707,20 @@ public class Act027_Main_New extends Base_Activity_Frag implements Act027_Main_V
     @Override
     public void menuOptionsSelected(String type) {
         switch (type.toUpperCase()) {
-            case Act027_Main_New.SELECTION_SERVICES:
-                setFrag(act027_services_new, Act027_Main_New.SELECTION_SERVICES);
+            case Act027_Main.SELECTION_SERVICES:
+                setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
                 break;
-            case Act027_Main_New.SELECTION_SERIAL:
-                setFrag(act027_serial_new, Act027_Main_New.SELECTION_SERIAL);
+            case Act027_Main.SELECTION_SERIAL:
+                setFrag(act027_serial_, Act027_Main.SELECTION_SERIAL);
                 break;
-            case Act027_Main_New.SELECTION_HEADER:
-                setFrag(act027_header_new, Act027_Main_New.SELECTION_HEADER);
+            case Act027_Main.SELECTION_HEADER:
+                setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 break;
-            case Act027_Main_New.SELECTION_APPROVAL:
+            case Act027_Main.SELECTION_APPROVAL:
                 callAct032(context, bundle);
                 break;
             default:
-                setFrag(act027_header_new, Act027_Main_New.SELECTION_HEADER);
+                setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 break;
         }
 

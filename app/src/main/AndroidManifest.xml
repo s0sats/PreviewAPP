@@ -205,7 +205,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.act027.Act027_Main_New"
+            android:name=".ui.act027.Act027_Main"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

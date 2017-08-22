@@ -42,7 +42,7 @@ import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
-import com.namoadigital.prj001.ui.act027.Act027_Main_New;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -523,7 +523,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                             public void onClick(DialogInterface dialog, int which) {
                                 bundle.remove("data");
                                 //
-                                Intent mIntent = new Intent(context, Act027_Main_New.class);
+                                Intent mIntent = new Intent(context, Act027_Main.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtras(bundle);
                                 //
@@ -581,7 +581,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                             public void onClick(DialogInterface dialog, int which) {
                                 bundle.remove("data");
                                 //
-                                Intent mIntent = new Intent(context, Act027_Main_New.class);
+                                Intent mIntent = new Intent(context, Act027_Main.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtras(bundle);
                                 //
@@ -660,7 +660,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
                                     bundle.remove("data");
                                     //
-                                    Intent mIntent = new Intent(context, Act027_Main_New.class);
+                                    Intent mIntent = new Intent(context, Act027_Main.class);
                                     mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     mIntent.putExtras(bundle);
                                     //

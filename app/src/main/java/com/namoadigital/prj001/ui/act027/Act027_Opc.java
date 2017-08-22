@@ -20,7 +20,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Opc_New extends BaseFragment {
+public class Act027_Opc extends BaseFragment {
     private boolean bStatus = false;
 
     private Context context;
@@ -29,7 +29,7 @@ public class Act027_Opc_New extends BaseFragment {
 
     private boolean partner_restriction = false;
 
-    private String SELECTION_TYPE = Act027_Main_New.SELECTION_SERVICES;
+    private String SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
 
     private LinearLayout ll_services;
     private LinearLayout ll_serial;
@@ -181,19 +181,19 @@ public class Act027_Opc_New extends BaseFragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.act027_opc_ll_services:
-                    SELECTION_TYPE = Act027_Main_New.SELECTION_SERVICES;
+                    SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
                     break;
                 case R.id.act027_opc_ll_serial:
-                    SELECTION_TYPE = Act027_Main_New.SELECTION_SERIAL;
+                    SELECTION_TYPE = Act027_Main.SELECTION_SERIAL;
                     break;
                 case R.id.act027_opc_ll_header:
-                    SELECTION_TYPE = Act027_Main_New.SELECTION_HEADER;
+                    SELECTION_TYPE = Act027_Main.SELECTION_HEADER;
                     break;
                 case R.id.act027_opc_ll_approval:
-                    SELECTION_TYPE = Act027_Main_New.SELECTION_APPROVAL;
+                    SELECTION_TYPE = Act027_Main.SELECTION_APPROVAL;
                     break;
                 default:
-                    SELECTION_TYPE = Act027_Main_New.SELECTION_SERVICES;
+                    SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
                     break;
             }
 
@@ -207,25 +207,25 @@ public class Act027_Opc_New extends BaseFragment {
 
     private void changeTabColor() {
         switch (SELECTION_TYPE) {
-            case Act027_Main_New.SELECTION_SERVICES:
+            case Act027_Main.SELECTION_SERVICES:
                 ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 break;
-            case Act027_Main_New.SELECTION_SERIAL:
+            case Act027_Main.SELECTION_SERIAL:
                 ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 break;
-            case Act027_Main_New.SELECTION_HEADER:
+            case Act027_Main.SELECTION_HEADER:
                 ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 break;
-            case Act027_Main_New.SELECTION_APPROVAL:
+            case Act027_Main.SELECTION_APPROVAL:
                 ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));

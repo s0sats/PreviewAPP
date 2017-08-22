@@ -14,7 +14,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.sql.Sql_Act027_001;
-import com.namoadigital.prj001.ui.act027.Act027_Main_New;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -175,7 +175,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 HMAux item = (HMAux) v.getTag();
                 //
                 if (delegate != null) {
-                    delegate.serviceSelected(item, Act027_Main_New.SELECTION_EXPRESS);
+                    delegate.serviceSelected(item, Act027_Main.SELECTION_EXPRESS);
                 }
             }
         });
@@ -187,7 +187,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 HMAux item = (HMAux) v.getTag();
                 //
                 if (delegate != null) {
-                    delegate.serviceSelected(item, Act027_Main_New.SELECTION_NORMAL);
+                    delegate.serviceSelected(item, Act027_Main.SELECTION_NORMAL);
                 }
             }
         });

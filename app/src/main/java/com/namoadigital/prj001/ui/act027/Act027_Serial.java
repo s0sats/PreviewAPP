@@ -55,13 +55,13 @@ import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Serial_New extends BaseFragment implements Act027_Serial_View_New {
+public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private boolean bStatus;
 
     private Context context;
 
-    public Act027_Serial_Presenter_New mPresenter;
+    public Act027_Serial_Presenter mPresenter;
 
     private Bundle bundle;
     public String requesting_process = "";
@@ -168,7 +168,7 @@ public class Act027_Serial_New extends BaseFragment implements Act027_Serial_Vie
         //
         recoverIntentsInfo();
         //
-        mPresenter = new Act027_Serial_Presenter_Impl_New(
+        mPresenter = new Act027_Serial_Presenter_Impl(
                 context,
                 this,
                 new MD_ProductDao(

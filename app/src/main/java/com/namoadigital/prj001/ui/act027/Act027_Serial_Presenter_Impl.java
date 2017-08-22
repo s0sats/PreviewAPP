@@ -25,17 +25,17 @@ import java.util.Map;
  * Created by neomatrix on 12/07/17.
  */
 
-public class Act027_Serial_Presenter_Impl_New implements Act027_Serial_Presenter_New {
+public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
 
     private Context context;
-    private Act027_Serial_View_New mView;
+    private Act027_Serial_View mView;
     private MD_ProductDao mdProductDao;
     private Long product_code;
     private HMAux hmAux_Trans;
     private MD_Product_SerialDao serialDao;
     private SM_SO mSm_so;
 
-    public Act027_Serial_Presenter_Impl_New(Context context, Act027_Serial_View_New mView, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, SM_SO mSm_so) {
+    public Act027_Serial_Presenter_Impl(Context context, Act027_Serial_View mView, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, SM_SO mSm_so) {
         this.context = context;
         this.mView = mView;
         this.mdProductDao = mdProductDao;

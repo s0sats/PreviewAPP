@@ -7,7 +7,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
  * Created by neomatrix on 12/07/17.
  */
 
-public interface Act027_Serial_Presenter_New {
+public interface Act027_Serial_Presenter {
 
     void getProductInfo();
 

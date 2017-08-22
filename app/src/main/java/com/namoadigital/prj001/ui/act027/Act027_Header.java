@@ -17,7 +17,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Header_New extends BaseFragment {
+public class Act027_Header extends BaseFragment {
     private boolean bStatus = false;
 
     private Context context;
