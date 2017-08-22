@@ -9,7 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
 import com.namoadigital.prj001.sql.Sql_Act028_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +54,7 @@ public class Act028_Opc_New extends BaseFragment {
 
     private Context context;
 
-    private HashMap<String, String> data = new HashMap<>();
+    private HashMap<String, String> data;
 
     private transient ListView lv_execs;
 
@@ -67,25 +69,36 @@ public class Act028_Opc_New extends BaseFragment {
     private SM_SO_Service_Exec_Task mTask;
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
 
-    private TextView tv_service_id_label;
-    private TextView tv_service_id_value;
+    private TextView tv_service_lbl;
+    private TextView tv_service_val;
 
-    private TextView tv_service_desc_label;
-    private TextView tv_service_desc_value;
+    private TextView tv_pack_lbl;
+    private TextView tv_pack_val;
 
-    private TextView tv_pack_id_label;
-    private TextView tv_pack_id_value;
+    private TextView tv_zone_lbl;
+    private TextView tv_zone_val;
 
-    private TextView tv_pack_desc_label;
-    private TextView tv_pack_desc_value;
+    private LinearLayout ll_comment;
+    private TextView tv_comment_lbl;
+    private TextView tv_comment_val;
 
-    private TextView tv_partiner_restriction_label;
-    private TextView tv_partiner_restriction_value;
+    private LinearLayout ll_partner;
+    private TextView tv_partner_lbl;
+    private TextView tv_partner_val;
 
-    private TextView tv_qty_label;
-    private TextView tv_qty_value;
+    private TextView tv_exec_type_lbl;
+    private TextView tv_exec_type_val;
 
-    private Button btn_new_exec;
+    private TextView tv_status;
+
+    private TextView tv_qty_total_lbl;
+    private TextView tv_qty_total_val;
+
+    private TextView tv_optional_lbl;
+    private TextView tv_optional_val;
+
+    private ImageView btn_new_exec;
+    private ImageView btn_not_exec;
 
     public void setmService(SM_SO_Service mService) {
         this.mService = mService;
@@ -109,7 +122,7 @@ public class Act028_Opc_New extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act028_opc_content, container, false);
+        View view = inflater.inflate(R.layout.act028_opc_content_new, container, false);
         //
         iniVar(view);
         iniAction();
@@ -161,25 +174,38 @@ public class Act028_Opc_New extends BaseFragment {
 
         lv_execs = (ListView) view.findViewById(R.id.act028_opc_content_lv_execs);
 
-        tv_service_id_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_service_id_label);
-        tv_service_id_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_service_id_value);
+        tv_service_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_service_lbl);
+        tv_service_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_service_val);
 
-        tv_service_desc_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_desc_label);
-        tv_service_desc_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_desc_value);
+        tv_pack_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_pack_lbl);
+        tv_pack_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_pack_val);
 
-        tv_pack_id_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_pack_id_label);
-        tv_pack_id_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_pack_id_value);
+        tv_zone_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_zone_lbl);
+        tv_zone_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_zone_val);
 
-        tv_pack_desc_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_pack_desc_label);
-        tv_pack_desc_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_pack_desc_value);
+        ll_comment = (LinearLayout) view.findViewById(R.id.act028_opc_content_cell_ll_comment);
+        tv_comment_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_comment_lbl);
+        tv_comment_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_comment_val);
 
-        tv_partiner_restriction_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_partner_restriction_desc_label);
-        tv_partiner_restriction_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_partner_restriction_desc_value);
+        ll_partner = (LinearLayout) view.findViewById(R.id.act028_opc_content_cell_ll_partner);
+        tv_partner_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_partner_lbl);
+        tv_partner_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_partner_val);
 
-        tv_qty_label = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_qty_label);
-        tv_qty_value = (TextView) view.findViewById(R.id.act028_opc_content_tv_product_qty_value);
+        tv_exec_type_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_type_exec_lbl);
+        tv_exec_type_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_type_exec_val);
 
-        btn_new_exec = (Button) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
+        tv_status = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_status);
+
+        tv_qty_total_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_qty_lbl);
+        tv_qty_total_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_qty_val);
+
+        tv_optional_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_lbl);
+        tv_optional_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_val);
+
+        btn_new_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
+
+        btn_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
+
     }
 
     private void iniAction() {
@@ -282,7 +308,7 @@ public class Act028_Opc_New extends BaseFragment {
         if (bStatus) {
             if (mService != null) {
 
-                HashMap<String, String> data = sm_so_serviceDao.getByStringHM(
+                data = sm_so_serviceDao.getByStringHM(
                         new SM_SO_Service_Sql_005(
                                 mService.getCustomer_code(),
                                 mService.getSo_prefix(),
@@ -302,44 +328,39 @@ public class Act028_Opc_New extends BaseFragment {
                     partner_restriction = true;
                 }
 
-                tv_service_id_label.setText("Service ID");
-                tv_service_id_value.setText(mService.getService_id());
+                tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+                tv_service_val.setText(mService.getService_id() + " - " + mService.getService_desc());
 
-                tv_service_desc_label.setText("Service Description");
-                tv_service_desc_value.setText(mService.getService_desc());
+                tv_pack_lbl.setText(hmAux_Trans.get("pack_lbl"));
+                tv_pack_val.setText(data.get("pack_id") + " - " + data.get("pack_desc"));
 
-                tv_pack_id_label.setText("Pack ID");
-                tv_pack_id_value.setText(data.get("pack_id"));
+                tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
+                tv_zone_val.setText(data.get("zone_id") + " - " + data.get("zone_desc"));
 
-                tv_pack_desc_label.setText("Pack Description");
-                tv_pack_desc_value.setText(data.get("pack_desc"));
+                ll_comment.setVisibility(mService.getComments() != null && mService.getComments().length() > 0 ? View.VISIBLE : View.GONE);
+                tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
+                tv_comment_val.setText(mService.getComments());
 
-                tv_partiner_restriction_label.setText("Partner Restriction");
-                tv_partiner_restriction_value.setText(data.get("partner_id") + " / " + data.get("partner_desc"));
+                ll_partner.setVisibility(mService.getPartner_code() != null ? View.VISIBLE : View.GONE);
+                tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
+                tv_partner_val.setText(mService.getPartner_id() + " - " + mService.getPartner_desc());
 
-                tv_qty_label.setText("Quantity");
-                tv_qty_value.setText(String.valueOf(mService.getQty()));
+                tv_exec_type_lbl.setText(hmAux_Trans.get("exec_type_lbl"));
+                tv_exec_type_val.setText(hmAux_Trans.get(mService.getExec_type()));
 
-                if (data.get("pack_id").equals("")) {
-                    tv_pack_id_label.setVisibility(View.GONE);
-                    tv_pack_id_value.setVisibility(View.GONE);
+                tv_status.setText(hmAux_Trans.get(mService.getStatus()).toUpperCase());
+                ToolBox_Inf.setServiceStatusColor(context, tv_status, mService.getStatus());
 
-                    tv_pack_desc_label.setVisibility(View.GONE);
-                    tv_pack_desc_value.setVisibility(View.GONE);
+                tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
+                tv_qty_total_val.setText("calc done / " + mService.getQty());
+
+                tv_optional_lbl.setText(hmAux_Trans.get("optional_lbl"));
+                tv_optional_val.setText(mService.getOptional() == 1 ? hmAux_Trans.get("YES") : hmAux_Trans.get("NO"));
+
+                if (mService.getOptional() == 1) {
+                    btn_not_exec.setVisibility(View.VISIBLE);
                 } else {
-                    tv_pack_id_label.setVisibility(View.VISIBLE);
-                    tv_pack_id_value.setVisibility(View.VISIBLE);
-
-                    tv_pack_desc_label.setVisibility(View.VISIBLE);
-                    tv_pack_desc_value.setVisibility(View.VISIBLE);
-                }
-
-                if (partner_restriction) {
-                    tv_partiner_restriction_label.setVisibility(View.VISIBLE);
-                    tv_partiner_restriction_value.setVisibility(View.VISIBLE);
-                } else {
-                    tv_partiner_restriction_label.setVisibility(View.GONE);
-                    tv_partiner_restriction_value.setVisibility(View.GONE);
+                    btn_not_exec.setVisibility(View.GONE);
                 }
 
                 int qty = 0;
@@ -361,7 +382,6 @@ public class Act028_Opc_New extends BaseFragment {
                         btn_new_exec.setVisibility(View.VISIBLE);
                     }
                 }
-                btn_new_exec.setText(hmAux_Trans.get("btn_new_exec"));
 
                 lv_execs.setAdapter(
                         new Act028_Exec_Adapter(

@@ -78,8 +78,6 @@ public class Act028_Opc extends BaseFragment {
     private TextView tv_qty_value;
 
     //new
-
-
     private TextView tv_service_lbl;
     private TextView tv_service_val;
 

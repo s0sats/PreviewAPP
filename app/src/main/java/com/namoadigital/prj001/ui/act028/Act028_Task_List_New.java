@@ -43,6 +43,8 @@ import java.util.HashMap;
 
 public class Act028_Task_List_New extends BaseFragment {
 
+    private boolean bStatus = false;
+
     private Context context;
 
     private transient TextView tv_exec_tmp_value;
@@ -95,7 +97,8 @@ public class Act028_Task_List_New extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        bStatus = true;
+        //
         View view = inflater.inflate(R.layout.act028_task_list_content, container, false);
         //
         iniVar(view);
@@ -105,10 +108,24 @@ public class Act028_Task_List_New extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        bStatus = false;
+    }
+
+    @Override
     public void onResume() {
-        setHMAuxScreen();
-        //
         super.onResume();
+
+        loadDataToScreen();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        loadScreenToData();
     }
 
     private void iniVar(View view) {
@@ -143,7 +160,7 @@ public class Act028_Task_List_New extends BaseFragment {
         //
         tv_exec_status = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_status);
 
-        tv_exec_code_lbl =  (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_lbl);
+        tv_exec_code_lbl = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_lbl);
         tv_exec_code_val = (TextView) view.findViewById(R.id.act028_task_list_content_tv_exec_val);
 
         tv_partner_lbl = (TextView) view.findViewById(R.id.act028_task_list_content_tv_partner_lbl);
@@ -154,78 +171,78 @@ public class Act028_Task_List_New extends BaseFragment {
 
         lv_tasks = (ListView) view.findViewById(R.id.act028_task_list_content_lv_tasks);
         btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_btn_new_task);
-
-        setHMAuxScreen();
     }
 
-    public void setHMAuxScreen() {
-
-        try {
-
-            sm_so_service = sm_so_serviceDao.getByString(
-                    new SM_SO_Service_Sql_001(
-                            sm_so_service_exec.getCustomer_code(),
-                            sm_so_service_exec.getSo_prefix(),
-                            sm_so_service_exec.getSo_code(),
-                            sm_so_service_exec.getPrice_list_code(),
-                            sm_so_service_exec.getPack_code(),
-                            sm_so_service_exec.getPack_seq(),
-                            sm_so_service_exec.getCategory_price_code(),
-                            sm_so_service_exec.getService_code(),
-                            sm_so_service_exec.getService_seq()
-                    ).toSqlQuery()
-            );
-
-            tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
-            tv_exec_status.setText(sm_so_service_exec.getStatus());
-            setExecStatusColor(tv_exec_status,sm_so_service_exec.getStatus());
-
-            tv_exec_code_lbl.setText(hmAux_Trans.get("exec_code_lbl"));
-            tv_exec_code_val.setText(String.valueOf(sm_so_service_exec.getExec_code()));
-
-            tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
-            tv_partner_val.setText(sm_so_service_exec.getPartner_id() +" - "+ sm_so_service_exec.getPartner_desc());
-
-            tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
-            tv_service_val.setText(sm_so_service.getService_id() +" - "+ sm_so_service.getService_desc());
-
-            btn_new_task.setText(hmAux_Trans.get("btn_new_task"));
-
+    @Override
+    public void loadDataToScreen() {
+        if (bStatus) {
             if (sm_so_service_exec != null) {
-                createTaskList();
-            }
+                sm_so_service = sm_so_serviceDao.getByString(
+                        new SM_SO_Service_Sql_001(
+                                sm_so_service_exec.getCustomer_code(),
+                                sm_so_service_exec.getSo_prefix(),
+                                sm_so_service_exec.getSo_code(),
+                                sm_so_service_exec.getPrice_list_code(),
+                                sm_so_service_exec.getPack_code(),
+                                sm_so_service_exec.getPack_seq(),
+                                sm_so_service_exec.getCategory_price_code(),
+                                sm_so_service_exec.getService_code(),
+                                sm_so_service_exec.getService_seq()
+                        ).toSqlQuery()
+                );
 
-            if (full_status.equalsIgnoreCase("1")) {
+                tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
+                tv_exec_status.setText(sm_so_service_exec.getStatus());
+                setExecStatusColor(tv_exec_status, sm_so_service_exec.getStatus());
 
-                switch (sm_so_service_exec.getStatus().toUpperCase()) {
-                    case Constant.SO_STATUS_PENDING:
-                        //btn_new_task.setVisibility(View.VISIBLE);
-                        break;
-                    case Constant.SO_STATUS_PROCESS:
-                        //btn_new_task.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        btn_new_task.setVisibility(View.GONE);
-                        break;
+                tv_exec_code_lbl.setText(hmAux_Trans.get("exec_code_lbl"));
+                tv_exec_code_val.setText(String.valueOf(sm_so_service_exec.getExec_code()));
+
+                tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
+                tv_partner_val.setText(sm_so_service_exec.getPartner_id() + " - " + sm_so_service_exec.getPartner_desc());
+
+                tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+                tv_service_val.setText(sm_so_service.getService_id() + " - " + sm_so_service.getService_desc());
+
+                btn_new_task.setText(hmAux_Trans.get("btn_new_task"));
+
+                if (sm_so_service_exec != null) {
+                    createTaskList();
                 }
-            } else {
-                btn_new_task.setVisibility(View.GONE);
+
+                if (full_status.equalsIgnoreCase("1")) {
+
+                    switch (sm_so_service_exec.getStatus().toUpperCase()) {
+                        case Constant.SO_STATUS_PENDING:
+                            break;
+                        case Constant.SO_STATUS_PROCESS:
+                            break;
+                        default:
+                            btn_new_task.setVisibility(View.GONE);
+                            break;
+                    }
+                } else {
+                    btn_new_task.setVisibility(View.GONE);
+                }
+
+                // Partner Restriction
+                MD_Partner md_partner = partnerDao.getByString(
+                        new MD_Partner_Sql_002(
+                                sm_so_service_exec.getCustomer_code(),
+                                sm_so_service_exec.getPartner_code()
+                        ).toSqlQuery()
+                );
+
+                if (md_partner == null) {
+                    btn_new_task.setVisibility(View.GONE);
+                }
             }
+        }
+    }
 
-            // Partner Restriction
-            MD_Partner md_partner = partnerDao.getByString(
-                    new MD_Partner_Sql_002(
-                            sm_so_service_exec.getCustomer_code(),
-                            sm_so_service_exec.getPartner_code()
-                    ).toSqlQuery()
-            );
-
-            if (md_partner == null) {
-                btn_new_task.setVisibility(View.GONE);
-            }
-
-        } catch (Exception e) {
-            String error_s = e.toString();
+    @Override
+    public void loadScreenToData() {
+        if (bStatus) {
         }
     }
 
@@ -335,19 +352,8 @@ public class Act028_Task_List_New extends BaseFragment {
                 task.setQty_people(1);
                 task.setStatus(Constant.SO_STATUS_PROCESS);
 
-                // Selecionar do cadastro do serial
-                //task.setSite_code(so.getSite_code());
-                //task.setSite_id("1");
-                //task.setSite_desc("1");
-                //task.setZone_code(2);
-                //task.setZone_id("2");
-                //task.setZone_desc("2");
-                //task.setLocal_code(4);
-                //task.setLocal_id("4");
-
                 task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
                 task.setEnd_date("");
-                //task.setExec_time(60);
                 task.setComments("");
                 //
                 task.setPK(sm_so_service_exec);
@@ -370,10 +376,6 @@ public class Act028_Task_List_New extends BaseFragment {
 
                 task.setTask_tmp(nTaskTemp);
                 sm_so_service_exec_taskDao.addUpdateTmp(task);
-
-//                if (numberOfValidTasks == 0) {
-//                    showPartnerOptDialog();
-//                }
 
                 createTaskList();
 
@@ -427,7 +429,6 @@ public class Act028_Task_List_New extends BaseFragment {
             //
             context.sendBroadcast(mIntent);
         } else {
-            //ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
@@ -476,27 +477,27 @@ public class Act028_Task_List_New extends BaseFragment {
         return aux;
     }
 
-    private void setExecStatusColor(TextView tv_status, String status){
+    private void setExecStatusColor(TextView tv_status, String status) {
                 /*
         * Tratativa de cor por Status
         * */
-        switch (status){
-            case Constant.SO_STATUS_PENDING :
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_PROCESS :
+            case Constant.SO_STATUS_PROCESS:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-            case Constant.SO_STATUS_DONE :
+            case Constant.SO_STATUS_DONE:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED :
+            case Constant.SO_STATUS_CANCELLED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
-            case Constant.SO_STATUS_NOT_EXECUTED :
+            case Constant.SO_STATUS_NOT_EXECUTED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
                 break;
-            case Constant.SO_STATUS_INCONSISTENT :
+            case Constant.SO_STATUS_INCONSISTENT:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
                 break;
             default:

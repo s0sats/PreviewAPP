@@ -70,8 +70,9 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     private boolean mDrawerStatus = true;
 
     private FragmentManager fm;
+    private Act028_Empty_New act028_empty_new;
     private Act028_Opc_New act028_opc;
-    private Act028_Task_List act028_task_list;
+    private Act028_Task_List_New act028_task_list;
 
     private Act028_Task act028_task;
 
@@ -214,12 +215,15 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         act028_opc.setOnMenuOptionsSelected(this);
         act028_opc.setmService(mService);
         act028_opc.setHmAux_Trans(hmAux_Trans);
-//
-//        act028_task_list = (Act028_Task_List) fm.findFragmentById(R.id.act028_list);
-//        act028_task_list.setBaInfra(this);
-//        act028_task_list.setOnTaskSelected(this);
-//        act028_task_list.setHmAux_Trans(hmAux_Trans);
-//
+
+        act028_empty_new = new Act028_Empty_New();
+        act028_empty_new.setHmAux_Trans(hmAux_Trans);
+
+        act028_task_list = new Act028_Task_List_New();
+        act028_task_list.setBaInfra(this);
+        act028_task_list.setOnTaskSelected(this);
+        act028_task_list.setHmAux_Trans(hmAux_Trans);
+
 //        act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
 //        act028_task.setBaInfra(this);
 //        act028_task.setData(mData);
@@ -232,7 +236,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
         //tv_no_exec_selected.setText(hmAux_Trans.get("no_exec_selected_lbl"));
 
-        //setFrag(act028_task_list, SELECTION_EMPTY);
+        setFrag(act028_empty_new, SELECTION_EMPTY);
     }
 
     //region Recover Intent Parameters
@@ -505,7 +509,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             //
             act028_task.updateTaskOnLeave();
             //
-            act028_task_list.setHMAuxScreen();
+//            act028_task_list.setHMAuxScreen();
         } else {
             if (mDrawerStatus) {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -685,7 +689,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 //            ll_list.setVisibility(View.VISIBLE);
 //            ll_task.setVisibility(View.GONE);
             //
-            act028_task_list.setHMAuxScreen();
+            //act028_task_list.setHMAuxScreen();
             //
             if (progressDialog != null && progressDialog.isShowing()) {
                 disableProgressDialog();
@@ -812,17 +816,18 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     @Override
     public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status) {
 
-        act028_opc.loadDataToScreen();
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
         act028_task_list.loadDataToScreen();
-        act028_task.loadDataToScreen();
-
-
-
+        //
+        index = 0;
+        //
+        setFrag(act028_task_list, "TASK_LIST");
     }
 
     @Override
     public void newExec() {
-
     }
 
     //region Drawer Visibility

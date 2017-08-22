@@ -622,11 +622,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
             //
             activateUpload(context);
         } else {
-//            if (delegate != null) {
-//                delegate.exec_list_opc_update("UI");
-//            }
-
-            //ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
@@ -638,14 +633,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
 
     @Override
     public void informTaskError(int i, String s) {
-
-//        ToolBox.alertMSG(
-//                context,
-//                hmAux_Trans.get("task_title_error") != null ? hmAux_Trans.get("task_title_error") : s,
-//                s,
-//                null,
-//                -1
-//        );
 
         ToolBox.alertMSG(
                 context,
