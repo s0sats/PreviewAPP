@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -69,16 +70,21 @@ public class Act028_Task_Adapter extends BaseAdapter {
 
         HMAux item = source.get(position);
 
-        TextView tv_task_label = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_tmp_label);
+
         TextView tv_task_value = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_tmp_value);
         TextView tv_task_status = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_task_status);
-        ImageView iv_icon = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_ll_iv_icon);
+        ImageView iv_icon = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_iv_usr);
 
-        tv_task_label.setText(hmAux_Trans.get("task_tmp_lbl"));
+        TextView tv_qty_people_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_qty_people_val);
+        TextView tv_percent_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_percent_val);
+        TextView tv_sum_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_sum_val);
+        TextView tv_comment_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_comment_val);
+        TextView tv_gallery_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_gallery_val);
+
         tv_task_value.setText(item.get("task_tmp"));
-        tv_task_status.setText(item.get("task_status"));
+        tv_task_status.setText(hmAux_Trans.get(item.get("task_status")));
         //
-        if (item.get("task_user").equalsIgnoreCase(String.valueOf(ToolBox_Con.getPreference_User_Code(context)))){
+        if (item.get("task_user").equalsIgnoreCase(String.valueOf(ToolBox_Con.getPreference_User_Code(context)))) {
             iv_icon.setVisibility(View.VISIBLE);
         } else {
             iv_icon.setVisibility(View.INVISIBLE);
@@ -86,28 +92,34 @@ public class Act028_Task_Adapter extends BaseAdapter {
         /*
         * Tratativa de cor do Status
         * */
-        switch (item.get("task_status")){
-            case Constant.SO_STATUS_PENDING :
+        switch (item.get("task_status")) {
+            case Constant.SO_STATUS_PENDING:
                 tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_PROCESS :
+            case Constant.SO_STATUS_PROCESS:
                 tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-            case Constant.SO_STATUS_DONE :
+            case Constant.SO_STATUS_DONE:
                 tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED :
+            case Constant.SO_STATUS_CANCELLED:
                 tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
-            case Constant.SO_STATUS_NOT_EXECUTED :
+            case Constant.SO_STATUS_NOT_EXECUTED:
                 tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
                 break;
-            case Constant.SO_STATUS_INCONSISTENT :
+            case Constant.SO_STATUS_INCONSISTENT:
                 tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
                 break;
             default:
                 break;
         }
+
+        tv_qty_people_val.setText(item.get("qty_people"));
+        tv_percent_val.setText(item.get("task_perc"));
+        tv_sum_val.setText(ToolBox.durationTimeValuesMinutes(item.get("start_date"), item.get("end_date")));
+        tv_comment_val.setText(item.get("comments") != null && !item.get("comments").isEmpty() ? "1" : "0");
+        tv_gallery_val.setText(item.get("qty_photo"));
 
         return convertView;
     }

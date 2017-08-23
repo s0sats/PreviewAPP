@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.TaskControl;
 import com.namoa_digital.namoa_library.util.ConstantBase;
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
@@ -46,6 +45,8 @@ import java.util.HashMap;
 
 public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskControl {
 
+    private boolean bStatus = false;
+
     private Context context;
 
     private TextView tv_exec_tmp_label;
@@ -77,16 +78,16 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
 
     private IAct028_Task delegate;
 
-    public void setOnExec_List_Opc_Update(IAct028_Task delegate) {
-        this.delegate = delegate;
-    }
-
-    public void changeData(HMAux newData) {
-        if (data != null) {
-            data.put("exec_code", newData.get("exec_code"));
-            data.put("task_code", newData.get("exec_task"));
-        }
-    }
+//    public void setOnExec_List_Opc_Update(IAct028_Task delegate) {
+//        this.delegate = delegate;
+//    }
+//
+//    public void changeData(HMAux newData) {
+//        if (data != null) {
+//            data.put("exec_code", newData.get("exec_code"));
+//            data.put("task_code", newData.get("exec_task"));
+//        }
+//    }
 
     public void setData(HashMap<String, String> data) {
         this.data = data;
@@ -104,7 +105,8 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        bStatus = true;
+        //
         View view = inflater.inflate(R.layout.act028_task_content, container, false);
         //
         iniVar(view);
@@ -114,8 +116,25 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        bStatus = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadDataToScreen();
+        //setHMAuxScreen();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+
+        loadScreenToData();
 
         tempValues.put("qty", taskControl.getmQty_People());
         tempValues.put("perc", taskControl.getmPerc());
@@ -123,13 +142,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
         tempValues.put("dte", taskControl.getmDtEnd());
         tempValues.put("comments", taskControl.getmComments());
         tempValues.put("img", taskControl.getmImgPath());
-    }
-
-    @Override
-    public void onResume() {
-        setHMAuxScreen();
-        //
-        super.onResume();
     }
 
     public void updateTaskOnLeave() {
@@ -183,24 +195,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
                 Constant.DB_VERSION_CUSTOM
         );
 
-//        sm_so_service_exec_task = sm_so_service_exec_taskDao.getByString(
-//
-//                new SM_SO_Service_Exec_Task_Sql_005(
-//                        Long.parseLong(data.get("customer_code")),
-//                        Integer.parseInt(data.get("so_prefix")),
-//                        Integer.parseInt(data.get("so_code")),
-//                        Integer.parseInt(data.get("price_list_code")),
-//                        Integer.parseInt(data.get("pack_code")),
-//                        Integer.parseInt(data.get("pack_seq")),
-//                        Integer.parseInt(data.get("category_price_code")),
-//                        Integer.parseInt(data.get("service_code")),
-//                        Integer.parseInt(data.get("service_seq")),
-//                        Integer.parseInt(data.get("exec_tmp")),
-//                        Integer.parseInt(data.get("task_tmp"))
-//                ).toSqlQuery()
-//
-//        );
-
         tv_exec_tmp_label = (TextView) view.findViewById(R.id.act028_task_content_tv_exec_tmp_label);
         tv_exec_tmp_value = (TextView) view.findViewById(R.id.act028_task_content_tv_exec_tmp_value);
 
@@ -216,88 +210,9 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
         controls_task.add(taskControl);
     }
 
-    private void iniAction() {
-
-        btn_cancel_task.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ToolBox.alertMSG(
-                        context,
-                        "Cancelamento de Task",
-                        "Deseja cancelar a Task?",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sm_so_service_exec_task.setStatus(Constant.SO_STATUS_CANCELLED);
-                                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
-                                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
-                                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
-                                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
-                                sm_so_service_exec_task.setComments(taskControl.getmComments());
-                                sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
-                                //
-                                //sm_so_service_exec_task.setPK(sm_so_service_exec);
-                                //
-                                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
-
-                                // Include Files to Upload
-                                uploadFiles(sm_so_service_exec_task);
-
-                                /**
-                                 * Calling WebService
-                                 */
-                                SM_SO so = soDao.getByString(
-                                        new SM_SO_Sql_001(
-                                                ToolBox_Con.getPreference_Customer_Code(context),
-                                                sm_so_service_exec_task.getSo_prefix(),
-                                                sm_so_service_exec_task.getSo_code()
-                                        ).toSqlQuery()
-                                );
-
-                                so.setUpdate_required(1);
-                                soDao.addUpdate(so);
-
-                                callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
-                            }
-                        },
-                        1,
-                        false
-                );
-
-//                sm_so_service_exec_task.setStatus(Constant.SO_STATUS_CANCELLED);
-//                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
-//                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
-//                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
-//                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
-//                sm_so_service_exec_task.setComments(taskControl.getmComments());
-//                //
-//                //sm_so_service_exec_task.setPK(sm_so_service_exec);
-//                //
-//                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
-//
-//                /**
-//                 * Calling WebService
-//                 */
-//                SM_SO so = soDao.getByString(
-//                        new SM_SO_Sql_001(
-//                                ToolBox_Con.getPreference_Customer_Code(context),
-//                                sm_so_service_exec_task.getSo_prefix(),
-//                                sm_so_service_exec_task.getSo_code()
-//                        ).toSqlQuery()
-//                );
-//
-//                so.setUpdate_required(1);
-//                soDao.addUpdate(so);
-//
-//                callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
-            }
-        });
-
-    }
-
-    public void setHMAuxScreen() {
-        try {
+    @Override
+    public void loadDataToScreen() {
+        if (bStatus) {
             if (data != null) {
 
                 sm_so_service_exec_task = sm_so_service_exec_taskDao.getByString(
@@ -317,9 +232,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
                         ).toSqlQuery()
 
                 );
-
-                // Tirar só Teste
-                // sm_so_service_exec_taskDao.updateStatusOffLine(sm_so_service_exec_task);
 
                 tv_exec_tmp_label.setText("Exec TMP");
                 tv_exec_tmp_value.setText(data.get("exec_tmp"));
@@ -383,19 +295,153 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
 
                 processTaskStatus();
 
-//                switch (data.get("exec_status").toUpperCase()) {
-//                    case "PENDING":
-//                        processTaskStatus();
-//                        break;
-//                    case "PROCESS":
-//                        processTaskStatus();
-//                        break;
-//                    default:
-//                        taskControl.setmEnabled(false);
-//                        break;
-//                }
+            }
+        }
+    }
+
+    @Override
+    public void loadScreenToData() {
+        if (bStatus) {
+        }
+    }
+
+    private void iniAction() {
+
+        btn_cancel_task.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ToolBox.alertMSG(
+                        context,
+                        "Cancelamento de Task",
+                        "Deseja cancelar a Task?",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sm_so_service_exec_task.setStatus(Constant.SO_STATUS_CANCELLED);
+                                sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
+                                sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
+                                sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart())));
+                                sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd())));
+                                sm_so_service_exec_task.setComments(taskControl.getmComments());
+                                sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
+                                //
+                                sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
+
+                                // Include Files to Upload
+                                uploadFiles(sm_so_service_exec_task);
+
+                                /**
+                                 * Calling WebService
+                                 */
+                                SM_SO so = soDao.getByString(
+                                        new SM_SO_Sql_001(
+                                                ToolBox_Con.getPreference_Customer_Code(context),
+                                                sm_so_service_exec_task.getSo_prefix(),
+                                                sm_so_service_exec_task.getSo_code()
+                                        ).toSqlQuery()
+                                );
+
+                                so.setUpdate_required(1);
+                                soDao.addUpdate(so);
+
+                                callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
+                            }
+                        },
+                        1,
+                        false
+                );
+            }
+        });
+
+    }
+
+    public void setHMAuxScreen() {
+        try {
+            if (data != null) {
+
+                sm_so_service_exec_task = sm_so_service_exec_taskDao.getByString(
+
+                        new SM_SO_Service_Exec_Task_Sql_005(
+                                Long.parseLong(data.get("customer_code")),
+                                Integer.parseInt(data.get("so_prefix")),
+                                Integer.parseInt(data.get("so_code")),
+                                Integer.parseInt(data.get("price_list_code")),
+                                Integer.parseInt(data.get("pack_code")),
+                                Integer.parseInt(data.get("pack_seq")),
+                                Integer.parseInt(data.get("category_price_code")),
+                                Integer.parseInt(data.get("service_code")),
+                                Integer.parseInt(data.get("service_seq")),
+                                Long.parseLong(data.get("exec_tmp")),
+                                Long.parseLong(data.get("task_tmp"))
+                        ).toSqlQuery()
+
+                );
+
+                tv_exec_tmp_label.setText("Exec TMP");
+                tv_exec_tmp_value.setText(data.get("exec_tmp"));
+
+                tv_task_tmp_label.setText("Task TMP");
+                tv_task_tmp_value.setText(data.get("task_tmp"));
+
+                btn_cancel_task.setText(hmAux_Trans.get("btn_cancel_task"));
+
+                taskControl.setmLabel("Task Lavel");
+                taskControl.setmValue(data.get("task_perc"), false);
+                taskControl.setmPerc(data.get("task_perc"));
+                taskControl.setmQty_People_label("Qty People");
+                taskControl.setmQty_People(data.get("qty_people"), false);
+                taskControl.setmDtStart(data.get("start_date_local"));
+                taskControl.setmDtEnd(data.get("end_date_local"));
+                taskControl.setmComments(data.get("comments"));
+                taskControl.setmMaxImages(4);
+                taskControl.setmType(data.get("exec_type"));
+                taskControl.setOnInformTaskStatusListener(this);
+
+                StringBuilder sFiles = new StringBuilder();
+
+                boolean bFirst = true;
+
+                for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : sm_so_service_exec_task.getTask_file()) {
+
+                    if (!sm_so_service_exec_task_file.getFile_name().isEmpty()) {
+
+                        if (bFirst) {
+                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
+                            bFirst = false;
+                        } else {
+                            sFiles.append("#");
+                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
+                        }
+
+                    }
+                }
+
+                taskControl.setmImgPath(sFiles.toString());
+
+                try {
+
+                    taskControl.setmValue(tempValues.get("perc"));
+                    taskControl.setmPerc(tempValues.get("perc"));
+                    taskControl.setmQty_People(tempValues.get("qty"));
+                    taskControl.setmDtStart(tempValues.get("dts"));
+                    taskControl.setmDtEnd(tempValues.get("dte"));
+                    taskControl.setmComments(tempValues.get("comments"));
+
+                    if (sdAvoid) {
+                        sdAvoid = false;
+                    } else {
+                        taskControl.setmImgPath(tempValues.get("img"));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                processTaskStatus();
 
             }
+
         } catch (Exception e) {
         }
 
@@ -440,60 +486,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
         }
     }
 
-    private void saveTask() {
-        sm_so_service_exec_task.setStatus(Constant.SO_STATUS_DONE);
-        sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
-        sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
-        sm_so_service_exec_task.setStart_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart()));
-        sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
-        sm_so_service_exec_task.setComments(taskControl.getmComments());
-        sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
-        //
-        //sm_so_service_exec_task.setPK(sm_so_service_exec);
-        //
-        sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
-
-        // Include Files to Upload
-        uploadFiles(sm_so_service_exec_task);
-
-        /**
-         * Calling WebService
-         */
-        SM_SO so = soDao.getByString(
-                new SM_SO_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        sm_so_service_exec_task.getSo_prefix(),
-                        sm_so_service_exec_task.getSo_code()
-                ).toSqlQuery()
-        );
-
-        so.setUpdate_required(1);
-        soDao.addUpdate(so);
-
-        if (sm_so_service_exec_task.getTask_perc() == 100) {
-            sm_so_service_execDao.addUpdate(
-                    new SM_SO_Service_Exec_Sql_004(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            sm_so_service_exec_task.getSo_prefix(),
-                            sm_so_service_exec_task.getSo_code(),
-                            sm_so_service_exec_task.getPrice_list_code(),
-                            sm_so_service_exec_task.getPack_code(),
-                            sm_so_service_exec_task.getPack_seq(),
-                            sm_so_service_exec_task.getCategory_price_code(),
-                            sm_so_service_exec_task.getService_code(),
-                            sm_so_service_exec_task.getService_seq(),
-                            sm_so_service_exec_task.getExec_tmp()
-                    ).toSqlQuery()
-            );
-
-            if (delegate != null) {
-                delegate.exec_list_opc_update("");
-            }
-        }
-
-        callSoSave(sm_so_service_exec_task.getSo_prefix(), sm_so_service_exec_task.getSo_code());
-    }
-
     private void uploadFiles(SM_SO_Service_Exec_Task sm_so_service_exec_task) {
         GE_FileDao geFileDao = new GE_FileDao(
                 context,
@@ -524,23 +516,10 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
 
     @Override
     public void informTaskStatus(String s, String s1) {
-
-        String st = s1;
-
-        // Cancelar
-
-
     }
 
     @Override
     public void informTaskActiveClosed(int i, String s) {
-
-        String tts = taskControl.getmDtStart();
-        String tte = taskControl.getmDtEnd();
-
-
-        String st = ToolBox.convertToDeviceTMZ2(taskControl.getmDtStart());
-
         sm_so_service_exec_task.setStatus(Constant.SO_STATUS_DONE);
         sm_so_service_exec_task.setQty_people(Integer.parseInt(taskControl.getmQty_People()));
         sm_so_service_exec_task.setTask_perc(Integer.parseInt(taskControl.getmValue()));
@@ -548,8 +527,6 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
         sm_so_service_exec_task.setEnd_date(ToolBox.convertToDeviceTMZ2(taskControl.getmDtEnd()));
         sm_so_service_exec_task.setComments(taskControl.getmComments());
         sm_so_service_exec_task.setTask_file(recoverTaskFiles(sm_so_service_exec_task.getTask_file(), taskControl.getmImgPath()));
-        //
-        //sm_so_service_exec_task.setPK(sm_so_service_exec);
         //
         sm_so_service_exec_taskDao.addUpdateTmp(sm_so_service_exec_task);
 
@@ -736,6 +713,5 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
         //
         context.sendBroadcast(mIntent);
     }
-
 
 }

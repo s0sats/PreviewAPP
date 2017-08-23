@@ -296,7 +296,6 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     @Override
     public void menuTaksSelected(HashMap<String, String> data) {
         act028_task.setData(data);
-        //act028_task.setHMAuxScreen();
         //
         ll_list.setVisibility(View.GONE);
         ll_task.setVisibility(View.VISIBLE);

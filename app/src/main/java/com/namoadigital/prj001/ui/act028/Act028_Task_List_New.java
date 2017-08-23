@@ -192,7 +192,7 @@ public class Act028_Task_List_New extends BaseFragment {
                 );
 
                 tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
-                tv_exec_status.setText(sm_so_service_exec.getStatus());
+                tv_exec_status.setText(hmAux_Trans.get(sm_so_service_exec.getStatus()));
                 setExecStatusColor(tv_exec_status, sm_so_service_exec.getStatus());
 
                 tv_exec_code_lbl.setText(hmAux_Trans.get("exec_code_lbl"));
@@ -251,7 +251,7 @@ public class Act028_Task_List_New extends BaseFragment {
 
                 new Act028_Task_Adapter(
                         context,
-                        R.layout.act028_task_content_cell_01,
+                        R.layout.act028_task_content_cell_02,
                         sm_so_service_exec_taskDao.query_HM(
                                 new SM_SO_Service_Exec_Task_Sql_003(
                                         sm_so_service_exec.getCustomer_code(),

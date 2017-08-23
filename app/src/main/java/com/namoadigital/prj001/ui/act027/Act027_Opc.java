@@ -70,6 +70,7 @@ public class Act027_Opc extends BaseFragment {
 
     public interface IAct027_Opc {
         void menuOptionsSelected(String type);
+
         void soSyncClick();
     }
 
@@ -260,13 +261,13 @@ public class Act027_Opc extends BaseFragment {
 
                 tv_deadline_value.setText(
                         ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline() != null ? mSm_so.getDeadline() : "" , ""),
+                                ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline() != null ? mSm_so.getDeadline() : "", ""),
                                 ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
                         )
                 );
 
                 tv_status_label.setText(hmAux_Trans.get("status_lbl"));
-                tv_status_value.setText(mSm_so.getStatus());
+                tv_status_value.setText(hmAux_Trans.get(mSm_so.getStatus()));
                 //
                 switch (mSm_so.getStatus()) {
                     case Constant.SO_STATUS_PENDING:

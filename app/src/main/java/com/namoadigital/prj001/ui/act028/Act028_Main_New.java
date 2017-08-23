@@ -73,8 +73,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     private Act028_Empty_New act028_empty_new;
     private Act028_Opc_New act028_opc;
     private Act028_Task_List_New act028_task_list;
-
-    private Act028_Task act028_task;
+    private Act028_Task_New act028_task;
 
     private SM_SO_Service mService;
     private SM_SO_Service_Exec mExec;
@@ -224,17 +223,13 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         act028_task_list.setOnTaskSelected(this);
         act028_task_list.setHmAux_Trans(hmAux_Trans);
 
-//        act028_task = (Act028_Task) fm.findFragmentById(R.id.act028_lt);
-//        act028_task.setBaInfra(this);
-//        act028_task.setData(mData);
-//        act028_task.setOnExec_List_Opc_Update(this);
-//        act028_task.setHmAux_Trans(hmAux_Trans);
+        act028_task = new Act028_Task_New();
+        act028_task.setBaInfra(this);
+        act028_task.setHmAux_Trans(hmAux_Trans);
 
         mDrawerLayout.openDrawer(GravityCompat.START);
 
         controls_frags.add(act028_task);
-
-        //tv_no_exec_selected.setText(hmAux_Trans.get("no_exec_selected_lbl"));
 
         setFrag(act028_empty_new, SELECTION_EMPTY);
     }
@@ -503,11 +498,16 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         if (index == 1) {
             index = 0;
             //
+            setFrag(act028_task_list, SELECTION_TASK_LIST);
+
+
+            //
             // Mudar
 //            ll_list.setVisibility(View.VISIBLE);
 //            ll_task.setVisibility(View.GONE);
-            //
-            act028_task.updateTaskOnLeave();
+
+            // atualizar a task on leave....Hugo
+            // act028_task.updateTaskOnLeave();
             //
 //            act028_task_list.setHMAuxScreen();
         } else {
@@ -806,6 +806,11 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     @Override
     public void menuTaksSelected(HashMap<String, String> data) {
 
+        act028_task.setData(data);
+        //
+        index = 1;
+        //
+        setFrag(act028_task, SELECTION_TASK);
     }
 
     @Override
@@ -818,12 +823,15 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
+        this.mExec = sm_so_service_exec;
+        this.mTask = null;
+
         act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
         act028_task_list.loadDataToScreen();
         //
         index = 0;
         //
-        setFrag(act028_task_list, "TASK_LIST");
+        setFrag(act028_task_list, SELECTION_TASK_LIST);
     }
 
     @Override

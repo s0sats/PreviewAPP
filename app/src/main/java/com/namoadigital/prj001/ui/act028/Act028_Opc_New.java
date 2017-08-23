@@ -348,7 +348,7 @@ public class Act028_Opc_New extends BaseFragment {
                 tv_exec_type_lbl.setText(hmAux_Trans.get("exec_type_lbl"));
                 tv_exec_type_val.setText(hmAux_Trans.get(mService.getExec_type()));
 
-                tv_status.setText(hmAux_Trans.get(mService.getStatus()).toUpperCase());
+                tv_status.setText(hmAux_Trans.get(mService.getStatus()));
                 ToolBox_Inf.setServiceStatusColor(context, tv_status, mService.getStatus());
 
                 tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
