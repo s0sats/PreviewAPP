@@ -14,6 +14,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.sql.Sql_Act027_001;
+import com.namoadigital.prj001.sql.Sql_Act027_002;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -94,6 +95,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         TextView tv_pack_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_lbl);
         TextView tv_pack_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_val);
 
+        LinearLayout ll_zone = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_zone);
         TextView tv_zone_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_zone_lbl);
         TextView tv_zone_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_zone_val);
 
@@ -120,18 +122,29 @@ public class Act027_Services_Adapter extends BaseAdapter {
         tv_pack_val.setText(item.get(SM_SO_PackDao.PACK_ID) +" - "+ item.get(SM_SO_PackDao.PACK_DESC));
 
         tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
-        //tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) +" - "+ item.get(SM_SO_ServiceDao.ZONE_DESC));
+        if(item.get(SM_SO_ServiceDao.ZONE_CODE) != null && item.get(SM_SO_ServiceDao.ZONE_CODE).length() > 0) {
+            ll_zone.setVisibility(View.VISIBLE);
+            tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) + " - " + item.get(SM_SO_ServiceDao.ZONE_DESC));
+            //Após inserir seleção de zona, mudar vidação para zona
+            if (!item.get(SM_SO_ServiceDao.ZONE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context))) {
+                tv_zone_val.setTextColor(context.getResources().getColor(R.color.namoa_color_danger_red));
+            } else {
+                tv_zone_val.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+            }
+        }else{
+            ll_zone.setVisibility(View.GONE);
+            tv_zone_val.setText("");
+        }
 
         tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
         tv_service_val.setText(item.get(SM_SO_ServiceDao.SERVICE_ID) +" - "+item.get(SM_SO_ServiceDao.SERVICE_DESC));
 
+        tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
         if(item.get(SM_SO_ServiceDao.COMMENTS) != null && item.get(SM_SO_ServiceDao.COMMENTS).length() > 0){
             ll_comment.setVisibility(View.VISIBLE);
-            tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
             tv_comment_val.setText(item.get(SM_SO_ServiceDao.COMMENTS));
         }else{
             ll_comment.setVisibility(View.GONE);
-            tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
             tv_comment_val.setText("");
         }
 
@@ -160,13 +173,39 @@ public class Act027_Services_Adapter extends BaseAdapter {
             iv_flag.setVisibility(View.INVISIBLE);
         }
         //
-        if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
-            iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
-        }else{
-            iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
-            //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_stop_circle_black_24px));
-        }
+        if(item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_PENDING)) {
+            //
+            /*if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
+                iv_express.setVisibility(View.VISIBLE);
 
+            } else {
+                iv_express.setVisibility(View.VISIBLE);
+                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
+                //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_stop_circle_black_24px));
+            }*/
+            if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
+                if(item.get(Sql_Act027_002.YES_NO_ICON).equals("1")){
+                    iv_express.setVisibility(View.VISIBLE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
+                }else{
+                    iv_express.setVisibility(View.INVISIBLE);
+                }
+
+            }else{
+
+                if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)){
+                    iv_express.setVisibility(View.VISIBLE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
+                }else if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)){
+                    iv_express.setVisibility(View.VISIBLE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_stop_circle_black_24px));
+                }else{
+                    iv_express.setVisibility(View.INVISIBLE);
+                }
+            }
+        }else{
+            iv_express.setVisibility(View.INVISIBLE);
+        }
 
         iv_express.setTag(item);
         iv_express.setOnClickListener(new View.OnClickListener() {

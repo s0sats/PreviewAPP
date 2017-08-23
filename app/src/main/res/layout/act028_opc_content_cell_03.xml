@@ -82,8 +82,8 @@
 
                         <ImageView
                             android:id="@+id/act028_main_content_cell_iv_percent"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="@dimen/namoa_icon_cell_so_width"
+                            android:layout_height="@dimen/namoa_icon_cell_so_height"
                             android:src="@drawable/ic_chart_pie_24px_black"
                             android:tint="@color/namoa_color_dark_blue2" />
 
