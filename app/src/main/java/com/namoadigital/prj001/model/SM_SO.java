@@ -106,6 +106,8 @@ public class SM_SO {
     private String add_inf2;
     @Expose
     private String add_inf3;
+    private int approve_budget;
+    private int approve_client;
     private int update_required;
     @Expose
     private String action;
@@ -627,6 +629,22 @@ public class SM_SO {
 
     public void setAdd_inf3(String add_inf3) {
         this.add_inf3 = add_inf3;
+    }
+
+    public int getApprove_budget() {
+        return approve_budget;
+    }
+
+    public void setApprove_budget(int approve_budget) {
+        this.approve_budget = approve_budget;
+    }
+
+    public int getApprove_client() {
+        return approve_client;
+    }
+
+    public void setApprove_client(int approve_client) {
+        this.approve_client = approve_client;
     }
 
     public int getUpdate_required() {

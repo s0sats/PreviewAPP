@@ -33,13 +33,30 @@ public class Sql_Act027_002 implements Specification {
     private int so_prefix;
     private int so_code;
     private String user_code;
+    private int zone_code;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(SM_SO_ServiceDao.columns);
+    private String only_avaliable_where = "";
 
     public Sql_Act027_002(long customer_code, int so_prefix, int so_code, String user_code) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
         this.user_code = user_code;
+    }
+
+    public Sql_Act027_002(long customer_code, int so_prefix, int so_code, String user_code, int zone_code, boolean filter_only_avaliable) {
+        this.customer_code = customer_code;
+        this.so_prefix = so_prefix;
+        this.so_code = so_code;
+        this.user_code = user_code;
+        this.zone_code = zone_code;
+        //
+        if(filter_only_avaliable){
+            this.only_avaliable_where =
+                    "     AND TTT.status = '"+Constant.SO_STATUS_PENDING+"'\n" +
+                    "     AND (TTT.PARTNER_RESTRICTION IN (-1,1) or TTT.ANY_PARTNER > 0)\n" +
+                    "     AND (TTT.ZONE_CODE is null or TTT.ZONE_CODE <> '"+zone_code+"')" ;
+        }
     }
 
     @Override
@@ -150,10 +167,27 @@ public class Sql_Act027_002 implements Specification {
                         "       so.customer_code = '"+customer_code+"'\n" +
                         "       AND so.so_prefix = '"+so_prefix+"'\n" +
                         "       AND so.so_code = '"+so_code+"'\n" +
-                        "    ) "+SO_STATUS+" \n" +
-                        "" +
-                        " \n" +
-                        "             \n" +
+                        "    ) "+SO_STATUS+" ,\n" +
+                        "    SUM(CASE WHEN \n" +
+                        "          e.status = '"+Constant.SO_STATUS_PROCESS+"' \n" +
+                        "          and \n" +
+                        "          ( \n" +
+                        "            e.partner_code IS NULL OR" +
+                        "              (SELECT\n" +
+                        "                      COUNT(1)  \n" +
+                        "                  FROM\n" +
+                        "                      "+ MD_PartnerDao.TABLE+" m\n" +
+                        "                  WHERE                        \n" +
+                        "                      m.customer_code = e.customer_code\n" +
+                        "                      and m.partner_code = e.partner_code\n" +
+                        "                ) <> 0" +
+                        "           )" +
+                        "\n" +
+                        "     THEN \n" +
+                        "      1\n" +
+                        "     ELSE\n" +
+                        "      0\n" +
+                        "     END) ANY_PARTNER " +
                         "     \n" +
                         "    FROM\n" +
                         "      "+ SM_SO_PackDao.TABLE+" p,\n" +
@@ -197,7 +231,10 @@ public class Sql_Act027_002 implements Specification {
                         "       S.service_seq     \n" +
                         "    \n" +
                         "    ORDER BY \n" +
-                        "     exec_seq_oper) TTT")
+                        "     exec_seq_oper) TTT \n" +
+                        " WHERE\n" +
+                        "     1 = 1\n")
+                .append(only_avaliable_where)
                 .append(";")
                 .append(SM_SO_PackDao.PRICE_LIST_ID+"#"+ SM_SO_PackDao.PRICE_LIST_DESC+"#"+SM_SO_PackDao.PACK_ID+"#"+SM_SO_PackDao.PACK_DESC+"#"+
                         HmAuxFields+"#"+YES_NO_ICON+"#"+START_STOP_ICON+"#"+SET_FLAG+"#"+QTY_DONE+"#"+PARTNER_RESTRICTION+"#"+SO_STATUS

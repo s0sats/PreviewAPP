@@ -88,7 +88,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
         LinearLayout ll_bg = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
 
         TextView exec_seq_oper =  (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_exec_seq_oper);
-        ImageView iv_express = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_btn_express);
+        LinearLayout ll_express = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_express);
+        ImageView iv_express = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_express);
         ImageView iv_normal = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_btn_normal);
         ImageView iv_flag = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_flag);
 
@@ -185,26 +186,26 @@ public class Act027_Services_Adapter extends BaseAdapter {
             }*/
             if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
                 if(item.get(Sql_Act027_002.YES_NO_ICON).equals("1")){
-                    iv_express.setVisibility(View.VISIBLE);
+                    ll_express.setVisibility(View.VISIBLE);
                     iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
                 }else{
-                    iv_express.setVisibility(View.INVISIBLE);
+                    ll_express.setVisibility(View.GONE);
                 }
 
             }else{
 
                 if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)){
-                    iv_express.setVisibility(View.VISIBLE);
+                    ll_express.setVisibility(View.VISIBLE);
                     iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
                 }else if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)){
-                    iv_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_stop_circle_black_24px));
+                    ll_express.setVisibility(View.VISIBLE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_pencil_circle_black_24dp));
                 }else{
-                    iv_express.setVisibility(View.INVISIBLE);
+                    ll_express.setVisibility(View.GONE);
                 }
             }
         }else{
-            iv_express.setVisibility(View.INVISIBLE);
+            ll_express.setVisibility(View.GONE);
         }
 
         iv_express.setTag(item);
