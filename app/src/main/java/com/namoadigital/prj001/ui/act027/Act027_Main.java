@@ -226,6 +226,11 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("searchable_spinner_lbl");
         //Service Fragment
         transList.add("filter_lbl");
+        transList.add("select_partner_lbl");
+        transList.add("alert_start_task_confirm_ttl");
+        transList.add("alert_start_task_confirm_msg");
+        transList.add("alert_partner_selection_ttl");
+        transList.add("alert_no_partner_selected_msg");
 
         sm_soDao = new SM_SODao(
                 context,
