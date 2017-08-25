@@ -74,7 +74,7 @@ public class Act028_Task_List_New extends BaseFragment {
     private String full_status;
 
     public interface IAct028_Task_List {
-        void menuTaksSelected(HashMap<String, String> data);
+        void menuTaskSelected(HashMap<String, String> data);
 
         void exec_task_tmp(String exec_tmp, String task_tmp);
     }
@@ -318,7 +318,7 @@ public class Act028_Task_List_New extends BaseFragment {
                 hmAux.put("full_status", full_status);
 
                 if (delegate != null) {
-                    delegate.menuTaksSelected(hmAux);
+                    delegate.menuTaskSelected(hmAux);
                 }
 
             }

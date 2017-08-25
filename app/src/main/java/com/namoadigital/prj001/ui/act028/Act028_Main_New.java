@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -68,6 +70,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     private ActionBarDrawerToggle mDrawerToggle;
 
     private boolean mDrawerStatus = true;
+    private boolean mShortCut = false;
 
     private FragmentManager fm;
     private Act028_Empty_New act028_empty_new;
@@ -77,6 +80,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     private SM_SO_Service mService;
     private SM_SO_Service_Exec mExec;
+    private SM_SO_Service_Exec mExec_Aux;
     private SM_SO_Service_Exec_Task mTask;
 
     private SM_SO_ServiceDao sm_so_serviceDao;
@@ -227,11 +231,15 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         act028_task.setBaInfra(this);
         act028_task.setHmAux_Trans(hmAux_Trans);
 
-        mDrawerLayout.openDrawer(GravityCompat.START);
-
         controls_frags.add(act028_task);
 
-        setFrag(act028_empty_new, SELECTION_EMPTY);
+        if (mShortCut) {
+            act028_task.setFull_status(true);
+            setFrag(act028_task, SELECTION_TASK);
+        } else {
+            setDrawerState(true);
+            setFrag(act028_empty_new, SELECTION_EMPTY);
+        }
     }
 
     //region Recover Intent Parameters
@@ -265,8 +273,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                         Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ)),
                         Long.parseLong(bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP))
                 );
+
+                mShortCut = true;
             } else {
                 mExec = null;
+
+                mShortCut = false;
             }
 
             if (bundle.getString(SM_SO_Service_Exec_TaskDao.TASK_TMP) != null) {
@@ -291,6 +303,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             mService = null;
             mExec = null;
             mTask = null;
+        }
+
+        if (mShortCut) {
+            setDrawerState(false);
+        } else {
+            setDrawerState(true);
         }
     }
 
@@ -439,7 +457,6 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         setTitleLanguage();
         setFooter();
 
-
         HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
         mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
@@ -468,9 +485,6 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
-
         menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
 
@@ -481,9 +495,6 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -495,46 +506,76 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     @Override
     public void onBackPressed() {
-        if (index == 1) {
-            index = 0;
-            //
-            setFrag(act028_task_list, SELECTION_TASK_LIST);
-
-
-            //
-            // Mudar
-//            ll_list.setVisibility(View.VISIBLE);
-//            ll_task.setVisibility(View.GONE);
-
-            // atualizar a task on leave....Hugo
-            // act028_task.updateTaskOnLeave();
-            //
-//            act028_task_list.setHMAuxScreen();
-        } else {
-            if (mDrawerStatus) {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_service_list_title"),
-                        hmAux_Trans.get("alert_service_list_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                bundle.remove("data");
-                                //
-                                Intent mIntent = new Intent(context, Act027_Main.class);
-                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mIntent.putExtras(bundle);
-                                //
-                                startActivity(mIntent);
-                                finish();
-
+        if (mShortCut) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_service_list_title"),
+                    hmAux_Trans.get("alert_service_list_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            bundle.remove("data");
+                            //
+                            if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+                                act028_task.updateTaskOnLeave();
+                            } else {
+                                act028_task.removeTaskOnLeave();
                             }
-                        },
-                        1,
-                        false
-                );
+                            //
+                            Intent mIntent = new Intent(context, Act027_Main.class);
+                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            mIntent.putExtras(bundle);
+                            //
+                            startActivity(mIntent);
+                            finish();
+                        }
+                    },
+                    1,
+                    false
+            );
+        } else {
+            if (index == 1) {
+                index = 0;
+                //
+                if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+                    act028_task.updateTaskOnLeave();
+                } else {
+                    act028_task.removeTaskOnLeave();
+                }
+                //
+                setFrag(act028_task_list, SELECTION_TASK_LIST);
+            } else {
+                if (mDrawerStatus) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_service_list_title"),
+                            hmAux_Trans.get("alert_service_list_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    bundle.remove("data");
+                                    //
+                                    if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+                                        act028_task.updateTaskOnLeave();
+                                    } else {
+                                        act028_task.removeTaskOnLeave();
+                                    }
+                                    //
+                                    Intent mIntent = new Intent(context, Act027_Main.class);
+                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    mIntent.putExtras(bundle);
+                                    //
+                                    startActivity(mIntent);
+                                    finish();
+
+                                }
+                            },
+                            1,
+                            false
+                    );
+                }
             }
         }
     }
@@ -552,7 +593,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             //
             showResults(so, so_current_reload);
         } else {
-            refreshUI();
+            //refreshUI();
+            Log.d("SO_RETURN", "SO RETURN null!!!");
         }
 
     }
@@ -571,29 +613,27 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         }
 
         if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
-            if (so_current_reload.equalsIgnoreCase("1")) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_so_list_title"),
-                        hmAux_Trans.get("alert_so_list_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                bundle.remove("data");
-                                //
-                                Intent mIntent = new Intent(context, Act027_Main.class);
-                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mIntent.putExtras(bundle);
-                                //
-                                startActivity(mIntent);
-                                finish();
-                            }
-                        },
-                        -1,
-                        false
-                );
+
+            if (mShortCut) {
+                callAct027();
             } else {
-                return;
+                if (so_current_reload.equalsIgnoreCase("1")) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_list_title"),
+                            hmAux_Trans.get("alert_so_list_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            -1,
+                            false
+                    );
+                } else {
+                    return;
+                }
             }
         } else {
             showNewOptDialog(sos, so_current_reload);
@@ -644,52 +684,89 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             @Override
             public void onClick(View v) {
 
-                refreshUI();
-
-                if (so_current_reload.equalsIgnoreCase("1")) {
-
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_list_title"),
-                            hmAux_Trans.get("alert_so_list_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    show.dismiss();
-
-                                    bundle.remove("data");
-                                    //
-                                    Intent mIntent = new Intent(context, Act027_Main.class);
-                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    mIntent.putExtras(bundle);
-                                    //
-                                    startActivity(mIntent);
-                                    finish();
-                                }
-                            },
-                            -1,
-                            false
-                    );
-
+                if (mShortCut) {
+                    callAct027();
                 } else {
-                    show.dismiss();
+                    if (so_current_reload.equalsIgnoreCase("1")) {
+
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_so_list_title"),
+                                hmAux_Trans.get("alert_so_list_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        show.dismiss();
+                                        //
+                                        refreshUI();
+                                    }
+                                },
+                                -1,
+                                false
+                        );
+
+                    } else {
+                        show.dismiss();
+                    }
                 }
             }
         });
     }
 
     private void refreshUI() {
+
+        mService = loadService(
+                mService.getCustomer_code(),
+                mService.getSo_prefix(),
+                mService.getSo_code(),
+                mService.getPrice_list_code(),
+                mService.getPack_code(),
+                mService.getPack_seq(),
+                mService.getCategory_price_code(),
+                mService.getService_code(),
+                mService.getService_seq()
+        );
+        //
+        if (mExec_Aux != null) {
+            mExec = loadExec(
+                    mExec_Aux.getCustomer_code(),
+                    mExec_Aux.getSo_prefix(),
+                    mExec_Aux.getSo_code(),
+                    mExec_Aux.getPrice_list_code(),
+                    mExec_Aux.getPack_code(),
+                    mExec_Aux.getPack_seq(),
+                    mExec_Aux.getCategory_price_code(),
+                    mExec_Aux.getService_code(),
+                    mExec_Aux.getService_seq(),
+                    mExec_Aux.getExec_tmp()
+            );
+        }
+
+        act028_opc.setmService(mService);
+        act028_opc.loadDataToScreen();
+
+        if (mExec != null) {
+
+            act028_task_list.setSm_so_service_exec(
+                    mExec,
+                    act028_opc.verificarStatus_SO(
+                            mService.getSo_prefix(),
+                            mService.getSo_code(),
+                            mService
+                    ) ? "1" : "0"
+            );
+            act028_task_list.loadDataToScreen();
+
+            setFrag(act028_task_list, SELECTION_TASK_LIST);
+        } else {
+            setDrawerState(true);
+            setFrag(act028_empty_new, SELECTION_EMPTY);
+        }
+
         if (index == 0) {
             disableProgressDialog();
         } else {
             index = 0;
-            //
-            // Mudar
-//            ll_list.setVisibility(View.VISIBLE);
-//            ll_task.setVisibility(View.GONE);
-            //
-            //act028_task_list.setHMAuxScreen();
             //
             if (progressDialog != null && progressDialog.isShowing()) {
                 disableProgressDialog();
@@ -697,32 +774,16 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         }
     }
 
-//    private void refreshUI() {
-//        mSm_so = loadSM_SO(
-//                mSm_so.getCustomer_code(),
-//                mSm_so.getSo_prefix(),
-//                mSm_so.getSo_code()
-//        );
-//
-//        act027_opc_new.setmSm_so(mSm_so);
-//        act027_opc_new.loadDataToScreen();
-//
-//        act027_services_new.setmSm_so(mSm_so);
-//        act027_services_new.loadDataToScreen();
-//
-//        act027_serial_new.setmSm_so(mSm_so);
-//        act027_serial_new.loadDataToScreen();
-//
-//        act027_header_new.setmSm_so(mSm_so);
-//        act027_header_new.loadDataToScreen();
-//    }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
 
-        refreshUI();
-
+        if (mShortCut) {
+            callAct027();
+        } else {
+            refreshUI();
+        }
     }
 
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
@@ -804,9 +865,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     }
 
     @Override
-    public void menuTaksSelected(HashMap<String, String> data) {
-
+    public void menuTaskSelected(HashMap<String, String> data) {
         act028_task.setData(data);
+        act028_task.setSm_so_service(mService);
+        act028_task.setSm_so_service_exec_task(mTask);
         //
         index = 1;
         //
@@ -815,7 +877,6 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     @Override
     public void exec_task_tmp(String exec_tmp, String task_tmp) {
-
     }
 
     @Override
@@ -823,7 +884,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
-        this.mExec = sm_so_service_exec;
+        this.mExec_Aux = sm_so_service_exec;
         this.mTask = null;
 
         act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
@@ -870,6 +931,17 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         }
     }
     //endregion
+
+    private void callAct027() {
+        bundle.remove("data");
+        //
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
 
 
 }
