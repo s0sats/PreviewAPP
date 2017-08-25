@@ -79,6 +79,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String ACT023_SO_HEADER_LIST = "so_header_list";
 
+    public static final String ACT027_IS_SHORTCUT = "ACT027_IS_SHORTCUT";
+
     public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";
     public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
     public static final String MAIN_PRODUCT_CODE = "main_product_code";
