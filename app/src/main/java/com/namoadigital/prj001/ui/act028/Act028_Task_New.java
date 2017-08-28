@@ -466,6 +466,7 @@ public class Act028_Task_New extends BaseFragment implements TaskControl.ITaskCo
             }
         });
 
+
     }
 
     private void processTaskStatus() {
