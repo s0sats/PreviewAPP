@@ -42,19 +42,19 @@ public class SM_SO_Service_Exec_Task_Sql_006 implements Specification {
         return sb
                 .append(" DELETE\n" +
                         " FROM\n" +
-                        SM_SO_Service_Exec_TaskDao.TABLE + " S\n" +
+                        SM_SO_Service_Exec_TaskDao.TABLE + " \n" +
                         " WHERE\n" +
-                        "    S.customer_code =              '" + customer_code + "'\n" +
-                        "    AND S.so_prefix =              '" + so_prefix + "'\n" +
-                        "    AND S.so_code =                '" + so_code + "'\n" +
-                        "    AND S.price_list_code =        '" + price_list_code + "'\n" +
-                        "    AND S.pack_code =              '" + pack_code + "'\n" +
-                        "    AND S.pack_seq =               '" + pack_seq + "'\n" +
-                        "    AND S.category_price_code =    '" + category_price_code + "'\n" +
-                        "    AND S.service_code =           '" + service_code + "'\n" +
-                        "    AND S.service_seq =            '" + service_seq + "'\n" +
-                        "    AND S.exec_tmp =              '" + exec_tmp + "'\n" +
-                        "    AND S.task_tmp =              '" + task_tmp + "' ")
+                        "    customer_code =              '" + customer_code + "'\n" +
+                        "    AND so_prefix =              '" + so_prefix + "'\n" +
+                        "    AND so_code =                '" + so_code + "'\n" +
+                        "    AND price_list_code =        '" + price_list_code + "'\n" +
+                        "    AND pack_code =              '" + pack_code + "'\n" +
+                        "    AND pack_seq =               '" + pack_seq + "'\n" +
+                        "    AND category_price_code =    '" + category_price_code + "'\n" +
+                        "    AND service_code =           '" + service_code + "'\n" +
+                        "    AND service_seq =            '" + service_seq + "'\n" +
+                        "    AND exec_tmp =              '" + exec_tmp + "'\n" +
+                        "    AND task_tmp =              '" + task_tmp + "' ")
                 .toString();
     }
 }

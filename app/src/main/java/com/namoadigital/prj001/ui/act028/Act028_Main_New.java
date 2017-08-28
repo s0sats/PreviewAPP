@@ -252,6 +252,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         controls_frags.add(act028_task);
 
         if (mShortCut) {
+            act028_task.setmService(mService);
+            act028_task.setmTask(mTask);
             act028_task.setFull_status(full_status);
             setFrag(act028_task, SELECTION_TASK);
         } else {

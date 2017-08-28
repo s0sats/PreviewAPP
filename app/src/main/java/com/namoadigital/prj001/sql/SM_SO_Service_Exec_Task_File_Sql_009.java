@@ -45,7 +45,7 @@ public class SM_SO_Service_Exec_Task_File_Sql_009 implements Specification {
         return sb
                 .append(" DELETE \n" +
                         " FROM\n" +
-                        SM_SO_Service_Exec_Task_FileDao.TABLE + " S\n" +
+                        SM_SO_Service_Exec_Task_FileDao.TABLE + " \n" +
                         " WHERE\n" +
                         "  customer_code = '" + customer_code + "'\n" +
                         "  AND so_prefix = '" + so_prefix + "'\n" +

@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
+import static com.namoa_digital.namoa_library.util.ToolBox.reverseB;
 
 /**
  * Created by neomatrix on 14/07/17.
@@ -243,7 +244,7 @@ public class Act028_Task_New extends BaseFragment {
     }
 
     public void removeTaskOnLeave() {
-        if (String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
+        if (mTask != null && String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
 
             if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)
                     && mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
@@ -499,11 +500,11 @@ public class Act028_Task_New extends BaseFragment {
         if (bStatus) {
             tempValues.put("comments", mk_comments.getText().toString());
             tempValues.put("img", (String) iv_gallery.getTag());
-            String sDTS = ToolBox.reverseB(mk_start_date.getText().toString());
+            String sDTS = reverseB(mk_start_date.getText().toString());
 
             tempValues.put("dts", sDTS + " " + mk_start_hour.getText().toString());
 
-            String sDTE = ToolBox.reverseB(mk_end_date.getText().toString());
+            String sDTE = reverseB(mk_end_date.getText().toString());
 
             tempValues.put("dte", sDTE + " " + mk_end_hour.getText().toString());
 
@@ -530,8 +531,8 @@ public class Act028_Task_New extends BaseFragment {
                                 mTask.setComments(mk_comments.getText().toString());
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-                                mTask.setStart_date(ToolBox.reverseB(mk_start_date.getText().toString()) + mk_start_hour.getText().toString());
-                                mTask.setEnd_date(ToolBox.reverseB(mk_end_date.getText().toString()) + mk_end_hour.getText().toString());
+                                mTask.setStart_date(reverseB(mk_start_date.getText().toString())  + " " + mk_start_hour.getText().toString());
+                                mTask.setEnd_date(reverseB(mk_end_date.getText().toString())  + " " +  mk_end_hour.getText().toString());
 
                                 mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
@@ -636,8 +637,8 @@ public class Act028_Task_New extends BaseFragment {
         mTask.setComments(mk_comments.getText().toString());
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-        mTask.setStart_date(ToolBox.reverseB(mk_start_date.getText().toString()) + mk_start_hour.getText().toString());
-        mTask.setEnd_date(ToolBox.reverseB(mk_end_date.getText().toString()) + mk_end_hour.getText().toString());
+        mTask.setStart_date(reverseB(mk_start_date.getText().toString())  + " " + mk_start_hour.getText().toString());
+        mTask.setEnd_date(reverseB(mk_end_date.getText().toString())  + " " +  mk_end_hour.getText().toString());
 
         mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
@@ -1104,13 +1105,22 @@ public class Act028_Task_New extends BaseFragment {
             return false;
         }
 
-        if (!ToolBox.isValidDateIntervalT(mTask.getStart_date(), mTask.getEnd_date())) {
+        String sDTS = ToolBox.reverseB(mk_start_date.getText().toString())  + " " + mk_start_hour.getText().toString();
+
+        String sDTE = reverseB(mk_end_date.getText().toString())  + " " +  mk_end_hour.getText().toString();
+
+
+        if (!ToolBox.isValidDateIntervalT(sDTS, sDTE)) {
             mErrorMSG = HMAUX_TRANS_LIB.get("msg_task_interval_or_future_date_error");
 
             return false;
         }
 
-        if (mTask.getTask_perc() <= 0) {
+
+        int perc = rb_stepped_perc.getProgress() * (int) interval + (int) min;
+
+
+        if (perc <= 0) {
             mErrorMSG = HMAUX_TRANS_LIB.get("msg_value_error");
 
             return false;
@@ -1152,7 +1162,10 @@ public class Act028_Task_New extends BaseFragment {
         btnSaveParcially.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValid() && mTask.getTask_perc() < 100) {
+
+                int perc = rb_stepped_perc.getProgress() * (int) interval + (int) min;
+
+                if (isValid() && perc < 100) {
                     informTaskActiveClosed();
 
                     alert.dismiss();
@@ -1169,7 +1182,10 @@ public class Act028_Task_New extends BaseFragment {
         btnSaveFull.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValid() && mTask.getTask_perc() < 100) {
+
+                int perc = rb_stepped_perc.getProgress() * (int) interval + (int) min;
+
+                if (isValid() && perc == 100) {
                     informTaskActiveClosed();
 
                     alert.dismiss();
