@@ -370,7 +370,6 @@ public class Act027_Services extends BaseFragment {
                 //
                 createTask(serviceExec);
             }else{
-
                 HMAux execTaskAux =  sm_so_service_exec_taskDao.getByStringHM(
                         new Sql_Act027_004(
                                 item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
