@@ -588,7 +588,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         });
     }
 
-    private void executeSoSave() {
+    public void executeSoSave() {
         setWs_process(WS_PROCESS_SO_SAVE);
         //
         enableProgressDialog(
@@ -773,6 +773,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         bundle.putString(SM_SO_Service_Exec_TaskDao.TASK_TMP, sService.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
 
         bundle.putSerializable("data", sService);
+        bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, false);
 
         callAct028(context, bundle);
     }
