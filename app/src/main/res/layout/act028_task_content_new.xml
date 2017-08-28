@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/padrao_WHITE"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:padding="5dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -22,7 +24,7 @@
             android:text="Exec"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,7 +38,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_task_list_content_tv_exec_task_tmp_value"
+                    android:id="@+id/act028_task_content_tv_exec_task_tmp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -56,27 +58,27 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_task_list_content_tv_exec_status"
+                    android:id="@+id/act028_task_content_tv_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
                     android:text="DONE"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
         </LinearLayout>
+
         <LinearLayout
-            android:id="@+id/act028_opc_content_cell_ll_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_marginLeft="15dp">
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_task_lbl"
+                android:id="@+id/act028_task_content_tv_task_code_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Task_Code"
@@ -84,7 +86,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_task_val"
+                android:id="@+id/act028_task_content_tv_task_code_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -94,15 +96,14 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/act028_opc_content_cell_ll_service"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_marginLeft="15dp">
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_service_lbl"
+                android:id="@+id/act028_task_content_tv_service_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Service"
@@ -110,7 +111,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act028_opc_content_cell_tv_service_val"
+                android:id="@+id/act028_task_content_tv_service_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -119,7 +120,37 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <!--<CheckBox-->
+            <!--android:id="@+id/act028_task_content_cb_play_stop"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:background="@drawable/ic_play_status"-->
+            <!--android:button="@null"-->
+            <!--android:checked="false" />-->
+
+            <ImageView
+                android:id="@+id/act028_task_content_iv_play_stop"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_check_circle" />
+
+            <ImageView
+                android:id="@+id/act028_task_content_iv_save"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_check_circle" />
+
+        </LinearLayout>
+
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -132,29 +163,292 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <com.namoa_digital.namoa_library.ctls.TaskControl
-            android:id="@+id/act028_task_content_tc_task_value"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/taskcontrol_tv_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Label"
+                        android:textAppearance="@android:style/TextAppearance" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" - "
+                        android:textAppearance="@android:style/TextAppearance" />
+
+
+                    <TextView
+                        android:id="@+id/taskcontrol_tv_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DONE"
+                        android:textAppearance="@android:style/TextAppearance" />
+
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act028_task_content_mk_comments"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text" />
+
+                <ImageView
+                    android:id="@+id/act028_task_content_iv_gallery"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ic_camera_off" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act028_task_content_tv_start_date_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Start Date"
+                    android:textStyle="bold" />
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                    android:id="@+id/act028_task_content_mk_start_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="2"
+                    android:background="@drawable/border_black"
+                    android:gravity="center"
+                    android:hint="Date"
+                    android:padding="5dp"
+                    app:mBARCODE="false"
+                    app:mInputType="DATE" />
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                    android:id="@+id/act028_task_content_mk_start_hour"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_black"
+                    android:gravity="center"
+                    android:hint="Hour"
+                    android:padding="5dp"
+                    app:mBARCODE="false"
+                    app:mInputType="HOUR" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act028_task_content_tv_end_date_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="End Date"
+                    android:textStyle="bold" />
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                    android:id="@+id/act028_task_content_mk_end_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="2"
+                    android:background="@drawable/border_black"
+                    android:gravity="center"
+                    android:hint="Date"
+                    android:padding="5dp"
+                    app:mBARCODE="false"
+                    app:mInputType="DATE" />
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNMT
+                    android:id="@+id/act028_task_content_mk_end_hour"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_black"
+                    android:gravity="center"
+                    android:hint="Hour"
+                    android:padding="5dp"
+                    app:mBARCODE="false"
+                    app:mInputType="HOUR" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/namoa_color_light_blue3" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act028_task_content_tv_stepped_txt_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="-10dp"
+                        android:text="0"
+                        android:textSize="20sp" />
+
+                    <SeekBar
+                        android:id="@+id/act028_task_content_rb_stepped_perc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminateTint="@color/namoa_color_light_green_lib"
+                        android:indeterminateTintMode="src_atop"
+                        android:max="100"
+                        android:maxHeight="40dp"
+                        android:minHeight="30dp"
+                        android:paddingLeft="30dp"
+                        android:paddingRight="30dp"
+
+                        android:progress="0"
+                        android:thumb="@drawable/thumb_o" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp">
+
+                        <TextView
+                            android:id="@+id/act028_task_content_tv_stepped_txt_min_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:text="0"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/act028_task_content_tv_stepped_txt_max_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:text="0"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border_black"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/act028_task_content_iv_worker"
+                    android:layout_width="@dimen/namoa_icon_cell_so_width"
+                    android:layout_height="@dimen/namoa_icon_cell_so_height"
+                    android:src="@drawable/ic_worker_24px_black"
+                    android:tint="@color/namoa_color_dark_blue2" />
+
+                <TextView
+                    android:id="@+id/act028_task_content_tv_qty_peoplelabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="Qty_PeoPle" />
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act028_task_content_mk_qty_people"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:selectAllOnFocus="true"
+                    android:text="0"
+                    app:mBARCODE="false"
+                    app:mInputType="NUMBER" />
+
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/act028_task_content_btn_cancel_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_namoa_main_states"
+                android:text="Cancel Task"
+                android:textColor="@color/padrao_WHITE" />
+
+        </LinearLayout>
 
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/act028_task_content_btn_cancel_task"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_namoa_main_states"
-            android:text="Cancel Task"
-            android:textColor="@color/padrao_WHITE" />
-
-    </LinearLayout>
 
 </LinearLayout>
 

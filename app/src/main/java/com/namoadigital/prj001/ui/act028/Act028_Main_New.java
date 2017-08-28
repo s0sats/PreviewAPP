@@ -63,6 +63,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     public static final String SELECTION_TASK_LIST = "TASK_LIST";
     public static final String SELECTION_TASK = "TASK";
 
+    public String full_status;
+
     private Context context;
     private Bundle bundle;
 
@@ -219,6 +221,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         act028_opc.setmService(mService);
         act028_opc.setHmAux_Trans(hmAux_Trans);
 
+        full_status = act028_opc.verificarStatus_SO(
+                mService.getSo_prefix(),
+                mService.getSo_code(),
+                mService
+        ) ? "1" : "0";
+
         act028_empty_new = new Act028_Empty_New();
         act028_empty_new.setHmAux_Trans(hmAux_Trans);
 
@@ -234,10 +242,9 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         controls_frags.add(act028_task);
 
         if (mShortCut) {
-            act028_task.setFull_status(true);
+            act028_task.setFull_status(full_status);
             setFrag(act028_task, SELECTION_TASK);
         } else {
-            setDrawerState(true);
             setFrag(act028_empty_new, SELECTION_EMPTY);
         }
     }
@@ -247,6 +254,9 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         bundle = getIntent().getExtras();
 
         if (bundle != null) {
+
+            // Tratar o salto
+            mShortCut = false;
 
             mService = loadService(
                     ToolBox_Con.getPreference_Customer_Code(context),
@@ -273,12 +283,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                         Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ)),
                         Long.parseLong(bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP))
                 );
-
-                mShortCut = true;
             } else {
                 mExec = null;
-
-                mShortCut = false;
             }
 
             if (bundle.getString(SM_SO_Service_Exec_TaskDao.TASK_TMP) != null) {
@@ -745,15 +751,17 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         act028_opc.setmService(mService);
         act028_opc.loadDataToScreen();
 
+        full_status = act028_opc.verificarStatus_SO(
+                mService.getSo_prefix(),
+                mService.getSo_code(),
+                mService
+        ) ? "1" : "0";
+
         if (mExec != null) {
 
             act028_task_list.setSm_so_service_exec(
                     mExec,
-                    act028_opc.verificarStatus_SO(
-                            mService.getSo_prefix(),
-                            mService.getSo_code(),
-                            mService
-                    ) ? "1" : "0"
+                    full_status
             );
             act028_task_list.loadDataToScreen();
 
@@ -866,9 +874,24 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     @Override
     public void menuTaskSelected(HashMap<String, String> data) {
-        act028_task.setData(data);
-        act028_task.setSm_so_service(mService);
-        act028_task.setSm_so_service_exec_task(mTask);
+
+        mTask = loadTask(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.parseInt(data.get(SM_SODao.SO_PREFIX)),
+                Integer.parseInt(data.get(SM_SODao.SO_CODE)),
+                Integer.parseInt(data.get(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE)),
+                Integer.parseInt(data.get(SM_SO_Service_Exec_TaskDao.PACK_CODE)),
+                Integer.parseInt(data.get(SM_SO_Service_Exec_TaskDao.PACK_SEQ)),
+                Integer.parseInt(data.get(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE)),
+                Integer.parseInt(data.get(SM_SO_Service_Exec_TaskDao.SERVICE_CODE)),
+                Integer.parseInt(data.get(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ)),
+                Long.parseLong(data.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP)),
+                Long.parseLong(data.get(SM_SO_Service_Exec_TaskDao.TASK_TMP))
+        );
+
+        act028_task.setmService(mService);
+        act028_task.setmTask(mTask);
+        act028_task.setFull_status(full_status);
         //
         index = 1;
         //
@@ -880,10 +903,11 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     }
 
     @Override
-    public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status) {
+    public void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String opc_full_status) {
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
+        this.full_status = opc_full_status;
         this.mExec_Aux = sm_so_service_exec;
         this.mTask = null;
 

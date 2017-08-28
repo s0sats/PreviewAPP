@@ -47,6 +47,8 @@ public class Act028_Task_List_New extends BaseFragment {
 
     private Context context;
 
+    private String full_status;
+
     private transient TextView tv_exec_tmp_value;
     private transient TextView tv_exec_status;
     private transient TextView tv_exec_code_lbl;
@@ -54,15 +56,16 @@ public class Act028_Task_List_New extends BaseFragment {
     private transient TextView tv_partner_lbl;
     private transient TextView tv_partner_val;
     private transient TextView tv_service_lbl;
+
     private transient TextView tv_service_val;
-
     private transient ListView lv_tasks;
+
     private transient Button btn_new_task;
-
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
-    private SM_SO_Service_Exec sm_so_service_exec;
 
+    private SM_SO_Service_Exec sm_so_service_exec;
     private SM_SO_ServiceDao sm_so_serviceDao;
+
     private SM_SO_Service sm_so_service;
 
     private SM_SODao soDao;
@@ -70,8 +73,6 @@ public class Act028_Task_List_New extends BaseFragment {
     private MD_PartnerDao partnerDao;
 
     private HMAux partnerAux = new HMAux();
-
-    private String full_status;
 
     public interface IAct028_Task_List {
         void menuTaskSelected(HashMap<String, String> data);
@@ -314,9 +315,6 @@ public class Act028_Task_List_New extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> hmAux = (HashMap<String, String>) parent.getItemAtPosition(position);
-                hmAux.put("exec_status", sm_so_service_exec.getStatus());
-                hmAux.put("full_status", full_status);
-
                 if (delegate != null) {
                     delegate.menuTaskSelected(hmAux);
                 }
