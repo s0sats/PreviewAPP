@@ -255,8 +255,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
         if (bundle != null) {
 
-            // Tratar o salto
-            mShortCut = false;
+            mShortCut = bundle.getBoolean(Constant.ACT027_IS_SHORTCUT);
 
             mService = loadService(
                     ToolBox_Con.getPreference_Customer_Code(context),

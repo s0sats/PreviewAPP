@@ -139,7 +139,7 @@
                 android:id="@+id/act028_task_content_iv_play_stop"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_check_circle" />
+                android:src="@drawable/ic_stop" />
 
             <ImageView
                 android:id="@+id/act028_task_content_iv_save"
@@ -414,7 +414,7 @@
                     android:tint="@color/namoa_color_dark_blue2" />
 
                 <TextView
-                    android:id="@+id/act028_task_content_tv_qty_peoplelabel"
+                    android:id="@+id/act028_task_content_tv_qty_people_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
