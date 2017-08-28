@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -40,7 +40,7 @@ public class SM_SO_Service_Exec_Sql_005 implements Specification {
         return sb
                 .append(" DELETE\n" +
                         " FROM\n" +
-                        SM_SO_Service_Exec_TaskDao.TABLE + " S\n" +
+                        SM_SO_Service_ExecDao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S.customer_code =              '" + customer_code + "'\n" +
                         "    AND S.so_prefix =              '" + so_prefix + "'\n" +

@@ -49,6 +49,8 @@ public class Act028_Task_List_New extends BaseFragment {
 
     private String full_status;
 
+    private Act028_Main_New mMain_new;
+
     private transient TextView tv_exec_tmp_value;
     private transient TextView tv_exec_status;
     private transient TextView tv_exec_code_lbl;
@@ -131,6 +133,8 @@ public class Act028_Task_List_New extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
+
+        mMain_new = (Act028_Main_New) getActivity();
 
         partnerDao = new MD_PartnerDao(
                 context,
@@ -394,6 +398,8 @@ public class Act028_Task_List_New extends BaseFragment {
                 processStatusUpdateOffLine(task);
 
                 if (sm_so_service.getExec_type().equalsIgnoreCase("START_STOP")) {
+                    mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+                    //
                     callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
                 }
             }

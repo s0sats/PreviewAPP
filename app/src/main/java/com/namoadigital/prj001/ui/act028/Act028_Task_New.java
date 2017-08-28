@@ -61,6 +61,8 @@ public class Act028_Task_New extends BaseFragment {
 
     private Context context;
 
+    private Act028_Main_New mMain_new;
+
     private TextView tv_exec_task_tmp_value;
     private TextView tv_status;
 
@@ -141,8 +143,27 @@ public class Act028_Task_New extends BaseFragment {
     public void setmTask(SM_SO_Service_Exec_Task mTask) {
         this.mTask = mTask;
         //
+        StringBuilder sFiles = new StringBuilder();
+
+        boolean bFirst = true;
+
+        for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : mTask.getTask_file()) {
+
+            if (!sm_so_service_exec_task_file.getFile_name().isEmpty()) {
+
+                if (bFirst) {
+                    sFiles.append(sm_so_service_exec_task_file.getFile_name());
+                    bFirst = false;
+                } else {
+                    sFiles.append("#");
+                    sFiles.append(sm_so_service_exec_task_file.getFile_name());
+                }
+
+            }
+        }
+        //
         tempValues.put("comments", mTask.getComments());
-        tempValues.put("img", "");
+        tempValues.put("img", sFiles.toString());
         tempValues.put("dts", mTask.getStart_date());
         tempValues.put("dte", mTask.getEnd_date());
         tempValues.put("perc", String.valueOf(mTask.getTask_perc()));
@@ -280,6 +301,8 @@ public class Act028_Task_New extends BaseFragment {
     private void iniVar(View view) {
         context = getActivity();
 
+        mMain_new = (Act028_Main_New) getActivity();
+
         user_code = ToolBox_Con.getPreference_User_Code(getActivity());
 
         soDao = new SM_SODao(
@@ -380,28 +403,30 @@ public class Act028_Task_New extends BaseFragment {
                 tv_service_lbl.setText("Servide");
                 tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
 
-                mk_comments.setText(mTask.getComments());
+                //mk_comments.setText(mTask.getComments());
 
-                StringBuilder sFiles = new StringBuilder();
+//                StringBuilder sFiles = new StringBuilder();
+//
+//                boolean bFirst = true;
+//
+//                for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : mTask.getTask_file()) {
+//
+//                    if (!sm_so_service_exec_task_file.getFile_name().isEmpty()) {
+//
+//                        if (bFirst) {
+//                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
+//                            bFirst = false;
+//                        } else {
+//                            sFiles.append("#");
+//                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
+//                        }
+//
+//                    }
+//                }
+//
+                //iv_gallery.setTag(sFiles.toString());
 
-                boolean bFirst = true;
-
-                for (SM_SO_Service_Exec_Task_File sm_so_service_exec_task_file : mTask.getTask_file()) {
-
-                    if (!sm_so_service_exec_task_file.getFile_name().isEmpty()) {
-
-                        if (bFirst) {
-                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
-                            bFirst = false;
-                        } else {
-                            sFiles.append("#");
-                            sFiles.append(sm_so_service_exec_task_file.getFile_name());
-                        }
-
-                    }
-                }
-
-                iv_gallery.setTag(sFiles.toString());
+                //iv_gallery.setTag(tempValues.get("img"));
 
                 mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
                 mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
@@ -414,7 +439,14 @@ public class Act028_Task_New extends BaseFragment {
                 mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
 
                 try {
-                    mk_comments.setText(tempValues.get("comments"));
+
+                    if (widgetset) {
+                        widgetset = false;
+                    } else {
+                        mk_comments.setText(tempValues.get("comments"));
+                    }
+
+                    //mk_comments.setText(tempValues.get("comments"));
 
                     mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
                     mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
@@ -423,6 +455,11 @@ public class Act028_Task_New extends BaseFragment {
 
                     rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(tempValues.get("perc")) - min) / interval));
                     mk_qty_people.setText(tempValues.get("qty"));
+
+                    if (iv_gallery.getTag() == null) {
+                        iv_gallery.setTag(tempValues.get("img"));
+                    }
+
 
                     if (sdAvoid) {
                         sdAvoid = false;
@@ -607,7 +644,10 @@ public class Act028_Task_New extends BaseFragment {
         mTask.setQty_people(Integer.parseInt(mk_qty_people.getText().toString()));
         //
         sm_so_service_exec_taskDao.addUpdateTmp(mTask);
-
+        //
+        //
+        processTaskStatus();
+        //
         // Include Files to Upload
         uploadFiles(mTask);
 
@@ -641,6 +681,8 @@ public class Act028_Task_New extends BaseFragment {
                     ).toSqlQuery()
             );
         }
+        //
+        mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_SAVE);
         //
         callSoSave(mTask.getSo_prefix(), mTask.getSo_code());
     }
@@ -811,13 +853,15 @@ public class Act028_Task_New extends BaseFragment {
     }
 
     private void callCamera() {
+        sdAvoid = true;
+
         Intent mIntent = new Intent(context, Gallery_Activity.class);
-        mIntent.putExtra(ConstantBase.PID, getId());
+        mIntent.putExtra(ConstantBase.PID, iv_gallery.getId());
         mIntent.putExtra(ConstantBase.PTYPE, 10);
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "p");
 
-        if (mTask.getStatus().equalsIgnoreCase(ConstantBase.TASK_STATUS_EXEC)) {
+        if (mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
             mIntent.putExtra(ConstantBase.PENABLED, true);
         } else {
             mIntent.putExtra(ConstantBase.PENABLED, false);

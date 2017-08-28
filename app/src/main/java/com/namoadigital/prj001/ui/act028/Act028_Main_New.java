@@ -63,6 +63,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     public static final String SELECTION_TASK_LIST = "TASK_LIST";
     public static final String SELECTION_TASK = "TASK";
 
+    public static final String CREATE_TASK = "CREATE_TASK";
+    public static final String CREATE_SAVE = "CREATE_SAVE";
+    public static final String CREATE_NULL = "CREATE_NULL";
+
     public String full_status;
 
     private Context context;
@@ -73,6 +77,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     private boolean mDrawerStatus = true;
     private boolean mShortCut = false;
+
+    private String MTASK_STATUS;
 
     private FragmentManager fm;
     private Act028_Empty_New act028_empty_new;
@@ -92,6 +98,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     private HMAux partnerAux = new HMAux();
 
     private int index = 0;
+
+    public void setMTASK_STATUS(String MTASK_STATUS) {
+        this.MTASK_STATUS = MTASK_STATUS;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -637,7 +647,15 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                             false
                     );
                 } else {
-                    return;
+
+                    if (MTASK_STATUS.equalsIgnoreCase(CREATE_TASK)) {
+                        return;
+                    } else {
+                        refreshUI();
+                    }
+
+                    MTASK_STATUS = CREATE_NULL;
+
                 }
             }
         } else {
