@@ -80,6 +80,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     private SM_SO mSm_so;
 
     private String ws_process = "";
+    private boolean only_save = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -425,6 +426,11 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
+    //Variavel que determina se salva so e sincroniza ou só salva.
+    //Após implementação do atalho, foi necessario criar essa var pra pular o syncronismo.
+    public void setOnly_save(boolean only_save) {
+        this.only_save = only_save;
+    }
 
     private void processSoDownloadResult(HMAux so_download_result) {
         if (so_download_result.containsKey(WS_SO_Search.SO_PREFIX_CODE) && so_download_result.containsKey(WS_SO_Search.SO_LIST_QTY)) {
@@ -476,7 +482,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
     }
 
-    private void refreshUI() {
+    public void refreshUI() {
 
         mSm_so = loadSM_SO(
                 mSm_so.getCustomer_code(),
@@ -519,11 +525,20 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         if (sos.size() == 1) {
 
             if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
-                ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_so_save_ok"), "", "0");
-                //
-                ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
-                //
-                executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                //Se for apenas save do atalho, reseta var only_save, fecha progress
+                //e chama metodo que reloada tela.
+                if(only_save){
+                    progressDialog.dismiss();
+                    only_save = false;
+                    refreshUI();
+
+                }else {
+                    ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_so_save_ok"), "", "0");
+                    //
+                    ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+                    //
+                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                }
             } else {
                 progressDialog.dismiss();
 
@@ -583,7 +598,16 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             public void onClick(View v) {
                 show.dismiss();
                 //
-                executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                if(only_save){
+                    //
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    only_save = false;
+                    refreshUI();
+                }else{
+                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                }
             }
         });
     }

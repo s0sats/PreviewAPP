@@ -39,6 +39,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.Sql_Act027_002;
 import com.namoadigital.prj001.sql.Sql_Act027_003;
 import com.namoadigital.prj001.sql.Sql_Act027_004;
+import com.namoadigital.prj001.sql.Sql_Act027_005;
 import com.namoadigital.prj001.ui.act028.Act028_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -370,9 +371,8 @@ public class Act027_Services extends BaseFragment {
                 //
                 createTask(serviceExec);
             }else{
-
                 HMAux execTaskAux =  sm_so_service_exec_taskDao.getByStringHM(
-                        new Sql_Act027_004(
+                        new Sql_Act027_005(
                                 item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
                                 item.get(SM_SO_ServiceDao.SO_PREFIX),
                                 item.get(SM_SO_ServiceDao.SO_CODE),
@@ -381,18 +381,23 @@ public class Act027_Services extends BaseFragment {
                                 item.get(SM_SO_ServiceDao.PACK_SEQ),
                                 item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
                                 item.get(SM_SO_ServiceDao.SERVICE_CODE),
-                                item.get(SM_SO_ServiceDao.SERVICE_SEQ),
-                                ToolBox_Con.getPreference_User_Code(context)
+                                item.get(SM_SO_ServiceDao.SERVICE_SEQ)
                         ).toSqlQuery()
                 );
 
                 createTask(execAux, execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_PERC));
             }
             //
-            Act027_Main mMain = (Act027_Main) getActivity();
-            //
-            mMain.executeSoSave();
-
+            if(ToolBox_Con.isOnline(context)) {
+                Act027_Main mMain = (Act027_Main) getActivity();
+                //Seta flag de somente save sem sincronismo.
+                mMain.setOnly_save(true);
+                //
+                mMain.executeSoSave();
+            }else{
+                Act027_Main mMain = (Act027_Main) getActivity();
+                mMain.refreshUI();
+            }
         }
 
 
@@ -414,7 +419,7 @@ public class Act027_Services extends BaseFragment {
         newTask.setStatus(Constant.SO_STATUS_PROCESS);
         newTask.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         newTask.setEnd_date("");
-        newTask.setComments("");
+        //newTask.setComments(null);
 
         newTask.setPK(serviceExec);
 
@@ -478,10 +483,14 @@ public class Act027_Services extends BaseFragment {
         newExec.setStatus(Constant.SO_STATUS_PROCESS);
         //
         if (sm_so_service.getPartner_code() == null) {
-            partnerAux.size();
-            newExec.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
-            newExec.setPartner_id(partnerAux.get(MD_PartnerDao.PARTNER_ID));
-            newExec.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
+            try {
+                partnerAux.size();
+                newExec.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
+                newExec.setPartner_id(partnerAux.get(MD_PartnerDao.PARTNER_ID));
+                newExec.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }else {
             newExec.setPartner_code(sm_so_service.getPartner_code());
             newExec.setPartner_id(sm_so_service.getPartner_id());

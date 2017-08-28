@@ -3,13 +3,14 @@
     android:id="@+id/act027_services_content_cell_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/namoa_cell_8_states"
+    android:background="@drawable/namoa_cell_8"
     android:clickable="false"
     android:orientation="vertical"
     android:paddingBottom="15dp"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
     android:paddingTop="0dp"
+    android:focusable="false"
     >
 
     <View
@@ -84,6 +85,7 @@
                     android:src="@drawable/ic_check_circle"
                     android:text="Ex"
                     android:tint="@color/namoa_dark_blue"
+                    android:focusable="false"
                     />
 
             </LinearLayout>
@@ -121,7 +123,8 @@
                 android:paddingTop="4dp"
                 android:src="@drawable/ic_transfer_24px_black"
                 android:text="NO"
-                android:tint="@color/namoa_dark_blue" />
+                android:tint="@color/namoa_dark_blue"
+                android:focusable="false"/>
         </LinearLayout>
 
 

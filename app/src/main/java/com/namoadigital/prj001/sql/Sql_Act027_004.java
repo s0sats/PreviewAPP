@@ -44,9 +44,9 @@ public class Sql_Act027_004 implements Specification {
         return
                 sb
                 .append(" SELECT\n" +
-                        "   E.exec_tmp,\n" +
-                        "   T.task_tmp,\n" +
-                        "   t.task_perc \n" +
+                        "   E.exec_tmp exec_tmp,\n" +
+                        "   T.task_tmp task_tmp,\n" +
+                        "   t.task_perc  task_perc\n" +
                         " FROM\n" +
                         "     sm_so_service_exec_tasks t," +
                         "     (SELECT \n" +
