@@ -32,6 +32,7 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
@@ -297,6 +298,7 @@ public class Act028_Opc_New extends BaseFragment {
                     if (delegate != null) {
                         delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
                         //setHMAuxScreen(); loadDataToScreen()
+                        loadDataToScreen();
                     }
                 }
             }
@@ -334,8 +336,13 @@ public class Act028_Opc_New extends BaseFragment {
                 tv_pack_lbl.setText(hmAux_Trans.get("pack_lbl"));
                 tv_pack_val.setText(data.get("pack_id") + " - " + data.get("pack_desc"));
 
-                tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
-                tv_zone_val.setText(data.get("zone_id") + " - " + data.get("zone_desc"));
+                if (mService.getZone_id() != null) {
+                    tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
+                    tv_zone_val.setText(mService.getZone_id() + " - " + mService.getZone_desc());
+                } else {
+                    tv_zone_lbl.setVisibility(View.GONE);
+                    tv_zone_val.setVisibility(View.GONE);
+                }
 
                 ll_comment.setVisibility(mService.getComments() != null && mService.getComments().length() > 0 ? View.VISIBLE : View.GONE);
                 tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
@@ -351,8 +358,8 @@ public class Act028_Opc_New extends BaseFragment {
                 tv_status.setText(hmAux_Trans.get(mService.getStatus()));
                 ToolBox_Inf.setServiceStatusColor(context, tv_status, mService.getStatus());
 
-                tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
-                tv_qty_total_val.setText("calc done / " + mService.getQty());
+//                tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
+//                tv_qty_total_val.setText("calc done / " + mService.getQty());
 
                 tv_optional_lbl.setText(hmAux_Trans.get("optional_lbl"));
                 tv_optional_val.setText(mService.getOptional() == 1 ? hmAux_Trans.get("YES") : hmAux_Trans.get("NO"));
@@ -364,14 +371,38 @@ public class Act028_Opc_New extends BaseFragment {
                 }
 
                 int qty = 0;
+                int qty_done = 0;
 
-                for (SM_SO_Service_Exec sm_so_service_exec : mService.getExec()) {
-                    if (!sm_so_service_exec.getStatus().equalsIgnoreCase("CANCELLED") &&
-                            !sm_so_service_exec.getStatus().equalsIgnoreCase("INCONSISTENT")) {
+                ArrayList<SM_SO_Service_Exec> mExecList = (ArrayList<SM_SO_Service_Exec>) sm_so_service_execDao.query(
+                        new SM_SO_Service_Exec_Sql_002(
+                                mService.getCustomer_code(),
+                                mService.getSo_prefix(),
+                                mService.getSo_code(),
+                                mService.getPrice_list_code(),
+                                mService.getPack_code(),
+                                mService.getPack_seq(),
+                                mService.getCategory_price_code(),
+                                mService.getService_code(),
+                                mService.getService_seq()
+                        ).toSqlQuery()
+                );
+
+                for (SM_SO_Service_Exec sm_so_service_exec : mExecList) {
+                    if (!sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
+                            !sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_INCONSISTENT)) {
                         qty++;
                     }
 
+                    if (sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
+                            sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_NOT_EXECUTED)) {
+                        qty_done++;
+                    }
+
                 }
+
+                tv_qty_total_lbl.setText(hmAux_Trans.get("qty_total_lbl"));
+                tv_qty_total_val.setText(String.valueOf(qty_done) + " / " + mService.getQty());
+
 
                 if (partner_restriction) {
                     btn_new_exec.setVisibility(View.GONE);
@@ -485,6 +516,7 @@ public class Act028_Opc_New extends BaseFragment {
             if (delegate != null) {
                 delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                 // setHMAuxScreen(); loadDataToScreen()
+                loadDataToScreen();
             }
         } else {
 
@@ -538,6 +570,7 @@ public class Act028_Opc_New extends BaseFragment {
                         if (delegate != null) {
                             delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                             // setHMAuxScreen(); loadDataToScreen()
+                            loadDataToScreen();
                         }
                     }
                 }
@@ -575,6 +608,7 @@ public class Act028_Opc_New extends BaseFragment {
                         if (delegate != null) {
                             delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
                             // setHMAuxScreen(); loadDataToScreen()
+                            loadDataToScreen();
                         }
 
                     }

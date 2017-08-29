@@ -33,6 +33,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.HashMap;
@@ -78,6 +79,8 @@ public class Act028_Task_List_New extends BaseFragment {
 
     public interface IAct028_Task_List {
         void menuTaskSelected(HashMap<String, String> data);
+
+        void menuTaskCreated(SM_SO_Service_Exec_Task mTask);
 
         void exec_task_tmp(String exec_tmp, String task_tmp);
     }
@@ -350,7 +353,6 @@ public class Act028_Task_List_New extends BaseFragment {
                     task.setTask_perc(0);
                 }
 
-
                 task.setQty_people(1);
                 task.setStatus(Constant.SO_STATUS_PROCESS);
 
@@ -397,10 +399,14 @@ public class Act028_Task_List_New extends BaseFragment {
 
                 processStatusUpdateOffLine(task);
 
-                if (sm_so_service.getExec_type().equalsIgnoreCase("START_STOP")) {
+                if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
                     mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
                     //
                     callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+                }
+
+                if (delegate != null){
+                    delegate.menuTaskCreated(task);
                 }
             }
         });

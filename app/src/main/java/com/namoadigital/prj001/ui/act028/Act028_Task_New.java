@@ -565,8 +565,6 @@ public class Act028_Task_New extends BaseFragment {
                 );
             }
         });
-
-
     }
 
     private void processTaskStatus() {
@@ -577,7 +575,11 @@ public class Act028_Task_New extends BaseFragment {
                 switch (mTask.getStatus().toUpperCase()) {
                     case Constant.SO_STATUS_PROCESS:
 
-                        btn_cancel_task.setVisibility(View.VISIBLE);
+                        if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
+                            btn_cancel_task.setVisibility(View.GONE);
+                        } else {
+                            btn_cancel_task.setVisibility(View.VISIBLE);
+                        }
 
                         cfgStatus(true);
                         break;
@@ -646,6 +648,8 @@ public class Act028_Task_New extends BaseFragment {
         //
         sm_so_service_exec_taskDao.addUpdateTmp(mTask);
         //
+        tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
+        setExecStatusColor(tv_status, mTask.getStatus());
         //
         processTaskStatus();
         //
@@ -711,6 +715,7 @@ public class Act028_Task_New extends BaseFragment {
             //
             activateUpload(context);
         } else {
+            mMain_new.offLineProcess();
         }
     }
 

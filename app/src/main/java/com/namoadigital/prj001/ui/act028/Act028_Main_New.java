@@ -918,6 +918,21 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     }
 
     @Override
+    public void menuTaskCreated(SM_SO_Service_Exec_Task mTask) {
+        this.mTask = mTask;
+
+        if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_YES_NO)) {
+            act028_task.setmService(mService);
+            act028_task.setmTask(mTask);
+            act028_task.setFull_status(full_status);
+            //
+            index = 1;
+            //
+            setFrag(act028_task, SELECTION_TASK);
+        }
+    }
+
+    @Override
     public void exec_task_tmp(String exec_tmp, String task_tmp) {
     }
 
@@ -974,6 +989,14 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         }
     }
     //endregion
+
+    public void offLineProcess() {
+        if (mShortCut) {
+            callAct027();
+        } else {
+            refreshUI();
+        }
+    }
 
     private void callAct027() {
         bundle.remove("data");
