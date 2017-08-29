@@ -325,7 +325,6 @@ public class Act028_Task_List_New extends BaseFragment {
                 if (delegate != null) {
                     delegate.menuTaskSelected(hmAux);
                 }
-
             }
         });
 

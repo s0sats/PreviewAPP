@@ -651,12 +651,29 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                 } else {
 
                     if (MTASK_STATUS.equalsIgnoreCase(CREATE_TASK)) {
-                        return;
+
+                        if (mTask != null) {
+                            mTask = loadTask(
+                                    mTask.getCustomer_code(),
+                                    mTask.getSo_prefix(),
+                                    mTask.getSo_code(),
+                                    mTask.getPrice_list_code(),
+                                    mTask.getPack_code(),
+                                    mTask.getPack_seq(),
+                                    mTask.getCategory_price_code(),
+                                    mTask.getService_code(),
+                                    mTask.getService_seq(),
+                                    mTask.getExec_tmp(),
+                                    mTask.getTask_tmp()
+                            );
+                            //
+                            callFragTAsk(mTask);
+                        }
+                        // return;
+
                     } else {
                         refreshUI();
                     }
-
-                    MTASK_STATUS = CREATE_NULL;
 
                 }
             }
@@ -751,21 +768,21 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                 mService.getService_code(),
                 mService.getService_seq()
         );
-        //
-        if (mExec_Aux != null) {
-            mExec = loadExec(
-                    mExec_Aux.getCustomer_code(),
-                    mExec_Aux.getSo_prefix(),
-                    mExec_Aux.getSo_code(),
-                    mExec_Aux.getPrice_list_code(),
-                    mExec_Aux.getPack_code(),
-                    mExec_Aux.getPack_seq(),
-                    mExec_Aux.getCategory_price_code(),
-                    mExec_Aux.getService_code(),
-                    mExec_Aux.getService_seq(),
-                    mExec_Aux.getExec_tmp()
-            );
-        }
+//        //
+//        if (mExec_Aux != null) {
+//            mExec = loadExec(
+//                    mExec_Aux.getCustomer_code(),
+//                    mExec_Aux.getSo_prefix(),
+//                    mExec_Aux.getSo_code(),
+//                    mExec_Aux.getPrice_list_code(),
+//                    mExec_Aux.getPack_code(),
+//                    mExec_Aux.getPack_seq(),
+//                    mExec_Aux.getCategory_price_code(),
+//                    mExec_Aux.getService_code(),
+//                    mExec_Aux.getService_seq(),
+//                    mExec_Aux.getExec_tmp()
+//            );
+//        }
 
         act028_opc.setmService(mService);
         act028_opc.loadDataToScreen();
@@ -776,19 +793,19 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                 mService
         ) ? "1" : "0";
 
-        if (mExec != null) {
-
-            act028_task_list.setSm_so_service_exec(
-                    mExec,
-                    full_status
-            );
-            act028_task_list.loadDataToScreen();
-
-            setFrag(act028_task_list, SELECTION_TASK_LIST);
-        } else {
-            setDrawerState(true);
-            setFrag(act028_empty_new, SELECTION_EMPTY);
-        }
+//        if (mExec != null) {
+//
+//            act028_task_list.setSm_so_service_exec(
+//                    mExec,
+//                    full_status
+//            );
+//            act028_task_list.loadDataToScreen();
+//
+//            setFrag(act028_task_list, SELECTION_TASK_LIST);
+//        } else {
+        setDrawerState(true);
+        setFrag(act028_empty_new, SELECTION_EMPTY);
+//        }
 
         if (index == 0) {
             disableProgressDialog();
@@ -922,14 +939,23 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         this.mTask = mTask;
 
         if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_YES_NO)) {
-            act028_task.setmService(mService);
-            act028_task.setmTask(mTask);
-            act028_task.setFull_status(full_status);
-            //
-            index = 1;
-            //
-            setFrag(act028_task, SELECTION_TASK);
+            callFragTAsk(mTask);
+        } else {
+            if (!ToolBox_Con.isOnline(context)) {
+                callFragTAsk(mTask);
+            }
         }
+    }
+
+    public void callFragTAsk(SM_SO_Service_Exec_Task mTask) {
+        act028_task.setmService(mService);
+        act028_task.setmTask(mTask);
+        act028_task.setFull_status(full_status);
+        act028_task.loadDataToScreen();
+        //
+        index = 1;
+        //
+        setFrag(act028_task, SELECTION_TASK);
     }
 
     @Override
