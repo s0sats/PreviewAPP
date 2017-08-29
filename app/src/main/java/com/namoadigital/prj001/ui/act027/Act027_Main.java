@@ -232,6 +232,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_start_task_confirm_msg");
         transList.add("alert_partner_selection_ttl");
         transList.add("alert_no_partner_selected_msg");
+        transList.add("tracking_num_lbl");
 
         sm_soDao = new SM_SODao(
                 context,

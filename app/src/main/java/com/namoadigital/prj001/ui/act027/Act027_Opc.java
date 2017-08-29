@@ -190,7 +190,8 @@ public class Act027_Opc extends BaseFragment {
         ll_header.setOnClickListener(menuOnClickListener);
         ll_approval.setOnClickListener(menuOnClickListener);
 
-        iv_so_sync.setOnClickListener(new View.OnClickListener() {
+        //iv_so_sync.setOnClickListener(new View.OnClickListener() {
+        ll_so_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (delegate != null) {
@@ -232,28 +233,33 @@ public class Act027_Opc extends BaseFragment {
     private void changeTabColor() {
         switch (SELECTION_TYPE) {
             case Act027_Main.SELECTION_SERVICES:
-                ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
+               /* ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
                 ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
                 ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));*/
+                ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
+                ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+
                 break;
             case Act027_Main.SELECTION_SERIAL:
-                ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_serial.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
-                ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
+                ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_HEADER:
-                ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_header.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
-                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
+                ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_APPROVAL:
-                ll_services.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_approval.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
+                ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 break;
         }
     }
@@ -261,6 +267,10 @@ public class Act027_Opc extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if (mSm_so != null) {
+
+                if(mSm_so.getUpdate_required() == 1 ){
+                    ll_so_sync.setBackgroundDrawable(getResources().getDrawable(R.drawable.stroke_yellow_pressed));
+                }
 
                 tv_so_label.setText(hmAux_Trans.get("so_lbl"));
                 tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
@@ -297,7 +307,7 @@ public class Act027_Opc extends BaseFragment {
                 }
 
                 if(1 == 1){
-                    tv_tracking_label.setText(hmAux_Trans.get("tracking_lbl"));
+                    tv_tracking_label.setText(hmAux_Trans.get("tracking_num_lbl"));
                     tv_tracking_value.setText("Lista de \n tracking!");
                 }else{
                     ll_tracking.setVisibility(View.GONE);
