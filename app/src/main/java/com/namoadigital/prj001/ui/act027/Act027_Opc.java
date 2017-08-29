@@ -39,12 +39,33 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_so_label;
 
     private ImageView iv_so_sync;
+    private TextView tv_so_prefix_code;
+    private LinearLayout ll_so_sync;
 
+    private LinearLayout ll_so_id;
     private TextView tv_so_id_label;
     private TextView tv_so_id_value;
 
+    private LinearLayout ll_so_desc;
+    private TextView tv_so_desc;
+
     private TextView tv_prefix_code_label;
     private TextView tv_prefix_code_value;
+
+    private TextView tv_priority_label;
+    private TextView tv_priority_value;
+
+    private TextView tv_status_label;
+    private TextView tv_status_value;
+
+    private LinearLayout ll_deadline;
+    private TextView tv_deadline_label;
+    private TextView tv_deadline_value;
+
+    private LinearLayout ll_tracking;
+    private TextView tv_tracking_label;
+    private TextView tv_tracking_value;
+
     private TextView tv_product_id_label;
     private TextView tv_product_id_value;
 
@@ -53,15 +74,6 @@ public class Act027_Opc extends BaseFragment {
 
     private TextView tv_serial_label;
     private TextView tv_serial_value;
-
-    private TextView tv_deadline_label;
-    private TextView tv_deadline_value;
-
-    private TextView tv_status_label;
-    private TextView tv_status_value;
-
-    private TextView tv_priority_label;
-    private TextView tv_priority_value;
 
     private TextView tv_services_title;
     private TextView tv_serial_title;
@@ -89,7 +101,7 @@ public class Act027_Opc extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act027_opc_content, container, false);
+        View view = inflater.inflate(R.layout.act027_opc_content_new, container, false);
         //
         iniVar(view);
         iniAction();
@@ -123,31 +135,42 @@ public class Act027_Opc extends BaseFragment {
 
         tv_so_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_ttl);
 
+        ll_so_sync = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_sync);
+        tv_so_prefix_code = (TextView) view.findViewById(R.id.act027_opc_tv_so_prefix_code);
         iv_so_sync = (ImageView) view.findViewById(R.id.act027_opc_iv_sync_so);
 
+        ll_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_id);
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
 
-        tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
-        tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
+        ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
+        tv_so_desc = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
 
-        tv_product_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_id_label);
-        tv_product_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_id_value);
-
-        tv_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_desc_label);
-        tv_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_desc_value);
-
-        tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
-        tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
-
-        tv_deadline_label = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_label);
-        tv_deadline_value = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_value);
+        tv_priority_label = (TextView) view.findViewById(R.id.act027_opc_tv_priority_label);
+        tv_priority_value = (TextView) view.findViewById(R.id.act027_opc_tv_priority_value);
 
         tv_status_label = (TextView) view.findViewById(R.id.act027_opc_tv_status_label);
         tv_status_value = (TextView) view.findViewById(R.id.act027_opc_tv_status_value);
 
-        tv_priority_label = (TextView) view.findViewById(R.id.act027_opc_tv_priority_label);
-        tv_priority_value = (TextView) view.findViewById(R.id.act027_opc_tv_priority_value);
+        ll_deadline = (LinearLayout) view.findViewById(R.id.act027_opc_ll_deadline);
+        tv_deadline_label = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_label);
+        tv_deadline_value = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_value);
+
+        ll_tracking = (LinearLayout) view.findViewById(R.id.act027_opc_ll_tracking);
+        tv_tracking_label = (TextView) view.findViewById(R.id.act027_opc_tv_tracking_label);
+        tv_tracking_value = (TextView) view.findViewById(R.id.act027_opc_tv_tracking_value);
+
+//        tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
+//        tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
+
+        tv_product_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_label);
+        tv_product_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_value);
+
+//        tv_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_desc_label);
+//        tv_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_desc_value);
+
+        tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
+        tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
 
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
@@ -240,34 +263,55 @@ public class Act027_Opc extends BaseFragment {
             if (mSm_so != null) {
 
                 tv_so_label.setText(hmAux_Trans.get("so_lbl"));
+                tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
 
-                tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
-                tv_so_id_value.setText(mSm_so.getSo_id());
+                if(!mSm_so.getSo_id().equals(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code())) {
+                    tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
+                    tv_so_id_value.setText(mSm_so.getSo_id());
+                }else{
+                    ll_so_id.setVisibility(View.GONE);
+                }
 
-                tv_prefix_code_label.setText(hmAux_Trans.get("so_code_lbl"));
-                tv_prefix_code_value.setText(String.valueOf(mSm_so.getSo_prefix()) + " / " + mSm_so.getSo_code());
+                if(mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0){
+                    tv_so_desc.setText(mSm_so.getSo_desc());
+                }else{
+                    ll_so_desc.setVisibility(View.GONE);
+                }
+
+                tv_priority_label.setText(hmAux_Trans.get("priority_lbl"));
+                tv_priority_value.setText(mSm_so.getPriority_desc());
+
+                tv_status_label.setText(hmAux_Trans.get("status_lbl"));
+                tv_status_value.setText(hmAux_Trans.get(mSm_so.getStatus()));
+
+                if(mSm_so.getDeadline() != null && mSm_so.getDeadline().length() > 0) {
+                    tv_deadline_label.setText(hmAux_Trans.get("deadline_lbl"));
+                    tv_deadline_value.setText(
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline() != null ? mSm_so.getDeadline() : "", ""),
+                                    ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                            )
+                    );
+                }else{
+                    ll_deadline.setVisibility(View.GONE);
+                }
+
+                if(1 == 1){
+                    tv_tracking_label.setText(hmAux_Trans.get("tracking_lbl"));
+                    tv_tracking_value.setText("Lista de \n tracking!");
+                }else{
+                    ll_tracking.setVisibility(View.GONE);
+                }
 
                 tv_product_id_label.setText(hmAux_Trans.get("product_id_lbl"));
                 tv_product_id_value.setText(mSm_so.getProduct_id());
 
-                tv_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
-                tv_desc_value.setText(mSm_so.getProduct_desc());
+//                tv_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
+//                tv_desc_value.setText(mSm_so.getProduct_desc());
 
                 tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
                 tv_serial_value.setText(mSm_so.getSerial_id());
 
-                tv_deadline_label.setText(hmAux_Trans.get("deadline_lbl"));
-
-
-                tv_deadline_value.setText(
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline() != null ? mSm_so.getDeadline() : "", ""),
-                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
-                        )
-                );
-
-                tv_status_label.setText(hmAux_Trans.get("status_lbl"));
-                tv_status_value.setText(hmAux_Trans.get(mSm_so.getStatus()));
                 //
                 switch (mSm_so.getStatus()) {
                     case Constant.SO_STATUS_PENDING:
@@ -297,9 +341,6 @@ public class Act027_Opc extends BaseFragment {
                         break;
 
                 }
-
-                tv_priority_label.setText(hmAux_Trans.get("priority_lbl"));
-                tv_priority_value.setText(mSm_so.getPriority_desc());
 
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));

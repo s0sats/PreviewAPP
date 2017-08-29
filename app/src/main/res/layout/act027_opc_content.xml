@@ -170,7 +170,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act027_opc_tv_product_id_value"
+                    android:id="@+id/act027_opc_tv_product_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
