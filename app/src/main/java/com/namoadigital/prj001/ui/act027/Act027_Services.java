@@ -40,6 +40,7 @@ import com.namoadigital.prj001.sql.Sql_Act027_002;
 import com.namoadigital.prj001.sql.Sql_Act027_003;
 import com.namoadigital.prj001.sql.Sql_Act027_004;
 import com.namoadigital.prj001.sql.Sql_Act027_005;
+import com.namoadigital.prj001.sql.Sql_Act027_006;
 import com.namoadigital.prj001.ui.act028.Act028_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -233,9 +234,9 @@ public class Act027_Services extends BaseFragment {
 
     private void serviceExpress(final HMAux item) {
 
-        if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_START_STOP)){
+        if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_START_STOP)) {
 
-            if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)){
+            if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)) {
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_start_task_confirm_ttl"),
@@ -243,18 +244,18 @@ public class Act027_Services extends BaseFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if(item.get(Sql_Act027_002.PARTNER_RESTRICTION).equals("-1")){
-                                   showPartnerDialog(item);
-                                }else{
+                                if (item.get(Sql_Act027_002.PARTNER_RESTRICTION).equals("-1")) {
+                                    showPartnerDialog(item);
+                                } else {
                                     createExecTask(item);
                                 }
                             }
                         },
                         1
                 );
-            }else{
+            } else {
 
-                HMAux execTaskAux =  sm_so_service_exec_taskDao.getByStringHM(
+                HMAux execTaskAux = sm_so_service_exec_taskDao.getByStringHM(
                         new Sql_Act027_004(
                                 item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
                                 item.get(SM_SO_ServiceDao.SO_PREFIX),
@@ -270,10 +271,10 @@ public class Act027_Services extends BaseFragment {
                         ).toSqlQuery()
                 );
                 //
-                if(execTaskAux != null){
-                    sendToTask(item, execTaskAux.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP),execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
-                }else{
-                    Log.d("SHORTCUT_STOP","Exec_tmp e task_tmp não encontrado.");
+                if (execTaskAux != null) {
+                    sendToTask(item, execTaskAux.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP), execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
+                } else {
+                    Log.d("SHORTCUT_STOP", "Exec_tmp e task_tmp não encontrado.");
                     /*Toast.makeText(
                             context,
                             "Express",
@@ -282,20 +283,20 @@ public class Act027_Services extends BaseFragment {
                 }
             }
 
-        }else{
-            if(item.get(Sql_Act027_002.PARTNER_RESTRICTION).equals("-1")){
+        } else {
+            if (item.get(Sql_Act027_002.PARTNER_RESTRICTION).equals("-1")) {
                 showPartnerDialog(item);
-            }else{
+            } else {
                 createExecTask(item);
             }
         }
     }
 
-    private void sendToTask(HMAux sService, String exec_tmp, String task_tmp ) {
+    private void sendToTask(HMAux sService, String exec_tmp, String task_tmp) {
 
         Bundle bundle = new Bundle();
-        bundle.putString(SM_SODao.SO_PREFIX,sService.get(SM_SO_Service_Exec_TaskDao.SO_PREFIX));
-        bundle.putString(SM_SODao.SO_CODE,sService.get(SM_SO_Service_Exec_TaskDao.SO_CODE));
+        bundle.putString(SM_SODao.SO_PREFIX, sService.get(SM_SO_Service_Exec_TaskDao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE, sService.get(SM_SO_Service_Exec_TaskDao.SO_CODE));
         bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE));
         bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PACK_CODE));
         bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.PACK_SEQ));
@@ -328,7 +329,7 @@ public class Act027_Services extends BaseFragment {
 
     private void createExecTask(HMAux item) {
         //Monta o obj serviço
-        SM_SO_Service sm_so_service =  sm_so_serviceDao.getByString(
+        SM_SO_Service sm_so_service = sm_so_serviceDao.getByString(
                 new SM_SO_Service_Sql_001(
                         Long.parseLong(item.get(SM_SO_ServiceDao.CUSTOMER_CODE)),
                         Integer.parseInt(item.get(SM_SO_ServiceDao.SO_PREFIX)),
@@ -343,35 +344,35 @@ public class Act027_Services extends BaseFragment {
                 ).toSqlQuery()
         );
         //
-        if(sm_so_service.getExec_type().equals(Constant.SO_SERVICE_TYPE_YES_NO)){
+        if (sm_so_service.getExec_type().equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
             SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
             //
             SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
             //
-            sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()) ,String.valueOf( serviceExecTask.getTask_tmp()) );
+            sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()), String.valueOf(serviceExecTask.getTask_tmp()));
 
-        }else{
+        } else {
             //Action_Start
             SM_SO_Service_Exec execAux = sm_so_service_execDao.getByString(
-                            new Sql_Act027_003(
-                                    item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
-                                    item.get(SM_SO_ServiceDao.SO_PREFIX),
-                                    item.get(SM_SO_ServiceDao.SO_CODE),
-                                    item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
-                                    item.get(SM_SO_ServiceDao.PACK_CODE),
-                                    item.get(SM_SO_ServiceDao.PACK_SEQ),
-                                    item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
-                                    item.get(SM_SO_ServiceDao.SERVICE_CODE),
-                                    item.get(SM_SO_ServiceDao.SERVICE_SEQ)
-                            ).toSqlQuery()
+                    new Sql_Act027_003(
+                            item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
+                            item.get(SM_SO_ServiceDao.SO_PREFIX),
+                            item.get(SM_SO_ServiceDao.SO_CODE),
+                            item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
+                            item.get(SM_SO_ServiceDao.PACK_CODE),
+                            item.get(SM_SO_ServiceDao.PACK_SEQ),
+                            item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
+                            item.get(SM_SO_ServiceDao.SERVICE_CODE),
+                            item.get(SM_SO_ServiceDao.SERVICE_SEQ)
+                    ).toSqlQuery()
             );
             //Se null , não existe exec criada.
-            if(execAux == null){
+            if (execAux == null) {
                 SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
                 //
                 createTask(serviceExec);
-            }else{
-                HMAux execTaskAux =  sm_so_service_exec_taskDao.getByStringHM(
+            } else {
+                HMAux execTaskAux = sm_so_service_exec_taskDao.getByStringHM(
                         new Sql_Act027_005(
                                 item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
                                 item.get(SM_SO_ServiceDao.SO_PREFIX),
@@ -388,13 +389,13 @@ public class Act027_Services extends BaseFragment {
                 createTask(execAux, execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_PERC));
             }
             //
-            if(ToolBox_Con.isOnline(context)) {
+            if (ToolBox_Con.isOnline(context)) {
                 Act027_Main mMain = (Act027_Main) getActivity();
                 //Seta flag de somente save sem sincronismo.
                 mMain.setOnly_save(true);
                 //
                 mMain.executeSoSave();
-            }else{
+            } else {
                 Act027_Main mMain = (Act027_Main) getActivity();
                 mMain.refreshUI();
             }
@@ -404,16 +405,33 @@ public class Act027_Services extends BaseFragment {
     }
 
     private SM_SO_Service_Exec_Task createTask(SM_SO_Service_Exec serviceExec, String task_perc) {
-
         /*
         * Cria Task
         */
-        SM_SO_Service_Exec_Task newTask =  new SM_SO_Service_Exec_Task();
+        //Pega proximo task_seq_oper
+        HMAux taskSeqOperAux =
+                sm_so_service_exec_taskDao.getByStringHM(
+                    new Sql_Act027_006(
+                            serviceExec.getCustomer_code(),
+                            serviceExec.getSo_prefix(),
+                            serviceExec.getSo_code(),
+                            serviceExec.getPrice_list_code(),
+                            serviceExec.getPack_code(),
+                            serviceExec.getPack_seq(),
+                            serviceExec.getCategory_price_code(),
+                            serviceExec.getService_code(),
+                            serviceExec.getService_seq()
+                    ).toSqlQuery()
+                );
+
+        int next_task_seq_oper = taskSeqOperAux != null ? Integer.parseInt(taskSeqOperAux.get(Sql_Act027_006.NEXT_TASK_SEQ_OPER)) : 1 ;
+        //
+        SM_SO_Service_Exec_Task newTask = new SM_SO_Service_Exec_Task();
         //
         newTask.setTask_code(0);
         newTask.setTask_perc(task_perc == null ? 0 : Integer.parseInt(task_perc));
         newTask.setQty_people(1);
-        newTask.setTask_seq_oper(1);
+        newTask.setTask_seq_oper(next_task_seq_oper);
         newTask.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
         newTask.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
         newTask.setStatus(Constant.SO_STATUS_PROCESS);
@@ -488,10 +506,10 @@ public class Act027_Services extends BaseFragment {
                 newExec.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
                 newExec.setPartner_id(partnerAux.get(MD_PartnerDao.PARTNER_ID));
                 newExec.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else {
+        } else {
             newExec.setPartner_code(sm_so_service.getPartner_code());
             newExec.setPartner_id(sm_so_service.getPartner_id());
             newExec.setPartner_desc(sm_so_service.getPartner_desc());
@@ -511,7 +529,7 @@ public class Act027_Services extends BaseFragment {
     }
 
     private SM_SO_Service_Exec_Task createTask(SM_SO_Service_Exec serviceExec) {
-        return createTask(serviceExec,null);
+        return createTask(serviceExec, null);
     }
 
     private void showPartnerDialog(final HMAux item) {
@@ -554,7 +572,7 @@ public class Act027_Services extends BaseFragment {
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(partnerAux.size() == 0){
+                if (partnerAux.size() == 0) {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_partner_selection_ttl"),
@@ -562,7 +580,7 @@ public class Act027_Services extends BaseFragment {
                             null,
                             0
                     );
-                }else{
+                } else {
                     createExecTask(item);
                 }
             }
