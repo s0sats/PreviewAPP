@@ -75,6 +75,28 @@ public class Act027_Services_Adapter extends BaseAdapter {
         return 0L;
     }
 
+    public int getPositionByPk(String pk){
+        for (int i = 0; i < source.size()  ; i++) {
+            HMAux auxItem  = source.get(i);
+            String auxPk =
+                    auxItem.get(SM_SO_ServiceDao.CUSTOMER_CODE) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.SO_PREFIX) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.SO_CODE) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.PRICE_LIST_CODE) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.PACK_CODE) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.PACK_SEQ) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.SERVICE_CODE) +"|"+
+                    auxItem.get(SM_SO_ServiceDao.SERVICE_SEQ) ;
+
+            if(auxPk.equals(pk)){
+                return  i;
+            }
+        }
+        //
+        return -1;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {

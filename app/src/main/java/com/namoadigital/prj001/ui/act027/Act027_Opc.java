@@ -269,7 +269,9 @@ public class Act027_Opc extends BaseFragment {
             if (mSm_so != null) {
 
                 if(mSm_so.getUpdate_required() == 1 ){
-                    ll_so_sync.setBackgroundDrawable(getResources().getDrawable(R.drawable.stroke_yellow_states));
+                    ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
+                }else{
+                    ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
                 }
 
                 tv_so_label.setText(hmAux_Trans.get("so_lbl"));

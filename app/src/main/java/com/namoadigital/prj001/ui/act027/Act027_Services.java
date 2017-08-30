@@ -65,6 +65,7 @@ public class Act027_Services extends BaseFragment {
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
     private SM_SO mSm_so;
     private HMAux partnerAux = new HMAux();
+    private String lastServiceUpdated ="1|2017|122|17|3|1|6|17|1";
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -78,6 +79,10 @@ public class Act027_Services extends BaseFragment {
 
     public void setOnServiceSelectedListener(IAct027_Services delegate) {
         this.delegate = delegate;
+    }
+
+    public void setLastServiceUpdated(String lastServiceUpdated) {
+        this.lastServiceUpdated = lastServiceUpdated;
     }
 
     @Nullable
@@ -157,7 +162,7 @@ public class Act027_Services extends BaseFragment {
 
                 tv_filter_lbl.setText(hmAux_Trans.get("filter_lbl"));
                 //
-                sw_filter.setChecked(true);
+                //sw_filter.setChecked(true);
                 //
                 setServiceAdapter(sw_filter.isChecked());
             }
@@ -225,6 +230,17 @@ public class Act027_Services extends BaseFragment {
 
         //
         lv_services.setAdapter(adp);
+        //Se possui var indicando qual seriviço foi alterado,
+        //Aplica "auto scroll"
+        if(!lastServiceUpdated.equals("")){
+            int idx = adp.getPositionByPk(lastServiceUpdated);
+            //
+            if(idx > -1){
+                lv_services.setSelection(idx);
+            }
+            lastServiceUpdated = "";
+        }
+
     }
 
     public void loadScreenToData() {

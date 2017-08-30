@@ -34,6 +34,7 @@
                 android:id="@+id/act027_services_content_sw_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 />
 
         </LinearLayout>
