@@ -4,4 +4,7 @@
     <stroke
         android:width="2dp"
         android:color="@color/namoa_color_yellow_2"/>
+    <solid
+        android:width="2dp"
+        android:color="@color/namoa_color_yellow_2_alpha"/>
 </shape>
