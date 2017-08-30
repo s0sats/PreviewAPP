@@ -45,6 +45,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static android.R.attr.type;
+
 /**
  * Created by neomatrix on 14/07/17.
  */
@@ -108,7 +110,7 @@ public class Act028_Opc_New extends BaseFragment {
     public interface IAct028_Opc {
         void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status);
 
-        void newExec();
+        void newExec(SM_SO_Service sm_so_service, SM_SO_Service_Exec sm_so_service_exec, String full_status);
     }
 
     private IAct028_Opc delegate;
@@ -235,7 +237,7 @@ public class Act028_Opc_New extends BaseFragment {
                 if (sm_so_service_exec.getPartner_code() == null) {
 
                     if (data.get("full_status").equalsIgnoreCase("1")) {
-                        handlePartnerDefinition(sm_so_service_exec);
+                        handlePartnerDefinition(sm_so_service_exec, 0);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -285,7 +287,7 @@ public class Act028_Opc_New extends BaseFragment {
                 sm_so_service_execNew.setStatus(Constant.SO_STATUS_PROCESS);
 
                 if (mService.getPartner_code() == null) {
-                    handlePartnerDefinition(sm_so_service_execNew);
+                    handlePartnerDefinition(sm_so_service_execNew, 1);
                 } else {
                     sm_so_service_execNew.setPartner_code(mService.getPartner_code());
                     sm_so_service_execNew.setPartner_id(mService.getPartner_id());
@@ -296,9 +298,20 @@ public class Act028_Opc_New extends BaseFragment {
                     setOffLineStatus(sm_so_service_execNew);
                     //
                     if (delegate != null) {
-                        delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
-                        //setHMAuxScreen(); loadDataToScreen()
-                        loadDataToScreen();
+                        if (type == 1) {
+                            delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
+                            loadDataToScreen();
+                        } else {
+                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
+                            // setHMAuxScreen(); loadDataToScreen()
+                            loadDataToScreen();
+                        }
+
+
+//                        //delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
+//                        delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
+//                        //setHMAuxScreen(); loadDataToScreen()
+//                        loadDataToScreen();
                     }
                 }
             }
@@ -488,11 +501,11 @@ public class Act028_Opc_New extends BaseFragment {
         ).toSqlQuery());
     }
 
-    private void handlePartnerDefinition(SM_SO_Service_Exec sm_so_service_exec) {
-        showPartnerOptDialog(sm_so_service_exec);
+    private void handlePartnerDefinition(SM_SO_Service_Exec sm_so_service_exec, int type) {
+        showPartnerOptDialog(sm_so_service_exec, type);
     }
 
-    public void showPartnerOptDialog(final SM_SO_Service_Exec sm_so_service_exec) {
+    public void showPartnerOptDialog(final SM_SO_Service_Exec sm_so_service_exec, final int type) {
         MD_PartnerDao md_partnerDao = new MD_PartnerDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -514,9 +527,14 @@ public class Act028_Opc_New extends BaseFragment {
             sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
             //
             if (delegate != null) {
-                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-                // setHMAuxScreen(); loadDataToScreen()
-                loadDataToScreen();
+                if (type == 1) {
+                    delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
+                    loadDataToScreen();
+                } else {
+                    delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+                    // setHMAuxScreen(); loadDataToScreen()
+                    loadDataToScreen();
+                }
             }
         } else {
 
@@ -559,19 +577,24 @@ public class Act028_Opc_New extends BaseFragment {
                                 false
                         );
                     } else {
-                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
-                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
-                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
-                        //
-                        sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
-                        //
-                        setOffLineStatus(sm_so_service_exec);
-                        //
-                        if (delegate != null) {
-                            delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-                            // setHMAuxScreen(); loadDataToScreen()
-                            loadDataToScreen();
-                        }
+//                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
+//                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
+//                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
+//                        //
+//                        sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
+//                        //
+//                        setOffLineStatus(sm_so_service_exec);
+//                        //
+//                        if (delegate != null) {
+//                            if (type == 1) {
+//                                delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
+//                                loadDataToScreen();
+//                            } else {
+//                                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+//                                // setHMAuxScreen(); loadDataToScreen()
+//                                loadDataToScreen();
+//                            }
+//                        }
                     }
                 }
             });
@@ -606,9 +629,15 @@ public class Act028_Opc_New extends BaseFragment {
                         setOffLineStatus(sm_so_service_exec);
                         //
                         if (delegate != null) {
-                            delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-                            // setHMAuxScreen(); loadDataToScreen()
-                            loadDataToScreen();
+                            if (type == 1) {
+                                delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
+                                // setHMAuxScreen(); loadDataToScreen()
+                                loadDataToScreen();
+                            } else {
+                                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+                                // setHMAuxScreen(); loadDataToScreen()
+                                loadDataToScreen();
+                            }
                         }
 
                     }
@@ -618,124 +647,6 @@ public class Act028_Opc_New extends BaseFragment {
             });
         }
     }
-
-//    public void setHMAuxScreen() {
-//        if (data != null) {
-//            mService = sm_so_serviceDao.getByString(
-//                    new SM_SO_Service_Sql_001(
-//                            Long.parseLong(data.get("customer_code")),
-//                            Integer.parseInt(data.get("so_prefix")),
-//                            Integer.parseInt(data.get("so_code")),
-//                            Integer.parseInt(data.get("price_list_code")),
-//                            Integer.parseInt(data.get("pack_code")),
-//                            Integer.parseInt(data.get("pack_seq")),
-//                            Integer.parseInt(data.get("category_price_code")),
-//                            Integer.parseInt(data.get("service_code")),
-//                            Integer.parseInt(data.get("service_seq"))
-//                            //
-//                    ).toSqlQuery()
-//            );
-//
-//            tv_service_id_label.setText("Service ID");
-//            tv_service_id_value.setText(mService.getService_id());
-//
-//            tv_service_desc_label.setText("Service Description");
-//            tv_service_desc_value.setText(mService.getService_desc());
-//
-//            tv_pack_id_label.setText("Pack ID");
-//            tv_pack_id_value.setText(data.get("pack_id"));
-//
-//            tv_pack_desc_label.setText("Pack Description");
-//            tv_pack_desc_value.setText(data.get("pack_desc"));
-//
-//            tv_partiner_restriction_label.setText("Partner Restriction");
-//            tv_partiner_restriction_value.setText(data.get("partner_id") + " / " + data.get("partner_desc"));
-//
-//            tv_qty_label.setText("Quantity");
-//            tv_qty_value.setText(String.valueOf(mService.getQty()));
-//
-//            if (data.get("pack_id").equals("")) {
-//                tv_pack_id_label.setVisibility(View.GONE);
-//                tv_pack_id_value.setVisibility(View.GONE);
-//
-//                tv_pack_desc_label.setVisibility(View.GONE);
-//                tv_pack_desc_value.setVisibility(View.GONE);
-//            } else {
-//                tv_pack_id_label.setVisibility(View.VISIBLE);
-//                tv_pack_id_value.setVisibility(View.VISIBLE);
-//
-//                tv_pack_desc_label.setVisibility(View.VISIBLE);
-//                tv_pack_desc_value.setVisibility(View.VISIBLE);
-//            }
-//
-//            if (data.get("partner_restriction").equals("0")) {
-//                tv_partiner_restriction_label.setVisibility(View.GONE);
-//                tv_partiner_restriction_value.setVisibility(View.GONE);
-//            } else {
-//                tv_partiner_restriction_label.setVisibility(View.VISIBLE);
-//                tv_partiner_restriction_value.setVisibility(View.VISIBLE);
-//            }
-//
-//            int qty = 0;
-//
-//            for (SM_SO_Service_Exec sm_so_service_exec : mService.getExec()) {
-//                if (!sm_so_service_exec.getStatus().equalsIgnoreCase("CANCELLED") &&
-//                        !sm_so_service_exec.getStatus().equalsIgnoreCase("INCONSISTENT")) {
-//                    qty++;
-//                }
-//
-//            }
-//
-//            if (data.get("partner_restriction").equals("1")) {
-//                btn_new_exec.setVisibility(View.GONE);
-//            } else {
-//                if ((mService.getQty() - qty) <= 0) {
-//                    btn_new_exec.setVisibility(View.GONE);
-//                } else {
-//                    btn_new_exec.setVisibility(View.VISIBLE);
-//                }
-//            }
-//            btn_new_exec.setText(hmAux_Trans.get("btn_new_exec"));
-//
-//            lv_execs.setAdapter(
-//                    new Act028_Exec_Adapter(
-//                            getActivity(),
-//                            R.layout.act028_opc_content_cell_03,
-//                            //sm_so_service.getExec()
-//
-//                            new SM_SO_Service_ExecDao(
-//                                    context,
-//                                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                                    Constant.DB_VERSION_CUSTOM
-//                            ).query_HM(
-//                                    new Sql_Act028_001(
-//                                            mService.getCustomer_code(),
-//                                            mService.getSo_prefix(),
-//                                            mService.getSo_code(),
-//                                            mService.getPrice_list_code(),
-//                                            mService.getPack_code(),
-//                                            mService.getPack_seq(),
-//                                            mService.getCategory_price_code(),
-//                                            mService.getService_code(),
-//                                            mService.getService_seq(),
-//                                            ToolBox_Con.getPreference_User_Code(context)
-//                                    ).toSqlQuery()
-//                            )
-//                    )
-//
-//            );
-//
-//            data.put(
-//                    "full_status",
-//                    verificarStatus_SO(mService.getSo_prefix(), mService.getSo_code(), mService) ? "1" : "0"
-//            );
-//
-//            if (data.get("full_status").equalsIgnoreCase("0")) {
-//                btn_new_exec.setVisibility(View.GONE);
-//            } else {
-//            }
-//        }
-//    }
 
     public boolean verificarStatus_SO(int so_prefix, int so_code, SM_SO_Service sm_so_service) {
 
@@ -752,7 +663,6 @@ public class Act028_Opc_New extends BaseFragment {
                         so_prefix,
                         so_code
                 ).toSqlQuery()
-
         );
 
         if (
@@ -790,9 +700,7 @@ public class Act028_Opc_New extends BaseFragment {
                         }
                     }
                 }
-
             }
-
         }
 
         return true;

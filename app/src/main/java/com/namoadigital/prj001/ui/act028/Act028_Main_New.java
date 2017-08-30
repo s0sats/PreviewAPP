@@ -38,11 +38,13 @@ import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -91,6 +93,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     private SM_SO_Service_Exec mExec_Aux;
     private SM_SO_Service_Exec_Task mTask;
 
+    private SM_SODao sm_soDao;
     private SM_SO_ServiceDao sm_so_serviceDao;
     private SM_SO_Service_ExecDao sm_so_service_execDao;
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
@@ -156,6 +159,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         transList.add("exec_code_lbl");
         transList.add("partner_lbl");
         transList.add("service_lbl");
+
+        sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
 
         sm_so_serviceDao = new SM_SO_ServiceDao(
                 context,
@@ -556,11 +565,16 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                 //
                 if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
                     act028_task.updateTaskOnLeave();
+                    setFrag(act028_task_list, SELECTION_TASK_LIST);
                 } else {
+                    mDrawerStatus = true;
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                    //
                     act028_task.removeTaskOnLeave();
+                    act028_opc.loadDataToScreen();
+                    //
+                    setFrag(act028_empty_new, SELECTION_EMPTY);
                 }
-                //
-                setFrag(act028_task_list, SELECTION_TASK_LIST);
             } else {
                 if (mDrawerStatus) {
                     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -808,7 +822,9 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 //        }
 
         if (index == 0) {
-            disableProgressDialog();
+            if (progressDialog != null && progressDialog.isShowing()) {
+                disableProgressDialog();
+            }
         } else {
             index = 0;
             //
@@ -816,6 +832,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                 disableProgressDialog();
             }
         }
+
+
     }
 
 
@@ -980,7 +998,64 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     }
 
     @Override
-    public void newExec() {
+    public void newExec(SM_SO_Service sm_so_service, SM_SO_Service_Exec sm_so_service_exec, String full_status) {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        this.full_status = full_status;
+        this.mExec_Aux = sm_so_service_exec;
+        this.mTask = null;
+
+        act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
+        act028_task_list.loadDataToScreen();
+        //
+        index = 0;
+        //
+        setFrag(act028_task_list, SELECTION_TASK_LIST);
+
+        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+        task.setTask_code(0);
+        task.setTask_seq_oper(1);
+        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+            task.setTask_perc(0);
+        } else {
+            task.setTask_perc(100);
+        }
+        task.setQty_people(1);
+        task.setStatus(Constant.SO_STATUS_PROCESS);
+
+        task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        task.setEnd_date("");
+        task.setComments("");
+
+        task.setPK(sm_so_service_exec);
+        task.setTask_tmp(201);
+        sm_so_service_exec_taskDao.addUpdateTmp(task);
+
+        /**
+         * Calling WebService
+         */
+
+        sm_soDao.getByString(
+                new SM_SO_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        sm_so_service_exec.getSo_prefix(),
+                        sm_so_service_exec.getSo_code()
+                ).toSqlQuery()
+        );
+
+        setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+
+        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+            setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+            //
+            callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+        } else {
+            setMTASK_STATUS(Act028_Main_New.CREATE_NULL);
+        }
+
+        menuTaskCreated(task);
     }
 
     //region Drawer Visibility
@@ -1033,6 +1108,28 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         //
         startActivity(mIntent);
         finish();
+    }
+
+    private void callSoSave(int prefix, int code) {
+
+        if (ToolBox_Con.isOnline(context)) {
+
+            enableProgressDialog(
+                    hmAux_Trans.get("alert_task_title"),
+                    hmAux_Trans.get("alert_so_list_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+        }
     }
 
 

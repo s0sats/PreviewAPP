@@ -22,7 +22,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.MD_Partner;
-import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
@@ -31,7 +30,7 @@ import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -332,84 +331,87 @@ public class Act028_Task_List_New extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-                HMAux dtAux = last_task_seq_oper();
-
-                SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
-                task.setTask_code(0);
-
-                if (dtAux != null) {
-                    task.setTask_seq_oper(Integer.parseInt(dtAux.get("task_seq_oper")) + 1);
-                } else {
-                    task.setTask_seq_oper(1);
-                }
-
-                task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-                task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-
-                if (dtAux != null) {
-                    task.setTask_perc(Integer.parseInt(dtAux.get("task_perc")));
-                } else {
-                    task.setTask_perc(0);
-                }
-
-                task.setQty_people(1);
-                task.setStatus(Constant.SO_STATUS_PROCESS);
-
-                task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
-                task.setEnd_date("");
-                task.setComments("");
-                //
-                task.setPK(sm_so_service_exec);
-                //
-                long nTaskTemp = Long.parseLong(sm_so_service_exec_taskDao.getByStringHM(
-                        new SM_SO_Service_Exec_Task_Sql_004(
-                                task.getCustomer_code(),
-                                task.getSo_prefix(),
-                                task.getSo_code(),
-                                task.getPrice_list_code(),
-                                task.getPack_code(),
-                                task.getPack_seq(),
-                                task.getCategory_price_code(),
-                                task.getService_code(),
-                                task.getService_seq(),
-                                task.getExec_tmp()
-
-                        ).toSqlQuery()
-                ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
-
-                task.setTask_tmp(nTaskTemp);
-                sm_so_service_exec_taskDao.addUpdateTmp(task);
-
-                createTaskList();
-
-                /**
-                 * Calling WebService
-                 */
-                SM_SO so = soDao.getByString(
-                        new SM_SO_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                sm_so_service_exec.getSo_prefix(),
-                                sm_so_service_exec.getSo_code()
-                        ).toSqlQuery()
-                );
-
-                so.setUpdate_required(1);
-                soDao.addUpdate(so);
-
-                processStatusUpdateOffLine(task);
-
-                if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
-                    mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
-                    //
-                    callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
-                }
-
-                if (delegate != null){
-                    delegate.menuTaskCreated(task);
-                }
+                createNewTask();
             }
         });
 
+    }
+
+    public void createNewTask() {
+        HMAux dtAux = last_task_seq_oper();
+
+        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+        task.setTask_code(0);
+
+        if (dtAux != null) {
+            task.setTask_seq_oper(Integer.parseInt(dtAux.get("task_seq_oper")) + 1);
+        } else {
+            task.setTask_seq_oper(1);
+        }
+
+        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+
+        if (dtAux != null) {
+            task.setTask_perc(Integer.parseInt(dtAux.get("task_perc")));
+        } else {
+            task.setTask_perc(0);
+        }
+
+        task.setQty_people(1);
+        task.setStatus(Constant.SO_STATUS_PROCESS);
+
+        task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        task.setEnd_date("");
+        task.setComments("");
+        //
+        task.setPK(sm_so_service_exec);
+        //
+        long nTaskTemp = Long.parseLong(sm_so_service_exec_taskDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_Sql_004(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq(),
+                        task.getExec_tmp()
+
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
+
+        task.setTask_tmp(nTaskTemp);
+        sm_so_service_exec_taskDao.addUpdateTmp(task);
+
+        if (bStatus) {
+            createTaskList();
+        }
+
+        /**
+         * Calling WebService
+         */
+        soDao.getByString(
+                new SM_SO_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        sm_so_service_exec.getSo_prefix(),
+                        sm_so_service_exec.getSo_code()
+                ).toSqlQuery()
+        );
+
+        processStatusUpdateOffLine(task);
+
+        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+            mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+            //
+            callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+        }
+
+        if (delegate != null){
+            delegate.menuTaskCreated(task);
+        }
     }
 
     private void processStatusUpdateOffLine(SM_SO_Service_Exec_Task sm_so_service_exec_task) {

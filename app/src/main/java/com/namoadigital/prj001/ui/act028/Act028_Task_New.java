@@ -39,6 +39,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_008;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -659,16 +660,13 @@ public class Act028_Task_New extends BaseFragment {
         /**
          * Calling WebService
          */
-        SM_SO so = soDao.getByString(
-                new SM_SO_Sql_001(
+        soDao.getByString(
+                new SM_SO_Sql_009(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         mTask.getSo_prefix(),
                         mTask.getSo_code()
                 ).toSqlQuery()
         );
-
-        so.setUpdate_required(1);
-        soDao.addUpdate(so);
 
         if (mTask.getTask_perc() == 100) {
             sm_so_service_execDao.addUpdate(
