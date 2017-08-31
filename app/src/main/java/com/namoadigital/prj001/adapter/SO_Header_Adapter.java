@@ -189,11 +189,18 @@ public class SO_Header_Adapter extends BaseAdapter {
         ToolBox_Inf.setSOStatusColor(context,tv_status_val,so.get(SM_SODao.STATUS));
         //
         tv_deadline_lbl.setText(hmAux_Trans.get("deadline_lbl"));
-        tv_deadline_val.setText(so.get(SM_SODao.DEADLINE));
         if(so.get(SM_SODao.DEADLINE) != null && so.get(SM_SODao.DEADLINE).length() > 0){
             ll_deadline.setVisibility(View.VISIBLE);
+            tv_deadline_val.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.DEADLINE)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+
+            );
         }else{
             ll_deadline.setVisibility(View.GONE);
+            tv_deadline_val.setText("");
         }
         //
         tv_site_lbl.setText(hmAux_Trans.get("site_lbl"));

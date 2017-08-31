@@ -75,6 +75,8 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_serial_label;
     private TextView tv_serial_value;
 
+    private ImageView iv_n_service;
+
     private TextView tv_services_title;
     private TextView tv_serial_title;
     private TextView tv_header_title;
@@ -84,6 +86,8 @@ public class Act027_Opc extends BaseFragment {
         void menuOptionsSelected(String type);
 
         void soSyncClick();
+
+        void ivNServiceClick();
     }
 
     private IAct027_Opc delegate;
@@ -172,6 +176,8 @@ public class Act027_Opc extends BaseFragment {
         tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
 
+        iv_n_service = (ImageView) view.findViewById(R.id.act027_opc_iv_n_service);
+
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
@@ -196,6 +202,15 @@ public class Act027_Opc extends BaseFragment {
             public void onClick(View v) {
                 if (delegate != null) {
                     delegate.soSyncClick();
+                }
+            }
+        });
+
+        iv_n_service.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate != null) {
+                    delegate.ivNServiceClick();
                 }
             }
         });

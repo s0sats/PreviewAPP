@@ -349,7 +349,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
         //
         mPresenter.onBackPressedClicked();
     }
