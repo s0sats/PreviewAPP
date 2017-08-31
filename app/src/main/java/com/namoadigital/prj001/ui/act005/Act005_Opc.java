@@ -32,6 +32,7 @@ public class Act005_Opc extends Fragment {
     //
     public static final String DRAWER_OPC_CUSTOMER = "drawer_opc_customer";
     public static final String DRAWER_OPC_SITE = "drawer_opc_site";
+    public static final String DRAWER_OPC_ZONE = "drawer_opc_zone";
     public static final String DRAWER_OPC_OPERATION = "drawer_opc_operation";
     public static final String DRAWER_OPC_LOGOUT = "drawer_opc_logout";
     //
@@ -151,10 +152,12 @@ public class Act005_Opc extends Fragment {
         String[] id = {
                 DRAWER_OPC_CUSTOMER,
                 DRAWER_OPC_SITE,
+                DRAWER_OPC_ZONE,
                 DRAWER_OPC_OPERATION,
              //   DRAWER_OPC_LOGOUT
         };
         String[] icon = {
+                "",
                 "",
                 "",
                 "",
@@ -164,6 +167,7 @@ public class Act005_Opc extends Fragment {
         String[] desc = {
                 "lbl_change_customer",
                 "lbl_change_site",
+                "lbl_change_zone",
                 "lbl_change_operation",
               //  "lbl_logout",
         };
