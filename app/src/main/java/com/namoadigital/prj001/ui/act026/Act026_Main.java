@@ -185,13 +185,14 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
     @Override
     public void loadSOList(List<HMAux> soList) {
+        String configType =  product_code == null || serial_id == null ? SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL : SO_Header_Adapter.CONFIG_TYPE_EXIBITION_SO ;
         //
         mAdapter = new SO_Header_Adapter(
                 context,
                 //R.layout.act024_content_cell,
                 R.layout.so_header_cell,
                 soList,
-                SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL
+                configType
         );
         //
         lv_so.setAdapter(mAdapter);
