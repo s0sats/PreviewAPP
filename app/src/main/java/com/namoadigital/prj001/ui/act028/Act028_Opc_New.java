@@ -577,6 +577,7 @@ public class Act028_Opc_New extends BaseFragment {
                                 false
                         );
                     } else {
+
 //                        sm_so_service_exec.setPartner_code(Integer.parseInt(partnerAux.get("id")));
 //                        sm_so_service_exec.setPartner_id(partnerAux.get("partner_id"));
 //                        sm_so_service_exec.setPartner_desc(partnerAux.get("description"));
