@@ -166,7 +166,7 @@
             android:id="@+id/so_header_cell_tv_status_lbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+
             android:gravity="left"
             android:text="Status"
             android:textStyle="bold" />
