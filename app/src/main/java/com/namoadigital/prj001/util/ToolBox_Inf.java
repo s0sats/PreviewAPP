@@ -2181,7 +2181,38 @@ public class ToolBox_Inf {
             default:
                 break;
         }
+    }
 
+    public static void setSOStatusColor(Context context, TextView tv_status, String status){
+
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_BLOCKED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_black));
+                break;
+            case Constant.SO_STATUS_WAITING_BUDGET:
+            case Constant.SO_STATUS_WAITING_QUALITY:
+            case Constant.SO_STATUS_WAITING_CLIENT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_brown));
+                break;
+            case Constant.SO_STATUS_EDIT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
+                break;
+            default:
+                break;
+
+        }
 
     }
 

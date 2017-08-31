@@ -81,6 +81,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
     private String ws_process = "";
     private boolean only_save = false;
+    private String lastServiceReturned = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -310,7 +311,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         act027_services_.setmSm_so(mSm_so);
         //
         act027_services_.setOnServiceSelectedListener(this);
-
+        //Se retorno da task, seta qual serviço deve ser mostrado
+        act027_services_.setLastServiceUpdated(lastServiceReturned);
         // Serial
         act027_serial_ = new Act027_Serial();
         // Dialog Acess
@@ -342,6 +344,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                     Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX)),
                     Integer.parseInt(bundle.getString(SM_SODao.SO_CODE))
             );
+            //
+            lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED,"");
         } else {
             mSm_so = null;
         }
@@ -761,6 +765,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
 
     @Override
     public void soSyncClick() {
+
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_so_sync_ttl"),
@@ -768,22 +773,26 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Seta S.O como update required.
-                        sm_soDao.addUpdate(
-                                new SM_SO_Sql_009(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        mSm_so.getSo_prefix(),
-                                        mSm_so.getSo_code()
-                                ).toSqlQuery()
-                        );
-                        //
-                        executeSoSave();
+                        if(ToolBox_Con.isOnline(context)) {
+                            //Seta S.O como update required.
+                            sm_soDao.addUpdate(
+                                    new SM_SO_Sql_009(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            mSm_so.getSo_prefix(),
+                                            mSm_so.getSo_code()
+                                    ).toSqlQuery()
+                            );
+                            //
+                            executeSoSave();
+                        }else{
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
                     }
                 },
                 1
         );
 
-        refreshUI();
+       // refreshUI();
     }
 
     @Override
