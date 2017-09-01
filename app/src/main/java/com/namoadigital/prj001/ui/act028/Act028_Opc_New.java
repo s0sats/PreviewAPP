@@ -100,8 +100,8 @@ public class Act028_Opc_New extends BaseFragment {
     private TextView tv_optional_lbl;
     private TextView tv_optional_val;
 
-    private ImageView btn_new_exec;
-    private ImageView btn_not_exec;
+    private ImageView iv_new_exec;
+    private ImageView iv_not_exec;
 
     public void setmService(SM_SO_Service mService) {
         this.mService = mService;
@@ -111,6 +111,8 @@ public class Act028_Opc_New extends BaseFragment {
         void menuOptionsSelected(SM_SO_Service_Exec sm_so_service_exec, String full_status);
 
         void newExec(SM_SO_Service sm_so_service, SM_SO_Service_Exec sm_so_service_exec, String full_status);
+
+        void notExec(SM_SO_Service sm_so_service, SM_SO_Service_Exec sm_so_service_exec, String full_status);
     }
 
     private IAct028_Opc delegate;
@@ -205,9 +207,9 @@ public class Act028_Opc_New extends BaseFragment {
         tv_optional_lbl = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_lbl);
         tv_optional_val = (TextView) view.findViewById(R.id.act028_opc_content_cell_tv_optional_val);
 
-        btn_new_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
+        iv_new_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_btn_new_exec);
 
-        btn_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
+        iv_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
 
     }
 
@@ -258,7 +260,7 @@ public class Act028_Opc_New extends BaseFragment {
             }
         });
 
-        btn_new_exec.setOnClickListener(new View.OnClickListener() {
+        iv_new_exec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -306,14 +308,62 @@ public class Act028_Opc_New extends BaseFragment {
                             // setHMAuxScreen(); loadDataToScreen()
                             loadDataToScreen();
                         }
-
-
-//                        //delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
-//                        delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
-//                        //setHMAuxScreen(); loadDataToScreen()
-//                        loadDataToScreen();
                     }
                 }
+            }
+        });
+
+        iv_not_exec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SM_SO_Service_Exec sm_so_service_execNew = new SM_SO_Service_Exec();
+
+                sm_so_service_execNew.setExec_code(0);
+
+                sm_so_service_execNew.setPK(mService);
+
+                long nExecTemp = Long.parseLong(sm_so_service_execDao.getByStringHM(
+                        new SM_SO_Service_Exec_Sql_003(
+                                mService.getCustomer_code(),
+                                mService.getSo_prefix(),
+                                mService.getSo_code(),
+                                mService.getPrice_list_code(),
+                                mService.getPack_code(),
+                                mService.getPack_seq(),
+                                mService.getCategory_price_code(),
+                                mService.getService_code(),
+                                mService.getService_seq()
+
+                        ).toSqlQuery()
+                ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
+
+                sm_so_service_execNew.setExec_tmp(nExecTemp);
+                sm_so_service_execNew.setStatus(Constant.SO_STATUS_NOT_EXECUTED);
+
+                if (mService.getPartner_code() == null) {
+                    handlePartnerDefinition(sm_so_service_execNew, 1);
+                } else {
+                    sm_so_service_execNew.setPartner_code(mService.getPartner_code());
+                    sm_so_service_execNew.setPartner_id(mService.getPartner_id());
+                    sm_so_service_execNew.setPartner_desc(mService.getPartner_desc());
+                    //
+                    sm_so_service_execDao.addUpdateTmp(sm_so_service_execNew);
+                    //
+                    setOffLineStatus(sm_so_service_execNew);
+                    //
+                    if (delegate != null) {
+                        if (type == 1) {
+                            delegate.notExec(mService, sm_so_service_execNew, data.get("full_status"));
+                            loadDataToScreen();
+                        } else {
+                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
+                            // setHMAuxScreen(); loadDataToScreen()
+                            loadDataToScreen();
+                        }
+                    }
+                }
+
+
             }
         });
     }
@@ -378,9 +428,9 @@ public class Act028_Opc_New extends BaseFragment {
                 tv_optional_val.setText(mService.getOptional() == 1 ? hmAux_Trans.get("YES") : hmAux_Trans.get("NO"));
 
                 if (mService.getOptional() == 1) {
-                    btn_not_exec.setVisibility(View.VISIBLE);
+                    iv_not_exec.setVisibility(View.VISIBLE);
                 } else {
-                    btn_not_exec.setVisibility(View.GONE);
+                    iv_not_exec.setVisibility(View.GONE);
                 }
 
                 int qty = 0;
@@ -418,12 +468,12 @@ public class Act028_Opc_New extends BaseFragment {
 
 
                 if (partner_restriction) {
-                    btn_new_exec.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(View.GONE);
                 } else {
                     if ((mService.getQty() - qty) <= 0) {
-                        btn_new_exec.setVisibility(View.GONE);
+                        iv_new_exec.setVisibility(View.GONE);
                     } else {
-                        btn_new_exec.setVisibility(View.VISIBLE);
+                        iv_new_exec.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -456,7 +506,7 @@ public class Act028_Opc_New extends BaseFragment {
                 );
 
                 if (data.get("full_status").equalsIgnoreCase("0")) {
-                    btn_new_exec.setVisibility(View.GONE);
+                    iv_new_exec.setVisibility(View.GONE);
                 } else {
                 }
             }

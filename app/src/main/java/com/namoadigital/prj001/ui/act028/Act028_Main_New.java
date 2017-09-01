@@ -68,6 +68,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     public static final String CREATE_TASK = "CREATE_TASK";
     public static final String CREATE_SAVE = "CREATE_SAVE";
     public static final String CREATE_NULL = "CREATE_NULL";
+    public static final String CREATE_NOT_EXEC = "CREATE_NOT_EXEC";
 
     public String full_status;
 
@@ -533,10 +534,21 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     @Override
     public void onBackPressed() {
         if (mShortCut) {
+
+            String message = "";
+
+            if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP) &&
+                    mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                    ) {
+                hmAux_Trans.get("alert_task_msg_delete");
+            } else {
+                hmAux_Trans.get("alert_service_list_msg");
+            }
+
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_service_list_title"),
-                    hmAux_Trans.get("alert_service_list_msg"),
+                    message,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -548,12 +560,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                                 act028_task.removeTaskOnLeave();
                             }
                             //
-                            Intent mIntent = new Intent(context, Act027_Main.class);
-                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            mIntent.putExtras(bundle);
-                            //
-                            startActivity(mIntent);
-                            finish();
+                            callAct027();
                         }
                     },
                     1,
@@ -561,19 +568,38 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             );
         } else {
             if (index == 1) {
-                index = 0;
-                //
                 if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+                    index = 0;
+
+                    mTask = null;
+
                     act028_task.updateTaskOnLeave();
                     setFrag(act028_task_list, SELECTION_TASK_LIST);
                 } else {
-                    mDrawerStatus = true;
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                    //
-                    act028_task.removeTaskOnLeave();
-                    act028_opc.loadDataToScreen();
-                    //
-                    setFrag(act028_empty_new, SELECTION_EMPTY);
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_service_list_title"),
+                            hmAux_Trans.get("alert_task_msg_delete"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    index = 0;
+
+                                    mDrawerStatus = true;
+                                    mDrawerLayout.openDrawer(GravityCompat.START);
+                                    //
+                                    act028_task.removeTaskOnLeave();
+                                    act028_opc.loadDataToScreen();
+                                    //
+                                    mExec = null;
+                                    mTask = null;
+                                    //
+                                    setFrag(act028_empty_new, SELECTION_EMPTY);
+                                }
+                            },
+                            1,
+                            false
+                    );
                 }
             } else {
                 if (mDrawerStatus) {
@@ -956,7 +982,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     public void menuTaskCreated(SM_SO_Service_Exec_Task mTask) {
         this.mTask = mTask;
 
-        if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_YES_NO)) {
+        if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
             callFragTAsk(mTask);
         } else {
             if (!ToolBox_Con.isOnline(context)) {
@@ -1058,6 +1084,69 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         menuTaskCreated(task);
     }
 
+    @Override
+    public void notExec(SM_SO_Service sm_so_service, SM_SO_Service_Exec sm_so_service_exec, String full_status) {
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        this.full_status = full_status;
+        this.mExec_Aux = sm_so_service_exec;
+        this.mTask = null;
+
+        act028_task_list.setSm_so_service_exec(sm_so_service_exec, full_status);
+        act028_task_list.loadDataToScreen();
+        //
+        index = 0;
+        //
+        setFrag(act028_task_list, SELECTION_TASK_LIST);
+
+        SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
+        task.setTask_code(0);
+        task.setTask_seq_oper(1);
+        task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+            task.setTask_perc(0);
+        } else {
+            task.setTask_perc(100);
+        }
+        task.setQty_people(1);
+        task.setStatus(Constant.SO_STATUS_NOT_EXECUTED);
+
+        task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        task.setEnd_date("");
+        task.setComments("");
+
+        task.setPK(sm_so_service_exec);
+        task.setTask_tmp(201);
+        sm_so_service_exec_taskDao.addUpdateTmp(task);
+
+        /**
+         * Calling WebService
+         */
+
+        sm_soDao.getByString(
+                new SM_SO_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        sm_so_service_exec.getSo_prefix(),
+                        sm_so_service_exec.getSo_code()
+                ).toSqlQuery()
+        );
+
+        setMTASK_STATUS(Act028_Main_New.CREATE_NOT_EXEC);
+
+        callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+
+//        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+//            setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+//            //
+//            callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
+//        } else {
+//            setMTASK_STATUS(Act028_Main_New.CREATE_NULL);
+//        }
+
+        menuTaskCreated(task);
+    }
+
     //region Drawer Visibility
     public void setDrawerState(boolean isEnabled) {
         if (isEnabled) {
@@ -1132,7 +1221,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         }
     }
 
-    public void showInfo(){
+    public void showInfo() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
