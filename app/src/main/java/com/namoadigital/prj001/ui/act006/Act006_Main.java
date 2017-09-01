@@ -49,8 +49,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     public static final String NEW_OPT_TP_SERIAL= "new_opt_tp_serial";
     public static final String NEW_OPT_TP_LOCATION = "new_opt_tp_location";
 
-
-    private Context context;
     private Act006_Main_Presenter mPresenter;
 
     private Button btn_new;
@@ -76,8 +74,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     }
 
     private void iniSetup() {
-        context = Act006_Main.this;
-
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -141,25 +137,12 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
 
-        //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value =Constant.PRJ001_VERSION;
-
-        //Aplica informações do rodapé - fim
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {

@@ -42,7 +42,6 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     public static final String FORM_IN_PROCESSING = "form_in_processing";
     public static final String START_FORM = "start_form";
 
-    private Context context;
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
 
@@ -75,8 +74,6 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
-
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -165,26 +162,13 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         setTitleLanguage();
         setFooter();
 
-        //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
-        //Aplica informações do rodapé - fim
-
     }
 
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
+    }
     private void initActions() {
 
         lv_pendencies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
