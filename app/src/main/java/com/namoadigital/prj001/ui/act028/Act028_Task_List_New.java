@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -62,7 +62,10 @@ public class Act028_Task_List_New extends BaseFragment {
     private transient TextView tv_service_val;
     private transient ListView lv_tasks;
 
-    private transient Button btn_new_task;
+    private transient ImageView iv_not_exec;
+    private transient ImageView iv_info;
+    private transient ImageView iv_new_task;
+
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
 
     private SM_SO_Service_Exec sm_so_service_exec;
@@ -177,7 +180,10 @@ public class Act028_Task_List_New extends BaseFragment {
         tv_service_val = (TextView) view.findViewById(R.id.act028_task_list_content_tv_service_val);
 
         lv_tasks = (ListView) view.findViewById(R.id.act028_task_list_content_lv_tasks);
-        btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_btn_new_task);
+
+        iv_not_exec = (ImageView) view.findViewById(R.id.act028_task_list_content_iv_not_exec);
+        iv_info = (ImageView) view.findViewById(R.id.act028_task_list_content_iv_info);
+        iv_new_task = (ImageView) view.findViewById(R.id.act028_task_list_content_iv_new_task);
     }
 
     @Override
@@ -211,7 +217,7 @@ public class Act028_Task_List_New extends BaseFragment {
                 tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
                 tv_service_val.setText(sm_so_service.getService_id() + " - " + sm_so_service.getService_desc());
 
-                btn_new_task.setText(hmAux_Trans.get("btn_new_task"));
+                //iv_new_task.setText(hmAux_Trans.get("btn_new_task"));
 
                 if (sm_so_service_exec != null) {
                     createTaskList();
@@ -225,11 +231,11 @@ public class Act028_Task_List_New extends BaseFragment {
                         case Constant.SO_STATUS_PROCESS:
                             break;
                         default:
-                            btn_new_task.setVisibility(View.GONE);
+                            iv_new_task.setVisibility(View.GONE);
                             break;
                     }
                 } else {
-                    btn_new_task.setVisibility(View.GONE);
+                    iv_new_task.setVisibility(View.GONE);
                 }
 
                 // Partner Restriction
@@ -241,7 +247,7 @@ public class Act028_Task_List_New extends BaseFragment {
                 );
 
                 if (md_partner == null) {
-                    btn_new_task.setVisibility(View.GONE);
+                    iv_new_task.setVisibility(View.GONE);
                 }
             }
         }
@@ -306,11 +312,11 @@ public class Act028_Task_List_New extends BaseFragment {
         }
 
         if (numberofMyTasksDONE_100 > 0) {
-            btn_new_task.setVisibility(View.GONE);
+            iv_new_task.setVisibility(View.GONE);
         } else if (numberOfMyTasksProcess > 0) {
-            btn_new_task.setVisibility(View.GONE);
+            iv_new_task.setVisibility(View.GONE);
         } else {
-            btn_new_task.setVisibility(View.VISIBLE);
+            iv_new_task.setVisibility(View.VISIBLE);
         }
 
     }
@@ -327,7 +333,21 @@ public class Act028_Task_List_New extends BaseFragment {
             }
         });
 
-        btn_new_task.setOnClickListener(new View.OnClickListener() {
+        iv_not_exec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        iv_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMain_new.showInfo();
+            }
+        });
+
+        iv_new_task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -409,7 +429,7 @@ public class Act028_Task_List_New extends BaseFragment {
             callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
         }
 
-        if (delegate != null){
+        if (delegate != null) {
             delegate.menuTaskCreated(task);
         }
     }

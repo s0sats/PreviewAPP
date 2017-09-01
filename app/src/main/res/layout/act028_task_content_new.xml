@@ -124,28 +124,65 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:gravity="right"
             android:orientation="horizontal">
 
-            <!--<CheckBox-->
-            <!--android:id="@+id/act028_task_content_cb_play_stop"-->
-            <!--android:layout_width="40dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:background="@drawable/ic_play_status"-->
-            <!--android:button="@null"-->
-            <!--android:checked="false" />-->
+            <ImageView
+                android:id="@+id/act028_task_content_iv_cancel_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke_blue2_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_cancel_black_24px"
+                android:tint="@color/namoa_color_danger_red" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/act028_task_content_iv_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke_blue2_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_info"
+                android:tint="@color/namoa_dark_blue" />
+
+            <View
+                android:layout_width="5dp"
+                android:layout_height="1dp" />
 
             <ImageView
                 android:id="@+id/act028_task_content_iv_play_stop"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_stop" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke_blue2_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_stop"
+                android:tint="@color/namoa_dark_blue" />
+
 
             <ImageView
                 android:id="@+id/act028_task_content_iv_save"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_check_circle" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke_blue2_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_check_circle"
+                android:tint="@color/namoa_dark_blue" />
 
         </LinearLayout>
 
@@ -228,7 +265,9 @@
                     android:id="@+id/act028_task_content_iv_gallery"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/ic_camera_off" />
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/ic_camera_add_blue"
+                    android:scaleX="-1" />
 
 
             </LinearLayout>
@@ -330,14 +369,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -433,17 +470,6 @@
                     app:mInputType="NUMBER" />
 
             </LinearLayout>
-
-
-            <Button
-                android:id="@+id/act028_task_content_btn_cancel_task"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_namoa_main_states"
-                android:text="Cancel Task"
-                android:textColor="@color/padrao_WHITE" />
 
         </LinearLayout>
 

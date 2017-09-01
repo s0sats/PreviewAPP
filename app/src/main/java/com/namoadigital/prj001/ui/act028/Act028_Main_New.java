@@ -1132,5 +1132,54 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         }
     }
 
+    public void showInfo(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_task_dialog_info, null);
+
+        /**
+         * Ini Vars
+         */
+
+        ListView lv_opt = (ListView) view.findViewById(R.id.act028_task_dialog_info_lv_opt);
+
+//        String[] from = {NEW_OPT_LABEL};
+//        //int[] to = {android.R.id.text1};
+//        int[] to = {R.id.namoa_custom_cell_3_tv_item};
+//
+//
+//        lv_opt.setAdapter(
+//                new SimpleAdapter(
+//                        context,
+//                        getNewOpts(),
+//                        //android.R.layout.simple_list_item_1,
+//                        R.layout.namoa_custom_cell_3,
+//                        from,
+//                        to
+//                )
+//        );
+
+        /**
+         * Ini Action
+         */
+
+//        lv_opt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                HMAux item = (HMAux) parent.getItemAtPosition(position);
+//                mPresenter.defineFlow(item);
+//
+//            }
+//        });
+
+        //builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
+        builder.setTitle("On Construction");
+        builder.setView(view);
+        builder.setCancelable(true);
+
+        builder.show();
+    }
+
 
 }

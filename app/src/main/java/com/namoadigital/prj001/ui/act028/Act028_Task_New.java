@@ -74,6 +74,9 @@ public class Act028_Task_New extends BaseFragment {
     private TextView tv_service_lbl;
     private TextView tv_service_value;
 
+    private ImageView iv_info;
+    private ImageView iv_cancel_task;
+
     private ImageView iv_play_stop;
     private ImageView iv_save;
 
@@ -101,8 +104,6 @@ public class Act028_Task_New extends BaseFragment {
     //private ImageView iv_worker;
     private TextView tv_qty_people_lbl;
     private MKEditTextNM mk_qty_people;
-
-    private Button btn_cancel_task;
 
     private String mErrorMSG;
 
@@ -343,6 +344,9 @@ public class Act028_Task_New extends BaseFragment {
         iv_play_stop = (ImageView) view.findViewById(R.id.act028_task_content_iv_play_stop);
         iv_save = (ImageView) view.findViewById(R.id.act028_task_content_iv_save);
 
+        iv_info = (ImageView) view.findViewById(R.id.act028_task_content_iv_info);
+        iv_cancel_task = (ImageView) view.findViewById(R.id.act028_task_content_iv_cancel_task);
+
         mk_comments = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_comments);
         iv_gallery = (ImageView) view.findViewById(R.id.act028_task_content_iv_gallery);
 
@@ -382,7 +386,6 @@ public class Act028_Task_New extends BaseFragment {
         tv_qty_people_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_qty_people_lbl);
         mk_qty_people = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_qty_people);
 
-        btn_cancel_task = (Button) view.findViewById(R.id.act028_task_content_btn_cancel_task);
 
         controls_iv.add(iv_gallery);
         controls_sta.add(mk_comments);
@@ -399,7 +402,8 @@ public class Act028_Task_New extends BaseFragment {
 
                 //tv_task_code_lbl.setText(hmAux_Trans.get("task_code_lbl"));
                 tv_task_code_lbl.setText("Task Code");
-                tv_task_code_value.setText(String.valueOf(mTask.getTask_code()));
+                String task_code = String.valueOf(mTask.getTask_code());
+                tv_task_code_value.setText(task_code.equalsIgnoreCase("0") ? "" : String.valueOf(mTask.getTask_code()));
 
                 //tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
                 tv_service_lbl.setText("Servide");
@@ -436,6 +440,13 @@ public class Act028_Task_New extends BaseFragment {
                 mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
 
                 rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(String.valueOf(mTask.getTask_perc())) - min) / interval));
+
+                if (mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) ||
+                        mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
+
+                    tv_stepped_txt_lbl.setVisibility(View.GONE);
+                    rb_stepped_perc.setVisibility(View.GONE);
+                }
 
                 //tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
                 mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
@@ -483,9 +494,9 @@ public class Act028_Task_New extends BaseFragment {
 
     private void upImgGallery() {
         if (((String) iv_gallery.getTag()).equalsIgnoreCase("")) {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_off));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_add_gray));
         } else {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_on));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_add_blue));
         }
 
         iv_gallery.setOnClickListener(new View.OnClickListener() {
@@ -517,7 +528,16 @@ public class Act028_Task_New extends BaseFragment {
 
     private void iniAction() {
 
-        btn_cancel_task.setOnClickListener(new View.OnClickListener() {
+        iv_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMain_new.showInfo();
+
+            }
+        });
+
+        iv_cancel_task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -532,8 +552,8 @@ public class Act028_Task_New extends BaseFragment {
                                 mTask.setComments(mk_comments.getText().toString());
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-                                mTask.setStart_date(reverseB(mk_start_date.getText().toString())  + " " + mk_start_hour.getText().toString());
-                                mTask.setEnd_date(reverseB(mk_end_date.getText().toString())  + " " +  mk_end_hour.getText().toString());
+                                mTask.setStart_date(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString());
+                                mTask.setEnd_date(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString());
 
                                 mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
@@ -568,6 +588,55 @@ public class Act028_Task_New extends BaseFragment {
         });
     }
 
+    private void showInfo() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.act028_task_dialog_info, null);
+//
+//        /**
+//         * Ini Vars
+//         */
+//
+//        ListView lv_opt = (ListView) view.findViewById(R.id.act028_task_dialog_info_lv_opt);
+//
+////        String[] from = {NEW_OPT_LABEL};
+////        //int[] to = {android.R.id.text1};
+////        int[] to = {R.id.namoa_custom_cell_3_tv_item};
+////
+////
+////        lv_opt.setAdapter(
+////                new SimpleAdapter(
+////                        context,
+////                        getNewOpts(),
+////                        //android.R.layout.simple_list_item_1,
+////                        R.layout.namoa_custom_cell_3,
+////                        from,
+////                        to
+////                )
+////        );
+//
+//        /**
+//         * Ini Action
+//         */
+//
+////        lv_opt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+////            @Override
+////            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+////                HMAux item = (HMAux) parent.getItemAtPosition(position);
+////                mPresenter.defineFlow(item);
+////
+////            }
+////        });
+//
+//        //builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
+//        builder.setTitle("On Construction");
+//        builder.setView(view);
+//        builder.setCancelable(true);
+//
+//        builder.show();
+    }
+
     private void processTaskStatus() {
 
         if (String.valueOf(mTask.getTask_user()).toUpperCase().equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(getActivity()))) {
@@ -577,22 +646,22 @@ public class Act028_Task_New extends BaseFragment {
                     case Constant.SO_STATUS_PROCESS:
 
                         if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
-                            btn_cancel_task.setVisibility(View.GONE);
+                            iv_cancel_task.setVisibility(View.GONE);
                         } else {
-                            btn_cancel_task.setVisibility(View.VISIBLE);
+                            iv_cancel_task.setVisibility(View.VISIBLE);
                         }
 
                         cfgStatus(true);
                         break;
 
                     default:
-                        btn_cancel_task.setVisibility(View.GONE);
+                        iv_cancel_task.setVisibility(View.GONE);
 
                         cfgStatus(false);
                         break;
                 }
             } else {
-                btn_cancel_task.setVisibility(View.GONE);
+                iv_cancel_task.setVisibility(View.GONE);
 
                 cfgStatus(false);
             }
@@ -601,7 +670,7 @@ public class Act028_Task_New extends BaseFragment {
 
         } else {
 
-            btn_cancel_task.setVisibility(View.GONE);
+            iv_cancel_task.setVisibility(View.GONE);
 
             cfgStatus(false);
         }
@@ -640,8 +709,8 @@ public class Act028_Task_New extends BaseFragment {
         mTask.setComments(mk_comments.getText().toString());
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-        mTask.setStart_date(reverseB(mk_start_date.getText().toString())  + " " + mk_start_hour.getText().toString());
-        mTask.setEnd_date(reverseB(mk_end_date.getText().toString())  + " " +  mk_end_hour.getText().toString());
+        mTask.setStart_date(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString());
+        mTask.setEnd_date(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString());
 
         mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
@@ -1108,9 +1177,9 @@ public class Act028_Task_New extends BaseFragment {
             return false;
         }
 
-        String sDTS = ToolBox.reverseB(mk_start_date.getText().toString())  + " " + mk_start_hour.getText().toString();
+        String sDTS = ToolBox.reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString();
 
-        String sDTE = reverseB(mk_end_date.getText().toString())  + " " +  mk_end_hour.getText().toString();
+        String sDTE = reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString();
 
 
         if (!ToolBox.isValidDateIntervalT(sDTS, sDTE)) {
