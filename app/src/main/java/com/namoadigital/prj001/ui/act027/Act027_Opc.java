@@ -10,11 +10,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -283,25 +290,25 @@ public class Act027_Opc extends BaseFragment {
         if (bStatus) {
             if (mSm_so != null) {
 
-                if(mSm_so.getUpdate_required() == 1 ){
+                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile()) {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
-                }else{
+                } else {
                     ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
                 }
 
                 tv_so_label.setText(hmAux_Trans.get("so_lbl"));
                 tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
 
-                if(!mSm_so.getSo_id().equals(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code())) {
+                if (!mSm_so.getSo_id().equals(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code())) {
                     tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
                     tv_so_id_value.setText(mSm_so.getSo_id());
-                }else{
+                } else {
                     ll_so_id.setVisibility(View.GONE);
                 }
 
-                if(mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0){
+                if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
                     tv_so_desc.setText(mSm_so.getSo_desc());
-                }else{
+                } else {
                     ll_so_desc.setVisibility(View.GONE);
                 }
 
@@ -311,7 +318,7 @@ public class Act027_Opc extends BaseFragment {
                 tv_status_label.setText(hmAux_Trans.get("status_lbl"));
                 tv_status_value.setText(hmAux_Trans.get(mSm_so.getStatus()));
 
-                if(mSm_so.getDeadline() != null && mSm_so.getDeadline().length() > 0) {
+                if (mSm_so.getDeadline() != null && mSm_so.getDeadline().length() > 0) {
                     tv_deadline_label.setText(hmAux_Trans.get("deadline_lbl"));
                     tv_deadline_value.setText(
                             ToolBox_Inf.millisecondsToString(
@@ -319,14 +326,14 @@ public class Act027_Opc extends BaseFragment {
                                     ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
                             )
                     );
-                }else{
+                } else {
                     ll_deadline.setVisibility(View.GONE);
                 }
 
-                if(1 == 1){
+                if (1 == 1) {
                     tv_tracking_label.setText(hmAux_Trans.get("tracking_num_lbl"));
                     tv_tracking_value.setText("Lista de \n tracking!");
-                }else{
+                } else {
                     ll_tracking.setVisibility(View.GONE);
                 }
 
@@ -376,6 +383,38 @@ public class Act027_Opc extends BaseFragment {
                 changeTabColor();
             }
         }
+    }
+
+    private boolean isSoWithinTokenFile() {
+        try {
+            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                if (token_so_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (SM_SO so : token_so_list) {
+                    if (
+                        so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                        && so.getSo_prefix() == mSm_so.getSo_prefix()
+                        && so.getSo_code() == mSm_so.getSo_code()
+                        ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        return false;
     }
 
     public void loadScreenToData() {
