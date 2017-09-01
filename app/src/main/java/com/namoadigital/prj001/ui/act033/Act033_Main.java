@@ -19,7 +19,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
-import com.namoadigital.prj001.ui.act002.Act002_Main;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -117,7 +117,8 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         //
         lv_zone = (ListView) findViewById(R.id.act033_lv_zone);
         //
-        mPresenter.getZones();
+        mPresenter.accessToSoModule(backAction);
+        //mPresenter.getZones();
     }
 
     private void recoverIntentsInfo() {
@@ -126,6 +127,9 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         if (bundle != null) {
             backAction = bundle.getInt(Constant.BACK_ACTION,0);
             requestingAct = bundle.getString(Constant.MAIN_REQUESTING_ACT,"");
+        }else{
+            backAction = 0;
+            requestingAct = "";
         }
     }
 
@@ -217,9 +221,14 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
 
     @Override
     public void callAct003(Context context,Bundle bundle) {
-        Intent mIntent = new Intent(context, Act005_Main.class);
+        //Zera preferencia de site
+        ToolBox_Con.setPreference_Site_Code(context,"-1");
+        //
+        Intent mIntent = new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
         mIntent.putExtras(bundle);
+        //
         startActivity(mIntent);
         finish();
     }
@@ -238,5 +247,11 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 }

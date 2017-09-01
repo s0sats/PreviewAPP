@@ -8,6 +8,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -29,6 +30,29 @@ public class Act033_Main_Presenter_Impl implements Act033_Main_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         this.zoneDao = zoneDao;
         this.requestingAct = requestingAct;
+    }
+
+    /**
+     * Essa Act só deve ser exibida pelo usr se ele tiver acesso ao modulo de Serviço.
+     * Para facilitar o fluxo, a Act033 sempre será chama após a Act003 e backpress da Act004
+     * Esse metodo verifica se o Customer tem acesso ao modulo de Serviço
+     *   Caso tenha, a tela carrega todos os seus metodos e faz parte do fluxo.
+     *   Caso não tenha, o metodo analisa se é um ação de "ida" ou "volta" e define qual Act
+     *   deve ser chamada.
+     * @param back_action: Parametro enviado pelo bundle que indica se é uma ação de voltar.
+     *
+     */
+    @Override
+    public void accessToSoModule(int back_action) {
+        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
+            getZones();
+        }else{
+           if(back_action == 1){
+               onBackPressedClicked();
+           }else{
+               defineForwardFlow();
+           }
+        }
     }
 
     @Override

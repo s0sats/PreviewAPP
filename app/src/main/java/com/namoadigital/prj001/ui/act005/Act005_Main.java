@@ -576,7 +576,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setFooter();
 
         //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+       /* HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
@@ -590,8 +590,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
         mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;*/
+    }
 
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     @Override

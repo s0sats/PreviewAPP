@@ -8,6 +8,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act033_Main_Presenter {
 
+    void accessToSoModule(int back_action);
+
     void getZones();
 
     boolean checkPreferenceIsSet();

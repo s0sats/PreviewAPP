@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +80,6 @@ public class Act005_Opc extends Fragment {
             }
         }
     }
-
 
     @Nullable
     @Override
@@ -173,10 +174,16 @@ public class Act005_Opc extends Fragment {
         };
         drawerItemList = new ArrayList<>();
         for (int i = 0; i < id.length; i++) {
+            //Verifica se customer tem acesso ao modulo serviço e , em caso negativo,
+            //remove opção de trocar zona.
+            if(id[i].equals(DRAWER_OPC_ZONE) && !ToolBox_Inf.parameterExists(getActivity(),new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
+                continue;
+            }
             HMAux hmAux = new HMAux();
             hmAux.put(DRAWER_KEY_OPC_ID, id[i]);
             hmAux.put(DRAWER_KEY_OPC_ICON, icon[i]);
             hmAux.put(DRAWER_KEY_OPC_DESC, desc[i]);
+
             drawerItemList.add(hmAux);
         }
 
