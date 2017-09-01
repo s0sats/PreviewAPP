@@ -37,6 +37,7 @@ import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main_New;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -234,6 +235,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_partner_selection_ttl");
         transList.add("alert_no_partner_selected_msg");
         transList.add("tracking_num_lbl");
+        transList.add("alert_goto_service_menu_ttl");
+        transList.add("alert_goto_service_menu_msg");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -796,6 +799,22 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     }
 
     @Override
+    public void ivNServiceClick() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_goto_service_menu_ttl"),
+                hmAux_Trans.get("alert_goto_service_menu_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callAct021(context);
+                    }
+                },
+                1
+        );
+    }
+
+    @Override
     public void onServiceSelected(HMAux sService) {
         bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE));
         bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PACK_CODE));
@@ -810,6 +829,13 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, false);
 
         callAct028(context, bundle);
+    }
+
+    private void callAct021(Context context) {
+        Intent mIntent = new Intent(context, Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
