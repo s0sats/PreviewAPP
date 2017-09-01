@@ -154,7 +154,7 @@ public class Act028_Task_List extends BaseFragment {
         tv_service_val = (TextView) view.findViewById(R.id.act028_task_list_content_tv_service_val);
 
         lv_tasks = (ListView) view.findViewById(R.id.act028_task_list_content_lv_tasks);
-        btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_btn_new_task);
+        btn_new_task = (Button) view.findViewById(R.id.act028_task_list_content_iv_new_task);
 
         setHMAuxScreen();
     }
