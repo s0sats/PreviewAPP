@@ -23,6 +23,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
+import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -65,6 +66,13 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         //
     }
 
+    public void callAct033(Context context) {
+        Intent mIntent =  new Intent(context, Act033_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
     public void callAct004(Context context) {
         Intent mIntent =  new Intent(context, Act004_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -83,7 +91,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
         //
         if(mPresenter.checkPreferenceIsSet()){
-                callAct004(context);
+                //callAct004(context);
+            callAct033(context);
         }else{
             mPresenter.getSites(hmAux_Trans);
         }

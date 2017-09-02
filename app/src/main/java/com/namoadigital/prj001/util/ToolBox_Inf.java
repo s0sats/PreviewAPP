@@ -2,6 +2,7 @@ package com.namoadigital.prj001.util;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -17,8 +18,13 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -36,6 +42,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -45,6 +52,7 @@ import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
 import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -67,6 +75,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -100,6 +109,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -1125,16 +1136,109 @@ public class ToolBox_Inf {
         );
     }
 
+    public static void buildFooterDialog(Context context){
+
+        HMAux hmDialogInfo = loadFooterDialogInfo(context);
+
+        LayoutInflater inflater = (LayoutInflater) LayoutInflater.from(context);
+        View customView = inflater.inflate(R.layout.footer_dialog_info_app, null);
+        LinearLayout ll_footer_close = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll);
+
+        ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
+        //
+        LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
+        TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
+        TextView tv_customer_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_value);
+        //
+        LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
+        TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
+        TextView tv_site_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_value);
+        //
+        LinearLayout ll_zone = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_zone);
+        TextView tv_zone_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_zone_lbl);
+        TextView tv_zone_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_zone_value);
+        //
+        LinearLayout ll_operation = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_operation);
+        TextView tv_operation_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_operation_lbl);
+        TextView tv_operation_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_operation_value);
+        //
+        LinearLayout ll_imei = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_imei);
+        TextView tv_imei_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_lbl);
+        TextView tv_imei_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_value);
+        //
+        TextView tv_version_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_version_lbl);
+        TextView tv_version_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_version_number);
+        //
+        Bitmap customer_img = getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
+
+        if (customer_img != null) {
+            iv_customer.setImageBitmap(customer_img);
+        } else {
+            iv_customer.setImageBitmap(null);
+            // Fazer Analise
+        }
+        //
+        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
+        tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
+
+        tv_site_lbl.setText(hmDialogInfo.get(Constant.FOOTER_SITE_LBL));
+        tv_site_value.setText(hmDialogInfo.get(Constant.FOOTER_SITE));
+        ll_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_zone_lbl.setText(hmDialogInfo.get(Constant.FOOTER_ZONE_LBL));
+        tv_zone_value.setText(hmDialogInfo.get(Constant.FOOTER_ZONE));
+        ll_zone.setVisibility(hmDialogInfo.get(Constant.FOOTER_ZONE) == null || hmDialogInfo.get(Constant.FOOTER_ZONE).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_operation_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL));
+        tv_operation_value.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION));
+        ll_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_imei_lbl.setText(hmDialogInfo.get(Constant.FOOTER_IMEI_LBL));
+        tv_imei_value.setText(hmDialogInfo.get(FOOTER_IMEI));
+        ll_imei.setVisibility(hmDialogInfo.get(FOOTER_IMEI) == null || hmDialogInfo.get(FOOTER_IMEI).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
+        tv_version_value.setText(Constant.PRJ001_VERSION);
+
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.9f;
+        float dmH = (float) dm.heightPixels * 0.9f;
+
+        //customDialog = new Dialog(context, R.style.MyDialogTheme);
+        final Dialog customDialog = new Dialog(context);
+        customDialog.setContentView(customView);
+        customDialog.getWindow().setLayout((int) dmW, (int) dmH);
+        customDialog.show();
+
+        ll_footer_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+            }
+        });
+
+    }
+
+    private static Bitmap getCustomerImage(String path) {
+        File image = new File(path);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+
+        return bitmap;
+    }
+
     public static HMAux loadFooterDialogInfo(Context context) {
         HMAux hmAux = new HMAux();
         String customerDesc = "";
         String siteDesc = "";
+        String zoneDesc = "";
         String operationDesc = "";
 
         List<String> transList = new ArrayList<>();
         transList.add("lbl_external_site");
         transList.add("footer_dialog_customer_lbl");
         transList.add("footer_dialog_site_lbl");
+        transList.add("footer_dialog_zone_lbl");
         transList.add("footer_dialog_operation_lbl");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
@@ -1187,8 +1291,34 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));
         hmAux.put(Constant.FOOTER_VERSION_LBL, HmTrans.get("footer_version_lbl"));
         hmAux.put(Constant.FOOTER_IMEI_LBL, HmTrans.get("footer_dialog_imei"));
-        hmAux.put(Constant.FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
+        hmAux.put(FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
+        //
+        hmAux.put(Constant.FOOTER_ZONE_LBL, "");
+        hmAux.put(Constant.FOOTER_ZONE, "");
 
+        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            MD_Site_Zone zone =
+                    new MD_Site_ZoneDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ).getByString(
+                            new MD_Site_Zone_Sql_003(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)),
+                                    ToolBox_Con.getPreference_Zone_Code(context)
+
+                            ).toSqlQuery()
+                    );
+            zoneDesc = "";
+            if(zone != null) {
+                zoneDesc = zone.getZone_code() + " - " + zone.getZone_desc();
+            }
+            //
+            hmAux.put(Constant.FOOTER_ZONE_LBL, HmTrans.get("footer_dialog_zone_lbl"));
+            hmAux.put(Constant.FOOTER_ZONE, zoneDesc);
+
+        }
         return hmAux;
 
     }

@@ -32,7 +32,7 @@ public class MD_Site_ZoneDao extends BaseDao implements Dao<MD_Site_Zone> {
     public static final String BLOCKED = "blocked";
     public static final String PROCESS_SEQ = "process_seq";
 
-    private String[] columns = {CUSTOMER_CODE, SITE_CODE, ZONE_CODE, ZONE_ID,ZONE_DESC,BLOCKED,PROCESS_SEQ};
+    public static final String[] columns = {CUSTOMER_CODE, SITE_CODE, ZONE_CODE, ZONE_ID,ZONE_DESC,BLOCKED,PROCESS_SEQ};
 
     public MD_Site_ZoneDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);

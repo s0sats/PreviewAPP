@@ -53,6 +53,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT030 = "act030";
     public static final String ACT031 = "act031";
     public static final String ACT032 = "act032";
+    public static final String ACT033 = "act033";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -156,6 +157,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_CUSTOMER = "footer_customer";
     public static final String FOOTER_SITE_LBL = "footer_site_lbl";
     public static final String FOOTER_SITE = "footer_site";
+    public static final String FOOTER_ZONE_LBL = "footer_zone_lbl";
+    public static final String FOOTER_ZONE = "footer_zone";
     public static final String FOOTER_OPERATION_LBL = "footer_operation_lbl";
     public static final String FOOTER_OPERATION = "footer_operation";
     public static final String FOOTER_BTN_OK = "footer_btn_ok";
@@ -247,6 +250,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
     public static final String LOGIN_SITE_CODE = "login_site_code";
+    public static final String LOGIN_ZONE_CODE = "login_zone_code";
     public static final String LOGIN_OPERATION_CODE = "login_operation_code";
     public static final String PHONE_UUID_CODE = "phone_uuid_code";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
