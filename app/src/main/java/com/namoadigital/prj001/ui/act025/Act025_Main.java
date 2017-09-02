@@ -58,6 +58,8 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
+    private ArrayList<TProduct_Serial> serial_list = new ArrayList<>();
+    private String tracking_searched = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +99,7 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
         transList.add("drawer_product_lbl");
         transList.add("drawer_product_id_lbl");
         transList.add("drawer_serial_lbl");
+        transList.add("drawer_tracking_lbl");
         transList.add("progress_serial_search_ttl");
         transList.add("progress_serial_search_msg");
         transList.add("alert_no_search_parameter_ttl");
@@ -130,6 +133,9 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
     }
 
     private void initVars() {
+        //
+        recoverIntentsInfo();
+        //
         mPresenter = new Act025_Main_Presenter_Impl(
                 context,
                 this,
@@ -237,6 +243,19 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
 
     }
 
+    private void recoverIntentsInfo() {
+       Bundle  bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            if(bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)){
+                serial_list = (ArrayList<TProduct_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+            }
+            if(bundle.containsKey(Constant.MAIN_SERIAL_TRACKING)){
+                tracking_searched = bundle.getString(Constant.MAIN_SERIAL_TRACKING,"");
+            }
+        }
+    }
+
     private void hideSoftKeyboard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
@@ -261,10 +280,20 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
     }
 
     private void initActions() {
-        //Abre drawer ao carregar a tela
-        mDrawerLayout.openDrawer(GravityCompat.START);
-        //Sincroniza icone do hambuguer
-        mDrawerToggle.syncState();
+        if(serial_list != null && serial_list.size() == 0) {
+            fragFilters.setTrackingText(serial_list.get(0).getSerial_id());
+            //
+            if(!tracking_searched.equals("")){
+                fragFilters.setTrackingText(tracking_searched);
+            }
+            //
+            loadProductSerialList(serial_list);
+        }else{
+            //Abre drawer ao carregar a tela
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            //Sincroniza icone do hambuguer
+            mDrawerToggle.syncState();
+        }
         //
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

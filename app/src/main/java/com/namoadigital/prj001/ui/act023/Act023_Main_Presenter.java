@@ -35,4 +35,6 @@ public interface Act023_Main_Presenter {
 
     void processSoDownloadResult(HMAux so_download_result);
 
+    void saveSerialInfo(MD_Product_Serial md_product_serial);
+
 }

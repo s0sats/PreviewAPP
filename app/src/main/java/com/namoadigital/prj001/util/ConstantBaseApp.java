@@ -87,8 +87,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
     public static final String MAIN_PRODUCT_CODE = "main_product_code";
     public static final String MAIN_SERIAL_ID = "main_serial_id";
+    public static final String MAIN_MD_PRODUCT_SERIAL = "main_md_product_serial";
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
+    public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
     //Constante de concatenação
     public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
     public static final String MAIN_CONCAT_STRING_2 = "##@n@m0@@##";

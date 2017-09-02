@@ -263,7 +263,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         serialProperties = new ArrayList<>();
         //
-        serialObj = new MD_Product_Serial();
+        //serialObj = new MD_Product_Serial();
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act023_mket_serial);
         mket_serial_id.setmNFC(true);
@@ -483,6 +483,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
                 bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
                 isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE, false);
+                if(bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)){
+                    serialObj = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                }else{
+                    serialObj = new MD_Product_Serial();
+                }
+
             } else {
                 ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
             }
@@ -610,11 +616,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         if (requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL)) {
             mket_serial_id.setText(bundle_serial_id);
             //
-            mPresenter.validadeSerialFlow(
+            /*mPresenter.validadeSerialFlow(
                     mket_serial_id.getText().toString(),
                     serial_required,
                     serial_allow_new
-            );
+            );*/
+            mPresenter.saveSerialInfo(serialObj);
         }
     }
 
@@ -1102,7 +1109,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         bundle.remove(Constant.MAIN_REQUESTING_PROCESS);
         bundle.remove(Constant.MAIN_IS_SCHEDULE);
+        bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL);
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT023);
+        //Quando o fluxo é vindo da seleção de produto e não serial
+        //Não existe o serial no bundle, então é necessario adicioná-lo para que
+        //a Act026 filtre apenas as SO's desse produto/serial.
+        if(bundle_serial_id == null || bundle_serial_id.equals("")){
+            bundle.putString(Constant.MAIN_SERIAL_ID, serialObj.getSerial_id());
+        }
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
