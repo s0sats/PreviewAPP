@@ -92,6 +92,7 @@ public class Act028_Task_List_New extends BaseFragment {
     private int numberOfValidTasks = 0;
     private int numberOfMyTasksProcess = 0;
     private int numberofMyTasksDONE_100 = 0;
+    private int numberofMyTasksProcess_DONE = 0;
 
     public void setOnTaskSelected(IAct028_Task_List delegate) {
         this.delegate = delegate;
@@ -284,6 +285,7 @@ public class Act028_Task_List_New extends BaseFragment {
 
         numberOfMyTasksProcess = 0;
         numberofMyTasksDONE_100 = 0;
+        numberofMyTasksProcess_DONE = 0;
 
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
@@ -311,12 +313,35 @@ public class Act028_Task_List_New extends BaseFragment {
             }
         }
 
+        for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
+            HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
+            //
+            if (auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS) ||
+                    auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE)
+                    ) {
+
+                numberofMyTasksProcess_DONE++;
+            }
+        }
+
         if (numberofMyTasksDONE_100 > 0) {
             iv_new_task.setVisibility(View.GONE);
         } else if (numberOfMyTasksProcess > 0) {
             iv_new_task.setVisibility(View.GONE);
         } else {
             iv_new_task.setVisibility(View.VISIBLE);
+        }
+
+        if (numberofMyTasksProcess_DONE == 0 &&
+                sm_so_service.getOptional() == 1 &&
+                full_status.equalsIgnoreCase("1") &&
+                sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                ) {
+
+            iv_not_exec.setVisibility(View.VISIBLE);
+
+        } else {
+            iv_not_exec.setVisibility(View.GONE);
         }
 
     }
@@ -336,6 +361,12 @@ public class Act028_Task_List_New extends BaseFragment {
         iv_not_exec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                mMain_new.notExec(
+                        sm_so_service,
+                        sm_so_service_exec,
+                        full_status
+                );
 
             }
         });

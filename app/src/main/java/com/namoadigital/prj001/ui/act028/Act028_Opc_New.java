@@ -31,9 +31,9 @@ import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
@@ -44,8 +44,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static android.R.attr.type;
 
 /**
  * Created by neomatrix on 14/07/17.
@@ -221,7 +219,7 @@ public class Act028_Opc_New extends BaseFragment {
                 HMAux hmAuxExec = (HMAux) parent.getItemAtPosition(position);
                 //Seleciona dados completos da exec selecionada
                 SM_SO_Service_Exec sm_so_service_exec = sm_so_service_execDao.getByString(
-                        new SM_SO_Service_Exec_Sql_001(
+                        new SM_SO_Service_Exec_Sql_006(
                                 Long.parseLong(hmAuxExec.get(SM_SO_Service_ExecDao.CUSTOMER_CODE)),
                                 Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SO_PREFIX)),
                                 Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SO_CODE)),
@@ -231,7 +229,7 @@ public class Act028_Opc_New extends BaseFragment {
                                 Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.CATEGORY_PRICE_CODE)),
                                 Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SERVICE_CODE)),
                                 Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.SERVICE_SEQ)),
-                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.EXEC_CODE))
+                                Integer.parseInt(hmAuxExec.get(SM_SO_Service_ExecDao.EXEC_TMP))
 
                         ).toSqlQuery()
                 );
@@ -239,7 +237,7 @@ public class Act028_Opc_New extends BaseFragment {
                 if (sm_so_service_exec.getPartner_code() == null) {
 
                     if (data.get("full_status").equalsIgnoreCase("1")) {
-                        handlePartnerDefinition(sm_so_service_exec, 0);
+                        handlePartnerDefinition(sm_so_service_exec, 3);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -300,15 +298,21 @@ public class Act028_Opc_New extends BaseFragment {
                     setOffLineStatus(sm_so_service_execNew);
                     //
                     if (delegate != null) {
-                        if (type == 1) {
-                            delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
-                            loadDataToScreen();
-                        } else {
-                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
-                            // setHMAuxScreen(); loadDataToScreen()
-                            loadDataToScreen();
-                        }
+                        delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
+                        loadDataToScreen();
                     }
+
+
+//                    if (delegate != null) {
+//                        if (type == 1) {
+//                            delegate.newExec(mService, sm_so_service_execNew, data.get("full_status"));
+//                            loadDataToScreen();
+//                        } else {
+//                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
+//                            // setHMAuxScreen(); loadDataToScreen()
+//                            loadDataToScreen();
+//                        }
+//                    }
                 }
             }
         });
@@ -341,7 +345,7 @@ public class Act028_Opc_New extends BaseFragment {
                 sm_so_service_execNew.setStatus(Constant.SO_STATUS_NOT_EXECUTED);
 
                 if (mService.getPartner_code() == null) {
-                    handlePartnerDefinition(sm_so_service_execNew, 1);
+                    handlePartnerDefinition(sm_so_service_execNew, 2);
                 } else {
                     sm_so_service_execNew.setPartner_code(mService.getPartner_code());
                     sm_so_service_execNew.setPartner_id(mService.getPartner_id());
@@ -352,15 +356,20 @@ public class Act028_Opc_New extends BaseFragment {
                     setOffLineStatus(sm_so_service_execNew);
                     //
                     if (delegate != null) {
-                        if (type == 1) {
-                            delegate.notExec(mService, sm_so_service_execNew, data.get("full_status"));
-                            loadDataToScreen();
-                        } else {
-                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
-                            // setHMAuxScreen(); loadDataToScreen()
-                            loadDataToScreen();
-                        }
+                        delegate.notExec(mService, sm_so_service_execNew, data.get("full_status"));
+                        loadDataToScreen();
                     }
+
+//                    if (delegate != null) {
+//                        if (type == 1) {
+//                            delegate.notExec(mService, sm_so_service_execNew, data.get("full_status"));
+//                            loadDataToScreen();
+//                        } else {
+//                            delegate.menuOptionsSelected(sm_so_service_execNew, data.get("full_status"));
+//                            // setHMAuxScreen(); loadDataToScreen()
+//                            loadDataToScreen();
+//                        }
+//                    }
                 }
 
 
@@ -472,6 +481,7 @@ public class Act028_Opc_New extends BaseFragment {
                 } else {
                     if ((mService.getQty() - qty) <= 0) {
                         iv_new_exec.setVisibility(View.GONE);
+                        iv_not_exec.setVisibility(View.GONE);
                     } else {
                         iv_new_exec.setVisibility(View.VISIBLE);
                     }
@@ -577,13 +587,21 @@ public class Act028_Opc_New extends BaseFragment {
             sm_so_service_execDao.addUpdateTmp(sm_so_service_exec);
             //
             if (delegate != null) {
-                if (type == 1) {
-                    delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
-                    loadDataToScreen();
-                } else {
-                    delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-                    // setHMAuxScreen(); loadDataToScreen()
-                    loadDataToScreen();
+                switch (type) {
+                    case 1:
+                        delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
+                        loadDataToScreen();
+                        break;
+                    case 2:
+                        delegate.notExec(mService, sm_so_service_exec, data.get("full_status"));
+                        loadDataToScreen();
+                        break;
+                    case 3:
+                        delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+                        loadDataToScreen();
+                        break;
+                    default:
+                        break;
                 }
             }
         } else {
@@ -680,16 +698,36 @@ public class Act028_Opc_New extends BaseFragment {
                         setOffLineStatus(sm_so_service_exec);
                         //
                         if (delegate != null) {
-                            if (type == 1) {
-                                delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
-                                // setHMAuxScreen(); loadDataToScreen()
-                                loadDataToScreen();
-                            } else {
-                                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
-                                // setHMAuxScreen(); loadDataToScreen()
-                                loadDataToScreen();
+                            switch (type) {
+                                case 1:
+                                    delegate.newExec(mService, sm_so_service_exec, data.get("full_status"));
+                                    loadDataToScreen();
+                                    break;
+                                case 2:
+                                    delegate.notExec(mService, sm_so_service_exec, data.get("full_status"));
+                                    loadDataToScreen();
+                                    break;
+                                case 3:
+                                    delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+                                    loadDataToScreen();
+                                    break;
+                                default:
+                                    break;
                             }
                         }
+
+
+//                        if (delegate != null) {
+//                            if (type == 1) {
+//                                delegate.notExec(mService, sm_so_service_exec, data.get("full_status"));
+//                                // setHMAuxScreen(); loadDataToScreen()
+//                                loadDataToScreen();
+//                            } else {
+//                                delegate.menuOptionsSelected(sm_so_service_exec, data.get("full_status"));
+//                                // setHMAuxScreen(); loadDataToScreen()
+//                                loadDataToScreen();
+//                            }
+//                        }
 
                     }
 

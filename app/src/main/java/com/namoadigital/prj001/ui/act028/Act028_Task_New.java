@@ -446,6 +446,8 @@ public class Act028_Task_New extends BaseFragment {
 
                     tv_stepped_txt_lbl.setVisibility(View.GONE);
                     rb_stepped_perc.setVisibility(View.GONE);
+                    tv_stepped_txt_min_lbl.setVisibility(View.GONE);
+                    tv_stepped_txt_max_lbl.setVisibility(View.GONE);
                 }
 
                 //tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
@@ -1002,6 +1004,26 @@ public class Act028_Task_New extends BaseFragment {
 
                     mk_comments.setEnabled(false);
                     break;
+
+                case Constant.SO_STATUS_NOT_EXECUTED:
+                    mk_qty_people.setEnabled(false);
+                    mk_start_date.setEnabled(false);
+                    mk_start_hour.setEnabled(false);
+                    mk_end_date.setEnabled(false);
+                    mk_end_hour.setEnabled(false);
+
+                    iv_play_stop.setEnabled(false);
+                    iv_save.setEnabled(false);
+                    rb_stepped_perc.setEnabled(false);
+
+                    if (mImgPath.trim().length() != 0) {
+                        iv_gallery.setEnabled(true);
+                    } else {
+                        iv_gallery.setEnabled(false);
+                    }
+
+                    mk_comments.setEnabled(false);
+                    break;
                 case Constant.SO_STATUS_PROCESS:
                     mk_qty_people.setEnabled(true);
                     mk_start_date.setEnabled(true);
@@ -1057,6 +1079,25 @@ public class Act028_Task_New extends BaseFragment {
                     mk_comments.setEnabled(false);
                     break;
                 case Constant.SO_STATUS_DONE:
+                    mk_qty_people.setEnabled(false);
+                    mk_start_date.setEnabled(false);
+                    mk_start_hour.setEnabled(false);
+                    mk_end_date.setEnabled(false);
+                    mk_end_hour.setEnabled(false);
+
+                    iv_play_stop.setEnabled(false);
+                    iv_save.setEnabled(false);
+                    rb_stepped_perc.setEnabled(false);
+
+                    if (mImgPath.trim().length() != 0) {
+                        iv_gallery.setEnabled(true);
+                    } else {
+                        iv_gallery.setEnabled(false);
+                    }
+
+                    mk_comments.setEnabled(false);
+                    break;
+                case Constant.SO_STATUS_NOT_EXECUTED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);

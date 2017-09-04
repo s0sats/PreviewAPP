@@ -361,10 +361,18 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             sbCommand.append(" UPDATE ");
             sbCommand.append(SM_SO_Service_ExecDao.TABLE);
 
-            sbCommand.append(" SET ");
-            sbCommand.append("  status = '");
-            sbCommand.append(Constant.SO_STATUS_DONE);
-            sbCommand.append("' ");
+            if (task.getStatus().equalsIgnoreCase(Constant.SO_STATUS_NOT_EXECUTED)) {
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_NOT_EXECUTED);
+                sbCommand.append("' ");
+
+            } else {
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append("' ");
+            }
 
             sbCommand.append(" WHERE ");
             sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
@@ -386,6 +394,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             sbCommand.append(SERVICE_SEQ).append(" = '").append(String.valueOf(task.getService_seq())).append("'");
             sbCommand.append(" and ");
             sbCommand.append(EXEC_TMP).append(" = '").append(String.valueOf(task.getExec_tmp())).append("'");
+
 
             sbCommand.append("  AND ( ");
 
@@ -415,13 +424,27 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             sbCommand.append(" and ");
             sbCommand.append(EXEC_TMP).append(" = '").append(String.valueOf(task.getExec_tmp())).append("'");
             sbCommand.append(" and ");
+
+            sbCommand.append(" ( ");
+
             sbCommand.append(STATUS).append(" = '");
             sbCommand.append(Constant.SO_STATUS_DONE);
             sbCommand.append("' ");
+
+            sbCommand.append(" or ");
+
+            sbCommand.append(STATUS).append(" = '");
+            sbCommand.append(Constant.SO_STATUS_NOT_EXECUTED);
+            sbCommand.append("' ");
+
+            sbCommand.append(" ) ");
+
+
             sbCommand.append(" and ");
             sbCommand.append(TASK_PERC).append(" = '100'");
 
             sbCommand.append("  ) != 0 ");
+
 
             db.execSQL(sbCommand.toString());
             rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);

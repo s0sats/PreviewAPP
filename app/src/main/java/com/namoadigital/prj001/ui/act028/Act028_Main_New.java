@@ -42,6 +42,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
@@ -1028,7 +1029,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         //
         index = 0;
         //
-        setFrag(act028_task_list, SELECTION_TASK_LIST);
+        //setFrag(act028_task_list, SELECTION_TASK_LIST);
 
         SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
         task.setTask_code(0);
@@ -1089,28 +1090,53 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         //
         index = 0;
         //
-        setFrag(act028_task_list, SELECTION_TASK_LIST);
+        //setFrag(act028_task_list, SELECTION_TASK_LIST);
+
+        setFrag(act028_empty_new, SELECTION_EMPTY);
 
         SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
         task.setTask_code(0);
         task.setTask_seq_oper(1);
         task.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
         task.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
-            task.setTask_perc(0);
-        } else {
-            task.setTask_perc(100);
-        }
+        task.setTask_perc(100);
+
+//        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+//            task.setTask_perc(100);
+//        } else {
+//            task.setTask_perc(100);
+//        }
+
         task.setQty_people(1);
         task.setStatus(Constant.SO_STATUS_NOT_EXECUTED);
 
         task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
-        task.setEnd_date("");
-        task.setComments("");
+        task.setEnd_date(task.getStart_date());
+        task.setComments(null);
 
         task.setPK(sm_so_service_exec);
-        task.setTask_tmp(201);
+
+        long nTaskTemp = Long.parseLong(sm_so_service_exec_taskDao.getByStringHM(
+                new SM_SO_Service_Exec_Task_Sql_004(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq(),
+                        task.getExec_tmp()
+
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_Sql_004.NEXT_TMP));
+
+        task.setTask_tmp(nTaskTemp);
         sm_so_service_exec_taskDao.addUpdateTmp(task);
+        sm_so_service_exec_taskDao.updateStatusOffLine(task);
+
+        act028_opc.loadDataToScreen();
 
         /**
          * Calling WebService
@@ -1136,7 +1162,9 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 //            setMTASK_STATUS(Act028_Main_New.CREATE_NULL);
 //        }
 
-        menuTaskCreated(task);
+//        menuTaskCreated(task);
+        //
+        //setFrag(act028_empty_new, SELECTION_EMPTY);
     }
 
     //region Drawer Visibility
@@ -1210,6 +1238,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             //
             context.sendBroadcast(mIntent);
         } else {
+
         }
     }
 

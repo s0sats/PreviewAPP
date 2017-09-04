@@ -7,8 +7,6 @@ import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import static android.icu.text.MessagePattern.ArgType.SELECT;
-
 /**
  * Created by d.luche on 25/05/2017.
  *
@@ -58,13 +56,13 @@ public class Sql_Act028_001 implements Specification {
                         " FROM "+ SM_SO_Service_ExecDao.TABLE+" E\n" +
                         " \n" +
                         " LEFT JOIN\n" +
-                        "         (SELECT T.EXEC_CODE,\n" +
+                        "         (SELECT T.EXEC_CODE, T.EXEC_TMP,\n" +
                         "             MAX(IFNULL(X.TASK_PERC,0)) "+TASK_PERC+",\n" +
                         "             MAX(IFNULL(T.SUM_EXEC_TIME,0)) "+SUM_EXEC_TIME+",\n" +
                         "             MAX(IFNULL(T.QTY_COMMENT,0)) "+QTY_COMMENT+",\n" +
                         "             MAX(IFNULL(T.QTY_FILES,0)) "+QTY_FILES+"\n," +
                         "             MAX(IFNULL(T.MY_TASK,0)) "+MY_TASK+"\n" +
-                        "      FROM (SELECT T.EXEC_CODE,\n" +
+                        "      FROM (SELECT T.EXEC_CODE, T.EXEC_TMP,\n" +
                         "                   MAX((CASE WHEN T.STATUS IN ('DONE','NOT_EXECUTED') THEN T.TASK_SEQ_OPER ELSE NULL END)) MAX_TASK_SEQ_OPER,\n" +
                         "                   SUM((CASE WHEN T.STATUS IN ('DONE','NOT_EXECUTED') THEN T.EXEC_TIME ELSE 0 END)) SUM_EXEC_TIME,\n" +
                         "                   SUM((CASE WHEN T.COMMENTS IS NOT NULL THEN 1 ELSE 0 END)) QTY_COMMENT,\n" +
@@ -79,8 +77,8 @@ public class Sql_Act028_001 implements Specification {
                         "                              AND F.CATEGORY_PRICE_CODE = T.CATEGORY_PRICE_CODE\n" +
                         "                              AND F.SERVICE_CODE = T.SERVICE_CODE\n" +
                         "                              AND F.SERVICE_SEQ = T.SERVICE_SEQ\n" +
-                        "                              AND F.EXEC_CODE = T.EXEC_CODE\n" +
-                        "                              AND F.TASK_CODE = T.TASK_CODE)) QTY_FILES," +
+                        "                              AND F.EXEC_TMP = T.EXEC_TMP\n" +
+                        "                              AND F.TASK_TMP = T.TASK_TMP)) QTY_FILES," +
                         "                       (SELECT COUNT(1)" +
                         "                        FROM "+ SM_SO_Service_Exec_TaskDao.TABLE+" TT\n" +
                         "                        WHERE TT.CUSTOMER_CODE = T.CUSTOMER_CODE\n" +
@@ -92,8 +90,8 @@ public class Sql_Act028_001 implements Specification {
                         "                              AND TT.CATEGORY_PRICE_CODE = T.CATEGORY_PRICE_CODE\n" +
                         "                              AND TT.SERVICE_CODE = T.SERVICE_CODE\n" +
                         "                              AND TT.SERVICE_SEQ = T.SERVICE_SEQ\n" +
-                        "                              AND TT.EXEC_CODE = T.EXEC_CODE\n" +
-                        "                              AND TT.TASK_CODE = T.TASK_CODE\n" +
+                        "                              AND TT.EXEC_TMP = T.EXEC_TMP\n" +
+                        "                              AND TT.TASK_TMP = T.TASK_TMP\n" +
                         "                              AND TT.TASK_USER = '"+user_code+"') MY_TASK\n"+
                         "            FROM "+ SM_SO_Service_Exec_TaskDao.TABLE+" T\n" +
                         "            WHERE T.CUSTOMER_CODE = '"+customer_code+"'\n" +
@@ -106,7 +104,8 @@ public class Sql_Act028_001 implements Specification {
                         "                  AND T.SERVICE_CODE = '"+service_code+"'\n" +
                         "                  AND T.SERVICE_SEQ = '"+service_seq+"'\n" +
                         "                  AND T.STATUS NOT IN ('"+ Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n" +
-                        "            GROUP BY T.EXEC_CODE) T\n" +
+//                        "            GROUP BY T.EXEC_CODE) T\n" +
+                        "            GROUP BY T.EXEC_TMP) T\n" +
                         "\n" +
                         "      LEFT JOIN\n" +
                         "           (SELECT *\n" +
@@ -121,8 +120,9 @@ public class Sql_Act028_001 implements Specification {
                         "                  AND X.SERVICE_CODE = '"+service_code+"'\n" +
                         "                  AND X.SERVICE_SEQ = '"+service_seq+"'\n" +
                         "                  AND X.STATUS NOT IN ('"+ Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n"+
-                        "                  ) X ON T.EXEC_CODE = X.EXEC_CODE AND  T.MAX_TASK_SEQ_OPER = X.TASK_SEQ_OPER            \n" +
-                        "      GROUP BY T.EXEC_CODE) T ON E.EXEC_CODE = T.EXEC_CODE            \n" +
+                        "                  ) X ON T.EXEC_TMP = X.EXEC_TMP AND  T.MAX_TASK_SEQ_OPER = X.TASK_SEQ_OPER            \n" +
+//                        "      GROUP BY T.EXEC_CODE) T ON E.EXEC_CODE = T.EXEC_CODE            \n" +
+                        "      GROUP BY T.EXEC_TMP) T ON E.EXEC_TMP = T.EXEC_TMP            \n" +
                         "      \n" +
                         " WHERE  E.CUSTOMER_CODE = '"+customer_code+"'\n" +
                         "        AND E.SO_PREFIX = '"+so_prefix+"'\n" +
