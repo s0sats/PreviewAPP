@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by d.luche on 22/05/2017.
  */
 
-public class TProduct_Serial {
+public class TProduct_Serial implements Serializable {
+
+    private static final long serialVersionUID = -6021410678904886961L;
 
     private long customer_code;
     private Long product_code;

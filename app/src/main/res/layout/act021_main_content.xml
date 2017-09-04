@@ -54,7 +54,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="5dp">
+                android:paddingTop="10dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_back">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act021_mket_serial"
@@ -82,18 +87,16 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/namoa_color_gray3"
-                />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="5dp"
+                android:paddingTop="10dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_back"
                 >
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -122,13 +125,6 @@
                     android:tint="@color/namoa_dark_blue" />
 
             </LinearLayout>
-            <View
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/namoa_color_gray3"
-                />
-
         </LinearLayout>
 
     </ScrollView>

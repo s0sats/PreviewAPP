@@ -225,6 +225,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_PRODUCT_CODE = "serial_search_product_code";
     public static final String WS_SERIAL_SEARCH_PRODUCT_ID = "serial_search_product_id";
     public static final String WS_SERIAL_SEARCH_SERIAL_ID = "serial_search_serial_id";
+    public static final String WS_SERIAL_SEARCH_TRACKING = "serial_search_tracking";
     public static final String WS_SERIAL_SEARCH_EXACT = "ws_serial_search_exact";
     public static final String WS_SERIAL_SEARCH_SAVE_PROCESS = "ws_serial_search_save_process";
     public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_new_process";
