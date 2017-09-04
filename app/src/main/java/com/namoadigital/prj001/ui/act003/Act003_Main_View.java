@@ -17,5 +17,7 @@ public interface Act003_Main_View {
 
     void callAct004(Context context);
 
+    void callAct033(Context context);
+
     void callAct002(Context context , boolean force_get_customer);
 }

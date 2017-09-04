@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
@@ -38,6 +39,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -48,6 +50,7 @@ import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
+import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -217,8 +220,12 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         transList.add("alert_support_finish_msg");
         //alert support
         transList.add("support_dialog_ttl");
-
-
+        //
+        transList.add("lbl_change_zone");
+        transList.add("drawer_change_zone_one_zone_alert_ttl");
+        transList.add("drawer_change_zone_one_zone_alert_msg");
+        transList.add("drawer_change_zone_alert_ttl");
+        transList.add("drawer_change_zone_alert_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -367,9 +374,54 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     //Reseta preferencias do Customer e volta para
                                     ToolBox_Con.setPreference_Site_Code(context, "-1");
+                                    ToolBox_Con.setPreference_Zone_Code(context, -1);
                                     ToolBox_Con.setPreference_Operation_Code(context, -1);
                                     //
                                     callAct003(context);
+                                }
+                            };
+                        }
+                        break;
+                    case Act005_Opc.DRAWER_OPC_ZONE:
+                        MD_Site_ZoneDao zoneDao = new MD_Site_ZoneDao(
+                                context,
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                Constant.DB_VERSION_CUSTOM
+                        );
+
+                        int qty_zones = zoneDao.query_HM(
+                                new MD_Site_Zone_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))
+                                ).toSqlQuery()
+                        ).size();
+
+                        if (qty_zones <= 1) {
+                            //Se apenas um site, da alert e não permite troca.
+                            alertTitle = hmAux_Trans.get("drawer_change_zone_one_zone_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_zone_one_zone_alert_msg");
+
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            };
+
+                            negativeBtn = 0;
+                        } else {
+                            //
+                            alertTitle = hmAux_Trans.get("drawer_change_zone_alert_ttl");
+                            alertMsg = hmAux_Trans.get("drawer_change_zone_alert_msg");
+                            //
+                            //Apaga preferencia de zona volta a lista de zona
+                            listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Reseta preferencias da zona e volta para
+                                    ToolBox_Con.setPreference_Zone_Code(context, -1);
+                                    //
+                                    callAct033(context);
                                 }
                             };
                         }
@@ -524,7 +576,7 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         setFooter();
 
         //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+       /* HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
 
         mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
 
@@ -538,8 +590,13 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
         mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
         mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
         mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
+        mVersion_Value = Constant.PRJ001_VERSION;*/
+    }
 
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     @Override
@@ -692,6 +749,17 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
     public void callAct030(Context context) {
         Intent mIntent = new Intent(context, Act030_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+
+    private void callAct033(Context context) {
+        Intent mIntent = new Intent(context, Act033_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT005);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

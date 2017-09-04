@@ -20,12 +20,16 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -44,6 +48,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     private TextView tv_customer_val;
     private TextView tv_site_lbl;
     private TextView tv_site_val;
+    private TextView tv_zone_val;
     private ListView lv_operations;
     private Act004_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
@@ -98,6 +103,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         tv_customer_val = (TextView) findViewById(R.id.act004_tv_customer_val);
         tv_site_lbl = (TextView) findViewById(R.id.act004_tv_site_lbl);
         tv_site_val = (TextView) findViewById(R.id.act004_tv_site_val);
+        tv_zone_val = (TextView) findViewById(R.id.act004_tv_zone_val);
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
         //
@@ -139,8 +145,30 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         if(site != null){
             siteDesc = site.getSite_desc();
         }
-
+        //
         tv_site_val.setText(siteDesc);
+        //
+        tv_zone_val.setVisibility(View.GONE);
+        //Se customer tem acesso ao modulo de serviço, busca qual a zona selecionada e a exibe
+        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            MD_Site_Zone zone =
+                    new MD_Site_ZoneDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ).getByString(
+                            new MD_Site_Zone_Sql_003(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)),
+                                    ToolBox_Con.getPreference_Zone_Code(context)
+                            ).toSqlQuery()
+                    );
+            if (zone != null) {
+                tv_zone_val.setText(zone.getZone_desc());
+            }
+            tv_zone_val.setVisibility(View.VISIBLE);
+        }
+
         //
         lv_operations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -178,7 +206,8 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
             Bundle bundle = getIntent().getExtras();
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
             if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
-                callAct003(context);
+                //callAct003(context);
+                callAct033(context);
             }else{
                 mPresenter.setOperationCode(operations.get(0));
             }
@@ -235,6 +264,21 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         startActivity(mIntent);
         finish();
 
+    }
+
+    @Override
+    public void callAct033(Context context) {
+        ToolBox_Con.setPreference_Zone_Code(context,-1);
+        Intent mIntent = new Intent(context, Act033_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.BACK_ACTION, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
     }
 
     private void killCurSession(Context context){

@@ -162,6 +162,7 @@ public class WS_SO_Save extends IntentService {
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
             if (!checksumJsonToken(json_token_content, jsonToken)) {
+                deleteFile(Constant.TOKEN_PATH,file_to_del);
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }

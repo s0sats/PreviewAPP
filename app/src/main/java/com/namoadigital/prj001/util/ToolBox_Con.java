@@ -393,6 +393,28 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region Zone_Code
+    public static void setPreference_Zone_Code(Context context, int zone_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putInt(
+                Constant.LOGIN_ZONE_CODE,
+                zone_code
+        ).apply();
+    }
+
+    public static int getPreference_Zone_Code(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getInt(
+                Constant.LOGIN_ZONE_CODE,
+                -1
+        );
+    }
+    //endregion
+
     //region Operation_Code
     public static void setPreference_Operation_Code(Context context, long operation_code) {
         SharedPreferences sharedPreferences =
@@ -745,6 +767,11 @@ public class ToolBox_Con {
         sharedPreferences.edit().putString(
                 Constant.LOGIN_SITE_CODE,
                 "-1"
+        ).apply();
+        //
+        sharedPreferences.edit().putInt(
+                Constant.LOGIN_ZONE_CODE,
+                -1
         ).apply();
         //
         sharedPreferences.edit().putLong(
