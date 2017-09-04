@@ -1079,7 +1079,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     @Override
     public void notExec(SM_SO_Service sm_so_service, SM_SO_Service_Exec sm_so_service_exec, String full_status) {
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.openDrawer(GravityCompat.START);
 
         this.full_status = full_status;
         this.mExec_Aux = sm_so_service_exec;
