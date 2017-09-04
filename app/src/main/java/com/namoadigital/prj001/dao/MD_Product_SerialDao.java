@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
  * Created by d.luche on 30/06/2017.
  */
 
-public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Serial> {
+public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Serial> , DaoTmpStatus<MD_Product_Serial> {
 
     private final Mapper<MD_Product_Serial, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, MD_Product_Serial> toMD_Product_SerialMapper;
@@ -27,6 +28,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String PRODUCT_CODE = "product_code";
     public static final String SERIAL_CODE = "serial_code";
+    public static final String SERIAL_TMP = "serial_tmp";
     public static final String SERIAL_ID = "serial_id";
     public static final String SITE_CODE = "site_code";
     public static final String ZONE_CODE = "zone_code";
@@ -43,7 +45,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String ONLY_POSITION = "only_position";
 
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1, ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED};
+    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_TMP, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1, ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED};
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -69,9 +71,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
                 db.update(TABLE, toContentValuesMapper.map(md_product_serial), sbWhere.toString(), null);
             }
+            //
+            MD_Product_Serial_TrackingDao md_product_serial_trackingDao =
+                    new MD_Product_Serial_TrackingDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
 
+            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(),false);
 
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
         }
 
@@ -111,6 +122,91 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         }
 
         closeDB();
+    }
+
+    @Override
+    public void addUpdateTmp(MD_Product_Serial md_product_serial) {
+        openDB();
+
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_serial)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product_serial.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product_serial.getProduct_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SERIAL_TMP).append(" = '").append(String.valueOf(md_product_serial.getSerial_tmp())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(md_product_serial), sbWhere.toString(), null);
+            }
+            //
+            MD_Product_Serial_TrackingDao md_product_serial_trackingDao =
+                    new MD_Product_Serial_TrackingDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+            md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(),false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+
+        closeDB();
+
+    }
+
+    @Override
+    public void addUpdateTmp(Iterable<MD_Product_Serial> md_product_serials, boolean status) {
+        openDB();
+
+        try {
+            //db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+            //
+            MD_Product_Serial_TrackingDao md_product_serial_trackingDao =
+                    new MD_Product_Serial_TrackingDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+            //
+            for (MD_Product_Serial md_product_serial :md_product_serials) {
+
+                if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_serial)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product_serial.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product_serial.getProduct_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(SERIAL_TMP).append(" = '").append(String.valueOf(md_product_serial.getSerial_tmp())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(md_product_serial), sbWhere.toString(), null);
+                }
+                //
+                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(),false);
+
+            }
+
+            //db.setTransactionSuccessful();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //db.endTransaction();
+        }
+
+        closeDB();
+    }
+
+    @Override
+    public void updateStatusOffLine(MD_Product_Serial item) {
+
     }
 
     @Override

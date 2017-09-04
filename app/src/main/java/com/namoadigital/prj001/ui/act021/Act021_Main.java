@@ -10,11 +10,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -46,11 +50,13 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     private Act021_Main_Presenter mPresenter;
     private Button btn_load;
-    private Button btn_express;
     private Button btn_pendencies;
+    private MKEditTextNM mket_serial;
+    private ImageView iv_search_serial;
+    private MKEditTextNM mket_tracking;
+    private ImageView iv_search_tracking;
     private int pendencies_qty;
-    //var de teste apagar após testar
-    private Button btn_tst_so;
+    private View.OnClickListener searchListner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,7 +91,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         List<String> transList = new ArrayList<String>();
         transList.add("act021_title");
         transList.add("btn_load_so");
-        transList.add("btn_express_so");
         transList.add("btn_pendencies_so");
         transList.add("alert_new_opt_ttl");
         transList.add("alert_new_opt_product_lbl");
@@ -95,6 +100,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("alert_so_to_send_msg");
         transList.add("alert_no_pendencies_title");
         transList.add("alert_no_pendencies_msg");
+        transList.add("mket_serial_hint");
+        transList.add("mket_tracking_hint");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -125,18 +132,35 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_load.setTag("btn_load_so");
         views.add(btn_load);
         //
-        btn_express = (Button) findViewById(R.id.act021_btn_express);
-        btn_express.setTag("btn_express_so");
-        views.add(btn_express);
-        btn_express.setVisibility(View.GONE);
-        //
         btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
         btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
-        //APAGAR
-        btn_tst_so = (Button) findViewById(R.id.act021_btn_testeWS);
-        btn_tst_so.setVisibility(View.GONE);
-        //APAGAR
-
+        //
+        mket_serial = (MKEditTextNM) findViewById(R.id.act021_mket_serial);
+        mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
+        iv_search_serial = (ImageView) findViewById(R.id.act021_iv_search_serial);
+        //
+        mket_tracking = (MKEditTextNM) findViewById(R.id.act021_mket_tracking);
+        mket_tracking.setHint(hmAux_Trans.get("mket_tracking_hint"));
+        iv_search_tracking = (ImageView) findViewById(R.id.act021_iv_search_tracking);
+        //
+        searchListner = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.act021_iv_search_serial:
+                        Toast.makeText(context,"Serial",Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.act021_iv_search_tracking:
+                        Toast.makeText(context,"Tracking",Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        //
+        hideSoftKeyboard();
+        //
         mPresenter.getPendencies();
 
     }
@@ -147,24 +171,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             public void onClick(View v) {
                 //showNewOptDialog();
                 mPresenter.checkForSoToSend();
-            }
-        });
-
-        btn_express.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //callAct022T(context);
-                //callTestsEnvSOExec();
-              //  callAct032(context);
-              //  callTestSoSaveMult();
-
-            }
-        });
-
-        btn_tst_so.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            //    callTestSoSaveMult();
             }
         });
 
@@ -182,6 +188,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             }
         });
 
+        iv_search_serial.setOnClickListener(searchListner);
+
+        iv_search_tracking.setOnClickListener(searchListner);
+
     }
 
     public void showMsg() {
@@ -195,22 +205,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         );
 
     }
-//
-//    private void callTestSoSaveMult() {
-//        enableProgressDialog(
-//                "Teste Save SO",
-//                "Testando Save SO",
-//                "Cancel",
-//                "OK"
-//        );
-//        //
-//        Intent mIntent = new Intent(context, WBR_SO_Save.class);
-//        Bundle bundle = new Bundle();
-//
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//    }
+
+    private void hideSoftKeyboard() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
 
     @Override
     public void setPendencies(int qty) {

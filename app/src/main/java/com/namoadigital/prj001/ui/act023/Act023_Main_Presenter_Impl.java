@@ -444,6 +444,15 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     }
 
     @Override
+    public void saveSerialInfo(MD_Product_Serial md_product_serial) {
+        //Salva dados do serial
+        serialDao.addUpdate(md_product_serial);
+        //Continua fluxo antigo
+        getSerialInfo(md_product_serial.getProduct_code(),md_product_serial.getSerial_id());
+
+    }
+
+    @Override
     public void onBackPressedClicked() {
         defineBackFlow();
     }
