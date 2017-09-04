@@ -280,8 +280,8 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
     }
 
     private void initActions() {
-        if(serial_list != null && serial_list.size() == 0) {
-            fragFilters.setTrackingText(serial_list.get(0).getSerial_id());
+        if(serial_list != null && serial_list.size() != 0) {
+            fragFilters.setSerialIdText(serial_list.get(0).getSerial_id());
             //
             if(!tracking_searched.equals("")){
                 fragFilters.setTrackingText(tracking_searched);

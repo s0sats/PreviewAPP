@@ -45,7 +45,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     public static final String NEW_OPT_LABEL = "new_opt_label";
 
     public static final String NEW_OPT_TP_PRODUCT = "new_opt_tp_product";
-    public static final String NEW_OPT_TP_SERIAL= "new_opt_tp_serial";
+    public static final String NEW_OPT_TP_SERIAL = "new_opt_tp_serial";
     public static final String NEW_OPT_TP_LOCATION = "new_opt_tp_location";
 
     private Act021_Main_Presenter mPresenter;
@@ -153,45 +153,47 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         searchListner = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    switch (v.getId()) {
-                        case R.id.act021_iv_search_serial:
-                            //
-                            if(mket_serial.getText().toString().trim().length() > 0) {
-                                search_pressed = R.id.act021_iv_search_serial;
-                                //Limpa campo tracking
-                                mket_tracking.setText("");
-                                //Chama Ws que consulta Seriais
-                                mPresenter.executeSerialTracking(
-                                        mket_serial.getText().toString().trim(),
-                                        mket_tracking.getText().toString().trim()
-                                );
+                ToolBox_Inf.hideSoftKeyboard(Act021_Main.this);
+                //
+                switch (v.getId()) {
+                    case R.id.act021_iv_search_serial:
+                        //
+                        if (mket_serial.getText().toString().trim().length() > 0) {
+                            search_pressed = R.id.act021_iv_search_serial;
+                            //Limpa campo tracking
+                            mket_tracking.setText("");
+                            //Chama Ws que consulta Seriais
+                            mPresenter.executeSerialTracking(
+                                    mket_serial.getText().toString().trim(),
+                                    mket_tracking.getText().toString().trim()
+                            );
 
-                            }else{
-                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-                                        hmAux_Trans.get("alert_no_value_filled_msg"));
-                            }
-                            //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.id.act021_iv_search_tracking:
+                        } else {
+                            showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+                                    hmAux_Trans.get("alert_no_value_filled_msg"));
+                        }
+                        //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.act021_iv_search_tracking:
 
-                            if(mket_tracking.getText().toString().trim().length() > 0) {
-                                search_pressed = R.id.act021_iv_search_tracking;
-                                //Limpa campo Serial
-                                mket_serial.setText("");
-                                //Chama Ws que consulta Seriais
-                                mPresenter.executeSerialTracking(
-                                        mket_serial.getText().toString().trim(),
-                                        mket_tracking.getText().toString().trim()
-                                );
-                            }else{
-                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-                                        hmAux_Trans.get("alert_no_value_filled_msg"));
-                            }
-                            //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            break;
-                    }
+                        if (mket_tracking.getText().toString().trim().length() > 0) {
+                            search_pressed = R.id.act021_iv_search_tracking;
+                            //Limpa campo Serial
+                            mket_serial.setText("");
+                            //Chama Ws que consulta Seriais
+                            mPresenter.executeSerialTracking(
+                                    mket_serial.getText().toString().trim(),
+                                    mket_tracking.getText().toString().trim()
+                            );
+                        } else {
+                            showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+                                    hmAux_Trans.get("alert_no_value_filled_msg"));
+                        }
+                        //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
+                }
             }
         };
         //
@@ -214,9 +216,9 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
 
-                if(pendencies_qty > 0){
+                if (pendencies_qty > 0) {
                     callAct026(context);
-                }else{
+                } else {
                     showMsg();
                 }
 
@@ -243,7 +245,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     }
 
     @Override
-    public void showMsg(String ttl,String msg) {
+    public void showMsg(String ttl, String msg) {
         ToolBox.alertMSG(
                 context,
                 ttl,
@@ -271,7 +273,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     @Override
     public void setPendencies(int qty) {
         pendencies_qty = qty;
-        String btn_text = hmAux_Trans.get("btn_pendencies_so") +" (" +pendencies_qty+")";
+        String btn_text = hmAux_Trans.get("btn_pendencies_so") + " (" + pendencies_qty + ")";
         btn_pendencies.setText(btn_text);
     }
 
@@ -328,19 +330,19 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     private List<HMAux> getNewOpts() {
         List<HMAux> opts = new ArrayList<>();
 
-        HMAux aux =  new HMAux();
+        HMAux aux = new HMAux();
         aux.put(NEW_OPT_ID, NEW_OPT_TP_PRODUCT);
-        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_product_lbl"));
+        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_product_lbl"));
         opts.add(aux);
 
         aux = new HMAux();
         aux.put(NEW_OPT_ID, NEW_OPT_TP_SERIAL);
-        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_serial_lbl"));
+        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_serial_lbl"));
         opts.add(aux);
 
         aux = new HMAux();
         aux.put(NEW_OPT_ID, NEW_OPT_TP_LOCATION);
-        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_location_lbl"));
+        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_location_lbl"));
         //opts.add(aux);
 
         return opts;
@@ -352,7 +354,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         progressDialog.dismiss();
         //
-        mPresenter.defineSearchResultFlow(result,mket_tracking.getText().toString().trim());
+        mPresenter.defineSearchResultFlow(result, mket_tracking.getText().toString().trim());
     }
 
     //Tratativa SESSION NOT FOUND
@@ -367,6 +369,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         finish();
 
     }
+
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
@@ -396,10 +399,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         Intent mIntent = new Intent(context, Act022_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = getIntent().getExtras();
-        if(bundle == null){
+        if (bundle == null) {
             bundle = new Bundle();
         }
-        bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_SO);
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -415,14 +418,17 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     }
 
     @Override
-    public void callAct025(Context context,Bundle bundle) {
+    public void callAct025(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act025_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if(bundle == null){
+        if (bundle == null) {
             bundle = new Bundle();
         }
-        bundle.putAll(getIntent().getExtras());
-        bundle.putString(Constant.MAIN_REQUESTING_PROCESS,Constant.MODULE_SO);
+        Bundle bundle2 = getIntent().getExtras();
+        if(bundle2 != null){
+            bundle.putAll(bundle2);
+        }
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -434,7 +440,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         Intent mIntent = new Intent(context, Act026_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT021);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT021);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
