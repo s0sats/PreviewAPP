@@ -2,11 +2,14 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
+
 /**
  * Created by d.luche on 02/09/2017.
  */
 
-public class MD_Product_Serial_Tracking {
+public class MD_Product_Serial_Tracking implements Serializable {
+    private static final long serialVersionUID = -2220422244392353101L;
 
     @Expose
     private long customer_code;
@@ -17,7 +20,22 @@ public class MD_Product_Serial_Tracking {
     @Expose
     private Long serial_tmp;
     @Expose
-    private long tracking;
+    private String tracking;
+
+    public MD_Product_Serial_Tracking() {
+        this.customer_code = -1;
+        this.product_code =  -1;
+        this.serial_code = -1;
+        this.serial_tmp =  -1L;
+        this.tracking = "";
+    }
+
+    public void setPk(MD_Product_Serial md_product_serial){
+        this.customer_code = md_product_serial.getCustomer_code();
+        this.product_code = md_product_serial.getProduct_code();
+        this.serial_code = md_product_serial.getSerial_code();
+        this.serial_tmp = md_product_serial.getSerial_tmp();
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -51,11 +69,11 @@ public class MD_Product_Serial_Tracking {
         this.serial_tmp = serial_tmp;
     }
 
-    public long getTracking() {
+    public String getTracking() {
         return tracking;
     }
 
-    public void setTracking(long tracking) {
+    public void setTracking(String tracking) {
         this.tracking = tracking;
     }
 }

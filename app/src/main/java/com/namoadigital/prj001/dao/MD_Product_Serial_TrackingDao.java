@@ -257,7 +257,7 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
                 md_product_serial_tracking.setSerial_tmp(cursor.getLong(cursor.getColumnIndex(SERIAL_TMP)));
             }
             md_product_serial_tracking.setSerial_tmp(cursor.getLong(cursor.getColumnIndex(SERIAL_TMP)));
-            md_product_serial_tracking.setTracking(cursor.getLong(cursor.getColumnIndex(TRACKING)));
+            md_product_serial_tracking.setTracking(cursor.getString(cursor.getColumnIndex(TRACKING)));
 
             return md_product_serial_tracking;
         }
@@ -283,7 +283,7 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
 
             contentValues.put(SERIAL_TMP,md_product_serial_tracking.getSerial_tmp());
 
-            if(md_product_serial_tracking.getTracking() > -1){
+            if(md_product_serial_tracking.getTracking() != null){
                 contentValues.put(TRACKING,md_product_serial_tracking.getTracking());
             }
 

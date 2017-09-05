@@ -87,8 +87,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
     public static final String MAIN_PRODUCT_CODE = "main_product_code";
     public static final String MAIN_SERIAL_ID = "main_serial_id";
+    public static final String MAIN_MD_PRODUCT_SERIAL = "main_md_product_serial";
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
+    public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
     //Constante de concatenação
     public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
     public static final String MAIN_CONCAT_STRING_2 = "##@n@m0@@##";
@@ -223,6 +225,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_PRODUCT_CODE = "serial_search_product_code";
     public static final String WS_SERIAL_SEARCH_PRODUCT_ID = "serial_search_product_id";
     public static final String WS_SERIAL_SEARCH_SERIAL_ID = "serial_search_serial_id";
+    public static final String WS_SERIAL_SEARCH_TRACKING = "serial_search_tracking";
     public static final String WS_SERIAL_SEARCH_EXACT = "ws_serial_search_exact";
     public static final String WS_SERIAL_SEARCH_SAVE_PROCESS = "ws_serial_search_save_process";
     public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_new_process";
@@ -307,6 +310,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
+    public static final String MODULE_SO_SEARCH_SERIAL_EXPRESS = "MODULE_SO_SEARCH_SERIAL_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
 

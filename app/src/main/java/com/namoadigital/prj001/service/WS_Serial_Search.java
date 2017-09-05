@@ -51,12 +51,13 @@ public class WS_Serial_Search extends IntentService {
             String product_code = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE);
             String product_id = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID);
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
+            String tracking = bundle.getString(Constant.WS_SERIAL_SEARCH_TRACKING);
             boolean save_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS,false);
             //Variavel que indica se é criação de serial(Act031)
             boolean new_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS,false);
             int serial_exact = bundle.getInt(Constant.WS_SERIAL_SEARCH_EXACT,1);
 
-            processWSSerialSearch(product_code, product_id,serial_id ,save_serial,serial_exact,new_serial);
+            processWSSerialSearch(product_code, product_id,serial_id , tracking,save_serial,serial_exact,new_serial);
 
         }catch (Exception e) {
 
@@ -73,7 +74,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, boolean save_serial, int serial_exact, boolean new_serial) {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, boolean save_serial, int serial_exact, boolean new_serial) {
 
         //Seleciona traduções
         loadTranslation();
@@ -87,6 +88,8 @@ public class WS_Serial_Search extends IntentService {
         env.setProduct_id(product_id);
         env.setSerial_id(serial_id);
         env.setSerial_exact(serial_exact);
+        env.setTracking(tracking);
+        env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS",hmAux_Trans.get("msg_receving_data"), "", "0");
 

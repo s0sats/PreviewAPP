@@ -28,6 +28,8 @@ public interface Act023_Main_View {
 
     void continueOffline();
 
+    void callAct021(Context context);
+
     void callAct022(Context context);
 
     void callAct024(Context context, Bundle bundle);

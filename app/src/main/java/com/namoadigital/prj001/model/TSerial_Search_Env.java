@@ -14,6 +14,8 @@ public class TSerial_Search_Env {
     private String serial_code;
     private String serial_id;
     private int serial_exact;
+    private String tracking;
+    private String site_code;
 
     public String getApp_code() {
         return app_code;
@@ -77,5 +79,21 @@ public class TSerial_Search_Env {
 
     public void setSerial_exact(int serial_exact) {
         this.serial_exact = serial_exact;
+    }
+
+    public String getTracking() {
+        return tracking;
+    }
+
+    public void setTracking(String tracking) {
+        this.tracking = tracking;
+    }
+
+    public String getSite_code() {
+        return site_code;
+    }
+
+    public void setSite_code(String site_code) {
+        this.site_code = site_code;
     }
 }

@@ -48,6 +48,7 @@ import com.namoadigital.prj001.sql.MD_Segment_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act024.Act024_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
@@ -263,7 +264,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         serialProperties = new ArrayList<>();
         //
-        serialObj = new MD_Product_Serial();
+        //serialObj = new MD_Product_Serial();
         //
         mket_serial_id = (MKEditTextNM) findViewById(R.id.act023_mket_serial);
         mket_serial_id.setmNFC(true);
@@ -463,6 +464,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 break;
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
             default:
                 ll_serial_full_desc.setVisibility(View.GONE);
                 ll_require_serial.setVisibility(View.GONE);
@@ -483,6 +485,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
                 bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
                 isSchedule = bundle.getBoolean(Constant.MAIN_IS_SCHEDULE, false);
+                if(bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)){
+                    serialObj = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                }else{
+                    serialObj = new MD_Product_Serial();
+                }
+
             } else {
                 ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
             }
@@ -607,14 +615,16 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
             }
         });
 
-        if (requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL)) {
+        if (requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL)     ||
+            requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS)) {
             mket_serial_id.setText(bundle_serial_id);
             //
-            mPresenter.validadeSerialFlow(
+            /*mPresenter.validadeSerialFlow(
                     mket_serial_id.getText().toString(),
                     serial_required,
                     serial_allow_new
-            );
+            );*/
+            mPresenter.saveSerialInfo(serialObj);
         }
     }
 
@@ -1013,6 +1023,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
                 if (ws_process.equals(SO_WS_SERIAL_SAVE)) {
                     //
                     if(hmAux.size() > 0) {
@@ -1051,6 +1062,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
                 if (ws_process.equals(SO_WS_SEARCH_SERIAL)) {
                     //
                     mPresenter.getSerialInfo(product_code, mket_serial_id.getText().toString().trim());
@@ -1064,6 +1076,13 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     }
 
+    @Override
+    public void callAct021(Context context) {
+        Intent mIntent = new Intent(context, Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 
     @Override
     public void callAct022(Context context) {
@@ -1102,7 +1121,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         bundle.remove(Constant.MAIN_REQUESTING_PROCESS);
         bundle.remove(Constant.MAIN_IS_SCHEDULE);
+        bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL);
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT023);
+        //Quando o fluxo é vindo da seleção de produto e não serial
+        //Não existe o serial no bundle, então é necessario adicioná-lo para que
+        //a Act026 filtre apenas as SO's desse produto/serial.
+        if(bundle_serial_id == null || bundle_serial_id.equals("")){
+            bundle.putString(Constant.MAIN_SERIAL_ID, serialObj.getSerial_id());
+        }
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);

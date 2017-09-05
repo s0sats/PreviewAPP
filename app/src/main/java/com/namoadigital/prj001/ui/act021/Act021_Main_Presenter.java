@@ -14,5 +14,9 @@ public interface Act021_Main_Presenter {
 
     void defineFlow(HMAux hmAux);
 
+    void executeSerialTracking(String serial, String tracking);
+
+    void defineSearchResultFlow(String result, String tracking);
+
     void onBackPressedClicked();
 }
