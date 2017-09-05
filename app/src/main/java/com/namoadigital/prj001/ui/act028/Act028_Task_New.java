@@ -554,8 +554,8 @@ public class Act028_Task_New extends BaseFragment {
                                 mTask.setComments(mk_comments.getText().toString());
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-                                mTask.setStart_date(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString());
-                                mTask.setEnd_date(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString());
+                                mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
+                                mTask.setEnd_date(reverseB(ToolBox.convertToDeviceTMZ2(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
                                 mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
@@ -711,8 +711,8 @@ public class Act028_Task_New extends BaseFragment {
         mTask.setComments(mk_comments.getText().toString());
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
-        mTask.setStart_date(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString());
-        mTask.setEnd_date(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString());
+        mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
+        mTask.setEnd_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
         mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 

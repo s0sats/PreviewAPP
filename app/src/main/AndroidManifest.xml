@@ -212,12 +212,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Tirar -->
-        <activity
-            android:name=".ui.act028.Act028_Main"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act028.Act028_Main_New"
