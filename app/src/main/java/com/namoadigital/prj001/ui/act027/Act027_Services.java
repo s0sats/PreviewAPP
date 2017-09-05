@@ -227,9 +227,9 @@ public class Act027_Services extends BaseFragment {
                 }
             }
         });
-
         //
         lv_services.setAdapter(adp);
+
         //Se possui var indicando qual seriviço foi alterado,
         //Aplica "auto scroll"
         if(!lastServiceUpdated.equals("")){

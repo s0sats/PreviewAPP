@@ -638,8 +638,8 @@ public class Act028_Opc_New extends BaseFragment {
 
                         ToolBox.alertMSG(
                                 context,
-                                "Partner da Execucao",
-                                "Não é possível prosseguir sem selecionar o Parceiro",
+                                hmAux_Trans.get("alert_partner_selection_ttl"),
+                                hmAux_Trans.get("alert_partner_selection_msg"),
                                 null,
                                 -1,
                                 false
@@ -682,8 +682,8 @@ public class Act028_Opc_New extends BaseFragment {
 
                         ToolBox.alertMSG(
                                 context,
-                                "Partner da Execucao",
-                                "Não é possível prosseguir sem selecionar o Parceiro",
+                                hmAux_Trans.get("alert_partner_selection_ttl"),
+                                hmAux_Trans.get("alert_partner_selection_msg"),
                                 null,
                                 -1,
                                 false

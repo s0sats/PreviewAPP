@@ -400,13 +400,13 @@ public class Act028_Task_New extends BaseFragment {
                 tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
                 setExecStatusColor(tv_status, mTask.getStatus());
 
-                //tv_task_code_lbl.setText(hmAux_Trans.get("task_code_lbl"));
-                tv_task_code_lbl.setText("Task Code");
+                tv_task_code_lbl.setText(hmAux_Trans.get("task_code_lbl"));
+                //tv_task_code_lbl.setText("Task Code");
                 String task_code = String.valueOf(mTask.getTask_code());
                 tv_task_code_value.setText(task_code.equalsIgnoreCase("0") ? "" : String.valueOf(mTask.getTask_code()));
 
-                //tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
-                tv_service_lbl.setText("Servide");
+                tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+                //tv_service_lbl.setText("Servide");
                 tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
 
                 //mk_comments.setText(mTask.getComments());
@@ -545,8 +545,8 @@ public class Act028_Task_New extends BaseFragment {
 
                 ToolBox.alertMSG(
                         context,
-                        "Cancelamento de Task",
-                        "Deseja cancelar a Task?",
+                        hmAux_Trans.get("alert_cancel_task_ttl"),
+                        hmAux_Trans.get("alert_cancel_task_msg"),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

@@ -158,6 +158,14 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         transList.add("alert_exec_blocked_msg");
         transList.add("alert_results_ttl");
         //
+        transList.add("alert_task_lost_data_ttl");
+        transList.add("alert_task_lost_data_msg");
+        transList.add("alert_partner_selection_ttl");
+        transList.add("alert_partner_selection_msg");
+        transList.add("alert_cancel_task_ttl");
+        transList.add("alert_cancel_task_msg");
+        transList.add("task_code_lbl");
+        //
         transList.add("exec_code_lbl");
         transList.add("partner_lbl");
         transList.add("service_lbl");
@@ -569,30 +577,78 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                     act028_task.updateTaskOnLeave();
                     setFrag(act028_task_list, SELECTION_TASK_LIST);
                 } else {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_service_list_title"),
-                            hmAux_Trans.get("alert_task_msg_delete"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    index = 0;
+                    String user_code = ToolBox_Con.getPreference_User_Code(context);
 
-                                    mDrawerStatus = true;
-                                    mDrawerLayout.openDrawer(GravityCompat.START);
-                                    //
-                                    act028_task.removeTaskOnLeave();
-                                    act028_opc.loadDataToScreen();
-                                    //
-                                    mExec = null;
-                                    mTask = null;
-                                    //
-                                    setFrag(act028_empty_new, SELECTION_EMPTY);
-                                }
-                            },
-                            1,
-                            false
-                    );
+                    if (mTask != null && String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
+
+                        if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)
+                                && mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_task_lost_data_ttl"),
+                                    hmAux_Trans.get("alert_task_lost_data_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            index = 0;
+
+                                            mDrawerStatus = true;
+                                            mDrawerLayout.openDrawer(GravityCompat.START);
+                                            //
+                                            act028_task.removeTaskOnLeave();
+                                            act028_opc.loadDataToScreen();
+                                            //
+                                            mExec = null;
+                                            mTask = null;
+                                            //
+                                            setFrag(act028_empty_new, SELECTION_EMPTY);
+                                        }
+                                    },
+                                    1,
+                                    false
+                            );
+
+                        }
+                    } else {
+                        index = 0;
+
+                        mDrawerStatus = true;
+                        mDrawerLayout.openDrawer(GravityCompat.START);
+//                        //
+//                        act028_task.removeTaskOnLeave();
+//                        act028_opc.loadDataToScreen();
+                        //
+                        mExec = null;
+                        mTask = null;
+                        //
+                        setFrag(act028_empty_new, SELECTION_EMPTY);
+                    }
+
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_service_list_title"),
+//                            hmAux_Trans.get("alert_task_msg_delete"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    index = 0;
+//
+//                                    mDrawerStatus = true;
+//                                    mDrawerLayout.openDrawer(GravityCompat.START);
+//                                    //
+//                                    act028_task.removeTaskOnLeave();
+//                                    act028_opc.loadDataToScreen();
+//                                    //
+//                                    mExec = null;
+//                                    mTask = null;
+//                                    //
+//                                    setFrag(act028_empty_new, SELECTION_EMPTY);
+//                                }
+//                            },
+//                            1,
+//                            false
+//                    );
                 }
             } else {
                 if (mDrawerStatus) {
@@ -613,12 +669,14 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                                         act028_task.removeTaskOnLeave();
                                     }
                                     //
-                                    Intent mIntent = new Intent(context, Act027_Main.class);
-                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    mIntent.putExtras(bundle);
-                                    //
-                                    startActivity(mIntent);
-                                    finish();
+//                                    Intent mIntent = new Intent(context, Act027_Main.class);
+//                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                    mIntent.putExtras(bundle);
+//                                    //
+//                                    startActivity(mIntent);
+//                                    finish();
+
+                                    callAct027();
 
                                 }
                             },
@@ -895,8 +953,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
         SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
 
-        ss_partner.setmLabel("Selecao de Partner");
-        ss_partner.setmTitle("Busca de Partner");
+        ss_partner.setmLabel(hmAux_Trans.get("ss_partner_list_ttl"));
+        ss_partner.setmTitle(hmAux_Trans.get("ss_partner_list_search_ttl"));
 
         MD_PartnerDao md_partnerDao = new MD_PartnerDao(
                 context,
@@ -914,7 +972,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         if (partners.size() > 0) {
             HMAux hmAux = new HMAux();
             hmAux.put("id", "0");
-            hmAux.put("description", "Select a Partner");
+            hmAux.put("description", hmAux_Trans.get("ss_partner_list_ttl"));
 
             ss_partner.setmValue(hmAux);
         }
@@ -1210,6 +1268,18 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
     private void callAct027() {
         bundle.remove("data");
+        bundle.putString(
+                Constant.ACT028_SERVICE_UPDATED,
+                ToolBox_Con.getPreference_Customer_Code(context) + "|" +
+                        bundle.getString(SM_SODao.SO_PREFIX) + "|" +
+                        bundle.getString(SM_SODao.SO_CODE) + "|" +
+                        bundle.getString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE) + "|" +
+                        bundle.getString(SM_SO_Service_Exec_TaskDao.PACK_CODE) + "|" +
+                        bundle.getString(SM_SO_Service_Exec_TaskDao.PACK_SEQ) + "|" +
+                        bundle.getString(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE) + "|" +
+                        bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_CODE) + "|" +
+                        bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ)
+        );
         //
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

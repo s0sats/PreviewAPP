@@ -382,7 +382,7 @@ public class Act027_Header extends BaseFragment {
                 tv_client_type.setText(mSm_so.getClient_type());
 
                 tv_client_user_title.setText(hmAux_Trans.get("client_user"));
-                tv_client_user.setText(String.valueOf(mSm_so.getClient_user()));
+                tv_client_user.setText(mSm_so.getClient_user() == null ? "" : String.valueOf(mSm_so.getClient_user()));
 
                 tv_client_code_title.setText(hmAux_Trans.get("client_code"));
                 tv_client_code.setText(mSm_so.getClient_code() != null ? String.valueOf(mSm_so.getClient_code()) : "");
