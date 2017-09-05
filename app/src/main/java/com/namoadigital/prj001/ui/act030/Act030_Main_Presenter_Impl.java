@@ -72,7 +72,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_code, String product_id, String serial_id) {
+    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
             mView.showPD();
@@ -80,9 +80,10 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
             //
             mIntent.putExtras(bundle);
@@ -98,8 +99,9 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     public void defineFlow(TProduct_Serial productSerial,boolean new_serial) {
         Bundle bundle = new Bundle();
         //
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
-        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+//        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
+//        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial.getMDProductSerial());
         if(new_serial){
             bundle.putBoolean(Act030_Main.NEW_SERIAL, new_serial);
         }
@@ -126,13 +128,13 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
-    public boolean checkProductExists(String product_code, String product_id, String serial) {
+    public boolean checkProductExists(String product_id, String serial) {
 
         MD_Product md_product
                 = mdProductDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
+                        "",
                         product_id
                 ).toSqlQuery()
 
@@ -209,5 +211,22 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
             return false;
         }
 
+    }
+
+    @Override
+    public String searchProductInfo(String product_code,String product_id) {
+        MD_Product md_product = mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        if(md_product != null){
+            return md_product.getProduct_id();
+        }
+        //
+        return "";
     }
 }

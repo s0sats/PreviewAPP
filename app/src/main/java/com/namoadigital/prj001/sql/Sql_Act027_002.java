@@ -55,7 +55,7 @@ public class Sql_Act027_002 implements Specification {
             this.only_avaliable_where =
                     "     AND TTT.status = '"+Constant.SO_STATUS_PENDING+"'\n" +
                     "     AND (TTT.PARTNER_RESTRICTION IN (-1,1) or TTT.ANY_PARTNER > 0)\n" +
-                    "     AND (TTT.ZONE_CODE is null or TTT.ZONE_CODE <> '"+zone_code+"')" ;
+                    "     AND (TTT.ZONE_CODE is null or TTT.ZONE_CODE = '"+zone_code+"')" ;
         }
     }
 

@@ -121,8 +121,8 @@ public class Act030_Frag_Filter extends Fragment {
             public void onClick(View v) {
                 if (delegate != null){
                     delegate.onIvSearchClick(
+                            mket_product_id.getText().toString().trim(),
                             mket_serial.getText().toString().trim(),
-                            mket_tracking.getText().toString().trim(),
                             mket_tracking.getText().toString().trim()
                     );
                 }

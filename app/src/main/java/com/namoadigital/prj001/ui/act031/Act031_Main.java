@@ -363,7 +363,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         if(new_serial) {
             mPresenter.saveNewSerialInfo(product_code,bundle_serial_id);
         }else{
-            mPresenter.serialFlow(bundle_serial_id);
+            mPresenter.getSerialInfo(product_code, bundle_serial_id);
         }
         //
     }
@@ -473,9 +473,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            if (bundle.containsKey(Constant.MAIN_PRODUCT_CODE) && bundle.containsKey(Constant.MAIN_SERIAL_ID)) {
-                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
-                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+            if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
+                serialObj = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                product_code = serialObj.getProduct_code();
+                bundle_serial_id = serialObj.getSerial_id();
                 new_serial = bundle.getBoolean(Act030_Main.NEW_SERIAL,false);
 
             } else {
@@ -719,6 +720,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     public void setSerialValues(HMAux md_product_serial) {
         //
         if(!new_serial){
+            mket_serial_id.setmBARCODE(false);
+            mket_serial_id.setmOCR(false);
+            mket_serial_id.setmNFC(false);
+
             mket_serial_id.setEnabled(false);
         }
         //}
