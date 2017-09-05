@@ -19,6 +19,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -65,7 +66,18 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         );
         //
         int qty = Integer.parseInt(hmAux.get(Sql_Act021_001.UPDATE_REQUIRED_QTY));
-        if (qty == 0) {
+        //
+        boolean hasTokenFile = false;
+        try {
+            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+            if(soToken != null  && soToken.length > 0){
+                hasTokenFile = true;
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //Se tiver pendente ou existir arquivo de token exibe msg.
+        if (qty == 0 && !hasTokenFile) {
             mView.showNewOptDialog();
         } else {
             ToolBox.alertMSG(

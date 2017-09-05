@@ -220,7 +220,7 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
             @Override
             public void onIvSearchClick(String product, String product_id, String serial) {
                 ToolBox_Inf.hideSoftKeyboard(Act030_Main.this);
-                if ((product.trim().length() > 0 || product_id.trim().length() > 0)
+                if (product_id.trim().length() > 0
                     && serial.trim().length() > 0
                 ) {
                     //Se tudo preenchido, valida se produto existe
