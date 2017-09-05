@@ -29,7 +29,7 @@ public class TProduct_Serial implements Serializable {
     private Integer color_code;
     private Integer segment_code;
     private Integer category_price_code;
-    private ArrayList<MD_Product_Serial_Tracking> tracking_list;
+    private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
 
     public long getCustomer_code() {
         return customer_code;

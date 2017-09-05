@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act025;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TProduct_Serial;
 
 import java.util.ArrayList;
@@ -29,4 +30,6 @@ public interface Act025_Main_View {
 //    void callAct011(Context context, Bundle bundle);
 
     void setWs_process(String ws_process);
+
+    void setProductInfo(MD_Product product);
 }

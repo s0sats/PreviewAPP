@@ -8,16 +8,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
-import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.sql.MD_Product_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.List;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -28,21 +31,13 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
     private Context context;
     private Act025_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
-    private GE_Custom_Form_LocalDao formLocalDao;
-    private Sync_ChecklistDao syncChecklistDao;
-    private GE_Custom_Form_OperationDao formOperationDao;
+    private MD_ProductDao productDao;
 
-    //
-    private boolean downloadStarted = false;
-    private TProduct_Serial tProductSerial;
-
-    public Act025_Main_Presenter_Impl(Context context, Act025_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao) {
+    public Act025_Main_Presenter_Impl(Context context, Act025_Main_View mView, HMAux hmAux_Trans, MD_ProductDao productDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
-        this.formLocalDao = formLocalDao;
-        this.syncChecklistDao = syncChecklistDao;
-        this.formOperationDao = formOperationDao;
+        this.productDao = productDao;
     }
 
     @Override
@@ -68,7 +63,7 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_code, String product_id, String serial_id) {
+    public void executeSerialSearch(String product_id, String serial_id,String tracking) {
 
         if(ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
@@ -77,9 +72,10 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE,"");
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
             //
             mIntent.putExtras(bundle);
@@ -103,6 +99,36 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
         mView.callAct023(context,bundle);
     }
 
+    @Override
+    public String searchProductInfo(String product_code,String product_id) {
+        MD_Product md_product = productDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        if(md_product != null){
+            return md_product.getProduct_id();
+        }
+        //
+        return "";
+    }
+
+    @Override
+    public void checkSingleProduct() {
+        List<MD_Product> products = productDao.query(
+                new MD_Product_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //Se só um produto, chama metodo que carrega info na tela.
+        if(products != null && products.size() == 1){
+            mView.setProductInfo(products.get(0));
+        }
+
+    }
 
     @Override
     public void onBackPressedClicked() {

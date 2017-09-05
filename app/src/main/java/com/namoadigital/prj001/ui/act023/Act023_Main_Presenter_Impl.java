@@ -73,6 +73,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 break;
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
                 getSOProductInfoFlow();
                 break;
             default:
@@ -185,6 +186,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 break;
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
                 serialSOFlow(serial);
                 break;
             default:
@@ -243,6 +245,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
 
             case Constant.MODULE_SO:
             case Constant.MODULE_SO_SEARCH_SERIAL:
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
                 MD_Product_Serial serial = (MD_Product_Serial) param;
                 //
                 executeSoDownload(serial.getProduct_code(), serial.getSerial_id());
@@ -291,6 +294,9 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 break;
             case Constant.MODULE_SO_SEARCH_SERIAL:
                 mView.callAct025(context);
+                break;
+            case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
+                mView.callAct021(context);
                 break;
             case Constant.MODULE_SO:
             default:

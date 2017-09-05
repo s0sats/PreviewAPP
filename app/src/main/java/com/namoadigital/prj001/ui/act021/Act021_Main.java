@@ -149,6 +149,9 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         mket_tracking = (MKEditTextNM) findViewById(R.id.act021_mket_tracking);
         mket_tracking.setHint(hmAux_Trans.get("mket_tracking_hint"));
         iv_search_tracking = (ImageView) findViewById(R.id.act021_iv_search_tracking);
+        //Add controles no array list.
+        controls_sta.add(mket_serial);
+        controls_sta.add(mket_tracking);
         //
         searchListner = new View.OnClickListener() {
             @Override
@@ -423,10 +426,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle == null) {
             bundle = new Bundle();
-        }
-        Bundle bundle2 = getIntent().getExtras();
-        if(bundle2 != null){
-            bundle.putAll(bundle2);
         }
         bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO);
         //

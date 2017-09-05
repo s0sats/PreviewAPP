@@ -69,7 +69,8 @@
                     app:mBARCODE="true"
                     app:mNFC="false"
                     app:mOCR="false"
-                    android:hint="Serial"/>
+                    android:hint="Serial"
+                    android:inputType="text"/>
 
                 <ImageView
                     android:id="@+id/act021_iv_search_serial"
@@ -108,6 +109,7 @@
                     app:mNFC="false"
                     app:mOCR="false"
                     android:hint="Tracking"
+                    android:inputType="text"
                     />
 
                 <ImageView

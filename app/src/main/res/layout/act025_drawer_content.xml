@@ -54,6 +54,7 @@
                 android:padding="10dp"
                 android:text="Prod Code"
                 android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone"
                 />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -66,6 +67,7 @@
                 app:mInputType="number"
                 app:mNFC="false"
                 app:mOCR="false"
+                android:visibility="gone"
                 />
 
             <View

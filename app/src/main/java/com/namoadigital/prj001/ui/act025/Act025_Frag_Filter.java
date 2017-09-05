@@ -116,16 +116,14 @@ public class Act025_Frag_Filter extends Fragment {
 
     private void iniAction() {
 
-
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (delegate != null){
                     delegate.onIvSearchClick(
-                            mket_product.getText().toString().trim(),
                             mket_product_id.getText().toString().trim(),
-                            mket_serial.getText().toString().trim()/*,
-                            mket_tracking.getText().toString().trim()*/
+                            mket_serial.getText().toString().trim(),
+                            mket_tracking.getText().toString().trim()
 
                     );
                 }
@@ -162,7 +160,7 @@ public class Act025_Frag_Filter extends Fragment {
     private void setTranslation() {
         tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));
         //
-        tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
+        //tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
         //
         tv_product_id.setText(hmAux_Trans.get("drawer_product_id_lbl"));
        // mket_product.setHint(hmAux_Trans.get("search_prod_hint"));
@@ -178,7 +176,7 @@ public class Act025_Frag_Filter extends Fragment {
     public void cleanFields(){
         tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));
         //
-        //mket_product.setText("");
+        mket_product.setText("");
         //
         mket_product_id.setText("");
         //
