@@ -388,6 +388,10 @@
 
         <service android:name=".service.WS_Serial_Save" />
 
+        <receiver android:name=".receiver.WBR_Serial_Tracking_Search" />
+
+        <service android:name=".service.WS_Serial_Tracking_Search" />
+
 
     </application>
 

@@ -18,6 +18,10 @@ public interface Act031_Main_View {
 
     void showAlertDialog(String title, String msg);
 
+    String getSearched_tracking();
+
+    void cleanSearched_tracking();
+
     void setWs_process(String ws_process);
 
     void setProductValues(MD_Product md_product);
@@ -29,4 +33,9 @@ public interface Act031_Main_View {
     void showSingleResultMsg(String ttl, String msg);
 
     void showSerialResults(ArrayList<HMAux> returnList);
+
+    void appendTracking(String tracking);
+
+    void scrollToTracking();
+
 }

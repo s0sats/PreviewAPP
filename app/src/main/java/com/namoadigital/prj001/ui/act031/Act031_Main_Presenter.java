@@ -21,6 +21,8 @@ public interface Act031_Main_Presenter {
 
     void executeSaveSerial(Long product_code, String serial_id, boolean save_serial);
 
+    void executeTrackingSearch(long product_code, long serial_code, String tracking);
+
     void getSerialInfo(Long product_code, String serial_id);
 
     void updateSerialInfo(MD_Product_Serial productSerial);
@@ -28,6 +30,10 @@ public interface Act031_Main_Presenter {
     void saveNewSerialInfo(Long product_code, String serial_id);
 
     void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult);
+
+    void processTrackingResult(HMAux auxResult);
+
+    boolean isTrackingListed(String tracking);
 
 }
 
