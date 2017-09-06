@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act028;
+package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,30 +6,38 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 
 /**
- * Created by neomatrix on 21/08/17.
+ * Created by neomatrix on 05/09/17.
  */
 
-public class Act028_Empty_New extends BaseFragment {
+public class Act027_Approval extends BaseFragment {
 
     private boolean bStatus = false;
 
     private Context context;
 
-    private TextView tv_no_exec_selected;
+    private ButtonNFC approvalNFC;
+    private View.OnClickListener listener;
 
+    public void setListener(View.OnClickListener listener) {
+        this.listener = listener;
+        //
+        if (bStatus) {
+            approvalNFC.setOnClickListener(listener);
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act028_empty_content, container, false);
+        View view = inflater.inflate(R.layout.act027_approval_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -59,29 +67,26 @@ public class Act028_Empty_New extends BaseFragment {
     }
 
     private void iniVar(View view) {
-        context = getActivity();
-
-        tv_no_exec_selected = (TextView) view.findViewById(R.id.act028_main_tv_no_exec_selected);
-
-        tv_no_exec_selected.setText(hmAux_Trans.get("no_exec_selected_lbl"));
+        approvalNFC = (ButtonNFC) view.findViewById(R.id.act027_approval_content_btn_nfc);
+        approvalNFC.setmLogin(true);
+        approvalNFC.setmProgressClose(true);
     }
 
     private void iniAction() {
 
     }
 
-    @Override
     public void loadDataToScreen() {
         if (bStatus) {
+            approvalNFC.setOnClickListener(listener);
 
         }
     }
 
-    @Override
     public void loadScreenToData() {
-        if (bStatus) {
-
-        }
+//        if (bStatus) {
+//        }
     }
+
 
 }

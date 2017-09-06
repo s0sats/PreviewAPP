@@ -20,11 +20,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
-import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -54,7 +55,7 @@ import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SYNC;
  * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
+public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
@@ -73,6 +74,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     private FragmentManager fm;
 
     private Act027_Opc act027_opc_;
+    private Act027_Approval act027_approval_;
     private Act027_Services act027_services_;
     private Act027_Serial act027_serial_;
     private Act027_Header act027_header_;
@@ -96,6 +98,9 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         initVars();
         iniUIFooter();
         initActions();
+
+//        setbNFCStatus(true);
+//        setNFC_PARAMS_TECH_LOGIN(true);
     }
 
     private void iniSetup() {
@@ -132,6 +137,8 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("deadline_lbl");
         transList.add("status_lbl");
         transList.add("priority_lbl");
+
+        transList.add("approval_ll_lbl");
         transList.add("services_ll_lbl");
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");
@@ -304,6 +311,15 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         //
         act027_opc_.setOnMenuOptionsSelected(this);
 
+        // Approval
+        act027_approval_ = new Act027_Approval();
+        // Dialog Acess
+        act027_approval_.setBaInfra(this);
+        // Translation Access
+        act027_approval_.setHmAux_Trans(hmAux_Trans);
+        //
+        act027_approval_.setListener(actionBTN);
+
         // Services
         act027_services_ = new Act027_Services();
         // Dialog Acess
@@ -348,7 +364,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                     Integer.parseInt(bundle.getString(SM_SODao.SO_CODE))
             );
             //
-            lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED,"");
+            lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
         } else {
             mSm_so = null;
         }
@@ -426,6 +442,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
+
     //Variavel que determina se salva so e sincroniza ou só salva.
     //Após implementação do atalho, foi necessario criar essa var pra pular o syncronismo.
     public void setOnly_save(boolean only_save) {
@@ -527,12 +544,12 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
                 //Se for apenas save do atalho, reseta var only_save, fecha progress
                 //e chama metodo que reloada tela.
-                if(only_save){
+                if (only_save) {
                     progressDialog.dismiss();
                     only_save = false;
                     refreshUI();
 
-                }else {
+                } else {
                     ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_so_save_ok"), "", "0");
                     //
                     ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
@@ -598,14 +615,14 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             public void onClick(View v) {
                 show.dismiss();
                 //
-                if(only_save){
+                if (only_save) {
                     //
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
                     only_save = false;
                     refreshUI();
-                }else{
+                } else {
                     executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                 }
             }
@@ -748,7 +765,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 break;
             case Act027_Main.SELECTION_APPROVAL:
-                callAct032(context, bundle);
+                setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                 break;
             default:
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
@@ -768,7 +785,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(ToolBox_Con.isOnline(context)) {
+                        if (ToolBox_Con.isOnline(context)) {
                             //Seta S.O como update required.
                             sm_soDao.addUpdate(
                                     new SM_SO_Sql_009(
@@ -779,7 +796,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                             );
                             //
                             executeSoSave();
-                        }else{
+                        } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
                         }
                     }
@@ -787,7 +804,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 1
         );
 
-       // refreshUI();
+        // refreshUI();
     }
 
     @Override
@@ -849,5 +866,45 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         finish();
     }
 
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
+        if (!status) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
 
+            Toast.makeText(
+                    context,
+                    "Erro",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_nfc_return"),
+//                    value[0],
+//                    null,
+//                    0
+//            );
+
+        } else {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            Toast.makeText(
+                    context,
+                    "Login Ok",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+        }
+
+    }
+
+    @Override
+    protected void nfcDataError(boolean status, int id, String... value) {
+        int i = 10;
+    }
 }

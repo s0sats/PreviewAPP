@@ -41,7 +41,7 @@ import java.util.HashMap;
  * Created by neomatrix on 18/07/17.
  */
 
-public class Act028_Task_List_New extends BaseFragment {
+public class Act028_Task_List extends BaseFragment {
 
     private boolean bStatus = false;
 

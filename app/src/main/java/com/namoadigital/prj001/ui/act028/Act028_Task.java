@@ -55,7 +55,7 @@ import static com.namoa_digital.namoa_library.util.ToolBox.reverseB;
  * Created by neomatrix on 14/07/17.
  */
 
-public class Act028_Task_New extends BaseFragment {
+public class Act028_Task extends BaseFragment {
 
     private boolean bStatus = false;
 
@@ -87,7 +87,7 @@ public class Act028_Task_New extends BaseFragment {
     private MKEditTextNMT mk_start_date;
     private MKEditTextNMT mk_start_hour;
 
-    private TextView tv_start_end_lbl;
+    private TextView tv_end_date_lbl;
     private MKEditTextNMT mk_end_date;
     private MKEditTextNMT mk_end_hour;
 
@@ -354,7 +354,7 @@ public class Act028_Task_New extends BaseFragment {
         mk_start_date = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_start_date);
         mk_start_hour = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_start_hour);
 
-        tv_start_end_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_end_date_lbl);
+        tv_end_date_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_end_date_lbl);
         mk_end_date = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_end_date);
         mk_end_hour = (MKEditTextNMT) view.findViewById(R.id.act028_task_content_mk_end_hour);
 
@@ -434,8 +434,11 @@ public class Act028_Task_New extends BaseFragment {
 
                 //iv_gallery.setTag(tempValues.get("img"));
 
+                tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
                 mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
                 mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+
+                tv_end_date_lbl.setText(hmAux_Trans.get("end_date_lbl"));
                 mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
                 mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
 
@@ -450,7 +453,7 @@ public class Act028_Task_New extends BaseFragment {
                     tv_stepped_txt_max_lbl.setVisibility(View.GONE);
                 }
 
-                //tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
+                tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
                 mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
 
                 try {

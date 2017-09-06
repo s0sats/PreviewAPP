@@ -60,7 +60,7 @@ import java.util.List;
  * Created by neomatrix on 18/08/17.
  */
 
-public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_New.IAct028_Opc, Act028_Task_List_New.IAct028_Task_List, Act028_Task_New.IAct028_Task {
+public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
 
     public static final String SELECTION_EMPTY = "EMPTY";
     public static final String SELECTION_TASK_LIST = "TASK_LIST";
@@ -85,10 +85,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
     private String MTASK_STATUS;
 
     private FragmentManager fm;
-    private Act028_Empty_New act028_empty_new;
-    private Act028_Opc_New act028_opc;
-    private Act028_Task_List_New act028_task_list;
-    private Act028_Task_New act028_task;
+    private Act028_Empty act028_empty_;
+    private Act028_Opc act028_opc;
+    private Act028_Task_List act028_task_list;
+    private Act028_Task act028_task;
 
     private SM_SO_Service mService;
     private SM_SO_Service_Exec mExec;
@@ -169,6 +169,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         transList.add("exec_code_lbl");
         transList.add("partner_lbl");
         transList.add("service_lbl");
+        //
+        transList.add("start_date_lbl");
+        transList.add("end_date_lbl");
+        transList.add("qty_people_lbl");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -245,7 +249,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        act028_opc = (Act028_Opc_New) fm.findFragmentById(R.id.act028_opc);
+        act028_opc = (Act028_Opc) fm.findFragmentById(R.id.act028_opc);
         act028_opc.setOnMenuOptionsSelected(this);
         act028_opc.setmService(mService);
         act028_opc.setHmAux_Trans(hmAux_Trans);
@@ -256,15 +260,15 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                 mService
         ) ? "1" : "0";
 
-        act028_empty_new = new Act028_Empty_New();
-        act028_empty_new.setHmAux_Trans(hmAux_Trans);
+        act028_empty_ = new Act028_Empty();
+        act028_empty_.setHmAux_Trans(hmAux_Trans);
 
-        act028_task_list = new Act028_Task_List_New();
+        act028_task_list = new Act028_Task_List();
         act028_task_list.setBaInfra(this);
         act028_task_list.setOnTaskSelected(this);
         act028_task_list.setHmAux_Trans(hmAux_Trans);
 
-        act028_task = new Act028_Task_New();
+        act028_task = new Act028_Task();
         act028_task.setBaInfra(this);
         act028_task.setHmAux_Trans(hmAux_Trans);
 
@@ -276,7 +280,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
             act028_task.setFull_status(full_status);
             setFrag(act028_task, SELECTION_TASK);
         } else {
-            setFrag(act028_empty_new, SELECTION_EMPTY);
+            setFrag(act028_empty_, SELECTION_EMPTY);
         }
     }
 
@@ -602,7 +606,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                                             mExec = null;
                                             mTask = null;
                                             //
-                                            setFrag(act028_empty_new, SELECTION_EMPTY);
+                                            setFrag(act028_empty_, SELECTION_EMPTY);
                                         }
                                     },
                                     1,
@@ -622,7 +626,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
                         mExec = null;
                         mTask = null;
                         //
-                        setFrag(act028_empty_new, SELECTION_EMPTY);
+                        setFrag(act028_empty_, SELECTION_EMPTY);
                     }
 
 //                    ToolBox.alertMSG(
@@ -643,7 +647,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 //                                    mExec = null;
 //                                    mTask = null;
 //                                    //
-//                                    setFrag(act028_empty_new, SELECTION_EMPTY);
+//                                    setFrag(act028_empty_, SELECTION_EMPTY);
 //                                }
 //                            },
 //                            1,
@@ -895,7 +899,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 //            setFrag(act028_task_list, SELECTION_TASK_LIST);
 //        } else {
         setDrawerState(true);
-        setFrag(act028_empty_new, SELECTION_EMPTY);
+        setFrag(act028_empty_, SELECTION_EMPTY);
 //        }
 
         if (index == 0) {
@@ -1150,7 +1154,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
         //
         //setFrag(act028_task_list, SELECTION_TASK_LIST);
 
-        setFrag(act028_empty_new, SELECTION_EMPTY);
+        setFrag(act028_empty_, SELECTION_EMPTY);
 
         SM_SO_Service_Exec_Task task = new SM_SO_Service_Exec_Task();
         task.setTask_code(0);
@@ -1222,7 +1226,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc_Ne
 
 //        menuTaskCreated(task);
         //
-        //setFrag(act028_empty_new, SELECTION_EMPTY);
+        //setFrag(act028_empty_, SELECTION_EMPTY);
     }
 
     //region Drawer Visibility

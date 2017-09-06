@@ -189,7 +189,7 @@ public class Act027_Opc extends BaseFragment {
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
         ll_approval = (LinearLayout) view.findViewById(R.id.act027_opc_ll_approval);
-        ll_approval.setVisibility(View.GONE);
+        ll_approval.setVisibility(View.VISIBLE);
 
         tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
         tv_serial_title = (TextView) view.findViewById(R.id.act027_opc_tv_serial_title);
@@ -203,7 +203,6 @@ public class Act027_Opc extends BaseFragment {
         ll_header.setOnClickListener(menuOnClickListener);
         ll_approval.setOnClickListener(menuOnClickListener);
 
-        //iv_so_sync.setOnClickListener(new View.OnClickListener() {
         ll_so_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -255,10 +254,6 @@ public class Act027_Opc extends BaseFragment {
     private void changeTabColor() {
         switch (SELECTION_TYPE) {
             case Act027_Main.SELECTION_SERVICES:
-               /* ll_services.setBackgroundColor(getResources().getColor(R.color.namoa_color_light_blue3));
-                ll_serial.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_header.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
-                ll_approval.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));*/
                 ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
@@ -376,6 +371,7 @@ public class Act027_Opc extends BaseFragment {
 
                 }
 
+                tv_approval_title.setText(hmAux_Trans.get("approval_ll_lbl"));
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
@@ -403,16 +399,16 @@ public class Act027_Opc extends BaseFragment {
                 //
                 for (SM_SO so : token_so_list) {
                     if (
-                        so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                        && so.getSo_prefix() == mSm_so.getSo_prefix()
-                        && so.getSo_code() == mSm_so.getSo_code()
-                        ) {
+                            so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
+                                    && so.getSo_code() == mSm_so.getSo_code()
+                            ) {
                         return true;
                     }
                 }
             }
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
         return false;
     }

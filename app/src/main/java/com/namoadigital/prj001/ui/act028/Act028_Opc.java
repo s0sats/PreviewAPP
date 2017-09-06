@@ -49,7 +49,7 @@ import java.util.HashMap;
  * Created by neomatrix on 14/07/17.
  */
 
-public class Act028_Opc_New extends BaseFragment {
+public class Act028_Opc extends BaseFragment {
 
     private boolean bStatus = false;
 
