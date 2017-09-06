@@ -189,7 +189,8 @@ public class Act027_Services extends BaseFragment {
                                 mSm_so.getSo_prefix(),
                                 mSm_so.getSo_code(),
                                 ToolBox_Con.getPreference_User_Code(context),
-                                0,
+                                ToolBox_Con.getPreference_Site_Code(context),
+                                ToolBox_Con.getPreference_Zone_Code(context),
                                 isChecked//sw_filter != null && sw_filter.isChecked()
                         ).toSqlQuery()
                 )
@@ -550,16 +551,6 @@ public class Act027_Services extends BaseFragment {
 
     private void showPartnerDialog(final HMAux item) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
-
-        SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
-
-        //ss_partner.setmLabel("Selecao de Partner");
-        //ss_partner.setmTitle("Busca de Partner");
-
         MD_PartnerDao md_partnerDao = new MD_PartnerDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -572,49 +563,74 @@ public class Act027_Services extends BaseFragment {
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
+        //
+        if(partners  == null || partners.size() == 0){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_partner_selection_ttl"),
+                    hmAux_Trans.get("alert_no_partner_found_msg"),
+                    null,
+                    0
+            );
+        }else if(partners.size() == 1){
+            partnerAux.putAll(partners.get(0));
+            // Chama criação da execTask
+            createExecTask(item);
+        }else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        if (partners.size() > 0) {
-            HMAux hmAux = new HMAux();
-            hmAux.put("id", "0");
-            hmAux.put("description", hmAux_Trans.get("select_partner_lbl"));
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
 
-            ss_partner.setmValue(hmAux);
-        }
+            SearchableSpinner ss_partner = (SearchableSpinner) view.findViewById(R.id.act028_dialog_new_partner_opt_ss_partner);
 
-        ss_partner.setmOption(partners);
+            ss_partner.setmLabel(hmAux_Trans.get("partner_selection_ttl"));
+            ss_partner.setmTitle(hmAux_Trans.get("partner_search_lbl"));
 
-        builder.setView(view);
-        builder.setCancelable(true);
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                if (partnerAux.size() == 0) {
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_partner_selection_ttl"),
-                            hmAux_Trans.get("alert_no_partner_selected_msg"),
-                            null,
-                            0
-                    );
-                } else {
-                    createExecTask(item);
+
+            if (partners.size() > 0) {
+                HMAux hmAux = new HMAux();
+                hmAux.put("id", "0");
+                hmAux.put("description", hmAux_Trans.get("select_partner_lbl"));
+
+                ss_partner.setmValue(hmAux);
+            }
+
+            ss_partner.setmOption(partners);
+
+            builder.setView(view);
+            builder.setCancelable(true);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (partnerAux.size() == 0) {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_partner_selection_ttl"),
+                                hmAux_Trans.get("alert_no_partner_selected_msg"),
+                                null,
+                                0
+                        );
+                    } else {
+                        createExecTask(item);
+                    }
                 }
-            }
-        });
+            });
 
-        final AlertDialog show = builder.show();
+            final AlertDialog show = builder.show();
 
-        ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(HMAux hmAux) {
+            ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(HMAux hmAux) {
 
-                partnerAux.clear();
+                    partnerAux.clear();
 
-                partnerAux.putAll(hmAux);
+                    partnerAux.putAll(hmAux);
 
-                show.dismiss();
-            }
-        });
+                    show.dismiss();
+                }
+            });
+        }
     }
 
 }
