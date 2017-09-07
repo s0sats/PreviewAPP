@@ -126,8 +126,8 @@ public class Act032_Main_Presenter_Impl implements Act032_Main_Presenter {
         Intent mIntent = new Intent(context, WBR_SO_Approval.class);
         Bundle bundle = new Bundle();
 
-        bundle.putInt(Constant.SO_PARAM_PREFIX, prefix);
-        bundle.putInt(Constant.SO_PARAM_CODE, code);
+//        bundle.putInt(Constant.SO_PARAM_PREFIX, prefix);
+//        bundle.putInt(Constant.SO_PARAM_CODE, code);
         bundle.putString(Constant.GC_NFC, nfc);
         bundle.putString(Constant.GC_PWD, password);
 

@@ -33,6 +33,7 @@ import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
@@ -64,6 +65,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     public static final String SELECTION_EXPRESS = "EXPRESS";
     public static final String SELECTION_NORMAL = "NORMAL";
+
+    public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
 
     private Context context;
     private Bundle bundle;
@@ -319,6 +322,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_approval_.setHmAux_Trans(hmAux_Trans);
         //
         act027_approval_.setListener(actionBTN);
+        //
+        act027_approval_.setmSm_so(mSm_so);
 
         // Services
         act027_services_ = new Act027_Services();
@@ -421,15 +426,28 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if (ws_process.equals(WS_PROCESS_SO_SYNC)) {
+
             setWs_process("");
             processSoDownloadResult(hmAux);
             progressDialog.dismiss();
+
         } else if (ws_process.equals(WS_PROCESS_SO_SAVE)) {
+
             setWs_process("");
             processSoSave(hmAux);
+
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_USER_AUTHOR)) {
+
+            //progressDialog.dismiss();
+            //
+            setWs_process("");
+            processUserAuthorCheck(hmAux);
+
         } else {
+
             act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_id(), hmAux);
             progressDialog.dismiss();
+
         }
     }
 
@@ -508,6 +526,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         );
 
         act027_opc_.setmSm_so(mSm_so);
+        act027_opc_.loadDataToScreen();
+
+        act027_approval_.setmSm_so(mSm_so);
         act027_opc_.loadDataToScreen();
 
         act027_services_.setmSm_so(mSm_so);
@@ -629,6 +650,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         });
     }
 
+    private void processUserAuthorCheck(HMAux hmAux) {
+
+        //setWs_process(WS_PROCESS_SO_SAVE);
+        //act027_approval_.setOnLineApproval();
+        //
+        //executeSoSave();
+    }
+
     public void executeSoSave() {
         setWs_process(WS_PROCESS_SO_SAVE);
         //
@@ -646,6 +675,46 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    public void executeUserAuthorCheck(
+            long customer_code,
+            long so_prefix,
+            long so_code,
+            String auth_type,
+            String auth_nick_mail,
+            String auth_password,
+            String auth_nfc
+
+    ) {
+        if (ToolBox_Con.isOnline(context)) {
+            setWs_process(WS_PROCESS_USER_AUTHOR);
+            //
+            enableProgressDialog(
+                    "Credenciais",
+                    "Validando Credenciais",
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_UserAuthor.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putLong(Constant.SO_PARAM_CUSTOMER_CODE, customer_code);
+            bundle.putLong(Constant.SO_PARAM_SO_PREFIX, so_prefix);
+            bundle.putLong(Constant.SO_PARAM_SO_CODE, so_code);
+            bundle.putString(Constant.SO_PARAM_AUTH_TYPE, auth_type);
+            bundle.putString(Constant.SO_PARAM_AUTH_NICK_MAIL, auth_nick_mail);
+            bundle.putString(Constant.SO_PARAM_AUTH_PASSWORD, auth_password);
+            bundle.putString(Constant.SO_PARAM_AUTH_NFC, auth_nfc);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            setWs_process("");
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     public void executeSoSync(int so_prefix, int so_code) {
@@ -893,14 +962,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 progressDialog.dismiss();
             }
 
-            Toast.makeText(
-                    context,
-                    "Login Ok",
-                    Toast.LENGTH_SHORT
-            ).show();
-
+            executeUserAuthorCheck(
+                    mSm_so.getCustomer_code(),
+                    mSm_so.getSo_prefix(),
+                    mSm_so.getSo_code(),
+                    Constant.SO_PARAM_AUTH_TYPE_CLIENT,
+                    "",
+                    "",
+                    value[1]
+            );
         }
-
     }
 
     @Override

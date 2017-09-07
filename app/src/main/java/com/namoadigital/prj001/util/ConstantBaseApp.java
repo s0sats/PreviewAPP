@@ -332,12 +332,25 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_SERVICE_TYPE_YES_NO = "YES_NO";
     public static final String SO_SERVICE_TYPE_START_STOP = "START_STOP";
 
+//    public static final String SO_PARAM_PREFIX = "SO_PARAM_PREFIX";
+//    public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
+//    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
+//    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
 
-    //
-    public static final String SO_PARAM_PREFIX = "SO_PARAM_PREFIX";
-    public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
-    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
-    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
+    public static final String SO_PARAM_RETURN_STATUS = "so_param_return_status";
+    public static final String SO_PARAM_RETURN_MSG = "so_param_return_msg";
+    public static final String SO_PARAM_CUSTOMER_CODE = "so_param_customer_code";
+    public static final String SO_PARAM_SO_PREFIX = "so_param_so_prefix";
+    public static final String SO_PARAM_SO_CODE = "so_param_so_code";
+    public static final String SO_PARAM_AUTH_TYPE = "so_param_auth_type";
+
+    public static final String SO_PARAM_AUTH_TYPE_BUDGET = "BUDGET";
+    public static final String SO_PARAM_AUTH_TYPE_QUALITY = "QUALITY";
+    public static final String SO_PARAM_AUTH_TYPE_CLIENT = "CLIENT";
+
+    public static final String SO_PARAM_AUTH_NICK_MAIL = "so_param_auth_nick_mail";
+    public static final String SO_PARAM_AUTH_PASSWORD = "so_param_auth_password";
+    public static final String SO_PARAM_AUTH_NFC = "so_param_auth_nfc";
 
 
 }

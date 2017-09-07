@@ -38,8 +38,7 @@
             android:padding="10dp"
             app:mNFC="false"
             app:mOCR="false" />
-            android:textSize="@dimen/font_size_title"
-            />
+            android:textSize="@dimen/font_size_title"/>
 
         <ListView
             android:id="@+id/act007_lv_groups_products"

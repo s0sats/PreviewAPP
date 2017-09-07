@@ -55,12 +55,12 @@ public class WS_SO_Approval extends IntentService {
         try {
             soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
 
-            int so_prefix = bundle.getInt(Constant.SO_PARAM_PREFIX, 1900);
-            int so_code = bundle.getInt(Constant.SO_PARAM_CODE, 0);
+            //int so_prefix = bundle.getInt(Constant.SO_PARAM_PREFIX, 1900);
+            //int so_code = bundle.getInt(Constant.SO_PARAM_CODE, 0);
             String nfc_code = bundle.getString(Constant.GC_NFC, null);
             String pwd =  bundle.getString(Constant.GC_PWD, null);
 
-            processWSSOAproval(so_prefix, so_code, nfc_code, pwd);
+            //processWSSOAproval(so_prefix, so_code, nfc_code, pwd);
 
         } catch (Exception e) {
 
@@ -139,7 +139,6 @@ public class WS_SO_Approval extends IntentService {
                 ) {
             return;
         }
-
         //
         processSOSaveRet(rec);
 
