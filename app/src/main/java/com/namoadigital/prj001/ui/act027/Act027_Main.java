@@ -22,10 +22,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
+import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -46,9 +48,11 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SYNC;
 
@@ -977,5 +981,57 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     protected void nfcDataError(boolean status, int id, String... value) {
         int i = 10;
+    }
+
+    @Override
+    protected void getSignatueF(String mValue) {
+        super.getSignatueF(mValue);
+
+        String sFileName = "s_" +
+                ToolBox_Con.getPreference_Customer_Code(context) + "_" +
+                String.valueOf(mSm_so.getSo_prefix()) + "_" +
+                String.valueOf(mSm_so.getSo_code()) + "_" +
+                ".png";
+
+        File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + sFileName);
+        if (sFile.exists()) {
+            Toast.makeText(
+                    context,
+                    "Com Assinatura!!!",
+                    Toast.LENGTH_SHORT
+            ).show();
+        } else {
+            Toast.makeText(
+                    context,
+                    "Sem Assinatura!!!",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
+    public void callSignature(String name) {
+        try {
+
+            String sFileName = "s_" +
+                    ToolBox_Con.getPreference_Customer_Code(context) + "_" +
+                    String.valueOf(mSm_so.getSo_prefix()) + "_" +
+                    String.valueOf(mSm_so.getSo_code()) + "_" +
+                    ".png";
+
+            Bundle bundleN = new Bundle();
+            bundleN.putInt(ConstantBase.PID, -1);
+            bundleN.putInt(ConstantBase.PTYPE, 0);
+            bundleN.putString(ConstantBase.MNAME, name);
+            bundleN.putBoolean(ConstantBase.BLOCK_NAME, true);
+            bundleN.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + sFileName);
+
+            Intent mIntent = new Intent(context, SignaTure_Activity.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundleN);
+
+            context.startActivity(mIntent);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
     }
 }

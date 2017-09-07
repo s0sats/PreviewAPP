@@ -1613,7 +1613,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
-
     }
 
     private void activateUpload(Context context) {

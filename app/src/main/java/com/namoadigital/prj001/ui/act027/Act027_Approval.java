@@ -31,6 +31,7 @@ public class Act027_Approval extends BaseFragment {
 
     private ButtonNFC approvalNFC;
     private Button approvalUser_Password;
+    private Button approvalApproval;
 
     private View.OnClickListener listener;
 
@@ -95,6 +96,7 @@ public class Act027_Approval extends BaseFragment {
         approvalNFC.setmProgressClose(true);
 
         approvalUser_Password = (Button) view.findViewById(R.id.act027_approval_content_btn_user_password);
+        approvalApproval = (Button) view.findViewById(R.id.act027_approval_content_btn_approval);
     }
 
     private void iniAction() {
@@ -102,6 +104,14 @@ public class Act027_Approval extends BaseFragment {
             @Override
             public void onClick(View v) {
                 showDialogUserPassWord();
+            }
+        });
+
+        approvalApproval.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Act027_Main mMain = (Act027_Main) getActivity();
+                mMain.callSignature("N.Hugo");
             }
         });
 

@@ -41,6 +41,19 @@
             android:text="User / PassWord"
             android:textColor="@color/padrao_WHITE" />
 
+
+        <Button
+            android:id="@+id/act027_approval_content_btn_approval"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/namoa_cell_2_states"
+            android:padding="20dp"
+            android:text="Approval"
+            android:textColor="@color/padrao_WHITE" />
+
+
     </LinearLayout>
 
 
