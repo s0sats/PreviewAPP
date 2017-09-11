@@ -100,7 +100,7 @@ public class WS_SO_Save extends IntentService {
         }
     }
 
-    private void processSO_Save(String so_action) throws IOException {
+    private void processSO_Save(String so_action) throws Exception {
         ArrayList<SM_SO> sos = new ArrayList<>();
         //
         loadTranslation();
@@ -128,15 +128,21 @@ public class WS_SO_Save extends IntentService {
            callSO_Save_WS(env);
 
         } else {
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_so_data"), "", "0");
-            //Gera token
-            String token = ToolBox_Inf.getToken(getApplicationContext());
             //
             sos = (ArrayList<SM_SO>) soDao.query(
                     new SM_SO_Sql_005(
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                     ).toSqlQuery()
             );
+            //
+            if(sos != null && sos.size() == 0){
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_so_to_send"), "", "0");
+                return;
+            }
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_so_data"), "", "0");
+            //Gera token
+            String token = ToolBox_Inf.getToken(getApplicationContext());
             //
             for (int i = 0; i < sos.size(); i++) {
                 sos.get(i).setAction(so_action);
@@ -188,7 +194,7 @@ public class WS_SO_Save extends IntentService {
 
     }
 
-    private void callSO_Save_WS(TSO_Save_Env env) throws IOException {
+    private void callSO_Save_WS(TSO_Save_Env env) throws Exception {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
         //
@@ -243,7 +249,7 @@ public class WS_SO_Save extends IntentService {
         return json_token;
     }
 
-    private void processSOSaveRet(TSO_Save_Rec ret) throws IOException {
+    private void processSOSaveRet(TSO_Save_Rec ret) throws Exception {
         String so_list_ret = "";
         HMAux hmAuxRet = new HMAux();
         //

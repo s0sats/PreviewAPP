@@ -56,7 +56,7 @@ public class WS_Logout extends IntentService {
         }
     }
 
-    private void processWS_Logout(String customer_list, String user_code) {
+    private void processWS_Logout(String customer_list, String user_code) throws Exception {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 

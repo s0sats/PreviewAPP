@@ -70,7 +70,7 @@ public class WS_Serial_Save extends IntentService {
 
     }
 
-    private void processWS_Serial_Save() throws IOException {
+    private void processWS_Serial_Save() throws Exception {
         //
         loadTranslation();
         //
@@ -143,7 +143,7 @@ public class WS_Serial_Save extends IntentService {
 
     }
 
-    private void callSerial_Save_WS(TSerial_Save_Env env) throws IOException {
+    private void callSerial_Save_WS(TSerial_Save_Env env) throws Exception {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_serial_data"), "", "0");
         //
@@ -179,7 +179,7 @@ public class WS_Serial_Save extends IntentService {
         processSerialSaveRet(rec);
     }
 
-    private void processSerialSaveRet(TSerial_Save_Rec rec) throws IOException {
+    private void processSerialSaveRet(TSerial_Save_Rec rec) throws Exception {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
         //
         HMAux hmAuxRet = new HMAux();

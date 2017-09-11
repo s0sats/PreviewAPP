@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Env;
@@ -74,7 +75,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, boolean save_serial, int serial_exact, boolean new_serial) {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, boolean save_serial, int serial_exact, boolean new_serial) throws Exception {
 
         //Seleciona traduções
         loadTranslation();
@@ -187,7 +188,12 @@ public class WS_Serial_Search extends IntentService {
                 rec.getLink_url(),
                 1,
                 1
-        )
+                )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
                 ) {
             return false;
         }

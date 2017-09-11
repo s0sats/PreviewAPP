@@ -73,7 +73,7 @@ public class WS_SO_Search extends IntentService {
 
     }
 
-    private void processSO_Search(Long product_code, String serial_id, String so_mult) {
+    private void processSO_Search(Long product_code, String serial_id, String so_mult) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
