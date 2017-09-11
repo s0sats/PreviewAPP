@@ -231,6 +231,13 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_new_process";
 
     /**
+     * WS Serial Tracking Search
+     */
+    public static final String WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE = "serial_tracking_search_product_code";
+    public static final String WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE = "serial_tracking_search_serial_code";
+    public static final String WS_SERIAL_TRACKING_SEARCH_TRACKING = "serial_tracking_search_tracking";
+
+    /**
      * Retorno dos Ws de Envio
      */
 

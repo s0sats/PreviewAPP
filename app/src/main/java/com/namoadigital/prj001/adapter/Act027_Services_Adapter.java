@@ -148,11 +148,14 @@ public class Act027_Services_Adapter extends BaseAdapter {
         if(item.get(SM_SO_ServiceDao.ZONE_CODE) != null && item.get(SM_SO_ServiceDao.ZONE_CODE).length() > 0) {
             ll_zone.setVisibility(View.VISIBLE);
             tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) + " - " + item.get(SM_SO_ServiceDao.ZONE_DESC));
-            //Após inserir seleção de zona, mudar vidação para zona
-            if (!item.get(SM_SO_ServiceDao.ZONE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context))) {
-                tv_zone_val.setTextColor(context.getResources().getColor(R.color.namoa_color_danger_red));
-            } else {
+            //Monta variaveis de comparação
+            String site_zone_row = item.get(SM_SO_ServiceDao.SITE_CODE) +"|"+item.get(SM_SO_ServiceDao.ZONE_CODE);
+            String site_zone_pref = ToolBox_Con.getPreference_Site_Code(context) +"|"+ToolBox_Con.getPreference_Zone_Code(context);
+            //
+            if (site_zone_row.equals(site_zone_pref)) {
                 tv_zone_val.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+            } else {
+                tv_zone_val.setTextColor(context.getResources().getColor(R.color.namoa_color_danger_red));
             }
         }else{
             ll_zone.setVisibility(View.GONE);

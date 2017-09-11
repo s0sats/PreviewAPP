@@ -13,15 +13,17 @@ public interface Act030_Main_Presenter {
 
     void onBackPressedClicked();
 
-    void executeSerialSearch(String product_code, String product_id,String serial_id);
+    void executeSerialSearch(String product_id, String serial_id, String tracking );
 
     void defineFlow(TProduct_Serial productSerial,boolean new_serial);
 
     void checkSingleProduct();
 
-    boolean checkProductExists(String product_code, String product_id, String serial);
+    boolean checkProductExists(String product_id, String serial);
 
     boolean productAllowNewSerial(MD_Product md_product);
 
     boolean productAllowNewSerial(String product_code, String product_id);
+
+    String searchProductInfo(String product_code, String product_id );
 }

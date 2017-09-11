@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.ctls.TextViewCT;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -56,7 +58,6 @@ import java.util.List;
 import static com.namoadigital.prj001.dao.MD_Product_SerialDao.SITE_CODE_OWNER;
 import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
 
-
 /**
  * Created by neomatrix on 03/07/17.
  */
@@ -65,6 +66,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     public static final String WS_SEARCH_SERIAL = "WS_SEARCH_SERIAL";
     public static final String WS_SAVE_SERIAL = "WS_SAVE_SERIAL";
+    public static final String WS_SEARCH_TRACKING = "WS_SEARCH_TRACKING";
 
     private Act031_Main_Presenter mPresenter;
     private ScrollView sv_serial;
@@ -118,6 +120,15 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     //Listners do btnAction
     //private View.OnClickListener listnerSearchSerial;
     private View.OnClickListener listnerSearchSO;
+    //Revisão S.O 3 Tracking
+    private LinearLayout ll_tracking;
+    private TextView tv_tracking;
+    private ImageView iv_add_tracking;
+    private LinearLayout ll_tracking_content;
+    private TextViewCT.ITextViewCT tvCtListner;
+    private String searched_tracking = "";
+    private HMAux tracking_list;
+    private transient AlertDialog trackingDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -208,12 +219,21 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_no_data_changes_msg");
         transList.add("progress_serial_save_ttl");
         transList.add("progress_serial_save_msg");
-        //
         transList.add("dialog_results_ttl");
         transList.add("dialog_result_product_lbl");
         transList.add("dialog_result_serial_lbl");
         transList.add("dialog_result_msg_lbl");
         transList.add("alert_no_serial_return_msg");
+        //
+        transList.add("tracking_ttl");
+        transList.add("dialog_tracking_ttl");
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
+        transList.add("alert_tracking_unavailable_ttl");
+        transList.add("alert_tracking_unavailable_msg");
+        transList.add("alert_tracking_already_listed_ttl");
+        transList.add("alert_tracking_already_listed_msg");
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -242,7 +262,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                         Constant.DB_VERSION_CUSTOM
                 ),
                 product_code,
-                new_serial
+                new_serial,
+                tracking_list == null ? new HMAux() : tracking_list
         );
         //
         serialProperties = new ArrayList<>();
@@ -302,6 +323,12 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
         ss_site_zone_local.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
+        ll_tracking = (LinearLayout) findViewById(R.id.act031_ll_serial_tracking);
+        tv_tracking = (TextView) findViewById(R.id.act031_tv_serial_tracking_ttl);
+        tv_tracking.setTag("tracking_ttl");
+        iv_add_tracking = (ImageView) findViewById(R.id.act031_iv_add_tracking);
+        ll_tracking_content = (LinearLayout) findViewById(R.id.act031_ll_tracking_container);
+        //
         ll_serial_add_info = (LinearLayout) findViewById(R.id.act031_ll_serial_add_info);
         //
         tv_serial_add_info_ttl = (TextView) findViewById(R.id.act031_tv_serial_add_info_ttl);
@@ -351,6 +378,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         views.add(tv_serial_ttl);
         views.add(tv_serial_location_ttl);
         views.add(tv_serial_properties_ttl);
+        views.add(tv_tracking);
         //
         //spinnersInitializer();
         //
@@ -360,12 +388,99 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         mket_serial_id.setText(bundle_serial_id);
         //
+        //trackingDialog = showTrackingDialog();
+        //
         if(new_serial) {
             mPresenter.saveNewSerialInfo(product_code,bundle_serial_id);
         }else{
-            mPresenter.serialFlow(bundle_serial_id);
+            mPresenter.getSerialInfo(product_code, bundle_serial_id);
         }
         //
+    }
+    @Override
+    public String getSearched_tracking() {
+        return searched_tracking;
+    }
+
+    private void showTrackingDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.namoa_dialog_add_tracking, null);
+
+        final MKEditTextNM mket_tracking = (MKEditTextNM) view.findViewById(R.id.namoa_dialog_add_tracking_mket_tracking);
+        //mket_tracking.setHint(hmAux_Trans.get("tracking_hint_lbl"));
+        controls_sta.add(mket_tracking);
+        //
+        TextView tv_tracking_ttl = (TextView) view.findViewById(R.id.namoa_dialog_add_tracking_tv_lbl);
+        ImageView iv_action = (ImageView) view.findViewById(R.id.namoa_dialog_add_tracking_iv_action);
+        final ImageView iv_close = (ImageView) view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
+        //
+        tv_tracking_ttl.setText(hmAux_Trans.get("dialog_tracking_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+        //
+        final AlertDialog show = builder.show();
+        /*
+        *Ini Action
+        */
+        iv_action.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mket_text  = mket_tracking.getText().toString().trim().toUpperCase();
+
+                if(mket_text.length() > 0){
+
+                    if(!mPresenter.isTrackingListed(mket_text)) {
+
+                        if (ToolBox_Con.isOnline(context)) {
+                            ToolBox_Inf.hideSoftKeyboard(Act031_Main.this);
+                            //
+                            searched_tracking = mket_text;
+                            //
+                            mPresenter.executeTrackingSearch(
+                                    serialObj.getProduct_code(),
+                                    serialObj.getSerial_code(),
+                                    mket_text
+                            );
+                            //
+                            show.dismiss();
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
+                    } else {
+                        showAlertDialog(
+                                hmAux_Trans.get("alert_tracking_already_listed_ttl"),
+                                hmAux_Trans.get("alert_tracking_already_listed_msg")
+                        );
+                    }
+                }
+            }
+        });
+        //
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Remove mket do arraylist de controles
+                controls_sta.remove(mket_tracking);
+                //
+                show.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void appendTracking(String tracking) {
+        TextViewCT viewCT = new TextViewCT(context);
+        viewCT.setmValue(tracking);
+        viewCT.setOnRemoveViewsListener(tvCtListner);
+        //
+        ll_tracking_content.addView(viewCT);
+    }
+
+    @Override
+    public void cleanSearched_tracking() {
+        searched_tracking = "";
     }
 
     private void iniUIFooter() {
@@ -466,6 +581,14 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         });*/
 
         btn_action.setOnClickListener(listnerSearchSO);
+        //
+        iv_add_tracking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTrackingDialog();
+            }
+        });
+
 
     }
 
@@ -473,9 +596,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            if (bundle.containsKey(Constant.MAIN_PRODUCT_CODE) && bundle.containsKey(Constant.MAIN_SERIAL_ID)) {
-                product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE, "0"));
-                bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
+            if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
+                serialObj = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                product_code = serialObj.getProduct_code();
+                bundle_serial_id = serialObj.getSerial_id();
                 new_serial = bundle.getBoolean(Act030_Main.NEW_SERIAL,false);
 
             } else {
@@ -524,6 +648,15 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                             hmAux_Trans.get("alert_invalid_serial_local_msg")
                     );
                 }
+            }
+        };
+
+        tvCtListner = new TextViewCT.ITextViewCT() {
+            @Override
+            public void removeViews(TextViewCT textViewCT) {
+//              tracking_list.remove(textViewCT.getmValue());
+              //
+              ll_tracking_content.removeView(textViewCT);
             }
         };
 
@@ -719,6 +852,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     public void setSerialValues(HMAux md_product_serial) {
         //
         if(!new_serial){
+            mket_serial_id.setmBARCODE(false);
+            mket_serial_id.setmOCR(false);
+            mket_serial_id.setmNFC(false);
+
             mket_serial_id.setEnabled(false);
         }
         //}
@@ -849,11 +986,17 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         //
         progressDialog.dismiss();
         //
-        if (ws_process.equals(WS_SAVE_SERIAL)) {
-
-            if(hmAux.size() > 0) {
-              mPresenter.processSerialSaveResult(serialObj.getProduct_code(),serialObj.getSerial_id(),hmAux);
-            }
+        switch (ws_process){
+            case WS_SAVE_SERIAL:
+                if(hmAux.size() > 0) {
+                    mPresenter.processSerialSaveResult(serialObj.getProduct_code(),serialObj.getSerial_id(),hmAux);
+                }
+                break;
+            case WS_SEARCH_TRACKING:
+                mPresenter.processTrackingResult(hmAux);
+                break;
+            default:
+                break;
         }
 
     }
@@ -918,6 +1061,14 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             }
         });
 
+    }
+
+    @Override
+    public void scrollToTracking() {
+        int x = (int) ll_tracking_content.getX();
+        int y =  ll_tracking_content.getTop() + ((View) ll_tracking_content.getParent()).getTop();
+
+        sv_serial.smoothScrollTo(x,y);
     }
 
     //RETORNO DO WS_Search_Serial

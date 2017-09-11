@@ -128,6 +128,10 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("alert_new_serial_not_allow_ttl");
         transList.add("alert_new_serial_not_allow_msg");
         //
+        transList.add("drawer_tracking_lbl");
+        transList.add("alert_local_product_not_found_ttl");
+        transList.add("alert_local_product_not_found_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -218,20 +222,19 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         //
         fragFilters.setOnDrawerClick(new Act030_Frag_Filter.IAct030_Filter() {
             @Override
-            public void onIvSearchClick(String product, String product_id, String serial) {
+            public void onIvSearchClick(String product_id, String serial, String tracking) {
                 ToolBox_Inf.hideSoftKeyboard(Act030_Main.this);
-                if ((product.trim().length() > 0 || product_id.trim().length() > 0)
-                    && serial.trim().length() > 0
+                if ( ( product_id.trim().length() > 0 && serial.trim().length() > 0)
+                    || tracking.trim().length() > 0
                 ) {
                     //Se tudo preenchido, valida se produto existe
                     if (mPresenter.checkProductExists(
-                            product.trim(),
                             product_id.trim(),
                             serial.trim()
                             )
                     ) {
                         //
-                        mPresenter.executeSerialSearch(product, product_id, serial);
+                        mPresenter.executeSerialSearch(product_id, serial, tracking);
                     }
                 } else {
                     ToolBox.alertMSG(
@@ -458,21 +461,35 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         } else {
             fragFilters.cleanFields();
             ToolBox_Inf.hideSoftKeyboard(Act030_Main.this);
+            String product_id = "";
             //
             switch (value[0]) {
                 case PRODUCT:
+                    product_id = mPresenter.searchProductInfo(value[2],"");
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
                     fragFilters.setProductCodeText(value[2]);
-                    //mPresenter.executeSerialSearch(value[2], "", "");
+                    fragFilters.setProductIdText(product_id);
+
                     break;
                 case SERIAL:
-                    fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
-                    fragFilters.setProductCodeText(value[2]);
-                    fragFilters.setSerialIdText(value[3]);
-                    if(fragFilters.getProductCodeText().length() > 0
-                       && fragFilters.getSerialIdText().length() > 0
-                    ){
-                        mPresenter.executeSerialSearch(value[2], "", value[3]);
+                    product_id = mPresenter.searchProductInfo(value[2],"");
+                    if(!product_id.equals("")) {
+                        fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
+                        fragFilters.setProductCodeText(value[2]);
+                        fragFilters.setSerialIdText(value[3]);
+                        if (fragFilters.getProductCodeText().length() > 0
+                                && fragFilters.getSerialIdText().length() > 0
+                                ) {
+                            mPresenter.executeSerialSearch(value[2], "", value[3]);
+                        }
+                    }else{
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
+                        );
                     }
 
                     break;

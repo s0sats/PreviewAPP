@@ -33,29 +33,24 @@ public class Sql_Act027_002 implements Specification {
     private int so_prefix;
     private int so_code;
     private String user_code;
+    private String site_code;
     private int zone_code;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(SM_SO_ServiceDao.columns);
     private String only_avaliable_where = "";
 
-    public Sql_Act027_002(long customer_code, int so_prefix, int so_code, String user_code) {
+    public Sql_Act027_002(long customer_code, int so_prefix, int so_code, String user_code, String site_code, int zone_code, boolean filter_only_avaliable) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
         this.user_code = user_code;
-    }
-
-    public Sql_Act027_002(long customer_code, int so_prefix, int so_code, String user_code, int zone_code, boolean filter_only_avaliable) {
-        this.customer_code = customer_code;
-        this.so_prefix = so_prefix;
-        this.so_code = so_code;
-        this.user_code = user_code;
+        this.site_code = site_code;
         this.zone_code = zone_code;
         //
         if(filter_only_avaliable){
             this.only_avaliable_where =
                     "     AND TTT.status = '"+Constant.SO_STATUS_PENDING+"'\n" +
-                    "     AND (TTT.PARTNER_RESTRICTION IN (-1,1) or TTT.ANY_PARTNER > 0)\n" +
-                    "     AND (TTT.ZONE_CODE is null or TTT.ZONE_CODE <> '"+zone_code+"')" ;
+                            "     AND (TTT.PARTNER_RESTRICTION IN (-1,1) or TTT.ANY_PARTNER > 0)\n" +
+                            "     AND (TTT.ZONE_CODE is null or (TTT.SITE_CODE||'|'||TTT.ZONE_CODE = '"+site_code+"|"+zone_code+"'))" ;
         }
     }
 

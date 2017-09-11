@@ -54,8 +54,10 @@
     <color name="namoa_color_purple2">#FFE7BFEE</color>
 
     <color name="namoa_color_success_green">#5CB85C</color>
+    <color name="namoa_color_success_green_alpha">#555CB85C</color>
     <color name="namoa_color_warning_yellow">#FFFF00</color>
     <color name="namoa_color_danger_red">#D9534F</color>
+    <color name="namoa_color_danger_red_alpha">#55D9534F</color>
     <color name="namoa_color_disabled_gray">#ADADAD</color>
     <color name="namoa_icon_color">#044C60</color>
     <color name="namoa_icon_pressed_color">#33000000</color>

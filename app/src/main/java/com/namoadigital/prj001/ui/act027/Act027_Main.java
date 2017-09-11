@@ -248,6 +248,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_start_task_confirm_msg");
         transList.add("alert_partner_selection_ttl");
         transList.add("alert_no_partner_selected_msg");
+        transList.add("alert_no_partner_found_msg");
+        transList.add("partner_selection_ttl");
+        transList.add("partner_search_lbl");
         transList.add("tracking_num_lbl");
         transList.add("alert_goto_service_menu_ttl");
         transList.add("alert_goto_service_menu_msg");
