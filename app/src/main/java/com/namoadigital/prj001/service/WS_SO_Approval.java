@@ -76,7 +76,7 @@ public class WS_SO_Approval extends IntentService {
         }
     }
 
-    private void processWSSOAproval(int so_prefix, int so_code, String nfc_code, String pwd) {
+    private void processWSSOAproval(int so_prefix, int so_code, String nfc_code, String pwd) throws Exception {
 
         //Seleciona traduções
         loadTranslation();
@@ -107,7 +107,7 @@ public class WS_SO_Approval extends IntentService {
         env.setAction(action);
         env.setClient_date(so.getClient_approval_date());
         env.setClient_image(so.getClient_approval_image_name());
-        env.setClient_type_sig( so.getClient_type() == "CLIENT" ? so.getClient_type()  : null );
+        env.setClient_type_sig( so.getClient_type().equals("CLIENT") ? so.getClient_type()  : null );
         env.setClient_password(pwd);
         env.setClient_nfc(nfc_code);
         //

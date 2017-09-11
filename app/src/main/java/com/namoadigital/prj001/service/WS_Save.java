@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -95,7 +96,7 @@ public class WS_Save extends IntentService {
 
     }
 
-    private void processWS_Save(int jumpValidation, int jumpOD) {
+    private void processWS_Save(int jumpValidation, int jumpOD) throws Exception {
         //Seleciona traduções
         loadTranslation();
 
@@ -145,6 +146,11 @@ public class WS_Save extends IntentService {
                 jumpValidation,
                 jumpOD
                 )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
             ) {
             return;
         }

@@ -360,4 +360,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_PARAM_AUTH_NFC = "so_param_auth_nfc";
 
 
+    public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+
+
 }

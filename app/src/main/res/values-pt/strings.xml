@@ -81,6 +81,7 @@
     <string name="generic_drawer_opened">Drawer Opened</string>
     <string name="generic_drawer_closed">Drawer Closed</string>
     <string name="msg_device_code_not_found">Código do dispositivo não encontrado!\nÉ necessário um código de dispositivo para prosseguir. </string>
+    <string name="ws_exception_server_connection_failed">Erro ao tentar comunicar com o servidor !</string>
 
 
 </resources>

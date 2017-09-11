@@ -101,7 +101,7 @@ public class WS_SO_Serial_Save extends IntentService {
         }
     }
 
-    private void processSO_Serial_Save(Long product_code, String serial_id, int so_prefix, int so_code) {
+    private void processSO_Serial_Save(Long product_code, String serial_id, int so_prefix, int so_code) throws Exception {
         ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
         ArrayList<SM_SO> sos = new ArrayList<>();
         //

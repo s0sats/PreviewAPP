@@ -66,7 +66,7 @@ public class WS_Serial_Tracking_Search extends IntentService {
 
         }
 
-    private void processWSTrackingSearch(String product_code, String serial_code, String tracking) {
+    private void processWSTrackingSearch(String product_code, String serial_code, String tracking) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //

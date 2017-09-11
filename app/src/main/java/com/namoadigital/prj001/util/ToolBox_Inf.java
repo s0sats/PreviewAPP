@@ -798,8 +798,10 @@ public class ToolBox_Inf {
             case "PARAMETERS_ERROR":
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
-
             default:
+                if(validation.trim().length() == 0){
+                  return processoOthersError(context,context.getResources().getString(R.string.generic_error_lbl),error_msg);
+                }
                 break;
         }
 
@@ -1789,6 +1791,7 @@ public class ToolBox_Inf {
             transList.add("ws_exception_contact_admin_json_syntax");
             transList.add("ws_exception_contact_admin_oracle");
             transList.add("ws_exception_contact_admin_timeout");
+            transList.add("ws_exception_server_connection_failed");
             transList.add("generic_error_lbl");
 
             hmAux_Trans = setLanguage(
@@ -1813,6 +1816,10 @@ public class ToolBox_Inf {
 
         hmAux_Trans.put("ws_exception_contact_admin_timeout",
                 (!hmAux_Trans.containsKey("ws_exception_contact_admin_timeout") || hmAux_Trans.get("ws_exception_contact_admin_timeout").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_timeout) : hmAux_Trans.get("ws_exception_contact_admin_timeout"))
+        );
+
+        hmAux_Trans.put("ws_exception_server_connection_failed",
+                (!hmAux_Trans.containsKey("ws_exception_server_connection_failed") || hmAux_Trans.get("ws_exception_server_connection_failed").contains(Constant.APP_MODULE + "/") ? context.getString(R.string.ws_exception_server_connection_failed) : hmAux_Trans.get("ws_exception_server_connection_failed"))
         );
 
         results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
@@ -1843,6 +1850,15 @@ public class ToolBox_Inf {
                     .append("Timeout!\n ")
                     .append(e.toString()
                     );
+        }  else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
+            sb.append(results).append(" \n")
+                    .append(hmAux_Trans.get("ws_exception_server_connection_failed"))
+                    .append("\n")
+                    .append("\n")
+                    .append(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR+"!\n ")
+                    //.append(e.toString())//Como exception na mão, não tem toString
+                    ;
+
         } else {
             sb.append(results)
                     .append("\n")

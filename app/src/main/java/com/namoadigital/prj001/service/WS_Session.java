@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -64,7 +65,7 @@ public class WS_Session extends IntentService {
 
     }
 
-    private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od) {
+    private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od) throws Exception {
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -87,13 +88,13 @@ public class WS_Session extends IntentService {
         env.setTranslate_code(Integer.parseInt(translate_code));
         env.setGcm_id(ToolBox_Con.getPreference_Google_ID(getApplicationContext()));
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_sending_data_msg), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_sending_data_msg), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SESSION,
                 gson.toJson(env)
         );
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
 
         TSession_Rec rec = gson.fromJson(
                 resultado,
@@ -108,6 +109,11 @@ public class WS_Session extends IntentService {
                 jump_validation,
                 jump_od
                 )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
             ) {
             return;
         }

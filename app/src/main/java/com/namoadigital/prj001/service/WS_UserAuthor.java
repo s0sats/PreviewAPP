@@ -80,7 +80,7 @@ public class WS_UserAuthor extends IntentService {
             String auth_nick_mail,
             String auth_password,
             String auth_nfc
-    ) {
+    ) throws Exception {
 
         //Seleciona traduções
         loadTranslation();
