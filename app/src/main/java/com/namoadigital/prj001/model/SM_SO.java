@@ -109,6 +109,8 @@ public class SM_SO {
     private int approve_budget;
     private int approve_client;
     private int update_required;
+    private int approval_required;
+
     @Expose
     private String action;
     private String token;
@@ -653,6 +655,14 @@ public class SM_SO {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getApproval_required() {
+        return approval_required;
+    }
+
+    public void setApproval_required(int approval_required) {
+        this.approval_required = approval_required;
     }
 
     public String getAction() {

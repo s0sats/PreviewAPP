@@ -150,6 +150,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");
 
+        // ACT027_Approval Fragment
+        transList.add("user_name_lbl");
+        transList.add("user_lbl");
+        transList.add("other_lbl");
+        transList.add("approval_nfc_lbl");
+        transList.add("approval_user_password_lbl");
+        transList.add("approval_signature_lbl");
+
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
         transList.add("alert_no_connection_msg");

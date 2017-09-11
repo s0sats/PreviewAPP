@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
@@ -18,6 +20,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by neomatrix on 05/09/17.
@@ -28,6 +31,15 @@ public class Act027_Approval extends BaseFragment {
     private boolean bStatus = false;
 
     private Context context;
+
+    private TextView tv_so_id_lbl;
+    private TextView tv_so_id_value;
+    private TextView tv_name_lbl;
+    private TextView tv_name_value;
+
+    private RadioGroup rg_opc;
+    private RadioButton rb_user;
+    private RadioButton rb_other;
 
     private ButtonNFC approvalNFC;
     private Button approvalUser_Password;
@@ -90,6 +102,15 @@ public class Act027_Approval extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
+
+        tv_so_id_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_so_id_lbl);
+        tv_so_id_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_so_id_value);
+        tv_name_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_name_lbl);
+        tv_name_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_name_value);
+
+        rg_opc = (RadioGroup) view.findViewById(R.id.act027_approval_content_rg_opc);
+        rb_user = (RadioButton) view.findViewById(R.id.act027_approval_content_rb_user);
+        rb_other = (RadioButton) view.findViewById(R.id.act027_approval_content_rb_other);
 
         approvalNFC = (ButtonNFC) view.findViewById(R.id.act027_approval_content_btn_nfc);
         approvalNFC.setmLogin(true);
@@ -167,6 +188,20 @@ public class Act027_Approval extends BaseFragment {
 
     public void loadDataToScreen() {
         if (bStatus) {
+
+            tv_so_id_lbl.setText(hmAux_Trans.get("so_lbl"));
+            tv_so_id_value.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
+
+            tv_name_lbl.setText(hmAux_Trans.get("user_name_lbl"));
+            tv_name_value.setText(ToolBox_Con.getPreference_User_Code_Nick(getActivity()));
+
+            approvalNFC.setText(hmAux_Trans.get("approval_nfc_lbl"));
+            approvalUser_Password.setText(hmAux_Trans.get("approval_user_password_lbl"));
+            approvalApproval.setText(hmAux_Trans.get("approval_signature_lbl"));
+
+            rb_user.setText(hmAux_Trans.get("user_lbl"));
+            rb_other.setText(hmAux_Trans.get("other_lbl"));
+
             approvalNFC.setOnClickListener(listener);
 
         }

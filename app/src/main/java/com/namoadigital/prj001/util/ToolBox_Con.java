@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -66,7 +67,12 @@ public class ToolBox_Con {
             writer.close();
             os.close();
 
-            sb.append(readStreamAux(conn.getInputStream()));
+            int httpStatus = conn.getResponseCode();
+            if(httpStatus == HttpURLConnection.HTTP_OK){
+                sb.append(readStreamAux(conn.getInputStream()));
+            } else {
+                sb.append("Error: " + "HTTP_STATUS " + httpStatus);
+            }
 
         } catch (Exception e) {
 

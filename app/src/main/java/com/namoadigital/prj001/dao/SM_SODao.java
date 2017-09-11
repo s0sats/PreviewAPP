@@ -96,6 +96,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String APPROVE_CLIENT = "approve_client";
 
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String APPROVAL_REQUIRED = "approval_required";
     public static final String TOKEN = "token";
 
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
@@ -106,7 +107,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             DEADLINE, ORIGIN, CLIENT_TYPE, CLIENT_USER, CLIENT_CODE, CLIENT_ID, CLIENT_NAME, CLIENT_EMAIL, CLIENT_PHONE, CLIENT_APPROVAL_IMAGE,
             CLIENT_APPROVAL_IMAGE_NAME, CLIENT_APPROVAL_IMAGE_URL, CLIENT_APPROVAL_DATE, CLIENT_APPROVAL_USER, CLIENT_APPROVAL_USER_NICK,
             CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
-            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, TOKEN
+            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, TOKEN
     };
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
@@ -661,11 +662,18 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             so.setApprove_budget(cursor.getInt(cursor.getColumnIndex(APPROVE_BUDGET)));
             so.setApprove_client(cursor.getInt(cursor.getColumnIndex(APPROVE_CLIENT)));
 
-            if (cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_REQUIRED))) {
+                so.setApproval_required(0);
+            } else {
+                so.setApproval_required(cursor.getInt(cursor.getColumnIndex(APPROVAL_REQUIRED)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_REQUIRED))) {
                 so.setUpdate_required(0);
             } else {
                 so.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             }
+
             //
             so.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
@@ -945,6 +953,11 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             if (sm_so.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, sm_so.getUpdate_required());
             }
+
+            if (sm_so.getApproval_required() > -1) {
+                contentValues.put(APPROVAL_REQUIRED, sm_so.getApproval_required());
+            }
+
             if (sm_so.getToken() != null) {
                 contentValues.put(TOKEN, sm_so.getToken());
             }
