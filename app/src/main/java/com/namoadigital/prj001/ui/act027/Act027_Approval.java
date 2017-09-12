@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -10,12 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SM_SO;
@@ -35,15 +39,18 @@ public class Act027_Approval extends BaseFragment {
     private TextView tv_so_id_lbl;
     private TextView tv_so_id_value;
     private TextView tv_name_lbl;
-    private TextView tv_name_value;
+    private MKEditTextNM mk_name_value;
 
     private RadioGroup rg_opc;
     private RadioButton rb_user;
     private RadioButton rb_other;
 
+    private Button approvalApprovalUser;
     private ButtonNFC approvalNFC;
     private Button approvalUser_Password;
     private Button approvalApproval;
+
+    private ImageView iv_signature;
 
     private View.OnClickListener listener;
 
@@ -106,7 +113,7 @@ public class Act027_Approval extends BaseFragment {
         tv_so_id_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_so_id_lbl);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_so_id_value);
         tv_name_lbl = (TextView) view.findViewById(R.id.act027_approval_content_tv_name_lbl);
-        tv_name_value = (TextView) view.findViewById(R.id.act027_approval_content_tv_name_value);
+        mk_name_value = (MKEditTextNM) view.findViewById(R.id.act027_approval_content_mk_name_value);
 
         rg_opc = (RadioGroup) view.findViewById(R.id.act027_approval_content_rg_opc);
         rb_user = (RadioButton) view.findViewById(R.id.act027_approval_content_rb_user);
@@ -116,11 +123,22 @@ public class Act027_Approval extends BaseFragment {
         approvalNFC.setmLogin(true);
         approvalNFC.setmProgressClose(true);
 
+        approvalApprovalUser = (Button) view.findViewById(R.id.act027_approval_content_btn_approval_user);
         approvalUser_Password = (Button) view.findViewById(R.id.act027_approval_content_btn_user_password);
         approvalApproval = (Button) view.findViewById(R.id.act027_approval_content_btn_approval);
+
+        iv_signature = (ImageView) view.findViewById(R.id.act027_approval_content_iv_signature);
     }
 
     private void iniAction() {
+
+        approvalApprovalUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // grava na so e manda bala
+            }
+        });
+
         approvalUser_Password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,11 +149,24 @@ public class Act027_Approval extends BaseFragment {
         approvalApproval.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Act027_Main mMain = (Act027_Main) getActivity();
-                mMain.callSignature("N.Hugo");
+                if (mk_name_value.getText().toString().trim().isEmpty()) {
+                    ToolBox.alertMSG(
+                            getActivity(),
+                            hmAux_Trans.get("alert_no_name_title"),
+                            hmAux_Trans.get("alert_no_name_msg"),
+                            null,
+                            -1,
+                            false
+                    );
+                } else {
+                    mSm_so.setClient_name(mk_name_value.getText().toString().trim());
+                    //
+                    Act027_Main mMain = (Act027_Main) getActivity();
+                    //
+                    mMain.callSignature(mSm_so.getClient_name());
+                }
             }
         });
-
     }
 
     private void showDialogUserPassWord() {
@@ -193,7 +224,6 @@ public class Act027_Approval extends BaseFragment {
             tv_so_id_value.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
 
             tv_name_lbl.setText(hmAux_Trans.get("user_name_lbl"));
-            tv_name_value.setText(ToolBox_Con.getPreference_User_Code_Nick(getActivity()));
 
             approvalNFC.setText(hmAux_Trans.get("approval_nfc_lbl"));
             approvalUser_Password.setText(hmAux_Trans.get("approval_user_password_lbl"));
@@ -202,8 +232,116 @@ public class Act027_Approval extends BaseFragment {
             rb_user.setText(hmAux_Trans.get("user_lbl"));
             rb_other.setText(hmAux_Trans.get("other_lbl"));
 
+            rg_opc.setOnCheckedChangeListener(null);
+
             approvalNFC.setOnClickListener(listener);
 
+            String sFileName = "s_" +
+                    ToolBox_Con.getPreference_Customer_Code(context) + "_" +
+                    String.valueOf(mSm_so.getSo_prefix()) + "_" +
+                    String.valueOf(mSm_so.getSo_code()) + "_" +
+                    ".png";
+
+            iv_signature.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + sFileName));
+
+            approvalStatus();
+        }
+    }
+
+    private void approvalStatus() {
+
+        tv_name_lbl.setVisibility(View.GONE);
+        mk_name_value.setVisibility(View.GONE);
+
+        rg_opc.setVisibility(View.GONE);
+
+        approvalApprovalUser.setVisibility(View.GONE);
+        approvalNFC.setVisibility(View.GONE);
+        approvalUser_Password.setVisibility(View.GONE);
+        approvalApproval.setVisibility(View.GONE);
+
+        iv_signature.setVisibility(View.GONE);
+
+        // Gambeta
+        mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
+
+        // Fechado
+        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+
+            if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_USER)) {
+            } else {
+                tv_name_lbl.setVisibility(View.VISIBLE);
+                mk_name_value.setVisibility(View.VISIBLE);
+
+                iv_signature.setVisibility(View.VISIBLE);
+            }
+
+        } else {
+            // abertp
+            if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_USER)) {
+
+                if (mSm_so.getApprove_client() == 1) {
+                    rg_opc.setVisibility(View.VISIBLE);
+                    //
+                    rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                            switch (checkedId) {
+                                case R.id.act027_approval_content_rb_user:
+
+                                    approvalApprovalUser.setVisibility(View.VISIBLE);
+                                    approvalNFC.setVisibility(View.GONE);
+                                    approvalUser_Password.setVisibility(View.GONE);
+
+                                    break;
+                                case R.id.act027_approval_content_rb_other:
+
+                                    approvalApprovalUser.setVisibility(View.GONE);
+                                    approvalNFC.setVisibility(View.VISIBLE);
+                                    approvalUser_Password.setVisibility(View.VISIBLE);
+
+                                    break;
+                            }
+                        }
+                    });
+                } else {
+                    approvalApprovalUser.setVisibility(View.GONE);
+                    approvalNFC.setVisibility(View.VISIBLE);
+                    approvalUser_Password.setVisibility(View.VISIBLE);
+                }
+
+            } else if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_CLIENT)) {
+                tv_name_lbl.setVisibility(View.VISIBLE);
+                mk_name_value.setVisibility(View.VISIBLE);
+
+                approvalApproval.setVisibility(View.VISIBLE);
+
+                rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                        switch (checkedId) {
+                            case R.id.act027_approval_content_rb_user:
+                                mSm_so.setClient_approval_type_sig("USER");
+                                mk_name_value.setText(ToolBox_Con.getPreference_User_Code_Nick(getActivity()));
+                                mk_name_value.setEnabled(false);
+
+                                break;
+                            case R.id.act027_approval_content_rb_other:
+                                mSm_so.setClient_approval_type_sig("CLIENT");
+                                mk_name_value.setText("");
+                                mk_name_value.setEnabled(true);
+                                break;
+                        }
+                    }
+                });
+
+                if (!rb_user.isChecked() && !rb_other.isChecked()) {
+                    rb_user.setChecked(true);
+                }
+
+            } else {
+
+            }
         }
     }
 
@@ -211,17 +349,6 @@ public class Act027_Approval extends BaseFragment {
 //        if (bStatus) {
 //        }
     }
-
-//                if (ToolBox_Con.isOnline(context)) {
-//        Act027_Main mMain = (Act027_Main) getActivity();
-//        //Seta flag de somente save sem sincronismo.
-//        mMain.executeUserAuthorCheck();
-//        //
-//        mMain.executeSoSave();
-//    } else {
-//        Act027_Main mMain = (Act027_Main) getActivity();
-//        mMain.refreshUI();
-//    }
 
     public void closeKeyboard(Context c, IBinder windowToken) {
         InputMethodManager mgr = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -71,6 +71,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public static final String SELECTION_NORMAL = "NORMAL";
 
     public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
+    public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
 
     private Context context;
     private Bundle bundle;
@@ -666,11 +667,28 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void processUserAuthorCheck(HMAux hmAux) {
-
-        //setWs_process(WS_PROCESS_SO_SAVE);
         //act027_approval_.setOnLineApproval();
         //
-        //executeSoSave();
+        executeSoSaveApproval();
+    }
+
+    public void executeSoSaveApproval() {
+        setWs_process(WS_PROCESS_SO_SAVE_APPROVAL);
+        //
+        enableProgressDialog(
+                hmAux_Trans.get("progress_so_save_ttl"),
+                hmAux_Trans.get("progress_so_save_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     public void executeSoSave() {

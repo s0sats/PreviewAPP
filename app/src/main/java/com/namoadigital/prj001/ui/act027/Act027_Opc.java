@@ -340,7 +340,18 @@ public class Act027_Opc extends BaseFragment {
 
                 tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
                 tv_serial_value.setText(mSm_so.getSerial_id());
-
+                //
+                //
+                // Halibitar o Status do ll_approval
+//                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
+//                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) ||
+//                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED)
+//                        ) {
+//                    ll_approval.setVisibility(View.VISIBLE);
+//
+//                } else {
+//                    ll_approval.setVisibility(View.GONE);
+//                }
                 //
                 switch (mSm_so.getStatus()) {
                     case Constant.SO_STATUS_PENDING:

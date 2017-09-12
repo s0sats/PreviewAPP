@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.model;
 
+import com.namoadigital.prj001.util.Constant;
+
+import java.util.ArrayList;
+
 /**
  * Created by d.luche on 27/07/2017.
  */
@@ -9,22 +13,8 @@ public class TSO_Approval_Env {
     private String app_code;
     private String app_version;
     private String session_app;
-    private long customer_code;
-    private int so_prefix;
-    private int so_code;
-    private int so_scn;
-    private String action;//HJ só approve_client, no futuro dependerá de qual status chamou.
-    private String origin_change;//
-    private String client_date;//: data da aprovação
-    private String client_image;//: nome da imagem que subiu no s3 (assinatura)
-    private String client_type_sig;//: client ou user (apenas quando o client_type = client)
-    private String client_password;//: senha do cliente (aplicar md5)
-    private String client_nfc;//: código nfc do cliente
 
-    public TSO_Approval_Env() {
-        this.action = "approve_client";
-        this.origin_change = "APP";
-    }
+    private ArrayList<SO_Approval_Item> so_status;
 
     public String getApp_code() {
         return app_code;
@@ -50,91 +40,122 @@ public class TSO_Approval_Env {
         this.session_app = session_app;
     }
 
-    public long getCustomer_code() {
-        return customer_code;
+    public ArrayList<SO_Approval_Item> getSo_status() {
+        return so_status;
     }
 
-    public void setCustomer_code(long customer_code) {
-        this.customer_code = customer_code;
+    public void setSo_status(ArrayList<SO_Approval_Item> so_status) {
+        this.so_status = so_status;
     }
 
-    public int getSo_prefix() {
-        return so_prefix;
+    public TSO_Approval_Env() {
     }
 
-    public void setSo_prefix(int so_prefix) {
-        this.so_prefix = so_prefix;
-    }
+    public static class SO_Approval_Item {
+        private long customer_code;
+        private int so_prefix;
+        private int so_code;
+        private int so_scn;
+        private String action;//HJ só approve_client, no futuro dependerá de qual status chamou.
+        private String origin_change;//
 
-    public int getSo_code() {
-        return so_code;
-    }
+        private String client_name;// nome do cliente
+        private String client_date;//: data da aprovação
+        private String client_image;//: nome da imagem que subiu no s3 (assinatura)
+        private String client_type_sig;//: client ou user (apenas quando o client_type = client)
+        private Integer client_user;//
 
-    public void setSo_code(int so_code) {
-        this.so_code = so_code;
-    }
+        public SO_Approval_Item() {
+            this.action = Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT;
+            this.origin_change = Constant.SO_ORIGIN_CHANGE_APP;
+        }
 
-    public int getSo_scn() {
-        return so_scn;
-    }
+        public long getCustomer_code() {
+            return customer_code;
+        }
 
-    public void setSo_scn(int so_scn) {
-        this.so_scn = so_scn;
-    }
+        public void setCustomer_code(long customer_code) {
+            this.customer_code = customer_code;
+        }
 
-    public String getAction() {
-        return action;
-    }
+        public int getSo_prefix() {
+            return so_prefix;
+        }
 
-    public void setAction(String action) {
-        this.action = action;
-    }
+        public void setSo_prefix(int so_prefix) {
+            this.so_prefix = so_prefix;
+        }
 
-    public String getOrigin_change() {
-        return origin_change;
-    }
+        public int getSo_code() {
+            return so_code;
+        }
 
-    public void setOrigin_change(String origin_change) {
-        this.origin_change = origin_change;
-    }
+        public void setSo_code(int so_code) {
+            this.so_code = so_code;
+        }
 
-    public String getClient_date() {
-        return client_date;
-    }
+        public int getSo_scn() {
+            return so_scn;
+        }
 
-    public void setClient_date(String client_date) {
-        this.client_date = client_date;
-    }
+        public void setSo_scn(int so_scn) {
+            this.so_scn = so_scn;
+        }
 
-    public String getClient_image() {
-        return client_image;
-    }
+        public String getAction() {
+            return action;
+        }
 
-    public void setClient_image(String client_image) {
-        this.client_image = client_image;
-    }
+        public void setAction(String action) {
+            this.action = action;
+        }
 
-    public String getClient_type_sig() {
-        return client_type_sig;
-    }
+        public String getOrigin_change() {
+            return origin_change;
+        }
 
-    public void setClient_type_sig(String client_type_sig) {
-        this.client_type_sig = client_type_sig;
-    }
+        public void setOrigin_change(String origin_change) {
+            this.origin_change = origin_change;
+        }
 
-    public String getClient_password() {
-        return client_password;
-    }
+        public String getClient_name() {
+            return client_name;
+        }
 
-    public void setClient_password(String client_password) {
-        this.client_password = client_password;
-    }
+        public void setClient_name(String client_name) {
+            this.client_name = client_name;
+        }
 
-    public String getClient_nfc() {
-        return client_nfc;
-    }
+        public String getClient_date() {
+            return client_date;
+        }
 
-    public void setClient_nfc(String client_nfc) {
-        this.client_nfc = client_nfc;
+        public void setClient_date(String client_date) {
+            this.client_date = client_date;
+        }
+
+        public String getClient_image() {
+            return client_image;
+        }
+
+        public void setClient_image(String client_image) {
+            this.client_image = client_image;
+        }
+
+        public String getClient_type_sig() {
+            return client_type_sig;
+        }
+
+        public void setClient_type_sig(String client_type_sig) {
+            this.client_type_sig = client_type_sig;
+        }
+
+        public Integer getClient_user() {
+            return client_user;
+        }
+
+        public void setClient_user(Integer client_user) {
+            this.client_user = client_user;
+        }
     }
 }

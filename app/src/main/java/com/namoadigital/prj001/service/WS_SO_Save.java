@@ -391,7 +391,6 @@ public class WS_SO_Save extends IntentService {
     private void startDownloadServices() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
         getApplicationContext().sendBroadcast(mIntentPIC);
-
     }
 
     private boolean processFromTo(TSO_Save_Rec.So_From_To so_from_to, ArrayList<SO_Save_Return> so_save_returns) {
