@@ -38,4 +38,6 @@ public interface Act031_Main_View {
 
     void scrollToTracking();
 
+    void setTrackingListChanged(boolean trackingListChanged);
+
 }
