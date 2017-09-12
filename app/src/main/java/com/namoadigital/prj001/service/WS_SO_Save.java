@@ -48,6 +48,7 @@ public class WS_SO_Save extends IntentService {
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String SO_RETURN_LIST = "SO_RETURN_LIST";
+    public static final String SO_NO_EMPTY_LIST = "SO_NO_EMPTY_LIST";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -136,7 +137,11 @@ public class WS_SO_Save extends IntentService {
             );
             //
             if(sos != null && sos.size() == 0){
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_so_to_send"), "", "0");
+                HMAux hmAuxRet = new HMAux();
+                hmAuxRet.put(SO_NO_EMPTY_LIST,"1");
+                hmAuxRet.put(SO_RETURN_LIST,"");
+                //
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_so_to_send"), hmAuxRet, "", "0");
                 return;
             }
             //
