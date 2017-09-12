@@ -728,6 +728,8 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
+        validation = validation == null ? "" : validation;
+
         switch (validation) {
             case "OK":
                 break;
