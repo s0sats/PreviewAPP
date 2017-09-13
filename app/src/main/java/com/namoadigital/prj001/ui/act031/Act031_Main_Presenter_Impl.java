@@ -360,8 +360,6 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
     private void refreshUI(long product_code, String serial_id){
         new_serial = false;
-        //Reseta tracking_list
-        tracking_list.clear();
         //
         mView.setTrackingListChanged(false);
         //

@@ -129,7 +129,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     private LinearLayout ll_tracking_content;
     private TextViewCT.ITextViewCT tvCtListner;
     private String searched_tracking = "";
-    private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<MD_Product_Serial_Tracking>();
+    private ArrayList<MD_Product_Serial_Tracking> tracking_list;
     private boolean trackingListChanged = false;
 
     @Override
@@ -446,8 +446,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 if (mket_text.length() > 0) {
 
                     if (!mPresenter.isTrackingListed(mket_text)) {
-
                         if (ToolBox_Con.isOnline(context)) {
+                            ToolBox_Inf.closeKeyboard(context,mket_tracking.getWindowToken());
                             //
                             searched_tracking = mket_text;
                             //
@@ -493,7 +493,6 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     @Override
     public void cleanSearched_tracking() {
-        ToolBox_Inf.hideSoftKeyboard(Act031_Main.this);
         //
         searched_tracking = "";
     }
@@ -616,7 +615,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 product_code = serialObj.getProduct_code();
                 bundle_serial_id = serialObj.getSerial_id();
                 new_serial = bundle.getBoolean(Act030_Main.NEW_SERIAL, false);
-                //tracking_list = serialObj.getTracking_list();
+                tracking_list = serialObj.getTracking_list();
             } else {
                 ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
             }
@@ -1072,7 +1071,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         serialObj.setUpdate_required(1);
         serialObj.setOnly_position(0);
         //
-        serialObj.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>(tracking_list));
+        //serialObj.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>(tracking_list));
+        serialObj.setTracking_list(tracking_list);
+        //Reseta tracking_list
+        //tracking_list.clear();
+
     }
 
     //RETORNO DO WS_SO_Search
