@@ -28,6 +28,8 @@ public interface Act031_Main_View {
 
     void setSerialValues(HMAux md_product_serial);
 
+    void setSerialValuesV2(HMAux md_product_serial);
+
     void callAct030(Context context);
 
     void showSingleResultMsg(String ttl, String msg);

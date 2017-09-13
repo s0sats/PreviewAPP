@@ -25,7 +25,6 @@ public class MD_Product_Serial_Tracking_Sql_002 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" DELETE\n" +
-                        "   *\n" +
                         " FROM\n" +
                         MD_Product_Serial_TrackingDao.TABLE +" \n" +
                         " WHERE \n" +

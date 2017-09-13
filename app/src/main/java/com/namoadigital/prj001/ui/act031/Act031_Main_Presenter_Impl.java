@@ -17,7 +17,6 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -206,9 +205,9 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 ).toSqlQuery()
         );
         //Reseta tracking_list
-        tracking_list.clear();
+       // tracking_list.clear();
         //
-        if (md_product_serial != null) {
+        /*if (md_product_serial != null) {
             ArrayList<MD_Product_Serial_Tracking> auxList =
                     (ArrayList<MD_Product_Serial_Tracking>) trackingDao.query(new MD_Product_Serial_Tracking_Sql_001(
                                     ToolBox_Con.getPreference_Customer_Code(context),
@@ -218,9 +217,10 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                     );
             //
             tracking_list.addAll(auxList);
-        }
+        }*/
         //
-        mView.setSerialValues(md_product_serial);
+        //mView.setSerialValues(md_product_serial);
+        mView.setSerialValuesV2(md_product_serial);
     }
 
 
@@ -236,10 +236,22 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         );
         //Salva dados alterados do S.O
         serialDao.addUpdate(productSerial);
+        //
+        refreshUI(productSerial.getProduct_code(),productSerial.getSerial_id());
+        //
         if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
             executeSaveSerial(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
         } else {
+            /*
+            *
+            * MODIFICAR PARA POSIBILITAR OFFLINE
+            *
+            *  MODIFICAR VAR new_serial PARA FALSE;
+            *
+            * EXIBER MSG E CHAMAR O METODO getSerialInfo
+            *
+            * */
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -285,7 +297,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 }
             }
             //Atualiza dados dos serial na tela e spinners
-            getSerialInfo(product_code, serial_id);
+            //getSerialInfo(product_code, serial_id);
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
@@ -344,7 +356,16 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
             }
         }
         return false;
-        //return tracking_list.containsKey(tracking);
+    }
+
+    private void refreshUI(long product_code, String serial_id){
+        new_serial = false;
+        //Reseta tracking_list
+        tracking_list.clear();
+        //
+        mView.setTrackingListChanged(false);
+        //
+        getSerialInfo(product_code, serial_id);
     }
 
 
