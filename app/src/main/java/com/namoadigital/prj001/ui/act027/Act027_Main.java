@@ -40,7 +40,6 @@ import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
-import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
