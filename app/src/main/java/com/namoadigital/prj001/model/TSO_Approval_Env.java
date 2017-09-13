@@ -13,6 +13,7 @@ public class TSO_Approval_Env {
     private String app_code;
     private String app_version;
     private String session_app;
+    private String token;
 
     private ArrayList<SO_Approval_Item> so_status;
 
@@ -38,6 +39,14 @@ public class TSO_Approval_Env {
 
     public void setSession_app(String session_app) {
         this.session_app = session_app;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public ArrayList<SO_Approval_Item> getSo_status() {

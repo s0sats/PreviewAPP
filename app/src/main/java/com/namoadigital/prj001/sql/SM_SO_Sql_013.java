@@ -28,7 +28,7 @@ public class SM_SO_Sql_013 implements Specification {
                         SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
-                        "    AND s.approval_required = 1")
+                        "    AND (s.approval_required = 1 or s.approval_required = 2)")
                 .toString();
     }
 }

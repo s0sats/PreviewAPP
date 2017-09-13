@@ -136,7 +136,7 @@ public class WS_UserAuthor extends IntentService {
         HMAux hmAux = new HMAux();
 
         if (rec.getAuth().isEmpty()) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("generic_error_lbl") + "\n" + rec.getAuth_msg(), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("generic_error_lbl") + "\n" + rec.getAuth_msg(), rec.getAuth_msg(), "0");
 
         } else {
 

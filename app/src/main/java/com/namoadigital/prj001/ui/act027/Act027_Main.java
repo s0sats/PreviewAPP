@@ -33,6 +33,7 @@ import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
@@ -40,6 +41,8 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.SM_SO_Sql_012;
+import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main_New;
@@ -158,6 +161,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("approval_nfc_lbl");
         transList.add("approval_user_password_lbl");
         transList.add("approval_signature_lbl");
+        transList.add("alert_no_name_ttl");
+        transList.add("alert_no_name_msg");
+        transList.add("alert_so_signature_ttl");
+        transList.add("alert_so_signature_msg");
 
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
@@ -393,6 +400,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private SM_SO loadSM_SO(long customer_code, int so_prefix, int so_code) {
+        sm_soDao.remove(
+                new SM_SO_Sql_014().toSqlQuery()
+        );
+
         SM_SO mSm_so = sm_soDao.getByString(
                 new SM_SO_Sql_001(
                         customer_code,
@@ -433,6 +444,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
 
+        // analisar recarga
+        //recoverApprovalState();
+
         progressDialog.dismiss();
     }
 
@@ -452,9 +466,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process("");
             processSoSave(hmAux);
 
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+
+            setWs_process("");
+            processSoSave(hmAux);
+
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_USER_AUTHOR)) {
 
-            //progressDialog.dismiss();
+            progressDialog.dismiss();
             //
             setWs_process("");
             processUserAuthorCheck(hmAux);
@@ -545,7 +564,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_opc_.loadDataToScreen();
 
         act027_approval_.setmSm_so(mSm_so);
-        act027_opc_.loadDataToScreen();
+        act027_approval_.loadDataToScreen();
 
         act027_services_.setmSm_so(mSm_so);
         act027_services_.loadDataToScreen();
@@ -556,6 +575,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_header_.setmSm_so(mSm_so);
         act027_header_.loadDataToScreen();
     }
+
 
     private void processSoSave(HMAux hmAux) {
         String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -600,7 +620,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         context,
                         hmAux_Trans.get("alert_so_list_title"),
                         sos.get(0).get("status"),
-                        null,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                refreshUI();
+                            }
+                        },
                         0
                 );
 
@@ -667,9 +692,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void processUserAuthorCheck(HMAux hmAux) {
-        //act027_approval_.setOnLineApproval();
-        //
-        executeSoSaveApproval();
+
+        if (hmAux.get("so_param_return_status").isEmpty()) {
+
+            recoverApprovalState();
+
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("Validacao de Aprovador"),
+                    hmAux_Trans.get("Erro:" + hmAux.get("so_param_return_msg")),
+                    null,
+                    0
+            );
+
+        } else {
+            act027_approval_.setOnLineApproval(hmAux.get("so_param_return_status") != null ? Integer.parseInt(hmAux.get("so_param_return_status")) : null);
+            executeSoSaveApproval();
+        }
     }
 
     public void executeSoSaveApproval() {
@@ -682,9 +721,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
         //
-        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        Intent mIntent = new Intent(context, WBR_SO_Approval.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
         //
         mIntent.putExtras(bundle);
         //
@@ -909,6 +947,31 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         // refreshUI();
     }
 
+    private void recoverApprovalState() {
+        mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
+        mSm_so.setApproval_required(0);
+        mSm_so.setClient_approval_user(null);
+
+        mSm_so.setClient_approval_date(null);
+        mSm_so.setClient_name(null);
+        mSm_so.setClient_approval_image_name(null);
+        mSm_so.setClient_approval_type_sig(null);
+        //
+        sm_soDao.addUpdate(
+                new SM_SO_Sql_012(
+                        0,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ).toSqlQuery()
+        );
+    }
+
     @Override
     public void ivNServiceClick() {
         ToolBox.alertMSG(
@@ -1024,17 +1087,20 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + sFileName);
         if (sFile.exists()) {
-            Toast.makeText(
-                    context,
-                    "Com Assinatura!!!",
-                    Toast.LENGTH_SHORT
-            ).show();
+
+            act027_approval_.setOnLineApprovalSig(sFileName);
+            executeSoSaveApproval();
+
         } else {
-            Toast.makeText(
+            recoverApprovalState();
+
+            ToolBox.alertMSG(
                     context,
-                    "Sem Assinatura!!!",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    hmAux_Trans.get("alert_so_signature_ttl"),
+                    hmAux_Trans.get("alert_so_signature_msg"),
+                    null,
+                    0
+            );
         }
     }
 

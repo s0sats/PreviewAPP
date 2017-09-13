@@ -64,7 +64,7 @@ public class WS_SO_Approval extends IntentService {
 
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", sb.toString(), "", "0");
 
         } finally {
 
@@ -91,6 +91,7 @@ public class WS_SO_Approval extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
 
         ArrayList<TSO_Approval_Env.SO_Approval_Item> so_status = new ArrayList<>();
 

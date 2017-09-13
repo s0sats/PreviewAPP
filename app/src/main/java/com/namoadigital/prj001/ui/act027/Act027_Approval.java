@@ -22,9 +22,12 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 05/09/17.
@@ -33,6 +36,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 public class Act027_Approval extends BaseFragment {
 
     private boolean bStatus = false;
+
+    private boolean bFirst = true;
 
     private Context context;
 
@@ -63,14 +68,60 @@ public class Act027_Approval extends BaseFragment {
     }
 
     private SM_SO mSm_so;
+    private SM_SODao sm_soDao;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
     }
 
-    public void setOnLineApproval() {
-        // mSm_so colocar os valores
-        // Salvar e marcar para atualizacao
+    public void setOnLineApproval(Integer user_code) {
+        mSm_so.setStatus(Constant.SO_STATUS_WAITING_SYNC);
+        mSm_so.setApproval_required(2);
+        mSm_so.setClient_approval_user(user_code);
+
+        mSm_so.setClient_approval_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        mSm_so.setClient_name(null);
+        mSm_so.setClient_approval_image_name(null);
+        mSm_so.setClient_approval_type_sig(null);
+        //
+        sm_soDao.addUpdate(
+                new SM_SO_Sql_012(
+                        2,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code(),
+                        mSm_so.getClient_approval_user(),
+                        mSm_so.getClient_approval_date(),
+                        mSm_so.getClient_name(),
+                        mSm_so.getClient_approval_image_name(),
+                        mSm_so.getClient_approval_type_sig()
+                ).toSqlQuery()
+        );
+    }
+
+    public void setOnLineApprovalSig(String image_name) {
+        mSm_so.setStatus(Constant.SO_STATUS_WAITING_SYNC);
+        mSm_so.setApproval_required(1);
+        mSm_so.setClient_approval_user(null);
+
+        mSm_so.setClient_approval_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        mSm_so.setClient_name(mk_name_value.getText().toString());
+        mSm_so.setClient_approval_image_name(image_name);
+        mSm_so.setClient_approval_type_sig(rb_user.isChecked() ? "USER" : "CLIENT");
+        //
+        sm_soDao.addUpdate(
+                new SM_SO_Sql_012(
+                        1,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code(),
+                        mSm_so.getClient_approval_user(),
+                        mSm_so.getClient_approval_date(),
+                        mSm_so.getClient_name(),
+                        mSm_so.getClient_approval_image_name(),
+                        mSm_so.getClient_approval_type_sig()
+                ).toSqlQuery()
+        );
     }
 
     @Nullable
@@ -128,6 +179,12 @@ public class Act027_Approval extends BaseFragment {
         approvalApproval = (Button) view.findViewById(R.id.act027_approval_content_btn_approval);
 
         iv_signature = (ImageView) view.findViewById(R.id.act027_approval_content_iv_signature);
+
+        sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
     }
 
     private void iniAction() {
@@ -135,7 +192,11 @@ public class Act027_Approval extends BaseFragment {
         approvalApprovalUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // grava na so e manda bala
+                setOnLineApproval(Integer.parseInt(ToolBox_Con.getPreference_User_Code(getActivity())));
+                //
+                Act027_Main mMain = (Act027_Main) getActivity();
+                //
+                mMain.executeSoSaveApproval();
             }
         });
 
@@ -152,7 +213,7 @@ public class Act027_Approval extends BaseFragment {
                 if (mk_name_value.getText().toString().trim().isEmpty()) {
                     ToolBox.alertMSG(
                             getActivity(),
-                            hmAux_Trans.get("alert_no_name_title"),
+                            hmAux_Trans.get("alert_no_name_ttl"),
                             hmAux_Trans.get("alert_no_name_msg"),
                             null,
                             -1,
@@ -262,9 +323,6 @@ public class Act027_Approval extends BaseFragment {
 
         iv_signature.setVisibility(View.GONE);
 
-        // Gambeta
-        mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
-
         // Fechado
         if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
 
@@ -304,6 +362,27 @@ public class Act027_Approval extends BaseFragment {
                             }
                         }
                     });
+
+                    if (rg_opc.getVisibility() == View.VISIBLE && rg_opc.getCheckedRadioButtonId() != -1) {
+                        switch (rg_opc.getCheckedRadioButtonId()) {
+                            case R.id.act027_approval_content_rb_user:
+
+                                approvalApprovalUser.setVisibility(View.VISIBLE);
+                                approvalNFC.setVisibility(View.GONE);
+                                approvalUser_Password.setVisibility(View.GONE);
+
+                                break;
+                            case R.id.act027_approval_content_rb_other:
+
+                                approvalApprovalUser.setVisibility(View.GONE);
+                                approvalNFC.setVisibility(View.VISIBLE);
+                                approvalUser_Password.setVisibility(View.VISIBLE);
+
+                                break;
+                        }
+                    }
+
+
                 } else {
                     approvalApprovalUser.setVisibility(View.GONE);
                     approvalNFC.setVisibility(View.VISIBLE);
@@ -334,6 +413,13 @@ public class Act027_Approval extends BaseFragment {
                         }
                     }
                 });
+
+                if (ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)){
+                    rg_opc.setVisibility(View.VISIBLE);
+                } else {
+                    rg_opc.setVisibility(View.GONE);
+                    rb_user.setChecked(true);
+                }
 
                 if (!rb_user.isChecked() && !rb_other.isChecked()) {
                     rb_user.setChecked(true);
