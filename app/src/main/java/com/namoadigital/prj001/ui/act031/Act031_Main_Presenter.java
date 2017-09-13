@@ -29,9 +29,11 @@ public interface Act031_Main_Presenter {
 
     void saveNewSerialInfo(Long product_code, String serial_id);
 
+    void saveNewSerialInfo(MD_Product_Serial md_product_serial);
+
     void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult);
 
-    void processTrackingResult(HMAux auxResult);
+    void processTrackingResult(HMAux auxResult, MD_Product_Serial serialObj);
 
     boolean isTrackingListed(String tracking);
 

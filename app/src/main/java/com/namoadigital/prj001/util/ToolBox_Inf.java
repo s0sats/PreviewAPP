@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -728,6 +729,8 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
+        validation = validation == null ? "" : validation;
+
         switch (validation) {
             case "OK":
                 break;
@@ -2126,6 +2129,17 @@ public class ToolBox_Inf {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    /**
+     * Metodo que esconde teclado quando o foco esta no campo passado como parametro.
+     *
+     * @param c - Contexto da tela
+     * @param windowToken - EditText.getWindowToken()
+     */
+    public static void closeKeyboard(Context c, IBinder windowToken) {
+        InputMethodManager mgr = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(windowToken, 0);
     }
 
     public static void clearFilesByPrefix(String path, String prefix) {

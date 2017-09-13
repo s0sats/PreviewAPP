@@ -12,14 +12,14 @@
         android:layout_marginTop ="2dp"
         android:layout_marginBottom="20dp"
         >
-
         <TextView
             android:id="@+id/namoa_dialog_add_tracking_tv_lbl"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="@dimen/font_size_title_md"
-            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/font_size_title_dialog"
+            android:gravity="center"
+            android:textStyle="bold"
             />
 
         <View
@@ -30,10 +30,10 @@
             android:id="@+id/namoa_dialog_add_tracking_iv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/stroke_red_states"
+
             android:paddingBottom="4dp"
             android:paddingLeft="15dp"
-            android:paddingRight="15dp"
+            android:paddingRight="5dp"
             android:paddingTop="4dp"
             android:src="@drawable/ic_close_circle_outline"
             android:tint="@color/namoa_color_danger_red"
@@ -45,8 +45,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="50dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/namoa_dialog_add_tracking_mket_tracking"

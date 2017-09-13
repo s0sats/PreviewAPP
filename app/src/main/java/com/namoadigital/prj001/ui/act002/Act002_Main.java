@@ -300,6 +300,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     }
 
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+    }
+
     public void startDownloadServices() {
 
         Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);

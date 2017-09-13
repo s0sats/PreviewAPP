@@ -32,7 +32,7 @@ public class WS_Serial_Tracking_Search extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_serial_search";
+    private String mResource_Name = "ws_serial_tracking_search";
 
     public WS_Serial_Tracking_Search() {
         super("WS_Serial_Tracking_Search");
@@ -129,10 +129,9 @@ public class WS_Serial_Tracking_Search extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
-        translist.add("msg_processing_list");
         translist.add("msg_sending_data");
         translist.add("msg_receiving_data");
-        translist.add("msg_no_serial_found");
+        translist.add("msg_save_ok");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

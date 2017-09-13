@@ -96,6 +96,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private String ws_process = "";
     private boolean only_save = false;
     private String lastServiceReturned = "";
+    private boolean ws_call_next_ctrl = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,6 +134,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("act027_title");
         transList.add("alert_so_exit_title");
         transList.add("alert_so_exit_msg");
+        transList.add("alert_so_ttl");
+        transList.add("msg_so_save_ok");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -578,9 +581,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
 
     private void processSoSave(HMAux hmAux) {
-        String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+        //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
+        if(hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
+            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+            //
+            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+        }else{
+            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
-        showResults(so);
+            showResults(so);
+        }
     }
 
     private void showResults(String[] so) {
@@ -597,38 +607,43 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         }
 
         if (sos.size() == 1) {
-
-            if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
-                //Se for apenas save do atalho, reseta var only_save, fecha progress
-                //e chama metodo que reloada tela.
-                if (only_save) {
+            //Verifica se S.O atualizada, foi esta S.O
+            if(sos.get(0).get("label").equals(mSm_so.getSo_prefix()+"."+mSm_so.getSo_code())){
+                if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
                     progressDialog.dismiss();
                     only_save = false;
-                    refreshUI();
-
-                } else {
-                    ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_so_save_ok"), "", "0");
                     //
-                    ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_ttl"),
+                            hmAux_Trans.get("msg_so_save_ok"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                    //refreshUI();
+                }else {
+                    progressDialog.dismiss();
                     //
-                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_list_title"),
+                            sos.get(0).get("status"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
                 }
-            } else {
-                progressDialog.dismiss();
-
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_so_list_title"),
-                        sos.get(0).get("status"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                refreshUI();
-                            }
-                        },
-                        0
-                );
-
+            }else{
+                showNewOptDialog(sos);
             }
 
         } else {
@@ -653,7 +668,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-
+        //
+        final HMAux auxSo = new HMAux();
+        for (int i = 0; i < sos.size() ; i++) {
+            if(sos.get(i).get("label").equals(mSm_so.getSo_prefix()+"."+mSm_so.getSo_code())){
+                auxSo.putAll(sos.get(i));
+                break;
+            }
+        }
+        //
         lv_results.setAdapter(
                 new Act028_Results_Adapter(
                         context,
@@ -661,6 +684,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         sos
                 )
         );
+
 
         //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
         builder.setView(view);
@@ -671,20 +695,33 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         /**
          * Ini Action
          */
-
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
                 //
-                if (only_save) {
-                    //
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
+                if(auxSo.containsKey("status")){
+                    if(auxSo.get("status").equalsIgnoreCase("Ok")){
+                        //
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                                    hmAux_Trans.get("alert_so_sync_ok_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        refreshUI();
+                                    }
+                                },
+                                0
+                        );
+                        //refreshUI();
                     }
-                    only_save = false;
-                    refreshUI();
-                } else {
+                }else{
                     executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                 }
             }
@@ -789,26 +826,29 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     public void executeSoSync(int so_prefix, int so_code) {
-        setWs_process(WS_PROCESS_SO_SYNC);
-        //
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
+        if(ws_call_next_ctrl){
+            setWs_process(WS_PROCESS_SO_SYNC);
+            //
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_so_sync_ttl"),
+                    hmAux_Trans.get("progress_so_sync_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, so_prefix + "." + so_code);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
         }
-        //
-        enableProgressDialog(
-                hmAux_Trans.get("progress_so_sync_ttl"),
-                hmAux_Trans.get("progress_so_sync_msg"),
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_SO_Search.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, so_prefix + "." + so_code);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+
 
     }
 
@@ -927,13 +967,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     public void onClick(DialogInterface dialog, int which) {
                         if (ToolBox_Con.isOnline(context)) {
                             //Seta S.O como update required.
-                            sm_soDao.addUpdate(
+                            /*sm_soDao.addUpdate(
                                     new SM_SO_Sql_009(
                                             ToolBox_Con.getPreference_Customer_Code(context),
                                             mSm_so.getSo_prefix(),
                                             mSm_so.getSo_code()
                                     ).toSqlQuery()
-                            );
+                            );*/
                             //
                             executeSoSave();
                         } else {
