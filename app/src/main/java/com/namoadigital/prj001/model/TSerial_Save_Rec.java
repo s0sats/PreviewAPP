@@ -58,7 +58,8 @@ public class TSerial_Save_Rec {
         private long customer_code;
         private long product_code;
         private int serial_code;
-        private String serial_id;
+        private int serial_tmp;
+        //private String serial_id;
         private String ret_status;
         private String ret_msg;
 
@@ -86,13 +87,21 @@ public class TSerial_Save_Rec {
             this.serial_code = serial_code;
         }
 
-        public String getSerial_id() {
-            return serial_id;
+        public int getSerial_tmp() {
+            return serial_tmp;
         }
 
-        public void setSerial_id(String serial_id) {
-            this.serial_id = serial_id;
+        public void setSerial_tmp(int serial_tmp) {
+            this.serial_tmp = serial_tmp;
         }
+
+//        public String getSerial_id() {
+//            return serial_id;
+//        }
+//
+//        public void setSerial_id(String serial_id) {
+//            this.serial_id = serial_id;
+//        }
 
         public String getRet_status() {
             return ret_status;

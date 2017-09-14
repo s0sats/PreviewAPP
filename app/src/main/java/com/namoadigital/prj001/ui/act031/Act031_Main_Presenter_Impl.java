@@ -177,7 +177,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
     @Override
     public void saveNewSerialInfo(MD_Product_Serial md_product_serial) {
-        serialDao.addUpdate(md_product_serial);
+        serialDao.addUpdateTmp(md_product_serial);
         //
         getSerialInfo(product_code, md_product_serial.getSerial_id());
     }
@@ -197,13 +197,14 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
     @Override
     public void getSerialInfo(Long product_code, String serial_id) {
-        HMAux md_product_serial = serialDao.getByStringHM(
+        HMAux serial_full_desc_info = serialDao.getByStringHM(
                 new MD_Product_Serial_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
         );
+
         //Reseta tracking_list
        // tracking_list.clear();
         //
@@ -220,7 +221,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         }*/
         //
         //mView.setSerialValues(md_product_serial);
-        mView.setSerialValuesV2(md_product_serial);
+        mView.setSerialValuesV2(serial_full_desc_info);
     }
 
 
@@ -235,7 +236,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 ).toSqlQuery()
         );
         //Salva dados alterados do S.O
-        serialDao.addUpdate(productSerial);
+        serialDao.addUpdateTmp(productSerial);
         //
         refreshUI(productSerial.getProduct_code(),productSerial.getSerial_id());
         //
@@ -359,6 +360,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
     }
 
     private void refreshUI(long product_code, String serial_id){
+
         new_serial = false;
         //
         mView.setTrackingListChanged(false);

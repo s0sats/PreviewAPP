@@ -1164,6 +1164,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     @Override
     public void scrollToTracking() {
+//        View lastTracking = ll_tracking_content.getChildAt(ll_tracking_content.getChildCount() -1);
+//        int x = (int) lastTracking.getX();
+//        int y =  (lastTracking.getTop() * ll_tracking_content.getChildCount())  + ((View) ll_tracking_content.getParent()).getTop();
+        //move pro title do tracking
         int x = (int) ll_tracking_content.getX();
         int y = ll_tracking_content.getTop() + ((View) ll_tracking_content.getParent()).getTop();
 

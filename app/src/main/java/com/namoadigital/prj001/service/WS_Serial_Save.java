@@ -15,7 +15,6 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.TSerial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -135,7 +134,7 @@ public class WS_Serial_Save extends IntentService {
             //Com arquivo token criado, seta update required para 0
             for (int i = 0; i < serialList.size(); i++) {
                 serialList.get(i).setUpdate_required(0);
-                serialDao.addUpdate(serialList.get(i));
+                serialDao.addUpdateTmp(serialList.get(i));
             }
             //
             callSerial_Save_WS(env);
@@ -194,29 +193,28 @@ public class WS_Serial_Save extends IntentService {
                             rec.getSerial_return(),
                             serialAux.getCustomer_code(),
                             serialAux.getProduct_code(),
-                            serialAux.getSerial_code(),
-                            serialAux.getSerial_id()
+                            serialAux.getSerial_tmp()
                     );
             if (serialSaveReturn != null
                     //Verificar se esse && existe
                     && serialSaveReturn.getRet_status().toUpperCase().equals("OK")
                     ) {
                 //Se serial code = 0, apaga o registro do banco de insere o novo ja com serial_code
-                if (serialAux.getSerial_code() == 0) {
+                /*if (serialAux.getSerial_code() == 0) {
                     serialDao.remove(new MD_Product_Serial_Sql_003(
                                     ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                                     serialAux.getProduct_code()
                             ).toSqlQuery()
                     );
-                }
+                }*/
                 serialAux.setSerial_code(serialSaveReturn.getSerial_code());
-                serialDao.addUpdate(serialAux);
+                serialDao.addUpdateTmp(serialAux);
                 //
                 hmAuxRet.put(hmKey, serialSaveReturn.getRet_status());
             } else {
                 //Setar para atualização novamente
                 serialAux.setUpdate_required(1);
-                serialDao.addUpdate(serialAux);
+                serialDao.addUpdateTmp(serialAux);
                 //
                 hmAuxRet.put(hmKey, String.valueOf(serialSaveReturn != null ? serialSaveReturn.getRet_msg() : hmAux_Trans.get("msg_no_return_found")));
             }
@@ -243,16 +241,17 @@ public class WS_Serial_Save extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
     }
 
-    private TSerial_Save_Rec.Serial_Save_Return getSaveReturn(ArrayList<TSerial_Save_Rec.Serial_Save_Return> serial_return, long customer_code, long product_code, long serial_code, String serial_id) {
+    private TSerial_Save_Rec.Serial_Save_Return getSaveReturn(ArrayList<TSerial_Save_Rec.Serial_Save_Return> serial_return, long customer_code, long product_code, long serial_tmp) {
         TSerial_Save_Rec.Serial_Save_Return serialSaveReturn = null;
         //
         for (int i = 0; i < serial_return.size(); i++) {
             if (serial_return.get(i).getCustomer_code() == customer_code
                     && serial_return.get(i).getProduct_code() == product_code
-                    && (serial_return.get(i).getSerial_code() == serial_code
-                    || (serial_code == 0 && serial_return.get(i).getSerial_id().equalsIgnoreCase(serial_id))
-            )
-                    ) {
+                    && serial_return.get(i).getSerial_tmp() == serial_tmp
+//                    && (serial_return.get(i).getSerial_code() == serial_code
+//                    || (serial_code == 0 && serial_return.get(i).getSerial_id().equalsIgnoreCase(serial_id)))
+
+                ) {
                 serialSaveReturn = serial_return.get(i);
                 break;
             }
