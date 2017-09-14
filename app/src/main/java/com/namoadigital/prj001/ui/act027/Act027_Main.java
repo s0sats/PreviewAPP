@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -30,12 +31,15 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
@@ -53,6 +57,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SAVE;
@@ -96,6 +101,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private boolean only_save = false;
     private String lastServiceReturned = "";
     private boolean ws_call_next_ctrl = true;
+
+    private String sFileNameSignature = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -394,11 +401,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     Integer.parseInt(bundle.getString(SM_SODao.SO_CODE))
             );
             //
+            if (mSm_so != null && mSm_so.getClient_approval_image_name() != null && !mSm_so.getClient_approval_image_name().isEmpty()) {
+                new DownloadSignature().execute(mSm_so.getClient_approval_image_url());
+            }
+            //
             lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
         } else {
             mSm_so = null;
         }
-
     }
 
     private SM_SO loadSM_SO(long customer_code, int so_prefix, int so_code) {
@@ -581,11 +591,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     private void processSoSave(HMAux hmAux) {
         //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
-        if(hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
+        if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
             //
             executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
-        }else{
+        } else {
             String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             showResults(so);
@@ -607,7 +617,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         if (sos.size() == 1) {
             //Verifica se S.O atualizada, foi esta S.O
-            if(sos.get(0).get("label").equals(mSm_so.getSo_prefix()+"."+mSm_so.getSo_code())){
+            if (sos.get(0).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
                 if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
                     progressDialog.dismiss();
                     only_save = false;
@@ -625,7 +635,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                             0
                     );
                     //refreshUI();
-                }else {
+                } else {
                     progressDialog.dismiss();
                     //
                     ToolBox.alertMSG(
@@ -641,7 +651,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                             0
                     );
                 }
-            }else{
+            } else {
                 showNewOptDialog(sos);
             }
 
@@ -669,8 +679,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         final HMAux auxSo = new HMAux();
-        for (int i = 0; i < sos.size() ; i++) {
-            if(sos.get(i).get("label").equals(mSm_so.getSo_prefix()+"."+mSm_so.getSo_code())){
+        for (int i = 0; i < sos.size(); i++) {
+            if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
                 auxSo.putAll(sos.get(i));
                 break;
             }
@@ -703,13 +713,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     progressDialog.dismiss();
                 }
                 //
-                if(auxSo.containsKey("status")){
-                    if(auxSo.get("status").equalsIgnoreCase("Ok")){
+                if (auxSo.containsKey("status")) {
+                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
                         //
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_so_sync_ok_ttl"),
-                                    hmAux_Trans.get("alert_so_sync_ok_msg"),
+                                hmAux_Trans.get("alert_so_sync_ok_msg"),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -720,7 +730,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         );
                         //refreshUI();
                     }
-                }else{
+                } else {
                     executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                 }
             }
@@ -825,7 +835,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     public void executeSoSync(int so_prefix, int so_code) {
-        if(ws_call_next_ctrl){
+        if (ws_call_next_ctrl) {
             setWs_process(WS_PROCESS_SO_SYNC);
             //
             if (progressDialog != null && progressDialog.isShowing()) {
@@ -1118,16 +1128,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     protected void getSignatueF(String mValue) {
         super.getSignatueF(mValue);
 
-        String sFileName = "s_" +
-                ToolBox_Con.getPreference_Customer_Code(context) + "_" +
-                String.valueOf(mSm_so.getSo_prefix()) + "_" +
-                String.valueOf(mSm_so.getSo_code()) + "_" +
-                ".png";
-
-        File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + sFileName);
+        File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + sFileNameSignature);
         if (sFile.exists()) {
 
-            act027_approval_.setOnLineApprovalSig(sFileName);
+            act027_approval_.setOnLineApprovalSig(sFileNameSignature);
+            //
+            callAddSignature(sFileNameSignature);
+            //
             executeSoSaveApproval();
 
         } else {
@@ -1145,11 +1152,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     public void callSignature(String name) {
         try {
-
-            String sFileName = "s_" +
+            sFileNameSignature = "s_" +
                     ToolBox_Con.getPreference_Customer_Code(context) + "_" +
                     String.valueOf(mSm_so.getSo_prefix()) + "_" +
-                    String.valueOf(mSm_so.getSo_code()) + "_" +
+                    String.valueOf(mSm_so.getSo_code()) + "_" + UUID.randomUUID().toString() +
                     ".png";
 
             Bundle bundleN = new Bundle();
@@ -1157,7 +1163,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             bundleN.putInt(ConstantBase.PTYPE, 0);
             bundleN.putString(ConstantBase.MNAME, name);
             bundleN.putBoolean(ConstantBase.BLOCK_NAME, true);
-            bundleN.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + sFileName);
+            bundleN.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + sFileNameSignature);
 
             Intent mIntent = new Intent(context, SignaTure_Activity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1166,6 +1172,61 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             context.startActivity(mIntent);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+    }
+
+
+    private void callAddSignature(String signature) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+
+        GE_File geFile = new GE_File();
+        geFile.setFile_code(signature.replace(".png", ""));
+        geFile.setFile_path(signature);
+        geFile.setFile_status("OPENED");
+        geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+        geFileDao.addUpdate(geFiles, false);
+
+        activateUpload(context);
+    }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private class DownloadSignature extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            String sFileName = params[0].replace(".png", "");
+
+            try {
+                if (!ToolBox_Inf.verifyDownloadFileInf(sFileName.toLowerCase() + ".png")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(sFileName.toLowerCase() + ".tmps");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            mSm_so.getClient_approval_image_url(),
+                            Constant.CACHE_PATH_PHOTO + "/" + sFileName.toLowerCase() + ".tmps"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInfSig(sFileName.toLowerCase(), ".png");
+                }
+            } catch (Exception e) {
+            }
+
+            return null;
         }
     }
 }

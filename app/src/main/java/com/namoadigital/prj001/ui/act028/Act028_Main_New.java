@@ -540,19 +540,27 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     public void onBackPressed() {
         if (mShortCut) {
 
+            String title = "";
             String message = "";
 
-            if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP) &&
+
+            if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_YES_NO) &&
                     mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
                     ) {
-                hmAux_Trans.get("alert_task_msg_delete");
+
+                title = hmAux_Trans.get("alert_task_lost_data_ttl");
+                message = hmAux_Trans.get("alert_task_lost_data_msg");
+
             } else {
-                hmAux_Trans.get("alert_service_list_msg");
+
+                title = hmAux_Trans.get("alert_service_list_title");
+                message = hmAux_Trans.get("alert_service_list_msg");
+
             }
 
             ToolBox.alertMSG(
                     context,
-                    hmAux_Trans.get("alert_service_list_title"),
+                    title,
                     message,
                     new DialogInterface.OnClickListener() {
                         @Override

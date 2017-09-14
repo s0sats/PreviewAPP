@@ -572,6 +572,12 @@ public class ToolBox_Inf {
         from.renameTo(to);
     }
 
+    public static void renameDownloadFileInfSig(String sName, String ext) {
+        File from = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ".tmps");
+        File to = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
 
     public static void renameDownloadFileInfV2(String path, String sName, String extOri, String extDest) {
         if (extOri == null || extOri.trim().length() == 0) {
@@ -802,8 +808,8 @@ public class ToolBox_Inf {
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
             default:
-                if(validation.trim().length() == 0){
-                  return processoOthersError(context,context.getResources().getString(R.string.generic_error_lbl),error_msg);
+                if (validation.trim().length() == 0) {
+                    return processoOthersError(context, context.getResources().getString(R.string.generic_error_lbl), error_msg);
                 }
                 break;
         }
@@ -1141,7 +1147,7 @@ public class ToolBox_Inf {
         );
     }
 
-    public static void buildFooterDialog(Context context){
+    public static void buildFooterDialog(Context context) {
 
         HMAux hmDialogInfo = loadFooterDialogInfo(context);
 
@@ -1301,7 +1307,7 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_ZONE_LBL, "");
         hmAux.put(Constant.FOOTER_ZONE, "");
 
-        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
                             context,
@@ -1316,7 +1322,7 @@ public class ToolBox_Inf {
                             ).toSqlQuery()
                     );
             zoneDesc = "";
-            if(zone != null) {
+            if (zone != null) {
                 zoneDesc = zone.getZone_code() + " - " + zone.getZone_desc();
             }
             //
@@ -1853,14 +1859,14 @@ public class ToolBox_Inf {
                     .append("Timeout!\n ")
                     .append(e.toString()
                     );
-        }  else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
+        } else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_server_connection_failed"))
                     .append("\n")
                     .append("\n")
-                    .append(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR+"!\n ")
-                    //.append(e.toString())//Como exception na mão, não tem toString
-                    ;
+                    .append(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR + "!\n ")
+            //.append(e.toString())//Como exception na mão, não tem toString
+            ;
 
         } else {
             sb.append(results)
@@ -2134,7 +2140,7 @@ public class ToolBox_Inf {
     /**
      * Metodo que esconde teclado quando o foco esta no campo passado como parametro.
      *
-     * @param c - Contexto da tela
+     * @param c           - Contexto da tela
      * @param windowToken - EditText.getWindowToken()
      */
     public static void closeKeyboard(Context c, IBinder windowToken) {
@@ -2289,10 +2295,10 @@ public class ToolBox_Inf {
         return false;
     }
 
-    public static String getColumnsToHmAux(String[] columns){
-        if(columns.length > 0){
-            return Arrays.toString(columns).replace("[","").replace("]","").replace(",","#").replace(" ","");
-        }else{
+    public static String getColumnsToHmAux(String[] columns) {
+        if (columns.length > 0) {
+            return Arrays.toString(columns).replace("[", "").replace("]", "").replace(",", "#").replace(" ", "");
+        } else {
             return "";
         }
     }
@@ -2315,27 +2321,27 @@ public class ToolBox_Inf {
     }
 
 
-    public static void setExecStatusColor(Context context, TextView tv_status, String status){
+    public static void setExecStatusColor(Context context, TextView tv_status, String status) {
                 /*
         * Tratativa de cor por Status
         * */
-        switch (status){
-            case Constant.SO_STATUS_PENDING :
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_PROCESS :
+            case Constant.SO_STATUS_PROCESS:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-            case Constant.SO_STATUS_DONE :
+            case Constant.SO_STATUS_DONE:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED :
+            case Constant.SO_STATUS_CANCELLED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
-            case Constant.SO_STATUS_NOT_EXECUTED :
+            case Constant.SO_STATUS_NOT_EXECUTED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
                 break;
-            case Constant.SO_STATUS_INCONSISTENT :
+            case Constant.SO_STATUS_INCONSISTENT:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
                 break;
             default:
@@ -2343,7 +2349,7 @@ public class ToolBox_Inf {
         }
     }
 
-    public static void setSOStatusColor(Context context, TextView tv_status, String status){
+    public static void setSOStatusColor(Context context, TextView tv_status, String status) {
 
         switch (status) {
             case Constant.SO_STATUS_PENDING:

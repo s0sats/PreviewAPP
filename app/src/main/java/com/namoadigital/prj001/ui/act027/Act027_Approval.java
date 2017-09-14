@@ -297,13 +297,7 @@ public class Act027_Approval extends BaseFragment {
 
             approvalNFC.setOnClickListener(listener);
 
-            String sFileName = "s_" +
-                    ToolBox_Con.getPreference_Customer_Code(context) + "_" +
-                    String.valueOf(mSm_so.getSo_prefix()) + "_" +
-                    String.valueOf(mSm_so.getSo_code()) + "_" +
-                    ".png";
-
-            iv_signature.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + sFileName));
+            iv_signature.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + mSm_so.getClient_approval_image_name()));
 
             approvalStatus();
         }
@@ -330,6 +324,7 @@ public class Act027_Approval extends BaseFragment {
             } else {
                 tv_name_lbl.setVisibility(View.VISIBLE);
                 mk_name_value.setVisibility(View.VISIBLE);
+                mk_name_value.setText(mSm_so.getClient_name());
 
                 iv_signature.setVisibility(View.VISIBLE);
             }
@@ -414,7 +409,7 @@ public class Act027_Approval extends BaseFragment {
                     }
                 });
 
-                if (ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)){
+                if (ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
                     rg_opc.setVisibility(View.VISIBLE);
                 } else {
                     rg_opc.setVisibility(View.GONE);
