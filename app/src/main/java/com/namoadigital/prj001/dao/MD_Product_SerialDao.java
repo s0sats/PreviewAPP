@@ -314,7 +314,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                         new MD_Product_Serial_Tracking_Sql_001(
                                                 md_product_serial.getCustomer_code(),
                                                 md_product_serial.getProduct_code(),
-                                                md_product_serial.getSerial_code()
+                                                md_product_serial.getSerial_tmp()
                                         ).toSqlQuery()
                                 )
                 );
@@ -385,7 +385,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                             new MD_Product_Serial_Tracking_Sql_001(
                                                     uAux.getCustomer_code(),
                                                     uAux.getProduct_code(),
-                                                    uAux.getSerial_code()
+                                                    uAux.getSerial_tmp()
                                             ).toSqlQuery()
                                     )
                     );

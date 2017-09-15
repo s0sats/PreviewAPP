@@ -235,6 +235,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_tracking_unavailable_msg");
         transList.add("alert_tracking_already_listed_ttl");
         transList.add("alert_tracking_already_listed_msg");
+        transList.add("alert_no_site_selected_ttl");
+        transList.add("alert_no_site_selected_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -269,7 +271,6 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                         Constant.DB_VERSION_CUSTOM
                 ),
                 product_code,
-                new_serial,
                 tracking_list
         );
         //
@@ -407,6 +408,16 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     }
 
     @Override
+    public boolean isNew_serial() {
+        return new_serial;
+    }
+
+    @Override
+    public void setNew_serial(boolean new_serial) {
+        this.new_serial = new_serial;
+    }
+
+    @Override
     public String getSearched_tracking() {
         return searched_tracking;
     }
@@ -447,14 +458,15 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
                     if (!mPresenter.isTrackingListed(mket_text)) {
                         if (ToolBox_Con.isOnline(context)) {
-                            ToolBox_Inf.closeKeyboard(context,mket_tracking.getWindowToken());
+                            ToolBox_Inf.closeKeyboard(context, mket_tracking.getWindowToken());
                             //
                             searched_tracking = mket_text;
                             //
                             mPresenter.executeTrackingSearch(
                                     serialObj.getProduct_code(),
                                     serialObj.getSerial_code(),
-                                    mket_text
+                                    mket_text,
+                                    ss_site.getmValue().get(SearchableSpinner.ID)
                             );
                             //
                             show.dismiss();
@@ -599,7 +611,15 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         iv_add_tracking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showTrackingDialog();
+                String site_val = ss_site.getmValue().get(SearchableSpinner.ID);
+                if (site_val != null && !site_val.equals("null") ) {
+                    showTrackingDialog();
+                } else {
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_no_site_selected_ttl"),
+                            hmAux_Trans.get("alert_no_site_selected_msg")
+                    );
+                }
             }
         });
 
@@ -779,7 +799,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             } else {
                 //Se for EditText
                 if (propertie instanceof EditText) {
-                    if (!((EditText) propertie).getText().toString().equals(((EditText) propertie).getTag().toString())) {
+                    String tag =  (String)((EditText) propertie).getTag() == null ? "" : (String)((EditText) propertie).getTag();
+                    String text = ((EditText) propertie).getText().toString();
+
+                    if (!text.equals(tag)) {
+                   // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
                         serialInfoChanges = true;
                         return true;
                     }
@@ -872,7 +896,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     }
 
     @Override
-    public void setSerialValuesV2(HMAux md_product_serial) {
+    public void setSerialValuesV2(HMAux md_product_serial, MD_Product_Serial serialObjDb) {
         //
         if (!new_serial) {
             mket_serial_id.setmBARCODE(false);
@@ -881,7 +905,13 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
             mket_serial_id.setEnabled(false);
         }
-        //}
+        //
+        if (serialObjDb != null) {
+            serialObj = serialObjDb;
+        }
+        //Seta Tracking na lista e atualiza referencia no presenter.
+        tracking_list = serialObj.getTracking_list();
+        mPresenter.updateTrackingReference(tracking_list);
         //
         btn_action.setOnClickListener(listnerSearchSO);
         btn_action.setText(hmAux_Trans.get("btn_action_lbl"));
@@ -915,19 +945,17 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         ToolBox_Inf.setSSmValue(ss_site_owner, String.valueOf(serialObj.getSite_code_owner()), md_product_serial.get(SITE_DESC_OWNER), true, false);
         serialProperties.add(ss_site_owner);
         //
-        et_info1.setText(String.valueOf(serialObj.getAdd_inf1()));
-        et_info1.setTag(String.valueOf(serialObj.getAdd_inf1()));
+        et_info1.setText(serialObj.getAdd_inf1());
+        et_info1.setTag(serialObj.getAdd_inf1());
         serialProperties.add(et_info1);
         //
-        et_info2.setText(String.valueOf(serialObj.getAdd_inf2()));
-        et_info2.setTag(String.valueOf(serialObj.getAdd_inf2()));
+        et_info2.setText(serialObj.getAdd_inf2());
+        et_info2.setTag(serialObj.getAdd_inf2());
         serialProperties.add(et_info2);
         //
-        et_info3.setText(String.valueOf(serialObj.getAdd_inf3()));
-        et_info3.setTag(String.valueOf(serialObj.getAdd_inf3()));
+        et_info3.setText(serialObj.getAdd_inf3());
+        et_info3.setTag(serialObj.getAdd_inf3());
         serialProperties.add(et_info3);
-        //
-        tracking_list = serialObj.getTracking_list();
         //
         ll_tracking_content.removeAllViews();
         //Insere lista de tracking vindo do banco.
@@ -1192,6 +1220,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
     }
+
+
 
     /**
      * Carrega lista que sera exibida no spinner.

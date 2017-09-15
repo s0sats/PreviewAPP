@@ -17,6 +17,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -40,10 +41,9 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private long product_code;
-    private boolean new_serial;
     private ArrayList<MD_Product_Serial_Tracking> tracking_list;
 
-    public Act031_Main_Presenter_Impl(Context context, Act031_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, long product_code, boolean new_serial, ArrayList<MD_Product_Serial_Tracking> tracking_list) {
+    public Act031_Main_Presenter_Impl(Context context, Act031_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, long product_code, ArrayList<MD_Product_Serial_Tracking> tracking_list) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -51,7 +51,6 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         this.serialDao = serialDao;
         this.trackingDao = trackingDao;
         this.product_code = product_code;
-        this.new_serial = new_serial;
         this.tracking_list = tracking_list;
     }
 
@@ -103,7 +102,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, "");
         bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
         bundle.putBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS, true);
-        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS, new_serial);
+        bundle.putBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS, mView.isNew_serial());
         bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
         //
         mIntent.putExtras(bundle);
@@ -156,7 +155,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
     }
 
     @Override
-    public void executeTrackingSearch(long product_code, long serial_code, String tracking) {
+    public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
         mView.setWs_process(Act031_Main.WS_SEARCH_TRACKING);
         //
         mView.showPD(
@@ -169,6 +168,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
         bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE, String.valueOf(serial_code));
         bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING, tracking);
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE, site_code);
         //
         mIntent.putExtras(bundle);
         //
@@ -204,26 +204,23 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                         serial_id
                 ).toSqlQuery()
         );
+        ///
+        MD_Product_Serial serialObjDb = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
 
-        //Reseta tracking_list
-       // tracking_list.clear();
-        //
-        /*if (md_product_serial != null) {
-            ArrayList<MD_Product_Serial_Tracking> auxList =
-                    (ArrayList<MD_Product_Serial_Tracking>) trackingDao.query(new MD_Product_Serial_Tracking_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    Long.parseLong(md_product_serial.get(MD_Product_SerialDao.PRODUCT_CODE)),
-                                    Long.parseLong(md_product_serial.get(MD_Product_SerialDao.SERIAL_CODE))
-                            ).toSqlQuery()
-                    );
-            //
-            tracking_list.addAll(auxList);
-        }*/
-        //
         //mView.setSerialValues(md_product_serial);
-        mView.setSerialValuesV2(serial_full_desc_info);
+        mView.setSerialValuesV2(serial_full_desc_info, serialObjDb);
     }
 
+    @Override
+    public void updateTrackingReference(ArrayList<MD_Product_Serial_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
+    }
 
     @Override
     public void updateSerialInfo(MD_Product_Serial productSerial) {
@@ -232,7 +229,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 MD_Product_Serial_Tracking_Sql_002(
                         productSerial.getCustomer_code(),
                         productSerial.getProduct_code(),
-                        productSerial.getSerial_code()
+                        productSerial.getSerial_tmp()
                 ).toSqlQuery()
         );
         //Salva dados alterados do S.O
@@ -298,7 +295,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 }
             }
             //Atualiza dados dos serial na tela e spinners
-            //getSerialInfo(product_code, serial_id);
+            refreshUI(product_code,serial_id);
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
@@ -361,7 +358,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
     private void refreshUI(long product_code, String serial_id){
 
-        new_serial = false;
+        mView.setNew_serial(false);
         //
         mView.setTrackingListChanged(false);
         //

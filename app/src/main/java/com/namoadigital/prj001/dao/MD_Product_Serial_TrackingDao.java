@@ -54,7 +54,7 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
                 sbWhere.append(" and ");
                 sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product_serial_tracking.getProduct_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(SERIAL_CODE).append(" = '").append(String.valueOf(md_product_serial_tracking.getSerial_code())).append("'");
+                sbWhere.append(SERIAL_TMP).append(" = '").append(String.valueOf(md_product_serial_tracking.getSerial_tmp())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TRACKING).append(" = '").append(String.valueOf(md_product_serial_tracking.getTracking())).append("'");
 
@@ -88,7 +88,7 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
                     sbWhere.append(" and ");
                     sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product_serial_tracking.getProduct_code())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(SERIAL_CODE).append(" = '").append(String.valueOf(md_product_serial_tracking.getSerial_code())).append("'");
+                    sbWhere.append(SERIAL_TMP).append(" = '").append(String.valueOf(md_product_serial_tracking.getSerial_tmp())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(TRACKING).append(" = '").append(String.valueOf(md_product_serial_tracking.getTracking())).append("'");
 
@@ -281,7 +281,9 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
                 contentValues.put(SERIAL_CODE,md_product_serial_tracking.getSerial_code());
             }
 
-            contentValues.put(SERIAL_TMP,md_product_serial_tracking.getSerial_tmp());
+            if(md_product_serial_tracking.getSerial_tmp() > -1){
+                contentValues.put(SERIAL_TMP,md_product_serial_tracking.getSerial_tmp());
+            }
 
             if(md_product_serial_tracking.getTracking() != null){
                 contentValues.put(TRACKING,md_product_serial_tracking.getTracking());
