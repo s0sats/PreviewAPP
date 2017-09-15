@@ -2241,7 +2241,8 @@ public class ToolBox_Inf {
             HMAux hmAux = new HMAux();
             hmAux.put(SearchableSpinner.ID, code);
             hmAux.put(SearchableSpinner.DESCRIPTION, desc);
-            ss_component.setmValue(hmAux);
+            //ss_component.setmValue(hmAux);
+            ss_component.setmValue(hmAux,source_val);
             //
             if (source_val) {
                 ss_component.setTag(code);

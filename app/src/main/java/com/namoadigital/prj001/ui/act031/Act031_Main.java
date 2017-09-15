@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act031;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -237,6 +238,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_tracking_already_listed_msg");
         transList.add("alert_no_site_selected_ttl");
         transList.add("alert_no_site_selected_msg");
+        transList.add("alert_keep_tracking_list_ttl");
+        transList.add("alert_keep_tracking_list_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -550,6 +553,31 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                     loadZoneSS(true);
                     //
                     loadLocalSS(true);
+                }
+                String tag = (String)ss_site.getTag() == null ? "" : (String) ss_site.getTag();
+                //
+                if (ss_site.hasChanged()) {
+                //if (!hmAux.get(SearchableSpinner.ID).equals(tag) && tracking_list.size() > 0) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_keep_tracking_list_ttl"),
+                            hmAux_Trans.get("alert_keep_tracking_list_msg"),
+                            null,
+                            2,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //
+                                    ll_tracking_content.removeAllViews();
+                                    //
+                                    serialObj.setTracking_list( new ArrayList<MD_Product_Serial_Tracking>());
+                                    //
+                                    tracking_list = serialObj.getTracking_list();
+                                    //
+                                    mPresenter.updateTrackingReference(tracking_list);
+                                }
+                            }
+                    );
                 }
             }
         });
