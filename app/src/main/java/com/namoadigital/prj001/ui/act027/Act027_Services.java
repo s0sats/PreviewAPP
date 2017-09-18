@@ -621,8 +621,12 @@ public class Act027_Services extends BaseFragment {
 
             ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(HMAux hmAux) {
+                public void onItemPreSelected(HMAux hmAux) {
 
+                }
+
+                @Override
+                public void onItemPostSelected(HMAux hmAux) {
                     partnerAux.clear();
 
                     partnerAux.putAll(hmAux);

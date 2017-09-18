@@ -317,8 +317,12 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
 
         ss_type_sig.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
 
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 typeAux.clear();
                 typeAux.putAll(hmAux);
 

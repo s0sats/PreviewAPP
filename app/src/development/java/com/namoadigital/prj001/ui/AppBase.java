@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui;
 import android.app.Application;
 import android.os.Environment;
 
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -28,10 +29,10 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -88,6 +89,8 @@ public class AppBase extends Application {
         ToolBox_Inf.libTranslation(getApplicationContext());
 
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
+
+        Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
 
     }
 }

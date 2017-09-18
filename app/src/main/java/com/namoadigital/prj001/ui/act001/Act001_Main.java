@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act001;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -292,6 +293,15 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class hugo extends AsyncTask<Void, Void, Integer>{
+
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            return null;
+        }
     }
 
 }

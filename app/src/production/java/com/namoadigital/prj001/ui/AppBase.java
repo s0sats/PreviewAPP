@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui;
 
 import android.app.Application;
 
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -88,6 +89,8 @@ public class AppBase extends Application {
         ToolBox_Inf.libTranslation(getApplicationContext());
 
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
+
+        Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
 
     }
 }

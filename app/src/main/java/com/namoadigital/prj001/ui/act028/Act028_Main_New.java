@@ -16,8 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -77,7 +75,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     private Bundle bundle;
 
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
+    //private ActionBarDrawerToggle mDrawerToggle;
 
     private boolean mDrawerStatus = true;
     private boolean mShortCut = false;
@@ -515,26 +513,26 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+//        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+//
+//        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        if (mDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onBackPressed() {
@@ -1000,8 +998,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
         ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
 
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 partnerAux.clear();
 
                 partnerAux.putAll(hmAux);
