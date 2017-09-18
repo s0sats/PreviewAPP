@@ -990,8 +990,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
         ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
 
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 partnerAux.clear();
 
                 partnerAux.putAll(hmAux);

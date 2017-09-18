@@ -566,18 +566,29 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 if (!skip_validation) {
                     loadZoneSS(true);
                     //
                     loadLocalSS(true);
                 }
             }
+
         });
         //
         ss_site_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 if (!skip_validation) {
                     loadLocalSS(true);
                 }
@@ -586,7 +597,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         ss_site_zone_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 //Se Site estiver em branco, a seleção do local preenche os outros campos.
                 if (ss_site.getmValue().get(SearchableSpinner.ID) == null) {
                     //Seta var para impedir que a troca de valores nos spinners dispare
@@ -607,7 +623,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(HMAux hmAux) {
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 //
                 loadModelSS(true);
                 //
