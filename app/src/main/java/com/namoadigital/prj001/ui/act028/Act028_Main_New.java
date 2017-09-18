@@ -587,6 +587,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                     mTask = null;
 
                     act028_task.updateTaskOnLeave();
+                    act028_opc.loadDataToScreen();
+
                     setFrag(act028_task_list, SELECTION_TASK_LIST);
                 } else {
                     String user_code = ToolBox_Con.getPreference_User_Code(context);

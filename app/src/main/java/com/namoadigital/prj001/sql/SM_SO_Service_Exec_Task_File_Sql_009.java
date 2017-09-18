@@ -56,8 +56,8 @@ public class SM_SO_Service_Exec_Task_File_Sql_009 implements Specification {
                         "  AND category_price_code = '" + category_price_code + "'\n" +
                         "  AND service_code = '" + service_code + "'\n" +
                         "  AND service_seq = '" + service_seq + "'\n" +
-                        "  AND exec_code = '" + exec_tmp + "' \n" +
-                        "  AND task_code ='" + task_tmp + "'")
+                        "  AND exec_tmp = '" + exec_tmp + "' \n" +
+                        "  AND task_tmp ='" + task_tmp + "'")
                 .toString();
     }
 }

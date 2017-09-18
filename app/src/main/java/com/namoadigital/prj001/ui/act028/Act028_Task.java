@@ -232,9 +232,27 @@ public class Act028_Task extends BaseFragment {
 
                 mTask.setQty_people(Integer.parseInt(tempValues.get("qty")));
                 //
+
                 //mTask.setPK(sm_so_service_exec);
                 //
+                sm_so_service_exec_task_fileDao.remove(
+                        new SM_SO_Service_Exec_Task_File_Sql_009(
+                                mTask.getCustomer_code(),
+                                mTask.getSo_prefix(),
+                                mTask.getSo_code(),
+                                mTask.getPrice_list_code(),
+                                mTask.getPack_code(),
+                                mTask.getPack_seq(),
+                                mTask.getCategory_price_code(),
+                                mTask.getService_code(),
+                                mTask.getService_seq(),
+                                mTask.getExec_tmp(),
+                                mTask.getTask_tmp()
+                        ).toSqlQuery()
+                );
+                //
                 sm_so_service_exec_taskDao.addUpdateTmp(mTask);
+                //
 
                 // Include Files to Upload
                 uploadFiles(mTask);
@@ -564,6 +582,22 @@ public class Act028_Task extends BaseFragment {
 
                                 mTask.setQty_people(Integer.parseInt(mk_qty_people.getText().toString()));
                                 //
+                                sm_so_service_exec_task_fileDao.remove(
+                                        new SM_SO_Service_Exec_Task_File_Sql_009(
+                                                mTask.getCustomer_code(),
+                                                mTask.getSo_prefix(),
+                                                mTask.getSo_code(),
+                                                mTask.getPrice_list_code(),
+                                                mTask.getPack_code(),
+                                                mTask.getPack_seq(),
+                                                mTask.getCategory_price_code(),
+                                                mTask.getService_code(),
+                                                mTask.getService_seq(),
+                                                mTask.getExec_tmp(),
+                                                mTask.getTask_tmp()
+                                        ).toSqlQuery()
+                                );
+                                //
                                 sm_so_service_exec_taskDao.addUpdateTmp(mTask);
 
                                 // Include Files to Upload
@@ -720,6 +754,22 @@ public class Act028_Task extends BaseFragment {
         mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
         mTask.setQty_people(Integer.parseInt(mk_qty_people.getText().toString()));
+        //
+        sm_so_service_exec_task_fileDao.remove(
+                new SM_SO_Service_Exec_Task_File_Sql_009(
+                        mTask.getCustomer_code(),
+                        mTask.getSo_prefix(),
+                        mTask.getSo_code(),
+                        mTask.getPrice_list_code(),
+                        mTask.getPack_code(),
+                        mTask.getPack_seq(),
+                        mTask.getCategory_price_code(),
+                        mTask.getService_code(),
+                        mTask.getService_seq(),
+                        mTask.getExec_tmp(),
+                        mTask.getTask_tmp()
+                ).toSqlQuery()
+        );
         //
         sm_so_service_exec_taskDao.addUpdateTmp(mTask);
         //
@@ -945,7 +995,7 @@ public class Act028_Task extends BaseFragment {
             mIntent.putExtra(ConstantBase.PENABLED, false);
         }
 
-        mIntent.putExtra(ConstantBase.MAXIMAGES, "4");
+        mIntent.putExtra(ConstantBase.MAXIMAGES, 4);
         //
         context.startActivity(mIntent);
     }
