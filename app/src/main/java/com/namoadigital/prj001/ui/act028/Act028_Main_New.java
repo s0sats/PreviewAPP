@@ -623,20 +623,31 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                                     false
                             );
 
+                        } else {
+                            index = 0;
+
+                            mTask = null;
+
+                            setFrag(act028_task_list, SELECTION_TASK_LIST);
                         }
                     } else {
                         index = 0;
 
-                        mDrawerStatus = true;
-                        mDrawerLayout.openDrawer(GravityCompat.START);
-//                        //
-//                        act028_task.removeTaskOnLeave();
-//                        act028_opc.loadDataToScreen();
-                        //
-                        mExec = null;
                         mTask = null;
-                        //
-                        setFrag(act028_empty_, SELECTION_EMPTY);
+
+                        setFrag(act028_task_list, SELECTION_TASK_LIST);
+
+
+//                        mDrawerStatus = true;
+//                        mDrawerLayout.openDrawer(GravityCompat.START);
+////                        //
+////                        act028_task.removeTaskOnLeave();
+////                        act028_opc.loadDataToScreen();
+//                        //
+//                        mExec = null;
+//                        mTask = null;
+//                        //
+//                        setFrag(act028_empty_, SELECTION_EMPTY);
                     }
 
 //                    ToolBox.alertMSG(

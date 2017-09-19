@@ -108,6 +108,10 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         //
         initActions();
 
+        //
+        // LIMBO PODERÁ SER DESCARTADA.
+        //
+
     }
 
     private void iniSetup() {
