@@ -576,7 +576,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 }
                 //final String tag = (String) ss_site.getTag() == null ? "" : (String) ss_site.getTag();
                 //
-                if (hmAux.size() == 0 && oldSite.size() > 0) {
+                if (hmAux.size() == 0 && oldSite.size() > 0 && tracking_list.size() > 0) {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_clear_tracking_list_ttl"),
@@ -623,6 +623,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             public void onItemPostSelected(HMAux hmAux) {
                 if (!skip_validation) {
                     loadLocalSS(true);
+                    //Ao setar Zona, se só possuir um local, o seta automaticamente
+                    if(ss_site_zone_local.getmOption().size() == 1){
+                        ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
+                    }
                 }
             }
         });
