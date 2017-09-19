@@ -134,6 +134,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         loadTranslation();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        //Constant.HM_ICON_NAMOA_GO_ACT021_SHOW = false;
     }
 
     private void loadTranslation() {
@@ -513,7 +515,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         }
     }
 
-//    @Override
+    //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
 //        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
@@ -1377,5 +1379,15 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         builder.show();
     }
 
+    @Override
+    protected void callAct021() {
 
+        if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
+            act028_task.updateTaskOnLeave();
+        } else {
+            act028_task.removeTaskOnLeave();
+        }
+
+        super.callAct021();
+    }
 }

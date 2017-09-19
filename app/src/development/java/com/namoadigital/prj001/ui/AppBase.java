@@ -62,8 +62,8 @@ public class AppBase extends Application {
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";
 
-        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
-        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
+        TOKEN_SO_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SERIAL_PREFIX;
 
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
@@ -91,6 +91,8 @@ public class AppBase extends Application {
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
+        Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
+        Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
 
     }
 }

@@ -91,6 +91,7 @@ public class AppBase extends Application {
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
+        Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
 
     }
 }

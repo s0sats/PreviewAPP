@@ -678,6 +678,12 @@ public class Act028_Task extends BaseFragment {
 
     private void processTaskStatus() {
 
+        mMain_new.setMenuExit(
+                HMAUX_TRANS_LIB.get("exit_shortcut_ttl"),
+                HMAUX_TRANS_LIB.get("exit_shortcut_msg"),
+                Constant.HM_ICON_NAMOA_SERVICES_TEXT
+        );
+
         if (String.valueOf(mTask.getTask_user()).toUpperCase().equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(getActivity()))) {
 
             if (full_status.equalsIgnoreCase("1")) {
@@ -686,6 +692,12 @@ public class Act028_Task extends BaseFragment {
 
                         if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
                             iv_cancel_task.setVisibility(View.GONE);
+                            //
+                            mMain_new.setMenuExit(
+                                    HMAUX_TRANS_LIB.get("exit_shortcut_ttl"),
+                                    hmAux_Trans.get("alert_task_lost_data_msg"),
+                                    Constant.HM_ICON_NAMOA_SERVICES_TEXT
+                            );
                         } else {
                             iv_cancel_task.setVisibility(View.VISIBLE);
                         }

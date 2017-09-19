@@ -20,6 +20,7 @@ import android.widget.GridView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.dao.EV_UserDao;
@@ -62,7 +63,7 @@ import java.util.List;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity implements Act005_Main_View {
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -240,6 +241,8 @@ public class Act005_Main extends Base_Activity implements Act005_Main_View {
 
         Constant.DATEFORMATDT = ToolBox_Inf.nlsDateFormat(context);
         Constant.DATEFORMATDTH = ToolBox_Inf.nlsDateFormat(context) + " HH:mm";
+
+        Constant.HM_ICON_NAMOA_SERVICES_TEXT = hmAux_Trans.get("lbl_so");
     }
 
     private void initVars() {
