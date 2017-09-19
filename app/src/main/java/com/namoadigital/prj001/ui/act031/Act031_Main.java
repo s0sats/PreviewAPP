@@ -453,6 +453,13 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         builder.setView(view);
         builder.setCancelable(false);
         //
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                controls_sta.remove(mket_tracking);
+            }
+        });
+        //
         final AlertDialog show = builder.show();
         /*
         *Ini Action
@@ -494,12 +501,12 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Remove mket do arraylist de controles
-                controls_sta.remove(mket_tracking);
                 //
                 show.dismiss();
             }
         });
+
+
     }
 
     @Override
