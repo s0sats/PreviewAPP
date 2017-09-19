@@ -565,7 +565,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         ss_site_owner.setVisibility(View.GONE);
         //
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -579,6 +578,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                     loadLocalSS(true);
                 }
             }
+
         });
         //
         ss_site_zone.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
@@ -596,7 +596,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         });
         //
         ss_site_zone_local.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -623,7 +622,6 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         });
         //
         ss_brand.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-
             @Override
             public void onItemPreSelected(HMAux hmAux) {
 
@@ -631,6 +629,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+                //
                 loadModelSS(true);
                 //
                 loadColorSS(true);

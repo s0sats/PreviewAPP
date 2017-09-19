@@ -398,6 +398,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+                //
                 loadModelSS(true);
                 //
                 loadColorSS(true);

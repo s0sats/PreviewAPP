@@ -54,6 +54,14 @@ public class MD_Product_Serial implements Serializable {
     @Expose
     private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
 
+    /*
+    * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
+    * via app.
+    */
+    public MD_Product_Serial() {
+        this.serial_tmp = 0;
+    }
+
     public void setPk(){
         for (int i = 0; i < tracking_list.size(); i++) {
             tracking_list.get(i).setPk(this);

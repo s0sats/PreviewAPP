@@ -48,8 +48,9 @@ public class WS_Serial_Tracking_Search extends IntentService {
             String product_code = bundle.getString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE);
             String serial_code = bundle.getString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE);
             String tracking = bundle.getString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING);
+            String site_code = bundle.getString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE);
 
-            processWSTrackingSearch(product_code, serial_code, tracking);
+            processWSTrackingSearch(product_code, serial_code, tracking, site_code);
 
         }catch (Exception e) {
 
@@ -66,7 +67,7 @@ public class WS_Serial_Tracking_Search extends IntentService {
 
         }
 
-    private void processWSTrackingSearch(String product_code, String serial_code, String tracking) throws Exception {
+    private void processWSTrackingSearch(String product_code, String serial_code, String tracking, String site_code) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -75,7 +76,7 @@ public class WS_Serial_Tracking_Search extends IntentService {
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-        env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
+        env.setSite_code(site_code);
         env.setProduct_code(product_code);
         env.setSerial_code(serial_code);
         env.setTracking(tracking);

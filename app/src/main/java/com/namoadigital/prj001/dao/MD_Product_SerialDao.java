@@ -9,6 +9,9 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_007;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -129,6 +132,52 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     @Override
     public void addUpdateTmp(MD_Product_Serial md_product_serial) {
         openDB();
+
+        int serial_tmp = 0;
+        Cursor cursor = null;
+
+        if(md_product_serial.getSerial_tmp() == 0){
+            if(md_product_serial.getSerial_code() == 0){
+                cursor = db.rawQuery(
+                        new MD_Product_Serial_Sql_005(
+                                md_product_serial.getCustomer_code(),
+                                md_product_serial.getProduct_code()
+                        ).toSqlQuery(),
+                        null
+                );
+            }else{
+                cursor = db.rawQuery(
+                        new MD_Product_Serial_Sql_007(
+                                md_product_serial.getCustomer_code(),
+                                md_product_serial.getProduct_code(),
+                                md_product_serial.getSerial_code()
+                        ).toSqlQuery(),
+                        null
+                );
+            }
+
+        }else{
+            cursor = db.rawQuery(
+                    new MD_Product_Serial_Sql_006(
+                            md_product_serial.getCustomer_code(),
+                            md_product_serial.getProduct_code(),
+                            md_product_serial.getSerial_tmp()
+                    ).toSqlQuery(),
+                    null
+            );
+        }
+        //
+        while (cursor.moveToNext()){
+            serial_tmp = cursor.getInt(cursor.getColumnIndex(SERIAL_TMP));
+        }
+        //Seta o novo valor no tmp no serial e atualiza pk na listagem de tracking
+        //
+        if(serial_tmp != 0)  {
+            md_product_serial.setSerial_tmp(serial_tmp);
+            for (int i = 0; i < md_product_serial.getTracking_list().size() ; i++) {
+                md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+            }
+        }
 
         try {
 
@@ -265,7 +314,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                         new MD_Product_Serial_Tracking_Sql_001(
                                                 md_product_serial.getCustomer_code(),
                                                 md_product_serial.getProduct_code(),
-                                                md_product_serial.getSerial_code()
+                                                md_product_serial.getSerial_tmp()
                                         ).toSqlQuery()
                                 )
                 );
@@ -336,7 +385,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                             new MD_Product_Serial_Tracking_Sql_001(
                                                     uAux.getCustomer_code(),
                                                     uAux.getProduct_code(),
-                                                    uAux.getSerial_code()
+                                                    uAux.getSerial_tmp()
                                             ).toSqlQuery()
                                     )
                     );
@@ -390,7 +439,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
             md_product_serial.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             md_product_serial.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
-            md_product_serial.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
+            md_product_serial.setSerial_code(cursor.getLong(cursor.getColumnIndex(SERIAL_CODE)));
+            md_product_serial.setSerial_tmp(cursor.getLong(cursor.getColumnIndex(SERIAL_TMP)));
             md_product_serial.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
             if (cursor.isNull(cursor.getColumnIndex(SITE_CODE))) {
                 md_product_serial.setSite_code(null);
@@ -467,6 +517,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
             if (md_product_serial.getSerial_code() > -1) {
                 contentValues.put(SERIAL_CODE, md_product_serial.getSerial_code());
+            }
+
+            if (md_product_serial.getSerial_code() > -1) {
+                contentValues.put(SERIAL_TMP, md_product_serial.getSerial_tmp());
             }
 
             if (md_product_serial.getSerial_id() != null) {

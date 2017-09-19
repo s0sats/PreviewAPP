@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ public interface Act031_Main_View {
 
     void setSerialValues(HMAux md_product_serial);
 
-    void setSerialValuesV2(HMAux md_product_serial);
+    void setSerialValuesV2(HMAux md_product_serial, MD_Product_Serial serialObjDb);
 
     void callAct030(Context context);
 
@@ -41,5 +42,10 @@ public interface Act031_Main_View {
     void scrollToTracking();
 
     void setTrackingListChanged(boolean trackingListChanged);
+
+    boolean isNew_serial();
+
+    void setNew_serial(boolean new_serial);
+
 
 }

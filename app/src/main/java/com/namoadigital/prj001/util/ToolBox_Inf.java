@@ -807,6 +807,12 @@ public class ToolBox_Inf {
             case "PARAMETERS_ERROR":
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
+            case "CUSTOMER_IP_REQUIRED" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+            case "CUSTOMER_IP_RESTRICTION" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
             default:
                 if (validation.trim().length() == 0) {
                     return processoOthersError(context, context.getResources().getString(R.string.generic_error_lbl), error_msg);
@@ -818,6 +824,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean processWSCheckValidationNFCAuth(Context context, String validation, String error_msg, String s_Link, String ret, String ret_error) {
+        validation = validation == null ? "" : validation;
 
         switch (validation) {
             case "OK":
@@ -861,7 +868,18 @@ public class ToolBox_Inf {
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
+            case "CUSTOMER_IP_REQUIRED" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
+            case "CUSTOMER_IP_RESTRICTION" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
             default:
+                if(validation.trim().length() == 0){
+                    return processoOthersError(context,context.getResources().getString(R.string.generic_error_lbl),error_msg);
+                }
                 break;
         }
 
@@ -2245,9 +2263,12 @@ public class ToolBox_Inf {
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, boolean acceptNull) {
         try {
             HMAux hmAux = new HMAux();
-            hmAux.put(SearchableSpinner.ID, code);
-            hmAux.put(SearchableSpinner.DESCRIPTION, desc);
-            ss_component.setmValue(hmAux);
+            if(code != null && code != "null") {
+                hmAux.put(SearchableSpinner.ID, code);
+                hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+            }
+            //ss_component.setmValue(hmAux);
+            ss_component.setmValue(hmAux,source_val);
             //
             if (source_val) {
                 ss_component.setTag(code);
