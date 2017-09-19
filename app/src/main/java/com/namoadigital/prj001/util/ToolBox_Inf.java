@@ -2239,8 +2239,10 @@ public class ToolBox_Inf {
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, boolean acceptNull) {
         try {
             HMAux hmAux = new HMAux();
-            hmAux.put(SearchableSpinner.ID, code);
-            hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+            if(code != null && code != "null") {
+                hmAux.put(SearchableSpinner.ID, code);
+                hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+            }
             //ss_component.setmValue(hmAux);
             ss_component.setmValue(hmAux,source_val);
             //

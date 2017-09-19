@@ -77,21 +77,19 @@
                             android:padding="2dp"
                             android:text="Code"
                             android:textSize="@dimen/font_size_item_md"
-                            android:visibility="gone"
+
                             />
 
                         <View
                             android:layout_width="5dp"
-                            android:layout_height="match_parent"
-                            android:visibility="gone"
-                            />
+                            android:layout_height="match_parent" />
 
                         <TextView
                             android:id="@+id/act031_tv_product_id_lbl"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="left|center_vertical"
+                            android:gravity="right"
                             android:padding="2dp"
                             android:text="Id"
                             android:textSize="@dimen/font_size_item_md" />
@@ -141,9 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/act031_ll_require_serial"
@@ -220,28 +216,6 @@
                 app:mNFC="false"
                 app:mOCR="false"
                 app:mBARCODE="false"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <Button
-                    android:id="@+id/act031_btn_action"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_namoa_main_states"
-                    android:text="NEW"
-                    android:textColor="@color/padrao_WHITE" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/act031_ll_serial_full_desc"
@@ -456,6 +430,30 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <Button
+                    android:id="@+id/act031_btn_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_namoa_main_states"
+                    android:text="NEW"
+                    android:textColor="@color/padrao_WHITE" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

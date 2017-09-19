@@ -738,7 +738,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 //validateSerialProperties esta comentado , mas seráa validação oficial no futuro.
                 //if(validateSerialProperties(serialProperties)) {
                 if (validadeSerialLocation()) {
-                    if (checkSerialChanges(serialProperties)) {
+                    if (checkSerialChangesV2(serialProperties)) {
                         buildSerialFull();
                         //
                         serialObj.setSerial_id(mket_serial_id.getText().toString().trim());
@@ -793,9 +793,9 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     }
 
     private boolean validadeSerialLocation() {
-        boolean site = ss_site.getmValue().get(SearchableSpinner.ID) != null && ss_site.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site.getmValue().get(SearchableSpinner.ID).length() > 0;
-        boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.ID) != null && ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.ID).length() > 0;
-        boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.ID) != null && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean site = ss_site.getmValue().get(SearchableSpinner.ID) != null && !ss_site.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).length() > 0;
         //
         if (site && zone && local) {
             //limpa marcação de erro.
@@ -866,6 +866,44 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         }
 
         return finalRet;
+    }
+
+    /**
+     * Faz loop no arraylist de itens verificando se
+     * houve alteração de valor.
+     * V2 - Usando metodo do proprio Spinner para validar se valor original
+     * , valor foi alterado.
+     * @return
+     */
+    private boolean checkSerialChangesV2(ArrayList<Object> properties){
+        if (trackingListChanged) {
+            serialInfoChanges = true;
+            return true;
+        }
+
+        for (int i = 0; i < properties.size(); i++) {
+            Object propertie = properties.get(i);
+            //Se for SearchableSpinner
+            if (propertie instanceof SearchableSpinner) {
+                if (((SearchableSpinner) propertie).hasChangedBD()) {
+                    serialInfoChanges = true;
+                    return true;
+                }
+            } else {
+                //Se for EditText
+                if (propertie instanceof EditText) {
+                    String tag = (String) ((EditText) propertie).getTag() == null ? "" : (String) ((EditText) propertie).getTag();
+                    String text = ((EditText) propertie).getText().toString();
+
+                    if (!text.equals(tag)) {
+                        // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
+                        serialInfoChanges = true;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
