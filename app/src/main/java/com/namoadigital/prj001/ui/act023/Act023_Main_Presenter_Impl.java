@@ -158,7 +158,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     @Override
     public void updateSerialInfo(MD_Product_Serial productSerial) {
         //Salva dados alterados do S.O
-        serialDao.addUpdate(productSerial);
+        serialDao.addUpdateTmp(productSerial);
         if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
             // executeSoDownload(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
@@ -452,7 +452,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     @Override
     public void saveSerialInfo(MD_Product_Serial md_product_serial) {
         //Salva dados do serial
-        serialDao.addUpdate(md_product_serial);
+        serialDao.addUpdateTmp(md_product_serial);
         //Continua fluxo antigo
         getSerialInfo(md_product_serial.getProduct_code(),md_product_serial.getSerial_id());
 

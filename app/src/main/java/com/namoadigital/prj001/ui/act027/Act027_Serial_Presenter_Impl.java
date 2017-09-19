@@ -114,7 +114,7 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
     @Override
     public void updateSerialInfo(MD_Product_Serial productSerial) {
         //Salva dados alterados do S.O
-        serialDao.addUpdate(productSerial);
+        serialDao.addUpdateTmp(productSerial);
         if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
             executeSerialSave(productSerial.getProduct_code(), productSerial.getSerial_id(), true);

@@ -230,6 +230,52 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             //
             for (MD_Product_Serial md_product_serial : md_product_serials) {
 
+                int serial_tmp = 0;
+                Cursor cursor = null;
+
+                if(md_product_serial.getSerial_tmp() == 0){
+                    if(md_product_serial.getSerial_code() == 0){
+                        cursor = db.rawQuery(
+                                new MD_Product_Serial_Sql_005(
+                                        md_product_serial.getCustomer_code(),
+                                        md_product_serial.getProduct_code()
+                                ).toSqlQuery(),
+                                null
+                        );
+                    }else{
+                        cursor = db.rawQuery(
+                                new MD_Product_Serial_Sql_007(
+                                        md_product_serial.getCustomer_code(),
+                                        md_product_serial.getProduct_code(),
+                                        md_product_serial.getSerial_code()
+                                ).toSqlQuery(),
+                                null
+                        );
+                    }
+
+                }else{
+                    cursor = db.rawQuery(
+                            new MD_Product_Serial_Sql_006(
+                                    md_product_serial.getCustomer_code(),
+                                    md_product_serial.getProduct_code(),
+                                    md_product_serial.getSerial_tmp()
+                            ).toSqlQuery(),
+                            null
+                    );
+                }
+                //
+                while (cursor.moveToNext()){
+                    serial_tmp = cursor.getInt(cursor.getColumnIndex(SERIAL_TMP));
+                }
+                //Seta o novo valor no tmp no serial e atualiza pk na listagem de tracking
+                //
+                if(serial_tmp != 0)  {
+                    md_product_serial.setSerial_tmp(serial_tmp);
+                    for (int i = 0; i < md_product_serial.getTracking_list().size() ; i++) {
+                        md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+                    }
+                }
+
                 if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_serial)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
                     sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product_serial.getCustomer_code())).append("'");

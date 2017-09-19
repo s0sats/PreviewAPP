@@ -146,7 +146,7 @@ public class WS_Serial_Search extends IntentService {
                 } else {
                     //Insere no banco os dados do Serial
                     //serialDao.addUpdate(rec.getRecord(),false);//insere varios
-                    serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
+                    serialDao.addUpdateTmp(rec.getRecord().get(0));//insere apenas o primeiro.
 
                 }
             }else{
@@ -159,7 +159,7 @@ public class WS_Serial_Search extends IntentService {
                 productSerial.setSite_code_owner(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(getApplicationContext())));
                 productSerial.setUpdate_required(1);
                 //Insere no banco.
-                serialDao.addUpdate(productSerial);
+                serialDao.addUpdateTmp(productSerial);
             }
         }
         return true;

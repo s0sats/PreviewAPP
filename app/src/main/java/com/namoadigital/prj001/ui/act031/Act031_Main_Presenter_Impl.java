@@ -190,7 +190,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         productSerial.setSerial_code(0);
         productSerial.setSerial_id(serial_id);
         //
-        serialDao.addUpdate(productSerial);
+        serialDao.addUpdateTmp(productSerial);
         //
         getSerialInfo(product_code, serial_id);
     }
@@ -241,16 +241,13 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
             executeSaveSerial(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
         } else {
-            /*
-            *
-            * MODIFICAR PARA POSIBILITAR OFFLINE
-            *
-            *  MODIFICAR VAR new_serial PARA FALSE;
-            *
-            * EXIBER MSG E CHAMAR O METODO getSerialInfo
-            *
-            * */
-            ToolBox_Inf.showNoConnectionDialog(context);
+            //Save Offiline
+            //ToolBox_Inf.showNoConnectionDialog(context);
+            mView.showSingleResultMsg(
+                    hmAux_Trans.get("alert_save_serial_return_ttl"),
+                    hmAux_Trans.get("alert_save_serial_offline_msg")
+                    );
+
         }
     }
 

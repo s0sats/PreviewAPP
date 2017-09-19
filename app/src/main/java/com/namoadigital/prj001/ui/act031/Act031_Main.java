@@ -246,6 +246,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_keep_tracking_list_msg");
         transList.add("alert_clear_tracking_list_ttl");
         transList.add("alert_clear_tracking_list_msg");
+        transList.add("alert_save_serial_offline_msg");
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

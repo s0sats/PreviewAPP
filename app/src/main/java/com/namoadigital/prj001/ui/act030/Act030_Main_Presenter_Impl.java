@@ -9,7 +9,6 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -33,14 +32,12 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     private Act030_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
     private MD_ProductDao mdProductDao;
-    private MD_Product_SerialDao serialDao;
 
-    public Act030_Main_Presenter_Impl(Context context, Act030_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao) {
+    public Act030_Main_Presenter_Impl(Context context, Act030_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = mdProductDao;
-        this.serialDao = serialDao;
     }
 
     @Override

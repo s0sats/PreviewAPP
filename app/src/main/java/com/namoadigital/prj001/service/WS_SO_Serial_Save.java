@@ -454,7 +454,7 @@ public class WS_SO_Serial_Save extends IntentService {
 
         if (serial_return.getRet_status().toUpperCase().equals("OK")) {
             serial.setUpdate_required(0);
-            serialDao.addUpdate(serial);
+            serialDao.addUpdateTmp(serial);
             hmAux.put(SERIAL_SAVE, "OK");
         } else {
             hmAux.put(SERIAL_SAVE, serial_return.getRet_msg() == null ? hmAux_Trans.get("msg_error_on_save_serial") : serial_return.getRet_msg());
