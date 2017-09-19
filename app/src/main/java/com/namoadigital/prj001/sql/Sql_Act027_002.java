@@ -93,7 +93,26 @@ public class Sql_Act027_002 implements Specification {
                         "        s.*,       \n" +
                         "        sum(CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN 1 ELSE 0 END) "+SET_FLAG+",\n" +
                         "        SUM(CASE WHEN e.status in ('"+Constant.SO_STATUS_DONE+"','"+Constant.SO_STATUS_NOT_EXECUTED+"') THEN 1 ELSE 0 END) "+QTY_DONE+",\n" +
-                        "        CASE WHEN IFNULL(e.partner_code,s.partner_code) IS NOT NULL \n" +
+//                        "        CASE WHEN IFNULL(e.partner_code,s.partner_code) IS NOT NULL \n" +
+//                        "             THEN\n" +
+//                        "             (SELECT\n" +
+//                        "                  COUNT(1)  \n" +
+//                        "              FROM\n" +
+//                        "                  "+ MD_PartnerDao.TABLE+" m\n" +
+//                        "              WHERE                        \n" +
+//                        "                  m.customer_code = s.customer_code\n" +
+//                        "                  and m.partner_code = IFNULL(e.partner_code,s.partner_code)\n" +
+//                        "              ) \n" +
+//                        "             ELSE \n" +
+//                        "              -1\n" +
+//                        "             END  "+PARTNER_RESTRICTION+",\n" +
+                        "        CASE WHEN IFNULL(" +
+                        "                         CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
+                        "                              e.partner_code\n" +
+                        "                          ELSE\n" +
+                        "                              null\n" +
+                        "                          END ," +
+                        "               s.partner_code) IS NOT NULL \n" +
                         "             THEN\n" +
                         "             (SELECT\n" +
                         "                  COUNT(1)  \n" +
@@ -101,7 +120,13 @@ public class Sql_Act027_002 implements Specification {
                         "                  "+ MD_PartnerDao.TABLE+" m\n" +
                         "              WHERE                        \n" +
                         "                  m.customer_code = s.customer_code\n" +
-                        "                  and m.partner_code = IFNULL(e.partner_code,s.partner_code)\n" +
+                        "                  and m.partner_code = IFNULL(" +
+                        "                                              CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
+                        "                                                  e.partner_code\n" +
+                        "                                              ELSE\n" +
+                        "                                                  null\n" +
+                        "                                              END,\n" +
+                        "                                               s.partner_code )\n" +
                         "              ) \n" +
                         "             ELSE \n" +
                         "              -1\n" +
