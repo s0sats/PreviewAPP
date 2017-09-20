@@ -582,4 +582,23 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         //
         context.sendBroadcast(mIntent);
     }
+
+    private void sHugo01(){
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void sHugo02(){
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+
+
 }

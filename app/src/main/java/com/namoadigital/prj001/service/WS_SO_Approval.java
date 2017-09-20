@@ -26,6 +26,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.service.WS_SO_Save.SO_NO_EMPTY_LIST;
 import static com.namoadigital.prj001.service.WS_SO_Save.SO_RETURN_LIST;
 
 
@@ -82,7 +83,12 @@ public class WS_SO_Approval extends IntentService {
         );
         //
         if (sm_sos.size() == 0) {
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_so_found"), "", "0");
+
+            HMAux hmAuxRet = new HMAux();
+            hmAuxRet.put(SO_NO_EMPTY_LIST,"1");
+            hmAuxRet.put(SO_RETURN_LIST,"");
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_approval_to_send"), hmAuxRet, "", "0");
             return;
         }
 
