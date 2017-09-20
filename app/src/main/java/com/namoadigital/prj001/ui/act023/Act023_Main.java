@@ -76,6 +76,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     public static final String SO_WS_SEARCH_SERIAL = "WS_SEARCH_SERIAL";
     public static final String SO_WS_SERIAL_SAVE = "SO_WS_SERIAL_SAVE";
     public static final String SO_WS_DOWNLOAD_SO = "SO_WS_DOWNLOAD_SO";
+    public static final String SO_WS_SEARCH_TRACKING = "SO_WS_SEARCH_TRACKING";
 
     public static final String SITE_DESC_OWNER = "site_desc_owner";
 
@@ -230,6 +231,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         transList.add("alert_no_so_found_msg");
         transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
+        //Tracking
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
+        transList.add("alert_tracking_unavailable_ttl");
+        transList.add("alert_tracking_unavailable_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

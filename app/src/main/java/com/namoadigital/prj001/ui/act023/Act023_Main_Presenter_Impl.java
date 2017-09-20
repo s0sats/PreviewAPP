@@ -21,6 +21,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
@@ -513,7 +514,23 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
 
     @Override
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
-
+        mView.setWs_process(Act023_Main.SO_WS_SEARCH_TRACKING);
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_tracking_search_ttl"),
+                hmAux_Trans.get("progress_tracking_search_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Tracking_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE, String.valueOf(serial_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING, tracking);
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE, site_code);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override
