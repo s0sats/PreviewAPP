@@ -236,6 +236,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         transList.add("progress_tracking_search_msg");
         transList.add("alert_tracking_unavailable_ttl");
         transList.add("alert_tracking_unavailable_msg");
+        transList.add("alert_no_site_selected_ttl");
+        transList.add("alert_no_site_selected_msg");
+        transList.add("dialog_tracking_ttl");
+        transList.add("alert_tracking_already_listed_ttl");
+        transList.add("alert_tracking_already_listed_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -467,6 +472,35 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         };
         //Listner para fluxo do N-form
         listnerGoToNForm = null;
+        //
+        tvCtListner = new TextViewCT.ITextViewCT() {
+            @Override
+            public void removeViews(TextViewCT textViewCT) {
+                int idx = ll_tracking_content.indexOfChild(textViewCT);
+                //
+                tracking_list.remove(idx);
+                //
+                ll_tracking_content.removeView(textViewCT);
+                //
+                setTrackingListChanged(true);
+            }
+        };
+        //Listner que zera trackingList.
+        //Usado no NÃO da troca de site e no SIM do "limpar" site
+
+        dialogClearTrackingListner = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //
+                ll_tracking_content.removeAllViews();
+                //
+                serialObj.setTracking_list(new ArrayList<MD_Product_Serial_Tracking>());
+                //
+                tracking_list = serialObj.getTracking_list();
+                //
+                mPresenter.updateTrackingReference(tracking_list);
+            }
+        };
 
     }
 
@@ -682,6 +716,23 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 loadColorSS(true);
             }
         });
+        //
+        //
+        iv_add_tracking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String site_val = ss_site.getmValue().get(SearchableSpinner.ID);
+                if (site_val != null && !site_val.equals("null")) {
+                    showTrackingDialog();
+                } else {
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_no_site_selected_ttl"),
+                            hmAux_Trans.get("alert_no_site_selected_msg")
+                    );
+                }
+            }
+        });
+
 
         if (requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL) ||
                 requesting_process.equals(Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS)) {
@@ -1276,6 +1327,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                 if (ws_process.equals(SO_WS_DOWNLOAD_SO)) {
                     //
                     mPresenter.processSoDownloadResult(hmAux);
+                }
+
+                if(ws_process.equals(SO_WS_SEARCH_TRACKING)){
+                    //
+                    mPresenter.processTrackingResult(hmAux,serialObj);
                 }
 
                 break;

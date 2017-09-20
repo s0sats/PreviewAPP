@@ -578,29 +578,4 @@ public class Act032_Main extends Base_Activity_NFC_Geral implements Act032_Main_
         //
         context.sendBroadcast(mIntent);
     }
-
-    private void sHugo01(){
-        ToolBox.alertMSG(
-                context,
-                "uhauha",
-                "uhauha",
-                null,
-                0
-        );
-    }
-
-    private void sLuche02(){
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-
-        ToolBox.alertMSG(
-                context,
-                "uhauha",
-                "uhauha",
-                null,
-                0
-                );
-    }
 }
