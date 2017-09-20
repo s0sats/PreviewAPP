@@ -356,7 +356,7 @@
                         android:textSize="@dimen/font_size_item_md" />
 
 
-                    <EditText
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act031_et_info1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -365,9 +365,13 @@
                         android:hint=""
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"
                         />
 
-                    <EditText
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act031_et_info2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -376,9 +380,13 @@
                         android:gravity="center_vertical"
                         android:hint=""
                         android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:padding="10dp"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"/>
 
-                    <EditText
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act031_et_info3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -386,7 +394,11 @@
                         android:gravity="center_vertical"
                         android:hint=""
                         android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:padding="10dp"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"/>
 
                 </LinearLayout>
 

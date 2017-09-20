@@ -95,9 +95,9 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     private SearchableSpinner ss_site_zone_local;
     private LinearLayout ll_serial_add_info;
     private TextView tv_serial_add_info_ttl;
-    private EditText et_info1;
-    private EditText et_info2;
-    private EditText et_info3;
+    private MKEditTextNM et_info1;
+    private MKEditTextNM et_info2;
+    private MKEditTextNM et_info3;
     private TextView tv_serial_properties_ttl;
     private LinearLayout ll_serial_properties;
     private SearchableSpinner ss_brand;
@@ -352,11 +352,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         tv_serial_add_info_ttl = (TextView) findViewById(R.id.act031_tv_serial_add_info_ttl);
         tv_serial_add_info_ttl.setTag("serial_add_info_ttl");
         //
-        et_info1 = (EditText) findViewById(R.id.act031_et_info1);
+        et_info1 = (MKEditTextNM) findViewById(R.id.act031_et_info1);
         //
-        et_info2 = (EditText) findViewById(R.id.act031_et_info2);
+        et_info2 = (MKEditTextNM) findViewById(R.id.act031_et_info2);
         //
-        et_info3 = (EditText) findViewById(R.id.act031_et_info3);
+        et_info3 = (MKEditTextNM) findViewById(R.id.act031_et_info3);
         //
         ll_serial_properties = (LinearLayout) findViewById(R.id.act031_ll_serial_properties);
         //
@@ -397,6 +397,19 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         views.add(tv_serial_location_ttl);
         views.add(tv_serial_properties_ttl);
         views.add(tv_tracking);
+        //Adiciona Componentes com dados do serial ao arrayList de validação
+        serialProperties.add(ss_site);
+        serialProperties.add(ss_site_zone);
+        serialProperties.add(ss_site_zone_local);
+        serialProperties.add(ss_brand);
+        serialProperties.add(ss_brand_model);
+        serialProperties.add(ss_brand_color);
+        serialProperties.add(ss_segment);
+        serialProperties.add(ss_category_price);
+        serialProperties.add(ss_site_owner);
+        serialProperties.add(et_info1);
+        serialProperties.add(et_info2);
+        serialProperties.add(et_info3);
         //
         //spinnersInitializer();
         //
@@ -904,9 +917,9 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 }
             } else {
                 //Se for EditText
-                if (propertie instanceof EditText) {
-                    String tag = (String) ((EditText) propertie).getTag() == null ? "" : (String) ((EditText) propertie).getTag();
-                    String text = ((EditText) propertie).getText().toString();
+                if (propertie instanceof MKEditTextNM) {
+                    String tag = (String) ((MKEditTextNM) propertie).getTag() == null ? "" : (String) ((MKEditTextNM) propertie).getTag();
+                    String text = ((MKEditTextNM) propertie).getText().toString();
 
                     if (!text.equals(tag)) {
                         // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
@@ -1062,43 +1075,31 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //
         ToolBox_Inf.setSSmValue(ss_site, String.valueOf(serialObj.getSite_code()), md_product_serial.get(MD_SiteDao.SITE_DESC), true, true);
-        serialProperties.add(ss_site);
         //
         ToolBox_Inf.setSSmValue(ss_site_zone, String.valueOf(serialObj.getZone_code()), md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC), true, true);
-        serialProperties.add(ss_site_zone);
         //
         ToolBox_Inf.setSSmValue(ss_site_zone_local, String.valueOf(serialObj.getLocal_code()), md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID), true, true);
-        serialProperties.add(ss_site_zone_local);
         //
         ToolBox_Inf.setSSmValue(ss_brand, String.valueOf(serialObj.getBrand_code()), md_product_serial.get(MD_BrandDao.BRAND_DESC), true, false);
-        serialProperties.add(ss_brand);
         //
         ToolBox_Inf.setSSmValue(ss_brand_model, String.valueOf(serialObj.getModel_code()), md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC), true, false);
-        serialProperties.add(ss_brand_model);
         //
         ToolBox_Inf.setSSmValue(ss_brand_color, String.valueOf(serialObj.getColor_code()), md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC), true, false);
-        serialProperties.add(ss_brand_color);
         //
         ToolBox_Inf.setSSmValue(ss_segment, String.valueOf(serialObj.getSegment_code()), md_product_serial.get(MD_SegmentDao.SEGMENT_DESC), true, false);
-        serialProperties.add(ss_segment);
         //
         ToolBox_Inf.setSSmValue(ss_category_price, String.valueOf(serialObj.getCategory_price_code()), md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC), true, false);
-        serialProperties.add(ss_category_price);
         //
         ToolBox_Inf.setSSmValue(ss_site_owner, String.valueOf(serialObj.getSite_code_owner()), md_product_serial.get(SITE_DESC_OWNER), true, false);
-        serialProperties.add(ss_site_owner);
         //
         et_info1.setText(serialObj.getAdd_inf1());
         et_info1.setTag(serialObj.getAdd_inf1());
-        serialProperties.add(et_info1);
         //
         et_info2.setText(serialObj.getAdd_inf2());
         et_info2.setTag(serialObj.getAdd_inf2());
-        serialProperties.add(et_info2);
         //
         et_info3.setText(serialObj.getAdd_inf3());
         et_info3.setTag(serialObj.getAdd_inf3());
-        serialProperties.add(et_info3);
         //
         ll_tracking_content.removeAllViews();
         //Insere lista de tracking vindo do banco.
