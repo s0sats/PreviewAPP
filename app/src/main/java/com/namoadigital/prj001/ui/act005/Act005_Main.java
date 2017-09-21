@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -85,6 +86,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
     public static final String WS_PROCESS_SEND = "ws_process_send";
+
+    public static final String WS_PROCESS_SO_STATUS = "ws_process_so_status";
+    public static final String WS_PROCESS_SO_SAVE = "ws_process_so_save";
+    public static final String WS_PROCESS_SO_SAVE_APPROVAL = "ws_process_so_save_approval";
+    public static final String WS_PROCESS_SO_SYNC = "ws_process_so_sync";
+
     public static final String WS_PROCESS_LOGOUT = "ws_process_logout";
     public static final String WS_PROCESS_ENABLE_NFC = "ws_process_enable_nfc";
     public static final String WS_PROCESS_CANCEL_NFC = "ws_process_cancel_nfc";
@@ -120,6 +127,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private String alertMsg = "";
 
     private String wsProcess;
+    private String wsSoProcess;
+
     //
     private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
@@ -249,6 +258,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private void initVars() {
 
         wsProcess = "";
+        wsSoProcess = "";
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
@@ -659,6 +669,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     @Override
+    public void setWsSoProcess(String wsSoProcess) {
+        this.wsSoProcess = wsSoProcess;
+    }
+
+    @Override
     public void setWsProcessList(ArrayList<HMAux> wsProcessList) {
         this.wsProcessList = wsProcessList;
     }
@@ -814,13 +829,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     processLogin();
                 }
             } else {
-                showSuccessDialog();
-                //Atualiza traduções
-                loadTranslation();
-                //Atualiza menu e os badges
-                mPresenter.getMenuItens(hmAux_Trans);
-                //Fecha Drawer
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+                    showSuccessDialog();
+                    //Atualiza traduções
+                    loadTranslation();
+                    //Atualiza menu e os badges
+                    mPresenter.getMenuItens(hmAux_Trans);
+                    //Fecha Drawer
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    processError_1("NService", "");
+                }
             }
         }
     }
@@ -830,6 +850,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        progressDialog.dismiss();
+
+        mPresenter.getMenuItens(hmAux_Trans);
+
+        Toast.makeText(
+                context,
+                "Agora a SO",
+                Toast.LENGTH_SHORT
+        ).show();
 
     }
 
@@ -844,7 +873,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (idx != -1) {
                 wsProcessList.get(idx).put(WS_LIST_ITEM_RETURN, hmAux.get("WS_Return"));
                 if (idx < wsProcessList.size()) {
-                    mPresenter.executeNextProcess(wsProcessList.get(idx).get(WS_LIST_ITEM));
+                    //mPresenter.executeNextProcess(wsProcessList.get(idx).get(WS_LIST_ITEM));
                 } else if (idx == wsProcessList.size()) {
                     progressDialog.dismiss();
                     showSendStatusScore();
