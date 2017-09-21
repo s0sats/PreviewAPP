@@ -65,7 +65,7 @@ public class Act027_Services extends BaseFragment {
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
     private SM_SO mSm_so;
     private HMAux partnerAux = new HMAux();
-    private String lastServiceUpdated ="1|2017|122|17|3|1|6|17|1";
+    private String lastServiceUpdated = "1|2017|122|17|3|1|6|17|1";
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -148,13 +148,15 @@ public class Act027_Services extends BaseFragment {
 
     private void iniAction() {
 
-        sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setServiceAdapter(isChecked);
-            }
-        });
+        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
     }
+
+    private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            setServiceAdapter(isChecked);
+        }
+    };
 
     public void loadDataToScreen() {
         if (bStatus) {
@@ -163,6 +165,14 @@ public class Act027_Services extends BaseFragment {
                 tv_filter_lbl.setText(hmAux_Trans.get("filter_lbl"));
                 //
                 //sw_filter.setChecked(true);
+                //
+                if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) &&
+                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                        ){
+                    sw_filter.setOnCheckedChangeListener(null);
+                    sw_filter.setChecked(false);
+                    sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+                }
                 //
                 setServiceAdapter(sw_filter.isChecked());
             }
@@ -233,10 +243,10 @@ public class Act027_Services extends BaseFragment {
 
         //Se possui var indicando qual seriviço foi alterado,
         //Aplica "auto scroll"
-        if(!lastServiceUpdated.equals("")){
+        if (!lastServiceUpdated.equals("")) {
             int idx = adp.getPositionByPk(lastServiceUpdated);
             //
-            if(idx > -1){
+            if (idx > -1) {
                 lv_services.setSelection(idx);
             }
             lastServiceUpdated = "";
@@ -428,20 +438,20 @@ public class Act027_Services extends BaseFragment {
         //Pega proximo task_seq_oper
         HMAux taskSeqOperAux =
                 sm_so_service_exec_taskDao.getByStringHM(
-                    new Sql_Act027_006(
-                            serviceExec.getCustomer_code(),
-                            serviceExec.getSo_prefix(),
-                            serviceExec.getSo_code(),
-                            serviceExec.getPrice_list_code(),
-                            serviceExec.getPack_code(),
-                            serviceExec.getPack_seq(),
-                            serviceExec.getCategory_price_code(),
-                            serviceExec.getService_code(),
-                            serviceExec.getService_seq()
-                    ).toSqlQuery()
+                        new Sql_Act027_006(
+                                serviceExec.getCustomer_code(),
+                                serviceExec.getSo_prefix(),
+                                serviceExec.getSo_code(),
+                                serviceExec.getPrice_list_code(),
+                                serviceExec.getPack_code(),
+                                serviceExec.getPack_seq(),
+                                serviceExec.getCategory_price_code(),
+                                serviceExec.getService_code(),
+                                serviceExec.getService_seq()
+                        ).toSqlQuery()
                 );
 
-        int next_task_seq_oper = taskSeqOperAux != null ? Integer.parseInt(taskSeqOperAux.get(Sql_Act027_006.NEXT_TASK_SEQ_OPER)) : 1 ;
+        int next_task_seq_oper = taskSeqOperAux != null ? Integer.parseInt(taskSeqOperAux.get(Sql_Act027_006.NEXT_TASK_SEQ_OPER)) : 1;
         //
         SM_SO_Service_Exec_Task newTask = new SM_SO_Service_Exec_Task();
         //
@@ -564,7 +574,7 @@ public class Act027_Services extends BaseFragment {
                 ).toSqlQuery()
         );
         //
-        if(partners  == null || partners.size() == 0){
+        if (partners == null || partners.size() == 0) {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_partner_selection_ttl"),
@@ -572,11 +582,11 @@ public class Act027_Services extends BaseFragment {
                     null,
                     0
             );
-        }else if(partners.size() == 1){
+        } else if (partners.size() == 1) {
             partnerAux.putAll(partners.get(0));
             // Chama criação da execTask
             createExecTask(item);
-        }else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -9,7 +9,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 21/06/2017.
  */
 
-public class SM_SO_Sql_011 implements Specification {
+public class SM_SO_Sql_016 implements Specification {
 
     private long customer_code;
     private String product_code;
@@ -17,7 +17,7 @@ public class SM_SO_Sql_011 implements Specification {
     private String filter = " ";
     private String fields = ToolBox_Inf.getColumnsToHmAux(SM_SODao.columns);
 
-    public SM_SO_Sql_011(long customer_code, String product_code, String serial_id) {
+    public SM_SO_Sql_016(long customer_code, String product_code, String serial_id) {
         this.customer_code = customer_code;
         this.product_code = product_code;
         this.serial_id = serial_id;
@@ -40,7 +40,8 @@ public class SM_SO_Sql_011 implements Specification {
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
                             filter +
-                        "    AND s.status not in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"');")
+                        //"    AND s.status in ('"+ Constant.SO_STATUS_CANCELLED+"','" + Constant.SO_STATUS_WAITING_QUALITY +"','"+ Constant.SO_STATUS_DONE+"');")
+                        "    AND s.status in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"');")
                 .append(fields)
                 .toString();
     }

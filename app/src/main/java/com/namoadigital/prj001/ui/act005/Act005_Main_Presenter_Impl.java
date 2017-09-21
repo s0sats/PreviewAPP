@@ -38,12 +38,15 @@ import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
 import com.namoadigital.prj001.sql.Sql_Act021_001;
+import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.sql.Sql_Act021_001.UPDATE_REQUIRED_QTY;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -140,19 +143,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             if (showMenu) {
                 HMAux Aux = new HMAux();
                 String qty = "";
+                String qtySO = "";
+
                 Aux.put(Act005_Main.MENU_ID, menuId[i]);
                 Aux.put(Act005_Main.MENU_ICON, icon[i]);
                 Aux.put(Act005_Main.MENU_DESC, menuDesc[i]);
 
                 switch (menuId[i]) {
                     case Act005_Main.MENU_ID_PENDING_DATA:
+
                         qty = customFormLocalDao.getByStringHM(
                                 new Sql_Act005_001(
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
 
+                        qtySO = soDao.getByStringHM(
+                                new Sql_Act021_002(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_SEND_DATA:
@@ -162,7 +175,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                 ).toSqlQuery()
                         ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
 
+                        qtySO = soDao.getByStringHM(
+                                new Sql_Act021_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
@@ -173,6 +193,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_MESSAGES:
@@ -181,9 +202,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
 
                     default:
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
                 }
 
@@ -199,10 +222,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
-        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SO)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
 
@@ -282,7 +305,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
             }
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
         }
     }
@@ -311,7 +334,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 executeSupport(et_support_msg.getText().toString().trim());
             }
         });
-        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null);
+        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
 
         builder.show();
     }
@@ -439,18 +462,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 ).toSqlQuery()
         ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
 
-        if(qty != null && !qty.equals("0")){
+        if (qty != null && !qty.equals("0")) {
             HMAux nFormHM = new HMAux();
-            nFormHM.put(Act005_Main.WS_LIST_ITEM,Act005_Main.WS_PROCESS_SEND_N_FORM);
-            nFormHM.put(Act005_Main.WS_LIST_ITEM_RETURN,"");
-            nFormHM.put(Act005_Main.WS_LIST_ITEM_LABEL,hmAux_Trans.get("lbl_checklist"));
+            nFormHM.put(Act005_Main.WS_LIST_ITEM, Act005_Main.WS_PROCESS_SEND_N_FORM);
+            nFormHM.put(Act005_Main.WS_LIST_ITEM_RETURN, "");
+            nFormHM.put(Act005_Main.WS_LIST_ITEM_LABEL, hmAux_Trans.get("lbl_checklist"));
             hmAuxList.add(nFormHM);
         }
 
         /*
         * S.O
         */
-        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
             //
             HMAux soHMQty = soDao.getByStringHM(
                     new Sql_Act021_001(
@@ -458,12 +481,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     ).toSqlQuery()
             );
             //
-            int so_qty = Integer.parseInt(soHMQty.get(Sql_Act021_001.UPDATE_REQUIRED_QTY));
+            int so_qty = Integer.parseInt(soHMQty.get(UPDATE_REQUIRED_QTY));
             if (so_qty > 0) {
                 HMAux SOHM = new HMAux();
-                SOHM.put(Act005_Main.WS_LIST_ITEM,Act005_Main.WS_PROCESS_SEND_SO);
-                SOHM.put(Act005_Main.WS_LIST_ITEM_RETURN,"");
-                SOHM.put(Act005_Main.WS_LIST_ITEM_LABEL,hmAux_Trans.get("lbl_so"));
+                SOHM.put(Act005_Main.WS_LIST_ITEM, Act005_Main.WS_PROCESS_SEND_SO);
+                SOHM.put(Act005_Main.WS_LIST_ITEM_RETURN, "");
+                SOHM.put(Act005_Main.WS_LIST_ITEM_LABEL, hmAux_Trans.get("lbl_so"));
                 hmAuxList.add(SOHM);
             }
 
@@ -471,9 +494,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     }
 
-    public void executeNextProcess(String next_ws){
+    public void executeNextProcess(String next_ws) {
 
-        switch (next_ws){
+        switch (next_ws) {
 
             case Constant.MODULE_CHECKLIST:
                 executeNFormSend();
@@ -485,10 +508,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 break;
         }
 
-
     }
 
-    private void executeNFormSend(){
+    private void executeNFormSend() {
         mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_N_FORM);
 
         Intent mIntent = new Intent(context, WBR_Save.class);
@@ -504,7 +526,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     }
 
-    private void executeSOSend(){
+    private void executeSOSend() {
         mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_SO);
         //
         Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
@@ -585,7 +607,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
         Intent mIntent = new Intent(context, WBR_Upload_Support.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_SUPPORT_MSG,support_msg);
+        bundle.putString(Constant.WS_SUPPORT_MSG, support_msg);
 
         mIntent.putExtras(bundle);
         //

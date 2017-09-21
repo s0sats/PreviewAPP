@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act032;
 
-import java.util.HashMap;
+import com.namoa_digital.namoa_library.util.HMAux;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -8,12 +8,10 @@ import java.util.HashMap;
 
 public interface Act032_Main_Presenter {
 
-    void onBackPressedAction();
+    void getSOList(String product_code, String serial_id);
 
-    void onProcessApproval(HashMap<String, String> data);
+    void defineForwardFlow(HMAux so);
 
-    void onProcessSignature(HashMap<String, String> data, String sFile, String type_sig);
-
-    void onProcessNFCPassWord(HashMap<String, String> data, String nfc, String password);
+    void onBackPressedClicked();
 
 }

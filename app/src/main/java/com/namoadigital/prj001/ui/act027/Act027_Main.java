@@ -78,8 +78,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
     public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
 
-    public static final String WS_PROCESS_SO_SAVE_APPROVAL_TYPE = "WS_PROCESS_SO_SAVE_APPROVAL_TYPE";
-
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
     public static final int WS_PROCESS_APPROVAL_ON_LINE = 2;
@@ -105,6 +103,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private String ws_process_approval_status = "";
 
     private boolean only_save = false;
+    private boolean only_approval = false;
+
     private String lastServiceReturned = "";
     private boolean ws_call_next_ctrl = true;
 
@@ -122,9 +122,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         initVars();
         iniUIFooter();
         initActions();
-
-//        setbNFCStatus(true);
-//        setNFC_PARAMS_TECH_LOGIN(true);
     }
 
     private void iniSetup() {
@@ -465,7 +462,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         if (ws_process_approval_status.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWs_process("");
-            setWs_process_approval_status("");
+            only_save = false;
 
             if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
                 recoverApprovalState();
@@ -519,10 +516,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
-    }
-
-    public void setWs_process_approval_status(String ws_process_approval_status) {
-        this.ws_process_approval_status = ws_process_approval_status;
     }
 
     //Variavel que determina se salva so e sincroniza ou só salva.
@@ -611,7 +604,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
             //
-            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            executeSoSaveApproval();
+            //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
         } else {
             String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
@@ -748,7 +742,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         //refreshUI();
                     }
                 } else {
-                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    executeSoSaveApproval();
+                    //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                 }
             }
         });
@@ -759,9 +754,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private void processSoApproval(HMAux hmAux) {
         //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
         if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
-            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
-            //
-            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            if (!only_approval) {
+                ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+                //
+                executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            } else {
+                only_approval = false;
+            }
         } else {
             String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
@@ -898,7 +897,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         //refreshUI();
                     }
                 } else {
-                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    if (!only_approval) {
+                        executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    } else {
+                        only_approval = false;
+                    }
                 }
             }
         });
@@ -910,9 +913,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         try {
 
             act027_approval_.setOnLineApproval(Integer.parseInt(hmAux.get("so_param_return_status")));
+            only_approval = true;
             executeSoSaveApproval();
 
         } catch (Exception e) {
+
+            only_approval = false;
 
             recoverApprovalState();
 
@@ -946,8 +952,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     public void executeSoSave() {
         setWs_process(WS_PROCESS_SO_SAVE);
-        setWs_process_approval_status("");
-
         //
         enableProgressDialog(
                 hmAux_Trans.get("progress_so_save_ttl"),
@@ -977,7 +981,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     ) {
         if (ToolBox_Con.isOnline(context)) {
             setWs_process(WS_PROCESS_USER_AUTHOR);
-            setWs_process_approval_status("");
             //
             enableProgressDialog(
                     "Credenciais",
@@ -1009,7 +1012,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public void executeSoSync(int so_prefix, int so_code) {
         if (ws_call_next_ctrl) {
             setWs_process(WS_PROCESS_SO_SYNC);
-            setWs_process_approval_status("");
             //
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -1129,7 +1131,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                             );*/
                             //
                             setWs_process(WS_PROCESS_SO_SAVE);
-                            setWs_process_approval_status(WS_PROCESS_SO_SAVE_APPROVAL_TYPE);
                             //
                             executeSoSave();
                         } else {
@@ -1241,14 +1242,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     Toast.LENGTH_SHORT
             ).show();
 
-//            ToolBox.alertMSG(
-//                    context,
-//                    hmAux_Trans.get("alert_nfc_return"),
-//                    value[0],
-//                    null,
-//                    0
-//            );
-
         } else {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -1280,11 +1273,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
             act027_approval_.setOnLineApprovalSig(sFileNameSignature);
             //
+            only_approval = true;
+            //
             callAddSignature(sFileNameSignature);
             //
             executeSoSaveApproval();
 
         } else {
+            only_approval = false;
+
             recoverApprovalState();
 
             ToolBox.alertMSG(

@@ -69,6 +69,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_ICON = "menu_icon";
     public static final String MENU_DESC = "menu_desc";
     public static final String MENU_BADGE = "menu_badge";
+    public static final String MENU_BADGESO = "menu_badgeso";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_SERVICE = "menu_service";
@@ -273,8 +274,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 ),
                 new SM_SODao(
                         context,
-                        Constant.DB_FULL_BASE,
-                        Constant.DB_VERSION_BASE
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
         );
         //
@@ -824,6 +825,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
     }
 
+    // Fazer algo com erro simples
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+
+    }
+
+
+
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
@@ -842,7 +853,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else {
             progressDialog.dismiss();
         }
-
     }
 
     private void showSendStatusScore() {
@@ -896,7 +906,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
                 //
-                // Hugo
                 startDownloadServices();
                 //
                 break;

@@ -18,17 +18,17 @@ public class Sql_Act005_001 implements Specification {
     @Override
     public String toSqlQuery() {
 
-        StringBuilder sb =  new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         return sb
                 .append(" SELECT\n" +
-                        "   count(1) "+BADGE_IN_PROCESSING_QTY+" \n" +
+                        "   count(1) " + BADGE_IN_PROCESSING_QTY + " \n" +
                         " FROM\n" +
                         "   ge_custom_forms_local l\n" +
                         " WHERE\n" +
-                        "   l.customer_code = '"+customer_code+"' \n" +
-                        "   and l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'\n")
-                .append(";"+BADGE_IN_PROCESSING_QTY)
+                        "   l.customer_code = '" + customer_code + "' \n" +
+                        "   and l.custom_form_status = '" + Constant.CUSTOM_FORM_STATUS_IN_PROCESSING + "'\n")
+                .append(";" + BADGE_IN_PROCESSING_QTY)
                 .toString();
         /**
          * QUERY ABAIXO É EXEMPLO DE COMO FICARA

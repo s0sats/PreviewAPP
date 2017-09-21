@@ -18,5 +18,7 @@ public interface Act014_Main_View {
 
     void callAct015(Context context);
 
+    void callAct032(Context context);
+
     void showMsg();
 }

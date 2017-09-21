@@ -32,6 +32,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -2234,6 +2235,30 @@ public class ToolBox_Inf {
         );
     }
 
+    public static void alertBundleNotFound(final Base_Activity_Frag act, HMAux hmAux_Trans) {
+        //
+        Exception e = new Exception("Bundle parameters not found.");
+        //
+        ToolBox_Inf.registerException(act.getClass().getName(), e);
+        //
+        ToolBox.alertMSG(
+                act,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(act, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        act.startActivity(mIntent);
+                        act.finish();
+                    }
+                },
+                0
+        );
+    }
+
+
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID, code);
@@ -2401,6 +2426,14 @@ public class ToolBox_Inf {
 
         }
 
+    }
+
+    public static int convertStringToInt(String value){
+        try{
+            return Integer.parseInt(value);
+        } catch (Exception e){
+            return 0;
+        }
     }
 
 }
