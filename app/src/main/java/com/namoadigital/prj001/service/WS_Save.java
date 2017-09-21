@@ -20,6 +20,7 @@ import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -44,6 +45,7 @@ public class WS_Save extends IntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "WS_Save";
+    private String mSEND = "";
 
 
 
@@ -77,6 +79,7 @@ public class WS_Save extends IntentService {
             //
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
+            mSEND = bundle.getString(Act005_Main.WS_PROCESS_SO_STATUS, "");
 
             processWS_Save(jumpValidation, jumpOD);
 
@@ -111,8 +114,13 @@ public class WS_Save extends IntentService {
         //Verifica se existem dados a serem enviado
         //Se não existir, cancela a chamada do WS
         if(form_datas.size() == 0){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_finalized_forms_found"), "", "0");
-            return;
+            if (mSEND.isEmpty()){
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_finalized_forms_found"), "", "0");
+                return;
+            } else {
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_finalized_forms_found"), hmAux_Trans.get("msg_no_finalized_forms_found"), "0");
+                return;
+            }
         }
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_forms"), "", "0");

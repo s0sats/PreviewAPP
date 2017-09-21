@@ -821,16 +821,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
 
         if (!wsProcess.equals("")) {
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+                progressDialog.dismiss();
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     processLogin();
                 }
             } else {
 
                 if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+                    progressDialog.dismiss();
                     showSuccessDialog();
                     //Atualiza traduções
                     loadTranslation();
@@ -839,9 +841,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    processError_1("NService", "");
+                    processError_1(mLink, mRequired);
                 }
             }
+        } else {
+            progressDialog.dismiss();
         }
     }
 
@@ -849,20 +853,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
-        //
+
         progressDialog.dismiss();
 
         mPresenter.getMenuItens(hmAux_Trans);
 
         Toast.makeText(
                 context,
-                "Agora a SO",
+                mLink + " / " + mRequired,
                 Toast.LENGTH_SHORT
         ).show();
 
     }
-
-
 
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {

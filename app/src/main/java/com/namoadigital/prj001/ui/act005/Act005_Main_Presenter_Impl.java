@@ -544,6 +544,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
         bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
 
         mIntent.putExtras(bundle);
         //
