@@ -1374,7 +1374,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
      */
     private void loadSiteOwner(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site_owner, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site_owner, null, null, false, false);
         }
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1390,7 +1390,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadCategoryPrice(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_category_price, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_category_price, null, null, false, false);
         }
         //
         MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1407,7 +1407,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadSegment(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_segment, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_segment, null, null, false, false);
         }
         //
         MD_SegmentDao segmentDao = new MD_SegmentDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1424,7 +1424,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadColorSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_brand_color, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_brand_color, null, null, false, false);
         }
         //
         MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1442,7 +1442,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadModelSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_brand_model, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_brand_model, null, null, false, false);
         }
         //
         MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1460,7 +1460,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadBrandSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_brand, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_brand, null, null, false, false);
         }
         //
         MD_BrandDao brandDao = new MD_BrandDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1478,7 +1478,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadSiteSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site, null, null, false, true);
         }
 
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1494,7 +1494,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadZoneSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site_zone, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site_zone, null, null, false, true);
         }
         //
         MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1510,7 +1510,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
     private void loadLocalSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site_zone_local, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site_zone_local, null, null, false, true);
         }
         //
         MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);

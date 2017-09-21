@@ -35,6 +35,7 @@ import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
@@ -241,6 +242,12 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         transList.add("dialog_tracking_ttl");
         transList.add("alert_tracking_already_listed_ttl");
         transList.add("alert_tracking_already_listed_msg");
+        transList.add("alert_clear_tracking_list_ttl");
+        transList.add("alert_clear_tracking_list_msg");
+        transList.add("alert_keep_tracking_list_ttl");
+        transList.add("alert_keep_tracking_list_msg");
+        transList.add("alert_invalid_serial_local_ttl");
+        transList.add("alert_invalid_serial_local_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -287,6 +294,11 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
                 isSchedule,
+                new MD_Product_Serial_TrackingDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
                 tracking_list
         );
         //
@@ -461,12 +473,19 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
             @Override
             public void onClick(View v) {
                 //
-                if (checkSerialChanges()) {
-                    buildSerialFull();
-                    //
-                    mPresenter.updateSerialInfo(serialObj);
-                } else {
-                    mPresenter.executeSoDownload(product_code, mket_serial_id.getText().toString().trim());
+                if (validadeSerialLocation()) {
+                    if (checkSerialChangesV2()) {
+                        buildSerialFull();
+                        //
+                        mPresenter.updateSerialInfo(serialObj);
+                    } else {
+                        mPresenter.executeSoDownload(product_code, mket_serial_id.getText().toString().trim());
+                    }
+                }else{
+                    showAlertDialog(
+                            hmAux_Trans.get("alert_invalid_serial_local_ttl"),
+                            hmAux_Trans.get("alert_invalid_serial_local_msg")
+                    );
                 }
             }
         };
@@ -532,6 +551,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         serialObj.setUpdate_required(1);
         serialObj.setOnly_position(1);
         //
+        serialObj.setTracking_list(tracking_list);
     }
 
     private void layoutConfiguration() {
@@ -647,16 +667,55 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         //
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemPreSelected(HMAux hmAux) {
-
+            public void onItemPreSelected(HMAux hmAuxOld) {
+                oldSite = hmAuxOld;
+                oldZone.putAll(ss_site_zone.getmValue());
+                oldLocal.putAll(ss_site_zone_local.getmValue());
             }
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
+                //
                 if (!skip_validation) {
                     loadZoneSS(true);
                     //
                     loadLocalSS(true);
+                }
+                //final String tag = (String) ss_site.getTag() == null ? "" : (String) ss_site.getTag();
+                //
+                if (hmAux.size() == 0 && oldSite.size() > 0 && tracking_list.size() > 0) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_clear_tracking_list_ttl"),
+                            hmAux_Trans.get("alert_clear_tracking_list_msg"),
+                            dialogClearTrackingListner,
+                            2,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ss_site.setmValue(oldSite);
+                                    ss_site_zone.setmValue(oldZone);
+                                    ss_site_zone_local.setmValue(oldLocal);
+                                    //
+                                    loadZoneSS(false);
+                                    //
+                                    loadLocalSS(false);
+                                }
+                            }
+
+                    );//
+                } else {
+                    if (ss_site.hasChanged() && tracking_list.size() > 0) {
+                        //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_keep_tracking_list_ttl"),
+                                hmAux_Trans.get("alert_keep_tracking_list_msg"),
+                                null,
+                                2,
+                                dialogClearTrackingListner
+                        );
+                    }
                 }
             }
 
@@ -672,6 +731,10 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
             public void onItemPostSelected(HMAux hmAux) {
                 if (!skip_validation) {
                     loadLocalSS(true);
+                    //Ao setar Zona, se só possuir um local, o seta automaticamente
+                    if(ss_site_zone_local.getmOption().size() == 1){
+                        ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
+                    }
                 }
             }
         });
@@ -690,10 +753,10 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
                     //o evento.
                     skip_validation = true;
                     //Seta valor do site
-                    setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
+                    ToolBox_Inf.setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
-                    setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
+                    ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
                     //
                     loadLocalSS(false);
                     //
@@ -797,7 +860,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         mPresenter.updateTrackingReference(tracking_list);
         //
         btn_action.setOnClickListener(listnerSearchSO);
-        btn_action.setText(hmAux_Trans.get("btn_action_lbl"));
+        btn_action.setText(hmAux_Trans.get("btn_so_search"));
         //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //
@@ -870,6 +933,38 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     public void cleanSearched_tracking() {
         //
         searched_tracking = "";
+    }
+
+    private boolean validadeSerialLocation() {
+        boolean site = ss_site.getmValue().get(SearchableSpinner.ID) != null && !ss_site.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).length() > 0;
+        //
+        if (site && zone && local) {
+            //limpa marcação de erro.
+            ss_site.setBackground(null);
+            ss_site_zone.setBackground(null);
+            ss_site_zone_local.setBackground(null);
+            return true;
+        }
+
+        if (!site && !zone && !local) {
+            //limpa marcação de erro.
+            ss_site.setBackground(null);
+            ss_site_zone.setBackground(null);
+            ss_site_zone_local.setBackground(null);
+            return true;
+        }
+        //Seta marcação de erro nos SS
+        ss_site.setBackground(context.getDrawable(R.drawable.shape_error));
+        ss_site_zone.setBackground(context.getDrawable(R.drawable.shape_error));
+        ss_site_zone_local.setBackground(context.getDrawable(R.drawable.shape_error));
+        //Pega posição do ultimo item e faz Scroll
+        int x = (int) ss_site_zone_local.getX();
+        int y = ss_site_zone_local.getTop() + ((View) ss_site_zone_local.getParent()).getTop();
+        sv_serial.smoothScrollTo(x, y);
+
+        return false;
     }
 
     @Override
@@ -1027,6 +1122,42 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     /**
      * Faz loop no arraylist de itens verificando se
      * houve alteração de valor.
+     * V2 - Utiliza metodo do proprio Spinner para validar se conteudo mudou
+     * e analisa tb tracking list.
+     *
+     * @return
+     */
+    private boolean checkSerialChangesV2() {
+
+        if (trackingListChanged) {
+            serialInfoChanges = true;
+            return true;
+        }
+
+        for (int i = 0; i < serialProperties.size(); i++) {
+            Object propertie = serialProperties.get(i);
+            //Se for SearchableSpinner
+            if (propertie instanceof SearchableSpinner) {
+                if (((SearchableSpinner) propertie).hasChangedBD()) {
+                    serialInfoChanges = true;
+                    return true;
+                }
+            } else {
+                //Se for EditText
+                if (propertie instanceof EditText) {
+                    if (!((EditText) propertie).getText().toString().equals(((EditText) propertie).getTag().toString())) {
+                        serialInfoChanges = true;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Faz loop no arraylist de itens verificando se
+     * houve alteração de valor.
      *
      * @return
      */
@@ -1081,7 +1212,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
      */
     private void loadSiteOwner(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site_owner, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site_owner, null, null, false, false);
         }
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1097,7 +1228,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadCategoryPrice(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_category_price, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_category_price, null, null, false, false);
         }
         //
         MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1115,6 +1246,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
     private void loadSegment(boolean reset_val) {
         if (reset_val) {
             setSSmValue(ss_segment, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_segment, null, null, false, false);
         }
         //
         MD_SegmentDao segmentDao = new MD_SegmentDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1131,7 +1263,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadColorSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_brand_color, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_brand_color, null, null, false, false);
         }
         //
         MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1149,7 +1281,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadModelSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_brand_model, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_brand_model, null, null, false, false);
         }
         //
         MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1167,7 +1299,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadBrandSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_brand, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_brand, null, null, false, false);
         }
         //
         MD_BrandDao brandDao = new MD_BrandDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1185,7 +1317,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadSiteSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site, null, null, false, true);
         }
 
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1201,7 +1333,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadZoneSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site_zone, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site_zone, null, null, false, true);
         }
         //
         MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1217,7 +1349,7 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
 
     private void loadLocalSS(boolean reset_val) {
         if (reset_val) {
-            setSSmValue(ss_site_zone_local, null, null, false);
+            ToolBox_Inf.setSSmValue(ss_site_zone_local, null, null, false, true);
         }
         //
         MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
