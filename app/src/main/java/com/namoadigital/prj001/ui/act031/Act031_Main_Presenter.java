@@ -18,7 +18,7 @@ public interface Act031_Main_Presenter {
 
     boolean hasSerial(String serial);
 
-    void onBackPressedClicked();
+    void onBackPressedClicked(boolean new_serial, MD_Product_Serial serialObj);
 
     void executeSerialSearch(Long product_code, String serial_id);
 

@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.ui.act031;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -18,6 +20,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -226,7 +229,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
     public void updateSerialInfo(MD_Product_Serial productSerial) {
         //Remove os tracking para reinserir os que ficaram
         trackingDao.remove(new
-                MD_Product_Serial_Tracking_Sql_002(
+                        MD_Product_Serial_Tracking_Sql_002(
                         productSerial.getCustomer_code(),
                         productSerial.getProduct_code(),
                         productSerial.getSerial_tmp()
@@ -235,7 +238,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         //Salva dados alterados do S.O
         serialDao.addUpdateTmp(productSerial);
         //
-        refreshUI(productSerial.getProduct_code(),productSerial.getSerial_id());
+        refreshUI(productSerial.getProduct_code(), productSerial.getSerial_id());
         //
         if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
@@ -246,7 +249,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
             mView.showSingleResultMsg(
                     hmAux_Trans.get("alert_save_serial_return_ttl"),
                     hmAux_Trans.get("alert_save_serial_offline_msg")
-                    );
+            );
 
         }
     }
@@ -292,7 +295,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                 }
             }
             //Atualiza dados dos serial na tela e spinners
-            refreshUI(product_code,serial_id);
+            refreshUI(product_code, serial_id);
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
@@ -353,7 +356,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         return false;
     }
 
-    private void refreshUI(long product_code, String serial_id){
+    private void refreshUI(long product_code, String serial_id) {
 
         mView.setNew_serial(false);
         //
@@ -364,8 +367,62 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
 
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct030(context);
+    public void onBackPressedClicked(boolean new_serial, final MD_Product_Serial serialObj) {
+        String ttl = "";
+        String msg = "";
+        DialogInterface.OnClickListener listener = null;
+
+        if (new_serial) {
+            ttl = hmAux_Trans.get("new_serial_data_lost_ttl");
+            msg = hmAux_Trans.get("new_serial_data_lost_msg");
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    removeNewSerialData(serialObj);
+                    //
+                    mView.callAct030(context);
+                }
+            };
+
+        } else {
+            ttl = hmAux_Trans.get("serial_data_lost_ttl");
+            msg = hmAux_Trans.get("serial_data_lost_msg");
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mView.callAct030(context);
+                }
+            };
+        }
+
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                listener,
+                1
+        );
+
+    }
+
+    private void removeNewSerialData(MD_Product_Serial serialObj) {
+        //Remove Tracking OBS:Não deve existir tracking até aqui
+        //MAS por segurança
+        trackingDao.remove(new
+                        MD_Product_Serial_Tracking_Sql_002(
+                        serialObj.getCustomer_code(),
+                        serialObj.getProduct_code(),
+                        serialObj.getSerial_tmp()
+                ).toSqlQuery()
+        );
+        //
+        serialDao.remove(new
+                        MD_Product_Serial_Sql_003(
+                        serialObj.getCustomer_code(),
+                        serialObj.getProduct_code(),
+                        serialObj.getSerial_tmp()
+                ).toSqlQuery()
+        );
     }
 
 }

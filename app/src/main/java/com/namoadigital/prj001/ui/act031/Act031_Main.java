@@ -247,6 +247,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("alert_clear_tracking_list_ttl");
         transList.add("alert_clear_tracking_list_msg");
         transList.add("alert_save_serial_offline_msg");
+        transList.add("new_serial_data_lost_ttl");
+        transList.add("new_serial_data_lost_msg");
+        transList.add("serial_data_lost_ttl");
+        transList.add("serial_data_lost_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -418,8 +422,6 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         mPresenter.getProductInfo();
         //
         mket_serial_id.setText(bundle_serial_id);
-        //
-        //trackingDialog = showTrackingDialog();
         //
         mPresenter.saveNewSerialInfo(serialObj);
 //        if (new_serial) {
@@ -613,8 +615,8 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
 
                     );
                 } else {
-                     if (ss_site.hasChanged() && tracking_list.size() > 0) {
-                    //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
+                    if (ss_site.hasChanged() && tracking_list.size() > 0) {
+                        //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_keep_tracking_list_ttl"),
@@ -639,7 +641,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 if (!skip_validation) {
                     loadLocalSS(true);
                     //Ao setar Zona, se só possuir um local, o seta automaticamente
-                    if(ss_site_zone_local.getmOption().size() == 1){
+                    if (ss_site_zone_local.getmOption().size() == 1) {
                         ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
                     }
                 }
@@ -730,11 +732,29 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
                 new_serial = bundle.getBoolean(Act030_Main.NEW_SERIAL, false);
                 tracking_list = serialObj.getTracking_list();
                 //Se novo Serial, seta site e zona atual como padrão
-                if(new_serial){
+                if (new_serial) {
                     serialObj.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
                     //Se Zona setada nas preferencias, adiciona.
-                    if(ToolBox_Con.getPreference_Zone_Code(context) != - 1){
+                    if (ToolBox_Con.getPreference_Zone_Code(context) != -1) {
                         serialObj.setZone_code(ToolBox_Con.getPreference_Zone_Code(context));
+                        //
+                        //Verifica se Zona possui apenas um local, se tiver, seta ela no obj
+                        ArrayList<HMAux> auxLocalList = (ArrayList<HMAux>)
+                                 new MD_Site_Zone_LocalDao(
+                                                    context,
+                                                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                                    Constant.DB_VERSION_CUSTOM
+                                            ).query_HM(
+                                                    new MD_Site_Zone_Local_Sql_SS(
+                                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                                            String.valueOf(serialObj.getSite_code()),
+                                                            String.valueOf(serialObj.getZone_code())
+                                                    ).toSqlQuery()
+                                            );
+                        //
+                        if(auxLocalList != null && auxLocalList.size() == 1){
+                            serialObj.setLocal_code(Integer.parseInt(auxLocalList.get(0).get(SearchableSpinner.ID)));
+                        }
                     }
                 }
             } else {
@@ -899,9 +919,10 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
      * houve alteração de valor.
      * V2 - Usando metodo do proprio Spinner para validar se valor original
      * , valor foi alterado.
+     *
      * @return
      */
-    private boolean checkSerialChangesV2(ArrayList<Object> properties){
+    private boolean checkSerialChangesV2(ArrayList<Object> properties) {
         if (trackingListChanged) {
             serialInfoChanges = true;
             return true;
@@ -1539,7 +1560,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(new_serial, serialObj);
     }
 
     @Override
