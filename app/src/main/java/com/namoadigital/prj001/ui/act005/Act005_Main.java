@@ -9,21 +9,25 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
-import android.widget.Toast;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
+import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
@@ -38,6 +42,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -826,6 +831,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
     }
 
+    private void setRes(String label, String status, String final_status) {
+        HMAux res = new HMAux();
+
+        res.put("label", label);
+        res.put("status", status);
+        res.put("final_status", final_status);
+
+        wsResults.add(res);
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
@@ -849,7 +864,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
+
+                    setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
                     mPresenter.executeSoSave();
+
                 }
             }
         } else {
@@ -862,29 +880,130 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         super.processCloseACT(mLink, mRequired, hmAux);
 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+
+            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (so.length > 0 && !so[0].isEmpty()) {
+                for (int i = 0; i < so.length; i++) {
+                    String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", "" + fields[0]);
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    wsResults.add(mHmAux);
+                }
+            } else {
+
+            }
+
             mPresenter.executeSoSaveApproval();
-        } else if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
+
+            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            if (approval.length > 0 && !approval[0].isEmpty()) {
+                for (int i = 0; i < approval.length; i++) {
+                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", fields[0]);
+                    mHmAux.put("status", fields[1]);
+                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                    //
+                    wsResults.add(mHmAux);
+                }
+            } else {
+
+            }
+
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
+
+            if (wsResults.size() > 0) {
+                showResults(wsResults);
+            }
+
         } else {
             setWsSoProcess("");
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
+
+            if (wsResults.size() > 0) {
+                showResults(wsResults);
+            }
         }
+    }
+
+    public void showResults(List<HMAux> res) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        lv_results.setAdapter(
+                new Act028_Results_Adapter(
+                        context,
+                        R.layout.act028_results_adapter_cell,
+                        res
+                )
+        );
+
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
     }
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+
+            setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
             mPresenter.executeSoSave();
+
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+
+            setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
+
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
+
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+
+            setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
+
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
+
         } else {
+
+            setRes("N-Geral", hmAux_Trans.get("N-Geral Error"), "");
+
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
         }
@@ -895,11 +1014,22 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         super.processCustom_error(mLink, mRequired);
 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+
             setWsSoProcess("");
+            setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
+            mPresenter.getMenuItens(hmAux_Trans);
+
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             setWsSoProcess("");
+            mPresenter.getMenuItens(hmAux_Trans);
+
+            setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
+
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
+            setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
+            mPresenter.getMenuItens(hmAux_Trans);
+
         } else {
             changeCustomer();
         }

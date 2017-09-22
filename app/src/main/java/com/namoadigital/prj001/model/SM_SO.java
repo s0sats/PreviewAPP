@@ -110,6 +110,7 @@ public class SM_SO {
     private int approve_client;
     private int update_required;
     private int approval_required;
+    private String log_date;
 
     @Expose
     private String action;
@@ -663,6 +664,14 @@ public class SM_SO {
 
     public void setApproval_required(int approval_required) {
         this.approval_required = approval_required;
+    }
+
+    public String getLog_date() {
+        return log_date;
+    }
+
+    public void setLog_date(String log_date) {
+        this.log_date = log_date;
     }
 
     public String getAction() {

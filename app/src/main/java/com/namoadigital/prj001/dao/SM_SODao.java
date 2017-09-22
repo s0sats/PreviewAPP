@@ -97,6 +97,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String APPROVAL_REQUIRED = "approval_required";
+    public static final String LOG_DATE = "log_date";
     public static final String TOKEN = "token";
 
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
@@ -107,7 +108,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             DEADLINE, ORIGIN, CLIENT_TYPE, CLIENT_USER, CLIENT_CODE, CLIENT_ID, CLIENT_NAME, CLIENT_EMAIL, CLIENT_PHONE, CLIENT_APPROVAL_IMAGE,
             CLIENT_APPROVAL_IMAGE_NAME, CLIENT_APPROVAL_IMAGE_URL, CLIENT_APPROVAL_DATE, CLIENT_APPROVAL_USER, CLIENT_APPROVAL_USER_NICK,
             CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
-            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, TOKEN
+            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, LOG_DATE, TOKEN
     };
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
@@ -674,6 +675,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(LOG_DATE))) {
+                so.setLog_date(null);
+            } else {
+                so.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
+            }
+
             //
             so.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
@@ -956,6 +963,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             if (sm_so.getApproval_required() > -1) {
                 contentValues.put(APPROVAL_REQUIRED, sm_so.getApproval_required());
+            }
+
+            if (sm_so.getLog_date() != null) {
+                contentValues.put(LOG_DATE, sm_so.getLog_date());
             }
 
             if (sm_so.getToken() != null) {
