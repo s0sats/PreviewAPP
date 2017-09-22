@@ -41,6 +41,8 @@ public interface Act005_Main_View {
 
     void callLoginProcess();
 
+    void cleanUpResults();
+
     void setWsProcessList(ArrayList<HMAux> wsProcessList);
 
 }

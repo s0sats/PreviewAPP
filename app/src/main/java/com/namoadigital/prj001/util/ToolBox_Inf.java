@@ -45,6 +45,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -78,6 +79,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -2434,6 +2436,12 @@ public class ToolBox_Inf {
         } catch (Exception e){
             return 0;
         }
+    }
+
+    public static void cleanUpApproval(SM_SODao sm_soDao){
+        sm_soDao.remove(
+                new SM_SO_Sql_014().toSqlQuery()
+        );
     }
 
 }

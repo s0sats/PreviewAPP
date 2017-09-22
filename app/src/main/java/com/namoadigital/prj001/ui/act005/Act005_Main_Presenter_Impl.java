@@ -27,6 +27,8 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
@@ -35,14 +37,17 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
-import com.namoadigital.prj001.sql.Sql_Act021_001;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
+import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
+import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -172,10 +177,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
 
                         qtySO = soDao.getByStringHM(
-                                new Sql_Act021_001(
+                                new Sql_Act021_003(
                                         ToolBox_Con.getPreference_Customer_Code(context)
                                 ).toSqlQuery()
-                        ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                        ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGESO, qtySO);
@@ -280,6 +285,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
                         mView.setWsSoProcess(Act005_Main.WS_PROCESS_SO_STATUS);
                         mView.showPD();
+                        mView.cleanUpResults();
                         executeSaveProcess();
                     } else {
                         mView.showNoConnectionDialog();
@@ -552,6 +558,48 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
 
     }
+
+    @Override
+    public void executeSoSave() {
+        mView.setWsSoProcess(WS_PROCESS_SO_SAVE);
+
+//        enableProgressDialog(
+//                hmAux_Trans.get("progress_so_save_ttl"),
+//                hmAux_Trans.get("progress_so_save_msg"),
+//                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                hmAux_Trans.get("sys_alert_btn_ok")
+//        );
+
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSoSaveApproval() {
+        mView.setWsSoProcess(WS_PROCESS_SO_SAVE_APPROVAL);
+
+//        enableProgressDialog(
+//                hmAux_Trans.get("progress_so_save_ttl"),
+//                hmAux_Trans.get("progress_so_save_msg"),
+//                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                hmAux_Trans.get("sys_alert_btn_ok")
+//        );
+
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Approval.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
 
     private void executeLogout(String customer_list) {
         mView.setWsProcess(Act005_Main.WS_PROCESS_LOGOUT);

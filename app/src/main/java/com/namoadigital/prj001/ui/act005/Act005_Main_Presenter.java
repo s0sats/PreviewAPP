@@ -24,6 +24,10 @@ public interface Act005_Main_Presenter {
 
     void showSupportDialog();
 
+    void executeSoSave();
+
+    void executeSoSaveApproval();
+
     //void generateWsListProcess();
 
     //void executeNextProcess(String next_ws);

@@ -414,7 +414,7 @@ public class Act028_Task_List extends BaseFragment {
 
         task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         task.setEnd_date("");
-        task.setComments("");
+        task.setComments(null);
         //
         task.setPK(sm_so_service_exec);
         //
