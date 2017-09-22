@@ -328,6 +328,7 @@ public class Act027_Approval extends BaseFragment {
                 tv_name_lbl.setVisibility(View.VISIBLE);
                 mk_name_value.setVisibility(View.VISIBLE);
                 mk_name_value.setText(mSm_so.getClient_name());
+                mk_name_value.setEnabled(false);
 
                 iv_signature.setVisibility(View.VISIBLE);
             }

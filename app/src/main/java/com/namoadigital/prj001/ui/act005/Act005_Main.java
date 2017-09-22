@@ -861,7 +861,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             mPresenter.executeSoSaveApproval();
         } else if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
@@ -876,12 +876,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
-        if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
             mPresenter.executeSoSave();
-        } else if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
-        } else if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
         } else {

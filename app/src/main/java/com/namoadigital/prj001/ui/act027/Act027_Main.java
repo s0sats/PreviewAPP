@@ -479,16 +479,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         if (ws_process.equals(WS_PROCESS_SO_SYNC)) {
 
-            setWs_process("");
-            processSoDownloadResult(hmAux);
             progressDialog.dismiss();
 
+            setWs_process("");
+            processSoDownloadResult(hmAux);
+
         } else if (ws_process.equals(WS_PROCESS_SO_SAVE)) {
+
+            progressDialog.dismiss();
 
             setWs_process("");
             processSoSave(hmAux);
 
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+
+            progressDialog.dismiss();
 
             setWs_process("");
             processSoApproval(hmAux);
@@ -1277,7 +1282,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             callAddSignature(sFileNameSignature);
             //
-            executeSoSaveApproval();
+            if (ToolBox_Con.isOnline(context)) {
+                executeSoSaveApproval();
+            }
 
         } else {
             only_approval = false;
@@ -1332,6 +1339,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         geFile.setFile_path(signature);
         geFile.setFile_status("OPENED");
         geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+        geFiles.add(geFile);
 
         geFileDao.addUpdate(geFiles, false);
 
