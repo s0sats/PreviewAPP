@@ -34,6 +34,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.HashMap;
 
@@ -207,7 +208,8 @@ public class Act028_Task_List extends BaseFragment {
 
                 tv_exec_tmp_value.setText(String.valueOf(sm_so_service_exec.getExec_tmp()));
                 tv_exec_status.setText(hmAux_Trans.get(sm_so_service_exec.getStatus()));
-                setExecStatusColor(tv_exec_status, sm_so_service_exec.getStatus());
+                //setExecStatusColor(tv_exec_status, sm_so_service_exec.getStatus());
+                ToolBox_Inf.setExecStatusColor(context, tv_exec_status, sm_so_service_exec.getStatus());
 
                 tv_exec_code_lbl.setText(hmAux_Trans.get("exec_code_lbl"));
                 tv_exec_code_val.setText(String.valueOf(sm_so_service_exec.getExec_code()));

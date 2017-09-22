@@ -83,40 +83,17 @@ public class Act028_Task_Adapter extends BaseAdapter {
 
         tv_task_value.setText(item.get("task_tmp"));
         tv_task_status.setText(hmAux_Trans.get(item.get("task_status")));
+        ToolBox_Inf.setTaskStatusColor(context,tv_task_status,item.get("task_status"));
+
         //
         if (item.get("task_user").equalsIgnoreCase(String.valueOf(ToolBox_Con.getPreference_User_Code(context)))) {
             iv_icon.setVisibility(View.VISIBLE);
         } else {
             iv_icon.setVisibility(View.INVISIBLE);
         }
-        /*
-        * Tratativa de cor do Status
-        * */
-        switch (item.get("task_status")) {
-            case Constant.SO_STATUS_PENDING:
-                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_PROCESS:
-                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
-            case Constant.SO_STATUS_DONE:
-                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED:
-                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            case Constant.SO_STATUS_NOT_EXECUTED:
-                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
-                break;
-            case Constant.SO_STATUS_INCONSISTENT:
-                tv_task_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
-                break;
-            default:
-                break;
-        }
 
         tv_qty_people_val.setText(item.get("qty_people"));
-        tv_percent_val.setText(item.get("task_perc"));
+        tv_percent_val.setText(item.get("task_perc") + "%");
         tv_sum_val.setText(ToolBox.durationTimeValuesMinutes(item.get("start_date"), item.get("end_date")));
         tv_comment_val.setText(item.get("comments") != null && !item.get("comments").isEmpty() ? "1" : "0");
         tv_gallery_val.setText(item.get("qty_photo"));

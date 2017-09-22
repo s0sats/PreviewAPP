@@ -65,7 +65,7 @@ public class Sql_Act028_001 implements Specification {
                         "      FROM (SELECT T.EXEC_CODE, T.EXEC_TMP,\n" +
                         "                   MAX((CASE WHEN T.STATUS IN ('DONE','NOT_EXECUTED') THEN T.TASK_SEQ_OPER ELSE NULL END)) MAX_TASK_SEQ_OPER,\n" +
                         "                   SUM((CASE WHEN T.STATUS IN ('DONE','NOT_EXECUTED') THEN T.EXEC_TIME ELSE 0 END)) SUM_EXEC_TIME,\n" +
-                        "                   SUM((CASE WHEN T.COMMENTS IS NOT NULL THEN 1 ELSE 0 END)) QTY_COMMENT,\n" +
+                        "                   SUM((CASE WHEN T.COMMENTS IS NOT NULL AND LENGTH(T.COMMENTS) > 0  THEN 1 ELSE 0 END)) QTY_COMMENT,\n" +
                         "                   SUM((SELECT COUNT(1)\n" +
                         "                        FROM "+ SM_SO_Service_Exec_Task_FileDao.TABLE+" F\n" +
                         "                        WHERE F.CUSTOMER_CODE = T.CUSTOMER_CODE\n" +
