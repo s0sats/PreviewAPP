@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 
 import java.util.ArrayList;
 
@@ -15,8 +16,6 @@ import java.util.ArrayList;
 public interface Act023_Main_View {
 
     void setProductValues(MD_Product md_product);
-
-    void setSerialValues(HMAux md_product_serial);
 
     void setWs_process(String ws_process);
 
@@ -44,4 +43,18 @@ public interface Act023_Main_View {
 
     void callAct027(Context context,Bundle bundle);
 
+    /*
+    * Review S.O - Adição do tracking
+    */
+    void setSerialValuesV2(HMAux md_product_serial, MD_Product_Serial serialObjDb);
+
+    void appendTracking(String tracking);
+
+    void scrollToTracking();
+
+    void setTrackingListChanged(boolean trackingListChanged);
+
+    String getSearched_tracking();
+
+    void cleanSearched_tracking();
 }

@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act021_Main_Presenter {
 
-    void checkForSoToSend();
+    boolean checkForSoToSend();
 
     void getPendencies();
 

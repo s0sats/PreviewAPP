@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -503,14 +504,20 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     }
 
     @Override
-    protected void processCloseACT(String ws_retorno, String mRequired) {
+    protected void processCloseACT(final String ws_retorno, String mRequired) {
         super.processCloseACT(ws_retorno, mRequired);
 
-        mPresenter.getProductSerialList(ws_retorno);
-        //
-        progressDialog.dismiss();
-        //
         mDrawerLayout.closeDrawer(GravityCompat.START);
+        //
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mPresenter.getProductSerialList(ws_retorno);
+                //
+                progressDialog.dismiss();
+            }
+        },150);
 
     }
 

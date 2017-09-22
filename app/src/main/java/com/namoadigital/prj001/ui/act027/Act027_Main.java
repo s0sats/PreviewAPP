@@ -58,8 +58,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
-import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SAVE;
-import static com.namoadigital.prj001.ui.act032.Act032_Main.WS_PROCESS_SO_SYNC;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -77,6 +75,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
     public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
+    public static final String WS_SEARCH_TRACKING = "WS_SEARCH_TRACKING";
+    public static final String WS_PROCESS_SERIAL = "WS_PROCESS_SERIAL";
+    public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
+    public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
 
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
@@ -228,6 +230,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
         transList.add("btn_serial_save");
+        //ACT027_Serial Tracking
+        transList.add("tracking_ttl");
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
+        transList.add("alert_tracking_unavailable_ttl");
+        transList.add("alert_tracking_unavailable_msg");
+        transList.add("alert_no_site_selected_ttl");
+        transList.add("alert_no_site_selected_msg");
+        transList.add("dialog_tracking_ttl");
+        transList.add("alert_tracking_already_listed_ttl");
+        transList.add("alert_tracking_already_listed_msg");
+        transList.add("alert_clear_tracking_list_ttl");
+        transList.add("alert_clear_tracking_list_msg");
+        transList.add("alert_keep_tracking_list_ttl");
+        transList.add("alert_keep_tracking_list_msg");
+        transList.add("alert_invalid_serial_local_ttl");
+        transList.add("alert_invalid_serial_local_msg");
 
         // ACT027_Header Fragment
         transList.add("so_id");
@@ -390,7 +409,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_header_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
         act027_header_.setmSm_so(mSm_so);
-
+        //
+        controls_frags.add(act027_serial_);
+        //
         setFrag(act027_services_, "SERVICES");
     }
 
@@ -505,11 +526,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process("");
             processUserAuthorCheck(hmAux);
 
-        } else {
-
+        } else if (ws_process.equalsIgnoreCase(WS_SEARCH_TRACKING)) {
+            progressDialog.dismiss();
+            //
+            setWs_process("");
+            act027_serial_.callProcessTrackingResult(hmAux);
+        }else{
             act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_id(), hmAux);
             progressDialog.dismiss();
-
         }
     }
 
@@ -522,6 +546,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
+//    public void addControlToList(MKEditTextNM mket_tracking){
+//        controls_sta.add(mket_tracking);
+//    }
+//
+//    public void removeControlToList(MKEditTextNM mket_tracking){
+//        controls_sta.remove(mket_tracking);
+//    }
+
+
 
     //Variavel que determina se salva so e sincroniza ou só salva.
     //Após implementação do atalho, foi necessario criar essa var pra pular o syncronismo.
@@ -1174,21 +1207,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         );
     }
 
-    @Override
-    public void ivNServiceClick() {
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_goto_service_menu_ttl"),
-                hmAux_Trans.get("alert_goto_service_menu_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        callAct021(context);
-                    }
-                },
-                1
-        );
-    }
+//    @Override
+//    public void ivNServiceClick() {
+//        ToolBox.alertMSG(
+//                context,
+//                hmAux_Trans.get("alert_goto_service_menu_ttl"),
+//                hmAux_Trans.get("alert_goto_service_menu_msg"),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        callAct021(context);
+//                    }
+//                },
+//                1
+//        );
+//    }
 
     @Override
     public void onServiceSelected(HMAux sService) {

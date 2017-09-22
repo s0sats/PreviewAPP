@@ -49,17 +49,26 @@ public class Act025_Main_Presenter_Impl implements Act025_Main_Presenter {
                 ws_result,
                 TSerial_Search_Rec.class
         );
-
-        //Seta qtd de registro
-        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
-        //chama
-        mView.loadProductSerialList(rec.getRecord());
-        //Se qtd de registro maior que o total retornado,
-        //exibe msg para refinar a busca.
-        if (rec.getRecord_count() > rec.getRecord_page()){
-            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
-        }
-
+        //
+//        //Se qtd 1, chama proxima define flow
+//        if (rec.getRecord_count() == 1) {
+//            defineFlow(rec.getRecord().get(0));
+//
+//        }else {
+            //Seta qtd de registro
+            mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
+            //chama
+            mView.loadProductSerialList(rec.getRecord());
+            //
+            //Se qtd 1, chama proxima define flow
+            if (rec.getRecord_count() == 1) {
+                defineFlow(rec.getRecord().get(0));
+                //Se qtd de registro maior que o total retornado,
+                //exibe msg para refinar a busca.
+            }else if (rec.getRecord_count() > rec.getRecord_page()) {
+                mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
+            }
+       // }
     }
 
     @Override

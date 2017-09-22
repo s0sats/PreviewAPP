@@ -56,7 +56,7 @@
     <string name="footer_label">Tela </string>
     <string name="act002_logout_ttl">Logout</string>
     <string name="act002_logout_one_customer_msg">Deseja realmente fazer logout do APP?</string>
-    <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar outro Cliente ou fazer Login novamente.</string>"
+    <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar outro Cliente ou fazer Login novamente.</string>
     <string name="generic_start_update_process_msg">Iniciando processo de atualização</string>
     <string name="generic_error_update_empty_link">Erro: erro ao atualizar!Link vazio!</string>
     <string name="generic_starting_download_msg">Download em Andamento</string>

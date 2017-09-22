@@ -12,16 +12,22 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_002;
 import com.namoadigital.prj001.util.Constant;
@@ -49,8 +55,10 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private boolean isSchedule;
     private boolean downloadStarted = false;
+    private MD_Product_Serial_TrackingDao trackingDao;
+    private ArrayList<MD_Product_Serial_Tracking> tracking_list;
 
-    public Act023_Main_Presenter_Impl(Context context, Act023_Main mView, String requesting_process, Bundle bundle, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, MD_Product_SerialDao serialDao, boolean isSchedule) {
+    public Act023_Main_Presenter_Impl(Context context, Act023_Main mView, String requesting_process, Bundle bundle, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, MD_Product_SerialDao serialDao, boolean isSchedule , MD_Product_Serial_TrackingDao trackingDao ,ArrayList<MD_Product_Serial_Tracking> tracking_list) {
         this.context = context;
         this.mView = mView;
         this.requesting_process = requesting_process;
@@ -62,6 +70,8 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         this.formOperationDao = formOperationDao;
         this.serialDao = serialDao;
         this.isSchedule = isSchedule;
+        this.trackingDao = trackingDao;
+        this.tracking_list = tracking_list;
     }
 
     @Override
@@ -150,13 +160,30 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                 ).toSqlQuery()
         );
         //
+        ///
+        MD_Product_Serial serialObjDb = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
 
-        mView.setSerialValues(md_product_serial);
+        //mView.setSerialValues(md_product_serial);
+        mView.setSerialValuesV2(md_product_serial,serialObjDb);
 
     }
 
     @Override
     public void updateSerialInfo(MD_Product_Serial productSerial) {
+        //Remove os tracking para reinserir os que ficaram
+        trackingDao.remove(new
+                MD_Product_Serial_Tracking_Sql_002(
+                        productSerial.getCustomer_code(),
+                        productSerial.getProduct_code(),
+                        productSerial.getSerial_tmp()
+                ).toSqlQuery()
+        );
         //Salva dados alterados do S.O
         serialDao.addUpdateTmp(productSerial);
         if (ToolBox_Con.isOnline(context)) {
@@ -175,7 +202,6 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         }
         return false;
     }
-
 
     @Override
     public void validadeSerialFlow(String serial, int required, int allow_new) {
@@ -205,6 +231,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         if (hasSerial(serial)) {
 
             if (ToolBox_Con.isOnline(context)) {
+                //
                 mView.showPD(
                         hmAux_Trans.get("progress_serial_search_ttl"),
                         hmAux_Trans.get("progress_serial_search_msg")
@@ -223,7 +250,6 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
             );
         }
     }
-
 
     @Override
     public boolean hasSerial(String serial) {
@@ -447,6 +473,76 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         } else {
             ToolBox_Inf.alertBundleNotFound(mView,hmAux_Trans);
         }
+    }
+
+    @Override
+    public void updateTrackingReference(ArrayList<MD_Product_Serial_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
+    }
+
+    @Override
+    public void processTrackingResult(HMAux auxResult, MD_Product_Serial serialObj) {
+        if (auxResult.containsKey(WS_Serial_Tracking_Search.TRACKING_RESULT_KEY)) {
+            if (auxResult.get(WS_Serial_Tracking_Search.TRACKING_RESULT_KEY).equals(WS_Serial_Tracking_Search.NOT_EXISTS)) {
+                //
+                tracking_list.add(
+                        buildTrackingObj(serialObj, mView.getSearched_tracking())
+                );
+                //
+                mView.appendTracking(mView.getSearched_tracking());
+                //
+                mView.setTrackingListChanged(true);
+                //
+                mView.cleanSearched_tracking();
+                //
+                mView.scrollToTracking();
+            } else {
+                mView.showAlertDialog(
+                        hmAux_Trans.get("alert_tracking_unavailable_ttl"),
+                        hmAux_Trans.get("alert_tracking_unavailable_msg")
+                );
+            }
+        }
+    }
+
+    @Override
+    public boolean isTrackingListed(String tracking) {
+        for (int i = 0; i < tracking_list.size(); i++) {
+            if (tracking_list.get(i).getTracking().equals(tracking)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private MD_Product_Serial_Tracking buildTrackingObj(MD_Product_Serial serialObj, String searched_tracking) {
+        MD_Product_Serial_Tracking auxTracking = new MD_Product_Serial_Tracking();
+        //
+        auxTracking.setTracking(searched_tracking);
+        auxTracking.setPk(serialObj);
+        //
+        return auxTracking;
+    }
+
+    @Override
+    public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
+        mView.setWs_process(Act023_Main.SO_WS_SEARCH_TRACKING);
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_tracking_search_ttl"),
+                hmAux_Trans.get("progress_tracking_search_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Tracking_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE, String.valueOf(product_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE, String.valueOf(serial_code));
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_TRACKING, tracking);
+        bundle.putString(Constant.WS_SERIAL_TRACKING_SEARCH_SITE_CODE, site_code);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

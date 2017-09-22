@@ -12,10 +12,13 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -82,8 +85,6 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_serial_label;
     private TextView tv_serial_value;
 
-    private ImageView iv_n_service;
-
     private TextView tv_services_title;
     private TextView tv_serial_title;
     private TextView tv_header_title;
@@ -94,7 +95,6 @@ public class Act027_Opc extends BaseFragment {
 
         void soSyncClick();
 
-        void ivNServiceClick();
     }
 
     private IAct027_Opc delegate;
@@ -183,8 +183,6 @@ public class Act027_Opc extends BaseFragment {
         tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
 
-        iv_n_service = (ImageView) view.findViewById(R.id.act027_opc_iv_n_service);
-
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
@@ -208,15 +206,6 @@ public class Act027_Opc extends BaseFragment {
             public void onClick(View v) {
                 if (delegate != null) {
                     delegate.soSyncClick();
-                }
-            }
-        });
-
-        iv_n_service.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (delegate != null) {
-                    delegate.ivNServiceClick();
                 }
             }
         });
@@ -324,10 +313,21 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_deadline.setVisibility(View.GONE);
                 }
+                //Seleciona Trackings do Serial
+                MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+                //
+                ArrayList<HMAux> tranckingAuxList =
+                        (ArrayList<HMAux>) trackingDao.query_HM(
+                            new MD_Product_Serial_Tracking_Sql_003(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    mSm_so.getProduct_code(),
+                                    mSm_so.getSerial_code()
+                            ).toSqlQuery()
+                        );
 
-                if (1 == 1) {
+                if (tranckingAuxList != null && tranckingAuxList.size() > 0) {
                     tv_tracking_label.setText(hmAux_Trans.get("tracking_num_lbl"));
-                    tv_tracking_value.setText("Lista de \n tracking!");
+                    tv_tracking_value.setText(formatTrackingList(tranckingAuxList));
                 } else {
                     ll_tracking.setVisibility(View.GONE);
                 }
@@ -388,6 +388,19 @@ public class Act027_Opc extends BaseFragment {
                 changeTabColor();
             }
         }
+    }
+
+    private String formatTrackingList(ArrayList<HMAux> tranckingAuxList) {
+        String trackingList = "";
+        //
+        for (int i = 0; i < tranckingAuxList.size(); i++) {
+            trackingList += " º " +
+                    tranckingAuxList.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
+            if(i <   tranckingAuxList.size()){
+                trackingList += "\n";
+            }
+        }
+        return trackingList;
     }
 
     private boolean isSoWithinTokenFile() {
