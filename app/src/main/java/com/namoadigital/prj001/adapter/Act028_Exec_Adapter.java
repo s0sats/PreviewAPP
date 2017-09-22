@@ -113,7 +113,7 @@ public class Act028_Exec_Adapter extends BaseAdapter {
                 ){
             iv_usr.setVisibility(View.VISIBLE);
         }else {
-            iv_usr.setVisibility(View.GONE);
+            iv_usr.setVisibility(View.INVISIBLE);
         }
         //
         if(item.get(Sql_Act028_001.TASK_PERC) != null){

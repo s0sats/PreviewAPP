@@ -416,7 +416,8 @@ public class Act028_Task extends BaseFragment {
 
                 tv_exec_task_tmp_value.setText(String.valueOf(mTask.getExec_tmp()) + " / " + String.valueOf(mTask.getTask_tmp()));
                 tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
-                setExecStatusColor(tv_status, mTask.getStatus());
+                //setExecStatusColor(tv_status, mTask.getStatus());
+                ToolBox_Inf.setTaskStatusColor(context,tv_status, mTask.getStatus());
 
                 tv_task_code_lbl.setText(hmAux_Trans.get("task_code_lbl"));
                 //tv_task_code_lbl.setText("Task Code");
@@ -572,7 +573,7 @@ public class Act028_Task extends BaseFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mTask.setStatus(Constant.SO_STATUS_CANCELLED);
-                                mTask.setComments(mk_comments.getText().toString());
+                                mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
                                 mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
@@ -757,7 +758,7 @@ public class Act028_Task extends BaseFragment {
 
     public void informTaskActiveClosed() {
         mTask.setStatus(Constant.SO_STATUS_DONE);
-        mTask.setComments(mk_comments.getText().toString());
+        mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
         mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
@@ -786,7 +787,8 @@ public class Act028_Task extends BaseFragment {
         sm_so_service_exec_taskDao.addUpdateTmp(mTask);
         //
         tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
-        setExecStatusColor(tv_status, mTask.getStatus());
+        ToolBox_Inf.setTaskStatusColor(context,tv_status, mTask.getStatus());
+        //setExecStatusColor(tv_status, mTask.getStatus());
         //
         processTaskStatus();
         //
