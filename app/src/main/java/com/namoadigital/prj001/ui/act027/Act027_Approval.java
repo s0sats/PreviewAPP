@@ -29,6 +29,9 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_LINE;
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_SIGNATURE;
+
 /**
  * Created by neomatrix on 05/09/17.
  */
@@ -76,7 +79,7 @@ public class Act027_Approval extends BaseFragment {
 
     public void setOnLineApproval(Integer user_code) {
         mSm_so.setStatus(Constant.SO_STATUS_WAITING_SYNC);
-        mSm_so.setApproval_required(2);
+        mSm_so.setApproval_required(WS_PROCESS_APPROVAL_ON_LINE);
         mSm_so.setClient_approval_user(user_code);
 
         mSm_so.setClient_approval_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -101,7 +104,7 @@ public class Act027_Approval extends BaseFragment {
 
     public void setOnLineApprovalSig(String image_name) {
         mSm_so.setStatus(Constant.SO_STATUS_WAITING_SYNC);
-        mSm_so.setApproval_required(1);
+        mSm_so.setApproval_required(WS_PROCESS_APPROVAL_ON_SIGNATURE);
         mSm_so.setClient_approval_user(null);
 
         mSm_so.setClient_approval_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -325,6 +328,7 @@ public class Act027_Approval extends BaseFragment {
                 tv_name_lbl.setVisibility(View.VISIBLE);
                 mk_name_value.setVisibility(View.VISIBLE);
                 mk_name_value.setText(mSm_so.getClient_name());
+                mk_name_value.setEnabled(false);
 
                 iv_signature.setVisibility(View.VISIBLE);
             }

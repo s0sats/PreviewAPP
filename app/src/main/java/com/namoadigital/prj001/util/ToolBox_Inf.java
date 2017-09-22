@@ -32,6 +32,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -44,6 +45,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -77,6 +79,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -2234,6 +2237,30 @@ public class ToolBox_Inf {
         );
     }
 
+    public static void alertBundleNotFound(final Base_Activity_Frag act, HMAux hmAux_Trans) {
+        //
+        Exception e = new Exception("Bundle parameters not found.");
+        //
+        ToolBox_Inf.registerException(act.getClass().getName(), e);
+        //
+        ToolBox.alertMSG(
+                act,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(act, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        act.startActivity(mIntent);
+                        act.finish();
+                    }
+                },
+                0
+        );
+    }
+
+
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID, code);
@@ -2401,6 +2428,20 @@ public class ToolBox_Inf {
 
         }
 
+    }
+
+    public static int convertStringToInt(String value){
+        try{
+            return Integer.parseInt(value);
+        } catch (Exception e){
+            return 0;
+        }
+    }
+
+    public static void cleanUpApproval(SM_SODao sm_soDao){
+        sm_soDao.remove(
+                new SM_SO_Sql_014().toSqlQuery()
+        );
     }
 
 }

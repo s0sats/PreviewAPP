@@ -78,6 +78,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
     public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
 
+    public static final int WS_PROCESS_APPROVAL_NOT = 0;
+    public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
+    public static final int WS_PROCESS_APPROVAL_ON_LINE = 2;
+
     private Context context;
     private Bundle bundle;
 
@@ -96,7 +100,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private SM_SO mSm_so;
 
     private String ws_process = "";
+    private String ws_process_approval_status = "";
+
     private boolean only_save = false;
+    private boolean only_approval = false;
+
     private String lastServiceReturned = "";
     private boolean ws_call_next_ctrl = true;
 
@@ -114,9 +122,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         initVars();
         iniUIFooter();
         initActions();
-
-//        setbNFCStatus(true);
-//        setNFC_PARAMS_TECH_LOGIN(true);
     }
 
     private void iniSetup() {
@@ -140,6 +145,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_so_exit_msg");
         transList.add("alert_so_ttl");
         transList.add("msg_so_save_ok");
+        transList.add("alert_author_validation");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -454,8 +460,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
 
-        // analisar recarga
-        //recoverApprovalState();
+        if (ws_process_approval_status.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setWs_process("");
+            only_save = false;
+
+            if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
+                recoverApprovalState();
+            }
+        }
 
         progressDialog.dismiss();
     }
@@ -467,19 +479,24 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         if (ws_process.equals(WS_PROCESS_SO_SYNC)) {
 
-            setWs_process("");
-            processSoDownloadResult(hmAux);
             progressDialog.dismiss();
 
+            setWs_process("");
+            processSoDownloadResult(hmAux);
+
         } else if (ws_process.equals(WS_PROCESS_SO_SAVE)) {
+
+            progressDialog.dismiss();
 
             setWs_process("");
             processSoSave(hmAux);
 
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
 
+            progressDialog.dismiss();
+
             setWs_process("");
-            processSoSave(hmAux);
+            processSoApproval(hmAux);
 
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_USER_AUTHOR)) {
 
@@ -586,13 +603,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_header_.loadDataToScreen();
     }
 
-
+    //region Ciclo Normal
     private void processSoSave(HMAux hmAux) {
         //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
         if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
             //
-            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            executeSoSaveApproval();
+            //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
         } else {
             String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
@@ -729,29 +747,193 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         //refreshUI();
                     }
                 } else {
-                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    executeSoSaveApproval();
+                    //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                 }
             }
         });
     }
+    //endregion
+
+    //region Ciclo Approval
+    private void processSoApproval(HMAux hmAux) {
+        //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
+        if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
+            if (!only_approval) {
+                ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+                //
+                executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            } else {
+                only_approval = false;
+            }
+        } else {
+            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            showResultsApproval(so);
+        }
+    }
+
+    private void showResultsApproval(String[] so) {
+        ArrayList<HMAux> sos = new ArrayList<>();
+        for (int i = 0; i < so.length; i++) {
+            String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
+            //
+            HMAux mHmAux = new HMAux();
+            mHmAux.put("label", fields[0]);
+            mHmAux.put("status", fields[1]);
+            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+            //
+            sos.add(mHmAux);
+        }
+
+        if (sos.size() == 1) {
+            //Verifica se S.O atualizada, foi esta S.O
+            if (sos.get(0).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+                    progressDialog.dismiss();
+                    only_save = false;
+                    //
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_ttl"),
+                            hmAux_Trans.get("msg_so_save_ok"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                    //refreshUI();
+                } else {
+                    progressDialog.dismiss();
+                    //
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_list_title"),
+                            sos.get(0).get("status"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                }
+            } else {
+                showNewOptDialogApproval(sos);
+            }
+
+        } else {
+            showNewOptDialogApproval(sos);
+        }
+    }
+
+    public void showNewOptDialogApproval(List<HMAux> sos) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        final HMAux auxSo = new HMAux();
+        for (int i = 0; i < sos.size(); i++) {
+            if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                auxSo.putAll(sos.get(i));
+                break;
+            }
+        }
+        //
+        lv_results.setAdapter(
+                new Act028_Results_Adapter(
+                        context,
+                        R.layout.act028_results_adapter_cell,
+                        sos
+                )
+        );
+
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //
+                if (auxSo.containsKey("status")) {
+                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
+                        //
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                                hmAux_Trans.get("alert_so_sync_ok_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        refreshUI();
+                                    }
+                                },
+                                0
+                        );
+                        //refreshUI();
+                    }
+                } else {
+                    if (!only_approval) {
+                        executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    } else {
+                        only_approval = false;
+                    }
+                }
+            }
+        });
+    }
+    //endregion
 
     private void processUserAuthorCheck(HMAux hmAux) {
 
-        if (hmAux.get("so_param_return_status").isEmpty()) {
+        try {
+
+            act027_approval_.setOnLineApproval(Integer.parseInt(hmAux.get("so_param_return_status")));
+            only_approval = true;
+            executeSoSaveApproval();
+
+        } catch (Exception e) {
+
+            only_approval = false;
 
             recoverApprovalState();
 
             ToolBox.alertMSG(
                     context,
-                    hmAux_Trans.get("Validacao de Aprovador"),
-                    hmAux_Trans.get("Erro:" + hmAux.get("so_param_return_msg")),
+                    hmAux_Trans.get("alert_author_validation"),
+                    ((hmAux.get("so_param_return_msg") == null || hmAux.get("so_param_return_msg").isEmpty()) ? e.toString() : hmAux.get("so_param_return_msg")),
                     null,
                     0
             );
-
-        } else {
-            act027_approval_.setOnLineApproval(hmAux.get("so_param_return_status") != null ? Integer.parseInt(hmAux.get("so_param_return_status")) : null);
-            executeSoSaveApproval();
         }
     }
 
@@ -855,8 +1037,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             context.sendBroadcast(mIntent);
         }
-
-
     }
 
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
@@ -955,6 +1135,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                                     ).toSqlQuery()
                             );*/
                             //
+                            setWs_process(WS_PROCESS_SO_SAVE);
+                            //
                             executeSoSave();
                         } else {
                             ToolBox_Inf.showNoConnectionDialog(context);
@@ -969,7 +1151,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     private void recoverApprovalState() {
         mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
-        mSm_so.setApproval_required(0);
+        mSm_so.setApproval_required(WS_PROCESS_APPROVAL_NOT);
         mSm_so.setClient_approval_user(null);
 
         mSm_so.setClient_approval_date(null);
@@ -1065,14 +1247,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                     Toast.LENGTH_SHORT
             ).show();
 
-//            ToolBox.alertMSG(
-//                    context,
-//                    hmAux_Trans.get("alert_nfc_return"),
-//                    value[0],
-//                    null,
-//                    0
-//            );
-
         } else {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -1104,11 +1278,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
             act027_approval_.setOnLineApprovalSig(sFileNameSignature);
             //
+            only_approval = true;
+            //
             callAddSignature(sFileNameSignature);
             //
-            executeSoSaveApproval();
+            if (ToolBox_Con.isOnline(context)) {
+                executeSoSaveApproval();
+            }
 
         } else {
+            only_approval = false;
+
             recoverApprovalState();
 
             ToolBox.alertMSG(
@@ -1159,6 +1339,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         geFile.setFile_path(signature);
         geFile.setFile_status("OPENED");
         geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+        geFiles.add(geFile);
 
         geFileDao.addUpdate(geFiles, false);
 

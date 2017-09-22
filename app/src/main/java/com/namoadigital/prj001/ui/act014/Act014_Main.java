@@ -17,9 +17,11 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.adapter.Namoa_Custom_Cell_2_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.Sql_Act014_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act015.Act015_Main;
+import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -31,7 +33,7 @@ import java.util.List;
 public class Act014_Main extends Base_Activity implements Act014_Main_View {
 
     public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
-    public static final String LABEL_TRANS_OS= "lbl_type_service_order";
+    public static final String LABEL_TRANS_OS = "lbl_type_service_order";
 
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
@@ -90,8 +92,13 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
+                new SM_SODao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
                 hmAux_Trans
-            );
+        );
 
         lv_sent = (ListView) findViewById(R.id.act014_lv_sent_data);
 
@@ -127,19 +134,18 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
                 mPresenter.checkSentFlow(item);
             }
         });
-
     }
 
     @Override
     public void loadSentData(List<HMAux> sent_datas) {
-        mAdapter =  new Namoa_Custom_Cell_2_Adapter(
-                            context,
-                            R.layout.namoa_custom_cell_2,
-                            sent_datas,
-                            Lib_Custom_Cell_Adapter.CFG_DESC_QTY,
-                            Sql_Act014_001.TYPE,
-                            Sql_Act014_001.SENT_QTY
-                    );
+        mAdapter = new Namoa_Custom_Cell_2_Adapter(
+                context,
+                R.layout.namoa_custom_cell_2,
+                sent_datas,
+                Lib_Custom_Cell_Adapter.CFG_DESC_QTY,
+                Sql_Act014_001.TYPE,
+                Sql_Act014_001.SENT_QTY
+        );
         //
         lv_sent.setAdapter(mAdapter);
     }
@@ -156,6 +162,21 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     public void callAct015(Context context) {
         Intent mIntent = new Intent(context, Act015_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct032(Context context) {
+        Intent mIntent = new Intent(context, Act032_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
+
+        mIntent.putExtras(bundle);
+
         startActivity(mIntent);
         finish();
     }

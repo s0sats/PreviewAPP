@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -69,6 +70,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_ICON = "menu_icon";
     public static final String MENU_DESC = "menu_desc";
     public static final String MENU_BADGE = "menu_badge";
+    public static final String MENU_BADGESO = "menu_badgeso";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
     public static final String MENU_ID_SERVICE = "menu_service";
@@ -84,6 +86,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
     public static final String WS_PROCESS_SEND = "ws_process_send";
+
+    public static final String WS_PROCESS_SO_STATUS = "ws_process_so_status";
+    public static final String WS_PROCESS_SO_SAVE = "ws_process_so_save";
+    public static final String WS_PROCESS_SO_SAVE_APPROVAL = "ws_process_so_save_approval";
+    public static final String WS_PROCESS_SO_SYNC = "ws_process_so_sync";
+
     public static final String WS_PROCESS_LOGOUT = "ws_process_logout";
     public static final String WS_PROCESS_ENABLE_NFC = "ws_process_enable_nfc";
     public static final String WS_PROCESS_CANCEL_NFC = "ws_process_cancel_nfc";
@@ -91,7 +99,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     //
     public static final String WS_PROCESS_SEND_N_FORM = "ws_process_send_n_form";
     public static final String WS_PROCESS_SEND_SO = "ws_process_send_so";
-
 
     public static final String WS_LIST_ITEM = "ws_list_item";
     public static final String WS_LIST_ITEM_RETURN = "ws_list_item_return";
@@ -103,6 +110,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private static final int TOOLBAR_CANCEL_NFC = 3;
     private static final int TOOLBAR_SUPPORT = 4;
 
+    private ArrayList<HMAux> wsResults = new ArrayList<>();
 
     private Context context;
     private GridView gv_menu;
@@ -119,6 +127,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private String alertMsg = "";
 
     private String wsProcess;
+    private String wsSoProcess;
+
     //
     private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
@@ -248,6 +258,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private void initVars() {
 
         wsProcess = "";
+        wsSoProcess = "";
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
@@ -273,12 +284,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 ),
                 new SM_SODao(
                         context,
-                        Constant.DB_FULL_BASE,
-                        Constant.DB_VERSION_BASE
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
+        //
+        ToolBox_Inf.cleanUpApproval(
+                new SM_SODao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
+        );
         //
         mPresenter.getMenuItens(hmAux_Trans);
 
@@ -658,6 +677,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     @Override
+    public void setWsSoProcess(String wsSoProcess) {
+        this.wsSoProcess = wsSoProcess;
+    }
+
+    @Override
     public void setWsProcessList(ArrayList<HMAux> wsProcessList) {
         this.wsProcessList = wsProcessList;
     }
@@ -761,7 +785,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntent = new Intent(context, Act033_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT005);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -805,22 +829,31 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
 
         if (!wsProcess.equals("")) {
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+                progressDialog.dismiss();
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     processLogin();
                 }
             } else {
-                showSuccessDialog();
-                //Atualiza traduções
-                loadTranslation();
-                //Atualiza menu e os badges
-                mPresenter.getMenuItens(hmAux_Trans);
-                //Fecha Drawer
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+                    progressDialog.dismiss();
+                    showSuccessDialog();
+                    //Atualiza traduções
+                    loadTranslation();
+                    //Atualiza menu e os badges
+                    mPresenter.getMenuItens(hmAux_Trans);
+                    //Fecha Drawer
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    mPresenter.executeSoSave();
+                }
             }
+        } else {
+            progressDialog.dismiss();
         }
     }
 
@@ -828,21 +861,48 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        if (!wsProcess.equals("")) {
-            int idx = getWsIdx(wsProcess);
-            if (idx != -1) {
-                wsProcessList.get(idx).put(WS_LIST_ITEM_RETURN, hmAux.get("WS_Return"));
-                if (idx < wsProcessList.size()) {
-                    mPresenter.executeNextProcess(wsProcessList.get(idx).get(WS_LIST_ITEM));
-                } else if (idx == wsProcessList.size()) {
-                    progressDialog.dismiss();
-                    showSendStatusScore();
-                }
-            }
+        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+            mPresenter.executeSoSaveApproval();
+        } else if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setWsSoProcess("");
+            mPresenter.getMenuItens(hmAux_Trans);
+            progressDialog.dismiss();
         } else {
+            setWsSoProcess("");
+            mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
         }
+    }
 
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+            mPresenter.executeSoSave();
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+            super.processError_1(mLink, mRequired);
+            mPresenter.getMenuItens(hmAux_Trans);
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+            super.processError_1(mLink, mRequired);
+            mPresenter.getMenuItens(hmAux_Trans);
+        } else {
+            super.processError_1(mLink, mRequired);
+            mPresenter.getMenuItens(hmAux_Trans);
+        }
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
+            setWsSoProcess("");
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
+            setWsSoProcess("");
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setWsSoProcess("");
+        } else {
+            changeCustomer();
+        }
     }
 
     private void showSendStatusScore() {
@@ -879,12 +939,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         return -1;
     }
 
-    @Override
-    protected void processCustom_error(String mLink, String mRequired) {
-        super.processCustom_error(mLink, mRequired);
-        changeCustomer();
-    }
-
     private void showSuccessDialog() {
         switch (wsProcess) {
             case Act005_Main.WS_PROCESS_SEND:
@@ -896,7 +950,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
                 //
-                // Hugo
                 startDownloadServices();
                 //
                 break;
@@ -949,6 +1002,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         ToolBox_Inf.call_Act001_Main(context);
         //
         finish();
+    }
+
+    @Override
+    public void cleanUpResults() {
+        if (wsResults != null) {
+            wsResults.clear();
+        } else {
+            wsResults = new ArrayList<>();
+        }
     }
 
     @Override

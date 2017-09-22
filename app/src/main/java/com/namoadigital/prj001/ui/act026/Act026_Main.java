@@ -112,6 +112,15 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
         //
         mPresenter.getSOList(product_code, serial_id);
+        //
+        ToolBox_Inf.cleanUpApproval(
+                new SM_SODao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
+        );
+
     }
 
     private void recoverIntentsInfo() {
@@ -126,11 +135,11 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
             } else {
                 //Tratar quando lista de s.o não for enviado.
                 //Caixa de alerta e volta para menu?!?
-                ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+                ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
             }
         } else {
             //Tratar caso não exista bundle
-            ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+            ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
 
     }
@@ -172,7 +181,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
     @Override
     public void loadSOList(List<HMAux> soList) {
-        String configType =  product_code == null || serial_id == null ? SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL : SO_Header_Adapter.CONFIG_TYPE_EXIBITION_SO ;
+        String configType = product_code == null || serial_id == null ? SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL : SO_Header_Adapter.CONFIG_TYPE_EXIBITION_SO;
         //
         mAdapter = new SO_Header_Adapter(
                 context,
@@ -214,7 +223,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
     @Override
     public void onBackPressed() {
-         //super.onBackPressed();
+        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
 
     }
