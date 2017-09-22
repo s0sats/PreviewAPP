@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act021;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -158,44 +159,60 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             public void onClick(View v) {
                 ToolBox_Inf.hideSoftKeyboard(Act021_Main.this);
                 //
-                switch (v.getId()) {
-                    case R.id.act021_iv_search_serial:
-                        //
-                        if (mket_serial.getText().toString().trim().length() > 0) {
-                            search_pressed = R.id.act021_iv_search_serial;
-                            //Limpa campo tracking
-                            mket_tracking.setText("");
-                            //Chama Ws que consulta Seriais
-                            mPresenter.executeSerialTracking(
-                                    mket_serial.getText().toString().trim(),
-                                    mket_tracking.getText().toString().trim()
-                            );
+                if(mPresenter.checkForSoToSend()) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_to_send_ttl"),
+                            hmAux_Trans.get("alert_so_to_send_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    callAct005(context);
+                                }
+                            },
+                            0
+                    );
+                }else{
+                    //
+                    switch (v.getId()) {
+                        case R.id.act021_iv_search_serial:
+                            //
+                            if (mket_serial.getText().toString().trim().length() > 0) {
+                                search_pressed = R.id.act021_iv_search_serial;
+                                //Limpa campo tracking
+                                mket_tracking.setText("");
+                                //Chama Ws que consulta Seriais
+                                mPresenter.executeSerialTracking(
+                                        mket_serial.getText().toString().trim(),
+                                        mket_tracking.getText().toString().trim()
+                                );
 
-                        } else {
-                            showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-                                    hmAux_Trans.get("alert_no_value_filled_msg"));
-                        }
-                        //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.act021_iv_search_tracking:
+                            } else {
+                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+                                        hmAux_Trans.get("alert_no_value_filled_msg"));
+                            }
+                            //Toast.makeText(context, "Serial", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.id.act021_iv_search_tracking:
 
-                        if (mket_tracking.getText().toString().trim().length() > 0) {
-                            search_pressed = R.id.act021_iv_search_tracking;
-                            //Limpa campo Serial
-                            mket_serial.setText("");
-                            //Chama Ws que consulta Seriais
-                            mPresenter.executeSerialTracking(
-                                    mket_serial.getText().toString().trim(),
-                                    mket_tracking.getText().toString().trim()
-                            );
-                        } else {
-                            showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
-                                    hmAux_Trans.get("alert_no_value_filled_msg"));
-                        }
-                        //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
+                            if (mket_tracking.getText().toString().trim().length() > 0) {
+                                search_pressed = R.id.act021_iv_search_tracking;
+                                //Limpa campo Serial
+                                mket_serial.setText("");
+                                //Chama Ws que consulta Seriais
+                                mPresenter.executeSerialTracking(
+                                        mket_serial.getText().toString().trim(),
+                                        mket_tracking.getText().toString().trim()
+                                );
+                            } else {
+                                showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+                                        hmAux_Trans.get("alert_no_value_filled_msg"));
+                            }
+                            //Toast.makeText(context, "Tracking", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         };
@@ -211,7 +228,22 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
                 //showNewOptDialog();
-                mPresenter.checkForSoToSend();
+                if(mPresenter.checkForSoToSend()){
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_to_send_ttl"),
+                            hmAux_Trans.get("alert_so_to_send_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    callAct005(context);
+                                }
+                            },
+                            0
+                    );
+                }else{
+                    showNewOptDialog();
+                }
             }
         });
 

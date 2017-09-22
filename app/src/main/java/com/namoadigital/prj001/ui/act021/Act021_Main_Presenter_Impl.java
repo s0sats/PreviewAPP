@@ -1,14 +1,12 @@
 package com.namoadigital.prj001.ui.act021;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -57,7 +55,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     }
 
     @Override
-    public void checkForSoToSend() {
+    public boolean checkForSoToSend() {
         //
         HMAux hmAux = soDao.getByStringHM(
                 new Sql_Act021_001(
@@ -78,20 +76,9 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         }
         //Se tiver pendente ou existir arquivo de token exibe msg.
         if (qty == 0 && !hasTokenFile) {
-            mView.showNewOptDialog();
+            return false;
         } else {
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_so_to_send_ttl"),
-                    hmAux_Trans.get("alert_so_to_send_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mView.callAct005(context);
-                        }
-                    },
-                    0
-            );
+            return true;
         }
     }
 

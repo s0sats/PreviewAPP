@@ -17,8 +17,6 @@ public interface Act023_Main_View {
 
     void setProductValues(MD_Product md_product);
 
-    void setSerialValues(HMAux md_product_serial);
-
     void setWs_process(String ws_process);
 
     void fieldFocus();

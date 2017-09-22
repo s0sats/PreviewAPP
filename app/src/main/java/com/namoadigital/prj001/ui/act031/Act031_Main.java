@@ -348,6 +348,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         ll_tracking = (LinearLayout) findViewById(R.id.act031_ll_serial_tracking);
         tv_tracking = (TextView) findViewById(R.id.act031_tv_serial_tracking_ttl);
         tv_tracking.setTag("tracking_ttl");
+        tv_tracking.setText(hmAux_Trans.get("tracking_ttl"));
         iv_add_tracking = (ImageView) findViewById(R.id.act031_iv_add_tracking);
         ll_tracking_content = (LinearLayout) findViewById(R.id.act031_ll_tracking_container);
         //
