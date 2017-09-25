@@ -42,6 +42,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private Bundle bundle;
     private Lib_Custom_Cell_Adapter mAdapter;
     private boolean back_act020 = false;
+    private int back_action;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,7 +91,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 context,
                 this,
                 new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                back_act020,
+                back_action
         );
 
         lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
@@ -105,6 +108,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
             back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
+            back_action = bundle.getInt(Constant.BACK_ACTION,0);
         } else {
 //
 //
@@ -148,7 +152,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         });
     }
 
-    private void addFormTypeInfoToBundle(HMAux item) {
+    @Override
+    public void addFormTypeInfoToBundle(HMAux item) {
         bundle.putString(
                 Constant.ACT009_CUSTOM_FORM_TYPE,
                 item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE)
@@ -207,6 +212,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT008_SERIAL_ID);
         bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.BACK_ACTION);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -228,6 +234,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         bundle.remove(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(Constant.ACT008_SERIAL_ID);
         bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.BACK_ACTION);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

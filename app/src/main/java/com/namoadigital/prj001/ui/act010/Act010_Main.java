@@ -28,6 +28,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by neomatrix on 23/01/17.
  */
@@ -189,6 +190,19 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                         ""
                         );
         lv_forms.setAdapter(mAdapter);
+        //
+//        if(forms.size() == 1 ){
+//            new Handler().post(new Runnable(){
+//                @Override
+//                public void run() {
+//                    lv_forms.performItemClick(
+//                            lv_forms.getAdapter().getView(0, null, null),
+//                            0,
+//                            lv_forms.getAdapter().getItemId(0)
+//                    );
+//                }
+//            });
+//        }
 
     }
     @Override
@@ -232,6 +246,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
         bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
+        bundle.putInt(Constant.BACK_ACTION, 1);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

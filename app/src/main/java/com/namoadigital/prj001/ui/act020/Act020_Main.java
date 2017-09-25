@@ -24,6 +24,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
@@ -121,6 +122,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         transList.add("progress_sync_msg");
         transList.add("alert_no_form_for_operation_ttl");
         transList.add("alert_no_form_for_operation_msg");
+        transList.add("drawer_tracking_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -149,6 +151,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         Constant.DB_VERSION_CUSTOM
                 ),
                 new GE_Custom_Form_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                new MD_ProductDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -215,13 +222,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         fragFilters.setOnDrawerClick(new Act020_Frag_Filter.IAct020_Filter() {
             @Override
-            public void onIvSearchClick(String product, String product_id, String serial) {
+            public void onIvSearchClick(String product_id, String serial, String tracking) {
                 ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
-                    if (product.trim().length() > 0
-                        || product_id.trim().length() > 0
+                    if (product_id.trim().length() > 0
                         || serial.trim().length() > 0
+                        || tracking.trim().length() > 0
+
                     ){
-                        mPresenter.executeSerialSearch(product, product_id, serial);
+                        mPresenter.executeSerialSearch(product_id, serial, tracking);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -422,18 +430,25 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         }else{
             fragFilters.cleanFields();
             ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
+            String product_id = "";
             //
             switch (value[0]){
                 case PRODUCT:
+                    product_id = mPresenter.searchProductInfo(value[2], "");
+                    //
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
                     fragFilters.setProductCodeText(value[2]);
-                    mPresenter.executeSerialSearch(value[2],"","");
+                    fragFilters.setProductIdText(product_id);
+                    mPresenter.executeSerialSearch(product_id,"","");
                     break;
                 case SERIAL:
+                    product_id = mPresenter.searchProductInfo(value[2], "");
+                    //
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_serial_lbl"));
                     fragFilters.setProductCodeText(value[2]);
+                    fragFilters.setProductIdText(product_id);
                     fragFilters.setSerialIdText(value[3]);
-                    mPresenter.executeSerialSearch(value[2],"", value[3]);
+                    mPresenter.executeSerialSearch(product_id,value[3],"");
                     break;
 
                 default:

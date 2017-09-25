@@ -131,6 +131,9 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
         transList.add("drawer_tracking_lbl");
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
+        transList.add("alert_tracking_not_found_ttl");
+        transList.add("alert_tracking_not_found_msg");
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -222,14 +225,19 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
                 if ( ( product_id.trim().length() > 0 && serial.trim().length() > 0)
                     || tracking.trim().length() > 0
                 ) {
-                    //Se tudo preenchido, valida se produto existe
-                    if (mPresenter.checkProductExists(
-                            product_id.trim(),
-                            serial.trim()
-                            )
-                    ) {
-                        //
+                    //Se somente tracking preenchido, chama Ws sem validar produto local
+                    if(tracking.trim().length() > 0 && product_id.trim().length() == 0 && serial.trim().length() == 0 ){
                         mPresenter.executeSerialSearch(product_id, serial, tracking);
+                    }else {
+                        //Se tudo preenchido, valida se produto existe
+                        if (mPresenter.checkProductExists(
+                                product_id.trim(),
+                                serial.trim()
+                        )
+                                ) {
+                            //
+                            mPresenter.executeSerialSearch(product_id, serial, tracking);
+                        }
                     }
                 } else {
                     ToolBox.alertMSG(
@@ -396,20 +404,34 @@ public class Act030_Main extends Base_Activity_NFC_Geral implements Act030_Main_
     public void showNewSerialMsg() {
         //Se nenhum serial encontrado e produto permite novo serial
         //exibe caixa perguntando se deseja criar novo serial.
-        if(mPresenter.productAllowNewSerial(fragFilters.getProductCodeText(),fragFilters.getProductIdText())){
+        if(fragFilters.getTrackingText().length() > 0
+                && fragFilters.getProductIdText().length() == 0
+                && fragFilters.getSerialIdText().length() == 0
+        ){
             ToolBox.alertMSG(
                     context,
-                    hmAux_Trans.get("alert_new_serial_ttl"),
-                    hmAux_Trans.get("alert_new_serial_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            mPresenter.defineFlow(serial, true);
-                        }
-                    },
-                    1
+                    hmAux_Trans.get("alert_tracking_not_found_ttl"),
+                    hmAux_Trans.get("alert_tracking_not_found_msg"),
+                    null,
+                    0
             );
+        }else {
+
+            if (mPresenter.productAllowNewSerial(fragFilters.getProductCodeText(), fragFilters.getProductIdText())) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_new_serial_ttl"),
+                        hmAux_Trans.get("alert_new_serial_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                mPresenter.defineFlow(serial, true);
+                            }
+                        },
+                        1
+                );
+            }
         }
     }
 
