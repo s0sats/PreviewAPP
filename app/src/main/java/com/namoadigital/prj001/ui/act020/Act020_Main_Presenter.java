@@ -12,7 +12,7 @@ public interface Act020_Main_Presenter {
 
     void onBackPressedClicked();
 
-    void executeSerialSearch(String product_code, String product_id,String serial_id);
+    void executeSerialSearch(String product_id, String serial, String tracking);
 
     void defineFlow(TProduct_Serial productSerial);
 
@@ -23,4 +23,6 @@ public interface Act020_Main_Presenter {
     void startDownloadServices();
 
     boolean checkFormXOperationExists();
+
+    String searchProductInfo(String product_code,String product_id);
 }

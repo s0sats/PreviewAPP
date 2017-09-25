@@ -30,6 +30,8 @@ public class Act020_Frag_Filter extends Fragment {
     private MKEditTextNM mket_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
+    private TextView tv_tracking;
+    private MKEditTextNM mket_tracking;
     private ImageView iv_search;
     private HMAux hmAux_Trans;
     private IAct020_Filter delegate;
@@ -97,6 +99,11 @@ public class Act020_Frag_Filter extends Fragment {
         mket_serial = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_serial);
         controls_sta.add(mket_serial);
         //
+        tv_tracking = (TextView) view.findViewById(R.id.act020_drawer_content_tv_tracking);
+        //
+        mket_tracking = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_tracking);
+        controls_sta.add(mket_tracking);
+        //
         iv_search = (ImageView) view.findViewById(R.id.act020_drawer_content_iv_search);
 
         if(supportNFC){
@@ -115,9 +122,10 @@ public class Act020_Frag_Filter extends Fragment {
             public void onClick(View v) {
                 if (delegate != null){
                     delegate.onIvSearchClick(
-                            mket_product.getText().toString().trim(),
+                            //mket_product.getText().toString().trim(),
                             mket_product_id.getText().toString().trim(),
-                            mket_serial.getText().toString().trim()
+                            mket_serial.getText().toString().trim(),
+                            mket_tracking.getText().toString().trim()
                     );
                 }
             }
@@ -141,6 +149,10 @@ public class Act020_Frag_Filter extends Fragment {
         mket_serial.setText(text.toString());
     }
 
+    public void setTrackingText(String text) {
+        mket_tracking.setText(text.toString());
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
         setTranslation();
@@ -155,6 +167,7 @@ public class Act020_Frag_Filter extends Fragment {
        // mket_product.setHint(hmAux_Trans.get("search_prod_hint"));
         tv_serial.setText(hmAux_Trans.get("drawer_serial_lbl"));
         //mket_serial.setHint(hmAux_Trans.get("search_prod_hint"));
+        tv_tracking.setText(hmAux_Trans.get("drawer_tracking_lbl"));
     }
 
     public ArrayList<MKEditTextNM> getControlsSta(){
@@ -169,5 +182,7 @@ public class Act020_Frag_Filter extends Fragment {
         mket_product_id.setText("");
         //
         mket_serial.setText("");
+        //
+        mket_tracking.setText("");
     }
 }
