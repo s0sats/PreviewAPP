@@ -80,7 +80,7 @@
                         android:id="@+id/act028_main_content_cell_iv_woker"
                         android:layout_width="@dimen/namoa_icon_cell_so_width"
                         android:layout_height="@dimen/namoa_icon_cell_so_height"
-                        android:src="@drawable/ic_worker_24px_black"
+                        android:src="@drawable/ic_funcionario_ns"
                         android:tint="@color/namoa_color_dark_blue2" />
 
                     <TextView
@@ -128,7 +128,7 @@
                         android:id="@+id/act028_main_content_cell_iv_sum"
                         android:layout_width="@dimen/namoa_icon_cell_so_width"
                         android:layout_height="@dimen/namoa_icon_cell_so_height"
-                        android:src="@drawable/ic_timer_black_24dp"
+                        android:src="@drawable/ic_relogio_ns"
                         android:tint="@color/namoa_color_dark_blue2" />
 
                     <TextView
