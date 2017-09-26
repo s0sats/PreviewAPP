@@ -1416,7 +1416,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
             //
             String trackingList = "";
             for (int i = 0; i < tracking_list.size() ; i++) {
-                trackingList += tracking_list.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
+                trackingList += " º " + tracking_list.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
                 if(i < tracking_list.size() ){
                     trackingList += "\n";
                 }

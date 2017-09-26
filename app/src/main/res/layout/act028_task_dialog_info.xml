@@ -44,94 +44,69 @@
 
             </LinearLayout>
 
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/act028_dialog_info_tv_service_lbl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:gravity="left"
+                android:padding="2dp"
+                android:text="Service"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/act028_dialog_info_tv_service_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:text="Service"
-                    android:textSize="@dimen/font_size_title_md"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/act028_dialog_info_tv_service_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:padding="2dp"
-                    android:textSize="@dimen/font_size_title_md" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/act028_dialog_info_tv_service_val"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:padding="2dp"
+                android:textColor="@color/lib_custom_cell_font_color"
+                android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act028_dialog_info_tv_product_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:text="Product"
-                    android:textSize="@dimen/font_size_title_md"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/act028_dialog_info_tv_product_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:padding="2dp"
-                    android:textSize="@dimen/font_size_title_md" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/act028_dialog_info_tv_product_lbl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:padding="2dp"
+                android:text="Product"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/act028_dialog_info_tv_serial_id_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:padding="2dp"
-                    android:text="Serial"
-                    android:textSize="@dimen/font_size_title_md"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/act028_dialog_info_tv_product_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:padding="2dp"
+                android:textColor="@color/lib_custom_cell_font_color"
+                android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act028_dialog_info_tv_serial_id_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:padding="2dp"
-                    android:text="uhauh"
-                    android:textSize="@dimen/font_size_title_md" />
+            <TextView
+                android:id="@+id/act028_dialog_info_tv_serial_id_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:text="Serial"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
 
-            </LinearLayout>
+            <TextView
+                android:id="@+id/act028_dialog_info_tv_serial_id_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:padding="2dp"
+                android:text="uhauh"
+                android:textColor="@color/lib_custom_cell_font_color"
+                android:textSize="@dimen/font_size_title_md" />
 
             <TextView
                 android:id="@+id/act028_dialog_info_tv_tracking_lbl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
                 android:padding="2dp"
-                android:text="Serial"
+                android:text="Tracking"
                 android:textSize="@dimen/font_size_title_md"
                 android:textStyle="bold" />
 
@@ -139,8 +114,9 @@
                 android:id="@+id/act028_dialog_info_tv_tracking_val"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:layout_marginStart="5dp"
                 android:padding="2dp"
+                android:textColor="@color/lib_custom_cell_font_color"
                 android:textSize="@dimen/font_size_title_md" />
 
         </LinearLayout>
