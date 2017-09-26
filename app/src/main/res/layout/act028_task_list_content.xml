@@ -181,7 +181,9 @@
                 android:paddingRight="15dp"
                 android:paddingTop="4dp"
                 android:src="@drawable/ic_info"
-                android:tint="@color/namoa_dark_blue" />
+                android:tint="@color/namoa_dark_blue"
+                android:visibility="gone"
+                />
 
             <View
                 android:layout_width="5dp"

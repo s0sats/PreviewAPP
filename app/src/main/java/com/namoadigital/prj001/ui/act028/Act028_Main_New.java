@@ -532,13 +532,18 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //Menu Suporte
+//        //Menu Suporte
+//        menu.add(0, 2, Menu.FIRST + 3, "Info");
+//        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+//        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+//        menu.findItem(2).setTitle("Info");
+
         menu.add(0, 2, Menu.FIRST + 3, "Info");
-        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_info));
         menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(2).setTitle("Info");
 
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -546,17 +551,22 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         int id = item.getItemId();
 
         switch (id) {
+//            case 2:
+//
+//                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                View view = inflater.inflate(R.layout.teste, null);
+//
+//                ToolBox_Inf.showDialogInfo(
+//                        context,
+//                        mService,
+//                        view
+//                );
+//
+//                return true;
+
+
             case 2:
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = inflater.inflate(R.layout.teste, null);
-
-                ToolBox_Inf.showDialogInfo(
-                        context,
-                        mService,
-                        view
-                );
-
+                showInfo();
                 return true;
         }
 

@@ -229,7 +229,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 }else if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)){
                     ll_express.setVisibility(View.VISIBLE);
                     //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_pencil_circle_black_24dp));
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_pencil_circle_black_24dp));
                 }else{
                     //ll_express.setVisibility(View.GONE);
                     ll_express.setVisibility(View.VISIBLE);

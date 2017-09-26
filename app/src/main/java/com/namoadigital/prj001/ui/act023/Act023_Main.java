@@ -8,8 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -25,7 +23,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.ctls.TextViewCT;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
@@ -72,7 +70,7 @@ import static com.namoadigital.prj001.util.ToolBox_Inf.setSSmValue;
  * Created by d.luche on 22/06/2017.
  */
 
-public class Act023_Main extends Base_Activity implements Act023_Main_View {
+public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View {
 
     public static final String SO_WS_SEARCH_SERIAL = "WS_SEARCH_SERIAL";
     public static final String SO_WS_SERIAL_SAVE = "SO_WS_SERIAL_SAVE";
@@ -1538,14 +1536,14 @@ public class Act023_Main extends Base_Activity implements Act023_Main_View {
         mPresenter.onBackPressedClicked();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+//
+//        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+//        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//
+//        return true;
+//    }
 }

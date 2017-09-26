@@ -10,8 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -20,7 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -39,7 +37,7 @@ import java.util.List;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_View {
+public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_Main_View {
 
     public static final String PROGRESS_WS_SERIAL_SEARCH = "progress_ws_serial_search";
     //public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
@@ -552,26 +550,4 @@ public class Act025_Main extends Base_Activity_NFC_Geral implements Act025_Main_
         mPresenter.onBackPressedClicked();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return true;
-    }
 }

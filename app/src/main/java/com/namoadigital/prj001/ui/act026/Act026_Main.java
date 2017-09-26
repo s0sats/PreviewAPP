@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -30,7 +30,7 @@ import static com.namoadigital.prj001.R.layout.act026_main;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act026_Main extends Base_Activity implements Act026_Main_View {
+public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View {
 
     private Act026_Main_Presenter mPresenter;
     private ListView lv_so;
