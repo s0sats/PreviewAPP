@@ -182,6 +182,7 @@ public class Act027_Services extends BaseFragment {
     public void setServiceAdapter(boolean isChecked) {
         adp = new Act027_Services_Adapter(
                 getActivity(),
+                //R.layout.act027_services_content_adapter_cell,
                 R.layout.act027_services_content_adapter_cell_new,
                 sm_so_serviceDao.query_HM(
                                 /*new SM_SO_Service_Sql_003(
@@ -223,6 +224,14 @@ public class Act027_Services extends BaseFragment {
                                 Integer.parseInt(sData.get("service_seq"))
                         ).toSqlQuery()
                 );
+                //Tratativa para o nova ação do btn express é que igual ao btn normal...
+                //Confuso ?! kkkk Senta e chora
+                if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
+                        sData.get(Sql_Act027_002.YES_NO_ICON).equals("0") &&
+                        sData.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_NONE)
+                ) {
+                    selection_type = Act027_Main.SELECTION_NORMAL;
+                }
 
                 switch (selection_type) {
                     case Act027_Main.SELECTION_EXPRESS:

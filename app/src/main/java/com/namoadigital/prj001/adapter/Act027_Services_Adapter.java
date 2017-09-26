@@ -212,25 +212,34 @@ public class Act027_Services_Adapter extends BaseAdapter {
             if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
                 if(item.get(Sql_Act027_002.YES_NO_ICON).equals("1")){
                     ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns));
                 }else{
-                    ll_express.setVisibility(View.GONE);
+                    //ll_express.setVisibility(View.GONE);
+                    ll_express.setVisibility(View.VISIBLE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns));
                 }
 
             }else{
 
                 if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)){
                     ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_ns));
                 }else if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)){
                     ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_pencil_circle_black_24dp));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_pencil_circle_black_24dp));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns));
                 }else{
-                    ll_express.setVisibility(View.GONE);
+                    //ll_express.setVisibility(View.GONE);
+                    ll_express.setVisibility(View.VISIBLE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns));
                 }
             }
         }else{
-            ll_express.setVisibility(View.GONE);
+            //ll_express.setVisibility(View.GONE);
+            ll_express.setVisibility(View.VISIBLE);
+            iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns));
         }
 
         iv_express.setTag(item);
