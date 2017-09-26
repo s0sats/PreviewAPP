@@ -16,6 +16,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -515,26 +517,39 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         }
     }
 
-    //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-//        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-//
-//        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//
-//        if (mDrawerToggle.onOptionsItemSelected(item)) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Menu Suporte
+        menu.add(0, 2, Menu.FIRST + 3, "Info");
+        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(2).setTitle("Info");
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case 2:
+
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view = inflater.inflate(R.layout.teste, null);
+
+                ToolBox_Inf.showDialogInfo(
+                        context,
+                        mService,
+                        view
+                );
+
+                return true;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onBackPressed() {
