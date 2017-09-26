@@ -94,7 +94,9 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_pontos_ns" />
+                android:src="@drawable/ic_pontos_ns"
+                android:background="@drawable/namoa_icon_bg_states"
+                />
         </LinearLayout>
 
 
@@ -295,6 +297,7 @@
                 android:focusable="false"
                 android:src="@drawable/ic_escolher_ns"
                 android:layout_gravity="center"
+                android:background="@drawable/namoa_icon_bg_states"
                 />
         </LinearLayout>
 
