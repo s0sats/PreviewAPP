@@ -31,6 +31,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
@@ -41,10 +42,12 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -175,6 +178,13 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         transList.add("start_date_lbl");
         transList.add("end_date_lbl");
         transList.add("qty_people_lbl");
+        //
+        transList.add("dialog_so_lbl");
+        transList.add("dialog_service_lbl");
+        transList.add("dialog_product_lbl");
+        transList.add("dialog_serial_lbl");
+        transList.add("dialog_tracking_lbl");
+        transList.add("dialog_info_ttl");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -1365,8 +1375,73 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         /**
          * Ini Vars
          */
+        TextView tv_so_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_so_lbl);
+        TextView tv_so_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_so_val);
+        //
+        TextView tv_service_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_service_lbl);
+        TextView tv_service_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_service_val);
+        //
+        TextView tv_product_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_product_lbl);
+        TextView tv_product_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_product_val);
+        //
+        TextView tv_serial_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_serial_id_lbl);
+        TextView tv_serial_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_serial_id_val);
+        //
+        TextView tv_tracking_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_tracking_lbl);
+        TextView tv_tracking_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_tracking_val);
+        //Busca dados
+        HMAux so_info = sm_soDao.getByStringHM(
+                new SM_SO_Sql_002(
+                        mService.getCustomer_code(),
+                        mService.getSo_prefix(),
+                        mService.getSo_code()
+                ).toSqlQuery()
+        );
+        //
+        ArrayList<HMAux> tracking_list = (ArrayList<HMAux>)
+                new MD_Product_Serial_TrackingDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ).query_HM(
+                        new MD_Product_Serial_Tracking_Sql_003(
+                         Long.parseLong(so_info.get(SM_SODao.CUSTOMER_CODE)),
+                          Long.parseLong(so_info.get(SM_SODao.PRODUCT_CODE)),
+                          Long.parseLong(so_info.get(SM_SODao.SERIAL_CODE))
 
-        ListView lv_opt = (ListView) view.findViewById(R.id.act028_task_dialog_info_lv_opt);
+                        ).toSqlQuery()
+                );
+        //
+        tv_so_lbl.setText(hmAux_Trans.get("dialog_so_lbl"));
+        //
+        String so_prefix_code = so_info.get(SM_SODao.SO_PREFIX)+"."+so_info.get(SM_SODao.SO_CODE);
+        tv_so_val.setText( so_info.get(SM_SODao.SO_ID).equals(so_prefix_code) ? so_prefix_code : so_info.get(SM_SODao.SO_ID) );
+        //
+        tv_service_lbl.setText(hmAux_Trans.get("dialog_service_lbl"));
+        tv_service_val.setText(mService.getService_id() +" - "+ mService.getService_desc());
+        //
+        tv_product_lbl.setText(hmAux_Trans.get("dialog_product_lbl"));
+        tv_product_val.setText(so_info.get(SM_SODao.PRODUCT_ID)  +" - "+ so_info.get(SM_SODao.PRODUCT_DESC));
+        //
+        tv_serial_lbl.setText(hmAux_Trans.get("dialog_serial_lbl"));
+        tv_serial_val.setText(so_info.get(SM_SODao.SERIAL_ID));
+        //
+        if(tracking_list != null && tracking_list.size() > 0){
+            tv_tracking_lbl.setText(hmAux_Trans.get("dialog_tracking_lbl"));
+            //
+            String trackingList = "";
+            for (int i = 0; i < tracking_list.size() ; i++) {
+                trackingList += " º " + tracking_list.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
+                if(i < tracking_list.size() ){
+                    trackingList += "\n";
+                }
+            }
+            //
+            tv_tracking_val.setText(trackingList);
+        }else{
+            tv_tracking_lbl.setVisibility(View.GONE);
+            tv_tracking_val.setVisibility(View.GONE);
+        }
 
 //        String[] from = {NEW_OPT_LABEL};
 //        //int[] to = {android.R.id.text1};
@@ -1398,7 +1473,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 //        });
 
         //builder.setTitle(hmAux_Trans.get("alert_new_opt_ttl"));
-        builder.setTitle("On Construction");
+        builder.setTitle(hmAux_Trans.get("dialog_info_ttl"));
         builder.setView(view);
         builder.setCancelable(true);
 
