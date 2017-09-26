@@ -175,9 +175,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         transList.add("partner_lbl");
         transList.add("service_lbl");
         //
-        transList.add("start_date_lbl");
-        transList.add("end_date_lbl");
-        transList.add("qty_people_lbl");
+        //transList.add("start_date_lbl");
+        //transList.add("end_date_lbl");
+        //transList.add("qty_people_lbl");
+        //
+        transList.add("exec_task_lbl");
+        transList.add("additional_info_lbl");
         //
         transList.add("dialog_so_lbl");
         transList.add("dialog_service_lbl");
