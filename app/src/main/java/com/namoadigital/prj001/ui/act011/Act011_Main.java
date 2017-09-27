@@ -1210,7 +1210,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     numberOfErrors += 1;
                 }
 
-                customFFs.get(i).setValidationBackGroundDots();
+                customFFs.get(i).setValidationBackGround();
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
                     if (!customFFs.get(i).isValid()) {

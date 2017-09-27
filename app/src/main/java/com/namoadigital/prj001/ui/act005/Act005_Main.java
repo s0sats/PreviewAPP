@@ -921,7 +921,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
-                    wsResults.add(mHmAux);
+                    if (!hmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
                 }
             } else {
 
@@ -942,7 +944,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
-                    wsResults.add(mHmAux);
+                    if (!hmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
                 }
             } else {
 

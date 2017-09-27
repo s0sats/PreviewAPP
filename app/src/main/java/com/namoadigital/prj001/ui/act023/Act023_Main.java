@@ -1535,15 +1535,4 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-//
-//        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-//        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//
-//        return true;
-//    }
 }
