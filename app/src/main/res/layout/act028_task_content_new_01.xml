@@ -97,7 +97,7 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_cancelar_ns" />
+                android:src="@drawable/ic_cancelar_ns_states" />
 
             <View
                 android:layout_width="0dp"
@@ -118,7 +118,7 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_ok_ns" />
+                android:src="@drawable/ic_ok_ns_states" />
 
 
             <ImageView
@@ -130,7 +130,7 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_ok_ns" />
+                android:src="@drawable/ic_ok_ns_states" />
 
         </LinearLayout>
 
