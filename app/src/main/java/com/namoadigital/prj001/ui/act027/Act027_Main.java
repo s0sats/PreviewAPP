@@ -289,6 +289,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("progress_save_serial_ttl");
         transList.add("progress_save_serial_msg");
         transList.add("searchable_spinner_lbl");
+        transList.add("add_info1_ttl");
+        transList.add("add_info2_ttl");
+        transList.add("add_info3_ttl");
         //Service Fragment
         transList.add("filter_lbl");
         transList.add("select_partner_lbl");

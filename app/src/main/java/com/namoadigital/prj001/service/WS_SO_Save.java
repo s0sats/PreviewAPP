@@ -31,6 +31,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_010;
+import com.namoadigital.prj001.sql.SM_SO_Sql_017;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -152,8 +153,18 @@ public class WS_SO_Save extends IntentService {
             for (int i = 0; i < sos.size(); i++) {
                 sos.get(i).setAction(so_action);
                 sos.get(i).setOrigin_change(SO_ORIGIN_CHANGE_APP);
+                //Metodo original que chamava addUpdate do obj
+                //Por questão de performance, mudado para addUpdate via Query
+                //soDao.addUpdate(sos.get(i));
+                soDao.addUpdate(
+                        new SM_SO_Sql_017(
+                                sos.get(i).getCustomer_code(),
+                                sos.get(i).getSo_prefix(),
+                                sos.get(i).getSo_code(),
+                                sos.get(i).getOrigin_change()
+                        ).toSqlQuery()
+                );
                 //
-                soDao.addUpdate(sos.get(i));
                 sos.get(i).setToken(token);
             }
             //
@@ -179,6 +190,7 @@ public class WS_SO_Save extends IntentService {
             }
             //Seta update required para 0
             //Trocar para sql com update?!
+            //Trocado por query por questão de performance.
             for (int i = 0; i < sos.size(); i++) {
                 /*sos.get(i).setUpdate_required(0);
                 //
