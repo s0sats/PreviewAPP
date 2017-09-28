@@ -188,6 +188,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         transList.add("dialog_serial_lbl");
         transList.add("dialog_tracking_lbl");
         transList.add("dialog_info_ttl");
+        //
+        transList.add("toolbar_info_lbl");
 
         sm_soDao = new SM_SODao(
                 context,
