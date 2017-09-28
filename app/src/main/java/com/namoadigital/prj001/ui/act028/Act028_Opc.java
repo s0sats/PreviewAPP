@@ -25,8 +25,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
@@ -35,9 +33,9 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_005;
-import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_Status_001;
 import com.namoadigital.prj001.sql.Sql_Act028_001;
+import com.namoadigital.prj001.sql.Sql_Act028_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -749,55 +747,88 @@ public class Act028_Opc extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        SM_SO sm_so = sm_soDao.getByString(
+        HMAux resp = sm_soDao.getByStringHM(
 
-                new SM_SO_Sql_001(
+                new Sql_Act028_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        so_prefix,
-                        so_code
+                        sm_so_service.getSo_prefix(),
+                        sm_so_service.getSo_code(),
+                        sm_so_service.getPrice_list_code(),
+                        sm_so_service.getPack_code(),
+                        sm_so_service.getPack_seq(),
+                        sm_so_service.getCategory_price_code(),
+                        sm_so_service.getService_code(),
+                        sm_so_service.getService_seq()
                 ).toSqlQuery()
         );
 
-        if (
-                !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
-                        !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
-                ) {
-
+        if (resp != null && resp.get("full_status").equalsIgnoreCase("0")){
             return false;
-
         } else {
-
-            for (SM_SO_Pack sm_so_pack : sm_so.getPack()) {
-
-                if ((sm_so_pack.getPrice_list_code() == sm_so_service.getPrice_list_code()) &&
-                        (sm_so_pack.getPack_code() == sm_so_service.getPack_code()) &&
-                        (sm_so_pack.getPack_seq() == sm_so_service.getPack_seq())
-
-                        ) {
-
-                    if (!sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
-                            !sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
-                            ) {
-                        return false;
-                    } else {
-
-                        if (!sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
-                                !sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
-                                ) {
-
-                            return false;
-
-                        } else {
-
-                            return true;
-                        }
-                    }
-                }
-            }
+            return true;
         }
 
-        return true;
     }
+
+//    public boolean verificarStatus_SO(int so_prefix, int so_code, SM_SO_Service sm_so_service) {
+//
+//        SM_SODao sm_soDao = new SM_SODao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//        );
+//
+//        SM_SO sm_so = sm_soDao.getByString(
+//
+//                new SM_SO_Sql_001(
+//                        ToolBox_Con.getPreference_Customer_Code(context),
+//                        so_prefix,
+//                        so_code
+//                ).toSqlQuery()
+//        );
+//
+//        if (
+//                !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+//                        !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+//                ) {
+//
+//            return false;
+//
+//        } else {
+//
+//            for (SM_SO_Pack sm_so_pack : sm_so.getPack()) {
+//
+//                if ((sm_so_pack.getPrice_list_code() == sm_so_service.getPrice_list_code()) &&
+//                        (sm_so_pack.getPack_code() == sm_so_service.getPack_code()) &&
+//                        (sm_so_pack.getPack_seq() == sm_so_service.getPack_seq())
+//
+//                        ) {
+//
+//                    if (!sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+//                            !sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+//                            ) {
+//                        return false;
+//                    } else {
+//
+//                        if (!sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+//                                !sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+//                                ) {
+//
+//                            return false;
+//
+//                        } else {
+//
+//                            return true;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//
+//        return true;
+//    }
 
     private void changeTabColor() {
     }
