@@ -148,6 +148,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_so_ttl");
         transList.add("msg_so_save_ok");
         transList.add("alert_author_validation");
+        transList.add("alert_no_profile_ttl");
+        transList.add("alert_no_profile_msg");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -1130,23 +1132,50 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         switch (type.toUpperCase()) {
             case Act027_Main.SELECTION_SERVICES:
                 setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case Act027_Main.SELECTION_SERIAL:
                 setFrag(act027_serial_, Act027_Main.SELECTION_SERIAL);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case Act027_Main.SELECTION_HEADER:
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case Act027_Main.SELECTION_APPROVAL:
-                setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)){
+
+                    if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_CLIENT)) {
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
+                            setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_no_profile_ttl"),
+                                    hmAux_Trans.get("alert_no_profile_msg"),
+                                    null,
+                                    0
+                            );
+                        }
+                    }
+
+                } else {
+                    setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+
                 break;
             default:
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
         }
 
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
     }
+
 
     @Override
     public void soSyncClick() {

@@ -538,10 +538,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 //        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
 //        menu.findItem(2).setTitle("Info");
 
-        menu.add(0, 2, Menu.FIRST + 3, "Info");
+        menu.add(0, 2, Menu.FIRST + 3, hmAux_Trans.get("toolbar_info_lbl"));
         menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_info));
         menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(2).setTitle("Info");
+        menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
 
         return super.onCreateOptionsMenu(menu);
     }
