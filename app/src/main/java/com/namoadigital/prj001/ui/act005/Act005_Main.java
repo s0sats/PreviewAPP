@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.Picture_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
@@ -955,8 +956,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 0) {
+            if (wsResults.size() > 1) {
                 showResults(wsResults);
+            } else {
+                showSuccessDialog();
             }
 
         } else {
@@ -964,8 +967,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 0) {
+            if (wsResults.size() > 1) {
                 showResults(wsResults);
+            } else {
+                showSuccessDialog();
             }
         }
     }

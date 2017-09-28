@@ -1355,7 +1355,12 @@ public class Act028_Task extends BaseFragment {
                     alert.dismiss();
 
                 } else {
-                    informTaskError(HMAUX_TRANS_LIB.get("msg_parcially_100_error"));
+
+                    if (perc >= 100) {
+                        informTaskError(HMAUX_TRANS_LIB.get("msg_parcially_100_error"));
+                    } else {
+                        informTaskError(mErrorMSG);
+                    }
 
                     alert.dismiss();
 
@@ -1375,7 +1380,12 @@ public class Act028_Task extends BaseFragment {
                     alert.dismiss();
 
                 } else {
-                    informTaskError(HMAUX_TRANS_LIB.get("msg_full_100_error"));
+
+                    if (perc != 100) {
+                        informTaskError(HMAUX_TRANS_LIB.get("msg_full_100_error"));
+                    } else {
+                        informTaskError(mErrorMSG);
+                    }
 
                     alert.dismiss();
 
