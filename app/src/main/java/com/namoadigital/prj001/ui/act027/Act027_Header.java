@@ -137,6 +137,14 @@ public class Act027_Header extends BaseFragment {
     private TextView tv_total_price_title;
     private TextView tv_total_price;
 
+    private TextView tv_add_inf1_title;
+    private TextView tv_add_inf1;
+
+    private TextView tv_add_inf2_title;
+    private TextView tv_add_inf2;
+
+    private TextView tv_add_inf3_title;
+    private TextView tv_add_inf3;
 
     @Nullable
     @Override
@@ -284,6 +292,15 @@ public class Act027_Header extends BaseFragment {
 
         tv_total_price_title = (TextView) view.findViewById(R.id.act027_header_content_tv_total_price_title);
         tv_total_price = (TextView) view.findViewById(R.id.act027_header_content_tv_total_price);
+
+        tv_add_inf1_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf1_title);
+        tv_add_inf1 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf1);
+
+        tv_add_inf2_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf2_title);
+        tv_add_inf2 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf2);
+
+        tv_add_inf3_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3_title);
+        tv_add_inf3 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3);
     }
 
     private void iniAction() {
@@ -311,7 +328,7 @@ public class Act027_Header extends BaseFragment {
                 tv_so_desc.setText(mSm_so.getSo_desc());
 
                 tv_prefix_code_title.setText(hmAux_Trans.get("so_code_lbl"));
-                tv_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + " / " + String.valueOf(mSm_so.getSo_code()));
+                tv_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + String.valueOf(mSm_so.getSo_code()));
 
                 tv_serial_title.setText(hmAux_Trans.get("serial"));
                 tv_serial.setText(mSm_so.getSerial_id());
@@ -320,31 +337,36 @@ public class Act027_Header extends BaseFragment {
                 tv_category_price_id.setText(mSm_so.getCategory_price_id());
 
                 tv_category_price_desc_title.setText(hmAux_Trans.get("category_price_desc"));
-                tv_category_price_desc.setText(mSm_so.getCategory_price_desc());
+                tv_category_price_desc.setText(mSm_so.getCategory_price_id() +" - "+mSm_so.getCategory_price_desc());
 
                 tv_segment_id_title.setText(hmAux_Trans.get("segment_id"));
                 tv_segment_id.setText(mSm_so.getSegment_id());
 
                 tv_segment_desc_title.setText(hmAux_Trans.get("segment_desc"));
-                tv_segment_desc.setText(mSm_so.getSegment_desc());
+                tv_segment_desc.setText(mSm_so.getSegment_id() + " - " + mSm_so.getSegment_desc());
 
                 tv_site_id_title.setText(hmAux_Trans.get("site_id"));
                 tv_site_id.setText(mSm_so.getSite_id());
 
                 tv_site_desc_title.setText(hmAux_Trans.get("site_desc"));
-                tv_site_desc.setText(mSm_so.getSite_desc());
+                tv_site_desc.setText(mSm_so.getSite_id()+" - "+mSm_so.getSite_desc());
 
                 tv_operation_id_title.setText(hmAux_Trans.get("operation_id"));
                 tv_operation_id.setText(mSm_so.getOperation_id());
 
                 tv_operation_desc_title.setText(hmAux_Trans.get("operation_desc"));
-                tv_operation_desc.setText(mSm_so.getOperation_desc());
+                tv_operation_desc.setText(mSm_so.getOperation_id() +" - "+mSm_so.getOperation_desc());
 
                 tv_deadline_title.setText(hmAux_Trans.get("deadline"));
-                tv_deadline.setText(mSm_so.getDeadline());
+                tv_deadline.setText(
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(mSm_so.getDeadline() != null ? mSm_so.getDeadline() : "", ""),
+                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
+                );
 
                 tv_status_title.setText(hmAux_Trans.get("status_lbl"));
-                tv_status.setText(mSm_so.getStatus());
+                tv_status.setText(hmAux_Trans.get(mSm_so.getStatus()));
 
                 tv_priority_desc_title.setText(hmAux_Trans.get("priority_lbl"));
                 tv_priority_desc.setText(mSm_so.getPriority_desc());
@@ -418,6 +440,15 @@ public class Act027_Header extends BaseFragment {
 
                 tv_total_price_title.setText(hmAux_Trans.get("total_price"));
                 tv_total_price.setText(String.valueOf(mSm_so.getTotal_price()));
+
+                tv_add_inf1_title.setText(hmAux_Trans.get("add_info1_ttl"));
+                tv_add_inf1.setText(mSm_so.getAdd_inf1() == null ? "" : String.valueOf(mSm_so.getAdd_inf1()));
+
+                tv_add_inf2_title.setText(hmAux_Trans.get("add_info2_ttl"));
+                tv_add_inf2.setText(mSm_so.getAdd_inf2() == null ? "" :String.valueOf(mSm_so.getAdd_inf2()));
+
+                tv_add_inf3_title.setText(hmAux_Trans.get("add_info3_ttl"));
+                tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" :String.valueOf(mSm_so.getAdd_inf3()));
 
             }
         }
