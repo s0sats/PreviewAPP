@@ -406,7 +406,7 @@ public class Act027_Approval extends BaseFragment {
                                 break;
                             case R.id.act027_approval_content_rb_other:
                                 mSm_so.setClient_approval_type_sig("CLIENT");
-                                mk_name_value.setText("");
+                                mk_name_value.setText(mSm_so.getClient_name());
                                 mk_name_value.setEnabled(true);
                                 break;
                         }
@@ -417,11 +417,11 @@ public class Act027_Approval extends BaseFragment {
                     rg_opc.setVisibility(View.VISIBLE);
                 } else {
                     rg_opc.setVisibility(View.GONE);
-                    rb_user.setChecked(true);
+                    rb_other.setChecked(true);
                 }
 
                 if (!rb_user.isChecked() && !rb_other.isChecked()) {
-                    rb_user.setChecked(true);
+                    rb_other.setChecked(true);
                 }
 
             } else {

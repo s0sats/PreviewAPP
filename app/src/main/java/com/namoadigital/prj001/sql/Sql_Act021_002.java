@@ -22,6 +22,18 @@ public class Sql_Act021_002 implements Specification {
     public String toSqlQuery() {
 
         StringBuilder sb = new StringBuilder();
+
+//        return sb
+//                .append(" SELECT\n" +
+//                        "   count(1) " + PENDING_PROCESS_QTY + " \n" +
+//                        " FROM\n" +
+//                        "   sm_sos s\n" +
+//                        " WHERE\n" +
+//                        "   s.customer_code = '" + customer_code + "' \n" +
+//                        "   and s.status = '" + Constant.SO_STATUS_PROCESS + "'\n")
+//                .append(";" + PENDING_PROCESS_QTY)
+//                .toString();
+
         return sb
                 .append(" SELECT\n" +
                         "   count(1) " + PENDING_PROCESS_QTY + " \n" +
@@ -29,8 +41,10 @@ public class Sql_Act021_002 implements Specification {
                         "   sm_sos s\n" +
                         " WHERE\n" +
                         "   s.customer_code = '" + customer_code + "' \n" +
-                        "   and s.status = '" + Constant.SO_STATUS_PROCESS + "'\n")
+                        "   and s.status != '" + Constant.SO_STATUS_DONE + "'\n" +
+                        "   and s.status != '" + Constant.SO_STATUS_CANCELLED + "'\n")
                 .append(";" + PENDING_PROCESS_QTY)
                 .toString();
+
     }
 }
