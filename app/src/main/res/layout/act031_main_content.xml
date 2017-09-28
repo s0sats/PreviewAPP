@@ -324,6 +324,7 @@
                             android:paddingBottom="4dp"
                             android:paddingRight= "15dp"
                             android:paddingLeft="15dp"
+                            android:layout_marginEnd="12dp"
                             android:background="@drawable/stroke_blue2_states"
                             />
                     </LinearLayout>
