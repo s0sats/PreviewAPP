@@ -87,13 +87,10 @@
 
             <ImageView
                 android:id="@+id/act027_services_content_cell_btn_normal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:focusable="false"
-                android:paddingBottom="4dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:paddingTop="4dp"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/ic_pontos_ns_states"
                 />
         </LinearLayout>
