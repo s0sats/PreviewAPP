@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.WS_Cleaning_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -347,6 +348,21 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
                         task.getCategory_price_code(),
                         task.getService_code(),
                         task.getService_seq()
+                ).toSqlQuery()
+        );
+
+        sm_so_serviceDao.addUpdate(
+                new WS_Cleaning_Sql_005(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq(),
+                        task.getExec_tmp()
                 ).toSqlQuery()
         );
 
