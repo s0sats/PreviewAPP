@@ -52,7 +52,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static com.namoadigital.prj001.ui.act023.Act023_Main.SITE_DESC_OWNER;
+import static com.namoadigital.prj001.util.ToolBox_Inf.setSSmValue;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -127,6 +129,12 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     private HMAux oldSite = new HMAux();
     private HMAux oldZone = new HMAux();
     private HMAux oldLocal = new HMAux();
+    //
+    private TextView tv_brand_model_color;
+    private ImageView iv_serial_add_info;
+    private String dialog_serial_category_price_desc;
+    private String dialog_serial_segment_desc;
+    private String brand_model_color_lbl;
 
     private Button btn_action;
 
@@ -245,8 +253,13 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         tv_allow_new_val = (TextView) view.findViewById(R.id.act027_serial_content_tv_allow_val);
         //
+        //
+        tv_brand_model_color = (TextView) view.findViewById(R.id.act027_serial_content_tv_brand_model_color);
+        //
         tv_serial_ttl = (TextView) view.findViewById(R.id.act027_serial_content_tv_serial_ttl);
         tv_serial_ttl.setTag("serial_ttl");
+        //
+        iv_serial_add_info = (ImageView) view.findViewById(R.id.act027_serial_content_iv_serial_add_info);
         //
         ll_serial_full_desc = (LinearLayout) view.findViewById(R.id.act027_serial_content_ll_serial_full_desc);
         //
@@ -257,15 +270,18 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         tv_serial_location_ttl.setText(hmAux_Trans.get("serial_location_ttl"));
         //
         ss_site = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site);
-        ss_site.setmLabel(hmAux_Trans.get("site_lbl"));
+        //ss_site.setmLabel(hmAux_Trans.get("site_lbl"));
+        ss_site.setmHint(hmAux_Trans.get("site_lbl"));
         ss_site.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_zone = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_zone);
-        ss_site_zone.setmLabel(hmAux_Trans.get("site_zone_lbl"));
+        //ss_site_zone.setmLabel(hmAux_Trans.get("site_zone_lbl"));
+        ss_site_zone.setmHint(hmAux_Trans.get("site_zone_lbl"));
         ss_site_zone.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //
         ss_site_zone_local = (SearchableSpinner) view.findViewById(R.id.act027_serial_content_ss_site_zone_local);
-        ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
+        //ss_site_zone_local.setmLabel(hmAux_Trans.get("site_zone_local_lbl"));
+        ss_site_zone_local.setmHint(hmAux_Trans.get("site_zone_local_lbl"));
         ss_site_zone_local.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         //TRACKIG
         ll_tracking = (LinearLayout) view.findViewById(R.id.act027_serial_content_ll_serial_tracking);
@@ -492,10 +508,10 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                     //o evento.
                     skip_validation = true;
                     //Seta valor do site
-                    ToolBox_Inf.setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
+                    setSSmValue(ss_site, hmAux.get(MD_SiteDao.SITE_CODE), hmAux.get(MD_SiteDao.SITE_DESC), false);
                     //Seta valor da zone e refaz HmAux baseado no novo site.
                     loadZoneSS(true);
-                    ToolBox_Inf.setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
+                    setSSmValue(ss_site_zone, hmAux.get(MD_Site_ZoneDao.ZONE_CODE), hmAux.get(MD_Site_ZoneDao.ZONE_DESC), false);
                     //
                     loadLocalSS(false);
                     //
@@ -534,6 +550,13 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
             }
         });
         //
+        iv_serial_add_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSerialAddInfoDialog();
+            }
+        });
+        //
         //
         tvCtListner = new TextViewCT.ITextViewCT() {
             @Override
@@ -568,6 +591,63 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         getSerialInfo();
     }
 
+    private void showSerialAddInfoDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.namoa_dialog_serial_more_info,null);
+        //
+        /*
+        * IniVar
+        */
+        TextView tv_dialog_ttl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_ttl);
+        //
+        LinearLayout ll_category = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_category);
+        TextView tv_category_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_category_lbl);
+        TextView tv_category_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_category_val);
+        //
+        LinearLayout ll_segment = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_segment);
+        TextView tv_segment_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_segment_lbl);
+        TextView tv_segment_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_segment_val);
+        //
+        LinearLayout ll_add_info1 = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_add_info1);
+        TextView tv_add_info1_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info1_lbl);
+        TextView tv_add_info1_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info1_val);
+        //
+        LinearLayout ll_add_info2 = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_add_info2);
+        TextView tv_add_info2_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info2_lbl);
+        TextView tv_add_info2_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info2_val);
+        //
+        LinearLayout ll_add_info3 = (LinearLayout) view.findViewById(R.id.dialog_serial_info_ll_add_info3);
+        TextView tv_add_info3_lbl = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info3_lbl);
+        TextView tv_add_info3_val = (TextView) view.findViewById(R.id.dialog_serial_info_tv_add_info3_val);
+        //
+        /*
+        *Add valores
+        */
+        tv_dialog_ttl.setText(hmAux_Trans.get("dialog_serial_info_ttl"));
+        //
+        tv_category_lbl.setText(hmAux_Trans.get("dialog_serial_category_price_lbl"));
+        tv_category_val.setText(dialog_serial_category_price_desc);
+        //
+        tv_segment_lbl.setText(hmAux_Trans.get("dialog_serial_segment_lbl"));
+        tv_segment_val.setText(dialog_serial_segment_desc);
+        //
+        tv_add_info1_lbl.setText(hmAux_Trans.get("dialog_serial_add_info1_lbl"));
+        tv_add_info1_val.setText(serialObj.getAdd_inf1());
+        //
+        tv_add_info2_lbl.setText(hmAux_Trans.get("dialog_serial_add_info2_lbl"));
+        tv_add_info2_val.setText(serialObj.getAdd_inf2());
+        //
+        tv_add_info3_lbl.setText(hmAux_Trans.get("dialog_serial_add_info3_lbl"));
+        tv_add_info3_val.setText(serialObj.getAdd_inf3());
+        //
+        builder.setView(view);
+
+        AlertDialog dialog = builder.show();
+
+    }
+
     public void loadDataToScreen() {
         if (bStatus) {
             mket_serial_id.setText(mSm_so.getSerial_id());
@@ -597,8 +677,9 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 hmAux_Trans.get("product_id_header_lbl") + " " +
                         mSm_so.getProduct_id()
         );
+        //tv_product_desc_value.setText(md_product.getProduct_desc());
+        tv_product_desc_value.setText( md_product.getProduct_id() +" - " +md_product.getProduct_desc());
 
-        tv_product_desc_value.setText(md_product.getProduct_desc());
         //
         serial_required = md_product.getRequire_serial();
         serial_allow_new = md_product.getAllow_new_serial_cl();
@@ -639,23 +720,39 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         ll_serial_full_desc.setVisibility(View.VISIBLE);
         //
-        ToolBox_Inf.setSSmValue(ss_site, String.valueOf(serialObj.getSite_code()), md_product_serial.get(MD_SiteDao.SITE_DESC), true, true);
+        setSSmValue(ss_site, String.valueOf(serialObj.getSite_code()), md_product_serial.get(MD_SiteDao.SITE_DESC), true, true);
         //
-        ToolBox_Inf.setSSmValue(ss_site_zone, String.valueOf(serialObj.getZone_code()), md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC), true, true);
+        setSSmValue(ss_site_zone, String.valueOf(serialObj.getZone_code()), md_product_serial.get(MD_Site_ZoneDao.ZONE_DESC), true, true);
         //
-        ToolBox_Inf.setSSmValue(ss_site_zone_local, String.valueOf(serialObj.getLocal_code()), md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID), true, true);
+        setSSmValue(ss_site_zone_local, String.valueOf(serialObj.getLocal_code()), md_product_serial.get(MD_Site_Zone_LocalDao.LOCAL_ID), true, true);
         //
-        ToolBox_Inf.setSSmValue(ss_brand, String.valueOf(serialObj.getBrand_code()), md_product_serial.get(MD_BrandDao.BRAND_DESC), true, false);
         //
-        ToolBox_Inf.setSSmValue(ss_brand_model, String.valueOf(serialObj.getModel_code()), md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC), true, false);
+        setSSmValue(ss_brand, String.valueOf(serialObj.getBrand_code()), md_product_serial.get(MD_BrandDao.BRAND_DESC), true, false);
+        brand_model_color_lbl =  md_product_serial.get(MD_BrandDao.BRAND_DESC).length() == 0 ? "" : "| " + md_product_serial.get(MD_BrandDao.BRAND_DESC) + " ";
         //
-        ToolBox_Inf.setSSmValue(ss_brand_color, String.valueOf(serialObj.getColor_code()), md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC), true, false);
+        setSSmValue(ss_brand_model, String.valueOf(serialObj.getModel_code()), md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC), true, false);
+        brand_model_color_lbl += md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC).length() == 0 ? "" :  "| " +  md_product_serial.get(MD_Brand_ModelDao.MODEL_DESC)+ " ";
         //
-        ToolBox_Inf.setSSmValue(ss_segment, String.valueOf(serialObj.getSegment_code()), md_product_serial.get(MD_SegmentDao.SEGMENT_DESC), true, false);
+        setSSmValue(ss_brand_color, String.valueOf(serialObj.getColor_code()), md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC), true, false);
+        brand_model_color_lbl += md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC).length() == 0 ? "" :"| " +   md_product_serial.get(MD_Brand_ColorDao.COLOR_DESC)+ " ";
         //
-        ToolBox_Inf.setSSmValue(ss_category_price, String.valueOf(serialObj.getCategory_price_code()), md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC), true, false);
+        if( brand_model_color_lbl.length() > 0){
+            brand_model_color_lbl = brand_model_color_lbl.substring(1,brand_model_color_lbl.length());
+            tv_brand_model_color.setText(brand_model_color_lbl);
+            tv_brand_model_color.setVisibility(View.VISIBLE);
+        }else{
+            tv_brand_model_color.setText("");
+            tv_brand_model_color.setVisibility(View.GONE);
+        }
         //
-        ToolBox_Inf.setSSmValue(ss_site_owner, String.valueOf(serialObj.getSite_code_owner()), md_product_serial.get(SITE_DESC_OWNER), true, false);
+        setSSmValue(ss_segment, String.valueOf(serialObj.getSegment_code()), md_product_serial.get(MD_SegmentDao.SEGMENT_DESC), true, false);
+        dialog_serial_segment_desc = md_product_serial.get(MD_SegmentDao.SEGMENT_ID) + " - " + md_product_serial.get(MD_SegmentDao.SEGMENT_DESC);
+        //
+        setSSmValue(ss_category_price, String.valueOf(serialObj.getCategory_price_code()), md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC), true, false);
+        dialog_serial_category_price_desc = md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_ID) + " - " + md_product_serial.get(MD_Category_PriceDao.CATEGORY_PRICE_DESC);
+        //
+        //
+        setSSmValue(ss_site_owner, String.valueOf(serialObj.getSite_code_owner()), md_product_serial.get(SITE_DESC_OWNER), true, false);
         //
         et_info1.setText(serialObj.getAdd_inf1());
         et_info1.setTag(serialObj.getAdd_inf1());
@@ -713,7 +810,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.namoa_dialog_add_tracking, null);
 
         final MKEditTextNM mket_tracking = (MKEditTextNM) view.findViewById(R.id.namoa_dialog_add_tracking_mket_tracking);
@@ -847,7 +944,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     public void showSerialResults(ArrayList<HMAux> returnList) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         //
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act028_dialog_results, null);
 
         /**
@@ -958,7 +1055,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
      */
     private void loadSiteOwner(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site_owner, null, null, false, false);
+            setSSmValue(ss_site_owner, null, null, false, false);
         }
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -974,7 +1071,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadCategoryPrice(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_category_price, null, null, false, false);
+            setSSmValue(ss_category_price, null, null, false, false);
         }
         //
         MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -991,7 +1088,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadSegment(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_segment, null, null, false, false);
+            setSSmValue(ss_segment, null, null, false, false);
         }
         //
         MD_SegmentDao segmentDao = new MD_SegmentDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1008,7 +1105,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadColorSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_brand_color, null, null, false, false);
+            setSSmValue(ss_brand_color, null, null, false, false);
         }
         //
         MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1026,7 +1123,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadModelSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_brand_model, null, null, false, false);
+            setSSmValue(ss_brand_model, null, null, false, false);
         }
         //
         MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1044,7 +1141,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadBrandSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_brand, null, null, false, false);
+            setSSmValue(ss_brand, null, null, false, false);
         }
         //
         MD_BrandDao brandDao = new MD_BrandDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1062,7 +1159,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadSiteSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site, null, null, false, true);
+            setSSmValue(ss_site, null, null, false, true);
         }
 
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1078,7 +1175,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadZoneSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site_zone, null, null, false, true);
+            setSSmValue(ss_site_zone, null, null, false, true);
         }
         //
         MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
@@ -1094,7 +1191,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void loadLocalSS(boolean reset_val) {
         if (reset_val) {
-            ToolBox_Inf.setSSmValue(ss_site_zone_local, null, null, false, true);
+            setSSmValue(ss_site_zone_local, null, null, false, true);
         }
         //
         MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);

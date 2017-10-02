@@ -242,6 +242,11 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                     callSetAdapterData(s);
                 }
             }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+
+            }
         });
         //
         btn_back.setOnClickListener(new View.OnClickListener() {

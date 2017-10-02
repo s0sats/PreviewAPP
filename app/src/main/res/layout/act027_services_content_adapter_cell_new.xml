@@ -279,9 +279,8 @@
 
         <LinearLayout
             android:id="@+id/act027_services_content_cell_ll_express"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.7"
             android:orientation="vertical"
             android:layout_gravity="center"
             android:padding="2dp">

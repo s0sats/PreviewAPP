@@ -146,10 +146,12 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         mket_serial = (MKEditTextNM) findViewById(R.id.act021_mket_serial);
         mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
         iv_search_serial = (ImageView) findViewById(R.id.act021_iv_search_serial);
+        iv_search_serial.setEnabled(false);
         //
         mket_tracking = (MKEditTextNM) findViewById(R.id.act021_mket_tracking);
         mket_tracking.setHint(hmAux_Trans.get("mket_tracking_hint"));
         iv_search_tracking = (ImageView) findViewById(R.id.act021_iv_search_tracking);
+        iv_search_tracking.setEnabled(false);
         //Add controles no array list.
         controls_sta.add(mket_serial);
         controls_sta.add(mket_tracking);
@@ -260,7 +262,53 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
             }
         });
+        //Interface acionando quando o usuário digita na caixa.
+        mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
 
+            }
+            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
+            @Override
+            public void reportTextChange(String text, boolean hasText) {
+                if(hasText){
+                    iv_search_serial.setEnabled(hasText);
+                }else{
+                    iv_search_serial.setEnabled(hasText);
+                }
+            }
+        });
+        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
+        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                iv_search_serial.performClick();
+            }
+        });
+        //Interface acionando quando o usuário digita na caixa.
+        mket_tracking.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
+            @Override
+            public void reportTextChange(String text, boolean hasText) {
+                if(hasText){
+                    iv_search_tracking.setEnabled(hasText);
+                }else{
+                    iv_search_tracking.setEnabled(hasText);
+                }
+            }
+        });
+        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
+        mket_tracking.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                iv_search_tracking.performClick();
+            }
+        });
+        //
         iv_search_serial.setOnClickListener(searchListner);
         //
         iv_search_tracking.setOnClickListener(searchListner);
