@@ -187,7 +187,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                 ).toSqlQuery()
                         ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
 
-                        qtySO += isSoWithinTokenFile();
+                        int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
+
+                        qtySO = String.valueOf(iqtySO);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGESO, qtySO);

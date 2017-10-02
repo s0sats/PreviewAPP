@@ -7,7 +7,7 @@ import com.namoadigital.prj001.util.Constant;
  * Created by neomatrix on 23/02/17.
  */
 
-public class WS_Cleaning_Sql_005 implements Specification {
+public class Sql_Act_28_003 implements Specification {
 
     private long customer_code;
     private int so_prefix;
@@ -21,7 +21,7 @@ public class WS_Cleaning_Sql_005 implements Specification {
     private long exec_tmp;
 
 
-    public WS_Cleaning_Sql_005(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
+    public Sql_Act_28_003(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
