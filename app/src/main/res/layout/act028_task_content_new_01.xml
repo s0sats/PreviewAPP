@@ -160,7 +160,7 @@
                 android:minHeight="30dp"
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
-                android:progress="20"
+                android:progress="0"
                 android:thumb="@drawable/thumb_o" />
 
             <LinearLayout
@@ -212,8 +212,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -258,19 +258,19 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/act028_task_content_tv_addicional_info_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Additional Info"
-                android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|right"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act028_task_content_tv_addicional_info_lbl"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Additional Info"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/act028_task_content_iv_gallery"
@@ -307,8 +307,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="64dp"
-                    android:layout_weight="0.04"
-
+                    android:layout_weight="0.07"
                     android:src="@drawable/ic_relogio_ns" />
 
                 <LinearLayout
