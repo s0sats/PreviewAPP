@@ -266,8 +266,8 @@
                 <TextView
                     android:id="@+id/act028_task_content_tv_addicional_info_lbl"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Additional Info"
                     android:textSize="@dimen/font_size_item_md"
                     android:textStyle="bold" />
@@ -276,8 +276,7 @@
                     android:id="@+id/act028_task_content_iv_gallery"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/ic_camera_add_blue"
-                    android:scaleX="-1" />
+                    android:background="@drawable/ic_foto_marcada_ns" />
 
             </LinearLayout>
 

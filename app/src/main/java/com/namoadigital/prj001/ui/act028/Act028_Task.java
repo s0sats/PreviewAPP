@@ -531,9 +531,9 @@ public class Act028_Task extends BaseFragment {
 
     private void upImgGallery() {
         if (((String) iv_gallery.getTag()).equalsIgnoreCase("")) {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_add_gray));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_ns));
         } else {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_add_blue));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_marcada_ns));
         }
 
         iv_gallery.setOnClickListener(new View.OnClickListener() {

@@ -243,6 +243,14 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                             s
                     );
                 }
+
+
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+
             }
         });
 
