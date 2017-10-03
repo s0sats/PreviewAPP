@@ -4,6 +4,7 @@ import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
@@ -93,7 +94,13 @@ public class Sql_Act027_002 implements Specification {
                         "        s.*,       \n" +
                         "        sum(CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN 1 ELSE 0 END) "+SET_FLAG+",\n" +
                         "        SUM(CASE WHEN e.status in ('"+Constant.SO_STATUS_DONE+"','"+Constant.SO_STATUS_NOT_EXECUTED+"') THEN 1 ELSE 0 END) "+QTY_DONE+",\n" +
-//                        "        CASE WHEN IFNULL(e.partner_code,s.partner_code) IS NOT NULL \n" +
+//                        "        CASE WHEN IFNULL(" +
+//                        "                         CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
+//                        "                              e.partner_code\n" +
+//                        "                          ELSE\n" +
+//                        "                              null\n" +
+//                        "                          END ," +
+//                        "               s.partner_code) IS NOT NULL \n" +
 //                        "             THEN\n" +
 //                        "             (SELECT\n" +
 //                        "                  COUNT(1)  \n" +
@@ -101,36 +108,63 @@ public class Sql_Act027_002 implements Specification {
 //                        "                  "+ MD_PartnerDao.TABLE+" m\n" +
 //                        "              WHERE                        \n" +
 //                        "                  m.customer_code = s.customer_code\n" +
-//                        "                  and m.partner_code = IFNULL(e.partner_code,s.partner_code)\n" +
+//                        "                  and m.partner_code = IFNULL(" +
+//                        "                                              CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
+//                        "                                                  e.partner_code\n" +
+//                        "                                              ELSE\n" +
+//                        "                                                  null\n" +
+//                        "                                              END,\n" +
+//                        "                                               s.partner_code )\n" +
 //                        "              ) \n" +
 //                        "             ELSE \n" +
 //                        "              -1\n" +
 //                        "             END  "+PARTNER_RESTRICTION+",\n" +
-                        "        CASE WHEN IFNULL(" +
-                        "                         CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
-                        "                              e.partner_code\n" +
-                        "                          ELSE\n" +
-                        "                              null\n" +
-                        "                          END ," +
-                        "               s.partner_code) IS NOT NULL \n" +
+                        "       CASE WHEN IFNULL(\n" +
+                        "                           (SELECT\n" +
+                        "                            max(e2.partner_code) partner_code\n" +
+                        "                          FROM\n" +
+                                                        SM_SO_Service_ExecDao.TABLE+" e2\n" +
+                        "                          WHERE\n" +
+                        "                            e2.customer_code =  e.customer_code\n" +
+                        "                            and e2.so_prefix = e.so_prefix \n" +
+                        "                            AND e2.so_code = e.so_code\n" +
+                        "                            AND e2.price_list_code = e.price_list_code\n" +
+                        "                            AND e2.pack_code = e.pack_code\n" +
+                        "                            AND e2.pack_seq = e.pack_seq\n" +
+                        "                            AND e2.category_price_code = e.category_price_code\n" +
+                        "                            AND e2.service_code  = e.service_code\n" +
+                        "                            AND e2.service_seq  = e.service_seq   \n" +
+                        "                            AND e2.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n)\n" +
+                        "        \n" +
+                        "                          , s.partner_code) IS NOT NULL \n" +
                         "             THEN\n" +
                         "             (SELECT\n" +
                         "                  COUNT(1)  \n" +
                         "              FROM\n" +
-                        "                  "+ MD_PartnerDao.TABLE+" m\n" +
+                        "                  md_partners m\n" +
                         "              WHERE                        \n" +
                         "                  m.customer_code = s.customer_code\n" +
                         "                  and m.partner_code = IFNULL(" +
-                        "                                              CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
-                        "                                                  e.partner_code\n" +
-                        "                                              ELSE\n" +
-                        "                                                  null\n" +
-                        "                                              END,\n" +
-                        "                                               s.partner_code )\n" +
+                    "                             (SELECT\n" +
+                        "                            max(e2.partner_code) partner_code\n" +
+                        "                          FROM\n" +
+                                                        SM_SO_Service_ExecDao.TABLE+" e2\n" +
+                        "                          WHERE\n" +
+                        "                            e2.customer_code =  e.customer_code\n" +
+                        "                            and e2.so_prefix = e.so_prefix \n" +
+                        "                            AND e2.so_code = e.so_code\n" +
+                        "                            AND e2.price_list_code = e.price_list_code\n" +
+                        "                            AND e2.pack_code = e.pack_code\n" +
+                        "                            AND e2.pack_seq = e.pack_seq\n" +
+                        "                            AND e2.category_price_code = e.category_price_code\n" +
+                        "                            AND e2.service_code  = e.service_code\n" +
+                        "                            AND e2.service_seq  = e.service_seq   \n" +
+                        "                            AND e2.status NOT IN('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
+                        "                           ), s.partner_code )\n" +
                         "              ) \n" +
                         "             ELSE \n" +
                         "              -1\n" +
-                        "             END  "+PARTNER_RESTRICTION+",\n" +
+                        "             END "+PARTNER_RESTRICTION+",\n" +
                         "        CASE WHEN s.qty <> 1 THEN\n" +
                         "          0\n" +
                         "        ELSE\n" +
