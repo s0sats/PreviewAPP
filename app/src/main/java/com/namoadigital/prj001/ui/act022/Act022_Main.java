@@ -243,7 +243,6 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                 }
             }
 
-
             @Override
             public void reportTextChange(String s, boolean b) {
 

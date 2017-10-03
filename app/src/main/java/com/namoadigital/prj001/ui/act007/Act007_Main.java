@@ -252,6 +252,11 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             public void reportTextChange(String s, boolean b) {
 
             }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+
+            }
         });
 
         btn_back.setOnClickListener(new View.OnClickListener() {

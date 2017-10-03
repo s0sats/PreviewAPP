@@ -311,11 +311,6 @@ public class Act027_Services extends BaseFragment {
                     sendToTask(item, execTaskAux.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP), execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
                 } else {
                     Log.d("SHORTCUT_STOP", "Exec_tmp e task_tmp não encontrado.");
-                    /*Toast.makeText(
-                            context,
-                            "Express",
-                            Toast.LENGTH_SHORT
-                    ).show();*/
                 }
             }
 
@@ -352,14 +347,6 @@ public class Act027_Services extends BaseFragment {
         startActivity(mIntent);
 
         getActivity().finish();
-
-
-        // PASSAR PARA A ACT O EXEC_TYPE
-       /* Toast.makeText(
-                context,
-                "mandar para task",
-                Toast.LENGTH_SHORT
-        ).show();*/
 
     }
 
@@ -408,6 +395,25 @@ public class Act027_Services extends BaseFragment {
                 //
                 createTask(serviceExec);
             } else {
+                /*
+                Verificação de parceiro.
+                    Mesmo a execução ja estando criado, é necessário verificar se existe parceiro
+                    vinculada a ela, pois caso a unica task existente tenha sido cancelada e não
+                    há parceiro definido no serviço, o parceiro da execução é setado para null.
+                 */
+                if(execAux.getPartner_code() == null && partnerAux != null && partnerAux.size() > 0 ){
+                    try {
+
+                        execAux.setPartner_code(Integer.valueOf(partnerAux.get(SearchableSpinner.ID)));
+                        execAux.setPartner_id(partnerAux.get(MD_PartnerDao.PARTNER_ID));
+                        execAux.setPartner_desc(partnerAux.get(SearchableSpinner.DESCRIPTION));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //Atualiza parceiro na exec
+                    sm_so_service_execDao.addUpdate(execAux);
+                }
+                //
                 HMAux execTaskAux = sm_so_service_exec_taskDao.getByStringHM(
                         new Sql_Act027_005(
                                 item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
@@ -422,7 +428,7 @@ public class Act027_Services extends BaseFragment {
                         ).toSqlQuery()
                 );
 
-                createTask(execAux, execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_PERC));
+                createTask(execAux, execTaskAux == null ? null : execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_PERC));
             }
             //
             if (ToolBox_Con.isOnline(context)) {

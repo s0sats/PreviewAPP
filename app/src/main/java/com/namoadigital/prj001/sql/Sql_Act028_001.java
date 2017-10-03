@@ -52,7 +52,14 @@ public class Sql_Act028_001 implements Specification {
         StringBuilder sb =  new StringBuilder();
         return
                 sb
-                .append(" SELECT *\n" +
+                .append(" SELECT " +
+                        "    E.*,\n" +
+                        "    T.EXEC_TMP,\n" +
+                        "    IFNULL(T.TASK_PERC,0) TASK_PERC,\n" +
+                        "    IFNULL(T.SUM_EXEC_TIME,0) SUM_EXEC_TIME,\n" +
+                        "    IFNULL(T.QTY_COMMENT,0) QTY_COMMENT,\n" +
+                        "    IFNULL(T.QTY_FILES,0) QTY_FILES,    \n" +
+                        "    T.MY_TASK\n" +
                         " FROM "+ SM_SO_Service_ExecDao.TABLE+" E\n" +
                         " \n" +
                         " LEFT JOIN\n" +

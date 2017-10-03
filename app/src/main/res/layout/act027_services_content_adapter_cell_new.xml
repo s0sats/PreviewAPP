@@ -80,18 +80,18 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:gravity="right"
             android:orientation="horizontal"
-            android:paddingBottom="5dp">
+            android:padding="2dp"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/act027_services_content_cell_btn_normal"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_weight="1"
                 android:focusable="false"
-                android:layout_marginEnd="10dp"
                 android:src="@drawable/ic_pontos_ns_states"
+                android:layout_gravity="center"
                 />
         </LinearLayout>
 
@@ -279,9 +279,8 @@
 
         <LinearLayout
             android:id="@+id/act027_services_content_cell_ll_express"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical"
             android:layout_gravity="center"
             android:padding="2dp">
@@ -292,7 +291,7 @@
                 android:layout_height="40dp"
                 android:focusable="false"
                 android:src="@drawable/ic_escolher_ns_states"
-                android:layout_gravity="center"
+                android:layout_gravity="end"
                 />
         </LinearLayout>
 

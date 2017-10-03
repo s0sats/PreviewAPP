@@ -54,14 +54,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="7dp"
-                    android:background="@drawable/stroke_blue2_states"
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="4dp"
-                    android:src="@drawable/ic_search_black_24dp"
-                    android:tint="@color/namoa_dark_blue" />
+                    android:src="@drawable/ic_lupa_states"
+
+                    />
 
             </LinearLayout>
 
@@ -94,16 +94,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="7dp"
-                    android:background="@drawable/stroke_blue2_states"
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="4dp"
-                    android:src="@drawable/ic_search_black_24dp"
-                    android:tint="@color/namoa_dark_blue" />
+                    android:src="@drawable/ic_lupa_states"
+                    />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/namoa_color_gray2"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                />
 
 
             <Button
