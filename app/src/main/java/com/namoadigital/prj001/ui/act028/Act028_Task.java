@@ -583,6 +583,8 @@ public class Act028_Task extends BaseFragment {
                                 mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
                                 mTask.setEnd_date(reverseB(ToolBox.convertToDeviceTMZ2(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
 
+                                mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
+
                                 mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
                                 mTask.setQty_people(Integer.parseInt(mk_qty_people.getText().toString()));
@@ -767,6 +769,8 @@ public class Act028_Task extends BaseFragment {
 
         mTask.setStart_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_start_date.getText().toString()) + " " + mk_start_hour.getText().toString()));
         mTask.setEnd_date(ToolBox.convertToDeviceTMZ2(reverseB(mk_end_date.getText().toString()) + " " + mk_end_hour.getText().toString()));
+
+        mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
 
         mTask.setTask_perc(rb_stepped_perc.getProgress() * (int) interval + (int) min);
 
