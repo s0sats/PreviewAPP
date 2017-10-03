@@ -13,7 +13,7 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act_28_004;
+import com.namoadigital.prj001.sql.Sql_Act028_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -352,7 +352,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
         );
 
         sm_so_serviceDao.addUpdate(
-                new Sql_Act_28_004(
+                new Sql_Act028_004(
                         task.getCustomer_code(),
                         task.getSo_prefix(),
                         task.getSo_code(),

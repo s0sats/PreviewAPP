@@ -794,10 +794,6 @@ public class Act028_Task extends BaseFragment {
         //
         sm_so_service_exec_taskDao.addUpdateTmp(mTask);
         //
-        //tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
-        //ToolBox_Inf.setTaskStatusColor(context,tv_status, mTask.getStatus());
-        //setExecStatusColor(tv_status, mTask.getStatus());
-        //
         processTaskStatus();
         //
         // Include Files to Upload

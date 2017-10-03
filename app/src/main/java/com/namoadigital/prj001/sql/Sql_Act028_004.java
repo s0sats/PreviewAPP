@@ -6,7 +6,7 @@ import com.namoadigital.prj001.database.Specification;
  * Created by neomatrix on 23/02/17.
  */
 
-public class Sql_Act_28_004 implements Specification {
+public class Sql_Act028_004 implements Specification {
 
     private long customer_code;
     private int so_prefix;
@@ -20,7 +20,7 @@ public class Sql_Act_28_004 implements Specification {
     private long exec_tmp;
 
 
-    public Sql_Act_28_004(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
+    public Sql_Act028_004(long customer_code, int so_prefix, int so_code, int price_list_code, int pack_code, int pack_seq, int category_price_code, int service_code, int service_seq, long exec_tmp) {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;

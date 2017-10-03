@@ -1166,6 +1166,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                                     0
                             );
                         }
+                    } else {
+                        setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                     }
 
                 } else {
