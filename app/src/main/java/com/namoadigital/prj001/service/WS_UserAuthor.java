@@ -28,7 +28,7 @@ public class WS_UserAuthor extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_userauthor";
+    private String mResource_Name = "ws_user_author";
 
     public WS_UserAuthor() {
         super("WS_UserAuthor");

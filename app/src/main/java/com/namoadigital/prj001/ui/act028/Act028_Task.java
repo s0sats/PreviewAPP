@@ -487,6 +487,7 @@ public class Act028_Task extends BaseFragment {
 
                 //tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
                 mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
+                mk_qty_people.setmMaxSize(5);
 
                 try {
 

@@ -182,6 +182,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_no_name_msg");
         transList.add("alert_so_signature_ttl");
         transList.add("alert_so_signature_msg");
+        transList.add("dialog_credentials_ttl");
+        transList.add("dialog_credentials_msg");
 
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
@@ -1030,8 +1032,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             setWs_process(WS_PROCESS_USER_AUTHOR);
             //
             enableProgressDialog(
-                    "Credenciais",
-                    "Validando Credenciais",
+                    hmAux_Trans.get("dialog_credentials_ttl"),
+                    hmAux_Trans.get("dialog_credentials_msg"),
                     hmAux_Trans.get("sys_alert_btn_cancel"),
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
