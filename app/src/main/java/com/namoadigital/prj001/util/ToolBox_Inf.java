@@ -2452,6 +2452,9 @@ public class ToolBox_Inf {
             case Constant.SO_STATUS_EDIT:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
                 break;
+            case Constant.SO_STATUS_WAITING_SYNC:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+                break;
             default:
                 break;
 
