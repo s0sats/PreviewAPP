@@ -251,7 +251,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="7dp"
                         android:layout_marginStart="2dp"
                         android:src="@drawable/icon_info_states"
                         android:visibility="visible" />
@@ -263,14 +263,13 @@
                 android:id="@+id/act027_serial_content_ll_serial_full_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/act027_serial_content_ll_serial_tracking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@color/namoa_color_gray"
                     android:orientation="vertical"
                     android:padding="5dp">
@@ -313,7 +312,7 @@
                     android:id="@+id/act027_serial_content_ll_serial_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="5dp"
                     android:background="@color/namoa_color_gray"
                     android:orientation="vertical"
                     android:padding="5dp">
@@ -354,7 +353,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="bottom"
-                    android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
