@@ -90,8 +90,11 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
     }
 
     private void iniSetup() {
+
+        context = Act019_Main.this;
+
         mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
+                Act019_Main.this,
                 mModule_Code,
                 Constant.ACT019
         );

@@ -110,6 +110,7 @@ public class SM_SO {
     private int approve_client;
     private int update_required;
     private int approval_required;
+    private int sync_required;
     private String log_date;
 
     @Expose
@@ -664,6 +665,14 @@ public class SM_SO {
 
     public void setApproval_required(int approval_required) {
         this.approval_required = approval_required;
+    }
+
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
     }
 
     public String getLog_date() {

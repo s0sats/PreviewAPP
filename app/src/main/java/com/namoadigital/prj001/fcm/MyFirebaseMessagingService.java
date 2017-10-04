@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -15,14 +14,19 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 
@@ -74,32 +78,42 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
-            fcmMessageDao.addUpdate(fcmMessage);
-            long fcmmessage_code = Long.parseLong(
-                    fcmMessageDao.getByStringHM(
-                            new FCMMessage_Sql_002().toSqlQuery()
-                    ).get(FCMMessage_Sql_002.FCMMESSAGE_CODE)
-            );
+            if (fcmMessage.getTitle().trim().equalsIgnoreCase("<SM_SO_UPDATE>") &&
+                    fcmMessage.getModule().trim().equalsIgnoreCase("SM_")) {
 
-            int fcmmessage_qty = Integer.parseInt(
-                    fcmMessageDao.getByStringHM(
-                            new FCMMessage_Sql_003().toSqlQuery()
-                    ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY)
-            );
+                checkNService_SO_Status(fcmMessage);
 
-            Log.d("msg", "Message data payload: " + sb.toString());
+            } else {
 
-            makeNF(
-                    getApplicationContext(),
-                    remoteMessage.getData().get("title"),
-                    remoteMessage.getData().get("msg_short"),
-                    fcmmessage_code,
-                    fcmmessage_qty
-            );
 
-            if (fcmMessage.getSync().equalsIgnoreCase("1")) {
-                ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "1");
-                ToolBox_Inf.call_Notification_Sync(getApplicationContext(), 11);
+                //
+                fcmMessageDao.addUpdate(fcmMessage);
+                long fcmmessage_code = Long.parseLong(
+                        fcmMessageDao.getByStringHM(
+                                new FCMMessage_Sql_002().toSqlQuery()
+                        ).get(FCMMessage_Sql_002.FCMMESSAGE_CODE)
+                );
+
+                int fcmmessage_qty = Integer.parseInt(
+                        fcmMessageDao.getByStringHM(
+                                new FCMMessage_Sql_003().toSqlQuery()
+                        ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY)
+                );
+
+                Log.d("msg", "Message data payload: " + sb.toString());
+
+                makeNF(
+                        getApplicationContext(),
+                        remoteMessage.getData().get("title"),
+                        remoteMessage.getData().get("msg_short"),
+                        fcmmessage_code,
+                        fcmmessage_qty
+                );
+
+                if (fcmMessage.getSync().equalsIgnoreCase("1")) {
+                    ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "1");
+                    ToolBox_Inf.call_Notification_Sync(getApplicationContext(), 11);
+                }
             }
         }
 
@@ -110,6 +124,43 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+    }
+
+    private void checkNService_SO_Status(FCMMessage fcmMessage) {
+
+        // Update So
+        try {
+
+            SM_SODao sm_soDao = new SM_SODao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            JSONObject jsonObjectRoot = new JSONObject(fcmMessage.getMsg_long());
+            JSONObject jsonObject = jsonObjectRoot.getJSONObject("so_update");
+
+            String customer_code = fcmMessage.getCustomer();
+            String so_prefix = jsonObject.getString("so_prefix");
+            String so_code = jsonObject.getString("so_code");
+            String so_scn = jsonObject.getString("so_scn");
+            String status = jsonObject.getString("status");
+
+            // Update S.O.
+            sm_soDao.addUpdate(
+                    new SM_SO_Sql_018(
+                            Long.parseLong(customer_code),
+                            Integer.parseInt(so_prefix),
+                            Integer.parseInt(so_code),
+                            Integer.parseInt(so_scn)
+                    ).toSqlQuery()
+            );
+
+
+        } catch (JSONException e) {
+
+            String error_r = e.toString();
+
+        }
     }
 
     private void makeNF(Context context, String title, String message, long fcmmessage_code, int fcmmessage_qty) {
@@ -158,19 +209,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     Notification.DEFAULT_SOUND |
                             Notification.DEFAULT_VIBRATE);
         } else {
-            // Nada
         }
-        //
-
-//        if (NotificationManagerCompat.from(getApplicationContext()).areNotificationsEnabled()){
-//
-//            Log.d("NOTIFI", "ok");
-//
-//
-//        } else {
-//
-//            Log.d("NOTIFI", "nao");
-//        }
         //
         ToolBox_Con.setPreference_Google_ID_DT(getApplicationContext(), dt_now);
         //

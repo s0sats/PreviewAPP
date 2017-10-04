@@ -186,7 +186,7 @@ public class Act028_Task extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act028_task_content_new_01, container, false);
+        View view = inflater.inflate(R.layout.act028_task_content_new_02, container, false);
         //
         iniVar(view);
         iniAction();
