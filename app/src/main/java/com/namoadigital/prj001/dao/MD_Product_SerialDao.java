@@ -13,6 +13,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_007;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -198,7 +199,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     );
-
+            //Apaga Trackings antesde chamar addUpdate
+            md_product_serial_trackingDao.remove(
+                    new MD_Product_Serial_Tracking_Sql_002(
+                            md_product_serial.getCustomer_code(),
+                            md_product_serial.getProduct_code(),
+                            md_product_serial.getSerial_tmp()
+                    ) .toSqlQuery()
+            );
+            //
             md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
 
         } catch (Exception e) {
@@ -286,6 +295,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
                     db.update(TABLE, toContentValuesMapper.map(md_product_serial), sbWhere.toString(), null);
                 }
+                //Apaga Trackings antesde chamar addUpdate
+                md_product_serial_trackingDao.remove(
+                        new MD_Product_Serial_Tracking_Sql_002(
+                                md_product_serial.getCustomer_code(),
+                                md_product_serial.getProduct_code(),
+                                md_product_serial.getSerial_tmp()
+                        ) .toSqlQuery()
+                );
                 //
                 md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
 
