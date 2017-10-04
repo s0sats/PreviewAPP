@@ -115,7 +115,7 @@ public class WS_Serial_Search extends IntentService {
             return;
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
 
     }
 

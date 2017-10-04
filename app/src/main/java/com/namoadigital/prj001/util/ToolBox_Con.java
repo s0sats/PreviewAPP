@@ -814,6 +814,7 @@ public class ToolBox_Con {
         ToolBox_Con.setPreference_Customer_Code(context, -1);
         ToolBox_Con.setPreference_Translate_Code(context, "");
         ToolBox_Con.setPreference_Site_Code(context, "-1");
+        ToolBox_Con.setPreference_Zone_Code(context, -1);
         ToolBox_Con.setPreference_Operation_Code(context, -1);
 
     }
