@@ -119,52 +119,71 @@ public class Sql_Act027_002 implements Specification {
 //                        "             ELSE \n" +
 //                        "              -1\n" +
 //                        "             END  "+PARTNER_RESTRICTION+",\n" +
-                        "       CASE WHEN IFNULL(\n" +
-                        "                           (SELECT\n" +
-                        "                            max(e2.partner_code) partner_code\n" +
-                        "                          FROM\n" +
-                                                        SM_SO_Service_ExecDao.TABLE+" e2\n" +
-                        "                          WHERE\n" +
-                        "                            e2.customer_code =  e.customer_code\n" +
-                        "                            and e2.so_prefix = e.so_prefix \n" +
-                        "                            AND e2.so_code = e.so_code\n" +
-                        "                            AND e2.price_list_code = e.price_list_code\n" +
-                        "                            AND e2.pack_code = e.pack_code\n" +
-                        "                            AND e2.pack_seq = e.pack_seq\n" +
-                        "                            AND e2.category_price_code = e.category_price_code\n" +
-                        "                            AND e2.service_code  = e.service_code\n" +
-                        "                            AND e2.service_seq  = e.service_seq   \n" +
-                        "                            AND e2.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n)\n" +
-                        "        \n" +
-                        "                          , s.partner_code) IS NOT NULL \n" +
+
+                        "        (CASE WHEN \n" +
+                        "               S.exec_type = '"+ Constant.SO_SERVICE_TYPE_YES_NO+"' " +
                         "             THEN\n" +
-                        "             (SELECT\n" +
-                        "                  COUNT(1)  \n" +
-                        "              FROM\n" +
-                        "                  md_partners m\n" +
-                        "              WHERE                        \n" +
-                        "                  m.customer_code = s.customer_code\n" +
-                        "                  and m.partner_code = IFNULL(" +
-                    "                             (SELECT\n" +
-                        "                            max(e2.partner_code) partner_code\n" +
-                        "                          FROM\n" +
-                                                        SM_SO_Service_ExecDao.TABLE+" e2\n" +
-                        "                          WHERE\n" +
-                        "                            e2.customer_code =  e.customer_code\n" +
-                        "                            and e2.so_prefix = e.so_prefix \n" +
-                        "                            AND e2.so_code = e.so_code\n" +
-                        "                            AND e2.price_list_code = e.price_list_code\n" +
-                        "                            AND e2.pack_code = e.pack_code\n" +
-                        "                            AND e2.pack_seq = e.pack_seq\n" +
-                        "                            AND e2.category_price_code = e.category_price_code\n" +
-                        "                            AND e2.service_code  = e.service_code\n" +
-                        "                            AND e2.service_seq  = e.service_seq   \n" +
-                        "                            AND e2.status NOT IN('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
-                        "                           ), s.partner_code )\n" +
-                        "              ) \n" +
-                        "             ELSE \n" +
-                        "              -1\n" +
-                        "             END "+PARTNER_RESTRICTION+",\n" +
+                        "                  (CASE WHEN s.partner_code IS NOT NULL\n" +
+                        "                        THEN (\n" +
+                        "                             SELECT\n" +
+                        "                                 COUNT(1)  \n" +
+                        "                             FROM\n" +
+                        "                               md_partners  m\n" +
+                        "                             WHERE \n" +
+                        "                                 m.customer_code = s.customer_code\n" +
+                        "                                 and m.partner_code = s.partner_code\n" +
+                        "                             ) \n" +
+                        "                         ELSE \n" +
+                        "                         -1\n" +
+                        "                         END)\n" +
+                        "              ELSE     " +
+                        "                 (CASE WHEN IFNULL(\n" +
+                        "                                        (SELECT\n" +
+                        "                                           max(e2.partner_code) partner_code\n" +
+                        "                                         FROM\n" +
+                                                                       SM_SO_Service_ExecDao.TABLE+" e2\n" +
+                        "                                         WHERE\n" +
+                        "                                           e2.customer_code =  e.customer_code\n" +
+                        "                                           and e2.so_prefix = e.so_prefix \n" +
+                        "                                           AND e2.so_code = e.so_code\n" +
+                        "                                           AND e2.price_list_code = e.price_list_code\n" +
+                        "                                           AND e2.pack_code = e.pack_code\n" +
+                        "                                           AND e2.pack_seq = e.pack_seq\n" +
+                        "                                           AND e2.category_price_code = e.category_price_code\n" +
+                        "                                           AND e2.service_code  = e.service_code\n" +
+                        "                                           AND e2.service_seq  = e.service_seq   \n" +
+                        "                                           AND e2.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n)\n" +
+                        "                       \n" +
+                        "                                         , s.partner_code) IS NOT NULL \n" +
+                        "                            THEN\n" +
+                        "                            (SELECT\n" +
+                        "                                 COUNT(1)  \n" +
+                        "                             FROM\n" +
+                        "                                 md_partners m\n" +
+                        "                             WHERE                        \n" +
+                        "                                 m.customer_code = s.customer_code\n" +
+                        "                                 and m.partner_code = IFNULL(" +
+                        "                                         (SELECT\n" +
+                        "                                           max(e2.partner_code) partner_code\n" +
+                        "                                         FROM\n" +
+                                                                       SM_SO_Service_ExecDao.TABLE+" e2\n" +
+                        "                                         WHERE\n" +
+                        "                                           e2.customer_code =  e.customer_code\n" +
+                        "                                           and e2.so_prefix = e.so_prefix \n" +
+                        "                                           AND e2.so_code = e.so_code\n" +
+                        "                                           AND e2.price_list_code = e.price_list_code\n" +
+                        "                                           AND e2.pack_code = e.pack_code\n" +
+                        "                                           AND e2.pack_seq = e.pack_seq\n" +
+                        "                                           AND e2.category_price_code = e.category_price_code\n" +
+                        "                                           AND e2.service_code  = e.service_code\n" +
+                        "                                           AND e2.service_seq  = e.service_seq   \n" +
+                        "                                           AND e2.status NOT IN('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
+                        "                                          ), s.partner_code )\n" +
+                        "                             ) \n" +
+                        "                            ELSE \n" +
+                        "                             -1\n" +
+                        "                            END)" +
+                        "                 END  )"+PARTNER_RESTRICTION+",\n" +
                         "        CASE WHEN s.qty <> 1 THEN\n" +
                         "          0\n" +
                         "        ELSE\n" +
@@ -182,7 +201,8 @@ public class Sql_Act027_002 implements Specification {
                         "              AND tt.pack_seq =  e.pack_seq\n" +
                         "              AND tt.category_price_code = e.category_price_code  \n" +
                         "              AND tt.service_code =  e.service_code          \n" +
-                        "              AND tt.service_seq = e.service_seq                 \n" +
+                        "              AND tt.service_seq = e.service_seq                 " +
+                        "              AND tt.exec_tmp = e.exec_tmp  \n" +
                         "              AND tt.customer_code = '"+customer_code+"'\n" +
                         "              AND tt.so_prefix = '"+so_prefix+"'\n" +
                         "              AND tt.so_code = '"+so_code+"'\n" +
@@ -259,6 +279,7 @@ public class Sql_Act027_002 implements Specification {
                         "                              AND S.customer_code = '"+customer_code+"'\n" +
                         "                              AND S.so_prefix = '"+so_prefix+"'\n" +
                         "                              AND S.so_code = '"+so_code+"'\n" +
+                        "                              AND e.status NOT IN ('"+Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n" +
                         "    \n" +
                         "    WHERE\n" +
                         "    \n" +
