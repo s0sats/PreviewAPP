@@ -190,6 +190,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     private void iniSetup() {
 
+
         context = Act005_Main.this;
         //
         ToolBox_Inf.cleanningFormLocal(context);
@@ -1021,6 +1022,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
 
             setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
+
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_so_save_ttl"),
+                    hmAux_Trans.get("progress_so_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+
             mPresenter.executeSoSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {

@@ -504,6 +504,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         progressDialog.dismiss();
     }
 
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+
+        if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
+            recoverApprovalState();
+        }
+    }
+
     // TRATAVIA DE ENCERRAMENTO SEM PROBLEMAS DO SERVICO
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
