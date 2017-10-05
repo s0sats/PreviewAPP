@@ -85,5 +85,9 @@
     <string name="generic_drawer_closed">Drawer Closed</string>
     <string name="msg_device_code_not_found">Device code not found! A Device code is required to proceed.</string>
     <string name="ws_exception_server_connection_failed">Failed to communicate to server</string>
+    <string name="generic_dialog_logout_ttl">Abmelden</string>
+    <string name="generic_dialog_logout_msg">Abmeldung erfolgt</string>
+    <string name="generic_alert_no_site_ttl">Standortliste ist leer</string>
+    <string name="generic_alert_no_site_msg">Standort wurde nicht gefunden. Prüfen Sie Ihre Zugriffsberechtigung oder versuchen Sie es noch einmal über die Option zurück.</string>
 
 </resources>

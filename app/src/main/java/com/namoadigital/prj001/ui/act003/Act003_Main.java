@@ -144,10 +144,13 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     @Override
     public void loadSites(List<HMAux> sites) {
         if(sites.size() == 0) {
+            String title = !hmAux_Trans.containsKey("alert_no_site_title") || hmAux_Trans.get("alert_no_site_title").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_alert_no_site_ttl) : hmAux_Trans.get("alert_no_site_title");
+            String msg = !hmAux_Trans.containsKey("alert_no_site_msg") || hmAux_Trans.get("alert_no_site_msg").contains(Constant.APP_MODULE + "/") ?  getString(R.string.generic_alert_no_site_msg) : hmAux_Trans.get("alert_no_site_msg");
+
             ToolBox.alertMSG(
                     Act003_Main.this,
-                    hmAux_Trans.get("alert_no_site_title"),
-                    hmAux_Trans.get("alert_no_site_msg"),
+                    title,
+                    msg,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -189,6 +192,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         transList.add("lbl_customer");
         transList.add("alert_no_site_title");
         transList.add("alert_no_site_msg");
+        transList.add("alert_logout_ttl");
+        transList.add("alert_logout_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -202,9 +207,17 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private void killCurSession(Context context){
 
+        String title = !hmAux_Trans.containsKey("alert_logout_ttl") || hmAux_Trans.get("alert_logout_ttl").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_dialog_logout_ttl) : hmAux_Trans.get("alert_logout_ttl") ;
+        String msg = !hmAux_Trans.containsKey("alert_logout_msg") || hmAux_Trans.get("alert_logout_msg").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_dialog_logout_msg) : hmAux_Trans.get("alert_logout_msg");
+
+        if(title == null || msg == null){
+            title = getString(R.string.generic_dialog_logout_ttl);
+            msg = getString(R.string.generic_dialog_logout_msg);
+        }
+
         enableProgressDialog(
-                hmAux_Trans.get("alert_logout_ttl"),
-                hmAux_Trans.get("alert_logout_msg"),
+                title,
+                msg,
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );

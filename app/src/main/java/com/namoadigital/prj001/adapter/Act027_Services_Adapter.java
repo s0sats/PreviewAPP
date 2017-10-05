@@ -238,7 +238,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
             }
         }else{
             //ll_express.setVisibility(View.GONE);
-            ll_express.setVisibility(View.VISIBLE);
+            ll_express.setVisibility(View.INVISIBLE);
             iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
         }
 

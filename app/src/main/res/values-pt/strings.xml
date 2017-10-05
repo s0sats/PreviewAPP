@@ -82,6 +82,11 @@
     <string name="generic_drawer_closed">Drawer Closed</string>
     <string name="msg_device_code_not_found">Código do dispositivo não encontrado!\nÉ necessário um código de dispositivo para prosseguir. </string>
     <string name="ws_exception_server_connection_failed">Erro ao tentar comunicar com o servidor !</string>
+    <string name="generic_dialog_logout_ttl">Logout</string>
+    <string name="generic_dialog_logout_msg">Realizando logout</string>
+    <string name="generic_alert_no_site_ttl">Lista de Site vazia</string>
+    <string name="generic_alert_no_site_msg">Nenhum Site encontrado.\nVerifique se você possui acesso a algum Site ou clique em voltar e tente novamente</string>
+
 
 
 </resources>
