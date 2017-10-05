@@ -195,11 +195,15 @@ public class Act027_Approval extends BaseFragment {
         approvalApprovalUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setOnLineApproval(Integer.parseInt(ToolBox_Con.getPreference_User_Code(getActivity())));
-                //
-                Act027_Main mMain = (Act027_Main) getActivity();
-                //
-                mMain.executeSoSaveApproval();
+                if (ToolBox_Con.isOnline(context)) {
+                    setOnLineApproval(Integer.parseInt(ToolBox_Con.getPreference_User_Code(getActivity())));
+                    //
+                    Act027_Main mMain = (Act027_Main) getActivity();
+                    //
+                    mMain.executeSoSaveApproval();
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
             }
         });
 
