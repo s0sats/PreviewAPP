@@ -363,9 +363,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         }
 
         if (mShortCut) {
-            //hugo
-            //setDrawerState(false);
-            setDrawerState(true);
+            setDrawerState(false);
         } else {
             setDrawerState(true);
         }

@@ -73,6 +73,9 @@ public class Sql_Act027_002 implements Specification {
                         "          CASE WHEN TTT.LAST_STATUS in ('"+Constant.SO_STATUS_DONE+"','NOT_EXIST') \n" +
                         "               THEN \n" +
                         "                 '"+ACTION_PLAY+"' \n" +
+                        "               WHEN TTT.LAST_STATUS ='NONE'  \n" +
+                        "               THEN\n" +
+                        "                 '"+ACTION_NONE+"'\n" +
                         "               ELSE \n" +
                         "                 '"+ACTION_STOP+"' \n" +
                         "               END \n" +
@@ -189,7 +192,13 @@ public class Sql_Act027_002 implements Specification {
                         "        ELSE\n" +
                         "        IFNULL(\n" +
                         "        (SELECT\n" +
-                        "            tt.status\n" +
+                        "            CASE WHEN tt.task_perc = '100'\n" +
+                        "                 THEN \n" +
+                        "                  'NONE'\n" +//AJUSTE PARA QUANDO TASK 100% MAS EXEC EM PROCESS..
+                        "                 ELSE\n" +
+                        "                   tt.status\n" +
+                        "                 END\n" +
+                        "                   status\n" +
                         "         FROM\n" +
                         "           "+ SM_SO_Service_Exec_TaskDao.TABLE+" tt\n" +
                         "         WHERE\n" +
@@ -201,7 +210,7 @@ public class Sql_Act027_002 implements Specification {
                         "              AND tt.pack_seq =  e.pack_seq\n" +
                         "              AND tt.category_price_code = e.category_price_code  \n" +
                         "              AND tt.service_code =  e.service_code          \n" +
-                        "              AND tt.service_seq = e.service_seq                 " +
+                        "              AND tt.service_seq = e.service_seq  \n               " +
                         "              AND tt.exec_tmp = e.exec_tmp  \n" +
                         "              AND tt.customer_code = '"+customer_code+"'\n" +
                         "              AND tt.so_prefix = '"+so_prefix+"'\n" +
