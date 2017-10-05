@@ -43,7 +43,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
-import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
@@ -332,7 +332,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                         Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE)),
                         Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_CODE)),
                         Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ)),
-                        Long.parseLong(bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP))
+                        Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP))
                 );
             } else {
                 mExec = null;
@@ -363,7 +363,9 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         }
 
         if (mShortCut) {
-            setDrawerState(false);
+            //hugo
+            //setDrawerState(false);
+            setDrawerState(true);
         } else {
             setDrawerState(true);
         }
@@ -434,10 +436,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                                         int category_price_code,
                                         int service_code,
                                         int service_seq,
-                                        long exec_tmp) {
+                                        int exec_tmp) {
 
         SM_SO_Service_Exec mSo_service_exec = sm_so_service_execDao.getByString(
-                new SM_SO_Service_Exec_Sql_004(
+                new SM_SO_Service_Exec_Sql_006(
                         customer_code,
                         so_prefix,
                         so_code,
@@ -1420,40 +1422,40 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                         Constant.DB_VERSION_CUSTOM
                 ).query_HM(
                         new MD_Product_Serial_Tracking_Sql_003(
-                         Long.parseLong(so_info.get(SM_SODao.CUSTOMER_CODE)),
-                          Long.parseLong(so_info.get(SM_SODao.PRODUCT_CODE)),
-                          Long.parseLong(so_info.get(SM_SODao.SERIAL_CODE))
+                                Long.parseLong(so_info.get(SM_SODao.CUSTOMER_CODE)),
+                                Long.parseLong(so_info.get(SM_SODao.PRODUCT_CODE)),
+                                Long.parseLong(so_info.get(SM_SODao.SERIAL_CODE))
 
                         ).toSqlQuery()
                 );
         //
         tv_so_lbl.setText(hmAux_Trans.get("dialog_so_lbl"));
         //
-        String so_prefix_code = so_info.get(SM_SODao.SO_PREFIX)+"."+so_info.get(SM_SODao.SO_CODE);
-        tv_so_val.setText( so_info.get(SM_SODao.SO_ID).equals(so_prefix_code) ? so_prefix_code : so_info.get(SM_SODao.SO_ID) );
+        String so_prefix_code = so_info.get(SM_SODao.SO_PREFIX) + "." + so_info.get(SM_SODao.SO_CODE);
+        tv_so_val.setText(so_info.get(SM_SODao.SO_ID).equals(so_prefix_code) ? so_prefix_code : so_info.get(SM_SODao.SO_ID));
         //
         tv_service_lbl.setText(hmAux_Trans.get("dialog_service_lbl"));
-        tv_service_val.setText(mService.getService_id() +" - "+ mService.getService_desc());
+        tv_service_val.setText(mService.getService_id() + " - " + mService.getService_desc());
         //
         tv_product_lbl.setText(hmAux_Trans.get("dialog_product_lbl"));
-        tv_product_val.setText(so_info.get(SM_SODao.PRODUCT_ID)  +" - "+ so_info.get(SM_SODao.PRODUCT_DESC));
+        tv_product_val.setText(so_info.get(SM_SODao.PRODUCT_ID) + " - " + so_info.get(SM_SODao.PRODUCT_DESC));
         //
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_serial_lbl"));
         tv_serial_val.setText(so_info.get(SM_SODao.SERIAL_ID));
         //
-        if(tracking_list != null && tracking_list.size() > 0){
+        if (tracking_list != null && tracking_list.size() > 0) {
             tv_tracking_lbl.setText(hmAux_Trans.get("dialog_tracking_lbl"));
             //
             String trackingList = "";
-            for (int i = 0; i < tracking_list.size() ; i++) {
+            for (int i = 0; i < tracking_list.size(); i++) {
                 trackingList += " º " + tracking_list.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
-                if(i < tracking_list.size() ){
+                if (i < tracking_list.size()) {
                     trackingList += "\n";
                 }
             }
             //
             tv_tracking_val.setText(trackingList);
-        }else{
+        } else {
             tv_tracking_lbl.setVisibility(View.GONE);
             tv_tracking_val.setVisibility(View.GONE);
         }
