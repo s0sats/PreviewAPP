@@ -3,7 +3,7 @@ package com.namoadigital.prj001.ui.act026;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.namoadigital.prj001.model.SM_SO;
+import com.namoa_digital.namoa_library.util.HMAux;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface Act026_Main_View {
 
-    void loadSOList(List<SM_SO> soList);
+    void loadSOList(List<HMAux> soList);
 
     void callAct012(Context context);
 

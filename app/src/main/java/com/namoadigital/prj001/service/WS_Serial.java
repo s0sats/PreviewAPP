@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TSerial_Env;
 import com.namoadigital.prj001.model.TSerial_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial;
@@ -64,7 +65,7 @@ public class WS_Serial extends IntentService {
 
     }
 
-    private void processWS_Serial(Long product_code, String serial_id, int serial_required, int serial_allow_new, int jumpValidation, int jumpOD) {
+    private void processWS_Serial(Long product_code, String serial_id, int serial_required, int serial_allow_new, int jumpValidation, int jumpOD) throws Exception {
         //Seleciona traduções
         loadTranslation();
 
@@ -97,7 +98,12 @@ public class WS_Serial extends IntentService {
                 rec.getLink_url(),
                 jumpValidation,
                 jumpOD
-        )
+                )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
                 ) {
             return;
         }

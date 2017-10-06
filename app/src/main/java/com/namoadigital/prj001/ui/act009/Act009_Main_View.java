@@ -14,6 +14,8 @@ public interface Act009_Main_View {
 
     void loadForm_Types(List<HMAux> form_types);
 
+    void addFormTypeInfoToBundle(HMAux item);
+
     void callAct008(Context context);
 
     void callAct010(Context context);

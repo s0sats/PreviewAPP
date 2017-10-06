@@ -21,7 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Services"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:dividerHeight="2dp"/>
 
     </LinearLayout>
 

@@ -5,8 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.sql.SM_SO_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_011;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -33,25 +32,35 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
     }
 
     @Override
-    public void getSOList() {
+    public void getSOList(String product_code, String serial_id) {
 
-        List<SM_SO> soList = soDao.query(
-                    new SM_SO_Sql_003(
-                            ToolBox_Con.getPreference_Customer_Code(context)
-                    ).toSqlQuery()
+//        List<SM_SO> soList = soDao.query(
+//                    new SM_SO_Sql_003(
+//                            ToolBox_Con.getPreference_Customer_Code(context),
+//                            product_code,
+//                            serial_id
+//                    ).toSqlQuery()
+//        );
+//        //
+//        int tam = soList.size();
+        List<HMAux> soList = soDao.query_HM(
+                new SM_SO_Sql_011(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
         );
-        //
-        int tam = soList.size();
+
         //
         mView.loadSOList(soList);
     }
 
     @Override
-    public void defineForwardFlow(SM_SO so) {
+    public void defineForwardFlow(HMAux so) {
         Bundle bundle = new Bundle();
 
-        bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(so.getSo_prefix()));
-        bundle.putString(SM_SODao.SO_CODE, String.valueOf(so.getSo_code()));
+        bundle.putString(SM_SODao.SO_PREFIX, so.get(SM_SODao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE, so.get(SM_SODao.SO_CODE));
         //
         mView.callAct027(context, bundle);
 

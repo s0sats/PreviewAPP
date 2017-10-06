@@ -35,7 +35,6 @@ import java.util.List;
 
 public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
-    private Context context;
     private Act009_Main_Presenter mPresenter;
     private ListView lv_form_types;
     private long product_code;
@@ -43,6 +42,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private Bundle bundle;
     private Lib_Custom_Cell_Adapter mAdapter;
     private boolean back_act020 = false;
+    private int back_action;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,8 +62,6 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
-
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -93,7 +91,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 context,
                 this,
                 new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                back_act020,
+                back_action
         );
 
         lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
@@ -106,8 +106,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
-            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
-            back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW,false);
+            serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
+            back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
+            back_action = bundle.getInt(Constant.BACK_ACTION,0);
         } else {
 //
 //
@@ -128,24 +129,12 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
 
-        //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
-        //Aplica informações do rodapé - fim
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {
@@ -161,10 +150,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
             }
         });
-
     }
 
-    private void addFormTypeInfoToBundle(HMAux item) {
+    @Override
+    public void addFormTypeInfoToBundle(HMAux item) {
         bundle.putString(
                 Constant.ACT009_CUSTOM_FORM_TYPE,
                 item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE)
@@ -179,7 +168,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public void loadForm_Types(List<HMAux> form_types) {
 
-        if(form_types.size() > 0) {
+        if (form_types.size() > 0) {
             //
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
@@ -196,13 +185,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             //
             lv_form_types.setAdapter(mAdapter);
 
-        }else{
+        } else {
             //Se lista vazia exibe alert e volta pra tela anterior
             List<String> transList = new ArrayList<>();
             transList.add("alert_ttl_no_form_found");
             transList.add("alert_msg_no_form_found");
 
-            HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans,mModule_Code,mResource_Code, transList);
+            HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code, transList);
             ToolBox.alertMSG(
                     Act009_Main.this,
                     alertTrans.get("alert_ttl_no_form_found"),
@@ -223,6 +212,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT008_SERIAL_ID);
         bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.BACK_ACTION);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -244,6 +234,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         bundle.remove(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(Constant.ACT008_SERIAL_ID);
         bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.BACK_ACTION);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

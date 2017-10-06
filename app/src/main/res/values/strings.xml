@@ -82,5 +82,10 @@
     <string name="generic_drawer_opened">Drawer Opened</string>
     <string name="generic_drawer_closed">Drawer Closed</string>
     <string name="msg_device_code_not_found">Device code not found! A Device code is required to proceed.</string>
+    <string name="ws_exception_server_connection_failed">Failed to communicate to server</string>
+    <string name="generic_dialog_logout_ttl">Logout</string>
+    <string name="generic_dialog_logout_msg">Accomplishing Logout</string>
+    <string name="generic_alert_no_site_ttl">Empty Sites List</string>
+    <string name="generic_alert_no_site_msg">None Site Found.\nPlease verify if you have access to any Site or click the back button and try again</string>
 
 </resources>

@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
@@ -44,7 +43,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
     public static final String WS_PROCESS_SERIAL = "ws_process_serial";
 
-    private Context context;
     private TextView tv_product_ttl;
     private TextView tv_product_code_label;
     private TextView tv_product_code_value;
@@ -87,8 +85,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
-
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -230,24 +226,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         setTitleLanguage();
         setFooter();
 
-        //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+    }
 
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
-
-        //Aplica informações do rodapé - fim
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {

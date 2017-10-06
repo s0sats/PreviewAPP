@@ -7,13 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -30,6 +33,9 @@ public class Act020_Frag_Filter extends Fragment {
     private MKEditTextNM mket_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
+    private LinearLayout ll_tracking;
+    private TextView tv_tracking;
+    private MKEditTextNM mket_tracking;
     private ImageView iv_search;
     private HMAux hmAux_Trans;
     private IAct020_Filter delegate;
@@ -97,6 +103,13 @@ public class Act020_Frag_Filter extends Fragment {
         mket_serial = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_serial);
         controls_sta.add(mket_serial);
         //
+        ll_tracking = (LinearLayout) view.findViewById(R.id.act020_drawer_content_ll_tracking);
+        //
+        tv_tracking = (TextView) view.findViewById(R.id.act020_drawer_content_tv_tracking);
+        //
+        mket_tracking = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_tracking);
+        controls_sta.add(mket_tracking);
+        //
         iv_search = (ImageView) view.findViewById(R.id.act020_drawer_content_iv_search);
 
         if(supportNFC){
@@ -104,7 +117,12 @@ public class Act020_Frag_Filter extends Fragment {
         }else{
             tv_nfc_reader.setVisibility(View.GONE);
         }
-
+        //Se customer sem acesso ao N-Service, não exibe tracking
+        if (ToolBox_Inf.parameterExists(getActivity(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            ll_tracking.setVisibility(View.VISIBLE);
+        }else{
+            ll_tracking.setVisibility(View.GONE);
+        }
     }
 
     private void iniAction() {
@@ -115,9 +133,10 @@ public class Act020_Frag_Filter extends Fragment {
             public void onClick(View v) {
                 if (delegate != null){
                     delegate.onIvSearchClick(
-                            mket_product.getText().toString().trim(),
+                            //mket_product.getText().toString().trim(),
                             mket_product_id.getText().toString().trim(),
-                            mket_serial.getText().toString().trim()
+                            mket_serial.getText().toString().trim(),
+                            mket_tracking.getText().toString().trim()
                     );
                 }
             }
@@ -141,6 +160,10 @@ public class Act020_Frag_Filter extends Fragment {
         mket_serial.setText(text.toString());
     }
 
+    public void setTrackingText(String text) {
+        mket_tracking.setText(text.toString());
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
         setTranslation();
@@ -155,6 +178,7 @@ public class Act020_Frag_Filter extends Fragment {
        // mket_product.setHint(hmAux_Trans.get("search_prod_hint"));
         tv_serial.setText(hmAux_Trans.get("drawer_serial_lbl"));
         //mket_serial.setHint(hmAux_Trans.get("search_prod_hint"));
+        tv_tracking.setText(hmAux_Trans.get("drawer_tracking_lbl"));
     }
 
     public ArrayList<MKEditTextNM> getControlsSta(){
@@ -169,5 +193,7 @@ public class Act020_Frag_Filter extends Fragment {
         mket_product_id.setText("");
         //
         mket_serial.setText("");
+        //
+        mket_tracking.setText("");
     }
 }

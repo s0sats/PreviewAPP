@@ -9,7 +9,6 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -33,14 +32,12 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     private Act030_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
     private MD_ProductDao mdProductDao;
-    private MD_Product_SerialDao serialDao;
 
-    public Act030_Main_Presenter_Impl(Context context, Act030_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao, MD_Product_SerialDao serialDao) {
+    public Act030_Main_Presenter_Impl(Context context, Act030_Main_View mView, HMAux hmAux_Trans, MD_ProductDao mdProductDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.mdProductDao = mdProductDao;
-        this.serialDao = serialDao;
     }
 
     @Override
@@ -53,17 +50,28 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
                 TSerial_Search_Rec.class
         );
 
-        //Seta qtd de registro
-        mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
-        //chama
-        mView.loadProductSerialList(rec.getRecord());
-        //Se qtd de registro maior que o total retornado,
-        //exibe msg para refinar a busca.
-        if (rec.getRecord_count() == 0) {
-            mView.showNewSerialMsg();
-        } else if (rec.getRecord_count() > rec.getRecord_page()) {
-            mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
-        }
+        //Se qtd 1, chama proxima define flow
+//        if (rec.getRecord_count() == 1) {
+//            defineFlow(rec.getRecord().get(0),false);
+//
+//        }else {
+            //Seta qtd de registro
+            mView.setRecordInfo(rec.getRecord().size(), rec.getRecord_page());
+            //chama
+            mView.loadProductSerialList(rec.getRecord());
+            //Se qtd 0, exibe msg de novo serial
+            //Se qtd de registro maior que o total retornado,
+            //exibe msg para refinar a busca.
+            if (rec.getRecord_count() == 0) {
+                mView.showNewSerialMsg();
+
+            } else if (rec.getRecord_count() == 1)  {
+                defineFlow(rec.getRecord().get(0),false);
+
+            }else if (rec.getRecord_count() > rec.getRecord_page()) {
+                mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
+            }
+       // }
     }
 
     @Override
@@ -72,7 +80,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_code, String product_id, String serial_id) {
+    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
             mView.showPD();
@@ -80,9 +88,10 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, product_code);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
+            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
             //
             mIntent.putExtras(bundle);
@@ -98,8 +107,9 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     public void defineFlow(TProduct_Serial productSerial,boolean new_serial) {
         Bundle bundle = new Bundle();
         //
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
-        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+//        bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
+//        bundle.putString(Constant.MAIN_SERIAL_ID, String.valueOf(productSerial.getSerial_id()));
+        bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, productSerial.getMDProductSerial());
         if(new_serial){
             bundle.putBoolean(Act030_Main.NEW_SERIAL, new_serial);
         }
@@ -126,13 +136,13 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
     }
 
     @Override
-    public boolean checkProductExists(String product_code, String product_id, String serial) {
+    public boolean checkProductExists(String product_id, String serial) {
 
         MD_Product md_product
                 = mdProductDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
+                        "",
                         product_id
                 ).toSqlQuery()
 
@@ -209,5 +219,22 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
             return false;
         }
 
+    }
+
+    @Override
+    public String searchProductInfo(String product_code,String product_id) {
+        MD_Product md_product = mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        if(md_product != null){
+            return md_product.getProduct_id();
+        }
+        //
+        return "";
     }
 }

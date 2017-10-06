@@ -64,7 +64,7 @@ public class WS_Cancel_NFC extends IntentService {
     }
 
 
-    private void processCancelNFC() {
+    private void processCancelNFC() throws Exception {
         userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_canceling_nfc"), "", "0");

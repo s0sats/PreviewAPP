@@ -106,7 +106,13 @@ public class SM_SO {
     private String add_inf2;
     @Expose
     private String add_inf3;
+    private int approve_budget;
+    private int approve_client;
     private int update_required;
+    private int approval_required;
+    private int sync_required;
+    private String log_date;
+
     @Expose
     private String action;
     private String token;
@@ -629,12 +635,52 @@ public class SM_SO {
         this.add_inf3 = add_inf3;
     }
 
+    public int getApprove_budget() {
+        return approve_budget;
+    }
+
+    public void setApprove_budget(int approve_budget) {
+        this.approve_budget = approve_budget;
+    }
+
+    public int getApprove_client() {
+        return approve_client;
+    }
+
+    public void setApprove_client(int approve_client) {
+        this.approve_client = approve_client;
+    }
+
     public int getUpdate_required() {
         return update_required;
     }
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getApproval_required() {
+        return approval_required;
+    }
+
+    public void setApproval_required(int approval_required) {
+        this.approval_required = approval_required;
+    }
+
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
+    }
+
+    public String getLog_date() {
+        return log_date;
+    }
+
+    public void setLog_date(String log_date) {
+        this.log_date = log_date;
     }
 
     public String getAction() {

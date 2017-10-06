@@ -3,13 +3,17 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act028_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -17,14 +21,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.dao.SM_SO_PackDao.PACK_SEQ;
-import static com.namoadigital.prj001.dao.SM_SO_ServiceDao.SERVICE_SEQ;
-
 /**
  * Created by neomatrix on 05/07/17.
  */
 
-public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_Service_Exec_Task> {
+public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<SM_SO_Service_Exec_Task> {
 
     private final Mapper<SM_SO_Service_Exec_Task, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, SM_SO_Service_Exec_Task> toSM_SO_Service_Exec_TaskMapper;
@@ -35,8 +36,10 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
     public static final String SO_CODE = "so_code";
     public static final String PRICE_LIST_CODE = "price_list_code";
     public static final String PACK_CODE = "pack_code";
+    public static final String PACK_SEQ = "pack_seq";
     public static final String CATEGORY_PRICE_CODE = "category_price_code";
     public static final String SERVICE_CODE = "service_code";
+    public static final String SERVICE_SEQ = "service_seq";
     public static final String EXEC_CODE = "exec_code";
     public static final String TASK_CODE = "task_code";
     public static final String EXEC_TMP = "exec_tmp";
@@ -323,6 +326,330 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmp<SM_SO_
         } finally {
         }
 
+        closeDB();
+    }
+
+    @Override
+    public void updateStatusOffLine(SM_SO_Service_Exec_Task task) {
+
+        SM_SO_ServiceDao sm_so_serviceDao = new SM_SO_ServiceDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        SM_SO_Service sm_so_service = sm_so_serviceDao.getByString(
+                new SM_SO_Service_Sql_001(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq()
+                ).toSqlQuery()
+        );
+
+        sm_so_serviceDao.addUpdate(
+                new Sql_Act028_004(
+                        task.getCustomer_code(),
+                        task.getSo_prefix(),
+                        task.getSo_code(),
+                        task.getPrice_list_code(),
+                        task.getPack_code(),
+                        task.getPack_seq(),
+                        task.getCategory_price_code(),
+                        task.getService_code(),
+                        task.getService_seq(),
+                        task.getExec_tmp()
+                ).toSqlQuery()
+        );
+
+        openDB();
+        //
+        try {
+
+            long rows = 0;
+
+            // Update Exec
+            StringBuilder sbCommand = new StringBuilder();
+            sbCommand.append(" UPDATE ");
+            sbCommand.append(SM_SO_Service_ExecDao.TABLE);
+
+            if (task.getStatus().equalsIgnoreCase(Constant.SO_STATUS_NOT_EXECUTED)) {
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_NOT_EXECUTED);
+                sbCommand.append("' ");
+
+            } else {
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append("' ");
+            }
+
+            sbCommand.append(" WHERE ");
+            sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(task.getPrice_list_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(task.getCategory_price_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SERVICE_CODE).append(" = '").append(String.valueOf(task.getService_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SERVICE_SEQ).append(" = '").append(String.valueOf(task.getService_seq())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(EXEC_TMP).append(" = '").append(String.valueOf(task.getExec_tmp())).append("'");
+
+
+            sbCommand.append("  AND ( ");
+
+            sbCommand.append("  SELECT ");
+            sbCommand.append("  COUNT(1) EXTRACT ");
+            sbCommand.append("  FROM ");
+            sbCommand.append(SM_SO_Service_Exec_TaskDao.TABLE);
+            sbCommand.append("  WHERE ");
+
+            sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(task.getPrice_list_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(task.getCategory_price_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SERVICE_CODE).append(" = '").append(String.valueOf(task.getService_code())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(SERVICE_SEQ).append(" = '").append(String.valueOf(task.getService_seq())).append("'");
+            sbCommand.append(" and ");
+            sbCommand.append(EXEC_TMP).append(" = '").append(String.valueOf(task.getExec_tmp())).append("'");
+            sbCommand.append(" and ");
+
+            sbCommand.append(" ( ");
+
+            sbCommand.append(STATUS).append(" = '");
+            sbCommand.append(Constant.SO_STATUS_DONE);
+            sbCommand.append("' ");
+
+            sbCommand.append(" or ");
+
+            sbCommand.append(STATUS).append(" = '");
+            sbCommand.append(Constant.SO_STATUS_NOT_EXECUTED);
+            sbCommand.append("' ");
+
+            sbCommand.append(" ) ");
+
+
+            sbCommand.append(" and ");
+            sbCommand.append(TASK_PERC).append(" = '100'");
+
+            sbCommand.append("  ) != 0 ");
+
+
+            db.execSQL(sbCommand.toString());
+            rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
+
+            if (rows != 0) {
+                // Update Service
+                sbCommand = new StringBuilder();
+                sbCommand.append(" UPDATE ");
+                sbCommand.append(SM_SO_ServiceDao.TABLE);
+
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append("' ");
+
+                sbCommand.append(" WHERE ");
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(task.getPrice_list_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(task.getCategory_price_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SERVICE_CODE).append(" = '").append(String.valueOf(task.getService_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SERVICE_SEQ).append(" = '").append(String.valueOf(task.getService_seq())).append("'");
+
+                sbCommand.append("  AND ( ");
+
+                sbCommand.append("  SELECT ");
+                sbCommand.append("  COUNT(1) EXTRACT ");
+                sbCommand.append("  FROM ");
+                sbCommand.append(SM_SO_Service_ExecDao.TABLE);
+                sbCommand.append("  WHERE ");
+
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(task.getPrice_list_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(CATEGORY_PRICE_CODE).append(" = '").append(String.valueOf(task.getCategory_price_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SERVICE_CODE).append(" = '").append(String.valueOf(task.getService_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SERVICE_SEQ).append(" = '").append(String.valueOf(task.getService_seq())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(STATUS).append(" = '");
+                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append("' ");
+                sbCommand.append("  ) = ");
+                sbCommand.append(sm_so_service.getQty());
+                sbCommand.append(" ");
+
+                db.execSQL(sbCommand.toString());
+                rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
+            }
+
+            if (rows != 0) {
+
+                // Update Pack
+                sbCommand = new StringBuilder();
+                sbCommand.append(" UPDATE ");
+                sbCommand.append(SM_SO_PackDao.TABLE);
+
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append("' ");
+
+                sbCommand.append(" WHERE ");
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(task.getPrice_list_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
+
+                sbCommand.append("  AND ( ");
+
+                sbCommand.append("  SELECT ");
+                sbCommand.append("  COUNT(1) EXTRACT ");
+                sbCommand.append("  FROM ");
+                sbCommand.append(SM_SO_ServiceDao.TABLE);
+                sbCommand.append("  WHERE ");
+
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PRICE_LIST_CODE).append(" = '").append(String.valueOf(task.getPrice_list_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_CODE).append(" = '").append(String.valueOf(task.getPack_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(PACK_SEQ).append(" = '").append(String.valueOf(task.getPack_seq())).append("'");
+                sbCommand.append(" and ");
+
+                sbCommand.append(" ( ");
+                sbCommand.append(STATUS).append(" = '");
+                sbCommand.append(Constant.SO_STATUS_PENDING);
+                sbCommand.append("' ");
+
+                sbCommand.append(" or ");
+
+                sbCommand.append(STATUS).append(" = '");
+                sbCommand.append(Constant.SO_STATUS_PROCESS);
+                sbCommand.append("' ");
+                sbCommand.append(" ) ");
+
+                sbCommand.append("  ) = 0 ");
+
+                db.execSQL(sbCommand.toString());
+                rows = DatabaseUtils.longForQuery(db, "SELECT changes()", null);
+            }
+
+            if (rows != 0) {
+
+                // Update SO
+                sbCommand = new StringBuilder();
+                sbCommand.append(" UPDATE ");
+                sbCommand.append(SM_SODao.TABLE);
+
+                sbCommand.append(" SET ");
+                sbCommand.append("  status = '");
+                sbCommand.append(Constant.SO_STATUS_WAITING_SYNC);
+                sbCommand.append("' ");
+
+                sbCommand.append(" WHERE ");
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+
+                sbCommand.append("  AND ( ");
+
+                sbCommand.append("  SELECT ");
+                sbCommand.append("  COUNT(1) EXTRACT ");
+                sbCommand.append("  FROM ");
+                sbCommand.append(SM_SO_PackDao.TABLE);
+                sbCommand.append("  WHERE ");
+
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(" and ");
+
+                sbCommand.append(" ( ");
+                sbCommand.append(STATUS).append(" = '");
+                sbCommand.append(Constant.SO_STATUS_PENDING);
+                sbCommand.append("' ");
+
+                sbCommand.append(" or ");
+
+                sbCommand.append(STATUS).append(" = '");
+                sbCommand.append(Constant.SO_STATUS_PROCESS);
+                sbCommand.append("' ");
+                sbCommand.append(" ) ");
+
+                sbCommand.append("  ) = 0");
+
+                db.execSQL(sbCommand.toString());
+            }
+
+        } catch (Exception e) {
+        }
+        //
         closeDB();
     }
 

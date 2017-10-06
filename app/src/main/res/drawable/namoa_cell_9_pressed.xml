@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <!--Borda -->
+    <corners android:radius="0dp"/>
+    <!--Background -->
+    <solid
+        android:color="@color/namoa_color_light_blue_alpha"
+        />
+
+</shape>

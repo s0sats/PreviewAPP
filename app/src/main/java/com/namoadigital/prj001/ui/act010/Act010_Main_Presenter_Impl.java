@@ -46,7 +46,11 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter{
                                 ToolBox_Con.getPreference_Operation_Code(context)
                         ).toSqlQuery()
                 );
-
+        //
+        if(data != null && data.size() == 1){
+            validateOpenForm(data.get(0));
+        }
+        //
         mView.loadForms(data);
     }
 

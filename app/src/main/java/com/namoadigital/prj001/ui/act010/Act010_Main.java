@@ -28,13 +28,13 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by neomatrix on 23/01/17.
  */
 
 public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
-    private Context context;
     private Act010_Main_Presenter mPresenter;
     private ListView lv_forms;
     private TextView tv_form_ttl;
@@ -68,8 +68,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
-
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -153,25 +151,12 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
 
-        //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value =  hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl =  hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value =  hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
-
-        //Aplica informações do rodapé - fim
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {
@@ -205,6 +190,19 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                         ""
                         );
         lv_forms.setAdapter(mAdapter);
+        //
+//        if(forms.size() == 1 ){
+//            new Handler().post(new Runnable(){
+//                @Override
+//                public void run() {
+//                    lv_forms.performItemClick(
+//                            lv_forms.getAdapter().getView(0, null, null),
+//                            0,
+//                            lv_forms.getAdapter().getItemId(0)
+//                    );
+//                }
+//            });
+//        }
 
     }
     @Override
@@ -248,6 +246,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE);
         bundle.remove(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
+        bundle.putInt(Constant.BACK_ACTION, 1);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

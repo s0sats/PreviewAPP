@@ -30,6 +30,8 @@ public class Act025_Frag_Filter extends Fragment {
     private MKEditTextNM mket_product_id;
     private TextView tv_serial;
     private MKEditTextNM mket_serial;
+    private TextView tv_tracking;
+    private MKEditTextNM mket_tracking;
     private ImageView iv_search;
     private HMAux hmAux_Trans;
     private IAct025_Filter delegate;
@@ -65,7 +67,7 @@ public class Act025_Frag_Filter extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view =  inflater.inflate(R.layout.act020_drawer_content,container,false);
+        View view =  inflater.inflate(R.layout.act025_drawer_content,container,false);
         iniVar(view);
         iniAction();
 
@@ -76,28 +78,33 @@ public class Act025_Frag_Filter extends Fragment {
 
         controls_sta = new ArrayList<>();
         //
-        tv_nfc_reader = (ButtonNFC) view.findViewById(R.id.act020_drawer_content_tv_nfc_reader);
+        tv_nfc_reader = (ButtonNFC) view.findViewById(R.id.act025_drawer_content_tv_nfc_reader);
         tv_nfc_reader.setmCustomer_code(String.valueOf(ToolBox_Con.getPreference_Customer_Code(getContext())));
         tv_nfc_reader.setmProduct(true);
         tv_nfc_reader.setmSerial(true);
         tv_nfc_reader.setmProgressClose(true);
         //
-        tv_product = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product_code);
+        tv_product = (TextView) view.findViewById(R.id.act025_drawer_content_tv_product_code);
         //
-        mket_product = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_product_code);
+        mket_product = (MKEditTextNM) view.findViewById(R.id.act025_drawer_content_mket_product_code);
         controls_sta.add(mket_product);
+
+        tv_product_id = (TextView) view.findViewById(R.id.act025_drawer_content_tv_product_id);
         //
-        tv_product_id = (TextView) view.findViewById(R.id.act020_drawer_content_tv_product_id);
-        //
-        mket_product_id = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_product_id);
+        mket_product_id = (MKEditTextNM) view.findViewById(R.id.act025_drawer_content_mket_product_id);
         controls_sta.add(mket_product_id);
         //
-        tv_serial = (TextView) view.findViewById(R.id.act020_drawer_content_tv_serial);
+        tv_serial = (TextView) view.findViewById(R.id.act025_drawer_content_tv_serial);
         //
-        mket_serial = (MKEditTextNM) view.findViewById(R.id.act020_drawer_content_mket_serial);
+        mket_serial = (MKEditTextNM) view.findViewById(R.id.act025_drawer_content_mket_serial);
         controls_sta.add(mket_serial);
         //
-        iv_search = (ImageView) view.findViewById(R.id.act020_drawer_content_iv_search);
+        tv_tracking = (TextView) view.findViewById(R.id.act025_drawer_content_tv_tracking);
+        //
+        mket_tracking = (MKEditTextNM) view.findViewById(R.id.act025_drawer_content_mket_tracking);
+        controls_sta.add(mket_tracking);
+        //
+        iv_search = (ImageView) view.findViewById(R.id.act025_drawer_content_iv_search);
 
         if(supportNFC){
             tv_nfc_reader.setVisibility(View.VISIBLE);
@@ -109,15 +116,15 @@ public class Act025_Frag_Filter extends Fragment {
 
     private void iniAction() {
 
-
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (delegate != null){
                     delegate.onIvSearchClick(
-                            mket_product.getText().toString().trim(),
                             mket_product_id.getText().toString().trim(),
-                            mket_serial.getText().toString().trim()
+                            mket_serial.getText().toString().trim(),
+                            mket_tracking.getText().toString().trim()
+
                     );
                 }
             }
@@ -141,6 +148,10 @@ public class Act025_Frag_Filter extends Fragment {
         mket_serial.setText(text.toString());
     }
 
+    public void setTrackingText(String text) {
+        mket_tracking.setText(text.toString());
+    }
+
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
         setTranslation();
@@ -149,12 +160,13 @@ public class Act025_Frag_Filter extends Fragment {
     private void setTranslation() {
         tv_nfc_reader.setText(hmAux_Trans.get("component_enable_nfc_lbl"));
         //
-        tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
+        //tv_product.setText(hmAux_Trans.get("drawer_product_lbl"));
         //
         tv_product_id.setText(hmAux_Trans.get("drawer_product_id_lbl"));
        // mket_product.setHint(hmAux_Trans.get("search_prod_hint"));
         tv_serial.setText(hmAux_Trans.get("drawer_serial_lbl"));
         //mket_serial.setHint(hmAux_Trans.get("search_prod_hint"));
+        tv_tracking.setText(hmAux_Trans.get("drawer_tracking_lbl"));
     }
 
     public ArrayList<MKEditTextNM> getControlsSta(){
@@ -169,5 +181,7 @@ public class Act025_Frag_Filter extends Fragment {
         mket_product_id.setText("");
         //
         mket_serial.setText("");
+        //
+        mket_tracking.setText("");
     }
 }

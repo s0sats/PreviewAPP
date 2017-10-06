@@ -21,33 +21,13 @@
             android:layout_height="wrap_content"
             android:text="Exec"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
             android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_task_list_content_tv_exec_tmp_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Exec TMP" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -60,31 +40,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="101" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_task_list_content_tv_exec_type_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="left"
-                    android:text="Exec Type" />
+                    android:text="101" />
 
             </LinearLayout>
 
@@ -99,83 +56,150 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_task_list_content_tv_exec_type_value"
+                    android:id="@+id/act028_task_list_content_tv_exec_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="TYPE" />
+                    android:text="PROCESSING"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_exec"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_task_list_content_tv_exec_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exec_Code"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_task_list_content_tv_exec_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_task_list_content_ll_partner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_task_list_content_tv_partner_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Partner"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_task_list_content_tv_partner_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Partner_id - Partner Desc" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_task_list_content_ll_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_task_list_content_tv_service_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_task_list_content_tv_service_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Service_id - Service Desc" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/act028_task_list_content_iv_not_exec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_task_list_content_tv_partner_id_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Partner ID" />
-
-            </LinearLayout>
+                android:background="@drawable/stroke_purple3_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_do_not_disturb_black_24dp"
+                android:tint="@color/namoa_color_purple_3"
+                android:visibility="gone" />
 
             <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/act028_task_list_content_iv_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:background="@drawable/stroke_blue2_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_info"
+                android:tint="@color/namoa_dark_blue"
+                android:visibility="gone"
+                />
 
-                <TextView
-                    android:id="@+id/act028_task_list_content_tv_partner_id_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="101" />
+            <View
+                android:layout_width="5dp"
+                android:layout_height="1dp" />
 
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
+            <ImageView
+                android:id="@+id/act028_task_list_content_iv_new_task"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_task_list_content_tv_partner_desc_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Partner Desc" />
-
-            </LinearLayout>
+                android:background="@drawable/stroke_blue2_states"
+                android:paddingBottom="4dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="4dp"
+                android:src="@drawable/ic_plus_circle_outline_24px"
+                android:tint="@color/namoa_dark_blue" />
 
         </LinearLayout>
 
@@ -185,7 +209,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+
         android:background="@color/namoa_color_light_blue3" />
 
     <ListView
@@ -194,25 +218,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-
     </ListView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/act028_task_list_content_btn_new_task"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:background="@drawable/btn_namoa_main_states"
-            android:textColor="@color/padrao_WHITE"
-            android:layout_weight="1"
-            android:text="New Task" />
-
-    </LinearLayout>
 
 </LinearLayout>
 

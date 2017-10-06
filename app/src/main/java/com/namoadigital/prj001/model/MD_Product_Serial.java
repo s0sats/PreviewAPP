@@ -2,11 +2,15 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  * Created by neomatrix on 8/9/16.
  */
 
-public class MD_Product_Serial {
+public class MD_Product_Serial implements Serializable {
+    private static final long serialVersionUID = 4954240719813141624L;
 
     @Expose
     private long customer_code;
@@ -14,6 +18,8 @@ public class MD_Product_Serial {
     private long product_code;
     @Expose
     private long serial_code;
+    @Expose
+    private long serial_tmp;
     @Expose
     private String serial_id;
     @Expose
@@ -44,7 +50,23 @@ public class MD_Product_Serial {
     private int update_required;
     //SOMENTE PARA ENVIO NO WS
     @Expose
-    private int only_position;
+    private Integer only_position;
+    @Expose
+    private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
+
+    /*
+    * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
+    * via app.
+    */
+    public MD_Product_Serial() {
+        this.serial_tmp = 0;
+    }
+
+    public void setPk(){
+        for (int i = 0; i < tracking_list.size(); i++) {
+            tracking_list.get(i).setPk(this);
+        }
+    }
 
     public long getCustomer_code() {
         return customer_code;
@@ -68,6 +90,14 @@ public class MD_Product_Serial {
 
     public void setSerial_code(long serial_code) {
         this.serial_code = serial_code;
+    }
+
+    public long getSerial_tmp() {
+        return serial_tmp;
+    }
+
+    public void setSerial_tmp(long serial_tmp) {
+        this.serial_tmp = serial_tmp;
     }
 
     public String getSerial_id() {
@@ -182,11 +212,19 @@ public class MD_Product_Serial {
         this.update_required = update_required;
     }
 
-    public int getOnly_position() {
+    public Integer getOnly_position() {
         return only_position;
     }
 
-    public void setOnly_position(int only_position) {
+    public void setOnly_position(Integer only_position) {
         this.only_position = only_position;
+    }
+
+    public ArrayList<MD_Product_Serial_Tracking> getTracking_list() {
+        return tracking_list;
+    }
+
+    public void setTracking_list(ArrayList<MD_Product_Serial_Tracking> tracking_list) {
+        this.tracking_list = tracking_list;
     }
 }

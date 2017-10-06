@@ -37,7 +37,11 @@ public interface Act005_Main_View {
 
     void setWsProcess(String ws_called);
 
+    void setWsSoProcess(String ws_called);
+
     void callLoginProcess();
+
+    void cleanUpResults();
 
     void setWsProcessList(ArrayList<HMAux> wsProcessList);
 

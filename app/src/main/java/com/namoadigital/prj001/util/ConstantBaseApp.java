@@ -14,8 +14,8 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "2.0.6";
-    public static final String PKG_CLEAN_APP = "15";
+    public static final String PRJ001_VERSION = "2.2.2";
+    public static final String PKG_CLEAN_APP = "28";
     //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -53,6 +53,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT030 = "act030";
     public static final String ACT031 = "act031";
     public static final String ACT032 = "act032";
+    public static final String ACT033 = "act033";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -79,12 +80,20 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String ACT023_SO_HEADER_LIST = "so_header_list";
 
+    public static final String ACT027_IS_SHORTCUT = "ACT027_IS_SHORTCUT";
+    public static final String ACT028_SERVICE_UPDATED = "ACT028_SERVICE_UPDATED";
+
     public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";
     public static final String MAIN_MSTACKVALUES = "main_mstackvalues";
     public static final String MAIN_PRODUCT_CODE = "main_product_code";
     public static final String MAIN_SERIAL_ID = "main_serial_id";
+    public static final String MAIN_MD_PRODUCT_SERIAL = "main_md_product_serial";
     public static final String MAIN_IS_SCHEDULE = "main_is_schedule";
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
+    public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
+    //Constante de concatenação
+    public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
+    public static final String MAIN_CONCAT_STRING_2 = "##@n@m0@@##";
 
 
     /**
@@ -111,6 +120,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String IMG_PATH;
     public static String THU_PATH;
     public static String SUPPORT_PATH;
+    public static String TOKEN_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -118,6 +128,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
 
+    public static String TOKEN_SO_PREFIX;
+    public static String TOKEN_SERIAL_PREFIX;
+
+    public static String TOKEN_SO_NAME_FULL;
+    public static String TOKEN_SERIAL_NAME_FULL;
 
     /**
      * SM_SO_Service Login Parameter
@@ -144,6 +159,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_CUSTOMER = "footer_customer";
     public static final String FOOTER_SITE_LBL = "footer_site_lbl";
     public static final String FOOTER_SITE = "footer_site";
+    public static final String FOOTER_ZONE_LBL = "footer_zone_lbl";
+    public static final String FOOTER_ZONE = "footer_zone";
     public static final String FOOTER_OPERATION_LBL = "footer_operation_lbl";
     public static final String FOOTER_OPERATION = "footer_operation";
     public static final String FOOTER_BTN_OK = "footer_btn_ok";
@@ -181,6 +198,14 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SO_SERIAL_SAVE_SERIAL_ID = "so_serial_save_serial_id";
     public static final String WS_SO_SERIAL_SAVE_SO_PREFIX = "so_serial_save_product_code";
     public static final String WS_SO_SERIAL_SAVE_SO_CODE = "so_serial_save_serial_id";
+    //As 4 constantes não serão mais utilizadas após processo de save so offline
+
+    /**
+     * SO Save
+     */
+    public static final String WS_SO_SAVE_SO_ACTION = "ws_so_save_so_action";
+    public static final String SO_ACTION_EXECUTION = "EXECUTION";
+
 
     /**
      * WS Logout
@@ -200,9 +225,18 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SERIAL_SEARCH_PRODUCT_CODE = "serial_search_product_code";
     public static final String WS_SERIAL_SEARCH_PRODUCT_ID = "serial_search_product_id";
     public static final String WS_SERIAL_SEARCH_SERIAL_ID = "serial_search_serial_id";
+    public static final String WS_SERIAL_SEARCH_TRACKING = "serial_search_tracking";
     public static final String WS_SERIAL_SEARCH_EXACT = "ws_serial_search_exact";
     public static final String WS_SERIAL_SEARCH_SAVE_PROCESS = "ws_serial_search_save_process";
     public static final String WS_SERIAL_SEARCH_NEW_PROCESS = "ws_serial_search_new_process";
+
+    /**
+     * WS Serial Tracking Search
+     */
+    public static final String WS_SERIAL_TRACKING_SEARCH_PRODUCT_CODE = "serial_tracking_search_product_code";
+    public static final String WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE = "serial_tracking_search_serial_code";
+    public static final String WS_SERIAL_TRACKING_SEARCH_TRACKING = "serial_tracking_search_tracking";
+    public static final String WS_SERIAL_TRACKING_SEARCH_SITE_CODE = "serial_tracking_search_site_code";
 
     /**
      * Retorno dos Ws de Envio
@@ -227,6 +261,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
     public static final String LOGIN_SITE_CODE = "login_site_code";
+    public static final String LOGIN_ZONE_CODE = "login_zone_code";
     public static final String LOGIN_OPERATION_CODE = "login_operation_code";
     public static final String PHONE_UUID_CODE = "phone_uuid_code";
     public static final String NLS_DATE_FORMAT = "nls_date_format";
@@ -271,21 +306,20 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CLIENT_TYPE_USER = "USER";
 
     /**
-     *
      * Parametros EV_PROFILE
-     *
      */
 
     public static final String PROFILE_MENU_SO = "PRJ001_SO";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
-
+    public static final String SO_ORIGIN_CHANGE_APP = "APP";
 
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
+    public static final String MODULE_SO_SEARCH_SERIAL_EXPRESS = "MODULE_SO_SEARCH_SERIAL_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
 
@@ -299,18 +333,34 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
     public static final String SO_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
     public static final String SO_STATUS_DONE = "DONE";
+    public static final String SO_STATUS_WAITING_SYNC = "WAITING_SYNC";
     public static final String SO_STATUS_CANCELLED = "CANCELLED";
     public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
     public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
     public static final String SO_STATUS_BLOCKED = "STOP";
+    public static final String SO_SERVICE_TYPE_YES_NO = "YES_NO";
+    public static final String SO_SERVICE_TYPE_START_STOP = "START_STOP";
+
+//    public static final String SO_PARAM_PREFIX = "SO_PARAM_PREFIX";
+//    public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
+//    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
+//    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
+
+    public static final String SO_PARAM_RETURN_STATUS = "so_param_return_status";
+    public static final String SO_PARAM_RETURN_MSG = "so_param_return_msg";
+    public static final String SO_PARAM_CUSTOMER_CODE = "so_param_customer_code";
+    public static final String SO_PARAM_SO_PREFIX = "so_param_so_prefix";
+    public static final String SO_PARAM_SO_CODE = "so_param_so_code";
+    public static final String SO_PARAM_AUTH_TYPE = "so_param_auth_type";
+
+    public static final String SO_PARAM_AUTH_TYPE_BUDGET = "BUDGET";
+    public static final String SO_PARAM_AUTH_TYPE_QUALITY = "QUALITY";
+    public static final String SO_PARAM_AUTH_TYPE_CLIENT = "CLIENT";
+
+    public static final String SO_PARAM_AUTH_NICK_MAIL = "so_param_auth_nick_mail";
+    public static final String SO_PARAM_AUTH_PASSWORD = "so_param_auth_password";
+    public static final String SO_PARAM_AUTH_NFC = "so_param_auth_nfc";
 
 
-
-    //
-    public static final String SO_PARAM_PREFIX = "SO_PARAM_PREFIX";
-    public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
-    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
-    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
-
-
+    public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
 }

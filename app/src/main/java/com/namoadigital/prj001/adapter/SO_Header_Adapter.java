@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,18 +27,20 @@ import java.util.List;
 
 public class SO_Header_Adapter extends BaseAdapter {
     public static final String CONFIG_TYPE_DOWNLOAD ="download";
-    public static final String CONFIG_TYPE_EXIBITION ="exibition";
+    public static final String CONFIG_TYPE_EXIBITION_FULL ="CONFIG_TYPE_EXIBITION_FULL";
+    public static final String CONFIG_TYPE_EXIBITION_SO ="CONFIG_TYPE_EXIBITION_SO";
     //
     private Context context;
     private int resource;
-    private List<SM_SO> source;
+    //private List<SM_SO> source;
+    private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private String config_type;
     private boolean[] checkedStatus;
     private ISO_Header_Adapter delegate;
 
-    public SO_Header_Adapter(Context context, int resource, List<SM_SO> source,String config_type) {
+    public SO_Header_Adapter(Context context, int resource, List<HMAux> source,String config_type) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -56,7 +58,7 @@ public class SO_Header_Adapter extends BaseAdapter {
     }
 
     public interface ISO_Header_Adapter{
-        void downloadBtnClicked(SM_SO so);
+        void downloadBtnClicked(HMAux so);
 
         void refreshSelectedQty(int qty_selected);
     }
@@ -90,85 +92,146 @@ public class SO_Header_Adapter extends BaseAdapter {
             convertView = mInflater.inflate(resource, parent, false);
         }
         //Resgata item do list view.
-        SM_SO so = source.get(position);
+        HMAux so = source.get(position);
         //
-        TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_so_ttl);
+        TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_ttl);
         //SO Prefix.SO_code
-        TextView tv_so_code = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_so_code);
+        TextView tv_so_prefix_code = (TextView) convertView.findViewById(R.id.so_header_cell_tv_prefix_code);
+
+        LinearLayout ll_so_id = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_id);
+        TextView tv_so_id_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_id);
+        TextView tv_so_id_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_id_val);
         //
-        TextView tv_so_id = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_so_id);
+        LinearLayout ll_so_desc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_desc);
+        TextView tv_so_desc_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_desc);
         //
-        TextView tv_so_desc = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_so_desc);
+        LinearLayout ll_priority = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_priority);
+        TextView tv_priority_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_lbl);
+        TextView tv_priority_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_val);
         //
-        TextView tv_site = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_site);
+        LinearLayout ll_status = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_status);
+        TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_status_lbl);
+        TextView tv_status_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_status_val);
         //
-        TextView tv_operation = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_operation);
+        LinearLayout ll_deadline = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_deadline);
+        TextView tv_deadline_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_deadline_lbl);
+        TextView tv_deadline_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_deadline_val);
         //
-        TextView tv_contract = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_contract);
+        LinearLayout ll_site = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_site);
+        TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_site_lbl);
+        TextView tv_site_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_site_val);
         //
-        TextView tv_priority = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_priority);
+        LinearLayout ll_operation = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_operation);
+        TextView tv_operation_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_operation_lbl);
+        TextView tv_operation_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_operation_val);
         //
-        TextView tv_status = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_status);
+        LinearLayout ll_contract = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_contract);
+        TextView tv_contract_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_contract_lbl);
+        TextView tv_contract_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_contract_val);
         //
-        TextView tv_client = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_client);
+        LinearLayout ll_client = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_client);
+        TextView tv_client_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_client_lbl);
+        TextView tv_client_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_client_val);
         //
-        TextView tv_deadline = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_deadline);
+        //if(config_type.equals(CONFIG_TYPE_EXIBITION_FULL)) {
+            LinearLayout ll_serial_info = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_serial_info);
+            TextView tv_serial_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_serial_lbl);
+            TextView tv_serial_id = (TextView) convertView.findViewById(R.id.so_header_cell_tv_serial_id);
+            //
+            LinearLayout ll_product = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_product);
+            TextView tv_product_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_product_lbl);
+            TextView tv_product_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_product_val);
+            //
+            LinearLayout ll_segment = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_segment);
+            TextView tv_segment_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_segment_lbl);
+            TextView tv_segment_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_segment_val);
+            //
+            LinearLayout ll_category_price = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_category_price);
+            TextView tv_category_price_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_lbl);
+            TextView tv_category_price_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_val);
+        //}
         //
-        TextView tv_serial_ttl = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_serial_ttl);
+        LinearLayout ll_download_optc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_download_opt);
         //
-        TextView tv_product = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_product);
+        ImageView btn_download = (ImageView) convertView.findViewById(R.id.so_header_cell_btn_single_download);
         //
-        TextView tv_serial = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_serial);
-        //
-        TextView tv_segment = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_segment);
-        //
-        TextView tv_category_price = (TextView) convertView.findViewById(R.id.act024_content_cell_tv_category_price);
-        //
-        LinearLayout ll_download_optc = (LinearLayout) convertView.findViewById(R.id.act024_content_cell_ll_download_opt);
-        //
-        ImageView btn_download = (ImageView) convertView.findViewById(R.id.act024_content_cell_btn_single_download);
-        //
-        CheckBox chk_download = (CheckBox) convertView.findViewById(R.id.act024_content_cell_chk_download);
+        CheckBox chk_download = (CheckBox) convertView.findViewById(R.id.so_header_cell_chk_download);
         //
         //Montagem dos dados na tela.
         //
         tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
         //
-        tv_so_code.setText(hmAux_Trans.get("so_code_lbl") + ": " + so.getSo_prefix() + "." + so.getSo_code());
+        tv_so_prefix_code.setText(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
         //
-        tv_so_id.setText(hmAux_Trans.get("so_id_lbl") + ": " + so.getSo_id());
-        //
-        tv_so_desc.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so.getSo_desc());
-        //
-        tv_priority.setText(hmAux_Trans.get("priority_lbl") + ": " + so.getPriority_desc());
-        //
-        tv_status.setText(hmAux_Trans.get("status_lbl") + ": " + so.getStatus());
-        //
-        if(so.getDeadline() != null && so.getDeadline().length() > 0){
-            tv_deadline.setVisibility(View.VISIBLE);
-            tv_deadline.setText(hmAux_Trans.get("deadline_lbl") + ": " + so.getDeadline());
+        tv_so_id_lbl.setText(hmAux_Trans.get("so_id_lbl"));
+        tv_so_id_val.setText(so.get(SM_SODao.SO_ID));
+        if(so.get(SM_SODao.SO_ID).equals(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE))) {
+            ll_so_id.setVisibility(View.GONE);
         }else{
-            tv_deadline.setVisibility(View.GONE);
-            tv_deadline.setText("");
+            ll_so_id.setVisibility(View.VISIBLE);
         }
         //
-        tv_site.setText(hmAux_Trans.get("site_lbl") + ": " + so.getSite_id() + " - " + so.getSite_desc());
+        tv_so_desc_val.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so.get(SM_SODao.SO_DESC));
+        if(so.get(SM_SODao.SO_DESC) != null  && so.get(SM_SODao.SO_DESC).length() > 0){
+            ll_so_desc.setVisibility(View.VISIBLE);
+        }else{
+            ll_so_desc.setVisibility(View.GONE);
+        }
+
         //
-        tv_operation.setText(hmAux_Trans.get("operation_lbl") + ": " + so.getOperation_id() + " - " + so.getOperation_desc());
+
         //
-        tv_contract.setText(hmAux_Trans.get("contract_lbl") + ": " + so.getContract_code() + " - " + so.getContract_desc());
+        tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
+        tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
         //
-        tv_client.setText(hmAux_Trans.get("client_lbl") + ": " + so.getClient_name());
+        tv_status_lbl.setText(hmAux_Trans.get("status_lbl"));
+        tv_status_val.setText(hmAux_Trans.get(so.get(SM_SODao.STATUS)));
+        ToolBox_Inf.setSOStatusColor(context,tv_status_val,so.get(SM_SODao.STATUS));
         //
-        tv_serial_ttl.setText(hmAux_Trans.get("serial_main_title"));
+        tv_deadline_lbl.setText(hmAux_Trans.get("deadline_lbl"));
+        if(so.get(SM_SODao.DEADLINE) != null && so.get(SM_SODao.DEADLINE).length() > 0){
+            ll_deadline.setVisibility(View.VISIBLE);
+            tv_deadline_val.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.DEADLINE)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+
+            );
+        }else{
+            ll_deadline.setVisibility(View.GONE);
+            tv_deadline_val.setText("");
+        }
         //
-        tv_product.setText(hmAux_Trans.get("product_lbl") + ": " + so.getProduct_id() + " - " + so.getProduct_desc());
+        tv_site_lbl.setText(hmAux_Trans.get("site_lbl"));
+        tv_site_val.setText(so.get(SM_SODao.SITE_ID) + " - " + so.get(SM_SODao.SITE_DESC));
         //
-        tv_serial.setText(hmAux_Trans.get("serial_lbl") + ": " + so.getSerial_id());
+        tv_operation_lbl.setText(hmAux_Trans.get("operation_lbl"));
+        tv_operation_val.setText(so.get(SM_SODao.OPERATION_ID) + " - " + so.get(SM_SODao.OPERATION_DESC));
         //
-        tv_segment.setText(hmAux_Trans.get("segment_lbl") + ": " + so.getSegment_id() + " - " + so.getSegment_desc());
+        tv_contract_lbl.setText(hmAux_Trans.get("contract_lbl"));
+        tv_contract_val.setText(so.get(SM_SODao.CONTRACT_CODE)+ " - " + so.get(SM_SODao.CONTRACT_DESC));
         //
-        tv_category_price.setText(hmAux_Trans.get("category_price_lbl") + ": " + so.getCategory_price_id() + " - " + so.getCategory_price_desc());
+        tv_client_lbl.setText(hmAux_Trans.get("client_lbl"));
+        tv_client_val.setText(so.get(SM_SODao.CLIENT_NAME));
+        if (so.get(SM_SODao.CLIENT_TYPE).equals(Constant.CLIENT_TYPE_CLIENT)){
+            ll_client.setVisibility(View.VISIBLE);
+        }else{
+            ll_client.setVisibility(View.GONE);
+        }
+
+        //
+        tv_serial_lbl.setText(hmAux_Trans.get("serial_main_title"));
+        tv_serial_id.setText(so.get(SM_SODao.SERIAL_ID));
+        //
+        tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
+        tv_product_val.setText(so.get(SM_SODao.PRODUCT_ID) + " - " + so.get(SM_SODao.PRODUCT_DESC));
+        //
+        tv_segment_lbl.setText(hmAux_Trans.get("segment_lbl"));
+        tv_segment_val.setText(so.get(SM_SODao.SEGMENT_ID) + " - " + so.get(SM_SODao.SEGMENT_DESC));
+        //
+        tv_category_price_lbl.setText(hmAux_Trans.get("category_price_lbl"));
+        tv_category_price_val.setText(so.get(SM_SODao.CATEGORY_PRICE_ID) + " - " + so.get(SM_SODao.CATEGORY_PRICE_DESC));
         //
         //Checkbox
         chk_download.setTag(position);
@@ -194,18 +257,24 @@ public class SO_Header_Adapter extends BaseAdapter {
         */
         if(config_type.equals(CONFIG_TYPE_DOWNLOAD)) {
             //Se status da OS for edit ou stop, não exibe opções de download.
-            if (so.getStatus().equals(Constant.SO_STATUS_EDIT) || so.getStatus().equals(Constant.SO_STATUS_STOP)) {
+            if (so.get(SM_SODao.STATUS).equals(Constant.SO_STATUS_EDIT) || so.get(SM_SODao.STATUS).equals(Constant.SO_STATUS_STOP)) {
                 ll_download_optc.setVisibility(View.GONE);
             } else {
                 ll_download_optc.setVisibility(View.VISIBLE);
             }
         }
 
+        if(config_type.equals(CONFIG_TYPE_EXIBITION_SO)) {
+            ll_serial_info.setVisibility(View.GONE);
+        }else{
+            ll_serial_info.setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 
-    public ArrayList<SM_SO> getSoToDownload() {
-        ArrayList<SM_SO> downloadList = new ArrayList<>();
+    public ArrayList<HMAux> getSoToDownload() {
+        ArrayList<HMAux> downloadList = new ArrayList<>();
         //
         for (int i = 0; i < checkedStatus.length; i++) {
             if (checkedStatus[i]) {

@@ -62,7 +62,7 @@ public class WS_Enable_NFC extends IntentService {
 
     }
 
-    private void processEnableNFC() {
+    private void processEnableNFC() throws Exception {
         userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_enabling_nfc"), "", "0");

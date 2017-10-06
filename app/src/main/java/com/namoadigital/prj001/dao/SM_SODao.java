@@ -92,8 +92,25 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String ADD_INF1 = "add_inf1";
     public static final String ADD_INF2 = "add_inf2";
     public static final String ADD_INF3 = "add_inf3";
+    public static final String APPROVE_BUDGET = "approve_budget";
+    public static final String APPROVE_CLIENT = "approve_client";
+
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String APPROVAL_REQUIRED = "approval_required";
+    public static final String SYNC_REQUIRED = "sync_required";
+    public static final String LOG_DATE = "log_date";
     public static final String TOKEN = "token";
+
+    public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
+            PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, CATEGORY_PRICE_CODE, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC,
+            SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, SITE_CODE, SITE_ID, SITE_DESC, OPERATION_CODE, OPERATION_ID, OPERATION_DESC,
+            CONTRACT_CODE, CONTRACT_DESC, CONTRACT_PO_ERP, CONTRACT_PO_CLIENT1, CONTRACT_PO_CLIENT2, PRIORITY_CODE, PRIORITY_DESC,
+            STATUS, QUALITY_APPROVAL_USER, QUALITY_APPROVAL_USER_NICK, QUALITY_APPROVAL_DATE, COMMENTS, SO_FATHER_PREFIX, SO_FATHER_CODE,
+            DEADLINE, ORIGIN, CLIENT_TYPE, CLIENT_USER, CLIENT_CODE, CLIENT_ID, CLIENT_NAME, CLIENT_EMAIL, CLIENT_PHONE, CLIENT_APPROVAL_IMAGE,
+            CLIENT_APPROVAL_IMAGE_NAME, CLIENT_APPROVAL_IMAGE_URL, CLIENT_APPROVAL_DATE, CLIENT_APPROVAL_USER, CLIENT_APPROVAL_USER_NICK,
+            CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
+            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN
+    };
 
     public SM_SODao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -301,7 +318,6 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
             }
 
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -309,7 +325,6 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
         }
 
         closeDB();
-
 
         return so;
     }
@@ -435,7 +450,11 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             so.setSo_code(cursor.getInt(cursor.getColumnIndex(SO_CODE)));
             so.setSo_id(cursor.getString(cursor.getColumnIndex(SO_ID)));
             so.setSo_scn(cursor.getInt(cursor.getColumnIndex(SO_SCN)));
-            so.setSo_desc(cursor.getString(cursor.getColumnIndex(SO_DESC)));
+            if (cursor.isNull(cursor.getColumnIndex(SO_DESC))) {
+                so.setSo_desc(null);
+            } else {
+                so.setSo_desc(cursor.getString(cursor.getColumnIndex(SO_DESC)));
+            }
             so.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
             so.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
             so.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
@@ -541,7 +560,11 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setClient_id(cursor.getString(cursor.getColumnIndex(CLIENT_ID)));
             }
 
-            so.setClient_name(cursor.getString(cursor.getColumnIndex(CLIENT_NAME)));
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_NAME))) {
+                so.setClient_name(null);
+            } else {
+                so.setClient_name(cursor.getString(cursor.getColumnIndex(CLIENT_NAME)));
+            }
 
             if (cursor.isNull(cursor.getColumnIndex(CLIENT_EMAIL))) {
                 so.setClient_email(null);
@@ -638,11 +661,33 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
             }
 
+            so.setApprove_budget(cursor.getInt(cursor.getColumnIndex(APPROVE_BUDGET)));
+            so.setApprove_client(cursor.getInt(cursor.getColumnIndex(APPROVE_CLIENT)));
+
             if (cursor.isNull(cursor.getColumnIndex(UPDATE_REQUIRED))) {
                 so.setUpdate_required(0);
             } else {
                 so.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             }
+
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_REQUIRED))) {
+                so.setApproval_required(0);
+            } else {
+                so.setApproval_required(cursor.getInt(cursor.getColumnIndex(APPROVAL_REQUIRED)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SYNC_REQUIRED))) {
+                so.setSync_required(0);
+            } else {
+                so.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(LOG_DATE))) {
+                so.setLog_date(null);
+            } else {
+                so.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
+            }
+
             //
             so.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
 
@@ -911,9 +956,30 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(ADD_INF3, sm_so.getAdd_inf3());
             }
 
+            if (sm_so.getApprove_budget() > -1) {
+                contentValues.put(APPROVE_BUDGET, sm_so.getApprove_budget());
+            }
+
+            if (sm_so.getApprove_client() > -1) {
+                contentValues.put(APPROVE_CLIENT, sm_so.getApprove_client());
+            }
+
             if (sm_so.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, sm_so.getUpdate_required());
             }
+
+            if (sm_so.getApproval_required() > -1) {
+                contentValues.put(APPROVAL_REQUIRED, sm_so.getApproval_required());
+            }
+
+            if (sm_so.getSync_required() > -1) {
+                contentValues.put(SYNC_REQUIRED, sm_so.getSync_required());
+            }
+
+            if (sm_so.getLog_date() != null) {
+                contentValues.put(LOG_DATE, sm_so.getLog_date());
+            }
+
             if (sm_so.getToken() != null) {
                 contentValues.put(TOKEN, sm_so.getToken());
             }

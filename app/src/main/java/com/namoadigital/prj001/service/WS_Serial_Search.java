@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Env;
@@ -51,12 +52,13 @@ public class WS_Serial_Search extends IntentService {
             String product_code = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE);
             String product_id = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID);
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
+            String tracking = bundle.getString(Constant.WS_SERIAL_SEARCH_TRACKING);
             boolean save_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_SAVE_PROCESS,false);
             //Variavel que indica se é criação de serial(Act031)
             boolean new_serial = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_NEW_PROCESS,false);
             int serial_exact = bundle.getInt(Constant.WS_SERIAL_SEARCH_EXACT,1);
 
-            processWSSerialSearch(product_code, product_id,serial_id ,save_serial,serial_exact,new_serial);
+            processWSSerialSearch(product_code, product_id,serial_id , tracking,save_serial,serial_exact,new_serial);
 
         }catch (Exception e) {
 
@@ -73,7 +75,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, boolean save_serial, int serial_exact, boolean new_serial) {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, boolean save_serial, int serial_exact, boolean new_serial) throws Exception {
 
         //Seleciona traduções
         loadTranslation();
@@ -87,6 +89,8 @@ public class WS_Serial_Search extends IntentService {
         env.setProduct_id(product_id);
         env.setSerial_id(serial_id);
         env.setSerial_exact(serial_exact);
+        env.setTracking(tracking);
+        env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS",hmAux_Trans.get("msg_receving_data"), "", "0");
 
@@ -111,7 +115,7 @@ public class WS_Serial_Search extends IntentService {
             return;
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT",hmAux_Trans.get("msg_processing_list"), resultado , "0");
 
     }
 
@@ -142,7 +146,7 @@ public class WS_Serial_Search extends IntentService {
                 } else {
                     //Insere no banco os dados do Serial
                     //serialDao.addUpdate(rec.getRecord(),false);//insere varios
-                    serialDao.addUpdate(rec.getRecord().get(0));//insere apenas o primeiro.
+                    serialDao.addUpdateTmp(rec.getRecord().get(0));//insere apenas o primeiro.
 
                 }
             }else{
@@ -155,7 +159,7 @@ public class WS_Serial_Search extends IntentService {
                 productSerial.setSite_code_owner(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(getApplicationContext())));
                 productSerial.setUpdate_required(1);
                 //Insere no banco.
-                serialDao.addUpdate(productSerial);
+                serialDao.addUpdateTmp(productSerial);
             }
         }
         return true;
@@ -184,7 +188,12 @@ public class WS_Serial_Search extends IntentService {
                 rec.getLink_url(),
                 1,
                 1
-        )
+                )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
                 ) {
             return false;
         }

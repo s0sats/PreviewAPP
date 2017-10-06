@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui;
 
 import android.app.Application;
 
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -26,6 +27,11 @@ import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 
 
 /**
@@ -45,12 +51,19 @@ public class AppBase extends Application {
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
         SUPPORT_PATH = DB_PATH + "/support";
+        TOKEN_PATH = DB_PATH + "/token";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
         SUPPORT_NAME = "support.zip";
         SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
+
+        TOKEN_SO_PREFIX = "so_token_";
+        TOKEN_SERIAL_PREFIX = "serial_token_";
+
+        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
 
         CACHE_PATH = DB_PATH + "/CC_CACHE";
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
@@ -61,7 +74,7 @@ public class AppBase extends Application {
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 9;
+        DB_VERSION_CUSTOM = 15;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         PKG_CLEAN = PKG_CLEAN_APP;
@@ -76,6 +89,9 @@ public class AppBase extends Application {
         ToolBox_Inf.libTranslation(getApplicationContext());
 
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
+
+        Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
+        Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
 
     }
 }

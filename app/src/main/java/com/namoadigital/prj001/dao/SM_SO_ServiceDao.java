@@ -57,7 +57,19 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
     public static final String PARTNER_DESC = "partner_desc";
     public static final String REQUIRE_APPROVAL = "require_approval";
     public static final String COMMENTS = "comments";
+    public static final String SITE_CODE = "site_code";
+    public static final String SITE_ID = "site_id";
+    public static final String SITE_DESC = "site_desc";
+    public static final String ZONE_CODE = "zone_code";
+    public static final String ZONE_ID = "zone_id";
+    public static final String ZONE_DESC = "zone_desc";
 
+    public static final String[] columns = {
+            CUSTOMER_CODE,SO_PREFIX,SO_CODE,PRICE_LIST_CODE,PACK_CODE,PACK_SEQ,CATEGORY_PRICE_CODE,SERVICE_CODE,SERVICE_SEQ,
+            SERVICE_ID,SERVICE_DESC,SERVICE_OPER_ID,STATUS,QTY,OPTIONAL,MANUAL_PRICE,EXPRESS,TIME_EXEC_STANDARD,PRICE,COST,
+            EXEC_TYPE,EXEC_SEQ_OPER,APPROVAL_BUDGET_USER,APPROVAL_BUDGET_USER_NICK,APPROVAL_BUDGET_DATE,PARTNER_CODE,
+            PARTNER_ID,PARTNER_DESC,REQUIRE_APPROVAL,COMMENTS,SITE_CODE,SITE_ID,SITE_DESC,ZONE_CODE,ZONE_ID,ZONE_DESC
+    };
 
     public SM_SO_ServiceDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -444,6 +456,42 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
                 sm_so_service.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(SITE_CODE))) {
+                sm_so_service.setSite_code(null);
+            } else {
+                sm_so_service.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SITE_ID))) {
+                sm_so_service.setSite_id(null);
+            } else {
+                sm_so_service.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SITE_DESC))) {
+                sm_so_service.setSite_desc(null);
+            } else {
+                sm_so_service.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
+                sm_so_service.setZone_code(null);
+            } else {
+                sm_so_service.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_ID))) {
+                sm_so_service.setZone_id(null);
+            } else {
+                sm_so_service.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_DESC))) {
+                sm_so_service.setZone_desc(null);
+            } else {
+                sm_so_service.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            }
+
             return sm_so_service;
         }
     }
@@ -574,6 +622,14 @@ public class SM_SO_ServiceDao extends BaseDao implements Dao<SM_SO_Service> {
             if (sm_so_service.getComments() != null) {
                 contentValues.put(COMMENTS, sm_so_service.getComments());
             }
+
+            contentValues.put(SITE_CODE, sm_so_service.getSite_code());
+            contentValues.put(SITE_ID, sm_so_service.getSite_id());
+            contentValues.put(SITE_DESC, sm_so_service.getSite_desc());
+
+            contentValues.put(ZONE_CODE, sm_so_service.getZone_code());
+            contentValues.put(ZONE_ID, sm_so_service.getZone_id());
+            contentValues.put(ZONE_DESC, sm_so_service.getZone_desc());
 
             return contentValues;
         }

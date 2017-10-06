@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +50,10 @@ public class Act005_Adapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            convertView = mInflater.inflate(resource, parent, false);
 
         }
 
@@ -60,22 +61,57 @@ public class Act005_Adapter extends BaseAdapter {
         ImageView ivIcon = (ImageView) convertView.findViewById(R.id.menu_ivChecklist);
         TextView tvTitle = (TextView) convertView.findViewById(R.id.menu_tvChecklist);
         TextView tvBadge = (TextView) convertView.findViewById(R.id.menu_tvBadge);
+        TextView tvBadgeSO = (TextView) convertView.findViewById(R.id.menu_tvBadgeSO);
 
-        HashMap<String,String> item = source.get(position);
+        HashMap<String, String> item = source.get(position);
 
         ivIcon.setImageDrawable(context.getResources().getDrawable(Integer.valueOf(item.get(Act005_Main.MENU_ICON))));
         tvTitle.setText(item.get(Act005_Main.MENU_DESC));
 
-        //Se chave Badge tiver preenchida exibe no menu
-        if(item.get(Act005_Main.MENU_BADGE).length() > 0 && !item.get(Act005_Main.MENU_BADGE).equals("0")){
-            tvBadge.setVisibility(View.VISIBLE);
-            String qty = item.get(Act005_Main.MENU_BADGE);
+        int sum = ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGE)) +
+                ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGESO));
 
-            if( item.get(Act005_Main.MENU_BADGE).length() == 1 ){
+        //Se chave Badge tiver preenchida exibe no menu
+        if (sum > 0) {
+            tvBadge.setVisibility(View.VISIBLE);
+            String qty = String.valueOf(sum);
+
+            if (qty.length() == 1) {
                 qty = " " + qty + " ";
             }
             tvBadge.setText(qty);
+        } else {
+            tvBadge.setVisibility(View.GONE);
+            tvBadge.setText(" ");
         }
+
+//        //Se chave Badge tiver preenchida exibe no menu
+//        if (item.get(Act005_Main.MENU_BADGE).length() > 0 && !item.get(Act005_Main.MENU_BADGE).equals("0")) {
+//            tvBadge.setVisibility(View.VISIBLE);
+//            String qty = item.get(Act005_Main.MENU_BADGE);
+//
+//            if (item.get(Act005_Main.MENU_BADGE).length() == 1) {
+//                qty = " " + qty + " ";
+//            }
+//            tvBadge.setText(qty);
+//        } else {
+//            tvBadge.setVisibility(View.GONE);
+//            tvBadge.setText(" ");
+//        }
+//
+//        //Se chave BadgeSO tiver preenchida exibe no menu
+//        if (item.get(Act005_Main.MENU_BADGESO).length() > 0 && !item.get(Act005_Main.MENU_BADGESO).equals("0")) {
+//            tvBadgeSO.setVisibility(View.VISIBLE);
+//            String qty = item.get(Act005_Main.MENU_BADGESO);
+//
+//            if (item.get(Act005_Main.MENU_BADGESO).length() == 1) {
+//                qty = " " + qty + " ";
+//            }
+//            tvBadgeSO.setText(qty);
+//        } else {
+//            tvBadgeSO.setVisibility(View.GONE);
+//            tvBadgeSO.setText(" ");
+//        }
 
         return convertView;
     }

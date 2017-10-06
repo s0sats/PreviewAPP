@@ -3,72 +3,119 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.BaseFragment;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
+import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.sql.SM_SO_Service_Sql_003;
-import com.namoadigital.prj001.sql.SM_SO_Sql_002;
+import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_012;
+import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act028.Act028_Main;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act028.Act028_Main_New;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import static com.namoadigital.prj001.ui.act023.Act023_Main.SO_WS_SEARCH_SERIAL;
+import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 
 /**
- * Created by neomatrix on 03/07/17.
+ * Created by neomatrix on 14/08/17.
  */
 
-public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
+public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
+
+    public static final String SELECTION_SERVICES = "SERVICES";
+    public static final String SELECTION_SERIAL = "SERIAL";
+    public static final String SELECTION_HEADER = "HEADER";
+    public static final String SELECTION_APPROVAL = "APPROVAL";
+
+    public static final String SELECTION_EXPRESS = "EXPRESS";
+    public static final String SELECTION_NORMAL = "NORMAL";
+
+    public static final String WS_PROCESS_USER_AUTHOR = "WS_PROCESS_USER_AUTHOR";
+    public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
+    public static final String WS_SEARCH_TRACKING = "WS_SEARCH_TRACKING";
+    public static final String WS_PROCESS_SERIAL = "WS_PROCESS_SERIAL";
+    public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
+    public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
+
+    public static final int WS_PROCESS_APPROVAL_NOT = 0;
+    public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
+    public static final int WS_PROCESS_APPROVAL_ON_LINE = 2;
 
     private Context context;
-
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private boolean mDrawerStatus = true;
-
-    private FragmentManager fm;
-    private Act027_Opc act027_opc;
-    private Act027_Services act027_services;
-    private Act027_Serial act027_serial;
-    private Act027_Header act027_header;
-
     private Bundle bundle;
 
-    private long mCustomer_code;
-    private int mSO_PREFIX;
-    private int mSO_CODE;
+    private DrawerLayout mDrawerLayout;
+    //private ActionBarDrawerToggle mDrawerToggle;
+
+    private FragmentManager fm;
+
+    private Act027_Opc act027_opc_;
+    private Act027_Approval act027_approval_;
+    private Act027_Services act027_services_;
+    private Act027_Serial act027_serial_;
+    private Act027_Header act027_header_;
 
     private SM_SODao sm_soDao;
-    private HMAux data;
+    private SM_SO mSm_so;
+
+    private String ws_process = "";
+    private String ws_process_approval_status = "";
+
+    private boolean only_save = false;
+    private boolean only_approval = false;
+
+    private String lastServiceReturned = "";
+    private boolean ws_call_next_ctrl = true;
+
+    private String sFileNameSignature = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act027_main);
+        setContentView(R.layout.act027_main_new);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -91,8 +138,6 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         );
 
         loadTranslation();
-
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void loadTranslation() {
@@ -100,7 +145,11 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("act027_title");
         transList.add("alert_so_exit_title");
         transList.add("alert_so_exit_msg");
-
+        transList.add("alert_so_ttl");
+        transList.add("msg_so_save_ok");
+        transList.add("alert_author_validation");
+        transList.add("alert_no_profile_ttl");
+        transList.add("alert_no_profile_msg");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -116,9 +165,32 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("deadline_lbl");
         transList.add("status_lbl");
         transList.add("priority_lbl");
+
+        transList.add("approval_ll_lbl");
         transList.add("services_ll_lbl");
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");
+
+        // ACT027_Approval Fragment
+        transList.add("user_name_lbl");
+        transList.add("user_lbl");
+        transList.add("other_lbl");
+        transList.add("approval_nfc_lbl");
+        transList.add("approval_user_password_lbl");
+        transList.add("approval_signature_lbl");
+        transList.add("alert_no_name_ttl");
+        transList.add("alert_no_name_msg");
+        transList.add("alert_so_signature_ttl");
+        transList.add("alert_so_signature_msg");
+        transList.add("dialog_credentials_ttl");
+        transList.add("dialog_credentials_msg");
+
+        transList.add("dialog_user_author_ttl");
+        transList.add("dialog_user_author_lbl");
+        transList.add("dialog_user_author_pwd_lbl");
+        transList.add("dialog_user_author_btn");
+
+
 
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
@@ -169,6 +241,27 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("alert_save_serial_error_ttl");
         transList.add("alert_save_serial_error_msg");
         transList.add("btn_serial_save");
+        //
+        transList.add("spinner_site_lbl");
+        transList.add("spinner_zone_lbl");
+        transList.add("spinner_local_lbl");
+        //ACT027_Serial Tracking
+        transList.add("tracking_ttl");
+        transList.add("progress_tracking_search_ttl");
+        transList.add("progress_tracking_search_msg");
+        transList.add("alert_tracking_unavailable_ttl");
+        transList.add("alert_tracking_unavailable_msg");
+        transList.add("alert_no_site_selected_ttl");
+        transList.add("alert_no_site_selected_msg");
+        transList.add("dialog_tracking_ttl");
+        transList.add("alert_tracking_already_listed_ttl");
+        transList.add("alert_tracking_already_listed_msg");
+        transList.add("alert_clear_tracking_list_ttl");
+        transList.add("alert_clear_tracking_list_msg");
+        transList.add("alert_keep_tracking_list_ttl");
+        transList.add("alert_keep_tracking_list_msg");
+        transList.add("alert_invalid_serial_local_ttl");
+        transList.add("alert_invalid_serial_local_msg");
 
         // ACT027_Header Fragment
         transList.add("so_id");
@@ -211,6 +304,22 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         transList.add("progress_save_serial_ttl");
         transList.add("progress_save_serial_msg");
         transList.add("searchable_spinner_lbl");
+        transList.add("add_info1_ttl");
+        transList.add("add_info2_ttl");
+        transList.add("add_info3_ttl");
+        //Service Fragment
+        transList.add("filter_lbl");
+        transList.add("select_partner_lbl");
+        transList.add("alert_start_task_confirm_ttl");
+        transList.add("alert_start_task_confirm_msg");
+        transList.add("alert_partner_selection_ttl");
+        transList.add("alert_no_partner_selected_msg");
+        transList.add("alert_no_partner_found_msg");
+        transList.add("partner_selection_ttl");
+        transList.add("partner_search_lbl");
+        transList.add("tracking_num_lbl");
+        transList.add("alert_goto_service_menu_ttl");
+        transList.add("alert_goto_service_menu_msg");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -226,7 +335,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
                 transList
         );
 
-        ToolBox_Inf.libTranslation(getApplicationContext());
+        ToolBox_Inf.libTranslation(context);
     }
 
     private void initVars() {
@@ -244,7 +353,7 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                mDrawerStatus = true;
+                act027_opc_.loadDataToScreen();
 
                 ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
@@ -253,8 +362,6 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
-                mDrawerStatus = false;
 
                 ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
@@ -269,64 +376,100 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        act027_opc = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
-        act027_opc.setOnMenuOptionsSelected(this);
-        act027_opc.setHmAux_Trans(hmAux_Trans);
+        // Drawer Opc
+        act027_opc_ = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
+        // Dialog Acess
+        act027_opc_.setBaInfra(this);
+        // Translation Access
+        act027_opc_.setHmAux_Trans(hmAux_Trans);
+        // SO Acess
+        act027_opc_.setmSm_so(mSm_so);
+        //
+        act027_opc_.setOnMenuOptionsSelected(this);
 
-        data = sm_soDao.getByStringHM(
-                new SM_SO_Sql_002(
-                        mCustomer_code,
-                        mSO_PREFIX,
-                        mSO_CODE
+        // Approval
+        act027_approval_ = new Act027_Approval();
+        // Dialog Acess
+        act027_approval_.setBaInfra(this);
+        // Translation Access
+        act027_approval_.setHmAux_Trans(hmAux_Trans);
+        //
+        act027_approval_.setListener(actionBTN);
+        //
+        act027_approval_.setmSm_so(mSm_so);
+
+        // Services
+        act027_services_ = new Act027_Services();
+        // Dialog Acess
+        act027_services_.setBaInfra(this);
+        // Translation Access
+        act027_services_.setHmAux_Trans(hmAux_Trans);
+        // SO Acess
+        act027_services_.setmSm_so(mSm_so);
+        //
+        act027_services_.setOnServiceSelectedListener(this);
+        //Se retorno da task, seta qual serviço deve ser mostrado
+        act027_services_.setLastServiceUpdated(lastServiceReturned);
+        // Serial
+        act027_serial_ = new Act027_Serial();
+        // Dialog Acess
+        act027_serial_.setBaInfra(this);
+        // Translation Access
+        act027_serial_.setHmAux_Trans(hmAux_Trans);
+        // SO Acess
+        act027_serial_.setmSm_so(mSm_so);
+
+        // header
+        act027_header_ = new Act027_Header();
+        // Dialog Acess
+        act027_header_.setBaInfra(this);
+        // Translation Access
+        act027_header_.setHmAux_Trans(hmAux_Trans);
+        // SO Acess
+        act027_header_.setmSm_so(mSm_so);
+        //
+        controls_frags.add(act027_serial_);
+        //
+        setFrag(act027_services_, "SERVICES");
+    }
+
+    //region Recover Intent Parameters
+    private void recoverGetIntents() {
+        bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+            mSm_so = loadSM_SO(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX)),
+                    Integer.parseInt(bundle.getString(SM_SODao.SO_CODE))
+            );
+            //
+            if (mSm_so != null && mSm_so.getClient_approval_image_name() != null && !mSm_so.getClient_approval_image_name().isEmpty()) {
+                new DownloadSignature().execute(mSm_so.getClient_approval_image_url());
+            }
+            //
+            lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
+        } else {
+            mSm_so = null;
+        }
+    }
+
+    private SM_SO loadSM_SO(long customer_code, int so_prefix, int so_code) {
+        sm_soDao.remove(
+                new SM_SO_Sql_014().toSqlQuery()
+        );
+
+        SM_SO mSm_so = sm_soDao.getByString(
+                new SM_SO_Sql_001(
+                        customer_code,
+                        so_prefix,
+                        so_code
                 ).toSqlQuery()
         );
 
-        act027_opc.setData(data);
-
-        act027_services = new Act027_Services();
-        act027_services.setOnItemClickListener(this);
-        act027_services.setHmAux_Trans(hmAux_Trans);
-        act027_services.setData((ArrayList<HMAux>) sm_soDao.query_HM(
-                new SM_SO_Service_Sql_003(
-                        mCustomer_code,
-                        mSO_PREFIX,
-                        mSO_CODE
-                ).toSqlQuery()
-        ));
-
-        act027_serial = new Act027_Serial();
-        act027_serial.setBaInfra(this);
-        act027_serial.setBundle(bundle);
-        act027_serial.setHmAux_Trans(hmAux_Trans);
-        act027_serial.setData(data);
-
-        act027_header = new Act027_Header();
-        act027_header.setHmAux_Trans(hmAux_Trans);
-        act027_header.setData(sm_soDao.getByStringHM(
-                new SM_SO_Sql_002(
-                        mCustomer_code,
-                        mSO_PREFIX,
-                        mSO_CODE
-                ).toSqlQuery()
-        ));
-
-        setFrag(act027_services, "SERVICES");
-
-        mDrawerLayout.openDrawer(GravityCompat.START);
+        return mSm_so;
     }
-
-    private void recoverGetIntents() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            mCustomer_code = ToolBox_Con.getPreference_Customer_Code(context);
-            mSO_PREFIX = Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "-1"));
-            mSO_CODE = Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "-1"));
-        } else {
-            mCustomer_code = ToolBox_Con.getPreference_Customer_Code(context);
-            mSO_PREFIX = -1;
-            mSO_CODE = -1;
-        }
-    }
+    //endregion
 
     private void iniUIFooter() {
         iniFooter();
@@ -339,55 +482,622 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
 
-
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {
     }
 
+    //region SERVICE RETURN HANDLING
+    // TRATAVIA DE ERROS ESPECIFICOS
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+
+        if (ws_process_approval_status.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setWs_process("");
+            only_save = false;
+
+            if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
+                recoverApprovalState();
+            }
+        }
+
         progressDialog.dismiss();
+    }
+
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+
+        if (mSm_so.getApproval_required() == WS_PROCESS_APPROVAL_ON_LINE) {
+            recoverApprovalState();
+        }
+    }
+
+    // TRATAVIA DE ENCERRAMENTO SEM PROBLEMAS DO SERVICO
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if (ws_process.equals(WS_PROCESS_SO_SYNC)) {
+
+            progressDialog.dismiss();
+
+            setWs_process("");
+            processSoDownloadResult(hmAux);
+
+        } else if (ws_process.equals(WS_PROCESS_SO_SAVE)) {
+
+            progressDialog.dismiss();
+
+            setWs_process("");
+            processSoSave(hmAux);
+
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+
+            progressDialog.dismiss();
+
+            setWs_process("");
+            processSoApproval(hmAux);
+
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_USER_AUTHOR)) {
+
+            progressDialog.dismiss();
+            //
+            setWs_process("");
+            processUserAuthorCheck(hmAux);
+
+        } else if (ws_process.equalsIgnoreCase(WS_SEARCH_TRACKING)) {
+            progressDialog.dismiss();
+            //
+            setWs_process("");
+            act027_serial_.callProcessTrackingResult(hmAux);
+        }else{
+            act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_id(), hmAux);
+            progressDialog.dismiss();
+        }
     }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-
-        switch (act027_serial.requesting_process) {
-
-            case Constant.MODULE_CHECKLIST:
-                //mView.callAct008(context,product_code);
-                break;
-
-            case Constant.MODULE_SO:
-            case Constant.MODULE_SO_SEARCH_SERIAL:
-                if (act027_serial.ws_process.equals(SO_WS_SEARCH_SERIAL)) {
-                    //
-                    act027_serial.getSerialInfo();
-                }
-                break;
-            default:
-                break;
-
-        }
         progressDialog.dismiss();
+    }
 
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
+    }
+//    public void addControlToList(MKEditTextNM mket_tracking){
+//        controls_sta.add(mket_tracking);
+//    }
+//
+//    public void removeControlToList(MKEditTextNM mket_tracking){
+//        controls_sta.remove(mket_tracking);
+//    }
+
+
+
+    //Variavel que determina se salva so e sincroniza ou só salva.
+    //Após implementação do atalho, foi necessario criar essa var pra pular o syncronismo.
+    public void setOnly_save(boolean only_save) {
+        this.only_save = only_save;
+    }
+
+    private void processSoDownloadResult(HMAux so_download_result) {
+        if (so_download_result.containsKey(WS_SO_Search.SO_PREFIX_CODE) && so_download_result.containsKey(WS_SO_Search.SO_LIST_QTY)) {
+            if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 0) {
+                //
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_so_invalid_status_ttl"),
+                        hmAux_Trans.get("alert_so_invalid_status_msg"),
+                        null,
+                        0
+                );
+
+            } else if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 1) {
+                //
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                        hmAux_Trans.get("alert_so_sync_ok_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                refreshUI();
+                            }
+                        },
+                        0
+                );
+
+            } else {
+                //
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                        hmAux_Trans.get("alert_so_sync_ok_msg"),
+                        null,
+                        0
+                );
+            }
+        } else {
+            // ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_sync_param_error_ttl"),
+                    hmAux_Trans.get("alert_so_sync_param_error_msg"),
+                    null,
+                    0
+            );
+        }
+
+    }
+
+    public void refreshUI() {
+
+        mSm_so = loadSM_SO(
+                mSm_so.getCustomer_code(),
+                mSm_so.getSo_prefix(),
+                mSm_so.getSo_code()
+        );
+
+        act027_opc_.setmSm_so(mSm_so);
+        act027_opc_.loadDataToScreen();
+
+        act027_approval_.setmSm_so(mSm_so);
+        act027_approval_.loadDataToScreen();
+
+        act027_services_.setmSm_so(mSm_so);
+        act027_services_.loadDataToScreen();
+
+        act027_serial_.setmSm_so(mSm_so);
+        act027_serial_.loadDataToScreen();
+
+        act027_header_.setmSm_so(mSm_so);
+        act027_header_.loadDataToScreen();
+    }
+
+    //region Ciclo Normal
+    private void processSoSave(HMAux hmAux) {
+        //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
+        if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
+            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+            //
+            executeSoSaveApproval();
+            //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+        } else {
+            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            showResults(so);
+        }
+    }
+
+    private void showResults(String[] so) {
+        ArrayList<HMAux> sos = new ArrayList<>();
+        for (int i = 0; i < so.length; i++) {
+            String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
+            //
+            HMAux mHmAux = new HMAux();
+            mHmAux.put("label", fields[0]);
+            mHmAux.put("status", fields[1]);
+            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+            //
+            sos.add(mHmAux);
+        }
+
+        if (sos.size() == 1) {
+            //Verifica se S.O atualizada, foi esta S.O
+            if (sos.get(0).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+                    progressDialog.dismiss();
+                    only_save = false;
+                    //
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_ttl"),
+                            hmAux_Trans.get("msg_so_save_ok"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                    //refreshUI();
+                } else {
+                    progressDialog.dismiss();
+                    //
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_list_title"),
+                            sos.get(0).get("status"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                }
+            } else {
+                showNewOptDialog(sos);
+            }
+
+        } else {
+            showNewOptDialog(sos);
+        }
+    }
+
+    public void showNewOptDialog(List<HMAux> sos) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        final HMAux auxSo = new HMAux();
+        for (int i = 0; i < sos.size(); i++) {
+            if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                auxSo.putAll(sos.get(i));
+                break;
+            }
+        }
+        //
+        lv_results.setAdapter(
+                new Act028_Results_Adapter(
+                        context,
+                        R.layout.act028_results_adapter_cell,
+                        sos
+                )
+        );
+
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //
+                if (auxSo.containsKey("status")) {
+                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
+                        //
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                                hmAux_Trans.get("alert_so_sync_ok_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        refreshUI();
+                                    }
+                                },
+                                0
+                        );
+                        //refreshUI();
+                    }
+                } else {
+                    executeSoSaveApproval();
+                    //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                }
+            }
+        });
+    }
+    //endregion
+
+    //region Ciclo Approval
+    private void processSoApproval(HMAux hmAux) {
+        //Tratativa para quando WS chamado e sem nenhuma s.o para atualizar.
+        if (hmAux.containsKey(WS_SO_Save.SO_NO_EMPTY_LIST)) {
+            if (!only_approval) {
+                ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
+                //
+                executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            } else {
+                only_approval = false;
+            }
+        } else {
+            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+            showResultsApproval(so);
+        }
+    }
+
+    private void showResultsApproval(String[] so) {
+        ArrayList<HMAux> sos = new ArrayList<>();
+        for (int i = 0; i < so.length; i++) {
+            String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
+            //
+            HMAux mHmAux = new HMAux();
+            mHmAux.put("label", fields[0]);
+            mHmAux.put("status", fields[1]);
+            mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+            //
+            sos.add(mHmAux);
+        }
+
+        if (sos.size() == 1) {
+            //Verifica se S.O atualizada, foi esta S.O
+            if (sos.get(0).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+                    progressDialog.dismiss();
+                    only_save = false;
+                    //
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_ttl"),
+                            hmAux_Trans.get("msg_so_save_ok"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                    //refreshUI();
+                } else {
+                    progressDialog.dismiss();
+                    //
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_so_list_title"),
+                            sos.get(0).get("status"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refreshUI();
+                                }
+                            },
+                            0
+                    );
+                }
+            } else {
+                showNewOptDialogApproval(sos);
+            }
+
+        } else {
+            showNewOptDialogApproval(sos);
+        }
+    }
+
+    public void showNewOptDialogApproval(List<HMAux> sos) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        //
+        final HMAux auxSo = new HMAux();
+        for (int i = 0; i < sos.size(); i++) {
+            if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                auxSo.putAll(sos.get(i));
+                break;
+            }
+        }
+        //
+        lv_results.setAdapter(
+                new Act028_Results_Adapter(
+                        context,
+                        R.layout.act028_results_adapter_cell,
+                        sos
+                )
+        );
+
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //
+                if (auxSo.containsKey("status")) {
+                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
+                        //
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                                hmAux_Trans.get("alert_so_sync_ok_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        refreshUI();
+                                    }
+                                },
+                                0
+                        );
+                        //refreshUI();
+                    }
+                } else {
+                    if (!only_approval) {
+                        executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                    } else {
+                        only_approval = false;
+                    }
+                }
+            }
+        });
+    }
+    //endregion
+
+    private void processUserAuthorCheck(HMAux hmAux) {
+
+        try {
+
+            act027_approval_.setOnLineApproval(Integer.parseInt(hmAux.get("so_param_return_status")));
+            only_approval = true;
+            executeSoSaveApproval();
+
+        } catch (Exception e) {
+
+            only_approval = false;
+
+            recoverApprovalState();
+
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_author_validation"),
+                    ((hmAux.get("so_param_return_msg") == null || hmAux.get("so_param_return_msg").isEmpty()) ? e.toString() : hmAux.get("so_param_return_msg")),
+                    null,
+                    0
+            );
+        }
+    }
+
+    public void executeSoSaveApproval() {
+        setWs_process(WS_PROCESS_SO_SAVE_APPROVAL);
+        //
+        enableProgressDialog(
+                hmAux_Trans.get("progress_so_save_ttl"),
+                hmAux_Trans.get("progress_so_save_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Approval.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    public void executeSoSave() {
+        setWs_process(WS_PROCESS_SO_SAVE);
+        //
+        enableProgressDialog(
+                hmAux_Trans.get("progress_so_save_ttl"),
+                hmAux_Trans.get("progress_so_save_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    public void executeUserAuthorCheck(
+            long customer_code,
+            long so_prefix,
+            long so_code,
+            String auth_type,
+            String auth_nick_mail,
+            String auth_password,
+            String auth_nfc
+
+    ) {
+        if (ToolBox_Con.isOnline(context)) {
+            setWs_process(WS_PROCESS_USER_AUTHOR);
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("dialog_credentials_ttl"),
+                    hmAux_Trans.get("dialog_credentials_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_UserAuthor.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putLong(Constant.SO_PARAM_CUSTOMER_CODE, customer_code);
+            bundle.putLong(Constant.SO_PARAM_SO_PREFIX, so_prefix);
+            bundle.putLong(Constant.SO_PARAM_SO_CODE, so_code);
+            bundle.putString(Constant.SO_PARAM_AUTH_TYPE, auth_type);
+            bundle.putString(Constant.SO_PARAM_AUTH_NICK_MAIL, auth_nick_mail);
+            bundle.putString(Constant.SO_PARAM_AUTH_PASSWORD, auth_password);
+            bundle.putString(Constant.SO_PARAM_AUTH_NFC, auth_nfc);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            setWs_process("");
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    public void executeSoSync(int so_prefix, int so_code) {
+        if (ws_call_next_ctrl) {
+            setWs_process(WS_PROCESS_SO_SYNC);
+            //
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_so_sync_ttl"),
+                    hmAux_Trans.get("progress_so_sync_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, so_prefix + "." + so_code);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }
     }
 
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
@@ -409,138 +1119,357 @@ public class Act027_Main extends Base_Activity_Frag implements Act027_Main_View,
         //
         finish();
     }
+    //endregion
 
-    //Metodo chamado ao finalizar o download da atualização.
-    @Override
-    protected void processCloseAPP(String mLink, String mRequired) {
-        super.processCloseAPP(mLink, mRequired);
-        //
-        Intent mIntent = new Intent(context, WBR_Logout.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
-        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        //
-        ToolBox_Con.cleanPreferences(context);
-
-        finish();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
-
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void menuOptionsSelected(String type) {
-        switch (type.toUpperCase()) {
-            case "SERVICES":
-                setFrag(act027_services, "SERVICES");
-                break;
-            case "SERIAL":
-                setFrag(act027_serial, "SERIAL");
-                break;
-            case "HEADER":
-                setFrag(act027_header, "HEADER");
-                break;
-            case "APPROVAL":
-                callAct032(context, bundle);
-                break;
-            default:
-                setFrag(act027_header, "HEADER");
-                break;
-        }
-
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-    }
-
-
-    @Override
-    public void onItemClickListener(HMAux type) {
-
-        bundle.putSerializable("data", type);
-
-        callAct028(context, bundle);
-
-    }
-
-    private <T extends Fragment> void setFrag(T type, String sTag) {
+    private <T extends BaseFragment> void setFrag(T type, String sTag) {
         if (fm.findFragmentByTag(sTag) == null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act027_main_ll, type, sTag);
             ft.commit();
+        } else {
+            //type.loadDataToScreen();
         }
     }
 
     @Override
     public void onBackPressed() {
-        if (mDrawerStatus) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_so_exit_title"),
-                    hmAux_Trans.get("alert_so_exit_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent mIntent = new Intent(context, Act005_Main.class);
-                            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            //
-                            startActivity(mIntent);
-                            finish();
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_so_exit_title"),
+                hmAux_Trans.get("alert_so_exit_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(context, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //
+                        startActivity(mIntent);
+                        finish();
 
+                    }
+                },
+                1,
+                false
+        );
+    }
+
+    @Override
+    public void menuOptionsSelected(String type) {
+        switch (type.toUpperCase()) {
+            case Act027_Main.SELECTION_SERVICES:
+                setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_SERIAL:
+                setFrag(act027_serial_, Act027_Main.SELECTION_SERIAL);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_HEADER:
+                setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case Act027_Main.SELECTION_APPROVAL:
+
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)){
+
+                    if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_CLIENT)) {
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
+                            setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_no_profile_ttl"),
+                                    hmAux_Trans.get("alert_no_profile_msg"),
+                                    null,
+                                    0
+                            );
                         }
-                    },
-                    1,
-                    false
-            );
+                    } else {
+                        setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                    }
 
+                } else {
+                    setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+
+                break;
+            default:
+                setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
         }
+
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+
+    @Override
+    public void soSyncClick() {
+
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_so_sync_ttl"),
+                hmAux_Trans.get("alert_so_sync_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            //Seta S.O como update required.
+                            /*sm_soDao.addUpdate(
+                                    new SM_SO_Sql_009(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            mSm_so.getSo_prefix(),
+                                            mSm_so.getSo_code()
+                                    ).toSqlQuery()
+                            );*/
+                            //
+                            setWs_process(WS_PROCESS_SO_SAVE);
+                            //
+                            executeSoSave();
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
+                    }
+                },
+                1
+        );
+
+        // refreshUI();
+    }
+
+    private void recoverApprovalState() {
+        mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
+        mSm_so.setApproval_required(WS_PROCESS_APPROVAL_NOT);
+        mSm_so.setClient_approval_user(null);
+
+        mSm_so.setClient_approval_date(null);
+        mSm_so.setClient_name(null);
+        mSm_so.setClient_approval_image_name(null);
+        mSm_so.setClient_approval_type_sig(null);
+        //
+        sm_soDao.addUpdate(
+                new SM_SO_Sql_012(
+                        0,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ).toSqlQuery()
+        );
+    }
+
+//    @Override
+//    public void ivNServiceClick() {
+//        ToolBox.alertMSG(
+//                context,
+//                hmAux_Trans.get("alert_goto_service_menu_ttl"),
+//                hmAux_Trans.get("alert_goto_service_menu_msg"),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        callAct021(context);
+//                    }
+//                },
+//                1
+//        );
+//    }
+
+    @Override
+    public void onServiceSelected(HMAux sService) {
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_CODE, sService.get(SM_SO_Service_Exec_TaskDao.PACK_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.PACK_SEQ));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE, sService.get(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_CODE, sService.get(SM_SO_Service_Exec_TaskDao.SERVICE_CODE));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.EXEC_TMP, sService.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.TASK_TMP, sService.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
+
+        bundle.putSerializable("data", sService);
+        bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, false);
+
+        callAct028(context, bundle);
+    }
+
+    private void callAct021(Context context) {
+        Intent mIntent = new Intent(context, Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
     public void callAct028(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act028_Main.class);
+        Intent mIntent = new Intent(context, Act028_Main_New.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
+
         finish();
     }
 
     private void callAct032(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act032_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putSerializable("data", data);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
+
         finish();
     }
 
+    @Override
+    protected void nfcData(boolean status, int id, String... value) {
+        super.nfcData(status, id, value);
+        if (!status) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            Toast.makeText(
+                    context,
+                    "Erro",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+        } else {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            executeUserAuthorCheck(
+                    mSm_so.getCustomer_code(),
+                    mSm_so.getSo_prefix(),
+                    mSm_so.getSo_code(),
+                    Constant.SO_PARAM_AUTH_TYPE_CLIENT,
+                    "",
+                    "",
+                    value[1]
+            );
+        }
+    }
+
+    @Override
+    protected void nfcDataError(boolean status, int id, String... value) {
+        int i = 10;
+    }
+
+    @Override
+    protected void getSignatueF(String mValue) {
+        super.getSignatueF(mValue);
+
+        File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + sFileNameSignature);
+        if (sFile.exists()) {
+
+            act027_approval_.setOnLineApprovalSig(sFileNameSignature);
+            //
+            only_approval = true;
+            //
+            callAddSignature(sFileNameSignature);
+            //
+            if (ToolBox_Con.isOnline(context)) {
+                executeSoSaveApproval();
+            }
+
+        } else {
+            only_approval = false;
+
+            recoverApprovalState();
+
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_signature_ttl"),
+                    hmAux_Trans.get("alert_so_signature_msg"),
+                    null,
+                    0
+            );
+        }
+    }
+
+    public void callSignature(String name) {
+        try {
+            sFileNameSignature = "s_" +
+                    ToolBox_Con.getPreference_Customer_Code(context) + "_" +
+                    String.valueOf(mSm_so.getSo_prefix()) + "_" +
+                    String.valueOf(mSm_so.getSo_code()) + "_" + UUID.randomUUID().toString() +
+                    ".png";
+
+            Bundle bundleN = new Bundle();
+            bundleN.putInt(ConstantBase.PID, -1);
+            bundleN.putInt(ConstantBase.PTYPE, 0);
+            bundleN.putString(ConstantBase.MNAME, name);
+            bundleN.putBoolean(ConstantBase.BLOCK_NAME, true);
+            bundleN.putString(ConstantBase.PPATH, CACHE_PATH_PHOTO + "/" + sFileNameSignature);
+
+            Intent mIntent = new Intent(context, SignaTure_Activity.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mIntent.putExtras(bundleN);
+
+            context.startActivity(mIntent);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+    }
+
+    private void callAddSignature(String signature) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+
+        GE_File geFile = new GE_File();
+        geFile.setFile_code(signature.replace(".png", ""));
+        geFile.setFile_path(signature);
+        geFile.setFile_status("OPENED");
+        geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+        geFiles.add(geFile);
+
+        geFileDao.addUpdate(geFiles, false);
+
+        activateUpload(context);
+    }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private class DownloadSignature extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            String sFileName = params[0].replace(".png", "");
+
+            try {
+                if (!ToolBox_Inf.verifyDownloadFileInf(sFileName.toLowerCase() + ".png")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(sFileName.toLowerCase() + ".tmps");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            mSm_so.getClient_approval_image_url(),
+                            Constant.CACHE_PATH_PHOTO + "/" + sFileName.toLowerCase() + ".tmps"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInfSig(sFileName.toLowerCase(), ".png");
+                }
+            } catch (Exception e) {
+            }
+
+            return null;
+        }
+    }
 }

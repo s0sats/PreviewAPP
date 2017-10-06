@@ -8,11 +8,15 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act021_Main_Presenter {
 
-    void checkForSoToSend();
+    boolean checkForSoToSend();
 
     void getPendencies();
 
     void defineFlow(HMAux hmAux);
+
+    void executeSerialTracking(String serial, String tracking);
+
+    void defineSearchResultFlow(String result, String tracking);
 
     void onBackPressedClicked();
 }

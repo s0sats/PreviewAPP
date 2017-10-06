@@ -11,9 +11,19 @@ import com.namoadigital.prj001.util.Constant;
 public class SM_SO_Sql_003 implements Specification {
 
     private long customer_code;
+    private String product_code;
+    private String serial_id;
+    private String filter = " ";
 
-    public SM_SO_Sql_003(long customer_code) {
+    public SM_SO_Sql_003(long customer_code, String product_code, String serial_id) {
         this.customer_code = customer_code;
+        this.product_code = product_code;
+        this.serial_id = serial_id;
+        if(product_code != null && serial_id != null){
+            filter += " AND s.product_code = '"+product_code+"' \n"+
+                      " AND s.serial_id = '"+serial_id+"' \n";
+        }
+
     }
 
     @Override
@@ -27,6 +37,7 @@ public class SM_SO_Sql_003 implements Specification {
                         SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
+                            filter +
                         "    AND s.status not in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"')")
                 .toString();
     }

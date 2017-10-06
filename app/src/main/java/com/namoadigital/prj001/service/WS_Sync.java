@@ -267,6 +267,11 @@ public class WS_Sync extends IntentService {
                 jump_validation,
                 jump_od
                 )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                        getApplicationContext(),
+                        getResources().getString(R.string.generic_error_lbl),
+                        rec.getError_msg())
         ) {
             return;
         }

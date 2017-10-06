@@ -10,7 +10,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
@@ -19,6 +20,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_005;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_001;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_002;
+import com.namoadigital.prj001.sql.WS_Cleaning_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -35,6 +37,8 @@ import java.util.Date;
 
 public class WS_Cleanning extends IntentService {
 
+    private String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
+
     public WS_Cleanning() {
         super("WS_Cleanning");
     }
@@ -48,7 +52,7 @@ public class WS_Cleanning extends IntentService {
 
         } catch (Exception e) {
             String results = e.toString();
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
     }
@@ -83,9 +87,16 @@ public class WS_Cleanning extends IntentService {
                         Constant.DB_VERSION_CUSTOM
                 );
 
+        SM_SODao sm_soDao =
+                new SM_SODao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
                 new WS_Cleaning_Sql_001(
-                        sDTFormat_5_Days("yyyy-MM-dd HH:mm:ss Z")
+                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
                 ).toSqlQuery()
         );
 
@@ -98,7 +109,7 @@ public class WS_Cleanning extends IntentService {
 
         ArrayList<HMAux> hmAuxFiles = (ArrayList<HMAux>) ge_fileDao.query_HM(
                 new WS_Cleaning_Sql_002(
-                        sDTFormat_5_Days("yyyy-MM-dd HH:mm:ss Z")
+                        sDTFormat_35_Days("yyyy-MM-dd HH:mm:ss Z")
                 ).toSqlQuery()
         );
 
@@ -167,6 +178,17 @@ public class WS_Cleanning extends IntentService {
                 ).toSqlQuery()
         );
 
+        // Remove So Files
+        ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) sm_soDao.query(
+                new WS_Cleaning_Sql_003(
+                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                ).toSqlQuery()
+        );
+
+        for (SM_SO sm_so : sm_sos) {
+            sm_soDao.removeFull(sm_so);
+        }
+
     }
 
     private void deleteFCMMessages() {
@@ -213,6 +235,52 @@ public class WS_Cleanning extends IntentService {
         ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 22);
 
         return String.valueOf(ca1.getTimeInMillis());
+    }
+
+    public String sDTFormat_30_Days(String sDTFormatS) {
+        String sResults = "";
+        Calendar ca1 = Calendar.getInstance();
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 31);
+        //Teste
+        //ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) + 6);
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
+            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
+                StringBuffer toFix = super.format(date, toAppendTo, pos);
+                return toFix.insert(toFix.length() - 2, ':');
+            }
+        };
+
+        try {
+            sResults = sdf.format(ca1.getTime());
+        } catch (Exception var5) {
+            sResults = "1900-01-01 00:00:00";
+        }
+
+        return sResults;
+    }
+
+    public String sDTFormat_35_Days(String sDTFormatS) {
+        String sResults = "";
+        Calendar ca1 = Calendar.getInstance();
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 36);
+        //Teste
+        //ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) + 6);
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
+            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
+                StringBuffer toFix = super.format(date, toAppendTo, pos);
+                return toFix.insert(toFix.length() - 2, ':');
+            }
+        };
+
+        try {
+            sResults = sdf.format(ca1.getTime());
+        } catch (Exception var5) {
+            sResults = "1900-01-01 00:00:00";
+        }
+
+        return sResults;
     }
 
 }

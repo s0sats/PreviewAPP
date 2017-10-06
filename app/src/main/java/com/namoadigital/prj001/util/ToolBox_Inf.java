@@ -2,6 +2,7 @@ package com.namoadigital.prj001.util;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,18 +13,28 @@ import android.graphics.BitmapFactory;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -35,6 +46,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -44,6 +57,8 @@ import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
+import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
 import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -66,6 +81,8 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -99,6 +116,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -147,6 +166,11 @@ public class ToolBox_Inf {
         File dirSupport = new File(Constant.SUPPORT_PATH);
         if (!dirSupport.exists()) {
             dirSupport.mkdir();
+        }
+
+        File dirToken = new File(Constant.TOKEN_PATH);
+        if (!dirToken.exists()) {
+            dirToken.mkdir();
         }
 
     }
@@ -466,6 +490,25 @@ public class ToolBox_Inf {
         return files;
     }
 
+    public static File[] getListOfFiles_v5(String path, final String prefix) {
+        File fileList = new File(path);
+        File[] files = fileList.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                if (filename.startsWith(prefix)) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        //
+        if (files != null) {
+            Arrays.sort(files);
+        }
+        //
+        return files;
+    }
+
     public static String getContents(File aFile) {
         StringBuilder contents = new StringBuilder();
 
@@ -535,6 +578,12 @@ public class ToolBox_Inf {
         from.renameTo(to);
     }
 
+    public static void renameDownloadFileInfSig(String sName, String ext) {
+        File from = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ".tmps");
+        File to = new File(Constant.CACHE_PATH_PHOTO + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
 
     public static void renameDownloadFileInfV2(String path, String sName, String extOri, String extDest) {
         if (extOri == null || extOri.trim().length() == 0) {
@@ -692,6 +741,8 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean processWSCheckValidation(Context context, String validation, String error_msg, String s_Link, int iStatus, int iStatus_OD) {
+        validation = validation == null ? "" : validation;
+
         switch (validation) {
             case "OK":
                 break;
@@ -762,8 +813,16 @@ public class ToolBox_Inf {
             case "PARAMETERS_ERROR":
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
-
+            case "CUSTOMER_IP_REQUIRED" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+            case "CUSTOMER_IP_RESTRICTION" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
             default:
+                if (validation.trim().length() == 0) {
+                    return processoOthersError(context, context.getResources().getString(R.string.generic_error_lbl), error_msg);
+                }
                 break;
         }
 
@@ -771,6 +830,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean processWSCheckValidationNFCAuth(Context context, String validation, String error_msg, String s_Link, String ret, String ret_error) {
+        validation = validation == null ? "" : validation;
 
         switch (validation) {
             case "OK":
@@ -814,7 +874,18 @@ public class ToolBox_Inf {
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
+            case "CUSTOMER_IP_REQUIRED" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
+            case "CUSTOMER_IP_RESTRICTION" :
+                ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
+                return false;
+
             default:
+                if(validation.trim().length() == 0){
+                    return processoOthersError(context,context.getResources().getString(R.string.generic_error_lbl),error_msg);
+                }
                 break;
         }
 
@@ -1100,16 +1171,109 @@ public class ToolBox_Inf {
         );
     }
 
+    public static void buildFooterDialog(Context context) {
+
+        HMAux hmDialogInfo = loadFooterDialogInfo(context);
+
+        LayoutInflater inflater = (LayoutInflater) LayoutInflater.from(context);
+        View customView = inflater.inflate(R.layout.footer_dialog_info_app, null);
+        LinearLayout ll_footer_close = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll);
+
+        ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
+        //
+        LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
+        TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
+        TextView tv_customer_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_value);
+        //
+        LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
+        TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
+        TextView tv_site_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_value);
+        //
+        LinearLayout ll_zone = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_zone);
+        TextView tv_zone_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_zone_lbl);
+        TextView tv_zone_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_zone_value);
+        //
+        LinearLayout ll_operation = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_operation);
+        TextView tv_operation_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_operation_lbl);
+        TextView tv_operation_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_operation_value);
+        //
+        LinearLayout ll_imei = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_imei);
+        TextView tv_imei_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_lbl);
+        TextView tv_imei_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_value);
+        //
+        TextView tv_version_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_version_lbl);
+        TextView tv_version_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_version_number);
+        //
+        Bitmap customer_img = getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
+
+        if (customer_img != null) {
+            iv_customer.setImageBitmap(customer_img);
+        } else {
+            iv_customer.setImageBitmap(null);
+            // Fazer Analise
+        }
+        //
+        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
+        tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
+
+        tv_site_lbl.setText(hmDialogInfo.get(Constant.FOOTER_SITE_LBL));
+        tv_site_value.setText(hmDialogInfo.get(Constant.FOOTER_SITE));
+        ll_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_zone_lbl.setText(hmDialogInfo.get(Constant.FOOTER_ZONE_LBL));
+        tv_zone_value.setText(hmDialogInfo.get(Constant.FOOTER_ZONE));
+        ll_zone.setVisibility(hmDialogInfo.get(Constant.FOOTER_ZONE) == null || hmDialogInfo.get(Constant.FOOTER_ZONE).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_operation_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL));
+        tv_operation_value.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION));
+        ll_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_imei_lbl.setText(hmDialogInfo.get(Constant.FOOTER_IMEI_LBL));
+        tv_imei_value.setText(hmDialogInfo.get(FOOTER_IMEI));
+        ll_imei.setVisibility(hmDialogInfo.get(FOOTER_IMEI) == null || hmDialogInfo.get(FOOTER_IMEI).length() <= 0 ? View.GONE : View.VISIBLE);
+
+        tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
+        tv_version_value.setText(Constant.PRJ001_VERSION);
+
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.9f;
+        float dmH = (float) dm.heightPixels * 0.9f;
+
+        //customDialog = new Dialog(context, R.style.MyDialogTheme);
+        final Dialog customDialog = new Dialog(context);
+        customDialog.setContentView(customView);
+        customDialog.getWindow().setLayout((int) dmW, (int) dmH);
+        customDialog.show();
+
+        ll_footer_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+            }
+        });
+
+    }
+
+    private static Bitmap getCustomerImage(String path) {
+        File image = new File(path);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+
+        return bitmap;
+    }
+
     public static HMAux loadFooterDialogInfo(Context context) {
         HMAux hmAux = new HMAux();
         String customerDesc = "";
         String siteDesc = "";
+        String zoneDesc = "";
         String operationDesc = "";
 
         List<String> transList = new ArrayList<>();
         transList.add("lbl_external_site");
         transList.add("footer_dialog_customer_lbl");
         transList.add("footer_dialog_site_lbl");
+        transList.add("footer_dialog_zone_lbl");
         transList.add("footer_dialog_operation_lbl");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
@@ -1162,8 +1326,34 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));
         hmAux.put(Constant.FOOTER_VERSION_LBL, HmTrans.get("footer_version_lbl"));
         hmAux.put(Constant.FOOTER_IMEI_LBL, HmTrans.get("footer_dialog_imei"));
-        hmAux.put(Constant.FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
+        hmAux.put(FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
+        //
+        hmAux.put(Constant.FOOTER_ZONE_LBL, "");
+        hmAux.put(Constant.FOOTER_ZONE, "");
 
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            MD_Site_Zone zone =
+                    new MD_Site_ZoneDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ).getByString(
+                            new MD_Site_Zone_Sql_003(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context)),
+                                    ToolBox_Con.getPreference_Zone_Code(context)
+
+                            ).toSqlQuery()
+                    );
+            zoneDesc = "";
+            if (zone != null) {
+                zoneDesc = zone.getZone_code() + " - " + zone.getZone_desc();
+            }
+            //
+            hmAux.put(Constant.FOOTER_ZONE_LBL, HmTrans.get("footer_dialog_zone_lbl"));
+            hmAux.put(Constant.FOOTER_ZONE, zoneDesc);
+
+        }
         return hmAux;
 
     }
@@ -1634,6 +1824,7 @@ public class ToolBox_Inf {
             transList.add("ws_exception_contact_admin_json_syntax");
             transList.add("ws_exception_contact_admin_oracle");
             transList.add("ws_exception_contact_admin_timeout");
+            transList.add("ws_exception_server_connection_failed");
             transList.add("generic_error_lbl");
 
             hmAux_Trans = setLanguage(
@@ -1658,6 +1849,10 @@ public class ToolBox_Inf {
 
         hmAux_Trans.put("ws_exception_contact_admin_timeout",
                 (!hmAux_Trans.containsKey("ws_exception_contact_admin_timeout") || hmAux_Trans.get("ws_exception_contact_admin_timeout").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.ws_exception_contact_admin_timeout) : hmAux_Trans.get("ws_exception_contact_admin_timeout"))
+        );
+
+        hmAux_Trans.put("ws_exception_server_connection_failed",
+                (!hmAux_Trans.containsKey("ws_exception_server_connection_failed") || hmAux_Trans.get("ws_exception_server_connection_failed").contains(Constant.APP_MODULE + "/") ? context.getString(R.string.ws_exception_server_connection_failed) : hmAux_Trans.get("ws_exception_server_connection_failed"))
         );
 
         results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
@@ -1688,6 +1883,15 @@ public class ToolBox_Inf {
                     .append("Timeout!\n ")
                     .append(e.toString()
                     );
+        } else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
+            sb.append(results).append(" \n")
+                    .append(hmAux_Trans.get("ws_exception_server_connection_failed"))
+                    .append("\n")
+                    .append("\n")
+                    .append(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR + "!\n ")
+            //.append(e.toString())//Como exception na mão, não tem toString
+            ;
+
         } else {
             sb.append(results)
                     .append("\n")
@@ -1957,6 +2161,17 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * Metodo que esconde teclado quando o foco esta no campo passado como parametro.
+     *
+     * @param c           - Contexto da tela
+     * @param windowToken - EditText.getWindowToken()
+     */
+    public static void closeKeyboard(Context c, IBinder windowToken) {
+        InputMethodManager mgr = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(windowToken, 0);
+    }
+
     public static void clearFilesByPrefix(String path, String prefix) {
         //File fileList = new File(Constant.CACHE_PATH);
         File fileList = new File(path);
@@ -2025,6 +2240,30 @@ public class ToolBox_Inf {
         );
     }
 
+    public static void alertBundleNotFound(final Base_Activity_Frag act, HMAux hmAux_Trans) {
+        //
+        Exception e = new Exception("Bundle parameters not found.");
+        //
+        ToolBox_Inf.registerException(act.getClass().getName(), e);
+        //
+        ToolBox.alertMSG(
+                act,
+                hmAux_Trans.get("alert_bundle_not_found_ttl"),
+                hmAux_Trans.get("alert_bundle_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mIntent = new Intent(act, Act005_Main.class);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        act.startActivity(mIntent);
+                        act.finish();
+                    }
+                },
+                0
+        );
+    }
+
+
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID, code);
@@ -2054,9 +2293,12 @@ public class ToolBox_Inf {
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, boolean acceptNull) {
         try {
             HMAux hmAux = new HMAux();
-            hmAux.put(SearchableSpinner.ID, code);
-            hmAux.put(SearchableSpinner.DESCRIPTION, desc);
-            ss_component.setmValue(hmAux);
+            if(code != null && code != "null") {
+                hmAux.put(SearchableSpinner.ID, code);
+                hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+            }
+            //ss_component.setmValue(hmAux);
+            ss_component.setmValue(hmAux,source_val);
             //
             if (source_val) {
                 ss_component.setTag(code);
@@ -2103,5 +2345,172 @@ public class ToolBox_Inf {
 
         return false;
     }
+
+    public static String getColumnsToHmAux(String[] columns) {
+        if (columns.length > 0) {
+            return Arrays.toString(columns).replace("[", "").replace("]", "").replace(",", "#").replace(" ", "");
+        } else {
+            return "";
+        }
+    }
+
+    public static void setServiceStatusColor(Context context, TextView tv_status, String status) {
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            default:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+        }
+    }
+
+
+    public static void setTaskStatusColor(Context context, TextView tv_status, String status){
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_NOT_EXECUTED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+                break;
+            case Constant.SO_STATUS_INCONSISTENT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    public static void setExecStatusColor(Context context, TextView tv_status, String status) {
+                /*
+        * Tratativa de cor por Status
+        * */
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_NOT_EXECUTED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+                break;
+            case Constant.SO_STATUS_INCONSISTENT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static void setSOStatusColor(Context context, TextView tv_status, String status) {
+
+        switch (status) {
+            case Constant.SO_STATUS_PENDING:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+                break;
+            case Constant.SO_STATUS_PROCESS:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+                break;
+            case Constant.SO_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SO_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SO_STATUS_BLOCKED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_black));
+                break;
+            case Constant.SO_STATUS_WAITING_BUDGET:
+            case Constant.SO_STATUS_WAITING_QUALITY:
+            case Constant.SO_STATUS_WAITING_CLIENT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_brown));
+                break;
+            case Constant.SO_STATUS_EDIT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
+                break;
+            case Constant.SO_STATUS_WAITING_SYNC:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+                break;
+            default:
+                break;
+
+        }
+
+    }
+
+    public static int convertStringToInt(String value){
+        try{
+            return Integer.parseInt(value);
+        } catch (Exception e){
+            return 0;
+        }
+    }
+
+    public static void cleanUpApproval(SM_SODao sm_soDao){
+        sm_soDao.remove(
+                new SM_SO_Sql_014().toSqlQuery()
+        );
+    }
+
+    public static void showDialogInfo(Context context, SM_SO_Service sm_so_service, View viewInclude) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.toolbox_dialog_info, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.toolbox_dialog_info_tv_title);
+        LinearLayout ll = (LinearLayout) view.findViewById(R.id.toolbox_dialog_info_ll);
+        Button btn_ok = (Button) view.findViewById(R.id.toolbox_dialog_info_btn_ok);
+
+        if (viewInclude != null){
+            ll.addView(viewInclude);
+        }
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
+    }
+
 
 }

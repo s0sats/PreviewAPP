@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -35,49 +36,46 @@ public class ToolBox_Con {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Con";
 
-    public static String connWebService(String urlEnd, String params) {
+    public static String connWebService(String urlEnd, String params) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         URL url;
         HttpsURLConnection conn = null;
 
-        try {
-            url = new URL(urlEnd);
+        url = new URL(urlEnd);
 
-            SSLContext contextS = SSLContext.getInstance("TLS");
-            TrustManager[] tmlist = {new MyTrustManager()};
+        SSLContext contextS = SSLContext.getInstance("TLS");
+        TrustManager[] tmlist = {new MyTrustManager()};
 
-            contextS.init(null, tmlist, null);
-            conn = (HttpsURLConnection) url.openConnection();
-            conn.setSSLSocketFactory(contextS.getSocketFactory());
-            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+        contextS.init(null, tmlist, null);
+        conn = (HttpsURLConnection) url.openConnection();
+        conn.setSSLSocketFactory(contextS.getSocketFactory());
+        conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
 
-            conn.setReadTimeout(60000);
-            conn.setConnectTimeout(60000);
+        conn.setReadTimeout(60000);
+        conn.setConnectTimeout(60000);
 
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+        conn.setRequestMethod("POST");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        OutputStream os = conn.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-            writer.write(params.toCharArray());
-            writer.flush();
-            writer.close();
-            os.close();
+        writer.write(params.toCharArray());
+        writer.flush();
+        writer.close();
+        os.close();
 
+        int httpStatus = conn.getResponseCode();
+        if (httpStatus == HttpURLConnection.HTTP_OK) {
             sb.append(readStreamAux(conn.getInputStream()));
+        } else {
+            throw new Exception(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR);
+            //sb.append("Error: " + "HTTP_STATUS " + httpStatus);
+        }
 
-        } catch (Exception e) {
-
-            sb.append("Error: " + e.toString());
-
-            ToolBox_Inf.registerException(CLASS_NAME,e);
-
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+        if (conn != null) {
+            conn.disconnect();
         }
 
         return sb.toString();
@@ -98,13 +96,13 @@ public class ToolBox_Con {
             }
 
         } catch (Exception e) {
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+            ToolBox_Inf.registerException(CLASS_NAME, e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    ToolBox_Inf.registerException(CLASS_NAME,e);
+                    ToolBox_Inf.registerException(CLASS_NAME, e);
                     e.printStackTrace();
                 }
             }
@@ -393,6 +391,28 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region Zone_Code
+    public static void setPreference_Zone_Code(Context context, int zone_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putInt(
+                Constant.LOGIN_ZONE_CODE,
+                zone_code
+        ).apply();
+    }
+
+    public static int getPreference_Zone_Code(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getInt(
+                Constant.LOGIN_ZONE_CODE,
+                -1
+        );
+    }
+    //endregion
+
     //region Operation_Code
     public static void setPreference_Operation_Code(Context context, long operation_code) {
         SharedPreferences sharedPreferences =
@@ -661,7 +681,7 @@ public class ToolBox_Con {
                 nls_date_format
         ).apply();
 
-        Constant.DATEFORMATDT = nls_date_format.toLowerCase().replace("m","M").replace("R","y");
+        Constant.DATEFORMATDT = nls_date_format.toLowerCase().replace("m", "M").replace("R", "y");
     }
 
     public static String getPreference_Customer_nls_date_format(Context context) {
@@ -747,6 +767,11 @@ public class ToolBox_Con {
                 "-1"
         ).apply();
         //
+        sharedPreferences.edit().putInt(
+                Constant.LOGIN_ZONE_CODE,
+                -1
+        ).apply();
+        //
         sharedPreferences.edit().putLong(
                 Constant.LOGIN_OPERATION_CODE,
                 -1
@@ -789,6 +814,7 @@ public class ToolBox_Con {
         ToolBox_Con.setPreference_Customer_Code(context, -1);
         ToolBox_Con.setPreference_Translate_Code(context, "");
         ToolBox_Con.setPreference_Site_Code(context, "-1");
+        ToolBox_Con.setPreference_Zone_Code(context, -1);
         ToolBox_Con.setPreference_Operation_Code(context, -1);
 
     }

@@ -101,7 +101,7 @@ public class WS_SO_Serial_Save extends IntentService {
         }
     }
 
-    private void processSO_Serial_Save(Long product_code, String serial_id, int so_prefix, int so_code) {
+    private void processSO_Serial_Save(Long product_code, String serial_id, int so_prefix, int so_code) throws Exception {
         ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
         ArrayList<SM_SO> sos = new ArrayList<>();
         //
@@ -169,7 +169,7 @@ public class WS_SO_Serial_Save extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SO_SERIAL_SAVE,
+                Constant.WS_SO_SAVE,
                 gsonEnv.toJson(env)
         );
         //
@@ -454,7 +454,7 @@ public class WS_SO_Serial_Save extends IntentService {
 
         if (serial_return.getRet_status().toUpperCase().equals("OK")) {
             serial.setUpdate_required(0);
-            serialDao.addUpdate(serial);
+            serialDao.addUpdateTmp(serial);
             hmAux.put(SERIAL_SAVE, "OK");
         } else {
             hmAux.put(SERIAL_SAVE, serial_return.getRet_msg() == null ? hmAux_Trans.get("msg_error_on_save_serial") : serial_return.getRet_msg());

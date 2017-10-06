@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act033.Act033_Main"
+    tools:showIn="@layout/act033_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp">
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_site"
+            android:padding="5dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/act033_tv_customer_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Customer"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/act033_tv_customer_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:text="Customer"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act033_tv_site_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Site"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/act033_tv_site_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Site"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/act033_tv_no_zone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textStyle="bold"
+        android:textSize="@dimen/font_size_title_md"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:visibility="gone"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/act033_lv_zone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/padrao_TRANSPARENT" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -21,15 +21,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:paddingTop="5dp"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="10dp"
+                android:paddingBottom="5dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp">
+                android:paddingTop="5dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -73,19 +77,21 @@
                             android:padding="2dp"
                             android:text="Code"
                             android:textSize="@dimen/font_size_item_md"
-
+                            android:visibility="gone"
                             />
 
                         <View
                             android:layout_width="5dp"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:visibility="gone"
+                            />
 
                         <TextView
                             android:id="@+id/act031_tv_product_id_lbl"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="right"
+                            android:gravity="left|center_vertical"
                             android:padding="2dp"
                             android:text="Id"
                             android:textSize="@dimen/font_size_item_md" />
@@ -105,7 +111,6 @@
 
 
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/act031_tv_product_ttl"
@@ -134,28 +139,33 @@
                 android:id="@+id/act031_ll_product_properties"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
 
                 <LinearLayout
                     android:id="@+id/act031_ll_require_serial"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="2dp">
 
                     <TextView
                         android:id="@+id/act031_tv_require_serial_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:text="Require Serial" />
 
                     <TextView
                         android:id="@+id/act031_tv_require_serial_val"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:layout_marginLeft="5dp"
+                        android:gravity="center_vertical|right"
                         android:text="Sim"
                         android:textColor="@color/namoa_color_orange" />
 
@@ -167,21 +177,24 @@
 
                 <LinearLayout
                     android:id="@+id/act031_ll_allow_new"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="2dp">
 
                     <TextView
                         android:id="@+id/act031_tv_allow_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:text="Allow Creation" />
 
                     <TextView
                         android:id="@+id/act031_tv_allow_val"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical|right"
+                        android:layout_weight="1"
                         android:layout_marginLeft="5dp"
                         android:text="Não"
                         android:textColor="@color/namoa_color_orange" />
@@ -192,7 +205,7 @@
                 android:id="@+id/act031_tv_serial_ttl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="5dp"
                 android:text="Serial Data"
                 android:textSize="@dimen/font_size_title_md" />
 
@@ -205,7 +218,30 @@
                 android:padding="10dp"
                 android:textSize="@dimen/font_size_title"
                 app:mNFC="false"
-                app:mOCR="false" />
+                app:mOCR="false"
+                app:mBARCODE="false"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <Button
+                    android:id="@+id/act031_btn_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_namoa_main_states"
+                    android:text="NEW"
+                    android:textColor="@color/padrao_WHITE" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/act031_ll_serial_full_desc"
@@ -258,6 +294,50 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/act031_ll_serial_tracking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/namoa_color_gray"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:layout_marginBottom="15dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:id="@+id/act031_tv_serial_tracking_ttl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="5dp"
+                            android:text="Tracking"
+                            android:textSize="@dimen/font_size_item_md" />
+                        <ImageView
+                            android:id="@+id/act031_iv_add_tracking"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_adicionar_tracking_number_states"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
+                            android:paddingRight= "15dp"
+                            android:paddingLeft="15dp"
+                            android:layout_marginEnd="12dp"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/act031_ll_tracking_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/act031_ll_serial_add_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -275,7 +355,7 @@
                         android:textSize="@dimen/font_size_item_md" />
 
 
-                    <EditText
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act031_et_info1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -284,9 +364,13 @@
                         android:hint=""
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"
                         />
 
-                    <EditText
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act031_et_info2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -295,9 +379,13 @@
                         android:gravity="center_vertical"
                         android:hint=""
                         android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:padding="10dp"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"/>
 
-                    <EditText
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act031_et_info3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -305,7 +393,11 @@
                         android:gravity="center_vertical"
                         android:hint=""
                         android:minHeight="30dp"
-                        android:padding="10dp" />
+                        android:padding="10dp"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"/>
 
                 </LinearLayout>
 
@@ -375,30 +467,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <Button
-                    android:id="@+id/act031_btn_action"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_namoa_main_states"
-                    android:text="NEW"
-                    android:textColor="@color/padrao_WHITE" />
-
-            </LinearLayout>
-
 
         </LinearLayout>
     </ScrollView>

@@ -23,14 +23,31 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-
-        <TextView
-            android:id="@+id/act027_opc_tv_so_ttl"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="S.O"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/act027_opc_tv_so_ttl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:text="S.O"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/act027_opc_iv_sync_so"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_sync_black_24dp"
+                android:layout_gravity="center_vertical|right"
+                android:focusable="false"
+                android:padding="2dp"
+                android:background="@drawable/namoa_icon_bg_states"
+                android:tint="@color/namoa_dark_blue"
+                />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -153,7 +170,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act027_opc_tv_product_id_value"
+                    android:id="@+id/act027_opc_tv_product_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

@@ -6,12 +6,16 @@
 
     <dimen name="font_size_title">15sp</dimen>
     <dimen name="font_size_item">12sp</dimen>
+    <dimen name="font_size_sub_item">10sp</dimen>
 
     <dimen name="font_size_title_md">18sp</dimen>
     <dimen name="font_size_item_md">16sp</dimen>
 
+    <dimen name="font_size_title_dialog">20sp</dimen>
+
 
     <dimen name="btn_width_default">200dp</dimen>
-
+    <dimen name="namoa_icon_cell_so_width">20dp</dimen>
+    <dimen name="namoa_icon_cell_so_height">20dp</dimen>
 
 </resources>

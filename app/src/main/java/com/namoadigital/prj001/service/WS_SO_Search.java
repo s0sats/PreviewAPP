@@ -10,15 +10,12 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -32,15 +29,14 @@ import java.util.List;
 
 public class WS_SO_Search extends IntentService {
 
-    public static final String SERIAL_SAVE = "serial_save";
-    public static final String SO_LIST  = "so_list";
-    public static final String SO_LIST_QTY  = "so_list_qty";
+    public static final String SO_PREFIX_CODE = "so_prefix_code";
+    public static final String SO_LIST_QTY = "so_list_qty";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "WS_SO_Search";
-    private MD_Product_SerialDao serialDao;
+    private Gson gson;
 
     public WS_SO_Search() {
         super("WS_SO_Search");
@@ -52,15 +48,12 @@ public class WS_SO_Search extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-
-            serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            gson = new GsonBuilder().serializeNulls().create();
             Long product_code = bundle.getLong(Constant.WS_SO_SEARCH_PRODUCT_CODE, -1L);
             String serial_id = bundle.getString(Constant.WS_SO_SEARCH_SERIAL_ID, "");
             String so_mult = bundle.getString(Constant.WS_SO_SEARCH_SO_MULT, "");//Lista de SO a Serem Baixados. Act024
-            boolean save_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_SAVE_SERIAL, false);
-            boolean create_serial = bundle.getBoolean(Constant.WS_SO_SEARCH_CREATE_SERIAL, false);
             //
-            processSO_Search(product_code, serial_id, so_mult, save_serial,create_serial);
+            processSO_Search(product_code, serial_id, so_mult);
 
         } catch (Exception e) {
 
@@ -77,25 +70,11 @@ public class WS_SO_Search extends IntentService {
 
     }
 
-    private void processSO_Search(Long product_code, String serial_id, String so_mult, boolean save_serial, boolean create_serial) {
-        ArrayList<MD_Product_Serial> serialList = new ArrayList<>();
-
-        if(save_serial) {
-            MD_Product_Serial serial = serialDao.getByString(
-                    new MD_Product_Serial_Sql_002(
-                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                            product_code,
-                            serial_id
-                    ).toSqlQuery()
-            );
-            //
-            serial.setOnly_position(create_serial ? 0 : 1);
-            serialList.add(serial);
-        }
+    private void processSO_Search(Long product_code, String serial_id, String so_mult) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
-        Gson gson = new GsonBuilder().serializeNulls().create();
+
         //
         TSO_Search_Env env = new TSO_Search_Env();
         //
@@ -105,9 +84,8 @@ public class WS_SO_Search extends IntentService {
         env.setProduct_code(product_code);
         env.setSerial_id(serial_id);
         env.setSo_mult(so_mult);
-        env.setSerial(serialList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", create_serial ? hmAux_Trans.get("msg_send_serial_data") : hmAux_Trans.get("msg_searching_sos"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_sos"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_SEARCH,
@@ -135,54 +113,48 @@ public class WS_SO_Search extends IntentService {
                 ) {
             return;
         }
-        HMAux hmAux = new HMAux();
-        //Se tentou salvar serial, valida retorno
-        if(save_serial){
-            processSerialSaveRet(rec.getSerial_return().get(0),serialList.get(0),hmAux);
-        }else{
-            hmAux.put(SERIAL_SAVE,"OK");
-        }
-        //Tratativas especificas
-        //mudar tratativa pra so_mult.split(?) > 0
-        if (so_mult.length() == 0) {
-            hmAux.put(SO_LIST,gson.toJson(rec.getSo()));
-        } else {
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
-            hmAux.put(SO_LIST,so_mult);
-            hmAux.put(SO_LIST_QTY, String.valueOf(rec.getSo().size()));
-            //
-            SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            //
-            for (SM_SO sm_so : rec.getSo()) {
-                //Apaga SO completa
-                soDao.removeFull(sm_so);
-                //
-                sm_so.setPK();
-                //
-            }
-            //
-            soDao.addUpdate(rec.getSo(), false);
-
-        }
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT",create_serial ? hmAux_Trans.get("msg_end_serial_save") : hmAux_Trans.get("msg_processing_list"),hmAux, "", "0");
-
+        processSOSearchReturn(rec);
     }
 
-    private void processSerialSaveRet(TSO_Search_Rec.Serial_Save_Return serial_return, MD_Product_Serial serial, HMAux hmAux) {
-
-        if(serial_return.getRet_status().toUpperCase().equals("OK")){
-            serial.setSerial_code(serial_return.getSerial_code());
-            serial.setUpdate_required(0);
-            //Apaga Serial Criado temporariamente no banco
-            serialDao.remove(new MD_Product_Serial_Sql_003(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),serial.getProduct_code()).toSqlQuery());
-            //Insere o serial retornado do server
-            serialDao.addUpdate(serial);
-            hmAux.put(SERIAL_SAVE,"OK");
-        }else{
-            hmAux.put(SERIAL_SAVE,serial_return.getRet_msg() == null ? hmAux_Trans.get("msg_error_on_save_serial"):serial_return.getRet_msg());
+    private void processSOSearchReturn(TSO_Search_Rec rec) {
+        String so_prefix_code = "";
+        //
+        if(rec.getSo() != null && rec.getSo().size() > 0){
+            so_prefix_code = rec.getSo().get(0).getSo_prefix()
+                             + Constant.MAIN_CONCAT_STRING
+                             + rec.getSo().get(0).getSo_code();
         }
+        //
+        HMAux hmAux = new HMAux();
+        hmAux.put(SO_PREFIX_CODE, so_prefix_code);
+        hmAux.put(SO_LIST_QTY, String.valueOf(rec.getSo().size()));
+        //
+        SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        //
+        for (SM_SO sm_so : rec.getSo()) {
+            //Apaga SO completa
+            soDao.removeFull(sm_so);
+            //
+            sm_so.setPK();
+            //
+        }
+        //
+        soDao.addUpdate(rec.getSo(), false);
+        //
+        callFinishProcessing(hmAux);
+    }
 
+    private void callFinishProcessing(HMAux hmAux) {
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_so_download"), hmAux, "", "0");
+        //
+        startDownloadServices();
+    }
+
+    private void startDownloadServices() {
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        getApplicationContext().sendBroadcast(mIntentPIC);
     }
 
     private void loadTranslation() {
@@ -193,6 +165,7 @@ public class WS_SO_Search extends IntentService {
         translist.add("msg_searching_sos");
         translist.add("msg_send_serial_data");
         translist.add("msg_end_serial_save");
+        translist.add("msg_end_so_download");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

@@ -17,7 +17,8 @@ import com.namoadigital.prj001.model.TSO_Approval_Env;
 import com.namoadigital.prj001.model.TSO_Approval_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
-import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.SM_SO_Sql_013;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,9 +26,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.service.WS_SO_Serial_Save.SO_RETURN_FULL_REFRESH;
-import static com.namoadigital.prj001.service.WS_SO_Serial_Save.SO_RETURN_LIST;
-import static com.namoadigital.prj001.service.WS_SO_Serial_Save.SO_RETURN_STATUS;
+import static com.namoadigital.prj001.service.WS_SO_Save.SO_NO_EMPTY_LIST;
+import static com.namoadigital.prj001.service.WS_SO_Save.SO_RETURN_LIST;
 
 
 /**
@@ -46,21 +46,18 @@ public class WS_SO_Approval extends IntentService {
         super("WS_SO_Approval");
     }
 
-
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
 
         try {
-            soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            soDao = new SM_SODao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM);
 
-            int so_prefix = bundle.getInt(Constant.SO_PARAM_PREFIX, 1900);
-            int so_code = bundle.getInt(Constant.SO_PARAM_CODE, 0);
-            String nfc_code = bundle.getString(Constant.GC_NFC, null);
-            String pwd =  bundle.getString(Constant.GC_PWD, null);
-
-            processWSSOAproval(so_prefix, so_code, nfc_code, pwd);
+            processWSSOAproval();
 
         } catch (Exception e) {
 
@@ -68,7 +65,7 @@ public class WS_SO_Approval extends IntentService {
 
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", sb.toString(), "", "0");
 
         } finally {
 
@@ -76,45 +73,58 @@ public class WS_SO_Approval extends IntentService {
         }
     }
 
-    private void processWSSOAproval(int so_prefix, int so_code, String nfc_code, String pwd) {
-
-        //Seleciona traduções
+    private void processWSSOAproval() throws Exception {
         loadTranslation();
         //
-        SM_SO so = soDao.getByString(
-                new SM_SO_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                        so_prefix,
-                        so_code
+        ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) soDao.query(
+                new SM_SO_Sql_013(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                 ).toSqlQuery()
         );
         //
-        if(so == null){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_so_found"), "", "0");
+        if (sm_sos.size() == 0) {
+
+            HMAux hmAuxRet = new HMAux();
+            hmAuxRet.put(SO_NO_EMPTY_LIST,"1");
+            hmAuxRet.put(SO_RETURN_LIST,"");
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_approval_to_send"), hmAuxRet, "", "0");
             return;
         }
-        String action = defineAction(so.getStatus());
 
         TSO_Approval_Env env = new TSO_Approval_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-        env.setCustomer_code(so.getCustomer_code());
-        env.setSo_prefix(so.getSo_prefix());
-        env.setSo_code(so.getSo_code());
-        env.setSo_scn(so.getSo_scn());
-        env.setAction(action);
-        env.setClient_date(so.getClient_approval_date());
-        env.setClient_image(so.getClient_approval_image_name());
-        env.setClient_type_sig( so.getClient_type() == "CLIENT" ? so.getClient_type()  : null );
-        env.setClient_password(pwd);
-        env.setClient_nfc(nfc_code);
+        env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
+
+        ArrayList<TSO_Approval_Env.SO_Approval_Item> so_status = new ArrayList<>();
+
+        for (SM_SO so : sm_sos) {
+            TSO_Approval_Env.SO_Approval_Item item = new TSO_Approval_Env.SO_Approval_Item();
+            //
+            item.setCustomer_code(so.getCustomer_code());
+            item.setSo_prefix(so.getSo_prefix());
+            item.setSo_code(so.getSo_code());
+            item.setSo_scn(so.getSo_scn());
+
+            item.setClient_date(so.getClient_approval_date());
+            item.setClient_image(so.getClient_approval_image_name());
+            item.setClient_type_sig(so.getClient_type().equals("CLIENT") ? so.getClient_approval_type_sig() : null);
+
+            item.setClient_user(so.getClient_approval_user());
+            item.setClient_name(so.getClient_name());
+            //
+            so_status.add(item);
+        }
+
+        env.setSo_status(so_status);
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SO_SERIAL_SAVE,
+                Constant.WS_SO_SAVE,
                 gson.toJson(env)
         );
         //
@@ -139,72 +149,70 @@ public class WS_SO_Approval extends IntentService {
                 ) {
             return;
         }
-
         //
         processSOSaveRet(rec);
 
     }
 
     private void processSOSaveRet(TSO_Approval_Rec rec) {
-        HMAux hmAux = new HMAux();
         String so_list_ret = "";
-        String so_list_status = "";
-
-        if(!rec.getSo_status().get(0).equals("OK")){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("generic_error_lbl") +"\n" + rec.getSo_status().get(0).getRet_msg(), "", "0");
-        }else{
-            if (rec.getSo() != null) {
-                for (SM_SO so : rec.getSo()) {
-                    so.setPK();
-                    //Apaga So do Banco
-                    soDao.removeFull(so);
-                    //Insere So novamente no banco
-                    soDao.addUpdate(so);
-                }
-                //Monta String com dados das S.O enviadas para processamento
-                for (SO_Save_Return so_ret : rec.getSo_status()) {
-                    so_list_ret += "#" + so_ret.getSo_prefix() + "." + so_ret.getSo_code();
-                    so_list_status += "#" + so_ret.getRet_status();
-                }
-
-                hmAux.put(SO_RETURN_LIST, so_list_ret.substring(1, so_list_ret.length()));
-                hmAux.put(SO_RETURN_STATUS, so_list_status.substring(1, so_list_status.length()));
-                hmAux.put(SO_RETURN_FULL_REFRESH, String.valueOf(1));
-
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAux, "", "0");
-                //
-                startDownloadServices();
-            }else{
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_so_full_returned"), hmAux, "", "0");
+        HMAux hmAuxRet = new HMAux();
+        //
+        //Gera extrato baseada no serve e seta update_required nas S.Os com erro.
+        //Monta HMaux ja inserindo as S.O e setando full_refresh como 0
+        for (SO_Save_Return so_ret : rec.getSo_status()) {
+            String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
+            //
+            hmAuxRet.put(so_pk, "0");
+            //
+            so_list_ret += Constant.MAIN_CONCAT_STRING + so_pk
+                    + Constant.MAIN_CONCAT_STRING_2 + so_ret.getRet_status();
+            //
+            if (!so_ret.getRet_status().equalsIgnoreCase("OK")) {
+                so_list_ret += ":\n" + so_ret.getRet_msg();
             }
+            //
+            if (!so_ret.getRet_status().toUpperCase().equals("OK")) {
+                soDao.addUpdate(
+                        new SM_SO_Sql_009(
+                                so_ret.getCustomer_code(),
+                                so_ret.getSo_prefix(),
+                                so_ret.getSo_code()
+                        ).toSqlQuery()
 
+                );
+            }
         }
 
+        //Insere so_list_ret no hmAuxRet
+        hmAuxRet.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), so_list_ret.length()) : "");
+
+        if (rec.getSo() != null) {
+
+            for (SM_SO so : rec.getSo()) {
+                //Se S.O Full, atualiza hmAux de full_refresh
+                hmAuxRet.put(so.getSo_prefix() + "." + so.getSo_code(), "1");
+                so.setPK();
+                //Apaga So do Banco
+                soDao.removeFull(so);
+                //Insere So novamente no banco
+                soDao.addUpdate(so);
+            }
+        }
+
+        callFinishProcessing(hmAuxRet);
+    }
+
+    private void callFinishProcessing(HMAux hmAuxRet) {
+        //
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
+        //
+        startDownloadServices();
     }
 
     private void startDownloadServices() {
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
         getApplicationContext().sendBroadcast(mIntentPIC);
-    }
-
-    private String defineAction(String so_status) {
-        String action = "";
-
-        switch(so_status){
-            case Constant.SO_STATUS_WAITING_CLIENT:
-                action = "approve_client";
-                break;
-            case Constant.SO_STATUS_WAITING_QUALITY:
-                action = "approve_quality";
-                break;
-            case Constant.SO_STATUS_WAITING_BUDGET:
-                action = "approve_quality";
-                break;
-            default:
-                break;
-        }
-
-        return action;
     }
 
     private void loadTranslation() {
@@ -226,6 +234,4 @@ public class WS_SO_Approval extends IntentService {
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
                 translist);
     }
-
-
 }

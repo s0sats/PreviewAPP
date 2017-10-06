@@ -15,9 +15,10 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -25,10 +26,13 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
@@ -37,13 +41,18 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
-import com.namoadigital.prj001.sql.Sql_Act021_001;
+import com.namoadigital.prj001.sql.Sql_Act021_002;
+import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
+import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -140,19 +149,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             if (showMenu) {
                 HMAux Aux = new HMAux();
                 String qty = "";
+                String qtySO = "";
+
                 Aux.put(Act005_Main.MENU_ID, menuId[i]);
                 Aux.put(Act005_Main.MENU_ICON, icon[i]);
                 Aux.put(Act005_Main.MENU_DESC, menuDesc[i]);
 
                 switch (menuId[i]) {
                     case Act005_Main.MENU_ID_PENDING_DATA:
+
                         qty = customFormLocalDao.getByStringHM(
                                 new Sql_Act005_001(
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
 
+                        qtySO = soDao.getByStringHM(
+                                new Sql_Act021_002(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_SEND_DATA:
@@ -162,7 +181,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                 ).toSqlQuery()
                         ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
 
+                        qtySO = soDao.getByStringHM(
+                                new Sql_Act021_003(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
+
+                        int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
+
+                        qtySO = String.valueOf(iqtySO);
+
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
@@ -173,6 +203,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_MESSAGES:
@@ -181,9 +212,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
 
                     default:
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
                 }
 
@@ -199,10 +232,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
         data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SCHEDULE_CHECKLIST)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
-        if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SO)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
 
@@ -223,6 +256,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void accessMenuItem(String menu_id, int jump_validation_UR) {
+
+        mView.setWsSoProcess("");
 
         try {
             switch (menu_id) {
@@ -257,7 +292,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 case Act005_Main.MENU_ID_SEND_DATA:
                     if (ToolBox_Con.isOnline(context)) {
                         mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                        mView.setWsSoProcess(Act005_Main.WS_PROCESS_SO_STATUS);
                         mView.showPD();
+                        mView.cleanUpResults();
                         executeSaveProcess();
                     } else {
                         mView.showNoConnectionDialog();
@@ -282,7 +319,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     break;
             }
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
         }
     }
@@ -311,7 +348,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 executeSupport(et_support_msg.getText().toString().trim());
             }
         });
-        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null);
+        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
 
         builder.show();
     }
@@ -427,95 +464,94 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         logoutDialog.show();
     }
 
-    @Override
-    public void generateWsListProcess() {
-        ArrayList<HMAux> hmAuxList = new ArrayList<>();
-        /*
-        * N-FORM
-        */
-        String qty = customFormLocalDao.getByStringHM(
-                new Sql_Act005_001(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                ).toSqlQuery()
-        ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
+//    @Override
+//    public void generateWsListProcess() {
+//        ArrayList<HMAux> hmAuxList = new ArrayList<>();
+//        /*
+//        * N-FORM
+//        */
+//        String qty = customFormLocalDao.getByStringHM(
+//                new Sql_Act005_001(
+//                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+//                ).toSqlQuery()
+//        ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
+//
+//        if (qty != null && !qty.equals("0")) {
+//            HMAux nFormHM = new HMAux();
+//            nFormHM.put(Act005_Main.WS_LIST_ITEM, Act005_Main.WS_PROCESS_SEND_N_FORM);
+//            nFormHM.put(Act005_Main.WS_LIST_ITEM_RETURN, "");
+//            nFormHM.put(Act005_Main.WS_LIST_ITEM_LABEL, hmAux_Trans.get("lbl_checklist"));
+//            hmAuxList.add(nFormHM);
+//        }
+//
+//        /*
+//        * S.O
+//        */
+//        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+//            //
+//            HMAux soHMQty = soDao.getByStringHM(
+//                    new Sql_Act021_001(
+//                            ToolBox_Con.getPreference_Customer_Code(context)
+//                    ).toSqlQuery()
+//            );
+//            //
+//            int so_qty = Integer.parseInt(soHMQty.get(UPDATE_REQUIRED_QTY));
+//            if (so_qty > 0) {
+//                HMAux SOHM = new HMAux();
+//                SOHM.put(Act005_Main.WS_LIST_ITEM, Act005_Main.WS_PROCESS_SEND_SO);
+//                SOHM.put(Act005_Main.WS_LIST_ITEM_RETURN, "");
+//                SOHM.put(Act005_Main.WS_LIST_ITEM_LABEL, hmAux_Trans.get("lbl_so"));
+//                hmAuxList.add(SOHM);
+//            }
+//
+//        }
+//
+//    }
 
-        if(qty != null && !qty.equals("0")){
-            HMAux nFormHM = new HMAux();
-            nFormHM.put(Act005_Main.WS_LIST_ITEM,Act005_Main.WS_PROCESS_SEND_N_FORM);
-            nFormHM.put(Act005_Main.WS_LIST_ITEM_RETURN,"");
-            nFormHM.put(Act005_Main.WS_LIST_ITEM_LABEL,hmAux_Trans.get("lbl_checklist"));
-            hmAuxList.add(nFormHM);
-        }
+//    public void executeNextProcess(String next_ws) {
+//
+//        switch (next_ws) {
+//
+//            case Constant.MODULE_CHECKLIST:
+//                executeNFormSend();
+//                break;
+//            case Constant.MODULE_SO:
+//                executeSOSend();
+//                break;
+//            default:
+//                break;
+//        }
+//
+//    }
 
-        /*
-        * S.O
-        */
-        if(ToolBox_Inf.parameterExists(context,new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
-            //
-            HMAux soHMQty = soDao.getByStringHM(
-                    new Sql_Act021_001(
-                            ToolBox_Con.getPreference_Customer_Code(context)
-                    ).toSqlQuery()
-            );
-            //
-            int so_qty = Integer.parseInt(soHMQty.get(Sql_Act021_001.UPDATE_REQUIRED_QTY));
-            if (so_qty > 0) {
-                HMAux SOHM = new HMAux();
-                SOHM.put(Act005_Main.WS_LIST_ITEM,Act005_Main.WS_PROCESS_SEND_SO);
-                SOHM.put(Act005_Main.WS_LIST_ITEM_RETURN,"");
-                SOHM.put(Act005_Main.WS_LIST_ITEM_LABEL,hmAux_Trans.get("lbl_so"));
-                hmAuxList.add(SOHM);
-            }
+//    private void executeNFormSend() {
+//        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_N_FORM);
+//
+//        Intent mIntent = new Intent(context, WBR_Save.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+//        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+//
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//        //
+//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+//
+//    }
 
-        }
-
-    }
-
-    public void executeNextProcess(String next_ws){
-
-        switch (next_ws){
-
-            case Constant.MODULE_CHECKLIST:
-                executeNFormSend();
-                break;
-            case Constant.MODULE_SO:
-                executeSOSend();
-                break;
-            default:
-                break;
-        }
-
-
-    }
-
-    private void executeNFormSend(){
-        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_N_FORM);
-
-        Intent mIntent = new Intent(context, WBR_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        //
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-
-    }
-
-    private void executeSOSend(){
-        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_SO);
-        //
-        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
-        Bundle bundle = new Bundle();
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-        //
-        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_so_send_data"), "", "0");
-
-    }
+//    private void executeSOSend() {
+//        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_SO);
+//        //
+//        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
+//        Bundle bundle = new Bundle();
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//        //
+//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_so_send_data"), "", "0");
+//
+//    }
 
     private void executeSaveProcess() {
 
@@ -523,6 +559,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
         bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
 
         mIntent.putExtras(bundle);
         //
@@ -530,6 +567,48 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
 
     }
+
+    @Override
+    public void executeSoSave() {
+        mView.setWsSoProcess(WS_PROCESS_SO_SAVE);
+
+//        enableProgressDialog(
+//                hmAux_Trans.get("progress_so_save_ttl"),
+//                hmAux_Trans.get("progress_so_save_msg"),
+//                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                hmAux_Trans.get("sys_alert_btn_ok")
+//        );
+
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSoSaveApproval() {
+        mView.setWsSoProcess(WS_PROCESS_SO_SAVE_APPROVAL);
+
+//        enableProgressDialog(
+//                hmAux_Trans.get("progress_so_save_ttl"),
+//                hmAux_Trans.get("progress_so_save_msg"),
+//                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                hmAux_Trans.get("sys_alert_btn_ok")
+//        );
+
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Approval.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
 
     private void executeLogout(String customer_list) {
         mView.setWsProcess(Act005_Main.WS_PROCESS_LOGOUT);
@@ -543,8 +622,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        //ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-
     }
 
     @Override
@@ -559,7 +636,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-
     }
 
     @Override
@@ -574,7 +650,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-
     }
 
     @Override
@@ -585,11 +660,33 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
         Intent mIntent = new Intent(context, WBR_Upload_Support.class);
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_SUPPORT_MSG,support_msg);
+        bundle.putString(Constant.WS_SUPPORT_MSG, support_msg);
 
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
 
+    private int isSoWithinTokenFile() {
+        try {
+            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                return token_so_list.size();
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            //
+            return 0;
+        }
     }
 }

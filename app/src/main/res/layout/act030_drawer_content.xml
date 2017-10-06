@@ -53,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="Prod Code"
-                android:textSize="@dimen/font_size_title_md" />
+                android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone"/>
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act030_drawer_content_mket_product_code"
@@ -64,7 +65,8 @@
                 app:mBARCODE="true"
                 app:mInputType="number"
                 app:mNFC="false"
-                app:mOCR="false" />
+                app:mOCR="false"
+                android:visibility="gone"/>
 
             <View
                 android:layout_width="match_parent"
@@ -109,6 +111,24 @@
                 app:mBARCODE="true"
                 app:mNFC="false"
                 app:mOCR="false" />
+            <TextView
+                android:id="@+id/act030_drawer_content_tv_tracking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Tracking N"
+                android:textSize="@dimen/font_size_title_md" />
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act030_drawer_content_mket_tracking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                app:mBARCODE="true"
+                app:mNFC="false"
+                app:mOCR="false" />
+
 
 
         </LinearLayout>

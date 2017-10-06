@@ -1,6 +1,11 @@
 package com.namoadigital.prj001.ui.act032;
 
 import android.content.Context;
+import android.os.Bundle;
+
+import com.namoa_digital.namoa_library.util.HMAux;
+
+import java.util.List;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -8,9 +13,11 @@ import android.content.Context;
 
 public interface Act032_Main_View {
 
-    void callAct027(Context context);
+    void loadSOList(List<HMAux> soList);
 
-    void dismissPD();
+    void callAct014(Context context);
 
-    void errorMsg(String title, String error);
+    void callAct021(Context context);
+
+    void callAct027(Context context, Bundle bundle);
 }

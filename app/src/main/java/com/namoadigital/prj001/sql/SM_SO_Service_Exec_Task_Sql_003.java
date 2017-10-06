@@ -37,7 +37,35 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("select S.service_id, S.service_desc, S.status as service_status, S.exec_type, T.*, T.status as task_status\n" +
+                .append("select S.service_id, S.service_desc, S.status as service_status, S.exec_type, T.*, T.status as task_status,\n" +
+
+                        "strftime('%Y-%m-%d %H:%M',T.start_date,'localtime') start_date_local,\n" +
+                        "strftime('%Y-%m-%d %H:%M',T.end_date,'localtime') end_date_local,\n" +
+
+                        "( " +
+                        " " +
+                        "	select count(1)  from sm_so_service_exec_task_files as F " +
+                        "	where  ( " +
+                        "	" +
+                        "    F.customer_code =              '" + customer_code + "'\n" +
+                        "    AND F.so_prefix =              '" + so_prefix + "'\n" +
+                        "    AND F.so_code =                '" + so_code + "'\n" +
+                        "    AND F.price_list_code =        '" + price_list_code + "'\n" +
+                        "    AND F.pack_code =              '" + pack_code + "'\n" +
+                        "    AND F.pack_seq =               '" + pack_seq + "'\n" +
+                        "    AND F.category_price_code =    '" + category_price_code + "'\n" +
+                        "    AND F.service_code =           '" + service_code + "'\n" +
+                        "    AND F.service_seq =            '" + service_seq + "'\n" +
+                        "    AND F.exec_tmp =               '" + exec_tmp + "' " +
+                        "    AND F.task_tmp =               T.task_tmp " +
+
+                        "	" +
+                        "				) " +
+                        " " +
+                        ") as qty_photo " +
+
+                        "\n" +
+
                         "\n" +
                         "from SM_SO_Services as S, SM_SO_Service_Exec_Tasks as T\n" +
                         "\n" +
@@ -65,19 +93,19 @@ public class SM_SO_Service_Exec_Task_Sql_003 implements Specification {
                         "    AND T.exec_tmp =               '" + exec_tmp + "' ")
                 .append(" ) ")
                 .append(" Order by ")
-                .append("    customer_code DESC, " +
-                        "    so_prefix DESC, " +
-                        "    so_code DESC, " +
-                        "    price_list_code DESC, " +
-                        "    pack_code DESC, " +
-                        "    pack_seq DESC, " +
-                        "    category_price_code DESC, " +
-                        "    service_code DESC, " +
-                        "    service_seq DESC, " +
-                        "    exec_tmp DESC, " +
-                        "    task_tmp DESC, " +
-                        "    task_seq_oper DESC")
-                .append(";service_id#service_desc#service_status#exec_type#task_status#customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#exec_tmp#task_tmp#task_seq_oper#task_user#task_user_nick#start_date#end_date#exec_time#exec_time_format#task_perc#qty_people#status#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#comments")
+//                .append("    customer_code DESC, " +
+//                        "    so_prefix DESC, " +
+//                        "    so_code DESC, " +
+//                        "    price_list_code DESC, " +
+//                        "    pack_code DESC, " +
+//                        "    pack_seq DESC, " +
+//                        "    category_price_code DESC, " +
+//                        "    service_code DESC, " +
+//                        "    service_seq DESC, " +
+//                        "    exec_tmp DESC, " +
+//                        "    task_tmp DESC, " +
+                .append("    task_seq_oper DESC")
+                .append(";service_id#service_desc#service_status#exec_type#task_status#customer_code#so_prefix#so_code#price_list_code#pack_code#pack_seq#category_price_code#service_code#service_seq#exec_code#task_code#exec_tmp#task_tmp#task_seq_oper#task_user#task_user_nick#start_date#start_date_local#end_date#end_date_local#exec_time#exec_time_format#task_perc#qty_people#status#site_code#site_id#site_desc#zone_code#zone_id#zone_desc#local_code#local_id#comments#qty_photo")
                 .toString();
     }
 }

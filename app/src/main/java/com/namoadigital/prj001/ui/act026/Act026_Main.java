@@ -10,11 +10,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -31,12 +30,14 @@ import static com.namoadigital.prj001.R.layout.act026_main;
  * Created by neomatrix on 03/07/17.
  */
 
-public class Act026_Main extends Base_Activity implements Act026_Main_View {
+public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View {
 
     private Act026_Main_Presenter mPresenter;
     private ListView lv_so;
     private SO_Header_Adapter mAdapter;
     private String requesting_act;
+    private String product_code;
+    private String serial_id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,7 +111,16 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
         //
-        mPresenter.getSOList();
+        mPresenter.getSOList(product_code, serial_id);
+        //
+        ToolBox_Inf.cleanUpApproval(
+                new SM_SODao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
+        );
+
     }
 
     private void recoverIntentsInfo() {
@@ -118,16 +128,18 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_ACT)) {
-                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT005);
+                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+                product_code = bundle.getString(Constant.MAIN_PRODUCT_CODE, null);
+                serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, null);
 
             } else {
                 //Tratar quando lista de s.o não for enviado.
                 //Caixa de alerta e volta para menu?!?
-                ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+                ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
             }
         } else {
             //Tratar caso não exista bundle
-            ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+            ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
 
     }
@@ -144,25 +156,12 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
         setTitleLanguage();
         setFooter();
         //
-        //Aplica informações do rodapé
-        HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
+    }
 
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;
-
-        //Aplica informações do rodapé -fim
-
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     private void initActions() {
@@ -170,7 +169,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
         lv_so.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SM_SO so = (SM_SO) parent.getItemAtPosition(position);
+                HMAux so = (HMAux) parent.getItemAtPosition(position);
                 //
                 mPresenter.defineForwardFlow(so);
 
@@ -181,13 +180,15 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
     }
 
     @Override
-    public void loadSOList(List<SM_SO> soList) {
+    public void loadSOList(List<HMAux> soList) {
+        String configType = product_code == null || serial_id == null ? SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL : SO_Header_Adapter.CONFIG_TYPE_EXIBITION_SO;
         //
         mAdapter = new SO_Header_Adapter(
                 context,
-                R.layout.act024_content_cell,
+                //R.layout.act024_content_cell,
+                R.layout.so_header_cell,
                 soList,
-                SO_Header_Adapter.CONFIG_TYPE_EXIBITION
+                configType
         );
         //
         lv_so.setAdapter(mAdapter);
@@ -213,6 +214,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
     @Override
     public void callAct027(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act027_Main.class);
+        //Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -221,7 +223,7 @@ public class Act026_Main extends Base_Activity implements Act026_Main_View {
 
     @Override
     public void onBackPressed() {
-         //super.onBackPressed();
+        //super.onBackPressed();
         mPresenter.onBackPressedClicked();
 
     }

@@ -5,11 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.SM_SO_Service_Exec;
+import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.sql.Sql_Act028_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,12 +28,12 @@ public class Act028_Exec_Adapter extends BaseAdapter {
 
     private Context context;
     private int resource;
-    private List<SM_SO_Service_Exec> source;
+    private List<HMAux> source;
 
     private String mResource_Code;
     private HMAux hmAux_Trans;
 
-    public Act028_Exec_Adapter(Context context, int resource, List<SM_SO_Service_Exec> source) {
+    public Act028_Exec_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
         this.resource = resource;
         this.source = source;
@@ -67,41 +70,70 @@ public class Act028_Exec_Adapter extends BaseAdapter {
             convertView = mInflater.inflate(resource, parent, false);
         }
 
-        SM_SO_Service_Exec item = source.get(position);
+        HMAux item = source.get(position);
 
-        TextView tv_exec_tmp_label = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_tmp_label);
-        TextView tv_exec_tmp_value = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_tmp_value);
+        //TextView tv_exec_tmp_label = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_tmp_label);
+        TextView tv_exec_tmp_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_tmp_value);
+        ImageView iv_usr = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_iv_usr);
         TextView tv_exec_status = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_exec_status);
+        //
+        LinearLayout ll_line2 = (LinearLayout) convertView.findViewById(R.id.act028_main_content_cell_ll_line2);
+        ImageView iv_percent = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_iv_percent);
+        TextView tv_percent_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_percent_val);
+        //
+        ImageView iv_sum_time = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_iv_sum_time);
+        TextView tv_sum_time_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_sum_time_val);
+        //
+        LinearLayout ll_line3 = (LinearLayout) convertView.findViewById(R.id.act028_main_content_cell_ll_line3);
+        //
+        LinearLayout ll_comments = (LinearLayout) convertView.findViewById(R.id.act028_main_content_cell_ll_comments);
+        ImageView iv_comment = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_iv_comment);
+        TextView tv_comment_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_comment_val);
+        //
+        LinearLayout ll_gallery = (LinearLayout) convertView.findViewById(R.id.act028_main_content_cell_ll_gallery);
+        ImageView iv_gallery = (ImageView) convertView.findViewById(R.id.act028_main_content_cell_iv_gallery);
+        TextView tv_gallery_val = (TextView) convertView.findViewById(R.id.act028_main_content_cell_tv_gallery_val);
 
-        tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
-        tv_exec_tmp_value.setText(String.valueOf(item.getExec_tmp()));
-        tv_exec_status.setText(item.getStatus());
-        /*
-        * Tratativa de cor por Status
-        * */
-
-        switch (item.getStatus()){
-            case Constant.SO_STATUS_PENDING :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_PROCESS :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
-            case Constant.SO_STATUS_DONE :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            case Constant.SO_STATUS_NOT_EXECUTED :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
-                break;
-            case Constant.SO_STATUS_INCONSISTENT :
-                tv_exec_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
-                break;
-            default:
-                break;
+        //tv_exec_tmp_label.setText(hmAux_Trans.get("exec_tmp_lbl"));
+        tv_exec_tmp_val.setText(String.valueOf(item.get(SM_SO_Service_ExecDao.EXEC_TMP)));
+        tv_exec_status.setText(hmAux_Trans.get(item.get(SM_SO_Service_ExecDao.STATUS)));
+        ToolBox_Inf.setExecStatusColor(context,tv_exec_status,item.get(SM_SO_Service_ExecDao.STATUS));
+        //
+        if(item.get(SM_SO_Service_ExecDao.STATUS).equals(Constant.SO_STATUS_INCONSISTENT)){
+            ll_line2.setVisibility(View.GONE);
+            ll_line3.setVisibility(View.GONE);
+        }else{
+            ll_line2.setVisibility(View.VISIBLE);
         }
+        //
+        if(item.get(Sql_Act028_001.MY_TASK) != null
+                && !item.get(Sql_Act028_001.MY_TASK).equals("0")
+                && !item.get(Sql_Act028_001.MY_TASK).equals("")
+
+                ){
+            iv_usr.setVisibility(View.VISIBLE);
+        }else {
+            iv_usr.setVisibility(View.INVISIBLE);
+        }
+        //
+        if(item.get(Sql_Act028_001.TASK_PERC) != null){
+            iv_percent.setVisibility(View.VISIBLE);
+            tv_percent_val.setText(item.get(Sql_Act028_001.TASK_PERC) + "%");
+        }else{
+            iv_percent.setVisibility(View.INVISIBLE);
+            tv_percent_val.setText("");
+        }
+        //
+        if(item.get(Sql_Act028_001.SUM_EXEC_TIME) != null){
+            iv_sum_time.setVisibility(View.VISIBLE);
+            tv_sum_time_val.setText(item.get(Sql_Act028_001.SUM_EXEC_TIME));
+        }else{
+            iv_sum_time.setVisibility(View.INVISIBLE);
+            tv_sum_time_val.setText("");
+        }
+
+        tv_comment_val.setText(item.get(Sql_Act028_001.QTY_COMMENT));
+        tv_gallery_val.setText(item.get(Sql_Act028_001.QTY_FILES));
 
         return convertView;
     }
