@@ -442,6 +442,7 @@
                         android:selectAllOnFocus="true"
                         android:text="0"
                         app:mBARCODE="false"
+                        android:inputType="text"
                         app:mInputType="NUMBER" />
 
                 </LinearLayout>

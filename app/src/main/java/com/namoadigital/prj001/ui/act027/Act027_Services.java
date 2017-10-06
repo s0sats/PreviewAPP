@@ -411,7 +411,7 @@ public class Act027_Services extends BaseFragment {
                         e.printStackTrace();
                     }
                     //Atualiza parceiro na exec
-                    sm_so_service_execDao.addUpdate(execAux);
+                    sm_so_service_execDao.addUpdateTmp(execAux);
                 }
                 //
                 HMAux execTaskAux = sm_so_service_exec_taskDao.getByStringHM(
@@ -557,7 +557,7 @@ public class Act027_Services extends BaseFragment {
             newExec.setPartner_desc(sm_so_service.getPartner_desc());
         }
         //Insere execução
-        sm_so_service_execDao.addUpdate(newExec);
+        sm_so_service_execDao.addUpdateTmp(newExec);
         //Seta S.O para update required.
         sm_so_serviceDao.addUpdate(
                 new SM_SO_Sql_009(
