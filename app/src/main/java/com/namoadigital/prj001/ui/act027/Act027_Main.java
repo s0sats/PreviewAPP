@@ -185,6 +185,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("dialog_credentials_ttl");
         transList.add("dialog_credentials_msg");
 
+        transList.add("dialog_user_author_ttl");
+        transList.add("dialog_user_author_lbl");
+        transList.add("dialog_user_author_pwd_lbl");
+        transList.add("dialog_user_author_btn");
+
+
+
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
         transList.add("alert_no_connection_msg");
