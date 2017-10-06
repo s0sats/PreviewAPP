@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -52,11 +53,15 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     private Act021_Main_Presenter mPresenter;
     private Button btn_load;
     private Button btn_pendencies;
+    private Button btn_sync;
+
     private MKEditTextNM mket_serial;
     private ImageView iv_search_serial;
     private MKEditTextNM mket_tracking;
     private ImageView iv_search_tracking;
     private int pendencies_qty;
+    private int syncs_qty;
+
     private int search_pressed;
     private View.OnClickListener searchListner;
 
@@ -94,6 +99,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("act021_title");
         transList.add("btn_load_so");
         transList.add("btn_pendencies_so");
+        transList.add("btn_sync_so");
+
         transList.add("alert_new_opt_ttl");
         transList.add("alert_new_opt_product_lbl");
         transList.add("alert_new_opt_serial_lbl");
@@ -143,6 +150,9 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
         btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
         //
+        btn_sync = (Button) findViewById(R.id.act021_btn_sync);
+        btn_sync.setText(hmAux_Trans.get("btn_sync_so"));
+        //
         mket_serial = (MKEditTextNM) findViewById(R.id.act021_mket_serial);
         mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
         iv_search_serial = (ImageView) findViewById(R.id.act021_iv_search_serial);
@@ -161,7 +171,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             public void onClick(View v) {
                 ToolBox_Inf.hideSoftKeyboard(Act021_Main.this);
                 //
-                if(mPresenter.checkForSoToSend()) {
+                if (mPresenter.checkForSoToSend()) {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_so_to_send_ttl"),
@@ -174,7 +184,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                             },
                             0
                     );
-                }else{
+                } else {
                     //
                     switch (v.getId()) {
                         case R.id.act021_iv_search_serial:
@@ -222,6 +232,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         hideSoftKeyboard();
         //
         mPresenter.getPendencies();
+        mPresenter.getSync();
 
     }
 
@@ -230,7 +241,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             @Override
             public void onClick(View v) {
                 //showNewOptDialog();
-                if(mPresenter.checkForSoToSend()){
+                if (mPresenter.checkForSoToSend()) {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_so_to_send_ttl"),
@@ -243,7 +254,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
                             },
                             0
                     );
-                }else{
+                } else {
                     showNewOptDialog();
                 }
             }
@@ -262,18 +273,33 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
             }
         });
+
+
+        btn_sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(
+                        context,
+                        "Implementar o Sync",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        });
+
+
         //Interface acionando quando o usuário digita na caixa.
         mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
 
             }
+
             //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
             @Override
             public void reportTextChange(String text, boolean hasText) {
-                if(hasText){
+                if (hasText) {
                     iv_search_serial.setEnabled(hasText);
-                }else{
+                } else {
                     iv_search_serial.setEnabled(hasText);
                 }
             }
@@ -291,12 +317,13 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             public void reportTextChange(String s) {
 
             }
+
             //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
             @Override
             public void reportTextChange(String text, boolean hasText) {
-                if(hasText){
+                if (hasText) {
                     iv_search_tracking.setEnabled(hasText);
-                }else{
+                } else {
                     iv_search_tracking.setEnabled(hasText);
                 }
             }
@@ -358,6 +385,20 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         pendencies_qty = qty;
         String btn_text = hmAux_Trans.get("btn_pendencies_so") + " (" + pendencies_qty + ")";
         btn_pendencies.setText(btn_text);
+    }
+
+    @Override
+    public void setSync(int qty) {
+        if (qty > 0) {
+            syncs_qty = qty;
+            String btn_text = hmAux_Trans.get("btn_sync_so") + " (" + syncs_qty + ")";
+
+            btn_sync.setVisibility(View.VISIBLE);
+            btn_sync.setText(btn_text);
+        } else {
+            btn_sync.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

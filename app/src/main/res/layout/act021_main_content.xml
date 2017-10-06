@@ -15,9 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="10dp"
         android:background="@color/padrao_WHITE"
-        >
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,24 +29,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_back"
                 android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:paddingRight="5dp"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/border_back">
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act021_mket_serial"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:hint="Serial"
+                    android:inputType="text"
                     app:mBARCODE="true"
                     app:mNFC="false"
-                    app:mOCR="false"
-                    android:hint="Serial"
-                    android:inputType="text"/>
+                    app:mOCR="false" />
 
                 <ImageView
                     android:id="@+id/act021_iv_search_serial"
@@ -68,26 +67,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/border_back"
-                >
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act021_mket_tracking"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:mBARCODE="true"
-                    app:mNFC="false"
-                    app:mOCR="false"
                     android:hint="Tracking"
                     android:inputType="text"
-                    />
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
 
                 <ImageView
                     android:id="@+id/act021_iv_search_tracking"
@@ -99,18 +96,16 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="4dp"
-                    android:src="@drawable/ic_lupa_states"
-                    />
+                    android:src="@drawable/ic_lupa_states" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/namoa_color_gray2"
-                android:layout_marginTop="30dp"
                 android:layout_marginBottom="30dp"
-                />
+                android:layout_marginTop="30dp"
+                android:background="@color/namoa_color_gray2" />
 
 
             <Button
@@ -121,9 +116,8 @@
                 android:background="@drawable/namoa_cell_2_states"
                 android:gravity="left"
                 android:padding="20dp"
-                android:textColor="@color/padrao_WHITE"
                 android:text="Carregar o.s"
-                />
+                android:textColor="@color/padrao_WHITE" />
 
             <Button
                 android:id="@+id/act021_btn_pendencies"
@@ -133,8 +127,20 @@
                 android:background="@drawable/namoa_cell_2_states"
                 android:gravity="left"
                 android:padding="20dp"
-                android:textColor="@color/padrao_WHITE"
-                android:text="Pendentes (14) "/>
+                android:text="Pendentes (14) "
+                android:textColor="@color/padrao_WHITE" />
+
+            <Button
+                android:id="@+id/act021_btn_sync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Syncs (14) "
+                android:textColor="@color/padrao_WHITE" />
+
 
         </LinearLayout>
 

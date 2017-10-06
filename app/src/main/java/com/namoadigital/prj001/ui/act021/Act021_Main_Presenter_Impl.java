@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act021_001;
+import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -52,6 +53,20 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         int qty = Integer.parseInt(hmAux.get(SM_SO_Sql_004.PENDING_QTY));
         //
         mView.setPendencies(qty);
+    }
+
+    @Override
+    public void getSync() {
+        //
+        String qtySO = soDao.getByStringHM(
+                new Sql_Act021_004(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
+        //
+        int qty = Integer.parseInt(qtySO);
+        //
+        mView.setSync(qty);
     }
 
     @Override

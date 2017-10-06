@@ -12,6 +12,8 @@ public interface Act021_Main_Presenter {
 
     void getPendencies();
 
+    void getSync();
+
     void defineFlow(HMAux hmAux);
 
     void executeSerialTracking(String serial, String tracking);

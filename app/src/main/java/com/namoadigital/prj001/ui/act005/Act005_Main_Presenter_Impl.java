@@ -43,6 +43,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
+import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -156,6 +157,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Aux.put(Act005_Main.MENU_DESC, menuDesc[i]);
 
                 switch (menuId[i]) {
+
+                    case Act005_Main.MENU_ID_SERVICE:
+                        qty = "0";
+
+                        qtySO = soDao.getByStringHM(
+                                new Sql_Act021_004(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
+
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
+                        break;
+
                     case Act005_Main.MENU_ID_PENDING_DATA:
 
                         qty = customFormLocalDao.getByStringHM(

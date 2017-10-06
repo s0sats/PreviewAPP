@@ -11,6 +11,8 @@ public interface Act021_Main_View {
 
     void setPendencies(int qty);
 
+    void setSync(int qty);
+
     void callAct005(Context context);
 
     void callAct022(Context context);
