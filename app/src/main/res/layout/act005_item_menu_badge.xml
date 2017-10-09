@@ -40,23 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/menu_tvBadgeSO"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/badge"
-            android:gravity="center"
-            android:paddingBottom="3dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="3dp"
-            android:text="12"
-            android:textColor="@color/padrao_WHITE"
-            android:textSize="12sp"
-            android:visibility="gone" />
-
+        android:orientation="vertical">
         <TextView
             android:id="@+id/menu_tvBadge"
             android:layout_width="wrap_content"
@@ -67,11 +51,27 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:paddingTop="3dp"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="0dp"
             android:text="12"
             android:textColor="@color/padrao_WHITE"
             android:textSize="12sp"
+            android:visibility="gone"
+            android:layout_marginBottom="3dp"/>
+
+        <TextView
+            android:id="@+id/menu_tvBadge2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge2"
+            android:gravity="center"
+            android:paddingBottom="3dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:text="12"
+            android:textSize="12sp"
             android:visibility="gone" />
+
     </LinearLayout>
 
 </FrameLayout>

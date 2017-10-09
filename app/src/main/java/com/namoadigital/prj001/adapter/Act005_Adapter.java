@@ -61,20 +61,20 @@ public class Act005_Adapter extends BaseAdapter {
         ImageView ivIcon = (ImageView) convertView.findViewById(R.id.menu_ivChecklist);
         TextView tvTitle = (TextView) convertView.findViewById(R.id.menu_tvChecklist);
         TextView tvBadge = (TextView) convertView.findViewById(R.id.menu_tvBadge);
-        TextView tvBadgeSO = (TextView) convertView.findViewById(R.id.menu_tvBadgeSO);
+        TextView tvBadge2 = (TextView) convertView.findViewById(R.id.menu_tvBadge2);
 
         HashMap<String, String> item = source.get(position);
 
         ivIcon.setImageDrawable(context.getResources().getDrawable(Integer.valueOf(item.get(Act005_Main.MENU_ICON))));
         tvTitle.setText(item.get(Act005_Main.MENU_DESC));
 
-        int sum = ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGE)) +
-                ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGESO));
+        int badgeNum = ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGE));
+        int badge2Num = ToolBox_Inf.convertStringToInt(item.get(Act005_Main.MENU_BADGE2));
 
         //Se chave Badge tiver preenchida exibe no menu
-        if (sum > 0) {
+        if (badgeNum > 0) {
             tvBadge.setVisibility(View.VISIBLE);
-            String qty = String.valueOf(sum);
+            String qty = String.valueOf(badgeNum);
 
             if (qty.length() == 1) {
                 qty = " " + qty + " ";
@@ -84,6 +84,21 @@ public class Act005_Adapter extends BaseAdapter {
             tvBadge.setVisibility(View.GONE);
             tvBadge.setText(" ");
         }
+
+        //Se chave Badge2 tiver preenchida exibe no menu
+        if (badge2Num > 0) {
+            tvBadge2.setVisibility(View.VISIBLE);
+            String qty = String.valueOf(badge2Num);
+
+            if (qty.length() == 1) {
+                qty = " " + qty + " ";
+            }
+            tvBadge2.setText(qty);
+        } else {
+            tvBadge2.setVisibility(View.GONE);
+            tvBadge2.setText(" ");
+        }
+
 
 //        //Se chave Badge tiver preenchida exibe no menu
 //        if (item.get(Act005_Main.MENU_BADGE).length() > 0 && !item.get(Act005_Main.MENU_BADGE).equals("0")) {
@@ -100,11 +115,11 @@ public class Act005_Adapter extends BaseAdapter {
 //        }
 //
 //        //Se chave BadgeSO tiver preenchida exibe no menu
-//        if (item.get(Act005_Main.MENU_BADGESO).length() > 0 && !item.get(Act005_Main.MENU_BADGESO).equals("0")) {
+//        if (item.get(Act005_Main.MENU_BADGE2).length() > 0 && !item.get(Act005_Main.MENU_BADGE2).equals("0")) {
 //            tvBadgeSO.setVisibility(View.VISIBLE);
-//            String qty = item.get(Act005_Main.MENU_BADGESO);
+//            String qty = item.get(Act005_Main.MENU_BADGE2);
 //
-//            if (item.get(Act005_Main.MENU_BADGESO).length() == 1) {
+//            if (item.get(Act005_Main.MENU_BADGE2).length() == 1) {
 //                qty = " " + qty + " ";
 //            }
 //            tvBadgeSO.setText(qty);
