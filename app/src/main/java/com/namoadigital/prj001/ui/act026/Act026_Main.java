@@ -7,7 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -38,6 +41,9 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private String requesting_act;
     private String product_code;
     private String serial_id;
+    //
+    private TextView tv_filter_lbl;
+    private Switch sw_filter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +86,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         transList.add("progress_downloading_so_msg");
         transList.add("alert_no_so_founded_ttl");
         transList.add("alert_no_so_founded_msg");
+        transList.add("only_avaliable_filter_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -111,7 +118,13 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
         //
-        mPresenter.getSOList(product_code, serial_id);
+        tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
+        tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
+        //views.add(tv_filter_lbl);
+        //
+        sw_filter = (Switch) findViewById(R.id.act026_sw_filter);
+        //
+        mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
         //
         ToolBox_Inf.cleanUpApproval(
                 new SM_SODao(
@@ -175,8 +188,13 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
 
             }
         });
-
-
+        //
+        sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               mPresenter.getSOList(product_code,serial_id,isChecked);
+            }
+        });
     }
 
     @Override

@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.sql.SM_SO_Sql_011;
+import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -32,7 +32,7 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
     }
 
     @Override
-    public void getSOList(String product_code, String serial_id) {
+    public void getSOList(String product_code, String serial_id, boolean onlyAvaliables) {
 
 //        List<SM_SO> soList = soDao.query(
 //                    new SM_SO_Sql_003(
@@ -44,13 +44,21 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
 //        //
 //        int tam = soList.size();
         List<HMAux> soList = soDao.query_HM(
-                new SM_SO_Sql_011(
+                /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
+                */
+                new Sql_Act026_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        ToolBox_Con.getPreference_Zone_Code(context),
+                        product_code,
+                        serial_id,
+                        onlyAvaliables
+                ).toSqlQuery()
         );
-
         //
         mView.loadSOList(soList);
     }
