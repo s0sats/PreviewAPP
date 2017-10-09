@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act026_Main_Presenter {
 
-    void getSOList(String product_code, String serial_id);
+    void getSOList(String product_code, String serial_id, boolean onlyAvaliables);
 
     void defineForwardFlow(HMAux so);
 
