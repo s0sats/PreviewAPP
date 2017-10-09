@@ -972,9 +972,14 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(APPROVAL_REQUIRED, sm_so.getApproval_required());
             }
 
-            if (sm_so.getSync_required() > -1) {
-                contentValues.put(SYNC_REQUIRED, sm_so.getSync_required());
-            }
+            /**
+             * Atualizar somente via query update para evitar sobreposicao com o update S.O.
+             * Atualiza com 0 quando de uma S.O. Full e para um através do recebimento do GCM
+             */
+
+//            if (sm_so.getSync_required() > -1) {
+//                contentValues.put(SYNC_REQUIRED, sm_so.getSync_required());
+//            }
 
             if (sm_so.getLog_date() != null) {
                 contentValues.put(LOG_DATE, sm_so.getLog_date());

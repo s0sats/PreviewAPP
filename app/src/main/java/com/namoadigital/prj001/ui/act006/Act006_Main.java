@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -46,10 +49,13 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     public static final String NEW_OPT_LABEL = "new_opt_label";
 
     public static final String NEW_OPT_TP_PRODUCT = "new_opt_tp_product";
-    public static final String NEW_OPT_TP_SERIAL= "new_opt_tp_serial";
+    public static final String NEW_OPT_TP_SERIAL = "new_opt_tp_serial";
     public static final String NEW_OPT_TP_LOCATION = "new_opt_tp_location";
 
     private Act006_Main_Presenter mPresenter;
+
+    private MKEditTextNM mket_serial;
+    private ImageView iv_search_serial;
 
     private Button btn_new;
     private Button btn_pendencies;
@@ -117,11 +123,23 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
         );
 
+        mket_serial = (MKEditTextNM) findViewById(R.id.act006_mket_serial);
+        mket_serial.setHint(hmAux_Trans.get("mket_serial_hint"));
+        iv_search_serial = (ImageView) findViewById(R.id.act006_iv_search_serial);
+        iv_search_serial.setEnabled(false);
+
         btn_new = (Button) findViewById(R.id.act006_btn_new);
         btn_new.setText(hmAux_Trans.get("act006_lbl_new"));
 
         btn_pendencies = (Button) findViewById(R.id.act006_btn_pendencies);
         btn_pendencies.setText(hmAux_Trans.get("act006_lbl_checklist"));
+
+        //Add controles no array list.
+        controls_sta.add(mket_serial);
+
+
+
+        hideSoftKeyboard();
 
         mPresenter.getPendencies();
     }
@@ -168,7 +186,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     @Override
     public void setPendenciesQty(int qty) {
         pendencies_qty = qty;
-        String btn_text = btn_pendencies.getText().toString().trim() +" (" +pendencies_qty+")";
+        String btn_text = btn_pendencies.getText().toString().trim() + " (" + pendencies_qty + ")";
         btn_pendencies.setText(btn_text);
     }
 
@@ -188,7 +206,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             context.startActivity(mIntent);
 
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
@@ -230,8 +248,8 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Bundle bundle =  new Bundle();
-        bundle.putInt(Constant.ACT006,1);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.ACT006, 1);
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);
@@ -240,7 +258,7 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
     @Override
     public void callAct005(Context context) {
-        Intent mIntent =  new Intent(context, Act005_Main.class);
+        Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -274,14 +292,14 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
         lv_opt.setAdapter(
                 new SimpleAdapter(
-                context,
-                getNewOpts(),
-                //android.R.layout.simple_list_item_1,
-                R.layout.namoa_custom_cell_3,
-                from,
-                to
+                        context,
+                        getNewOpts(),
+                        //android.R.layout.simple_list_item_1,
+                        R.layout.namoa_custom_cell_3,
+                        from,
+                        to
                 )
-            );
+        );
 
         /**
          * Ini Action
@@ -306,19 +324,19 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     private List<HMAux> getNewOpts() {
         List<HMAux> opts = new ArrayList<>();
 
-        HMAux aux =  new HMAux();
+        HMAux aux = new HMAux();
         aux.put(NEW_OPT_ID, NEW_OPT_TP_PRODUCT);
-        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_product_lbl"));
+        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_product_lbl"));
         opts.add(aux);
 
         aux = new HMAux();
         aux.put(NEW_OPT_ID, NEW_OPT_TP_SERIAL);
-        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_serial_lbl"));
+        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_serial_lbl"));
         opts.add(aux);
 
         aux = new HMAux();
         aux.put(NEW_OPT_ID, NEW_OPT_TP_LOCATION);
-        aux.put(NEW_OPT_LABEL,hmAux_Trans.get("alert_new_opt_location_lbl"));
+        aux.put(NEW_OPT_LABEL, hmAux_Trans.get("alert_new_opt_location_lbl"));
         //opts.add(aux);
 
         return opts;
@@ -339,6 +357,10 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    private void hideSoftKeyboard() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
 
