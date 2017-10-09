@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -52,10 +51,13 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     public static final String NEW_OPT_TP_SERIAL = "new_opt_tp_serial";
     public static final String NEW_OPT_TP_LOCATION = "new_opt_tp_location";
 
+    public static final String WS_RETURN_STRING = "ws_return_string";
+
     private Act006_Main_Presenter mPresenter;
 
     private MKEditTextNM mket_serial;
     private ImageView iv_search_serial;
+    private View.OnClickListener searchListner;
 
     private Button btn_new;
     private Button btn_pendencies;
@@ -100,7 +102,13 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         transList.add("alert_new_opt_ttl");
         transList.add("alert_new_opt_product_lbl");
         transList.add("alert_new_opt_serial_lbl");
-        //transList.add("alert_new_opt_location_lbl");
+        transList.add("mket_serial_hint");
+        transList.add("alert_no_value_filled_ttl");
+        transList.add("alert_no_value_filled_msg");
+        transList.add("alert_no_serial_found_ttl");
+        transList.add("alert_no_serial_found_msg");
+        transList.add("dialog_serial_search_ttl");
+        transList.add("dialog_serial_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -119,7 +127,8 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                hmAux_Trans
 
         );
 
@@ -136,8 +145,6 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
 
         //Add controles no array list.
         controls_sta.add(mket_serial);
-
-
 
         hideSoftKeyboard();
 
@@ -181,6 +188,51 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
             }
         });
 
+        searchListner = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToolBox_Inf.hideSoftKeyboard(Act006_Main.this);
+                //
+                if (mket_serial.getText().toString().trim().length() > 0) {
+                    //Chama Ws que consulta Seriais
+                    mPresenter.executeSerialSearch(
+                            mket_serial.getText().toString().trim()
+                    );
+
+                } else {
+                    showMsg(hmAux_Trans.get("alert_no_value_filled_ttl"),
+                            hmAux_Trans.get("alert_no_value_filled_msg")
+                    );
+                }
+            }
+        };
+
+        //Interface acionando quando o usuário digita na caixa.
+        mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            //Metodo que retorna o text e true/false,sendo true existe valor e false "vazio"
+            @Override
+            public void reportTextChange(String text, boolean hasText) {
+                if (hasText) {
+                    iv_search_serial.setEnabled(hasText);
+                } else {
+                    iv_search_serial.setEnabled(hasText);
+                }
+            }
+        });
+        //Metodo acionando após a leitura do codigo de barra.Somente se existe valor
+        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                iv_search_serial.performClick();
+            }
+        });
+        //
+        iv_search_serial.setOnClickListener(searchListner);
     }
 
     @Override
@@ -190,49 +242,27 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         btn_pendencies.setText(btn_text);
     }
 
-    //Metodo que será chamado quando houver btn barcode.
-    private void callBarCode(HMAux item) {
-        try {
-            Intent mIntent = new Intent(
-                    context,
-                    Class.forName(
-                            "com.namoa_digital.namoa_library.view.BarCode_Activity"
-                    )
-            );
-
-            mIntent.putExtra(ConstantBase.B_C_O_N_ID, Integer.parseInt(item.get(HMAux.ID)));
-            mIntent.putExtra(ConstantBase.PREFERENCES_UI_TYPE, 4);
-
-            context.startActivity(mIntent);
-
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-        }
-    }
-
-
     @Override
-    protected void barCodeShortCut(int id, String value) {
-        super.barCodeShortCut(id, value);
-        //
-        /*Toast.makeText(
-                context,
-                String.valueOf(id) + " - " + value,
-                Toast.LENGTH_SHORT
-        ).show();        */
-    }
-
-    @Override
-    public void showMsg() {
+    public void showMsg(String title, String msg) {
 
         ToolBox.alertMSG(
                 Act006_Main.this,
-                hmAux_Trans.get("alert_no_pendencies_title"),
-                hmAux_Trans.get("alert_no_pendencies_msg"),
+                title,
+                msg,
                 null,
                 0
         );
 
+    }
+
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override
@@ -265,11 +295,23 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
     }
 
     @Override
-    public void callAct020(Context context) {
+    public void callAct020(Context context,Bundle bundle) {
         Intent mIntent = new Intent(context, Act020_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle != null){
+            mIntent.putExtras(bundle);
+        }
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    protected void processCloseACT(String result, String mRequired) {
+        super.processCloseACT(result, mRequired);
+        //
+        progressDialog.dismiss();
+        //
+        mPresenter.defineSearchResultFlow(result);
     }
 
     private void showNewOptDialog() {

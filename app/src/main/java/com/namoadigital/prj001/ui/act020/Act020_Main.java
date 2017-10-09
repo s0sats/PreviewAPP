@@ -47,7 +47,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public static final String PROGRESS_WS_SYNC = "progress_ws_sync";
     public static final String PROGRESS_NFC = "progress_nfc";
 
-   // private Context context;
+    // private Context context;
     private Act020_Main_Presenter mPresenter;
     private DrawerLayout mDrawerLayout;
     private FragmentManager fm;
@@ -61,6 +61,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private TextView tv_no_result;
     private Act020_Prod_Serial_Adapter mAdapter;
     private String ws_process;
+    private ArrayList<TProduct_Serial> serial_list = new ArrayList<>();
 
 
     @Override
@@ -135,6 +136,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void initVars() {
+
+        //MAIN_MD_PRODUCT_SERIAL
+        recoverIntentsInfo();
 
         mPresenter = new Act020_Main_Presenter_Impl(
                 context,
@@ -224,21 +228,21 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             @Override
             public void onIvSearchClick(String product_id, String serial, String tracking) {
                 ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
-                    if (product_id.trim().length() > 0
+                if (product_id.trim().length() > 0
                         || serial.trim().length() > 0
                         || tracking.trim().length() > 0
 
-                    ){
-                        mPresenter.executeSerialSearch(product_id, serial, tracking);
-                    } else {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_no_search_parameter_ttl"),
-                                hmAux_Trans.get("alert_no_search_parameter_msg"),
-                                null,
-                                0
-                        );
-                    }
+                        ) {
+                    mPresenter.executeSerialSearch(product_id, serial, tracking);
+                } else {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_search_parameter_ttl"),
+                            hmAux_Trans.get("alert_no_search_parameter_msg"),
+                            null,
+                            0
+                    );
+                }
             }
 
         });
@@ -246,6 +250,20 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         * Drawer setup end
         */
         hideSoftKeyboard();
+    }
+
+    private void recoverIntentsInfo() {
+        Bundle bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
+                serial_list = (ArrayList<TProduct_Serial>) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+            }
+//            if (bundle.containsKey(Constant.MAIN_SERIAL_TRACKING)) {
+//                tracking_searched = bundle.getString(Constant.MAIN_SERIAL_TRACKING, "");
+//            }
+        }
+
     }
 
     private void hideSoftKeyboard() {
@@ -272,12 +290,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void initActions() {
-        //Abre drawer ao carregar a tela
-        mDrawerLayout.openDrawer(GravityCompat.START);
-        //Sincroniza icone do hambuguer
-        mDrawerToggle.syncState();
         //
-
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -286,7 +299,27 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 mPresenter.defineFlow(productSerial);
             }
         });
-
+        //
+        if (serial_list != null && serial_list.size() != 0) {
+            fragFilters.setSerialIdText(serial_list.get(0).getSerial_id());
+            //
+            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + serial_list.size() + " " + hmAux_Trans.get("records_lbl"));
+            //
+            loadProductSerialList(serial_list);
+            //
+            if(serial_list.size() == 1){
+                lv_prod_serial_list.performItemClick(
+                        lv_prod_serial_list.getAdapter().getView(0, null, null),
+                        0,
+                        lv_prod_serial_list.getAdapter().getItemId(0)
+                );
+            }
+        } else {
+            //Abre drawer ao carregar a tela
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            //Sincroniza icone do hambuguer
+            mDrawerToggle.syncState();
+        }
 
     }
 
@@ -299,7 +332,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void showPD() {
         String title = "";
         String msg = "";
-        switch (ws_process){
+        switch (ws_process) {
 
             case PROGRESS_WS_SERIAL_SEARCH:
                 title = hmAux_Trans.get("progress_serial_search_ttl");
@@ -311,14 +344,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 msg = hmAux_Trans.get("progress_sync_msg");
                 break;
 
-            case PROGRESS_NFC:default:
+            case PROGRESS_NFC:
+            default:
                 title = hmAux_Trans.get("progress_nfc_ttl");
                 msg = hmAux_Trans.get("progress_nfc_msg");
                 break;
 
         }
 
-        if (progressDialog == null || !progressDialog.isShowing()){
+        if (progressDialog == null || !progressDialog.isShowing()) {
 
             enableProgressDialog(
                     title,
@@ -326,7 +360,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                     hmAux_Trans.get("sys_alert_btn_cancel"),
                     hmAux_Trans.get("sys_alert_btn_ok")
             );
-        }if(progressDialog != null && progressDialog.isShowing()){
+        }
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.setTitle(title);
             progressDialog.setMessage(msg);
         }
@@ -335,9 +370,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     @Override
     public void setRecordInfo(long record_size, long record_page) {
-        if(record_size > 0){
+        if (record_size > 0) {
             tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
-        }else{
+        } else {
             tv_records.setText(hmAux_Trans.get("no_record_found_lbl"));
 
         }
@@ -350,7 +385,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         tv_no_result.setVisibility(View.GONE);
         ll_records.setVisibility(View.GONE);
         //
-        mAdapter =  new Act020_Prod_Serial_Adapter(
+        mAdapter = new Act020_Prod_Serial_Adapter(
                 context,
                 R.layout.act020_cell,
                 prod_serial_list
@@ -375,7 +410,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_qty_records_exceeded_ttl"),
-                hmAux_Trans.get("alert_qty_records_exceeded_msg") +"\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
+                hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded"),
                 null,
                 0);
 
@@ -415,8 +450,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
-        if(!status){
-            if(progressDialog != null && progressDialog.isShowing()){
+        if (!status) {
+            if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
             ToolBox.alertMSG(
@@ -427,19 +462,19 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                     0
             );
 
-        }else{
+        } else {
             fragFilters.cleanFields();
             ToolBox_Inf.hideSoftKeyboard(Act020_Main.this);
             String product_id = "";
             //
-            switch (value[0]){
+            switch (value[0]) {
                 case PRODUCT:
                     product_id = mPresenter.searchProductInfo(value[2], "");
                     //
                     fragFilters.setNFCText(hmAux_Trans.get("drawer_product_lbl"));
                     fragFilters.setProductCodeText(value[2]);
                     fragFilters.setProductIdText(product_id);
-                    mPresenter.executeSerialSearch(product_id,"","");
+                    mPresenter.executeSerialSearch(product_id, "", "");
                     break;
                 case SERIAL:
                     product_id = mPresenter.searchProductInfo(value[2], "");
@@ -448,7 +483,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                     fragFilters.setProductCodeText(value[2]);
                     fragFilters.setProductIdText(product_id);
                     fragFilters.setSerialIdText(value[3]);
-                    mPresenter.executeSerialSearch(product_id,value[3],"");
+                    mPresenter.executeSerialSearch(product_id, value[3], "");
                     break;
 
                 default:
@@ -469,22 +504,24 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     protected void processCloseACT(String ws_retorno, String mRequired) {
         super.processCloseACT(ws_retorno, mRequired);
 
-        if(ws_process.equals(PROGRESS_WS_SYNC)){
+        if (ws_process.equals(PROGRESS_WS_SYNC)) {
             mPresenter.updateSyncChecklist();
             mPresenter.startDownloadServices();
             //
             progressDialog.dismiss();
             //
             mPresenter.prepareAct009();
-        }else{
-            mPresenter.getProductSerialList(ws_retorno);
+        } else {
             //
             progressDialog.dismiss();
+            //
+            mPresenter.getProductSerialList(ws_retorno);
             //
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
 
     }
+
     //Tratativa SESSION NOT FOUND
     @Override
     protected void processLogin() {
@@ -497,6 +534,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         finish();
 
     }
+
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
