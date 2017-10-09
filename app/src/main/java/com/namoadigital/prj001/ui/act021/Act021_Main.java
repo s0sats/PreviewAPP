@@ -17,14 +17,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.sql.SM_SO_Sql_019;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act023.Act023_Main;
@@ -50,6 +56,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     public static final String NEW_OPT_TP_SERIAL = "new_opt_tp_serial";
     public static final String NEW_OPT_TP_LOCATION = "new_opt_tp_location";
 
+    public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
+    public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
+    public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
+
     private Act021_Main_Presenter mPresenter;
     private Button btn_load;
     private Button btn_pendencies;
@@ -64,6 +74,15 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     private int search_pressed;
     private View.OnClickListener searchListner;
+
+    private String ws_process = "";
+    private ArrayList<HMAux> wsResults = new ArrayList<>();
+
+    private SM_SODao soDao;
+
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,16 +149,24 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
     private void initVars() {
 
+        soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
         mPresenter = new Act021_Main_Presenter_Impl(
                 context,
                 this,
-                new SM_SODao(
-                        context,
-                        ToolBox_Con.customDBPath(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        ),
-                        Constant.DB_VERSION_CUSTOM
-                ),
+                soDao,
+//                new SM_SODao(
+//                        context,
+//                        ToolBox_Con.customDBPath(
+//                                ToolBox_Con.getPreference_Customer_Code(context)
+//                        ),
+//                        Constant.DB_VERSION_CUSTOM
+//                ),
                 hmAux_Trans
         );
         //
@@ -274,15 +301,18 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             }
         });
 
-
         btn_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(
-                        context,
-                        "Implementar o Sync",
-                        Toast.LENGTH_LONG
-                ).show();
+
+                if (ToolBox_Con.isOnline(context)) {
+
+                    executeSoSave();
+
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
+                }
+
             }
         });
 
@@ -503,11 +533,12 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         progressDialog.dismiss();
     }
 
-    @Override
-    protected void processCustom_error(String mLink, String mRequired) {
-        super.processCustom_error(mLink, mRequired);
-        progressDialog.dismiss();
-    }
+//    @Override
+//    protected void processCustom_error(String mLink, String mRequired) {
+//        super.processCustom_error(mLink, mRequired);
+//
+//        progressDialog.dismiss();
+//    }
 
 
     @Override
@@ -603,4 +634,281 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
     }
+
+    /**
+     * Processamento do Botão Sync
+     */
+
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+        if (ws_process.equals(WS_PROCESS_SO_SAVE)) {
+
+            setWs_process("");
+            processSoSave(hmAux);
+
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
+
+            setWs_process("");
+            processSoApproval(hmAux);
+
+        } else if (ws_process.equals(WS_PROCESS_SO_SYNC)) {
+
+            setWs_process("");
+            processSoDownloadResult(hmAux);
+
+        } else {
+            progressDialog.dismiss();
+        }
+
+    }
+
+    private void processSoSave(HMAux hmAux) {
+        String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+        if (so.length > 0 && !so[0].isEmpty()) {
+            for (int i = 0; i < so.length; i++) {
+                String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
+                //
+                HMAux mHmAux = new HMAux();
+                mHmAux.put("label", "" + fields[0]);
+                mHmAux.put("status", fields[1]);
+                mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                //
+                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    wsResults.add(mHmAux);
+                }
+            }
+        } else {
+        }
+
+        executeSoSaveApproval();
+    }
+
+    private void processSoApproval(HMAux hmAux) {
+        String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+
+        if (approval.length > 0 && !approval[0].isEmpty()) {
+            for (int i = 0; i < approval.length; i++) {
+                String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                //
+                HMAux mHmAux = new HMAux();
+                mHmAux.put("label", fields[0]);
+                mHmAux.put("status", fields[1]);
+                mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+                //
+                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    wsResults.add(mHmAux);
+                }
+            }
+        } else {
+        }
+
+        executeSoSync();
+    }
+
+    private void processSoDownloadResult(HMAux hmAux) {
+
+        progressDialog.dismiss();
+
+        ToolBox.alertMSG(
+                Act021_Main.this,
+                "Syncronismo",
+                "Syncronismo realizado com Sucesso!!!",
+                null,
+                0
+        );
+
+//        String sync[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+//
+//        if (sync.length > 0 && !sync[0].isEmpty()) {
+//            for (int i = 0; i < sync.length; i++) {
+//                String fields[] = sync[i].split(Constant.MAIN_CONCAT_STRING_2);
+//                //
+//                HMAux mHmAux = new HMAux();
+//                mHmAux.put("label", fields[0]);
+//                mHmAux.put("status", fields[1]);
+//                mHmAux.put("final_status", fields[0] + " / " + fields[1]);
+//                //
+//                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+//                    wsResults.add(mHmAux);
+//                }
+//            }
+//        } else {
+//        }
+//
+//        if (wsResults.size() > 1) {
+//            showResults(wsResults);
+//        } else {
+//            showSuccessDialog();
+//        }
+
+        mPresenter.getSync();
+    }
+
+    public void showResults(List<HMAux> res) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        lv_results.setAdapter(
+                new Act028_Results_Adapter(
+                        context,
+                        R.layout.act028_results_adapter_cell,
+                        res
+                )
+        );
+
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    private void showSuccessDialog() {
+        ToolBox.alertMSG(
+                Act021_Main.this,
+                hmAux_Trans.get("alert_sync_finish_ttl"),
+                hmAux_Trans.get("alert_sync_finish_msg"),
+                null,
+                0
+        );
+    }
+
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        progressDialog.dismiss();
+    }
+
+    private void setRes(String label, String status, String final_status) {
+        HMAux res = new HMAux();
+
+        res.put("label", label);
+        res.put("status", status);
+        res.put("final_status", final_status);
+
+        wsResults.add(res);
+    }
+
+    public void executeSoSave() {
+        setWs_process(WS_PROCESS_SO_SAVE);
+        //
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        //
+//        enableProgressDialog(
+//                hmAux_Trans.get("progress_so_save_ttl"),
+//                hmAux_Trans.get("progress_so_save_msg"),
+//                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                hmAux_Trans.get("sys_alert_btn_ok")
+//        );
+        enableProgressDialog(
+                "So Save",
+                "Processando So Save",
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    public void executeSoSaveApproval() {
+        setWs_process(WS_PROCESS_SO_SAVE_APPROVAL);
+        //
+        if (progressDialog != null && progressDialog.isShowing()) {
+//            progressDialog.setTitle(hmAux_Trans.get("progress_so_save_ttl"));
+//            progressDialog.setMessage(hmAux_Trans.get("progress_so_save_msg"));
+            progressDialog.setTitle("So Approval");
+            progressDialog.setMessage("Processando So Approval");
+
+        }
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Approval.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    public void executeSoSync() {
+        setWs_process(WS_PROCESS_SO_SYNC);
+        //
+        if (progressDialog != null && progressDialog.isShowing()) {
+//            progressDialog.setTitle(hmAux_Trans.get("progress_so_sync_ttl"));
+//            progressDialog.setMessage(hmAux_Trans.get("progress_so_sync_msg"));
+            progressDialog.setTitle("So Sync");
+            progressDialog.setMessage("Processando So Sync");
+        }
+        //
+        ArrayList<HMAux> sos = (ArrayList<HMAux>) soDao.query_HM(
+                new SM_SO_Sql_019(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+
+                ).toSqlQuery()
+        );
+        //
+        StringBuilder mSos = new StringBuilder();
+        boolean mFirst = true;
+
+        for (HMAux aux : sos) {
+            if (mFirst) {
+                mFirst = false;
+            } else {
+                mSos.append(aux.get("|"));
+            }
+            //
+            mSos.append(aux.get("so"));
+        }
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, mSos.toString());
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+
 }
