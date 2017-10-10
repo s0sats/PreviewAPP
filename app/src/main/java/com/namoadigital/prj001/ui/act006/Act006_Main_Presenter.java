@@ -16,4 +16,9 @@ public interface Act006_Main_Presenter {
 
     void defineFlow(HMAux item);
 
+    void executeSerialSearch(String serial_id);
+
+    void defineSearchResultFlow(String result);
+
+
 }

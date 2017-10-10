@@ -16,6 +16,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Seleciona todas S.O em que o usr pode ter alguma ação, incluindo
  * o status offine WAITING_SYNC.
  * "Filtro Minhas Pendencias"
+ * A query "base" dessa é Sql_Act027_002, porem sem os campos que calculam
+ * qual icone e qual ação existe naquela service.
  */
 
 public class Sql_Act026_001 implements Specification {

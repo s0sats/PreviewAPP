@@ -41,6 +41,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
+import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
@@ -151,6 +152,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 HMAux Aux = new HMAux();
                 String qty = "";
                 String qtySO = "";
+                String qtyBadge2 = "";
 
                 Aux.put(Act005_Main.MENU_ID, menuId[i]);
                 Aux.put(Act005_Main.MENU_ICON, icon[i]);
@@ -159,16 +161,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 switch (menuId[i]) {
 
                     case Act005_Main.MENU_ID_SERVICE:
-                        qty = "0";
 
-                        qtySO = soDao.getByStringHM(
+                        qty = soDao.getByStringHM(
                                 new Sql_Act021_004(
                                         ToolBox_Con.getPreference_Customer_Code(context)
                                 ).toSqlQuery()
                         ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_PENDING_DATA:
@@ -184,9 +184,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                        //Soma Qtd de n-form e n_service
+                        qty = String.valueOf(Integer.parseInt(qty) +  Integer.parseInt(qtySO));
+                        //
+                        qtyBadge2 = soDao.getByStringHM(
+                                new Sql_Act005_004(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        ToolBox_Con.getPreference_Site_Code(context),
+                                        ToolBox_Con.getPreference_Zone_Code(context)
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
+                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
                         break;
 
                     case Act005_Main.MENU_ID_SEND_DATA:
@@ -201,13 +211,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         ToolBox_Con.getPreference_Customer_Code(context)
                                 ).toSqlQuery()
                         ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
-
-                        int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
-
-                        qtySO = String.valueOf(iqtySO);
+                        //int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
+                        //qtySO = String.valueOf(iqtySO);
+                        //Soma Qtd de n-form e n_service
+                        qty = String.valueOf(Integer.parseInt(qty) +  Integer.parseInt(qtySO) + isSoWithinTokenFile());
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
@@ -218,7 +227,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
                         break;
 
                     case Act005_Main.MENU_ID_MESSAGES:
@@ -227,11 +235,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
 
                     default:
                         Aux.put(Act005_Main.MENU_BADGE, qty);
-                        Aux.put(Act005_Main.MENU_BADGESO, qtySO);
+                        Aux.put(Act005_Main.MENU_BADGE2, qtySO);
                         break;
                 }
 

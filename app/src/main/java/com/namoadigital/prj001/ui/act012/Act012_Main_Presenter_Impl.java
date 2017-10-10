@@ -5,6 +5,7 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.sql.Sql_Act012_002;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
@@ -14,6 +15,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.sql.Sql_Act005_004.QTD_MY_PENDING_SO;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -47,12 +50,29 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
         pendencies.addAll(NFormPendencies);
 
         if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            //Seleciona "pendencias do usr"
+            HMAux soMyPendencies = soDao.getByStringHM(
+                    new Sql_Act005_004(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context)
+                    ).toSqlQuery()
+            );
+
             List<HMAux> SOPendencies = soDao.query_HM(
                     new Sql_Act012_002(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             label_translation
                     ).toSqlQuery()
             );
+            //Se MyPendencies Existe, adiciona no pendentes
+            if(soMyPendencies != null &&
+                soMyPendencies.get(QTD_MY_PENDING_SO) != null &&
+                !soMyPendencies.get(QTD_MY_PENDING_SO).equals("0")
+            ){
+                String newPendencies = soMyPendencies.get(QTD_MY_PENDING_SO) + "/"+SOPendencies.get(0).get(Sql_Act012_002.PENDING_QTY);
+                SOPendencies.get(0).put(Sql_Act012_002.PENDING_QTY,newPendencies);
+            }
             //
             pendencies.addAll(SOPendencies);
         }
