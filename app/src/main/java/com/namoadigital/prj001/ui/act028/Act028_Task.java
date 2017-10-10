@@ -107,6 +107,9 @@ public class Act028_Task extends BaseFragment {
     //private TextView tv_qty_people_lbl;
     private MKEditTextNM mk_qty_people;
 
+    private TextView tv_nick;
+    private TextView tv_date;
+
     private String mErrorMSG;
 
     // Data
@@ -408,6 +411,8 @@ public class Act028_Task extends BaseFragment {
         //tv_qty_people_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_qty_people_lbl);
         mk_qty_people = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_qty_people);
 
+        tv_nick = (TextView) view.findViewById(R.id.act028_task_content_tv_nick);
+        tv_date = (TextView) view.findViewById(R.id.act028_task_content_tv_date);
 
         controls_iv.add(iv_gallery);
         controls_sta.add(mk_comments);
@@ -521,6 +526,9 @@ public class Act028_Task extends BaseFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                tv_nick.setText(mTask.getTask_user_nick());
+                tv_date.setText(mk_end_date.getText().toString().trim().length() != 0 ? mk_end_date.getText().toString().trim() : mk_start_date.getText().toString().trim());
 
                 upImgGallery();
 
