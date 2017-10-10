@@ -1,11 +1,14 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -141,6 +144,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     //
     private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
+    private FCMReceiver fcmReceiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,7 +163,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
+        //
+        fcmReceiver = new FCMReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.WS_FCM);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+    }
 
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        super.onDestroy();
     }
 
     public String sDTFormat_30_Days(String sDTFormatS) {
@@ -1355,5 +1371,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         ToolBox_Con.cleanPreferences(context);
 
         finish();
+    }
+
+    private class FCMReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mPresenter.getMenuItens(hmAux_Trans);
+        }
     }
 }

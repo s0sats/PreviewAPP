@@ -363,4 +363,8 @@ public class ConstantBaseApp extends ConstantBase {
 
 
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+
+    public static final String WS_FCM = "WS_FCM";
+
+
 }

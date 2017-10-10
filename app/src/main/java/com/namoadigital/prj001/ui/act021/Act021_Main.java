@@ -136,6 +136,15 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("alert_no_value_filled_msg");
         transList.add("alert_no_serial_found_ttl");
         transList.add("alert_no_serial_found_msg");
+        transList.add("alert_sync_success_ttl");
+        transList.add("alert_sync_success_msg");
+        transList.add("progress_so_save_approval_ttl");
+        transList.add("progress_so_save_approval_msg");
+        transList.add("progress_so_sync_ttl");
+        transList.add("progress_so_sync_msg");
+        transList.add("progress_so_save_ttl");
+        transList.add("progress_so_save_msg");
+        transList.add("alert_results_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -715,8 +724,8 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
         ToolBox.alertMSG(
                 Act021_Main.this,
-                "Syncronismo",
-                "Syncronismo realizado com Sucesso!!!",
+                hmAux_Trans.get("alert_sync_success_ttl"),
+                hmAux_Trans.get("alert_sync_success_msg"),
                 null,
                 0
         );
@@ -830,18 +839,18 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             progressDialog.dismiss();
         }
         //
-//        enableProgressDialog(
-//                hmAux_Trans.get("progress_so_save_ttl"),
-//                hmAux_Trans.get("progress_so_save_msg"),
-//                hmAux_Trans.get("sys_alert_btn_cancel"),
-//                hmAux_Trans.get("sys_alert_btn_ok")
-//        );
         enableProgressDialog(
-                "So Save",
-                "Processando So Save",
+                hmAux_Trans.get("progress_so_save_ttl"),
+                hmAux_Trans.get("progress_so_save_msg"),
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
+//        enableProgressDialog(
+//                "So Save",
+//                "Processando So Save",
+//                hmAux_Trans.get("sys_alert_btn_cancel"),
+//                hmAux_Trans.get("sys_alert_btn_ok")
+//        );
         //
         Intent mIntent = new Intent(context, WBR_SO_Save.class);
         Bundle bundle = new Bundle();
@@ -856,10 +865,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         setWs_process(WS_PROCESS_SO_SAVE_APPROVAL);
         //
         if (progressDialog != null && progressDialog.isShowing()) {
-//            progressDialog.setTitle(hmAux_Trans.get("progress_so_save_ttl"));
-//            progressDialog.setMessage(hmAux_Trans.get("progress_so_save_msg"));
-            progressDialog.setTitle("So Approval");
-            progressDialog.setMessage("Processando So Approval");
+            progressDialog.setTitle(hmAux_Trans.get("progress_so_save_approval_ttl"));
+            progressDialog.setMessage(hmAux_Trans.get("progress_so_save_approval_msg"));
+//            progressDialog.setTitle("So Approval");
+//            progressDialog.setMessage("Processando So Approval");
 
         }
         //
@@ -875,10 +884,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         setWs_process(WS_PROCESS_SO_SYNC);
         //
         if (progressDialog != null && progressDialog.isShowing()) {
-//            progressDialog.setTitle(hmAux_Trans.get("progress_so_sync_ttl"));
-//            progressDialog.setMessage(hmAux_Trans.get("progress_so_sync_msg"));
-            progressDialog.setTitle("So Sync");
-            progressDialog.setMessage("Processando So Sync");
+            progressDialog.setTitle(hmAux_Trans.get("progress_so_sync_ttl"));
+            progressDialog.setMessage(hmAux_Trans.get("progress_so_sync_msg"));
+//            progressDialog.setTitle("So Sync");
+//            progressDialog.setMessage("Processando So Sync");
         }
         //
         ArrayList<HMAux> sos = (ArrayList<HMAux>) soDao.query_HM(

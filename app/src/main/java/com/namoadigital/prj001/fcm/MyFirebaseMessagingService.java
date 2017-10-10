@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -161,7 +162,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String error_r = e.toString();
 
         }
+
+        sendFCMStatus();
     }
+
+    private void sendFCMStatus() {
+        Intent mIntent = new Intent();
+        mIntent.setAction(Constant.WS_FCM);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        //
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
+    }
+
 
     private void makeNF(Context context, String title, String message, long fcmmessage_code, int fcmmessage_qty) {
         NotificationManager nm = (NotificationManager)
