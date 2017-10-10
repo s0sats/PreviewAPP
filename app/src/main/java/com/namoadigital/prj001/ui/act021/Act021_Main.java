@@ -904,7 +904,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             if (mFirst) {
                 mFirst = false;
             } else {
-                mSos.append(aux.get("|"));
+                mSos.append("|");
             }
             //
             mSos.append(aux.get("so"));
