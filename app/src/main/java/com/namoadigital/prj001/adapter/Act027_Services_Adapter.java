@@ -114,6 +114,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
         ImageView iv_express = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_express);
         ImageView iv_normal = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_btn_normal);
         ImageView iv_flag = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_flag);
+        ImageView iv_plus = (ImageView) convertView.findViewById(R.id.act027_services_content_cell_iv_plus);
+        TextView tv_express_badge = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_badge);
 
         TextView tv_pack_lbl = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_lbl);
         TextView tv_pack_val = (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_pack_val);
@@ -225,16 +227,16 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
                 if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)){
                     ll_express.setVisibility(View.VISIBLE);
-                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_ns_states));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_ns_states));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
                 }else if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)){
                     ll_express.setVisibility(View.VISIBLE);
-                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_pencil_circle_black_24dp));
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_finaliza_play_ns_states));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_finaliza_play_ns_states));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_laranja_ns_states));
                 }else{
                     //ll_express.setVisibility(View.GONE);
                     ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_azul_ns_states));
                 }
             }
         }else{
@@ -243,13 +245,30 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 ll_express.setVisibility(View.VISIBLE);
                 iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
             }else{
-                //ll_express.setVisibility(View.GONE);
-                ll_express.setVisibility(View.INVISIBLE);
-                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+               // ll_express.setVisibility(View.INVISIBLE);
+                // iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+                ll_express.setVisibility(View.VISIBLE);
+                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_verde_ns_states));
             }
 
         }
+        //Add Badge
+        if(ToolBox_Inf.convertStringToInt(item.get(SM_SO_ServiceDao.QTY)) > 1 ){
+            String qty = item.get(SM_SO_ServiceDao.QTY);
+            if (item.get(SM_SO_ServiceDao.QTY).length() == 1) {
+                qty = " " + qty + " ";
+            }
+            tv_express_badge.setVisibility(View.GONE);
+            tv_express_badge.setText(qty);
+            //
+            iv_plus.setVisibility(View.VISIBLE);
 
+        }else{
+            tv_express_badge.setVisibility(View.GONE);
+            tv_express_badge.setText("");
+            iv_plus.setVisibility(View.GONE);
+        }
+        //
         iv_express.setTag(item);
         iv_express.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -73,7 +73,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="7dp"
-            android:src="@drawable/ic_lupa_states"/>
+            android:src="@drawable/ic_adicionar_states"/>
 
     </LinearLayout>
 
