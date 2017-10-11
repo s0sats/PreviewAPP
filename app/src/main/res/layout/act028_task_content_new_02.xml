@@ -467,17 +467,18 @@
                         android:layout_weight="1"
                         android:text="Nick"
                         android:textSize="@dimen/font_size_item_md"
-                        android:textStyle="bold" />
+                        android:textColor="@color/lib_custom_cell_font_color"/>
 
                     <TextView
                         android:id="@+id/act028_task_content_tv_date"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="right"
                         android:text="01/01/2018"
                         android:textSize="@dimen/font_size_item_md"
-                        android:textStyle="bold" />
+                        android:textColor="@color/lib_custom_cell_font_color"
+                        />
 
 
                 </LinearLayout>
