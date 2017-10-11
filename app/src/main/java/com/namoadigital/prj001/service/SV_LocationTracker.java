@@ -31,7 +31,8 @@ public class SV_LocationTracker extends Service {
     public static String msg_ok = "";
 
     // 1 minutos
-    private static int PROGRESS_TIME_OUT = 1 * 60 * 1000;
+    //private static int PROGRESS_TIME_OUT = 1 * 60 * 1000;
+    private static int PROGRESS_TIME_OUT = 1 * 30 * 1000;
 
     public static boolean status;
 

@@ -58,6 +58,17 @@
         </LinearLayout>
 
         <TextView
+            android:layout_marginTop="30dp"
+            android:id="@+id/act027_approval_content_tv_so_approval_type_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:textSize="@dimen/font_size_title_md"
+            android:text="Aprovação Final"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/act027_approval_content_tv_name_lbl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,7 +81,96 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="N.Hugo Android"
+            android:textSize="@dimen/font_size_item_md"
             app:mBARCODE="false" />
+
+        <TextView
+            android:id="@+id/act027_approval_content_tv_name_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="N.Hugo Android"
+            android:layout_marginStart="5dp"
+            android:padding="2dp"
+            android:textColor="@color/lib_custom_cell_font_color" />
+
+        <LinearLayout
+            android:id="@+id/act027_approval_content_ll_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--<TextView-->
+                <!--android:id="@+id/act027_approval_content_tv_client_type_lbl"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:text="Client Type"-->
+                <!--android:textStyle="bold" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+                <!--android:id="@+id/act027_approval_content_mk_client_type_value"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:enabled="false"-->
+                <!--android:text="User"-->
+                <!--app:mBARCODE="false" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/act027_approval_content_tv_client_approval_user_lbl"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:text="Client Approval User"-->
+                <!--android:textStyle="bold" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+                <!--android:id="@+id/act027_approval_content_mk_client_approval_user_value"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:enabled="false"-->
+                <!--android:text="User"-->
+                <!--app:mBARCODE="false" />-->
+
+            <TextView
+                android:id="@+id/act027_approval_content_tv_client_approval_user_nick_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Client Approval User Nick"
+                android:padding="2dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act027_approval_content_tv_client_approval_user_nick_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Nick"
+                android:layout_marginStart="5dp"
+                android:padding="2dp"
+                android:textColor="@color/lib_custom_cell_font_color" />
+
+            <TextView
+                android:id="@+id/act027_approval_content_tv_client_approval_date_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Client Approval Date"
+                android:padding="2dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act027_approval_content_tv_client_approval_date_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Date"
+                android:layout_marginStart="5dp"
+                android:padding="2dp"
+                android:textColor="@color/lib_custom_cell_font_color" />
+
+        </LinearLayout>
 
         <RadioGroup
             android:id="@+id/act027_approval_content_rg_opc"

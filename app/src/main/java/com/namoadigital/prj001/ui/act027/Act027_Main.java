@@ -190,7 +190,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("dialog_user_author_pwd_lbl");
         transList.add("dialog_user_author_btn");
 
-
+        transList.add("so_client_approval_type_lbl");
+        transList.add("client_approval_user_nick_lbl");
+        transList.add("client_approval_date_lbl");
 
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
