@@ -212,12 +212,13 @@ public class Act027_Services_Adapter extends BaseAdapter {
             if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
                 if(item.get(Sql_Act027_002.YES_NO_ICON).equals("1")){
                     ll_express.setVisibility(View.VISIBLE);
-                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_check_circle));
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_azul_ns_states));
                 }else{
                     //ll_express.setVisibility(View.GONE);
                     ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_azul_ns_states));
                 }
 
             }else{
@@ -237,9 +238,16 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 }
             }
         }else{
-            //ll_express.setVisibility(View.GONE);
-            ll_express.setVisibility(View.INVISIBLE);
-            iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+
+            if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
+                ll_express.setVisibility(View.VISIBLE);
+                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
+            }else{
+                //ll_express.setVisibility(View.GONE);
+                ll_express.setVisibility(View.INVISIBLE);
+                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+            }
+
         }
 
         iv_express.setTag(item);
