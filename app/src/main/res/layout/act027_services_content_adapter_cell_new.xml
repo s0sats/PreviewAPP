@@ -278,57 +278,64 @@
             android:layout_width="5dp"
             android:layout_height="match_parent" />
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/act027_services_content_cell_ll_express"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:padding="2dp"
-                android:layout_marginTop="5dp">
+                android:clickable="false"
+                android:focusable="false">
+
+                <LinearLayout
+                    android:id="@+id/act027_services_content_cell_ll_express"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:focusable="false"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/act027_services_content_cell_iv_express"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="end"
+                        android:focusable="false"
+                        android:src="@drawable/ic_escolher_ns_states" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/badge"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="3dp"
+                    android:text="22"
+                    android:textColor="@color/padrao_WHITE"
+                    android:textSize="10sp"
+                    android:visibility="gone" />
 
                 <ImageView
-                    android:id="@+id/act027_services_content_cell_iv_express"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="end"
-                    android:focusable="false"
-                    android:src="@drawable/ic_escolher_ns_states"
-                    />
+                    android:id="@+id/act027_services_content_cell_iv_plus"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/badge_sqn"
+                    android:src="@drawable/ic_namoa_plus" />
 
-            </LinearLayout>
+            </FrameLayout>
 
-            <TextView
-                android:id="@+id/act027_services_content_cell_tv_badge"
-                android:paddingBottom="3dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:background="@drawable/badge"
-                android:text="22"
-                android:textSize="10sp"
-                android:textColor="@color/padrao_WHITE"
-                android:visibility="gone"
-                />
-            <ImageView
-                android:id="@+id/act027_services_content_cell_iv_plus"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_plus_circle_outline_24px"
-                android:layout_gravity="top|end"
-                android:tint="@color/namoa_dark_blue"
-                android:background="@drawable/badge_sqn"
-
-                />
-
-        </FrameLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

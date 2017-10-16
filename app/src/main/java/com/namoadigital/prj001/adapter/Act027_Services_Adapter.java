@@ -253,7 +253,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         }
         //Add Badge
-        if(ToolBox_Inf.convertStringToInt(item.get(SM_SO_ServiceDao.QTY)) > 1 ){
+        if(ToolBox_Inf.convertStringToInt(item.get(SM_SO_ServiceDao.QTY)) > 1
+                && item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_START_STOP) ){
             String qty = item.get(SM_SO_ServiceDao.QTY);
             if (item.get(SM_SO_ServiceDao.QTY).length() == 1) {
                 qty = " " + qty + " ";

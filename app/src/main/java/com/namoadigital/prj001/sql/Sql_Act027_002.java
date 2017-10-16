@@ -22,6 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class Sql_Act027_002 implements Specification {
     public static final String YES_NO_ICON = "YES_NO_ICON";
     public static final String START_STOP_ICON = "START_STOP_ICON";
+    public static final String START_STOP_ACTION = "START_STOP_ACTION";
     public static final String QTY_DONE = "QTY_DONE";
     public static final String SET_FLAG = "SET_FLAG";
     public static final String PARTNER_RESTRICTION = "PARTNER_RESTRICTION";
@@ -68,21 +69,21 @@ public class Sql_Act027_002 implements Specification {
                                 "       ELSE\n" +
                                 "        0\n" +
                                 "       END  "+YES_NO_ICON+",\n" +
-//                        "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_START_STOP+"' AND TTT.qty = 1 AND TTT.PARTNER_RESTRICTION IN (-1,1) \n" +
-//                        "       THEN\n" +
-//                        "          CASE WHEN TTT.LAST_STATUS in ('"+Constant.SO_STATUS_DONE+"','NOT_EXIST') \n" +
-//                        "               THEN \n" +
-//                        "                 '"+ACTION_PLAY+"' \n" +
-//                        "               WHEN TTT.LAST_STATUS ='NONE'  \n" +
-//                        "               THEN\n" +
-//                        "                 '"+ACTION_NONE+"'\n" +
-//                        "               ELSE \n" +
-//                        "                 '"+ACTION_STOP+"' \n" +
-//                        "               END \n" +
-//                        "            \n" +
-//                        "       ELSE\n" +
-//                        "        '"+ACTION_NONE+"'\n" +
-//                        "       END  "+START_STOP_ICON+",\n" +
+                                "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_START_STOP+"' AND TTT.qty = 1 AND TTT.PARTNER_RESTRICTION IN (-1,1) \n" +
+                                "       THEN\n" +
+                                "          CASE WHEN TTT.LAST_STATUS in ('"+Constant.SO_STATUS_DONE+"','NOT_EXIST') \n" +
+                                "               THEN \n" +
+                                "                 '"+ACTION_PLAY+"' \n" +
+                                "               WHEN TTT.LAST_STATUS ='NONE'  \n" +
+                                "               THEN\n" +
+                                "                 '"+ACTION_NONE+"'\n" +
+                                "               ELSE \n" +
+                                "                 '"+ACTION_STOP+"' \n" +
+                                "               END \n" +
+                                "            \n" +
+                                "       ELSE\n" +
+                                "        '"+ACTION_NONE+"'\n" +
+                                "       END  "+START_STOP_ACTION+",\n" +
                                 "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_START_STOP+"' AND TTT.PARTNER_RESTRICTION IN (-1,1) \n" +
                                 "       THEN\n" +
                                 "          CASE WHEN TTT.qty = 1 THEN\n" +
@@ -386,7 +387,7 @@ public class Sql_Act027_002 implements Specification {
                         .append(only_avaliable_where)
                         .append(";")
                         .append(SM_SO_PackDao.PRICE_LIST_ID+"#"+ SM_SO_PackDao.PRICE_LIST_DESC+"#"+SM_SO_PackDao.PACK_ID+"#"+SM_SO_PackDao.PACK_DESC+"#"+
-                                HmAuxFields+"#"+YES_NO_ICON+"#"+START_STOP_ICON+"#"+SET_FLAG+"#"+QTY_DONE+"#"+PARTNER_RESTRICTION+"#"+SO_STATUS
+                                HmAuxFields+"#"+YES_NO_ICON+"#"+START_STOP_ACTION+"#"+START_STOP_ICON+"#"+SET_FLAG+"#"+QTY_DONE+"#"+PARTNER_RESTRICTION+"#"+SO_STATUS
                         )
                         .toString();
     }
