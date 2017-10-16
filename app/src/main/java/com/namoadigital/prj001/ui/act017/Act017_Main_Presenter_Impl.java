@@ -96,6 +96,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         if(hasSerial){
             mView.callAct011(context,bundle);
+        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SCHEDULED)){
+            mView.callAct011(context,bundle);
         }else{
             mView.callAct008(context,bundle);
         }

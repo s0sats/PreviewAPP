@@ -65,7 +65,7 @@ public class Act027_Services extends BaseFragment {
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
     private SM_SO mSm_so;
     private HMAux partnerAux = new HMAux();
-    private String lastServiceUpdated = "1|2017|122|17|3|1|6|17|1";
+    private String lastServiceUpdated = "";
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -228,7 +228,7 @@ public class Act027_Services extends BaseFragment {
                 //Confuso ?! kkkk Senta e chora
                 if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
                         sData.get(Sql_Act027_002.YES_NO_ICON).equals("0") &&
-                        sData.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_NONE)
+                        sData.get(Sql_Act027_002.START_STOP_ACTION).equals(Sql_Act027_002.ACTION_NONE)
                 ) {
                     selection_type = Act027_Main.SELECTION_NORMAL;
                 }
@@ -272,7 +272,7 @@ public class Act027_Services extends BaseFragment {
 
         if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_START_STOP)) {
 
-            if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)) {
+            if (item.get(Sql_Act027_002.START_STOP_ACTION).equals(Sql_Act027_002.ACTION_PLAY)) {
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_start_task_confirm_ttl"),
@@ -351,6 +351,18 @@ public class Act027_Services extends BaseFragment {
     }
 
     private void createExecTask(HMAux item) {
+        //Seta pk do serviço para q a lista seja recarregada no Serviço clicado
+        lastServiceUpdated =
+                item.get(SM_SO_ServiceDao.CUSTOMER_CODE)+"|"+
+                item.get(SM_SO_ServiceDao.SO_PREFIX)+"|"+
+                item.get(SM_SO_ServiceDao.SO_CODE)+"|"+
+                item.get(SM_SO_ServiceDao.PRICE_LIST_CODE)+"|"+
+                item.get(SM_SO_ServiceDao.PACK_CODE)+"|"+
+                item.get(SM_SO_ServiceDao.PACK_SEQ)+"|"+
+                item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE)+"|"+
+                item.get(SM_SO_ServiceDao.SERVICE_CODE)+"|"+
+                item.get(SM_SO_ServiceDao.SERVICE_SEQ);
+        //
         //Monta o obj serviço
         SM_SO_Service sm_so_service = sm_so_serviceDao.getByString(
                 new SM_SO_Service_Sql_001(

@@ -43,7 +43,11 @@ public class Sql_Act017_001 implements Specification {
                         "  l.custom_product_id,\n" +
                         "  l.custom_form_data,\n" +
                         "  l.custom_form_status,\n" +
-                        "  l.serial_id,\n" +
+                        //"  l.serial_id,\n" +
+                        "  CASE WHEN LENGTH(l.serial_id) <> 0 \n" +
+                        "       THEN L.serial_id\n" +
+                        "       ELSE d.serial_id\n" +
+                        "  END  serial_id,\n" +
                         "  l.custom_form_data_serv,\n" +
                         "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
                         "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +

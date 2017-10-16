@@ -80,19 +80,18 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:padding="2dp"
-            android:gravity="center">
+            android:padding="2dp">
 
             <ImageView
                 android:id="@+id/act027_services_content_cell_btn_normal"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:focusable="false"
-                android:src="@drawable/ic_pontos_ns_states"
-                android:layout_gravity="center"
-                />
+                android:src="@drawable/ic_pontos_ns_states" />
         </LinearLayout>
 
 
@@ -188,10 +187,9 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:orientation="vertical"
             android:layout_gravity="center_vertical"
-            >
+            android:layout_weight="5"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/act027_services_content_cell_ll_pack"
@@ -204,11 +202,12 @@
                     android:id="@+id/act027_services_content_cell_tv_pack_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="Pack"
                     android:textSize="@dimen/font_size_item_md"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp"/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/act027_services_content_cell_tv_pack_val"
                     android:layout_width="0dp"
@@ -230,11 +229,11 @@
                     android:id="@+id/act027_services_content_cell_tv_zone_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="Zone"
                     android:textSize="@dimen/font_size_item_md"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/act027_services_content_cell_tv_zone_val"
@@ -257,11 +256,12 @@
                     android:id="@+id/act027_services_content_cell_tv_partner_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="Partner"
                     android:textSize="@dimen/font_size_item_md"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp"/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/act027_services_content_cell_tv_partner_val"
                     android:layout_width="0dp"
@@ -273,28 +273,69 @@
             </LinearLayout>
 
         </LinearLayout>
+
         <View
             android:layout_width="5dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <LinearLayout
-            android:id="@+id/act027_services_content_cell_ll_express"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:padding="2dp">
+            android:focusable="false"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/act027_services_content_cell_iv_express"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:focusable="false"
-                android:src="@drawable/ic_escolher_ns_states"
-                android:layout_gravity="end"
-                />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false">
+
+                <LinearLayout
+                    android:id="@+id/act027_services_content_cell_ll_express"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:focusable="false"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/act027_services_content_cell_iv_express"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="end"
+                        android:focusable="false"
+                        android:src="@drawable/ic_escolher_ns_states" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/badge"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="3dp"
+                    android:text="22"
+                    android:textColor="@color/padrao_WHITE"
+                    android:textSize="10sp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/act027_services_content_cell_iv_plus"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/badge_sqn"
+                    android:src="@drawable/ic_namoa_plus" />
+
+            </FrameLayout>
+
         </LinearLayout>
-
 
     </LinearLayout>
 
