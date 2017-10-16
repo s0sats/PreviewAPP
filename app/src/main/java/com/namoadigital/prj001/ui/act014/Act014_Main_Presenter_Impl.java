@@ -7,7 +7,9 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.SM_SO_Sql_015;
 import com.namoadigital.prj001.sql.Sql_Act014_001;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -40,19 +42,21 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
                                 hmAux_Trans
                         ).toSqlQuery()
                 );
-        //
-        ArrayList<HMAux> senListSO =
-                (ArrayList<HMAux>) sm_soDao.query_HM(
-                        new SM_SO_Sql_015(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                hmAux_Trans
-                        ).toSqlQuery()
-                );
-        //
         ArrayList<HMAux> senList = new ArrayList<>();
 
         senList.addAll(senListF);
-        senList.addAll(senListSO);
+        //
+        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
+            ArrayList<HMAux> senListSO =
+                    (ArrayList<HMAux>) sm_soDao.query_HM(
+                            new SM_SO_Sql_015(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    hmAux_Trans
+                            ).toSqlQuery()
+                    );
+
+            senList.addAll(senListSO);
+        }
         //
         mView.loadSentData(senList);
     }
