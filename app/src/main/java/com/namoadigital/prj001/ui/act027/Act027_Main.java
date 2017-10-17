@@ -126,6 +126,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         initActions();
     }
 
+    @Override
+    protected void onDestroy() {
+        ToolBox_Con.setApproval_Type(context, "");
+
+        super.onDestroy();
+    }
+
     private void iniSetup() {
         context = Act027_Main.this;
 
@@ -185,14 +192,18 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("dialog_credentials_ttl");
         transList.add("dialog_credentials_msg");
 
+        transList.add("so_client_approval_quality_type_lbl");
+        transList.add("client_approval_quality_user_nick_lbl");
+        transList.add("client_approval_quality_date_lbl");
+
         transList.add("dialog_user_author_ttl");
         transList.add("dialog_user_author_lbl");
         transList.add("dialog_user_author_pwd_lbl");
         transList.add("dialog_user_author_btn");
 
-        transList.add("so_client_approval_type_lbl");
-        transList.add("client_approval_user_nick_lbl");
-        transList.add("client_approval_date_lbl");
+        transList.add("quality_approval_lbl");
+        transList.add("quality_approval_user_nick_lbl");
+        transList.add("quality_approval_date_lbl");
 
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
@@ -449,6 +460,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             if (mSm_so != null && mSm_so.getClient_approval_image_name() != null && !mSm_so.getClient_approval_image_name().isEmpty()) {
                 new DownloadSignature().execute(mSm_so.getClient_approval_image_url());
             }
+
+            if (mSm_so != null) {
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ||
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+                    ToolBox_Con.setApproval_Type(context, mSm_so.getStatus());
+                } else {
+                    ToolBox_Con.setApproval_Type(context, "");
+                }
+            }
             //
             lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
         } else {
@@ -458,7 +478,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     private SM_SO loadSM_SO(long customer_code, int so_prefix, int so_code) {
         sm_soDao.remove(
-                new SM_SO_Sql_014().toSqlQuery()
+                new SM_SO_Sql_014(ToolBox_Con.getApproval_Type(context)).toSqlQuery()
         );
 
         SM_SO mSm_so = sm_soDao.getByString(
@@ -468,6 +488,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         so_code
                 ).toSqlQuery()
         );
+
+        // Recarregar o Status da SO;
+        if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ||
+                mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+            ToolBox_Con.setApproval_Type(context, mSm_so.getStatus());
+        } else {
+            ToolBox_Con.setApproval_Type(context, "");
+        }
 
         return mSm_so;
     }
@@ -561,7 +589,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             setWs_process("");
             act027_serial_.callProcessTrackingResult(hmAux);
-        }else{
+        } else {
             act027_serial_.callProcessSerialSaveResult(String.valueOf(mSm_so.getProduct_code()), mSm_so.getSerial_id(), hmAux);
             progressDialog.dismiss();
         }
@@ -583,7 +611,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 //    public void removeControlToList(MKEditTextNM mket_tracking){
 //        controls_sta.remove(mket_tracking);
 //    }
-
 
 
     //Variavel que determina se salva so e sincroniza ou só salva.
@@ -1172,7 +1199,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 break;
             case Act027_Main.SELECTION_APPROVAL:
 
-                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)){
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
 
                     if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_CLIENT)) {
                         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
@@ -1192,6 +1219,22 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         mDrawerLayout.closeDrawer(GravityCompat.START);
                     }
 
+                } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
+                    setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+
+//                    if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_QUALITY)) {
+//                        setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
+//                        mDrawerLayout.closeDrawer(GravityCompat.START);
+//                    } else {
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("alert_no_profile_ttl"),
+//                                hmAux_Trans.get("alert_no_profile_msg"),
+//                                null,
+//                                0
+//                        );
+//                    }
                 } else {
                     setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -1243,7 +1286,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void recoverApprovalState() {
-        mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
+        //mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
+        mSm_so.setStatus(ToolBox_Con.getApproval_Type(context));
         mSm_so.setApproval_required(WS_PROCESS_APPROVAL_NOT);
         mSm_so.setClient_approval_user(null);
 
@@ -1251,6 +1295,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         mSm_so.setClient_name(null);
         mSm_so.setClient_approval_image_name(null);
         mSm_so.setClient_approval_type_sig(null);
+
+        mSm_so.setQuality_approval_user(null);
+        mSm_so.setQuality_approval_user_nick(null);
+        mSm_so.setQuality_approval_date(null);
         //
         sm_soDao.addUpdate(
                 new SM_SO_Sql_012(
@@ -1262,9 +1310,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         null,
                         null,
                         null,
+                        null,
+                        mSm_so.getStatus(),
+                        null,
+                        null,
                         null
                 ).toSqlQuery()
         );
+
+        //ToolBox_Con.setApproval_Type(context, "");
     }
 
 //    @Override
@@ -1345,11 +1399,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 progressDialog.dismiss();
             }
 
+            String Autor_Type = ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ? Constant.SO_PARAM_AUTH_TYPE_QUALITY : Constant.SO_PARAM_AUTH_TYPE_CLIENT;
+
             executeUserAuthorCheck(
                     mSm_so.getCustomer_code(),
                     mSm_so.getSo_prefix(),
                     mSm_so.getSo_code(),
-                    Constant.SO_PARAM_AUTH_TYPE_CLIENT,
+                    Autor_Type,
                     "",
                     "",
                     value[1]
@@ -1454,9 +1510,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         @Override
         protected Void doInBackground(String... params) {
 
-            String sFileName = params[0].replace(".png", "");
+            String sFileName = null;
 
             try {
+
+                sFileName = params[0].replace(".png", "");
+
                 if (!ToolBox_Inf.verifyDownloadFileInf(sFileName.toLowerCase() + ".png")) {
 
                     ToolBox_Inf.deleteDownloadFileInf(sFileName.toLowerCase() + ".tmps");

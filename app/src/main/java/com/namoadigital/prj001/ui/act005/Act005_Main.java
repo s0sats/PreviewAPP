@@ -341,6 +341,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
         //
         ToolBox_Inf.cleanUpApproval(
+                context,
                 new SM_SODao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),

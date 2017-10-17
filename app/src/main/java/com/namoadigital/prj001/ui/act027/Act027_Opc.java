@@ -343,6 +343,7 @@ public class Act027_Opc extends BaseFragment {
                 //
                 if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
                         mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) ||
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ||
                         mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED)
                         ) {
                     ll_approval.setVisibility(View.VISIBLE);

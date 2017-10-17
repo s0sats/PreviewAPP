@@ -109,12 +109,29 @@ public class WS_SO_Approval extends IntentService {
             item.setSo_code(so.getSo_code());
             item.setSo_scn(so.getSo_scn());
 
-            item.setClient_date(so.getClient_approval_date());
-            item.setClient_image(so.getClient_approval_image_name());
-            item.setClient_type_sig(so.getClient_type().equals("CLIENT") ? so.getClient_approval_type_sig() : null);
+            String sType = ToolBox_Con.getApproval_Type(getApplicationContext());
 
-            item.setClient_user(so.getClient_approval_user());
-            item.setClient_name(so.getClient_name());
+            if (sType.equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)){
+                item.setAction(Constant.PROFILE_MENU_SO_PARAM_APPROVE_QUALITY);
+                item.setQuality_user(String.valueOf(so.getQuality_approval_user()));
+                item.setQuality_date(so.getQuality_approval_date());
+
+            } else {
+                item.setAction(Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT);
+                item.setClient_date(so.getClient_approval_date());
+                item.setClient_image(so.getClient_approval_image_name());
+                item.setClient_type_sig(so.getClient_type().equals("CLIENT") ? so.getClient_approval_type_sig() : null);
+
+                item.setClient_user(so.getClient_approval_user());
+                item.setClient_name(so.getClient_name());
+            }
+
+//            item.setClient_date(so.getClient_approval_date());
+//            item.setClient_image(so.getClient_approval_image_name());
+//            item.setClient_type_sig(so.getClient_type().equals("CLIENT") ? so.getClient_approval_type_sig() : null);
+//
+//            item.setClient_user(so.getClient_approval_user());
+//            item.setClient_name(so.getClient_name());
             //
             so_status.add(item);
         }

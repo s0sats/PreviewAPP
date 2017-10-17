@@ -68,6 +68,11 @@ public class TSO_Approval_Env {
         private String action;//HJ só approve_client, no futuro dependerá de qual status chamou.
         private String origin_change;//
 
+        // Quality Approval
+        private String quality_user;
+        private String quality_date;
+
+        // Final Approval
         private String client_name;// nome do cliente
         private String client_date;//: data da aprovação
         private String client_image;//: nome da imagem que subiu no s3 (assinatura)
@@ -75,7 +80,7 @@ public class TSO_Approval_Env {
         private Integer client_user;//
 
         public SO_Approval_Item() {
-            this.action = Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT;
+            //this.action = Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT;
             this.origin_change = Constant.SO_ORIGIN_CHANGE_APP;
         }
 
@@ -125,6 +130,22 @@ public class TSO_Approval_Env {
 
         public void setOrigin_change(String origin_change) {
             this.origin_change = origin_change;
+        }
+
+        public String getQuality_user() {
+            return quality_user;
+        }
+
+        public void setQuality_user(String quality_user) {
+            this.quality_user = quality_user;
+        }
+
+        public String getQuality_date() {
+            return quality_date;
+        }
+
+        public void setQuality_date(String quality_date) {
+            this.quality_date = quality_date;
         }
 
         public String getClient_name() {

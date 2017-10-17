@@ -12,7 +12,10 @@ import com.namoadigital.prj001.util.Constant;
 
 public class SM_SO_Sql_014 implements Specification {
 
-    public SM_SO_Sql_014() {
+    private String approval_type;
+
+    public SM_SO_Sql_014(String approval_type) {
+        this.approval_type = approval_type;
     }
 
     @Override
@@ -21,16 +24,25 @@ public class SM_SO_Sql_014 implements Specification {
 
         StringBuilder sbStatus = new StringBuilder();
 
+        if (approval_type.trim().isEmpty()) {
+            approval_type = Constant.SO_STATUS_WAITING_CLIENT;
+        }
+
         return sb
                 .append(" UPDATE " + SM_SODao.TABLE + "\n" +
                         "  set approval_required = '0',\n" +
-                        "  status ='" + Constant.SO_STATUS_WAITING_CLIENT + "',\n" +
+                        //"  status ='" + Constant.SO_STATUS_WAITING_CLIENT + "',\n" +
+                        "  status ='" + approval_type + "',\n" +
                         "  client_approval_user = NULL,\n" +
 
                         "  client_approval_date = NULL,\n" +
                         "  client_name = NULL,\n" +
                         "  client_approval_image_name = NULL,\n" +
                         "  client_approval_type_sig = NULL\n" +
+
+//                        "  quality_approval_user = NULL\n" +
+//                        "  quality_approval_user_nick = NULL\n" +
+//                        "  quality_approval_date = NULL\n" +
 
                         " WHERE\n" +
                         "   approval_required = '2'")
