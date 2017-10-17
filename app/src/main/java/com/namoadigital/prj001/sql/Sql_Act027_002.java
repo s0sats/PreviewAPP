@@ -260,8 +260,8 @@ public class Sql_Act027_002 implements Specification {
                                 " \n" +
                                 "        ),'NOT_EXIST')\n" +
                                 "         END LAST_STATUS,\n" +
-                                "(\n" +
-                                "        SELECT\n" +
+                                "       IFNULL(            \n"+
+                                "       (SELECT\n" +
                                 "         SUM(\n" +
                                 "             CASE WHEN e1.status = '"+Constant.SO_STATUS_PROCESS+"'\n" +
                                 "                  THEN\n" +
@@ -272,7 +272,7 @@ public class Sql_Act027_002 implements Specification {
                                 "             ) MY_PROCESS_EXEC\n" +
                                 "        \n" +
                                 "        FROM\n" +
-                                SM_SO_Service_ExecDao.TABLE+" e1\n" +
+                                         SM_SO_Service_ExecDao.TABLE+" e1\n" +
                                 "         \n" +
                                 "        INNER JOIN \n" +
                                 "                "+ SM_SO_Service_Exec_TaskDao.TABLE+" t ON\n" +
@@ -307,7 +307,7 @@ public class Sql_Act027_002 implements Specification {
                                 "               E1.category_price_code,\n" +
                                 "               E1.service_code,\n" +
                                 "               E1.service_seq   \n" +
-                                "    ) HAS_MINE_EXEC_IN_PROCESS," +
+                                "    ),0) HAS_MINE_EXEC_IN_PROCESS," +
                                 "    (SELECT \n" +
                                 "       so.status \n" +
                                 "     FROM \n" +

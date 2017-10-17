@@ -420,9 +420,12 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     }
 
     @Override
-    public void setPendencies(int qty) {
+    public void setPendencies(int qty, String qtyMyPendencies) {
         pendencies_qty = qty;
-        String btn_text = hmAux_Trans.get("btn_pendencies_so") + " (" + pendencies_qty + ")";
+        String btn_text =
+                hmAux_Trans.get("btn_pendencies_so") + " (" +
+                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" :  qtyMyPendencies +"/") +
+                        pendencies_qty + ")";
         btn_pendencies.setText(btn_text);
     }
 

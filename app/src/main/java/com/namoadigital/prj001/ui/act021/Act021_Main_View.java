@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 public interface Act021_Main_View {
 
-    void setPendencies(int qty);
+    void setPendencies(int qty, String qtyMyPendencies);
 
     void setSync(int qty);
 
