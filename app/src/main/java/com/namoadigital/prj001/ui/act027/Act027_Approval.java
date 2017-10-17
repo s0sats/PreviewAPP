@@ -401,11 +401,14 @@ public class Act027_Approval extends BaseFragment {
             Bitmap bm = BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + mSm_so.getClient_approval_image_name());
 
             if (bm != null) {
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(300, 200);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        ToolBox.dbToPixel(context, 300), ToolBox.dbToPixel(context, 200)
+                );
 
                 layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
                 layoutParams.setMargins(0, 0, 0, 0);
 
+                iv_signature.setLayoutParams(layoutParams);
                 iv_signature.setImageBitmap(bm);
             } else {
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
