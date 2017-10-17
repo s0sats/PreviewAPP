@@ -143,8 +143,8 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT026;
-        mAct_Title = Constant.ACT026 + "_" + "title";
+        mAct_Info = Constant.ACT032;
+        mAct_Title = Constant.ACT032 + "_" + "title";
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
