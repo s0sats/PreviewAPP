@@ -717,6 +717,29 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region Approval Type
+    public static void setApproval_Type(Context context, String approval_type) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.APPROVAL_TYPE,
+                approval_type
+        ).apply();
+    }
+
+    public static String getApproval_Type(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.APPROVAL_TYPE,
+                ""
+        );
+    }
+
+    //endregion
+
 
     public static void cleanPreferences(Context context) {
         SharedPreferences sharedPreferences =

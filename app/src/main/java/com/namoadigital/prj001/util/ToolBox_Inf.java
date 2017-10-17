@@ -813,10 +813,10 @@ public class ToolBox_Inf {
             case "PARAMETERS_ERROR":
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
-            case "CUSTOMER_IP_REQUIRED" :
+            case "CUSTOMER_IP_REQUIRED":
                 ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
-            case "CUSTOMER_IP_RESTRICTION" :
+            case "CUSTOMER_IP_RESTRICTION":
                 ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
             default:
@@ -874,17 +874,17 @@ public class ToolBox_Inf {
                 sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
-            case "CUSTOMER_IP_REQUIRED" :
+            case "CUSTOMER_IP_REQUIRED":
                 ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
-            case "CUSTOMER_IP_RESTRICTION" :
+            case "CUSTOMER_IP_RESTRICTION":
                 ToolBox.sendBCStatus(context, "ERROR_1", error_msg, s_Link, "0");
                 return false;
 
             default:
-                if(validation.trim().length() == 0){
-                    return processoOthersError(context,context.getResources().getString(R.string.generic_error_lbl),error_msg);
+                if (validation.trim().length() == 0) {
+                    return processoOthersError(context, context.getResources().getString(R.string.generic_error_lbl), error_msg);
                 }
                 break;
         }
@@ -2293,12 +2293,12 @@ public class ToolBox_Inf {
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, boolean acceptNull) {
         try {
             HMAux hmAux = new HMAux();
-            if(code != null && code != "null") {
+            if (code != null && code != "null") {
                 hmAux.put(SearchableSpinner.ID, code);
                 hmAux.put(SearchableSpinner.DESCRIPTION, desc);
             }
             //ss_component.setmValue(hmAux);
-            ss_component.setmValue(hmAux,source_val);
+            ss_component.setmValue(hmAux, source_val);
             //
             if (source_val) {
                 ss_component.setTag(code);
@@ -2372,7 +2372,7 @@ public class ToolBox_Inf {
     }
 
 
-    public static void setTaskStatusColor(Context context, TextView tv_status, String status){
+    public static void setTaskStatusColor(Context context, TextView tv_status, String status) {
         switch (status) {
             case Constant.SO_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
@@ -2462,18 +2462,22 @@ public class ToolBox_Inf {
 
     }
 
-    public static int convertStringToInt(String value){
-        try{
+    public static int convertStringToInt(String value) {
+        try {
             return Integer.parseInt(value);
-        } catch (Exception e){
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static void cleanUpApproval(SM_SODao sm_soDao){
+    public static void cleanUpApproval(Context context, SM_SODao sm_soDao) {
+        String approval_type = ToolBox_Con.getApproval_Type(context);
+        //
         sm_soDao.remove(
-                new SM_SO_Sql_014().toSqlQuery()
+                new SM_SO_Sql_014(approval_type).toSqlQuery()
         );
+        //
+        ToolBox_Con.setApproval_Type(context, "");
     }
 
     public static void showDialogInfo(Context context, SM_SO_Service sm_so_service, View viewInclude) {
@@ -2491,7 +2495,7 @@ public class ToolBox_Inf {
         LinearLayout ll = (LinearLayout) view.findViewById(R.id.toolbox_dialog_info_ll);
         Button btn_ok = (Button) view.findViewById(R.id.toolbox_dialog_info_btn_ok);
 
-        if (viewInclude != null){
+        if (viewInclude != null) {
             ll.addView(viewInclude);
         }
 

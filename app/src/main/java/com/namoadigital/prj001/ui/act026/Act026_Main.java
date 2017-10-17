@@ -127,6 +127,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
         //
         ToolBox_Inf.cleanUpApproval(
+                context,
                 new SM_SODao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -192,7 +193,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               mPresenter.getSOList(product_code,serial_id,isChecked);
+                mPresenter.getSOList(product_code, serial_id, isChecked);
             }
         });
     }

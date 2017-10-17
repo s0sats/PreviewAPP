@@ -96,7 +96,7 @@ public class WS_UserAuthor extends IntentService {
         env.setSo_code(String.valueOf(so_code));
         env.setAuth_type(auth_type);
         env.setAuth_nick_mail(auth_nick_mail);
-        env.setAuth_password(auth_password.isEmpty() ? "" : ToolBox_Inf.md5(auth_password));
+        env.setAuth_password(auth_password.isEmpty() ? "" : ToolBox_Inf.md5(auth_password).toUpperCase());
         env.setAuth_nfc(auth_nfc);
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
