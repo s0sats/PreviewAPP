@@ -18,7 +18,7 @@ public class Constant extends ConstantBaseApp {
 
     public static final String WS_SYNC = "https://portal.namoadigital.com/ws/prj001/server_sync.ws";
     public static final String WS_SESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
-    public static final String WS_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save.ws";
+    public static final String WS_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_checklist.ws";
     public static final String WS_SERIAL = "https://portal.namoadigital.com/ws/prj001/server_serial.ws";
     public static final String WS_SERIAL_SEARCH  = "https://portal.namoadigital.com/ws/prj001/server_product_serial.ws";
     public static final String WS_SERIAL_TRACKING_SEARCH  = "https://portal.namoadigital.com/ws/prj001/server_serial_tracking.ws";

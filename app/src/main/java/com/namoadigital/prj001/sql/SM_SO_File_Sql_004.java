@@ -34,7 +34,7 @@ public class SM_SO_File_Sql_004 implements Specification {
                         "  SET file_url_local = '"+file_url_local+"'\n" +
                         " WHERE\n" +
                         "  customer_code = '"+customer_code+"'\n" +
-                        "  AND so_prefix = '"+customer_code+"'\n" +
+                        "  AND so_prefix = '"+so_prefix+"'\n" +
                         "  AND so_code = '"+so_code+"' \n" +
                         "  AND file_code = '"+file_code+"'")
                 .toString();
