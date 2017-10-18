@@ -20,23 +20,24 @@
             android:padding="15dp">
 
             <RadioGroup
+                android:id="@+id/act027_header_content_rdo_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <RadioButton
+                    android:id="@+id/act027_header_content_rdo_data"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:button="@null"
                     android:background="@drawable/act027_radio_data"
-
-
                     />
 
                 <View
                     android:layout_width="2dp"
                     android:layout_height="match_parent"/>
                 <RadioButton
+                    android:id="@+id/act027_header_content_rdo_attach"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
@@ -52,7 +53,7 @@
                 android:orientation="vertical" />
 
             <LinearLayout
-                android:id="@+id/act027_header_content_ll_header_info"
+                android:id="@+id/act027_header_content_ll_header_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

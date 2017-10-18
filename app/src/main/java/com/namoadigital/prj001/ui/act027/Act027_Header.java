@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -46,7 +49,13 @@ public class Act027_Header extends BaseFragment {
     private TextView tv_product_id;
     private TextView tv_product_desc;
 
+    private RadioGroup rdoGroup;
+    private RadioButton rdoData;
+    private RadioButton rdoAttach;
+
     private LinearLayout ll_pdf_list;
+
+    private LinearLayout ll_header_data;
 
     private TextView tv_so_id_title;
     private TextView tv_so_id;
@@ -204,6 +213,12 @@ public class Act027_Header extends BaseFragment {
         tv_product_desc = (TextView) view.findViewById(R.id.act027_header_content_tv_product_desc_value);
         tv_prefix_code = (TextView) view.findViewById(R.id.act027_header_content_tv_prefix_code);
 
+        rdoGroup = (RadioGroup) view.findViewById(R.id.act027_header_content_rdo_group);
+        rdoData = (RadioButton) view.findViewById(R.id.act027_header_content_rdo_data);
+        rdoAttach = (RadioButton) view.findViewById(R.id.act027_header_content_rdo_attach);
+
+        ll_header_data = (LinearLayout) view.findViewById(R.id.act027_header_content_ll_header_data);
+
         ll_pdf_list = (LinearLayout) view.findViewById(R.id.act027_header_content_ll_pdf_list);
 
         tv_so_id_title = (TextView) view.findViewById(R.id.act027_header_content_tv_so_id_title);
@@ -322,6 +337,24 @@ public class Act027_Header extends BaseFragment {
     }
 
     private void iniAction() {
+
+        rdoGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId){
+                    case R.id.act027_header_content_rdo_data:
+                        ll_pdf_list.setVisibility(View.GONE);
+                        ll_header_data.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.act027_header_content_rdo_attach:
+                        ll_header_data.setVisibility(View.GONE);
+                        ll_pdf_list.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+        //
+        rdoAttach.setChecked(true);
     }
 
     public void loadDataToScreen() {
