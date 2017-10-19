@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public interface Act011_Main_Presenter {
 
-    void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id);
+    void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code);
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);
 

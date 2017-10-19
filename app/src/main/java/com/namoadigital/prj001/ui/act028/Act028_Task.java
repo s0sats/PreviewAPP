@@ -127,6 +127,8 @@ public class Act028_Task extends BaseFragment {
 
     private boolean sdAvoid = false;
 
+    private boolean autoconf = false;
+
     public interface IAct028_Task {
         void exec_list_opc_update(String sFlag);
     }
@@ -1262,6 +1264,8 @@ public class Act028_Task extends BaseFragment {
         if (mk_end_date.getText().toString().equalsIgnoreCase("") || mk_end_hour.getText().toString().equalsIgnoreCase("")) {
             String sDT = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z");
             //
+            autoconf = true;
+            //
             mk_end_date.setMaskedText(ToolBox.reverseS(sDT));
             mk_end_hour.setMaskedText(ToolBox.reverseSH(sDT));
         }
@@ -1363,7 +1367,15 @@ public class Act028_Task extends BaseFragment {
 
                     alert.dismiss();
 
+                    autoconf = false;
+
                 } else {
+
+                    if (autoconf){
+                        autoconf = false;
+                        mk_end_date.setText("");
+                        mk_end_hour.setText("");
+                    }
 
                     if (perc >= 100) {
                         informTaskError(HMAUX_TRANS_LIB.get("msg_parcially_100_error"));
@@ -1388,7 +1400,15 @@ public class Act028_Task extends BaseFragment {
 
                     alert.dismiss();
 
+                    autoconf = false;
+
                 } else {
+
+                    if (autoconf){
+                        autoconf = false;
+                        mk_end_date.setText("");
+                        mk_end_hour.setText("");
+                    }
 
                     if (perc != 100) {
                         informTaskError(HMAUX_TRANS_LIB.get("msg_full_100_error"));
