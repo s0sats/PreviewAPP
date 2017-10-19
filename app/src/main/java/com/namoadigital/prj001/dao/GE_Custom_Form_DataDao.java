@@ -44,6 +44,8 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String LOCATION_LAT = "location_lat";
     public static final String LOCATION_LNG = "location_lng";
     public static final String USER_CODE_END = "user_code_end";
+    public static final String SO_PREFIX = "so_prefix";
+    public static final String SO_CODE = "so_code";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -113,7 +115,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -145,7 +147,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             db.execSQL(s_query);
 
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -167,7 +169,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -195,7 +197,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -221,7 +223,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -249,7 +251,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -314,6 +316,18 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setLocation_lng("");
             } else {
                 custom_form_data.setLocation_lng(cursor.getString(cursor.getColumnIndex(LOCATION_LNG)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SO_PREFIX))) {
+                custom_form_data.setSo_prefix(null);
+            } else {
+                custom_form_data.setSo_prefix(cursor.getInt(cursor.getColumnIndex(SO_PREFIX)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SO_CODE))) {
+                custom_form_data.setSo_code(null);
+            } else {
+                custom_form_data.setSo_code(cursor.getInt(cursor.getColumnIndex(SO_CODE)));
             }
 
             return custom_form_data;
@@ -384,6 +398,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }
             if (custom_form_data.getLocation_lng() != null) {
                 contentValues.put(LOCATION_LNG, custom_form_data.getLocation_lng());
+            }
+            if (custom_form_data.getSo_prefix() != null) {
+                contentValues.put(SO_PREFIX, custom_form_data.getSo_prefix());
+            }
+            if (custom_form_data.getSo_code() != null) {
+                contentValues.put(SO_CODE, custom_form_data.getSo_code());
             }
 
             return contentValues;

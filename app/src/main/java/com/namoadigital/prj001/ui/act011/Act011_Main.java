@@ -58,6 +58,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -156,6 +157,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private transient Dialog infoDialog;
 
     private boolean hasNFCSupport = false;
+
+    private Integer mSo_Prefix;
+    private Integer mSo_Code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -519,7 +523,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 product_id,
                 type_desc,
                 form_desc,
-                serial_id
+                serial_id,
+                mSo_Prefix,
+                mSo_Code
         );
 
     }
@@ -670,7 +676,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
             form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
             form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
+            //
+            int mSo_Prefix_Aux = bundle.getInt(SM_SODao.SO_PREFIX, 0);
+            int mSo_Code_Aux = bundle.getInt(SM_SODao.SO_CODE, 0);
+            //
+            mSo_Prefix = mSo_Prefix_Aux != 0 ? mSo_Prefix_Aux : null;
+            mSo_Code = mSo_Code_Aux != 0 ? mSo_Code_Aux : null;
+
         } else {
+            mSo_Prefix = null;
+            mSo_Code = null;
         }
     }
 
@@ -1611,7 +1626,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             context.startActivity(mIntent);
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
@@ -1787,7 +1802,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                                 new File(Constant.CACHE_PDF)
                         );
                     } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
 
 

@@ -71,6 +71,11 @@ public class GE_Custom_Form_Data {
     @Expose
     private String location_lng;
 
+    @Expose
+    private Integer so_prefix;
+
+    @Expose
+    private Integer so_code;
 
     private List<GE_Custom_Form_Data_Field> dataFields;
 
@@ -96,6 +101,8 @@ public class GE_Custom_Form_Data {
         this.location_type = "";
         this.location_lat = "";
         this.location_lng = "";
+        this.so_prefix = null;
+        this.so_code = null;
     }
 
     public long getCustomer_code() {
@@ -256,6 +263,22 @@ public class GE_Custom_Form_Data {
 
     public void setLocation_lng(String location_lng) {
         this.location_lng = location_lng;
+    }
+
+    public Integer getSo_prefix() {
+        return so_prefix;
+    }
+
+    public void setSo_prefix(Integer so_prefix) {
+        this.so_prefix = so_prefix;
+    }
+
+    public Integer getSo_code() {
+        return so_code;
+    }
+
+    public void setSo_code(Integer so_code) {
+        this.so_code = so_code;
     }
 
     public List<GE_Custom_Form_Data_Field> getDataFields() {
