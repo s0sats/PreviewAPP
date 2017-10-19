@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.util.Constant;
@@ -153,7 +154,10 @@ public class WS_SO_Search extends IntentService {
     }
 
     private void startDownloadServices() {
+        Intent mIntentPDF = new Intent(getApplicationContext(), WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        //
+        getApplicationContext().sendBroadcast(mIntentPDF);
         getApplicationContext().sendBroadcast(mIntentPIC);
     }
 

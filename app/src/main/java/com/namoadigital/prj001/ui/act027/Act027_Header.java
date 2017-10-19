@@ -1,17 +1,34 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_File;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import static java.lang.String.valueOf;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -31,6 +48,14 @@ public class Act027_Header extends BaseFragment {
     private TextView tv_product_code;
     private TextView tv_product_id;
     private TextView tv_product_desc;
+
+    private RadioGroup rdoGroup;
+    private RadioButton rdoData;
+    private RadioButton rdoAttach;
+
+    private LinearLayout ll_pdf_list;
+
+    private LinearLayout ll_header_data;
 
     private TextView tv_so_id_title;
     private TextView tv_so_id;
@@ -188,6 +213,14 @@ public class Act027_Header extends BaseFragment {
         tv_product_desc = (TextView) view.findViewById(R.id.act027_header_content_tv_product_desc_value);
         tv_prefix_code = (TextView) view.findViewById(R.id.act027_header_content_tv_prefix_code);
 
+        rdoGroup = (RadioGroup) view.findViewById(R.id.act027_header_content_rdo_group);
+        rdoData = (RadioButton) view.findViewById(R.id.act027_header_content_rdo_data);
+        rdoAttach = (RadioButton) view.findViewById(R.id.act027_header_content_rdo_attach);
+
+        ll_header_data = (LinearLayout) view.findViewById(R.id.act027_header_content_ll_header_data);
+
+        ll_pdf_list = (LinearLayout) view.findViewById(R.id.act027_header_content_ll_pdf_list);
+
         tv_so_id_title = (TextView) view.findViewById(R.id.act027_header_content_tv_so_id_title);
         tv_so_id = (TextView) view.findViewById(R.id.act027_header_content_tv_so_id);
 
@@ -304,6 +337,24 @@ public class Act027_Header extends BaseFragment {
     }
 
     private void iniAction() {
+
+        rdoGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId){
+                    case R.id.act027_header_content_rdo_data:
+                        ll_pdf_list.setVisibility(View.GONE);
+                        ll_header_data.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.act027_header_content_rdo_attach:
+                        ll_header_data.setVisibility(View.GONE);
+                        ll_pdf_list.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+        //
+        rdoAttach.setChecked(true);
     }
 
     public void loadDataToScreen() {
@@ -311,7 +362,7 @@ public class Act027_Header extends BaseFragment {
             if (mSm_so != null) {
                 tv_product_code.setText(
                         hmAux_Trans.get("product_header_lbl") + " " +
-                                String.valueOf(mSm_so.getProduct_code())
+                                valueOf(mSm_so.getProduct_code())
                 );
 
                 tv_product_id.setText(
@@ -321,6 +372,8 @@ public class Act027_Header extends BaseFragment {
 
                 tv_product_desc.setText(mSm_so.getProduct_desc());
 
+                loadPdfList();
+
                 tv_so_id_title.setText(hmAux_Trans.get("so_id"));
                 tv_so_id.setText(mSm_so.getSo_id());
 
@@ -328,7 +381,7 @@ public class Act027_Header extends BaseFragment {
                 tv_so_desc.setText(mSm_so.getSo_desc());
 
                 tv_prefix_code_title.setText(hmAux_Trans.get("so_code_lbl"));
-                tv_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + String.valueOf(mSm_so.getSo_code()));
+                tv_prefix_code.setText(valueOf(mSm_so.getSo_prefix()) + "." + valueOf(mSm_so.getSo_code()));
 
                 tv_serial_title.setText(hmAux_Trans.get("serial"));
                 tv_serial.setText(mSm_so.getSerial_id());
@@ -337,7 +390,7 @@ public class Act027_Header extends BaseFragment {
                 tv_category_price_id.setText(mSm_so.getCategory_price_id());
 
                 tv_category_price_desc_title.setText(hmAux_Trans.get("category_price_desc"));
-                tv_category_price_desc.setText(mSm_so.getCategory_price_id() +" - "+mSm_so.getCategory_price_desc());
+                tv_category_price_desc.setText(mSm_so.getCategory_price_id() + " - " + mSm_so.getCategory_price_desc());
 
                 tv_segment_id_title.setText(hmAux_Trans.get("segment_id"));
                 tv_segment_id.setText(mSm_so.getSegment_id());
@@ -349,13 +402,13 @@ public class Act027_Header extends BaseFragment {
                 tv_site_id.setText(mSm_so.getSite_id());
 
                 tv_site_desc_title.setText(hmAux_Trans.get("site_desc"));
-                tv_site_desc.setText(mSm_so.getSite_id()+" - "+mSm_so.getSite_desc());
+                tv_site_desc.setText(mSm_so.getSite_id() + " - " + mSm_so.getSite_desc());
 
                 tv_operation_id_title.setText(hmAux_Trans.get("operation_id"));
                 tv_operation_id.setText(mSm_so.getOperation_id());
 
                 tv_operation_desc_title.setText(hmAux_Trans.get("operation_desc"));
-                tv_operation_desc.setText(mSm_so.getOperation_id() +" - "+mSm_so.getOperation_desc());
+                tv_operation_desc.setText(mSm_so.getOperation_id() + " - " + mSm_so.getOperation_desc());
 
                 tv_deadline_title.setText(hmAux_Trans.get("deadline"));
                 tv_deadline.setText(
@@ -384,7 +437,7 @@ public class Act027_Header extends BaseFragment {
                 tv_contract_po_client2.setText(mSm_so.getContract_po_client2());
 
                 tv_quality_approval_user_title.setText(hmAux_Trans.get("quality_approval_user"));
-                tv_quality_approval_user.setText(mSm_so.getQuality_approval_user() != null ? String.valueOf(mSm_so.getQuality_approval_user()) : "");
+                tv_quality_approval_user.setText(mSm_so.getQuality_approval_user() != null ? valueOf(mSm_so.getQuality_approval_user()) : "");
 
                 tv_quality_approval_user_nick_title.setText(hmAux_Trans.get("quality_approval_user_nick"));
                 tv_quality_approval_user_nick.setText(mSm_so.getQuality_approval_user_nick());
@@ -404,10 +457,10 @@ public class Act027_Header extends BaseFragment {
                 tv_client_type.setText(mSm_so.getClient_type());
 
                 tv_client_user_title.setText(hmAux_Trans.get("client_user"));
-                tv_client_user.setText(mSm_so.getClient_user() == null ? "" : String.valueOf(mSm_so.getClient_user()));
+                tv_client_user.setText(mSm_so.getClient_user() == null ? "" : valueOf(mSm_so.getClient_user()));
 
                 tv_client_code_title.setText(hmAux_Trans.get("client_code"));
-                tv_client_code.setText(mSm_so.getClient_code() != null ? String.valueOf(mSm_so.getClient_code()) : "");
+                tv_client_code.setText(mSm_so.getClient_code() != null ? valueOf(mSm_so.getClient_code()) : "");
 
                 tv_client_id_title.setText(hmAux_Trans.get("client_id"));
                 tv_client_id.setText(mSm_so.getClient_id());
@@ -430,27 +483,110 @@ public class Act027_Header extends BaseFragment {
                 );
 
                 tv_client_approval_user_title.setText(hmAux_Trans.get("client_approval_user"));
-                tv_client_approval_user.setText(mSm_so.getClient_approval_user() != null ? String.valueOf(mSm_so.getClient_approval_user()) : "");
+                tv_client_approval_user.setText(mSm_so.getClient_approval_user() != null ? valueOf(mSm_so.getClient_approval_user()) : "");
 
                 tv_client_approval_user_nick_title.setText(hmAux_Trans.get("client_approval_user_nick"));
                 tv_client_approval_user_nick.setText(mSm_so.getClient_approval_user_nick());
 
                 tv_total_qty_service_title.setText(hmAux_Trans.get("total_qty_service"));
-                tv_total_qty_service.setText(String.valueOf(mSm_so.getTotal_qty_service()));
+                tv_total_qty_service.setText(valueOf(mSm_so.getTotal_qty_service()));
 
                 tv_total_price_title.setText(hmAux_Trans.get("total_price"));
-                tv_total_price.setText(String.valueOf(mSm_so.getTotal_price()));
+                tv_total_price.setText(valueOf(mSm_so.getTotal_price()));
 
                 tv_add_inf1_title.setText(hmAux_Trans.get("add_info1_ttl"));
-                tv_add_inf1.setText(mSm_so.getAdd_inf1() == null ? "" : String.valueOf(mSm_so.getAdd_inf1()));
+                tv_add_inf1.setText(mSm_so.getAdd_inf1() == null ? "" : valueOf(mSm_so.getAdd_inf1()));
 
                 tv_add_inf2_title.setText(hmAux_Trans.get("add_info2_ttl"));
-                tv_add_inf2.setText(mSm_so.getAdd_inf2() == null ? "" :String.valueOf(mSm_so.getAdd_inf2()));
+                tv_add_inf2.setText(mSm_so.getAdd_inf2() == null ? "" : valueOf(mSm_so.getAdd_inf2()));
 
                 tv_add_inf3_title.setText(hmAux_Trans.get("add_info3_ttl"));
-                tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" :String.valueOf(mSm_so.getAdd_inf3()));
+                tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" : valueOf(mSm_so.getAdd_inf3()));
 
             }
+        }
+    }
+
+    private void loadPdfList() {
+        //Limpa view do linear layout
+        ll_pdf_list.removeAllViews();
+        //
+        SM_SO_FileDao soFileDao = new SM_SO_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        ArrayList<SM_SO_File> pdfList = (ArrayList<SM_SO_File>) soFileDao.query(
+                new SM_SO_File_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+        View.OnClickListener pdfListner = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String localUrl = String.valueOf(v.getTag());
+
+                File file = new File(Constant.CACHE_PATH + "/" + localUrl);
+
+                try {
+
+                    ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                    ToolBox_Inf.copyFile(
+                            file,
+                            new File(Constant.CACHE_PDF)
+                    );
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(),e);
+                }
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +localUrl)), "application/pdf");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                startActivity(intent);
+            }
+        };
+        //
+        if(pdfList != null && pdfList.size() > 0){
+
+            for (int i = 0; i < pdfList.size(); i++) {
+
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                //
+                View view = inflater.inflate(R.layout.namoa_iv_tv_cell,null);
+                //
+                ImageView iv_pdf_icon = (ImageView) view.findViewById(R.id.namoa_iv_tv_iv_icon);
+                //
+                TextView tv_pdf_name = (TextView) view.findViewById(R.id.namoa_iv_tv_tv_desc);
+                //
+                if(pdfList.get(i).getFile_url_local().length() > 0) {
+                    view.setOnClickListener(pdfListner);
+                    //
+                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_picture_as_pdf_black_24px));
+                }else{
+                    view.setOnClickListener(null);
+                    view.setClickable(false);
+                    //
+                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
+                }
+                //
+                tv_pdf_name.setText(pdfList.get(i).getFile_name());
+                //
+                view.setTag(pdfList.get(i).getFile_url_local());
+                //Add view ao linear layout
+                ll_pdf_list.addView(view);
+
+            }
+        }else{
+            rdoData.setChecked(true);
+            //
+            rdoAttach.setEnabled(false);
+            //
+            rdoAttach.setBackground(getResources().getDrawable(R.drawable.act027_radio_pdf_disabled));
         }
     }
 
