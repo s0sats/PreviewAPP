@@ -268,7 +268,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
             bundle.putString(Constant.ACT008_SERIAL_ID, tProductSerial.getSerial_id());
-            bundle.putBoolean(Constant.ACT020_BACK_FLOW, true);
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
 
             mView.callAct009(context, bundle);
         }else{

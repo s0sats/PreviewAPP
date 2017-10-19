@@ -17,8 +17,9 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
-import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -49,6 +50,9 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private String serial_id;
     private int custom_form_type;
     private String custom_form_type_desc;
+    //
+    private String so_prefix;
+    private String so_code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,9 +100,12 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mPresenter = new Act010_Main_Presenter_Impl(
                 context,
                 this,
-                new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                product_code
+                new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                product_code,
+                serial_id,
+                so_prefix,
+                so_code
         );
 
         tv_form_ttl = (TextView) findViewById(R.id.act010_tv_form_lbl);
@@ -130,13 +137,12 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
             custom_form_type = Integer.parseInt(bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE));
             custom_form_type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
+            so_prefix = bundle.getString(SM_SODao.SO_PREFIX,"");
+            so_code = bundle.getString(SM_SODao.SO_CODE,"");
 
         } else {
-//
-//
-//            Tratar o Bundle null ?
-//
-//
+            so_prefix = "";
+            so_code = "";
         }
     }
 

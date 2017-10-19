@@ -7,7 +7,7 @@
 		"so_scn": 3,
 		"so_desc": "S.O Btt",
 		"product_code": 44,
-		"product_id": "TST-SO",
+		"product_code": "TST-SO",
 		"product_desc": "TESTE DE SO",
 		"serial_code": 1,
 		"serial_id": "promo",

@@ -6,6 +6,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_001;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
@@ -23,13 +24,14 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     private GE_Custom_Form_TypeDao custom_form_typeDao;
     private boolean back_act020;
     private int back_action;
+    private String actResqueting;
 
-    public Act009_Main_Presenter_Impl(Context context, Act009_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_Form_TypeDao custom_form_typeDao, boolean back_act020, int back_action) {
+    public Act009_Main_Presenter_Impl(Context context, Act009_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_Form_TypeDao custom_form_typeDao, String actResqueting, int back_action) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
         this.custom_form_typeDao = custom_form_typeDao;
-        this.back_act020 = back_act020;
+        this.actResqueting = actResqueting;
         this.back_action = back_action;
     }
 
@@ -47,7 +49,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
         //Se apenas um tipo, auto seleciona
         if(data != null && data.size() == 1){
             if(back_action == 1) {
-                onBackPressedClicked(back_act020);
+                onBackPressedClicked(actResqueting);
             }else{
                 mView.addFormTypeInfoToBundle(data.get(0));
                 //
@@ -61,12 +63,17 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     }
 
     @Override
-    public void onBackPressedClicked(boolean back_act020) {
+    public void onBackPressedClicked(String actResqueting) {
 
-        if(back_act020){
-           mView.callAct020(context);
-        }else {
-           mView.callAct008(context);
+        switch (actResqueting){
+            case Constant.ACT020:
+                mView.callAct020(context);
+                break;
+            case Constant.ACT027:
+                mView.callAct027(context);
+                break;
+            default:
+                mView.callAct008(context);
         }
     }
 }

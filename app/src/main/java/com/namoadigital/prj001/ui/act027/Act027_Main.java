@@ -1696,10 +1696,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     private void callAct009() {
         Intent mIntent = new Intent(context, Act009_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putInt(SM_SODao.SO_PREFIX,mSm_so.getSo_prefix());
-        bundle.putInt(SM_SODao.SO_CODE,mSm_so.getSo_code());
+        bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(mSm_so.getSo_prefix()));
+        bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSm_so.getSo_code()));
         bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
         bundle.putString(Constant.ACT008_SERIAL_ID, mSm_so.getSerial_id());
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT027);
