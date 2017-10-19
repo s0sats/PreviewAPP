@@ -12,7 +12,7 @@
         android:background="@drawable/namoa_icon_bg_states"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingLeft="544444444444444dp"
+        android:paddingLeft="5dp"
         android:paddingRight="10dp"
         android:paddingTop="8dp"
         android:gravity="center_vertical"
@@ -20,13 +20,11 @@
 
         <ImageView
             android:id="@+id/namoa_iv_tv_iv_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="10dp"
-            android:maxHeight="24dp"
-            android:maxWidth="24dp"
             android:src="@drawable/ic_picture_as_pdf_black_24px" />
 
         <TextView

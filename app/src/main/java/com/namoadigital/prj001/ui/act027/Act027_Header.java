@@ -571,7 +571,7 @@ public class Act027_Header extends BaseFragment {
                     view.setOnClickListener(null);
                     view.setClickable(false);
                     //
-                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_picture_as_pdf_black_disabled_24px));
+                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
                 }
                 //
                 tv_pdf_name.setText(pdfList.get(i).getFile_name());
@@ -581,6 +581,12 @@ public class Act027_Header extends BaseFragment {
                 ll_pdf_list.addView(view);
 
             }
+        }else{
+            rdoData.setChecked(true);
+            //
+            rdoAttach.setEnabled(false);
+            //
+            rdoAttach.setBackground(getResources().getDrawable(R.drawable.act027_radio_pdf_disabled));
         }
     }
 
