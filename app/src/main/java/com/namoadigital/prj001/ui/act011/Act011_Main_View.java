@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -20,9 +21,13 @@ public interface Act011_Main_View {
 
     void callAct005(Context context);
 
+    void callAct027(Context context, Bundle bundle);
+
     void callSignature();
 
     void showSignature();
+
+
 
 
 }

@@ -71,7 +71,6 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
         bundle.putString(SM_SODao.SO_CODE, so.get(SM_SODao.SO_CODE));
         //
         mView.callAct027(context, bundle);
-
     }
 
     @Override

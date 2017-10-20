@@ -10,47 +10,47 @@
         android:id="@+id/act_011_dialog_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="Form Information"
         android:textSize="@dimen/font_size_title_md"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp"
-        />
+        android:textStyle="bold" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingRight="10dp"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:paddingRight="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/act_011_dialog_tv_product_title_lbl"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Product"
-                android:textSize="@dimen/font_size_title"
-                android:textStyle="bold"
-                android:gravity="center_vertical"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/act_011_dialog_tv_product_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:layout_marginBottom="5dp"
-                android:text="Product desc"
-                android:textStyle="bold"
-                android:textSize="@dimen/font_size_title"
-                android:gravity="center_vertical"/>
+                <TextView
+                    android:id="@+id/act_011_dialog_tv_product_title_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:text="Product"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act_011_dialog_tv_product_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="4"
+                    android:gravity="center_vertical"
+                    android:text="Product desc"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -75,16 +75,15 @@
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_product_code_val"
-                    android:text="2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
                     android:gravity="start|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
+                    android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -96,15 +95,15 @@
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_product_id_lbl"
-                    android:text="ID--"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:gravity="start|center_vertical"
+                    android:text="ID--"
+                    android:textColor="@color/namoa_color_light_blue"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold"
-                    android:textColor="@color/namoa_color_light_blue"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_product_id_val"
@@ -112,11 +111,11 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:gravity="start|center_vertical"
-                    android:paddingStart="15dp"
                     android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
                     android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -128,27 +127,27 @@
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_serial_code_lbl"
-                    android:text="Serial:"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:gravity="start|center_vertical"
+                    android:text="Serial:"
+                    android:textColor="@color/namoa_color_light_blue"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold"
-                    android:textColor="@color/namoa_color_light_blue"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_serial_code_val"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
                     android:gravity="start|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
                     android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -160,13 +159,13 @@
                 android:padding="5dp"
                 android:text=""
                 android:textSize="@dimen/font_size_item"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_title"
@@ -181,11 +180,11 @@
                     android:id="@+id/act_011_dialog_tv_form_code_desc"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:layout_marginBottom="5dp"
+                    android:layout_weight="4"
                     android:text="Form desc"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -196,29 +195,27 @@
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_code_lbl"
-                    android:text="Form Code:"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:gravity="start|center_vertical"
-                    android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold"
+                    android:text="Form Code:"
                     android:textColor="@color/namoa_color_light_blue"
-                    />
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_code_val"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
                     android:gravity="start|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
                     android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -230,49 +227,47 @@
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_version_lbl"
-                    android:text="Form Version:"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:gravity="start|center_vertical"
+                    android:text="Form Version:"
+                    android:textColor="@color/namoa_color_light_blue"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold"
-                    android:textColor="@color/namoa_color_light_blue"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_version_val"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
                     android:gravity="start|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
                     android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingStart="10dp"
-                >
+                android:paddingStart="10dp">
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_type_lbl"
-                    android:text="Form Type:"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:gravity="start|center_vertical"
-                    android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold"
+                    android:text="Form Type:"
                     android:textColor="@color/namoa_color_light_blue"
-                    />
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_type_val"
@@ -281,28 +276,55 @@
                     android:layout_weight="1"
                     android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/act_011_dialog_tv_form_type_desc"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
                     android:gravity="start|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
                     android:text="2"
                     android:textColor="@color/namoa_color_light_blue"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act_011_dialog_tv_so_code_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Form"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act_011_dialog_tv_so_code_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="4"
+                    android:text="Form desc"
+                    android:textSize="@dimen/font_size_title"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/act_011_dialog_ll_scheduel_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -311,30 +333,30 @@
 
                     <TextView
                         android:id="@+id/act_011_dialog_tv_data_serv_lbl"
-                        android:text="Seq.Exec::"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:gravity="start|center_vertical"
+                        android:text="Seq.Exec::"
+                        android:textColor="@color/namoa_color_light_blue"
                         android:textSize="@dimen/font_size_title"
-                        android:textStyle="bold"
-                        android:textColor="@color/namoa_color_light_blue"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act_011_dialog_tv_data_serv_val"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
                         android:gravity="start|center_vertical"
+                        android:paddingEnd="15dp"
+                        android:paddingStart="15dp"
                         android:text="2"
                         android:textColor="@color/namoa_color_light_blue"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -343,30 +365,30 @@
 
                     <TextView
                         android:id="@+id/act_011_dialog_tv_schedule_dt_start_lbl"
-                        android:text="Agendamento Ini:"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:gravity="start|center_vertical"
+                        android:text="Agendamento Ini:"
+                        android:textColor="@color/namoa_color_light_blue"
                         android:textSize="@dimen/font_size_title"
-                        android:textStyle="bold"
-                        android:textColor="@color/namoa_color_light_blue"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act_011_dialog_tv_schedule_dt_start_val"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
                         android:gravity="start|center_vertical"
+                        android:paddingEnd="15dp"
+                        android:paddingStart="15dp"
                         android:text="2"
                         android:textColor="@color/namoa_color_light_blue"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -375,28 +397,27 @@
 
                     <TextView
                         android:id="@+id/act_011_dialog_tv_schedule_dt_end_lbl"
-                        android:text="Agendamento Ini:"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:gravity="start|center_vertical"
+                        android:text="Agendamento Ini:"
+                        android:textColor="@color/namoa_color_light_blue"
                         android:textSize="@dimen/font_size_title"
-                        android:textStyle="bold"
-                        android:textColor="@color/namoa_color_light_blue"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act_011_dialog_tv_schedule_dt_end_val"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
                         android:gravity="start|center_vertical"
+                        android:paddingEnd="15dp"
+                        android:paddingStart="15dp"
                         android:text="2"
                         android:textColor="@color/namoa_color_light_blue"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -408,20 +429,20 @@
 
     <TextView
         android:id="@+id/act_011_dialog_tv_title_pdf"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:padding="10dp"
         android:text="PDFs"
         android:textSize="@dimen/font_size_title"
         android:textStyle="bold"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/act_011_dialog_lv_pdfs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingEnd="10dp"
-        android:layout_weight="1.5"/>
+        android:layout_weight="1.5"
+        android:paddingEnd="10dp" />
 
 </LinearLayout>

@@ -66,6 +66,9 @@ public class Act011_FF_Options extends Fragment {
     private transient LinearLayout ff_options_ll_ii;
     private transient ImageView ff_options_ll_iv_ii;
 
+    private transient LinearLayout ff_options_ll_nserv;
+    private transient ImageView ff_options_ll_iv_nserv;
+
     private transient View ff_options_view_divider;
 
     public void setTabsAndFields(List<HMAux> tabsAndFields, HMAux resTabs, List<HMAux> pdfs, String signature, String desc) {
@@ -96,6 +99,8 @@ public class Act011_FF_Options extends Fragment {
         public void autograph();
 
         public void auto();
+
+        public void nserv();
     }
 
     private ICustom_Form_FF_Options_ll delegate_ll;
@@ -140,6 +145,10 @@ public class Act011_FF_Options extends Fragment {
 
         ff_options_ll_ii = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_ii);
         ff_options_ll_iv_ii = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_ii);
+
+        ff_options_ll_nserv = (LinearLayout) view.findViewById(R.id.act011_ff_options_ll_nserv);
+        ff_options_ll_iv_nserv = (ImageView) view.findViewById(R.id.act011_ff_options_ll_iv_nserv);
+
 
         ff_options_view_divider = view.findViewById(R.id.act011_ff_options_view_divider);
 
@@ -216,14 +225,30 @@ public class Act011_FF_Options extends Fragment {
             }
         });
 
+        ff_options_ll_nserv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (delegate_ll != null) {
+                    delegate_ll.nserv();
+                }
+            }
+        });
+
 
     }
 
-    public void enableScheduled(Long data_serv){
+    public void enableScheduled(Long data_serv) {
         this.data_serv = data_serv;
     }
 
-    public void enableTab(String status) {
+    public void enableTab(String status, int nserv) {
+
+        if (nserv == 1) {
+            ff_options_ll_nserv.setVisibility(View.VISIBLE);
+        } else {
+            ff_options_ll_nserv.setVisibility(View.GONE);
+        }
+
         switch (status.toUpperCase()) {
             case Constant.CUSTOM_FORM_STATUS_SENT:
                 ff_options_ll_e.setVisibility(View.GONE);
@@ -262,7 +287,7 @@ public class Act011_FF_Options extends Fragment {
             ff_options_ll_a.setVisibility(View.GONE);
         }
 
-        if (data_serv == null){
+        if (data_serv == null) {
             ff_options_ll_e.setVisibility(View.VISIBLE);
         } else {
             ff_options_ll_e.setVisibility(View.GONE);

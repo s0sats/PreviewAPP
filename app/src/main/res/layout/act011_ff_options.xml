@@ -36,24 +36,24 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#4D000000"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/act011_ff_options_ll_auto"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@drawable/namoa_cell_5_states"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="gone"
         android:padding="5dp"
-        android:background="@drawable/namoa_cell_5_states"
-        >
+        android:visibility="gone">
+
         <ImageView
-            android:layout_marginLeft="5dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_resposta_padrao_states"/>
+            android:src="@drawable/ic_resposta_padrao_states" />
 
         <TextView
             android:id="@+id/act011_ff_options_ll_autot"
@@ -63,9 +63,9 @@
             android:focusable="false"
             android:paddingLeft="16dp"
             android:text="Automatic"
+            android:textColor="@color/namoa_cell_5_font_color"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/namoa_cell_5_font_color"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#4D000000"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,6 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/namoa_icon_bg_states"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -104,6 +105,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/namoa_icon_bg_states"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -123,6 +125,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/namoa_icon_bg_states"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -142,6 +145,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/namoa_icon_bg_states"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -160,6 +164,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/namoa_icon_bg_states"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -170,6 +175,25 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:src="@drawable/ic_info" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act011_ff_options_ll_nserv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/namoa_icon_bg_states"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/act011_ff_options_ll_iv_nserv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:src="@drawable/ic_n_service2_24x24" />
 
         </LinearLayout>
 

@@ -72,6 +72,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -136,6 +137,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
     private String form_data;
     private String mSignature;
     private int signature;
+
+    private String so_prefix;
+    private String so_code;
 
     private boolean gpsCanceled = false;
 
@@ -228,6 +232,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         transList.add("dialog_info_data_serv_lbl");
         transList.add("dialog_info_dt_schedule_start_lbl");
         transList.add("dialog_info_dt_schedule_end_lbl");
+
+        transList.add("dialog_info_so_prefix_lbl");
+        transList.add("dialog_info_so_code_lbl");
 
         transList.add("alert_location_info_title");
         transList.add("alert_location_info_required");
@@ -493,6 +500,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         Toast.LENGTH_SHORT
                 ).show();
             }
+
+            @Override
+            public void nserv() {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                if (formData != null && formData.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING)) {
+                    exitAlertNServ();
+                } else {
+                    nservCall();
+                }
+            }
         });
 
         mPresenter = new Act011_Main_Presenter_Impl(
@@ -528,6 +546,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 mSo_Code
         );
 
+    }
+
+    private void nservCall() {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(mSo_Prefix));
+        bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSo_Code));
+        //
+        callAct027(context, bundle);
     }
 
     private void startCheckIN() {
@@ -725,6 +752,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.mSignature = "s_" + prefix + "1.png";
         this.pdfs_local = (ArrayList<HMAux>) pdfs;
         this.form_data = String.valueOf(formLocal.getCustom_form_data());
+        this.mSo_Prefix = formData.getSo_prefix();
+        this.mSo_Code = formData.getSo_code();
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id)) {
             formData.setSerial_id(serial_id);
@@ -864,7 +893,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
             act011_ff_options.enableScheduled(formData.getCustom_form_data_serv());
-            act011_ff_options.enableTab(formData.getCustom_form_status());
+
+            if (mSo_Prefix == null || mSo_Code == null) {
+                act011_ff_options.enableTab(formData.getCustom_form_status(), 0);
+            } else {
+                act011_ff_options.enableTab(formData.getCustom_form_status(), 1);
+            }
+
+            //act011_ff_options.enableTab(formData.getCustom_form_status());
             act011_ff_options.translaTab(hmAux_Trans);
 
             returnValidCheck(String.valueOf(index_old));
@@ -1491,7 +1527,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                                 activateUpload(context);*/
 
-                                callAct005(context);
+                                if (mSo_Prefix == null || mSo_Code == null) {
+                                    callAct005(context);
+                                } else {
+                                    nservCall();
+                                }
+
                             }
                         },
                         0,
@@ -1554,10 +1595,48 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         );
     }
 
+    public void exitAlertNServ() {
+
+        String alertTitle = hmAux_Trans.get("exit_alert_ttl");
+        String alertMsg = hmAux_Trans.get("exit_alert_msg");
+        //
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                // modificar para incluir a remossao do custom_form_local.
+                //mPresenter.saveData(formData, false);
+                if (bNew) {
+                    mPresenter.deleteFormLocal(formLocal);
+                }
+                //
+                nservCall();
+            }
+        };
+
+        ToolBox.alertMSG(
+                Act011_Main.this,
+                alertTitle,
+                alertMsg,
+                listener,
+                1
+        );
+    }
+
     @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct027(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        //Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1676,6 +1755,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //
         LinearLayout ll_schedule_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_scheduel_info);
         //
+        TextView tv_so_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_lbl);
+        TextView tv_so_code_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_desc);
+        //
         TextView tv_data_serv_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
         TextView tv_data_serv_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
         //
@@ -1698,6 +1780,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
         tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
 
+        tv_so_code_lbl.setText(hmAux_Trans.get("dialog_info_so_code_lbl"));
+
         tv_product_code_val.setText(product_code);
         tv_product_desc.setText(product_desc);
 
@@ -1717,6 +1801,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
 
+        if (mSo_Code != null) {
+            tv_so_code_desc.setText(String.valueOf(mSo_Prefix) + "." + String.valueOf(mSo_Code));
+        } else {
+            tv_so_code_desc.setText("");
+            //
+            tv_so_code_lbl.setVisibility(View.GONE);
+            tv_so_code_desc.setVisibility(View.GONE);
+        }
 
         GE_Custom_Form_LocalDao formLocalDao =
                 new GE_Custom_Form_LocalDao(

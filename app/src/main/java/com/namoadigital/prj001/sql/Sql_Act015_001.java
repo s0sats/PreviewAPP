@@ -38,6 +38,10 @@ public class Sql_Act015_001 implements Specification {
                         "  l.custom_product_id,\n" +
                         "  l.custom_form_data,\n" +
                         "  l.custom_form_status," +
+
+                        "  d.so_prefix,\n" +
+                        "  d.so_code,\n" +
+
                         "    CASE WHEN LENGTH(l.serial_id) <> 0 \n" +
                         "       THEN L.serial_id\n" +
                         "       ELSE d.serial_id\n" +
@@ -70,7 +74,7 @@ public class Sql_Act015_001 implements Specification {
                         "custom_form_code#custom_form_version#custom_form_desc#" +
                         "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
                         "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
-                        "schedule_date_start_format#schedule_date_end_format")
+                        "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code")
                 .toString();
     }
 }
