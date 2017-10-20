@@ -160,6 +160,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private Integer mSo_Prefix;
     private Integer mSo_Code;
+    private String mSite_Code;
+    private Integer mOperation_Code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -525,7 +527,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 form_desc,
                 serial_id,
                 mSo_Prefix,
-                mSo_Code
+                mSo_Code,
+                mSite_Code,
+                mOperation_Code
         );
 
     }
@@ -679,10 +683,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             //
             mSo_Prefix = bundle.getString(SM_SODao.SO_PREFIX, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, null));
             mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null :Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
+            mSite_Code = bundle.getString(SM_SODao.SITE_CODE, null);
+            mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
 
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
+            //
+            mSite_Code = null;
+            mOperation_Code = null;
         }
     }
 

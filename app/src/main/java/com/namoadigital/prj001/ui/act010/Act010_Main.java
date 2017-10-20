@@ -84,6 +84,16 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_version");
+        transList.add("alert_more_than_one_form_ttl");
+        transList.add("alert_more_than_one_form_msg");
+        transList.add("alert_so_form_exits_no_so_ttl");
+        transList.add("alert_so_form_exits_no_so_msg");
+        transList.add("alert_so_form_exits_with_so_ttl");
+        transList.add("alert_so_form_exits_with_so_msg");
+        transList.add("alert_form_exits_with_so_ttl");
+        transList.add("alert_form_exits_with_so_msg");
+        transList.add("alert_so_lbl");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -105,7 +115,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 product_code,
                 serial_id,
                 so_prefix,
-                so_code
+                so_code,
+                hmAux_Trans
         );
 
         tv_form_ttl = (TextView) findViewById(R.id.act010_tv_form_lbl);
@@ -241,6 +252,18 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 Act010_Main.this,
                 alertTrans.get("alert_form_not_ready_title"),
                 alertTrans.get("alert_form_not_ready_msg"),
+                null,
+                0
+        );
+    }
+
+    @Override
+    public void showAlertMsg(String title, String msg) {
+
+        ToolBox.alertMSG(
+                Act010_Main.this,
+                title,
+                msg,
                 null,
                 0
         );

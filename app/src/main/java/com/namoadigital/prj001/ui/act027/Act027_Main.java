@@ -1701,6 +1701,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         Bundle bundle = new Bundle();
         bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(mSm_so.getSo_prefix()));
         bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSm_so.getSo_code()));
+        bundle.putString(SM_SODao.SITE_CODE, String.valueOf(mSm_so.getSite_code()));
+        bundle.putString(SM_SODao.OPERATION_CODE, String.valueOf(mSm_so.getOperation_code()));
         bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
         bundle.putString(Constant.ACT008_SERIAL_ID, mSm_so.getSerial_id());
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT027);

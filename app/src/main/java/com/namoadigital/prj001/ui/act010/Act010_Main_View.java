@@ -22,4 +22,6 @@ public interface Act010_Main_View {
 
     void alertFormNotReady();
 
+    void showAlertMsg(String title, String msg);
+
 }

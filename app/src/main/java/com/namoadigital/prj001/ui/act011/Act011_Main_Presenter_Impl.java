@@ -83,7 +83,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code) {
 
         boolean bNew = false;
         bAgendado = false;
@@ -235,7 +235,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getCustom_form_data(),
                 customFormLocal.getCustom_form_data_serv(),
                 so_prefix,
-                so_code
+                so_code,
+                so_site_code,
+                so_operation_code
         );
 
         if (bAgendado) {
@@ -256,7 +258,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature());
     }
 
-    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code) {
+    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code) {
 
         GE_Custom_Form_Data form_data = custom_form_dataDao
 
@@ -300,8 +302,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             form_data.setDate_end("1900-01-01 00:00:00 +00:00");
             form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
-            form_data.setSite_code(ToolBox_Con.getPreference_Site_Code(context));
-            form_data.setOperation_code(ToolBox_Con.getPreference_Operation_Code(context));
+            form_data.setSite_code(so_site_code != null ? so_site_code : ToolBox_Con.getPreference_Site_Code(context));
+            form_data.setOperation_code(so_operation_code != null ? so_operation_code :ToolBox_Con.getPreference_Operation_Code(context));
             form_data.setSignature("");
             form_data.setToken("");
             form_data.setSo_prefix(so_prefix);

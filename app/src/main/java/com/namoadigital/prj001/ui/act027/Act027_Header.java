@@ -354,6 +354,13 @@ public class Act027_Header extends BaseFragment {
             }
         });
         //
+        rdoAttach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadPdfList();
+            }
+        });
+        //
         rdoAttach.setChecked(true);
     }
 
@@ -582,11 +589,11 @@ public class Act027_Header extends BaseFragment {
 
             }
         }else{
-            rdoData.setChecked(true);
-            //
             rdoAttach.setEnabled(false);
             //
             rdoAttach.setBackground(getResources().getDrawable(R.drawable.act027_radio_pdf_disabled));
+            //
+            rdoData.setChecked(true);
         }
     }
 
