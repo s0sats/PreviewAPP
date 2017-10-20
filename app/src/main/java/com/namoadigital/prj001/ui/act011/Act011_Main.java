@@ -63,6 +63,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
@@ -1527,10 +1528,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                                 activateUpload(context);*/
 
-                                if (mSo_Prefix == null || mSo_Code == null) {
-                                    callAct005(context);
+                                // Hugo is ok
+
+//                                if (mSo_Prefix == null || mSo_Code == null) {
+//                                    callAct005(context);
+//                                } else {
+//                                    nservCall();
+//                                }
+
+                                if (ToolBox_Con.isOnline(context)) {
+                                    enableProgressDialog(
+                                            hmAux_Trans.get("alert_send_finish_ttl"),
+                                            hmAux_Trans.get("alert_send_finish_msg"),
+                                            hmAux_Trans.get("sys_alert_btn_cancel"),
+                                            hmAux_Trans.get("sys_alert_btn_ok")
+                                    );
+
+                                    executeSaveProcess();
+
                                 } else {
-                                    nservCall();
+                                    flowControl();
+
                                 }
 
                             }
@@ -1564,6 +1582,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
                 break;
 
+        }
+    }
+
+    private void flowControl() {
+        //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
+        if (mSo_Prefix == null || mSo_Code == null) {
+            callAct005(context);
+        } else {
+            nservCall();
         }
     }
 
@@ -2015,5 +2042,26 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         gpsCanceled = true;
 
         progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+
+        flowControl();
+    }
+
+    private void executeSaveProcess() {
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+
     }
 }
