@@ -631,6 +631,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         progressDialog.dismiss();
         //
         if(ws_process.equals(WS_PROCESS_N_FORM_SYNC)){
+            setWs_process("");
+            //
             updateSyncChecklist();
             //
             callAct009();

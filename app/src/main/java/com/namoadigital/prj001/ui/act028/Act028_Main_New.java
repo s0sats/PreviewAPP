@@ -36,10 +36,17 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
@@ -49,13 +56,17 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
+import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,6 +84,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     public static final String CREATE_SAVE = "CREATE_SAVE";
     public static final String CREATE_NULL = "CREATE_NULL";
     public static final String CREATE_NOT_EXEC = "CREATE_NOT_EXEC";
+    //Var para controle de chamada do WS de Sync Form
+    public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
 
     public String full_status;
 
@@ -102,10 +115,14 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     private SM_SO_ServiceDao sm_so_serviceDao;
     private SM_SO_Service_ExecDao sm_so_service_execDao;
     private SM_SO_Service_Exec_TaskDao sm_so_service_exec_taskDao;
+    private Sync_ChecklistDao syncChecklistDao;
 
     private HMAux partnerAux = new HMAux();
 
     private int index = 0;
+    //Variavel só utilizada a criação de N-Form via N-Service
+    private HMAux sm_so_n_form = new HMAux();
+    private String ws_process = "";
 
     public void setMTASK_STATUS(String MTASK_STATUS) {
         this.MTASK_STATUS = MTASK_STATUS;
@@ -210,6 +227,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         );
 
         sm_so_service_exec_taskDao = new SM_SO_Service_Exec_TaskDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        syncChecklistDao = new Sync_ChecklistDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -532,49 +555,6 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        //Menu Suporte
-//        menu.add(0, 2, Menu.FIRST + 3, "Info");
-//        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-//        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-//        menu.findItem(2).setTitle("Info");
-
-        menu.add(0, 2, Menu.FIRST + 3, hmAux_Trans.get("toolbar_info_lbl"));
-        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_info));
-        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-//            case 2:
-//
-//                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View view = inflater.inflate(R.layout.teste, null);
-//
-//                ToolBox_Inf.showDialogInfo(
-//                        context,
-//                        mService,
-//                        view
-//                );
-//
-//                return true;
-
-
-            case 2:
-                showInfo();
-                return true;
-        }
-
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onBackPressed() {
@@ -1506,4 +1486,190 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
         super.callAct021();
     }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        menu.add(0, 2, Menu.FIRST + 3, hmAux_Trans.get("toolbar_info_lbl"));
+        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_info));
+        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
+        //
+        menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
+        menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
+        menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //
+        int id = item.getItemId();
+        //
+        switch (id) {
+            case 2:
+                showInfo();
+                return true;
+            case 3 :
+                callNFormMsg();
+                return true;
+        }
+        //
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void callNFormMsg() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_open_n_form_ttl"),
+                hmAux_Trans.get("alert_open_n_form_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        processNFormFlow();
+                    }
+                },
+                1
+        );
+    }
+
+    private void processNFormFlow() {
+        HMAux mSm_so = sm_soDao.getByStringHM(
+                new SM_SO_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mService.getSo_prefix(),
+                        mService.getSo_code()
+                ).toSqlQuery()
+        );
+        if (mSm_so != null && mSm_so.size() > 0){
+            sm_so_n_form = mSm_so;
+            //
+            HMAux syncProduct = syncChecklistDao
+                    .getByStringHM(
+                            new Sync_Checklist_Sql_002(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    Long.parseLong(mSm_so.get(SM_SODao.PRODUCT_CODE))
+                            ).toSqlQuery()
+                    );
+            //Se Forms do produto ainda não foram sincronizados,
+            //Chama Ws para baixar os Forms.
+            //Caso contrario, verifica se ja existe form aberto antes de
+            //direcionar par act009
+            if (syncProduct == null || syncProduct.size() == 0) {
+                //Chamar WS
+                executeSyncProcess();
+            } else {
+                callAct009();
+            }
+        }
+
+    }
+
+    private void executeSyncProcess() {
+        ws_process = WS_PROCESS_N_FORM_SYNC;
+        //
+        enableProgressDialog(
+                hmAux_Trans.get("progress_n_form_sync_ttl"),
+                hmAux_Trans.get("progress_n_form_sync_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        ArrayList<String> data_package = new ArrayList<>();
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+        //
+        Intent mIntent = new Intent(context, WBR_Sync.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
+        bundle.putLong(Constant.GS_PRODUCT_CODE, Long.parseLong(sm_so_n_form.get(SM_SODao.PRODUCT_CODE)));
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        bundle.putInt(Constant.GC_STATUS, 1);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        super.processCloseACT(mLink, mRequired);
+        progressDialog.dismiss();
+        //
+        if(ws_process.equals(WS_PROCESS_N_FORM_SYNC)){
+            updateSyncChecklist();
+            //
+            callAct009();
+            //
+            ws_process = "";
+        }
+    }
+
+    public void updateSyncChecklist() {
+        //Pega data atual
+        Calendar cDate =  Calendar.getInstance();
+        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+        String last_update = dateFormat.format(cDate.getTime());
+
+        Sync_Checklist syncChecklist =  new Sync_Checklist();
+
+        syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+        syncChecklist.setProduct_code(Long.parseLong(sm_so_n_form.get(SM_SODao.PRODUCT_CODE)));
+        syncChecklist.setLast_update(last_update);
+
+        syncChecklistDao.addUpdate(syncChecklist);
+        //
+        startDownloadServices();
+    }
+
+    private void startDownloadServices() {
+        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
+        Bundle bundle = new Bundle();
+        mIntentPDF.putExtras(bundle);
+        mIntentPIC.putExtras(bundle);
+        mIntentLogo.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentPDF);
+        context.sendBroadcast(mIntentPIC);
+        context.sendBroadcast(mIntentLogo);
+    }
+
+
+    private void callAct009() {
+        Intent mIntent = new Intent(context, Act009_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(SM_SODao.SO_PREFIX, sm_so_n_form.get(SM_SODao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE, sm_so_n_form.get(SM_SODao.SO_CODE));
+        bundle.putString(SM_SODao.SITE_CODE, sm_so_n_form.get(SM_SODao.SITE_CODE));
+        bundle.putString(SM_SODao.OPERATION_CODE,sm_so_n_form.get(SM_SODao.OPERATION_CODE) );
+        bundle.putString(Constant.ACT007_PRODUCT_CODE,sm_so_n_form.get(SM_SODao.PRODUCT_CODE));
+        bundle.putString(Constant.ACT008_SERIAL_ID,sm_so_n_form.get(SM_SODao.SERIAL_ID));
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT028);
+        //Dados do Serviço
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, String.valueOf(mService.getPrice_list_code()));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_CODE, String.valueOf(mService.getPack_code()));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.PACK_SEQ, String.valueOf(mService.getPack_seq()));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.CATEGORY_PRICE_CODE, String.valueOf(mService.getCategory_price_code()));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_CODE, String.valueOf(mService.getService_code()));
+        bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ, String.valueOf(mService.getService_seq()));
+        bundle.putBoolean(Constant.ACT027_IS_SHORTCUT,mShortCut);
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivity(mIntent);
+        finish();
+    }
+
+
 }
