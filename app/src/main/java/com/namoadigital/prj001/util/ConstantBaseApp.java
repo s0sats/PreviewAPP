@@ -298,7 +298,7 @@ public class ConstantBaseApp extends ConstantBase {
 
     //Parametros de Permissões
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
-    public static final String PARAM_CHECKLIST = "N-FORM";// "CHECKLIST";
+    public static final String PARAM_CHECKLIST = "CHECKLIST";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
     public static final String PARAM_SO = "SO";
     public static final String PARAM_SO_MOV = "SO_MOV";

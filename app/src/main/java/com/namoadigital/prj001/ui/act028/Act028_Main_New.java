@@ -207,6 +207,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         transList.add("dialog_info_ttl");
         //
         transList.add("toolbar_info_lbl");
+        transList.add("alert_unsaved_data_will_be_lost");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -1497,10 +1498,12 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
         //
-        menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
-        menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
-        menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST)) {
+            menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
+            menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
+            menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
+        }
 
 
         return super.onCreateOptionsMenu(menu);
@@ -1524,13 +1527,25 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     }
 
     private void callNFormMsg() {
+
+        String msg =
+                hmAux_Trans.get("alert_open_n_form_msg");
+
+        /*if(fm.findFragmentByTag(SELECTION_TASK) != null ){
+            msg+=  "\n" +hmAux_Trans.get("alert_unsaved_data_will_be_lost");
+        }*/
+
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_open_n_form_ttl"),
-                hmAux_Trans.get("alert_open_n_form_msg"),
+                msg,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //Salva os dados mexidos na task.
+                        if(fm.findFragmentByTag(SELECTION_TASK) != null ){
+                            act028_task.updateTaskOnLeave();
+                        }
                         processNFormFlow();
                     }
                 },
@@ -1571,29 +1586,33 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     }
 
     private void executeSyncProcess() {
-        ws_process = WS_PROCESS_N_FORM_SYNC;
-        //
-        enableProgressDialog(
-                hmAux_Trans.get("progress_n_form_sync_ttl"),
-                hmAux_Trans.get("progress_n_form_sync_msg"),
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
-        );
-        //
-        ArrayList<String> data_package = new ArrayList<>();
-        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        //
-        Intent mIntent = new Intent(context, WBR_Sync.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
-        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
-        bundle.putLong(Constant.GS_PRODUCT_CODE, Long.parseLong(sm_so_n_form.get(SM_SODao.PRODUCT_CODE)));
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-        bundle.putInt(Constant.GC_STATUS, 1);
+        if(ToolBox_Con.isOnline(context)) {
+            ws_process = WS_PROCESS_N_FORM_SYNC;
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_n_form_sync_ttl"),
+                    hmAux_Trans.get("progress_n_form_sync_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, Long.parseLong(sm_so_n_form.get(SM_SODao.PRODUCT_CODE)));
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override

@@ -1575,32 +1575,34 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
-        menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
-        menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST)) {
+            menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
+            menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
+            menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //
-        int id = item.getItemId();
-        //
-        switch (id) {
-            case 3 :
-                callNFormMsg();
-                return true;
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST)) {
+            //
+            int id = item.getItemId();
+            //
+            switch (id) {
+                case 3:
+                    callNFormMsg();
+                    return true;
 
+            }
+            //
         }
-        //
         return super.onOptionsItemSelected(item);
     }
 
     private void callNFormMsg() {
-        String test = hmAux_Trans.get("alert_open_n_form_msg");
-
         ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_open_n_form_ttl"),
@@ -1638,30 +1640,34 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void executeSyncProcess() {
-        setWs_process(WS_PROCESS_N_FORM_SYNC);
-        //
-        //
-        enableProgressDialog(
-                hmAux_Trans.get("progress_n_form_sync_ttl"),
-                hmAux_Trans.get("progress_n_form_sync_msg"),
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
-        );
-        //
-        ArrayList<String> data_package = new ArrayList<>();
-        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-        //
-        Intent mIntent = new Intent(context, WBR_Sync.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.GS_SESSION_APP,ToolBox_Con.getPreference_Session_App(context));
-        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
-        bundle.putLong(Constant.GS_PRODUCT_CODE, mSm_so.getProduct_code());
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-        bundle.putInt(Constant.GC_STATUS, 1);
+        if(ToolBox_Con.isOnline(context)) {
+            setWs_process(WS_PROCESS_N_FORM_SYNC);
+            //
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_n_form_sync_ttl"),
+                    hmAux_Trans.get("progress_n_form_sync_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, mSm_so.getProduct_code());
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     public void updateSyncChecklist() {
