@@ -956,8 +956,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                 disableProgressDialog();
             }
         }
-
-
+        //
+        startDownloadServices();
     }
 
 

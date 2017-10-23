@@ -33,6 +33,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
@@ -51,6 +52,9 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
@@ -469,12 +473,55 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         setFrag(act027_services_, "SERVICES");
         //
-
         syncChecklistDao = new Sync_ChecklistDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+        //
+        checkSOAttachExists();
+    }
+
+    private void checkSOAttachExists() {
+        if(!WBR_DownLoad_PDF.IS_RUNNING) {
+            SM_SO_FileDao soFileDao =
+                    new SM_SO_FileDao(
+                            getApplicationContext(),
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+            ArrayList<HMAux> so_file_list = new ArrayList<>();
+            //Carrega lista de files do cabealho da SO
+            so_file_list.addAll(
+                    soFileDao.query_HM(
+                            new SM_SO_File_Sql_005(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    mSm_so.getSo_prefix(),
+                                    mSm_so.getSo_code()
+                            ).toSqlQuery()
+                    )
+            );
+            //
+            String splitKey = "@#My#@Key#@";
+            for (HMAux hmAux : so_file_list) {
+                String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
+                String[] nameSplited = fileName.split(splitKey);
+                String ext = "." + nameSplited[nameSplited.length - 1];
+                //
+                if (ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ext)) {
+                    soFileDao.addUpdate(
+                            new SM_SO_File_Sql_004(
+                                    hmAux.get(SM_SO_FileDao.CUSTOMER_CODE),
+                                    hmAux.get(SM_SO_FileDao.SO_PREFIX),
+                                    hmAux.get(SM_SO_FileDao.SO_CODE),
+                                    hmAux.get(SM_SO_FileDao.FILE_CODE),
+                                    hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME) + ext
+                            ).toSqlQuery().toLowerCase()
+                    );
+                }
+            }
+        }
     }
 
     //region Recover Intent Parameters
@@ -730,6 +777,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         act027_header_.setmSm_so(mSm_so);
         act027_header_.loadDataToScreen();
+        //
+        startDownloadServices();
     }
 
     //region Ciclo Normal
