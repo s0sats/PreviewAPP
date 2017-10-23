@@ -165,6 +165,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     private Integer mSo_Prefix;
     private Integer mSo_Code;
+    private String mSite_Code;
+    private Integer mOperation_Code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -544,7 +546,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 form_desc,
                 serial_id,
                 mSo_Prefix,
-                mSo_Code
+                mSo_Code,
+                mSite_Code,
+                mOperation_Code
         );
 
     }
@@ -705,15 +709,17 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
             form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
             //
-            int mSo_Prefix_Aux = bundle.getInt(SM_SODao.SO_PREFIX, 0);
-            int mSo_Code_Aux = bundle.getInt(SM_SODao.SO_CODE, 0);
-            //
-            mSo_Prefix = mSo_Prefix_Aux != 0 ? mSo_Prefix_Aux : null;
-            mSo_Code = mSo_Code_Aux != 0 ? mSo_Code_Aux : null;
+            mSo_Prefix = bundle.getString(SM_SODao.SO_PREFIX, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, null));
+            mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null :Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
+            mSite_Code = bundle.getString(SM_SODao.SITE_CODE, null);
+            mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
 
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
+            //
+            mSite_Code = null;
+            mOperation_Code = null;
         }
     }
 

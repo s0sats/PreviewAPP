@@ -261,16 +261,11 @@
 
                     <ImageView
                         android:id="@+id/act028_opc_content_content_iv_not_exec"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/stroke_purple3_states"
-                        android:paddingBottom="4dp"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:paddingTop="4dp"
-                        android:src="@drawable/ic_do_not_disturb_black_24dp"
-                        android:tint="@color/namoa_color_purple_3"
-                        android:visibility="gone"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_rejeitar_states"
+                        android:visibility="gone"
+                        />
                 </LinearLayout>
 
                 <View
@@ -286,15 +281,9 @@
 
                     <ImageView
                         android:id="@+id/act028_opc_content_content_btn_new_exec"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_plus_circle_outline_24px"
-                        android:tint="@color/namoa_dark_blue"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:paddingRight="15dp"
-                        android:paddingLeft="15dp"
-                        android:background="@drawable/stroke_blue2_states"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_adicionar_filled_states"
                         />
                 </LinearLayout>
 

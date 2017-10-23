@@ -118,8 +118,31 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         //
         tProductSerial = productSerial;
         //
-        List<GE_Custom_Form_Local> formLocals = getFormInProcessing(productSerial);
+        List<HMAux> syncChecklists =  checkSyncChecklist();
+
+        if(syncChecklists == null || syncChecklists.size() == 0){
+            if(ToolBox_Con.isOnline(context)) {
+                executeSyncProcess();
+            }else{
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }else{
+            prepareAct009();
+        }
+        /**
+         *  O TRECHO DE CODIGO ABAIXO, FOI COMENTADO EM 20/10/2017 POR DANIEL LUCHE
+         *  Após a inclusão da criação de N-Form dentro do N-Service, identificamos
+         *  a falha que existia nessa tela,que consistia em seguir um fluxo antigo,
+         *  onde cada Produto/Serial só poderia ter um unico formulário em aberto.
+         *  Dessa forma, o codigo abaixo verificava se existia um form em aberto para
+         *  aquele Produto/Serial e , caso existisse, fazia uma atalho direto para
+         *  o form em aberto.
+         */
+
         //
+      /*
+       //
+        List<GE_Custom_Form_Local> formLocals = getFormInProcessing(productSerial);
         Bundle bundle = new Bundle();
         //Parametros comuns aos 2 fluxos
         //Nenhum form aberto, manda para seleção de tipo e form
@@ -151,7 +174,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA, String.valueOf(aux.getCustom_form_data()));
 
             mView.callAct011(context,bundle);
-        }
+        }*/
 
     }
 
@@ -268,7 +291,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(Constant.ACT008_PRODUCT_ID, tProductSerial.getProduct_id());
             bundle.putString(Constant.ACT008_SERIAL_ID, tProductSerial.getSerial_id());
-            bundle.putBoolean(Constant.ACT020_BACK_FLOW, true);
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
 
             mView.callAct009(context, bundle);
         }else{

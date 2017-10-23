@@ -19,10 +19,11 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
-import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act028.Act028_Main_New;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -42,11 +43,12 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private String serial_id;
     private Bundle bundle;
     private Lib_Custom_Cell_Adapter mAdapter;
-    private boolean back_act020 = false;
+    //private boolean back_act020 = false;
     private int back_action;
 
     private Integer mSo_Prefix;
     private Integer mSo_Code;
+    private String actResqueting="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,7 +98,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 this,
                 new EV_Module_Res_Txt_TransDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GE_Custom_Form_TypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                back_act020,
+                actResqueting,
                 back_action
         );
 
@@ -111,18 +113,12 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         if (bundle != null) {
             product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
             serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
-            back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
+            //back_act020 = bundle.getBoolean(Constant.ACT020_BACK_FLOW, false);
+            actResqueting = bundle.getString(Constant.MAIN_REQUESTING_ACT,"");
             back_action = bundle.getInt(Constant.BACK_ACTION, 0);
             //
-            int mSo_Prefix_Aux = bundle.getInt(SM_SODao.SO_PREFIX, 0);
-            int mSo_Code_Aux = bundle.getInt(SM_SODao.SO_CODE, 0);
-            //
-            mSo_Prefix = mSo_Prefix_Aux != 0 ? mSo_Prefix_Aux : null;
-            mSo_Code = mSo_Code_Aux != 0 ? mSo_Code_Aux : null;
-
         } else {
-            mSo_Prefix = null;
-            mSo_Code = null;
+
         }
     }
 
@@ -249,8 +245,36 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     }
 
     @Override
+    public void callAct027(Context context) {
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.BACK_ACTION);
+        bundle.remove(Constant.MAIN_REQUESTING_ACT);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct028(Context context) {
+        Intent mIntent = new Intent(context, Act028_Main_New.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.remove(Constant.ACT007_PRODUCT_CODE);
+        bundle.remove(Constant.ACT008_SERIAL_ID);
+        bundle.remove(Constant.ACT008_PRODUCT_DESC);
+        bundle.remove(Constant.BACK_ACTION);
+        bundle.remove(Constant.MAIN_REQUESTING_ACT);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked(back_act020);
+        mPresenter.onBackPressedClicked(actResqueting);
     }
 
     @Override

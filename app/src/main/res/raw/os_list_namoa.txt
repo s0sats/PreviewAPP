@@ -7,7 +7,7 @@
 		"so_scn": 15,
 		"so_desc": "uahsuhasd...ðŸ’©",
 		"product_code": 1,
-		"product_id": "PROD1",
+		"product_code": "PROD1",
 		"product_desc": "CARRO",
 		"serial_code": 52,
 		"serial_id": "X",
