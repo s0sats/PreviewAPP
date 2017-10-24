@@ -658,6 +658,11 @@ public class Act027_Approval extends BaseFragment {
 
                 approvalApproval.setVisibility(View.VISIBLE);
 
+                rg_opc.setOnCheckedChangeListener(null);
+
+                rb_user.setChecked(false);
+                rb_other.setChecked(false);
+
                 rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -677,8 +682,9 @@ public class Act027_Approval extends BaseFragment {
                     }
                 });
 
-                rb_user.setChecked(false);
-                rb_other.setChecked(false);
+                //
+//                rb_user.setChecked(false);
+//                rb_other.setChecked(false);
 
                 if (ToolBox_Inf.profileExists(getActivity(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
                     rg_opc.setVisibility(View.VISIBLE);

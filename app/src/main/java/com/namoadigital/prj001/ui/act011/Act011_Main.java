@@ -390,6 +390,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void check() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
+                /**
+                 * Atualizar tabs caso o usuário tente fazer um check().
+                 */
+                resTabs = returnValidCheckTabs("-1");
+                returnValidCheck("-1");
+                act011_ff_options.tabsS(resTabs);
+                //Fim
+
                 formData.setLocation_type("");
                 formData.setLocation_lat("");
                 formData.setLocation_lng("");
@@ -473,8 +481,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                     }
                 }
                 //
-                // Hugo auto
-
                 Set keysAuto = hmP.keySet();
 
                 for (Iterator iAuto = keysAuto.iterator(); iAuto.hasNext(); ) {
@@ -711,7 +717,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
             //
             mSo_Prefix = bundle.getString(SM_SODao.SO_PREFIX, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, null));
-            mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null :Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
+            mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
             mSite_Code = bundle.getString(SM_SODao.SITE_CODE, null);
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
 
@@ -1581,6 +1587,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
+                                // hugo assinatura
+                                formData.setSignature("");
+                                formData.setSignature_name("");
+
                                 mPresenter.checkData(formData, geFiles);
                                 bNew = false;
                             }
@@ -1703,7 +1714,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 formData.setSignature(mSignature);
                 formData.setSignature_name(sName);
                 //
-                // Hugo
                 GE_File geFile = new GE_File();
                 geFile.setFile_code(mSignature.replace(".png", ""));
                 geFile.setFile_path(mSignature);
