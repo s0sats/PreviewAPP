@@ -1587,6 +1587,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
+                                // hugo assinatura
+                                formData.setSignature("");
+                                formData.setSignature_name("");
+
                                 mPresenter.checkData(formData, geFiles);
                                 bNew = false;
                             }
@@ -1709,7 +1714,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
                 formData.setSignature(mSignature);
                 formData.setSignature_name(sName);
                 //
-                // Hugo
                 GE_File geFile = new GE_File();
                 geFile.setFile_code(mSignature.replace(".png", ""));
                 geFile.setFile_path(mSignature);
