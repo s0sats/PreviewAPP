@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -170,6 +171,9 @@ public class Act027_Header extends BaseFragment {
 
     private TextView tv_add_inf3_title;
     private TextView tv_add_inf3;
+    //
+    private Handler attachHandler;
+    private Runnable attachRunnable = null;
 
     @Nullable
     @Override
@@ -201,7 +205,9 @@ public class Act027_Header extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-
+        //
+        attachHandler.removeCallbacks(attachRunnable);
+        //
         loadScreenToData();
     }
 
@@ -334,6 +340,8 @@ public class Act027_Header extends BaseFragment {
 
         tv_add_inf3_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3_title);
         tv_add_inf3 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3);
+        //
+        attachHandler = new Handler();
     }
 
     private void iniAction() {
@@ -341,7 +349,7 @@ public class Act027_Header extends BaseFragment {
         rdoGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.act027_header_content_rdo_data:
                         ll_pdf_list.setVisibility(View.GONE);
                         ll_header_data.setVisibility(View.VISIBLE);
@@ -357,7 +365,9 @@ public class Act027_Header extends BaseFragment {
         rdoAttach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadPdfList();
+                if (attachRunnable == null) {
+                    loadPdfList();
+                }
             }
         });
         //
@@ -515,6 +525,8 @@ public class Act027_Header extends BaseFragment {
     }
 
     private void loadPdfList() {
+
+        int downloadedCount = 0;
         //Limpa view do linear layout
         ll_pdf_list.removeAllViews();
         //
@@ -547,38 +559,38 @@ public class Act027_Header extends BaseFragment {
                             new File(Constant.CACHE_PDF)
                     );
                 } catch (Exception e) {
-                    ToolBox_Inf.registerException(getClass().getName(),e);
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +localUrl)), "application/pdf");
+                intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + localUrl)), "application/pdf");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                 startActivity(intent);
             }
         };
         //
-        if(pdfList != null && pdfList.size() > 0){
-
+        if (pdfList != null && pdfList.size() > 0) {
             for (int i = 0; i < pdfList.size(); i++) {
-
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 //
-                View view = inflater.inflate(R.layout.namoa_iv_tv_cell,null);
+                View view = inflater.inflate(R.layout.namoa_iv_tv_cell, null);
                 //
                 ImageView iv_pdf_icon = (ImageView) view.findViewById(R.id.namoa_iv_tv_iv_icon);
                 //
                 TextView tv_pdf_name = (TextView) view.findViewById(R.id.namoa_iv_tv_tv_desc);
                 //
-                if(pdfList.get(i).getFile_url_local().length() > 0) {
+                if (pdfList.get(i).getFile_url_local().length() > 0) {
                     view.setOnClickListener(pdfListner);
                     //
                     iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_picture_as_pdf_black_24px));
-                }else{
+                    //atualiza contador e baixados.
+                    downloadedCount++;
+                } else {
+                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
+                    //
                     view.setOnClickListener(null);
                     view.setClickable(false);
-                    //
-                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
                 }
                 //
                 tv_pdf_name.setText(pdfList.get(i).getFile_name());
@@ -588,13 +600,27 @@ public class Act027_Header extends BaseFragment {
                 ll_pdf_list.addView(view);
 
             }
-        }else{
+        } else {
             rdoAttach.setEnabled(false);
             //
             rdoAttach.setBackground(getResources().getDrawable(R.drawable.act027_radio_pdf_disabled));
             //
             rdoData.setChecked(true);
         }
+
+        if (downloadedCount < pdfList.size()) {
+            if (attachRunnable == null) {
+                attachRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        loadPdfList();
+                    }
+                };
+            }
+            attachHandler.postDelayed(attachRunnable, 2000L);
+
+        }
+
     }
 
 
