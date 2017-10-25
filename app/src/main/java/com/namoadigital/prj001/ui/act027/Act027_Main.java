@@ -203,9 +203,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("user_name_lbl");
         transList.add("user_lbl");
         transList.add("other_lbl");
+
+        transList.add("approval_quality_lbl");
         transList.add("approval_nfc_lbl");
         transList.add("approval_user_password_lbl");
         transList.add("approval_signature_lbl");
+
         transList.add("alert_no_name_ttl");
         transList.add("alert_no_name_msg");
         transList.add("alert_so_signature_ttl");

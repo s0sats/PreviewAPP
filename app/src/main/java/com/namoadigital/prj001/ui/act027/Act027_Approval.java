@@ -387,6 +387,7 @@ public class Act027_Approval extends BaseFragment {
 
             tv_name_lbl.setText(hmAux_Trans.get("user_name_lbl"));
 
+            approvalApprovalUser.setText(hmAux_Trans.get("approval_quality_lbl"));
             approvalNFC.setText(hmAux_Trans.get("approval_nfc_lbl"));
             approvalUser_Password.setText(hmAux_Trans.get("approval_user_password_lbl"));
             approvalApproval.setText(hmAux_Trans.get("approval_signature_lbl"));
