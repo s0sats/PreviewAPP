@@ -25,6 +25,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -187,6 +188,21 @@ public class WS_Cleanning extends IntentService {
 
         for (SM_SO sm_so : sm_sos) {
             sm_soDao.removeFull(sm_so);
+            //
+            String filePrefix = "sm_so_"
+                    + sm_so.getCustomer_code() +"_"
+                    + sm_so.getSo_prefix() +"_"
+                    + sm_so.getSo_code() +"_"
+                    ;
+
+           File[] soFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, filePrefix);
+           //
+            for (File file : soFileList) {
+                if(file.exists()){
+                    file.delete();
+                }
+            }
+
         }
 
     }

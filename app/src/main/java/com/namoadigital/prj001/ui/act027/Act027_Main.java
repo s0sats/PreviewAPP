@@ -549,6 +549,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
             //
             lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
+            //Se veio preenchido é retorno de uma execução via atalho.
+            //Nessa caso inicia serviço de download.
+            if(lastServiceReturned.trim().length() > 0){
+                startDownloadServices();
+            }
         } else {
             mSm_so = null;
         }
