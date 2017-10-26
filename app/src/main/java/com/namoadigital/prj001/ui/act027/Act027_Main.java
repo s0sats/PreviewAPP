@@ -552,6 +552,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
             //
             lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
+            //Se veio preenchido é retorno de uma execução via atalho.
+            //Nessa caso inicia serviço de download.
+            if(lastServiceReturned.trim().length() > 0){
+                startDownloadServices();
+            }
         } else {
             mSm_so = null;
         }
@@ -1460,6 +1465,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         bundle.putSerializable("data", sService);
         bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, false);
+        bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED, mSm_so.getUpdate_required());
 
         callAct028(context, bundle);
     }

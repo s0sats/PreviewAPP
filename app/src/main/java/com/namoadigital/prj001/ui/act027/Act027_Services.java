@@ -66,6 +66,7 @@ public class Act027_Services extends BaseFragment {
     private SM_SO mSm_so;
     private HMAux partnerAux = new HMAux();
     private String lastServiceUpdated = "";
+    private int original_update_required;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -161,7 +162,9 @@ public class Act027_Services extends BaseFragment {
     public void loadDataToScreen() {
         if (bStatus) {
             if (mSm_so != null) {
-
+                //
+                original_update_required = mSm_so.getUpdate_required();
+                //
                 tv_filter_lbl.setText(hmAux_Trans.get("filter_lbl"));
                 //
                 //sw_filter.setChecked(true);
@@ -336,6 +339,7 @@ public class Act027_Services extends BaseFragment {
         bundle.putString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ, sService.get(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ));
         bundle.putString(SM_SO_Service_Exec_TaskDao.EXEC_TMP, exec_tmp);
         bundle.putString(SM_SO_Service_Exec_TaskDao.TASK_TMP, task_tmp);
+        bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED,original_update_required);
 
         bundle.putSerializable("data", sService);
 

@@ -1074,24 +1074,27 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         super.processCustom_error(mLink, mRequired);
 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
-
             setWsSoProcess("");
             setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
             mPresenter.getMenuItens(hmAux_Trans);
+            progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             setWsSoProcess("");
             mPresenter.getMenuItens(hmAux_Trans);
-
             setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
+            progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
             setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
             mPresenter.getMenuItens(hmAux_Trans);
+            progressDialog.dismiss();
 
-        } else {
+        } else if(wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
             changeCustomer();
+        }else{
+            progressDialog.dismiss();
         }
     }
 
