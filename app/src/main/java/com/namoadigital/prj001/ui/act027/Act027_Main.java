@@ -1462,6 +1462,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         bundle.putSerializable("data", sService);
         bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, false);
+        bundle.putInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED, mSm_so.getUpdate_required());
 
         callAct028(context, bundle);
     }

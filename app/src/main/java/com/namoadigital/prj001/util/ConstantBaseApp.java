@@ -81,6 +81,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT023_SO_HEADER_LIST = "so_header_list";
 
     public static final String ACT027_IS_SHORTCUT = "ACT027_IS_SHORTCUT";
+    public static final String ACT027_ORIGINAL_UPDATE_REQUIRED = "ACT027_ORIGINAL_UPDATE_REQUIRED";
     public static final String ACT028_SERVICE_UPDATED = "ACT028_SERVICE_UPDATED";
 
     public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";

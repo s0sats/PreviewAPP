@@ -40,6 +40,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
+import com.namoadigital.prj001.sql.SM_SO_Sql_020;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -321,7 +322,16 @@ public class Act028_Task extends BaseFragment {
                                 mTask.getTask_tmp()
                         ).toSqlQuery()
                 );
-
+                //Após apagar dados, volta update_required do cabeçalho
+                //para o original(recebido via bundle)
+                soDao.addUpdate(
+                        new SM_SO_Sql_020(
+                            mService.getCustomer_code(),
+                            mService.getSo_prefix(),
+                            mService.getSo_code(),
+                            mMain_new.getOriginal_update_required()
+                        ).toSqlQuery()
+                );
             }
         }
     }

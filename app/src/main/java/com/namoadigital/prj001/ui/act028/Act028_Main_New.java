@@ -124,9 +124,14 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     //Variavel só utilizada a criação de N-Form via N-Service
     private HMAux sm_so_n_form = new HMAux();
     private String ws_process = "";
+    private int original_update_required;
 
     public void setMTASK_STATUS(String MTASK_STATUS) {
         this.MTASK_STATUS = MTASK_STATUS;
+    }
+
+    public int getOriginal_update_required() {
+        return original_update_required;
     }
 
     @Override
@@ -333,6 +338,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         if (bundle != null) {
 
             mShortCut = bundle.getBoolean(Constant.ACT027_IS_SHORTCUT);
+
+            if(bundle.containsKey(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED)){
+                original_update_required = bundle.getInt(Constant.ACT027_ORIGINAL_UPDATE_REQUIRED);
+            }
 
             mService = loadService(
                     ToolBox_Con.getPreference_Customer_Code(context),
@@ -955,6 +964,19 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
             if (progressDialog != null && progressDialog.isShowing()) {
                 disableProgressDialog();
             }
+        }
+       //
+       HMAux soAux = sm_soDao
+               .getByStringHM(
+                       new SM_SO_Sql_002(
+                               mService.getCustomer_code(),
+                               mService.getSo_prefix(),
+                               mService.getSo_code()
+                       ).toSqlQuery()
+               );
+        //
+        if (soAux != null && soAux.size() > 0){
+            original_update_required = Integer.parseInt(soAux.get(SM_SODao.UPDATE_REQUIRED));
         }
         //
         startDownloadServices();
