@@ -1044,7 +1044,7 @@ public class WS_Sync extends IntentService {
                                &&
                                ToolBox_Con
                                    .getPreference_Zone_Code(getApplicationContext())
-                                   == zone.getSite_code()
+                                   == zone.getZone_code()
                                    ) {
                                zoneExist = true;
                                break;
