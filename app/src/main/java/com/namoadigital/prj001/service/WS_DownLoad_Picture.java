@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -14,6 +15,8 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_004;
+import com.namoadigital.prj001.sql.MD_Product_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_004;
 import com.namoadigital.prj001.util.Constant;
@@ -46,6 +49,10 @@ public class WS_DownLoad_Picture extends IntentService {
             }
 
             Bundle bundle = intent.getExtras();
+
+            /*
+            * Download images do N-Form
+            * */
             //
             ArrayList<HMAux> dados = new ArrayList<>();
             ArrayList<HMAux> dados_geral;
@@ -190,6 +197,46 @@ public class WS_DownLoad_Picture extends IntentService {
                             ).toSqlQuery().toLowerCase()
                     );
                 }
+                //
+                /*
+                * Download croquis de Produtos
+                */
+                MD_ProductDao productDao = new MD_ProductDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                ArrayList<HMAux> product_sketch_list = new ArrayList<>();
+                //
+                product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
+                        new MD_Product_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                );
+                //
+                for (HMAux hmAux : product_sketch_list) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(MD_ProductDao.SKETCH_URL),
+                                Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    productDao.addUpdate(
+                            new MD_Product_Sql_005(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    hmAux.get(MD_ProductDao.PRODUCT_CODE),
+                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) +".jpg"
+                            ).toSqlQuery()
+                    );
+                }
+
             }
             //fim SO
 
