@@ -24,7 +24,7 @@
     <string name="msg_processing_data_step1">Processando dados - Etapa 1 de 4</string>
     <string name="msg_processing_data_step2">Processando dados - Etapa 2 de 4</string>
     <string name="msg_processing_data_step3">Processando dados - Etapa 3 de 4</string>
-    <string name="msg_processing_data_step4">Processando dados - Etapa 3 de 4.\r\nEssa etapa pode demorar um pouco.</string>
+    <string name="msg_processing_data_step4">Processando dados - Etapa 3 de 4.\nEssa etapa pode demorar um pouco.</string>
     <string name="msg_version_invalid">Versão do app inválida.</string>
     <string name="msg_version_expired">Versão do app expirada</string>
     <string name="msg_update_required">Nova versão identificada!\r\nDeseja atualizar ?</string>
@@ -57,6 +57,7 @@
     <string name="act002_logout_ttl">Logout</string>
     <string name="act002_logout_one_customer_msg">Deseja realmente fazer logout do APP?</string>
     <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar outro Cliente ou fazer Login novamente.</string>
+    <string name="msg_lost_access_to_zone">Você não possui mais acesso a Zona em que esta logado!\nVocê precisará selecionar outra Zona ou fazer Login novamente.</string>
     <string name="generic_start_update_process_msg">Iniciando processo de atualização</string>
     <string name="generic_error_update_empty_link">Erro: erro ao atualizar!Link vazio!</string>
     <string name="generic_starting_download_msg">Download em Andamento</string>

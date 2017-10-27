@@ -25,7 +25,7 @@
     <string name="msg_processing_data_step1">Processing Data - Step 1 of 4</string>
     <string name="msg_processing_data_step2">Processing Data - Step 2 of 4</string>
     <string name="msg_processing_data_step3">Processing Data - Step 3 of 4</string>
-    <string name="msg_processing_data_step4">Processing Data - Step 3 of 4.\r\nThis step may take a few minutes</string>
+    <string name="msg_processing_data_step4">Processing Data - Step 3 of 4.\nThis step may take a few minutes</string>
     <string name="msg_version_invalid">Invalid APP Version</string>
     <string name="msg_version_expired">Expired APP Version</string>
     <string name="msg_update_required">New Version Identified!\r\nDo you want to update?</string>
@@ -59,6 +59,7 @@
     <string name="act002_logout_ttl">Logout</string>
     <string name="act002_logout_one_customer_msg">Do you really want to logout from the APP?</string>
     <string name="msg_lost_access_to_site_or_operation">You have no longer access to the Site or Operation you are logged!\nYou shall select another Customer or Login again</string>
+    <string name="msg_lost_access_to_zone">You have no longer access to the Zone you are logged!\nYou shall select another Customer or Login again</string>
     <string name="generic_start_update_process_msg">Starting Update Process</string>
     <string name="generic_error_update_empty_link">Error: updating error! Empty Link!</string>
     <string name="generic_starting_download_msg">Download in Progress</string>
