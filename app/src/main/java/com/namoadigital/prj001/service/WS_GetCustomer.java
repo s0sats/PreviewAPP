@@ -155,6 +155,12 @@ public class WS_GetCustomer extends IntentService {
             for (File _file : files_db) {
                 del = _file.delete();
             }
+            //Limpa arquivos de token S.O e Serial
+            File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
+            for (File _file : files_token) {
+                del = _file.delete();
+            }
+
         }
 
         //Apaga dados da tabela
