@@ -571,6 +571,16 @@ public class Act027_Header extends BaseFragment {
         };
         //
         if (pdfList != null && pdfList.size() > 0) {
+            //Se estava desabilitado e agora S.O possui pdf
+            //Habilita btn do pdf
+            if(!rdoAttach.isEnabled()){
+                rdoAttach.setEnabled(true);
+                //
+                rdoAttach.setBackground(getResources().getDrawable(R.drawable.act027_radio_pdf));
+                //
+                rdoAttach.setChecked(true);
+            }
+            //
             for (int i = 0; i < pdfList.size(); i++) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 //
