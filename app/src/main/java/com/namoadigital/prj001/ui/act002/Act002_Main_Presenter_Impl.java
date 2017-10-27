@@ -134,6 +134,8 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         }
+        //Não é necessario verificar se tem PARAM_SO_MOV,pois esse parametro sempre
+        //vem acompanhado do PARAM_SO.
         if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }

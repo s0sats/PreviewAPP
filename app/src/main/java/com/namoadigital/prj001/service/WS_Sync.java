@@ -973,6 +973,17 @@ public class WS_Sync extends IntentService {
         //
         //Processamento das tabelas do SO
         //
+
+        /**
+         *    VARIAVEIS DE PROFILE PARA ZONA
+         *  Após aplicação do profile na web, sempre que houver sincronismo do MAIN OU DATA_PACKAGE_SO
+         *  é necessario verificar se a zona das preferencias, ainda
+         *  existe na lista enviado pelo server.
+         *  Caso um não exista, após processar todas as tabelas envia msg
+         *  e envia para change customer.
+         */
+        boolean zoneExist = ToolBox_Con.getPreference_Zone_Code(getApplicationContext()) == -1;
+
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)){
             MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
             MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -1013,6 +1024,34 @@ public class WS_Sync extends IntentService {
                         new TypeToken<ArrayList<MD_Site_Zone>>() {
                         }.getType()
                 );
+
+
+               /*
+                * Se o siteExist false, não existe mais a zona
+                * selecionada também.
+                * Caso contrario,
+                * verifica se zona das preferencias
+                * esta na lista de zona enviadas.
+                * Se não tiver, ao final do processo desloga usr.
+                */
+               if(!siteExist){
+                   zoneExist = false;
+               }else {
+                   if (!zoneExist) {
+                       for (MD_Site_Zone zone : mdSiteZones) {
+                           if (ToolBox_Con.getPreference_Site_Code(getApplicationContext())
+                               .equalsIgnoreCase(String.valueOf(zone.getSite_code()))
+                               &&
+                               ToolBox_Con
+                                   .getPreference_Zone_Code(getApplicationContext())
+                                   == zone.getSite_code()
+                                   ) {
+                               zoneExist = true;
+                               break;
+                           }
+                       }
+                   }
+               }
 
                 siteZoneDao.addUpdate(mdSiteZones, false);
             }
@@ -1201,10 +1240,11 @@ public class WS_Sync extends IntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
         }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN) && (!operationExist || !siteExist)){
             ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
+        }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SO) && !zoneExist){
+            ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_zone"), rec.getLink_url(), "0");
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
-
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
     }
 
@@ -1213,6 +1253,7 @@ public class WS_Sync extends IntentService {
 
         translist.add("msg_no_forms_found");
         translist.add("msg_lost_access_to_site_or_operation");
+        translist.add("msg_lost_access_to_zone");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
