@@ -216,9 +216,9 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : product_sketch_list) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg",Constant.CACHE_PATH_PHOTO)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp",Constant.CACHE_PATH_PHOTO);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(MD_ProductDao.SKETCH_URL),

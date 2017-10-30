@@ -29,7 +29,7 @@ public class MD_Product_Sql_004 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "   p.*,\n" +
-                        "   '"+PROD_FILE_LOCAL_PREFIX+"'||p.customer_code||\"_\"||p.product_code||\"_\"p.sketch_code "+PROD_FILE_LOCAL_NAME+"\n" +
+                        "   '"+PROD_FILE_LOCAL_PREFIX+"'||p.customer_code||\"_\"||p.product_code||\"_\"||p.sketch_code "+PROD_FILE_LOCAL_NAME+"\n" +
                         " FROM\n" +
                         "      "+ MD_ProductDao.TABLE +" p\n" +
                         " WHERE\n" +
