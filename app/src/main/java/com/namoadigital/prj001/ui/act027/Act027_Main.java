@@ -83,6 +83,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
 
 public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
+    public static final String SELECTION_PRODUCT_LIST = "PRODUCT_LIST";
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
     public static final String SELECTION_HEADER = "HEADER";
@@ -112,6 +113,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private FragmentManager fm;
 
     private Act027_Opc act027_opc_;
+    private Act027_Product_List act027_product_list_;
     private Act027_Approval act027_approval_;
     private Act027_Services act027_services_;
     private Act027_Serial act027_serial_;
@@ -194,6 +196,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("status_lbl");
         transList.add("priority_lbl");
 
+        transList.add("product_ll_lbl");
         transList.add("approval_ll_lbl");
         transList.add("services_ll_lbl");
         transList.add("serial_ll_lbl");
@@ -442,6 +445,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         act027_approval_.setmSm_so(mSm_so);
 
+        // Product_List
+        act027_product_list_ = new Act027_Product_List();
+        // Dialog Acess
+        act027_product_list_.setBaInfra(this);
+        // Translation Access
+        act027_product_list_.setHmAux_Trans(hmAux_Trans);
+        // SO Acess
+        //act027_product_list_.setmSm_so(mSm_so);
+
         // Services
         act027_services_ = new Act027_Services();
         // Dialog Acess
@@ -454,6 +466,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_services_.setOnServiceSelectedListener(this);
         //Se retorno da task, seta qual serviço deve ser mostrado
         act027_services_.setLastServiceUpdated(lastServiceReturned);
+
         // Serial
         act027_serial_ = new Act027_Serial();
         // Dialog Acess
@@ -486,7 +499,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void checkSOAttachExists() {
-        if(!WBR_DownLoad_PDF.IS_RUNNING) {
+        if (!WBR_DownLoad_PDF.IS_RUNNING) {
             SM_SO_FileDao soFileDao =
                     new SM_SO_FileDao(
                             getApplicationContext(),
@@ -554,7 +567,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             lastServiceReturned = bundle.getString(Constant.ACT028_SERVICE_UPDATED, "");
             //Se veio preenchido é retorno de uma execução via atalho.
             //Nessa caso inicia serviço de download.
-            if(lastServiceReturned.trim().length() > 0){
+            if (lastServiceReturned.trim().length() > 0) {
                 startDownloadServices();
             }
         } else {
@@ -686,7 +699,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         super.processCloseACT(mLink, mRequired);
         progressDialog.dismiss();
         //
-        if(ws_process.equals(WS_PROCESS_N_FORM_SYNC)){
+        if (ws_process.equals(WS_PROCESS_N_FORM_SYNC)) {
             setWs_process("");
             //
             updateSyncChecklist();
@@ -1300,6 +1313,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public void menuOptionsSelected(String type) {
         switch (type.toUpperCase()) {
+
+            case Act027_Main.SELECTION_PRODUCT_LIST:
+                setFrag(act027_product_list_, Act027_Main.SELECTION_PRODUCT_LIST);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
             case Act027_Main.SELECTION_SERVICES:
                 setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -1337,19 +1355,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
                     setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
-
-//                    if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_QUALITY)) {
-//                        setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
-//                        mDrawerLayout.closeDrawer(GravityCompat.START);
-//                    } else {
-//                        ToolBox.alertMSG(
-//                                context,
-//                                hmAux_Trans.get("alert_no_profile_ttl"),
-//                                hmAux_Trans.get("alert_no_profile_msg"),
-//                                null,
-//                                0
-//                        );
-//                    }
                 } else {
                     setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -1361,8 +1366,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
         }
-
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
 
@@ -1653,7 +1656,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST)) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1665,7 +1668,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST)) {
             //
             int id = item.getItemId();
             //
@@ -1696,7 +1699,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void processNFormFlow() {
-                //
+        //
         HMAux syncProduct = syncChecklistDao
                 .getByStringHM(
                         new Sync_Checklist_Sql_002(
@@ -1708,17 +1711,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //Chama Ws para baixar os Forms.
         //Caso contrario, verifica se ja existe form aberto antes de
         //direcionar par act009
-        if(syncProduct == null || syncProduct.size() == 0){
+        if (syncProduct == null || syncProduct.size() == 0) {
             //Chamar WS
             executeSyncProcess();
-        }else{
+        } else {
             callAct009();
         }
 
     }
 
     private void executeSyncProcess() {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             setWs_process(WS_PROCESS_N_FORM_SYNC);
             //
             //
@@ -1743,18 +1746,18 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
     public void updateSyncChecklist() {
         //Pega data atual
-        Calendar cDate =  Calendar.getInstance();
-        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cDate = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String last_update = dateFormat.format(cDate.getTime());
 
-        Sync_Checklist syncChecklist =  new Sync_Checklist();
+        Sync_Checklist syncChecklist = new Sync_Checklist();
 
         syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
         syncChecklist.setProduct_code(mSm_so.getProduct_code());
@@ -1768,7 +1771,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private void startDownloadServices() {
         Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
+        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
@@ -1791,7 +1794,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         bundle.putString(SM_SODao.OPERATION_CODE, String.valueOf(mSm_so.getOperation_code()));
         bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
         bundle.putString(Constant.ACT008_SERIAL_ID, mSm_so.getSerial_id());
-        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT027);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT027);
         //
         mIntent.putExtras(bundle);
         //
