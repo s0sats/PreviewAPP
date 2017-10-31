@@ -148,8 +148,15 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                     Constant.DB_VERSION_CUSTOM
             );
 
+            SM_SO_Product_EventDao sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
             sm_so_fileDao.addUpdate(so.getSo_file(), false);
             sm_so_packDao.addUpdate(so.getPack(), false);
+            sm_so_product_eventDao.addUpdate(so.getProduct_event(), false);
 
         } catch (Exception e) {
             String resultado = e.toString();
@@ -183,6 +190,12 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                     Constant.DB_VERSION_CUSTOM
             );
 
+            SM_SO_Product_EventDao sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+
             for (SM_SO so : sos) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(so)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
@@ -197,7 +210,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
                 sm_so_fileDao.addUpdate(so.getSo_file(), false);
                 sm_so_packDao.addUpdate(so.getPack(), false);
-
+                sm_so_product_eventDao.addUpdate(so.getProduct_event(), false);
             }
 
             //db.setTransactionSuccessful();

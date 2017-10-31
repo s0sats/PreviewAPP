@@ -57,6 +57,10 @@ public class SM_SO_Product_Event_SketchDao extends BaseDao implements Dao<SM_SO_
                 sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSo_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(SEQ_TMP).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSeq_tmp())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(LINE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getLine())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(COL).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getCol())).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(sm_so_product_event_sketch), sbWhere.toString(), null);
             }
@@ -90,6 +94,10 @@ public class SM_SO_Product_Event_SketchDao extends BaseDao implements Dao<SM_SO_
                     sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSo_code())).append("'");
                     sbWhere.append(" and ");
                     sbWhere.append(SEQ_TMP).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSeq_tmp())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(LINE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getLine())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(COL).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getCol())).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(sm_so_product_event_sketch), sbWhere.toString(), null);
                 }
@@ -117,6 +125,10 @@ public class SM_SO_Product_Event_SketchDao extends BaseDao implements Dao<SM_SO_
             sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSo_code())).append("'");
             sbWhere.append(" and ");
             sbWhere.append(SEQ).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSeq())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(LINE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getLine())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(COL).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getCol())).append("'");
             //
             if (db.update(TABLE, toContentValuesMapper.map(sm_so_product_event_sketch), sbWhere.toString(), null) == 0) {
                 db.insert(TABLE, null, toContentValuesMapper.map(sm_so_product_event_sketch));
@@ -151,6 +163,10 @@ public class SM_SO_Product_Event_SketchDao extends BaseDao implements Dao<SM_SO_
                 sbWhere.append(SO_CODE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSo_code())).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(SEQ).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getSeq())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(LINE).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getLine())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(COL).append(" = '").append(String.valueOf(sm_so_product_event_sketch.getCol())).append("'");
                 //
                 if (db.update(TABLE, toContentValuesMapper.map(sm_so_product_event_sketch), sbWhere.toString(), null) == 0) {
                     db.insert(TABLE, null, toContentValuesMapper.map(sm_so_product_event_sketch));

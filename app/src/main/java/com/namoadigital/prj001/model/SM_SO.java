@@ -120,6 +120,8 @@ public class SM_SO {
     private ArrayList<SM_SO_File> so_file = new ArrayList<>();
     @Expose
     private ArrayList<SM_SO_Pack> pack = new ArrayList<>();
+    @Expose
+    private ArrayList<SM_SO_Product_Event> product_event = new ArrayList<>();
 
     public void setPK() {
         for (int i = 0; i < so_file.size(); i++) {
@@ -128,6 +130,10 @@ public class SM_SO {
         //
         for (int i = 0; i < pack.size(); i++) {
             pack.get(i).setPK(this);
+        }
+        //
+        for (int i = 0; i < product_event.size(); i++) {
+            product_event.get(i).setPK(this);
         }
     }
 
@@ -713,5 +719,13 @@ public class SM_SO {
 
     public void setPack(ArrayList<SM_SO_Pack> pack) {
         this.pack = pack;
+    }
+
+    public ArrayList<SM_SO_Product_Event> getProduct_event() {
+        return product_event;
+    }
+
+    public void setProduct_event(ArrayList<SM_SO_Product_Event> product_event) {
+        this.product_event = product_event;
     }
 }

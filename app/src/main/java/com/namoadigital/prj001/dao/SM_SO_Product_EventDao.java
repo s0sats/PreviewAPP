@@ -10,6 +10,8 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sketch_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -263,9 +265,9 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                     eventSketch.setPK(sm_so_product_event);
                 }
                 //
-                eventFileDao.addUpdateTmp(sm_so_product_event.getFile(), false);
+                eventFileDao.addUpdate(sm_so_product_event.getFile(), false);
                 //
-                eventSketchDao.addUpdateTmp(sm_so_product_event.getSketch(), false);
+                eventSketchDao.addUpdate(sm_so_product_event.getSketch(), false);
             }
 
             //db.setTransactionSuccessful();
@@ -334,19 +336,27 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                             Constant.DB_VERSION_CUSTOM
                     );
 
-//                    sm_so_product_event.setFile(
-//                            eventFileDao.query(
-//
-//                            )
-//                    );
-//                    //
-//                    sm_so_product_event.setSketch(
-//                            eventSketchDao.query(
-//
-//                            )
-//                    );
-
-
+                    sm_so_product_event.setFile(
+                            (ArrayList<SM_SO_Product_Event_File>) eventFileDao.query(
+                                new SM_SO_Product_Event_File_Sql_001(
+                                        sm_so_product_event.getCustomer_code(),
+                                        sm_so_product_event.getSo_prefix(),
+                                        sm_so_product_event.getSo_code(),
+                                        sm_so_product_event.getSeq_tmp()
+                                ).toSqlQuery()
+                            )
+                    );
+                    //
+                    sm_so_product_event.setSketch(
+                            (ArrayList<SM_SO_Product_Event_Sketch>) eventSketchDao.query(
+                                    new SM_SO_Product_Event_Sketch_Sql_001(
+                                            sm_so_product_event.getCustomer_code(),
+                                            sm_so_product_event.getSo_prefix(),
+                                            sm_so_product_event.getSo_code(),
+                                            sm_so_product_event.getSeq_tmp()
+                                    ).toSqlQuery()
+                            )
+                    );
                 }
 
             }
@@ -414,20 +424,6 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     );
-
-//                    uAux.setFile(
-//                            eventFileDao.query(
-//
-//                            )
-//
-//                    );
-//
-//                    uAux.setSketch(
-//                            eventSketchDao.query(
-//
-//                            )
-//                    );
-
                 }
                 //
                 sm_so_product_events.add(uAux);

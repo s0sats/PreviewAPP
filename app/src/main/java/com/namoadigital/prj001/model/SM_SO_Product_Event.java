@@ -45,6 +45,15 @@ public class SM_SO_Product_Event {
         this.customer_code = so.getCustomer_code();
         this.so_prefix = so.getSo_prefix();
         this.so_code = so.getSo_code();
+
+        for (int i = 0; i < file.size() ; i++) {
+            file.get(i).setPK(this);
+        }
+
+        for (int i = 0; i < sketch.size() ; i++) {
+            sketch.get(i).setPK(this);
+
+        }
     }
 
     public long getCustomer_code() {
