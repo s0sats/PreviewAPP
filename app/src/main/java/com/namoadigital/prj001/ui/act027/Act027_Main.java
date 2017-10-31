@@ -1317,6 +1317,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             case Act027_Main.SELECTION_PRODUCT_LIST:
                 setFrag(act027_product_list_, Act027_Main.SELECTION_PRODUCT_LIST);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
+                break;
 
             case Act027_Main.SELECTION_SERVICES:
                 setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
