@@ -35,7 +35,7 @@
                     android:paddingRight="5dp">
 
                     <TextView
-                        android:id="@+id/act027_product_list_content_cell_tv_exec_tmp_value"
+                        android:id="@+id/act027_product_list_content_cell_tv_seq_tmp_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="1dp"
@@ -44,7 +44,7 @@
                         android:textSize="@dimen/font_size_item" />
 
                     <TextView
-                        android:id="@+id/act027_product_list_content_cell_tv_exec_status"
+                        android:id="@+id/act027_product_list_content_cell_tv_seq_status"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -62,23 +62,30 @@
                         android:src="@drawable/ic_person_black_24px" />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/act027_product_list_content_cell_ll_line2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/act027_product_list_content_cell_tv_product_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="44 - TST SO"/>
+                        android:gravity="center"
+                        android:text="44 - TST SO"
+                        android:textColor="@color/lib_custom_cell_font_color"
+                        android:textSize="@dimen/font_size_item" />
+
                     <TextView
                         android:id="@+id/act027_product_list_content_cell_tv_qty_apply_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="4 UN"
-                        />
+                        android:textColor="@color/lib_custom_cell_font_color"
+                        android:textSize="@dimen/font_size_item" />
 
                 </LinearLayout>
 

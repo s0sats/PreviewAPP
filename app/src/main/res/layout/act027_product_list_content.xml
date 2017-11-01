@@ -9,34 +9,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="2dp"
-        android:gravity="center"
         android:layout_marginBottom="5dp"
         android:clickable="false"
         android:focusable="false"
-        >
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="2dp">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act027_product_list_content_mket_product"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="text"
-            app:mOCR="false"
-            app:mNFC="false"
-            app:mBARCODE="false"
             android:hint="Search Product"
+            android:inputType="text"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false"
+
             />
 
         <ImageView
-            android:padding="0dp"
             android:id="@+id/act027_product_list_content_iv_new_event"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_adicionar_filled_states"
             android:layout_marginLeft="5dp"
-            />
+            android:padding="0dp"
+            android:src="@drawable/ic_adicionar_filled_states" />
 
     </LinearLayout>
 
@@ -45,7 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        />
+        android:divider="@color/namoa_color_light_blue3"
+        android:dividerHeight="1dp" />
 
 
 </LinearLayout>

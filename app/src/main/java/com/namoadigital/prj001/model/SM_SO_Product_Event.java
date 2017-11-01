@@ -31,6 +31,13 @@ public class SM_SO_Product_Event {
     private String sketch_color;
     private String comments;
     private String status;
+    private String create_date;
+    private int create_user;
+    private String create_user_nick;
+    private String done_date;
+    private Integer done_user;
+    private String done_user_nick;
+    private int integrated;
     private ArrayList<SM_SO_Product_Event_File> file = new ArrayList<>();
     private ArrayList<SM_SO_Product_Event_Sketch> sketch = new ArrayList<>();
 
@@ -230,6 +237,62 @@ public class SM_SO_Product_Event {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCreate_date() {
+        return create_date;
+    }
+
+    public void setCreate_date(String create_date) {
+        this.create_date = create_date;
+    }
+
+    public int getCreate_user() {
+        return create_user;
+    }
+
+    public void setCreate_user(int create_user) {
+        this.create_user = create_user;
+    }
+
+    public String getCreate_user_nick() {
+        return create_user_nick;
+    }
+
+    public void setCreate_user_nick(String create_user_nick) {
+        this.create_user_nick = create_user_nick;
+    }
+
+    public String getDone_date() {
+        return done_date;
+    }
+
+    public void setDone_date(String done_date) {
+        this.done_date = done_date;
+    }
+
+    public Integer getDone_user() {
+        return done_user;
+    }
+
+    public void setDone_user(Integer done_user) {
+        this.done_user = done_user;
+    }
+
+    public String getDone_user_nick() {
+        return done_user_nick;
+    }
+
+    public void setDone_user_nick(String done_user_nick) {
+        this.done_user_nick = done_user_nick;
+    }
+
+    public int getIntegrated() {
+        return integrated;
+    }
+
+    public void setIntegrated(int integrated) {
+        this.integrated = integrated;
     }
 
     public ArrayList<SM_SO_Product_Event_File> getFile() {

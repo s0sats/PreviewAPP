@@ -277,6 +277,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             db.delete(SM_SO_Service_ExecDao.TABLE, sbWhere.toString(), null);
             db.delete(SM_SO_Service_Exec_TaskDao.TABLE, sbWhere.toString(), null);
             db.delete(SM_SO_Service_Exec_Task_FileDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_Product_EventDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_Product_Event_FileDao.TABLE, sbWhere.toString(), null);
+            db.delete(SM_SO_Product_Event_SketchDao.TABLE, sbWhere.toString(), null);
 
             db.setTransactionSuccessful();
         } catch (Exception e) {

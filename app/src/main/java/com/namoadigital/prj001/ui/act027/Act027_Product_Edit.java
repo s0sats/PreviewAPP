@@ -15,6 +15,15 @@ import com.namoadigital.prj001.R;
 
 public class Act027_Product_Edit extends BaseFragment{
 
+    private int mProductCode = -1;
+    private int mSeqTmp = -1;
+
+    public void setProductEventPk(int product_code, int seq_tmp){
+        mProductCode = product_code;
+        mSeqTmp = seq_tmp;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
