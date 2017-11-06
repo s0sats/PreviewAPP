@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 /**
@@ -11,34 +13,56 @@ public class SM_SO_Product_Event {
     private long customer_code; //pk
     private int so_prefix; //pk
     private int so_code; //pk
+    @Expose
     private int seq; //pk - server
+    @Expose
     private int seq_tmp; //pk
     //
+    @Expose
     private int product_code;
+    @Expose
     private String product_id;
+    @Expose
     private String product_desc;
+    @Expose
     private String un;
+    @Expose
     private int flag_apply;
+    @Expose
     private int flag_inspection;
+    @Expose
     private int flag_repair;
-    private Integer qty_apply;
+    @Expose
+    private String qty_apply;
+    @Expose
     private Integer sketch_code;
     private String sketch_name;
     private String sketch_url;
     private String sketch_url_local;
+    @Expose
     private Integer sketch_lines;
+    @Expose
     private Integer sketch_columns;
+    @Expose
     private String sketch_color;
+    @Expose
     private String comments;
+    @Expose
     private String status;
     private String create_date;
     private int create_user;
     private String create_user_nick;
+    @Expose
     private String done_date;
+    @Expose
     private Integer done_user;
+    @Expose
     private String done_user_nick;
+    @Expose
     private int integrated;
+    @Expose
     private ArrayList<SM_SO_Product_Event_File> file = new ArrayList<>();
+    @Expose
     private ArrayList<SM_SO_Product_Event_Sketch> sketch = new ArrayList<>();
 
     public SM_SO_Product_Event() {
@@ -159,11 +183,11 @@ public class SM_SO_Product_Event {
         this.flag_repair = flag_repair;
     }
 
-    public Integer getQty_apply() {
+    public String getQty_apply() {
         return qty_apply;
     }
 
-    public void setQty_apply(Integer qty_apply) {
+    public void setQty_apply(String qty_apply) {
         this.qty_apply = qty_apply;
     }
 

@@ -35,11 +35,15 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
+import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Product_Event;
+import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
+import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
@@ -56,7 +60,10 @@ import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_005;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
@@ -74,6 +81,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
@@ -466,7 +474,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_product_list_.setOnNewEventClickListner(new Act027_Product_List.OnNewEventClickListner() {
             @Override
             public void onNewEventClick() {
-                setFrag(act027_product_edit_,SELECTION_PRODUCT_EDIT);
+                //setFrag(act027_product_edit_,SELECTION_PRODUCT_EDIT);
+                //METODO ABAIXO, APENAS PARA TESTE.
+                createTestProdEvent();
             }
         });
         //
@@ -527,6 +537,137 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         );
         //
         checkSOAttachExists();
+    }
+
+    private void createTestProdEvent() {
+        SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        int product_code = 12;
+        String product_id = "18-10";
+        String product_desc = "TESTE PK FINAL 18-10";
+        HMAux hmTmp = eventDao.getByStringHM(
+                new SM_SO_Product_Event_Sql_002(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+        int seq_tmp = ToolBox_Inf.convertStringToInt(hmTmp.get(SM_SO_Product_Event_Sql_002.NEXT_TMP));
+
+        SM_SO_Product_Event testEvent = new SM_SO_Product_Event();
+        //
+        int r = new Random().nextInt(2 );
+        //
+        testEvent.setCustomer_code(mSm_so.getCustomer_code());
+        testEvent.setSo_prefix(mSm_so.getSo_prefix());
+        testEvent.setSo_code(mSm_so.getSo_code());
+        testEvent.setSeq(0);
+        testEvent.setSeq_tmp(seq_tmp);
+        testEvent.setProduct_code(product_code);
+        testEvent.setProduct_id(product_id);
+        testEvent.setProduct_desc(product_desc);
+        testEvent.setUn("cm");
+        testEvent.setFlag_apply(r);
+        testEvent.setFlag_repair(r == 0 ? 1: 0);
+        testEvent.setFlag_inspection(r);
+        testEvent.setQty_apply("0,62");
+        testEvent.setSketch_code(118);
+        testEvent.setSketch_name("prod_1_12_118.jpg");
+        testEvent.setSketch_url("https://s3.amazonaws.com/dev.namoa.web/1/MD/FILE/118_OFFLINE");
+        testEvent.setSketch_url_local("prod_1_12_118.jpg");
+        testEvent.setSketch_lines(5);
+        testEvent.setSketch_columns(5);
+        testEvent.setSketch_color("#FF0000");
+        testEvent.setComments("TestFakeViaApp_"+seq_tmp);
+        testEvent.setStatus(Constant.SO_STATUS_DONE);
+        testEvent.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        testEvent.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        testEvent.setCreate_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        testEvent.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        testEvent.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        testEvent.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        testEvent.setIntegrated(0);
+        //
+        ArrayList<SM_SO_Product_Event_Sketch> sketches = new ArrayList<>();
+        //
+
+        SM_SO_Product_Event_Sketch sketch1 = new SM_SO_Product_Event_Sketch();
+        sketch1.setPK(testEvent);
+        r = new Random().nextInt(5 )+ 1;
+        sketch1.setLine(r > 5 ? 5 : r);
+        r = new Random().nextInt(5 )+ 1;
+        sketch1.setCol(r > 5 ? 5 : r);
+        //
+        SM_SO_Product_Event_Sketch sketch2 = new SM_SO_Product_Event_Sketch();
+        sketch2.setPK(testEvent);
+        r = new Random().nextInt(5 )+ 1;
+        sketch2.setLine(r > 5 ? 5 : r);
+        r = new Random().nextInt(5 )+ 1;
+        sketch2.setCol(r > 5 ? 5 : r);
+        //
+        SM_SO_Product_Event_Sketch sketch3 = new SM_SO_Product_Event_Sketch();
+        sketch3.setPK(testEvent);
+        r = new Random().nextInt(5 )+ 1;
+        sketch3.setLine(r > 5 ? 5 : r);
+        r = new Random().nextInt(5 )+ 1;
+        sketch3.setCol(r > 5 ? 5 : r);
+        //
+        sketches.add(sketch1);
+        sketches.add(sketch2);
+        sketches.add(sketch3);
+
+        ArrayList<SM_SO_Product_Event_File> eventFiles = new ArrayList<>();
+
+        HMAux auxFileTmp = eventFileDao.getByStringHM(
+                new SM_SO_Product_Event_File_Sql_002(
+                        testEvent.getCustomer_code(),
+                        testEvent.getSo_prefix(),
+                        testEvent.getSo_code(),
+                        testEvent.getSeq_tmp()
+                ).toSqlQuery()
+        );
+
+        int fileTmp = Integer.parseInt(auxFileTmp.get(SM_SO_Product_Event_File_Sql_002.NEXT_TMP));
+        SM_SO_Product_Event_File eventFile1 = new SM_SO_Product_Event_File();
+
+        eventFile1.setPK(testEvent);
+        eventFile1.setSeq(0);
+        eventFile1.setSeq_tmp(seq_tmp);
+        eventFile1.setFile_tmp(fileTmp);
+        eventFile1.setFile_name("sm_so_"
+                + eventFile1.getCustomer_code() +"_"+
+                + eventFile1.getSo_prefix() +"_"+
+                + eventFile1.getSo_code() +"_"+
+                + eventFile1.getSeq_tmp() +"_"+
+                + eventFile1.getFile_tmp() +".jpg"
+        );
+        //
+        eventFiles.add(eventFile1);
+        //
+        testEvent.setSketch(sketches);
+        testEvent.setFile(eventFiles);
+        //
+        testEvent.setPK(mSm_so);
+        //
+        eventDao.addUpdateTmp(testEvent);
+        //
+        sm_soDao.addUpdate(
+                new SM_SO_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+
     }
 
     private void checkSOAttachExists() {

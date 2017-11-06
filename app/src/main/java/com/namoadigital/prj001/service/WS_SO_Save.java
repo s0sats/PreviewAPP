@@ -12,10 +12,16 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
+import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
+import com.namoadigital.prj001.dao.SM_SO_Product_Event_SketchDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SM_SO_Product_Event;
+import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
+import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
@@ -25,6 +31,8 @@ import com.namoadigital.prj001.model.TSO_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
@@ -126,8 +134,8 @@ public class WS_SO_Save extends IntentService {
             env.setApp_version(Constant.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setReprocess(1);
-           //
-           callSO_Save_WS(env);
+            //
+            callSO_Save_WS(env);
 
         } else {
             //
@@ -137,10 +145,10 @@ public class WS_SO_Save extends IntentService {
                     ).toSqlQuery()
             );
             //
-            if(sos != null && sos.size() == 0){
+            if (sos != null && sos.size() == 0) {
                 HMAux hmAuxRet = new HMAux();
-                hmAuxRet.put(SO_NO_EMPTY_LIST,"1");
-                hmAuxRet.put(SO_RETURN_LIST,"");
+                hmAuxRet.put(SO_NO_EMPTY_LIST, "1");
+                hmAuxRet.put(SO_RETURN_LIST, "");
                 //
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_so_to_send"), hmAuxRet, "", "0");
                 return;
@@ -184,7 +192,7 @@ public class WS_SO_Save extends IntentService {
             //Valida se checksum do json de envio e do arquivo são iguais.
             //Em caso seja falso, emite msg para o usr e aborta processamento
             if (!checksumJsonToken(json_token_content, jsonToken)) {
-                deleteFile(Constant.TOKEN_PATH,file_to_del);
+                deleteFile(Constant.TOKEN_PATH, file_to_del);
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_token_file_error"), "", "0");
                 return;
             }
@@ -275,13 +283,13 @@ public class WS_SO_Save extends IntentService {
         for (SO_Save_Return so_ret : ret.getSo_return()) {
             String so_pk = so_ret.getSo_prefix() + "." + so_ret.getSo_code();
             //
-            hmAuxRet.put(so_pk,"0");
+            hmAuxRet.put(so_pk, "0");
             //
             so_list_ret += Constant.MAIN_CONCAT_STRING + so_pk
-                         + Constant.MAIN_CONCAT_STRING_2 + so_ret.getRet_status();
+                    + Constant.MAIN_CONCAT_STRING_2 + so_ret.getRet_status();
             //
-            if(!so_ret.getRet_status().equalsIgnoreCase("OK")){
-                so_list_ret +=  ":\n" + so_ret.getRet_msg() ;
+            if (!so_ret.getRet_status().equalsIgnoreCase("OK")) {
+                so_list_ret += ":\n" + so_ret.getRet_msg();
             }
             //
             if (!so_ret.getRet_status().toUpperCase().equals("OK")) {
@@ -296,7 +304,7 @@ public class WS_SO_Save extends IntentService {
             }
         }
         //Insere so_list_ret no hmAuxRet
-        hmAuxRet.put(SO_RETURN_LIST,so_list_ret.length() > 0 ? so_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(),so_list_ret.length()) : "");
+        hmAuxRet.put(SO_RETURN_LIST, so_list_ret.length() > 0 ? so_list_ret.substring(Constant.MAIN_CONCAT_STRING.length(), so_list_ret.length()) : "");
         //
         //Processa de-para de task e Task File
         if (ret.getSo_from_to() != null) {
@@ -305,7 +313,7 @@ public class WS_SO_Save extends IntentService {
                 if (ret.getSo() != null) {
                     for (SM_SO so : ret.getSo()) {
                         //Se S.O Full, atualiza hmAux de full_refresh
-                        hmAuxRet.put(so.getSo_prefix()+"."+so.getSo_code(),"1");
+                        hmAuxRet.put(so.getSo_prefix() + "." + so.getSo_code(), "1");
                         //
                         so.setPK();
                         //Apaga So do Banco
@@ -335,17 +343,17 @@ public class WS_SO_Save extends IntentService {
                     }
                 }
                 //Após processamento , apaga arquivo de token
-                if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
-                    if(so_re_send){
+                if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                    if (so_re_send) {
                         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
                         //Reseta var de re transmissão.
                         so_re_send = false;
                         //
                         processSO_Save(so_action);
-                    }else{
+                    } else {
                         callFinishProcessing(hmAuxRet);
                     }
-                }else{
+                } else {
 
                     //VERIFICAR O QUYE FAZER NESSE CASO.
 
@@ -359,7 +367,7 @@ public class WS_SO_Save extends IntentService {
 
                 for (SM_SO so : ret.getSo()) {
                     //Se S.O Full, atualiza hmAux de full_refresh
-                    hmAuxRet.put(so.getSo_prefix()+"."+so.getSo_code(),"1");
+                    hmAuxRet.put(so.getSo_prefix() + "." + so.getSo_code(), "1");
                     so.setPK();
                     //Apaga So do Banco
                     soDao.removeFull(so);
@@ -368,17 +376,17 @@ public class WS_SO_Save extends IntentService {
                 }
             }
             //Após processamento , apaga arquivo de token
-            if(deleteFile(Constant.TOKEN_PATH,file_to_del)){
-                if(so_re_send){
+            if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
+                if (so_re_send) {
                     ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_re_processing_so_data"), "", "0");
                     //Reseta var de re transmissão.
                     so_re_send = false;
                     //
                     processSO_Save(so_action);
-                }else{
+                } else {
                     callFinishProcessing(hmAuxRet);
                 }
-            }else{
+            } else {
 
                 //VERIFICAR O QUYE FAZER NESSE CASO.
 
@@ -394,12 +402,12 @@ public class WS_SO_Save extends IntentService {
     }
 
 
-    private boolean deleteFile(String path,String name) {
-        File file = new File(path +"/"+ name );
+    private boolean deleteFile(String path, String name) {
+        File file = new File(path + "/" + name);
 
-        if(file.exists()){
-           return file.delete();
-        }else{
+        if (file.exists()) {
+            return file.delete();
+        } else {
             return false;
         }
     }
@@ -416,6 +424,10 @@ public class WS_SO_Save extends IntentService {
         SM_SO_Service_ExecDao execDao = new SM_SO_Service_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SO_Service_Exec_TaskDao taskDao = new SM_SO_Service_Exec_TaskDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_FileDao geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        //
+        SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        SM_SO_Product_Event_SketchDao eventSketchDao = new SM_SO_Product_Event_SketchDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
         try {
 
@@ -612,6 +624,184 @@ public class WS_SO_Save extends IntentService {
                                 taskFile.getCustomer_code(),
                                 taskFile.getSo_prefix(),
                                 taskFile.getSo_code()
+                        ).toSqlQuery());
+                    }
+                }
+            }
+
+            if (so_from_to.getProduct_event() != null) {
+                for (SM_SO_Product_Event event : so_from_to.getProduct_event()) {
+                    SO_Save_Return soReturn = getSoReturn(so_save_returns, event.getCustomer_code(), event.getSo_prefix(), event.getSo_code());
+                    int update_required = 0;
+                    //
+                    if (soReturn != null && soReturn.getRet_status().equalsIgnoreCase("OK")) {
+                        //
+                        SM_SO_Product_Event oldEvent = eventDao.getByString(
+                                new SM_SO_Product_Event_Sql_003(
+                                        event.getCustomer_code(),
+                                        event.getSo_prefix(),
+                                        event.getSo_code(),
+                                        event.getSeq_tmp()
+                                ).toSqlQuery()
+                        );
+                        //Completa dadosdo evento enviado no de_para
+                        event.setProduct_code(oldEvent.getProduct_code());
+                        event.setProduct_id(oldEvent.getProduct_id());
+                        event.setProduct_desc(oldEvent.getProduct_desc());
+                        event.setUn(oldEvent.getUn());
+                        event.setFlag_apply(oldEvent.getFlag_apply());
+                        event.setFlag_repair(oldEvent.getFlag_repair());
+                        event.setFlag_inspection(oldEvent.getFlag_inspection());
+                        event.setQty_apply(oldEvent.getQty_apply());
+                        event.setSketch_code(oldEvent.getSketch_code());
+                        event.setSketch_name(oldEvent.getSketch_name());
+                        event.setSketch_url(oldEvent.getSketch_url());
+                        event.setSketch_url_local(oldEvent.getSketch_url_local());
+                        event.setSketch_lines(oldEvent.getSketch_lines());
+                        event.setSketch_columns(oldEvent.getSketch_columns());
+                        event.setSketch_color(oldEvent.getSketch_color());
+                        event.setComments(oldEvent.getComments());
+                        event.setStatus(oldEvent.getStatus());
+                        event.setCreate_date(oldEvent.getCreate_date());
+                        event.setCreate_user(oldEvent.getCreate_user());
+                        event.setCreate_user_nick(oldEvent.getCreate_user_nick());
+                        event.setDone_date(oldEvent.getDone_date());
+                        event.setDone_user(oldEvent.getDone_user());
+                        event.setDone_user_nick(oldEvent.getDone_user_nick());
+                        event.setIntegrated(oldEvent.getIntegrated());
+                        //
+                        eventDao.addUpdateTmp(event);
+                        //Atualiza pk do sketch
+                        for(SM_SO_Product_Event_Sketch eventSketch : oldEvent.getSketch()){
+                            eventSketch.setPK(event);
+                        }
+                        eventSketchDao.addUpdateTmp(oldEvent.getSketch(),false);
+                        //Valida se é re_send para saber qual será update_required
+                        if (so_re_send) {
+                            if (soReturn.getSo_update() == 1) {
+                                //Atualiza só update_required para 1
+                                soDao.addUpdate(new SM_SO_Sql_009(
+                                        event.getCustomer_code(),
+                                        event.getSo_prefix(),
+                                        event.getSo_code()
+                                ).toSqlQuery());
+
+
+                            } else {
+                                //atualiza só SCN da S.O
+                                soDao.addUpdate(new SM_SO_Sql_010(
+                                        event.getCustomer_code(),
+                                        event.getSo_prefix(),
+                                        event.getSo_code(),
+                                        soReturn.getSo_scn(),
+                                        false,
+                                        update_required
+                                ).toSqlQuery());
+                            }
+
+                        } else {
+                            update_required = 0;
+                            //atualiza SCN e update_required na S.O
+                            soDao.addUpdate(new SM_SO_Sql_010(
+                                    event.getCustomer_code(),
+                                    event.getSo_prefix(),
+                                    event.getSo_code(),
+                                    soReturn.getSo_scn(),
+                                    true,
+                                    update_required
+                            ).toSqlQuery());
+                        }
+
+                    } else {
+                        //seta update required para 1
+                        soDao.addUpdate(new SM_SO_Sql_009(
+                                event.getCustomer_code(),
+                                event.getSo_prefix(),
+                                event.getSo_code()
+                        ).toSqlQuery());
+                    }
+                }
+            }
+            //
+            if (so_from_to.getProduct_event_file() != null) {
+                //
+                for (SM_SO_Product_Event_File eventFile : so_from_to.getProduct_event_file()) {
+
+                    SO_Save_Return soReturn = getSoReturn(so_save_returns, eventFile.getCustomer_code(), eventFile.getSo_prefix(), eventFile.getSo_code());
+                    int update_required = 0;
+                    //
+                    if (soReturn != null && soReturn.getRet_status().equalsIgnoreCase("OK")) {
+                        SM_SO_Product_Event_File auxFile =
+                                eventFileDao.getByString(
+                                        new SM_SO_Product_Event_File_Sql_003(
+                                                eventFile.getCustomer_code(),
+                                                eventFile.getSo_prefix(),
+                                                eventFile.getSo_code(),
+                                                eventFile.getSeq_tmp(),
+                                                eventFile.getFile_tmp()
+                                        ).toSqlQuery()
+                                );
+                        String new_name = "sm_so_" +
+                                eventFile.getCustomer_code() + "_" +
+                                eventFile.getSo_prefix() + "_" +
+                                eventFile.getSo_code() + "_" +
+                                eventFile.getSeq() + "_" +
+                                eventFile.getFile_code() + ".jpg";
+
+                        if (renameTaskFile(auxFile.getFile_name(), new_name)) {
+                            //Atualiza path da imagem na lista de upload
+                            geFileDao.addUpdate(
+                                    new GE_File_Sql_006(
+                                            auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
+                                            new_name
+                                    ).toSqlQuery()
+                            );
+                        } else {
+                            return false;
+                        }
+                        eventFile.setFile_url_local(new_name);
+                        eventFileDao.addUpdateTmp(eventFile);
+                        //Valida se é re_send para saber qual será update_required
+                        if (so_re_send) {
+                            if (soReturn.getSo_update() == 1) {
+                                //Atualiza só update_required para 1
+                                soDao.addUpdate(new SM_SO_Sql_009(
+                                        eventFile.getCustomer_code(),
+                                        eventFile.getSo_prefix(),
+                                        eventFile.getSo_code()
+                                ).toSqlQuery());
+
+
+                            } else {
+                                //atualiza só SCN da S.O
+                                soDao.addUpdate(new SM_SO_Sql_010(
+                                        eventFile.getCustomer_code(),
+                                        eventFile.getSo_prefix(),
+                                        eventFile.getSo_code(),
+                                        soReturn.getSo_scn(),
+                                        false,
+                                        update_required
+                                ).toSqlQuery());
+                            }
+
+                        } else {
+                            update_required = 0;
+                            //atualiza SCN e update_required na S.O
+                            soDao.addUpdate(new SM_SO_Sql_010(
+                                    eventFile.getCustomer_code(),
+                                    eventFile.getSo_prefix(),
+                                    eventFile.getSo_code(),
+                                    soReturn.getSo_scn(),
+                                    true,
+                                    update_required
+                            ).toSqlQuery());
+                        }
+                    } else {
+                        //seta update required para 1
+                        soDao.addUpdate(new SM_SO_Sql_009(
+                                eventFile.getCustomer_code(),
+                                eventFile.getSo_prefix(),
+                                eventFile.getSo_code()
                         ).toSqlQuery());
                     }
                 }

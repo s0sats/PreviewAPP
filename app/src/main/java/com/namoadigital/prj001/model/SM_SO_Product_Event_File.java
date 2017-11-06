@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by d.luche on 30/10/2017.
  */
@@ -12,8 +14,11 @@ public class SM_SO_Product_Event_File {
     private int seq; //pk - server
     private int seq_tmp; //pk
     //
+    @Expose
     private int file_code;
+    @Expose
     private int file_tmp;
+    @Expose
     private String file_name;
     private String file_url;
     private String file_url_local;

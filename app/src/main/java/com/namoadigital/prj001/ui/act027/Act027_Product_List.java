@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -127,7 +126,6 @@ public class Act027_Product_List extends BaseFragment {
                         },
                         1
                 );
-                Toast.makeText(context, "Em Dev", Toast.LENGTH_SHORT).show();
             }
         });
         //

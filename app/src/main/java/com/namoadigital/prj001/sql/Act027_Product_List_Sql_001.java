@@ -71,7 +71,7 @@ public class Act027_Product_List_Sql_001 implements Specification {
                         " WHERE\n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
                         "   and s.so_prefix = '"+so_prefix+"'\n" +
-                      //  "   and s.so_code = '"+so_code+"'" +
+                        "   and s.so_code = '"+so_code+"'" +
                         "   and ('"+product_filter+"' is null \n " +
                         "          or s.product_id like '%"+product_filter+"%' \n" +
                         "          or s.product_desc like '%"+product_filter+"%' \n" +

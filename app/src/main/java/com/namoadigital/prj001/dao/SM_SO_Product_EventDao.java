@@ -519,7 +519,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             if (cursor.isNull(cursor.getColumnIndex(QTY_APPLY))) {
                 sm_so_product_event.setQty_apply(null);
             } else {
-                sm_so_product_event.setQty_apply(cursor.getInt(cursor.getColumnIndex(QTY_APPLY)));
+                sm_so_product_event.setQty_apply(cursor.getString(cursor.getColumnIndex(QTY_APPLY)).replace(".",""));
             }
             if (cursor.isNull(cursor.getColumnIndex(SKETCH_CODE))) {
                 sm_so_product_event.setSketch_code(null);
@@ -573,7 +573,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             if(cursor.isNull(cursor.getColumnIndex(DONE_USER))){
                 sm_so_product_event.setDone_user(null);
             }else{
-                sm_so_product_event.setDone_user(cursor.getInt(cursor.getColumnIndex(DONE_USER_NICK)));
+                sm_so_product_event.setDone_user(cursor.getInt(cursor.getColumnIndex(DONE_USER)));
             }
             if(cursor.isNull(cursor.getColumnIndex(DONE_USER_NICK))){
                 sm_so_product_event.setDone_user_nick(null);
@@ -629,7 +629,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                 contentValues.put(FLAG_REPAIR, sm_so_product_event.getFlag_repair());
             }
             //campos que podem ser nulos
-            contentValues.put(QTY_APPLY, sm_so_product_event.getQty_apply());
+            contentValues.put(QTY_APPLY, sm_so_product_event.getQty_apply().replace(".",","));
             contentValues.put(SKETCH_CODE, sm_so_product_event.getSketch_code());
             contentValues.put(SKETCH_NAME, sm_so_product_event.getSketch_name());
             contentValues.put(SKETCH_URL, sm_so_product_event.getSketch_url());
