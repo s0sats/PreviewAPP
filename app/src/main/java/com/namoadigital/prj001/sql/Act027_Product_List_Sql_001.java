@@ -62,6 +62,8 @@ public class Act027_Product_List_Sql_001 implements Specification {
                         "           THEN '999'\n" +
                         "      WHEN s.status = '"+ Constant.SO_STATUS_CANCELLED+"'\n" +
                         "           THEN '998'\n" +
+                            "      WHEN s.status = '"+ Constant.SO_STATUS_DONE+"'\n" +
+                        "           THEN '1'\n" +
                         "           ELSE '0'             \n" +
                         " END) status_order \n" +
                         " FROM\n" +
