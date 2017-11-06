@@ -34,6 +34,7 @@ import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
+import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
@@ -83,11 +84,13 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO
 
 public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_Main_View, Act027_Opc.IAct027_Opc, Act027_Services.IAct027_Services {
 
-    public static final String SELECTION_PRODUCT_LIST = "PRODUCT_LIST";
     public static final String SELECTION_SERVICES = "SERVICES";
     public static final String SELECTION_SERIAL = "SERIAL";
     public static final String SELECTION_HEADER = "HEADER";
     public static final String SELECTION_APPROVAL = "APPROVAL";
+    public static final String SELECTION_PRODUCT_LIST = "PRODUCT_LIST";
+    public static final String SELECTION_PRODUCT_EDIT = "PRODUCT_EDIT";
+    public static final String SELECTION_PRODUCT_SELECTION = "PRODUCT_SELECTION";
 
     public static final String SELECTION_EXPRESS = "EXPRESS";
     public static final String SELECTION_NORMAL = "NORMAL";
@@ -114,6 +117,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     private Act027_Opc act027_opc_;
     private Act027_Product_List act027_product_list_;
+    private Act027_Product_Edit act027_product_edit_;
+    private Act027_Product_Selection act027_product_selection_;
     private Act027_Approval act027_approval_;
     private Act027_Services act027_services_;
     private Act027_Serial act027_serial_;
@@ -366,6 +371,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_open_n_form_msg");
         transList.add("progress_n_form_sync_ttl");
         transList.add("progress_n_form_sync_msg");
+        //Product Event Fragment
+        transList.add("mket_product_search_hint");
+        transList.add("new_product_event_ttl");
+        transList.add("new_product_event_msg");
 
         //
         sm_soDao = new SM_SODao(
@@ -452,7 +461,29 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         // Translation Access
         act027_product_list_.setHmAux_Trans(hmAux_Trans);
         // SO Acess
-        //act027_product_list_.setmSm_so(mSm_so);
+        act027_product_list_.setmSm_so(mSm_so);
+        //Interface
+        act027_product_list_.setOnNewEventClickListner(new Act027_Product_List.OnNewEventClickListner() {
+            @Override
+            public void onNewEventClick() {
+                setFrag(act027_product_edit_,SELECTION_PRODUCT_EDIT);
+            }
+        });
+        //
+        act027_product_list_.setOnItemEventClickListner(new Act027_Product_List.OnItemEventClickListner() {
+            @Override
+            public void onItemEventClick(HMAux hmAux) {
+                act027_product_edit_.setProductEventPk(
+                        Integer.parseInt(hmAux.get(SM_SO_Product_EventDao.PRODUCT_CODE)),
+                        Integer.parseInt(hmAux.get(SM_SO_Product_EventDao.SEQ_TMP))
+                );
+                //
+                setFrag(act027_product_edit_,SELECTION_PRODUCT_EDIT);
+            }
+        });
+        //
+        // Product_List
+        act027_product_edit_ = new Act027_Product_Edit();
 
         // Services
         act027_services_ = new Act027_Services();
@@ -798,6 +829,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         act027_header_.setmSm_so(mSm_so);
         act027_header_.loadDataToScreen();
+
+        act027_product_list_.setmSm_so(mSm_so);
+        act027_product_list_.loadDataToScreen();
         //
         startDownloadServices();
     }

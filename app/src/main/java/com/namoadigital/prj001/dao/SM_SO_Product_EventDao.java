@@ -51,12 +51,20 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
     public static final String SKETCH_COLOR = "sketch_color";
     public static final String COMMENTS = "comments";
     public static final String STATUS = "status";
+    public static final String CREATE_DATE = "create_date";
+    public static final String CREATE_USER = "create_user";
+    public static final String CREATE_USER_NICK = "create_user_nick";
+    public static final String DONE_DATE = "done_date";
+    public static final String DONE_USER = "done_user";
+    public static final String DONE_USER_NICK = "done_user_nick";
+    public static final String INTEGRATED = "integrated";
 
     public static final String[] columns = {
             CUSTOMER_CODE, SO_PREFIX, SO_CODE, SEQ, SEQ_TMP, PRODUCT_CODE, PRODUCT_ID,
             PRODUCT_DESC, UN, FLAG_APPLY, FLAG_INSPECTION, FLAG_REPAIR, QTY_APPLY,
             SKETCH_CODE, SKETCH_NAME, SKETCH_URL, SKETCH_URL_LOCAL, SKETCH_LINES,
-            SKETCH_COLUMNS, SKETCH_COLOR, COMMENTS, STATUS
+            SKETCH_COLUMNS, SKETCH_COLOR, COMMENTS, STATUS, CREATE_DATE, CREATE_USER,
+            CREATE_USER_NICK, DONE_DATE, DONE_USER, DONE_USER_NICK, INTEGRATED
     };
 
 
@@ -424,6 +432,28 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     );
+                    uAux.setFile(
+                            (ArrayList<SM_SO_Product_Event_File>) eventFileDao.query(
+                                    new SM_SO_Product_Event_File_Sql_001(
+                                            uAux.getCustomer_code(),
+                                            uAux.getSo_prefix(),
+                                            uAux.getSo_code(),
+                                            uAux.getSeq_tmp()
+                                    ).toSqlQuery()
+                            )
+                    );
+                    //
+                    uAux.setSketch(
+                            (ArrayList<SM_SO_Product_Event_Sketch>) eventSketchDao.query(
+                                    new SM_SO_Product_Event_Sketch_Sql_001(
+                                            uAux.getCustomer_code(),
+                                            uAux.getSo_prefix(),
+                                            uAux.getSo_code(),
+                                            uAux.getSeq_tmp()
+                                    ).toSqlQuery()
+                            )
+                    );
+
                 }
                 //
                 sm_so_product_events.add(uAux);
@@ -443,7 +473,30 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        return null;
+        ArrayList<HMAux> sm_so_product_events = new ArrayList<>();
+        openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                sm_so_product_events.add(toHMAuxMapper.map(cursor));
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return sm_so_product_events;
     }
 
     private class CursorSM_SO_Product_EventMapper implements Mapper<Cursor, SM_SO_Product_Event> {
@@ -509,6 +562,25 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                 sm_so_product_event.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
             sm_so_product_event.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            sm_so_product_event.setCreate_date(cursor.getString(cursor.getColumnIndex(CREATE_DATE)));
+            sm_so_product_event.setCreate_user(cursor.getInt(cursor.getColumnIndex(CREATE_USER)));
+            sm_so_product_event.setCreate_user_nick(cursor.getString(cursor.getColumnIndex(CREATE_USER_NICK)));
+            if(cursor.isNull(cursor.getColumnIndex(DONE_DATE))){
+                sm_so_product_event.setDone_date(null);
+            }else{
+                sm_so_product_event.setDone_date(cursor.getString(cursor.getColumnIndex(DONE_DATE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(DONE_USER))){
+                sm_so_product_event.setDone_user(null);
+            }else{
+                sm_so_product_event.setDone_user(cursor.getInt(cursor.getColumnIndex(DONE_USER_NICK)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(DONE_USER_NICK))){
+                sm_so_product_event.setDone_user_nick(null);
+            }else{
+                sm_so_product_event.setDone_user_nick(cursor.getString(cursor.getColumnIndex(DONE_USER_NICK)));
+            }
+            sm_so_product_event.setIntegrated(cursor.getInt(cursor.getColumnIndex(INTEGRATED)));
 
             return sm_so_product_event;
         }
@@ -557,6 +629,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                 contentValues.put(FLAG_REPAIR, sm_so_product_event.getFlag_repair());
             }
             //campos que podem ser nulos
+            contentValues.put(QTY_APPLY, sm_so_product_event.getQty_apply());
             contentValues.put(SKETCH_CODE, sm_so_product_event.getSketch_code());
             contentValues.put(SKETCH_NAME, sm_so_product_event.getSketch_name());
             contentValues.put(SKETCH_URL, sm_so_product_event.getSketch_url());
@@ -567,7 +640,21 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             //
             if (sm_so_product_event.getStatus() != null) {
                 contentValues.put(STATUS, sm_so_product_event.getStatus());
-
+            }
+            if (sm_so_product_event.getCreate_date() != null) {
+                contentValues.put(CREATE_DATE, sm_so_product_event.getCreate_date());
+            }
+            if (sm_so_product_event.getCreate_user() > -1) {
+                contentValues.put(CREATE_USER, sm_so_product_event.getCreate_user());
+            }
+            if (sm_so_product_event.getCreate_user_nick() != null) {
+                contentValues.put(CREATE_USER_NICK, sm_so_product_event.getCreate_user_nick());
+            }
+            contentValues.put(DONE_DATE,sm_so_product_event.getDone_date());
+            contentValues.put(DONE_USER,sm_so_product_event.getDone_user());
+            contentValues.put(DONE_USER_NICK,sm_so_product_event.getDone_user_nick());
+            if(sm_so_product_event.getIntegrated() > -1){
+                contentValues.put(INTEGRATED,sm_so_product_event.getIntegrated());
             }
 
             return contentValues;
