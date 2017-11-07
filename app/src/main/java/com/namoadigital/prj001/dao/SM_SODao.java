@@ -10,8 +10,10 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_File;
 import com.namoadigital.prj001.model.SM_SO_Pack;
+import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -331,6 +333,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                         so.getSo_code()
                 ).toSqlQuery()));
 
+                SM_SO_Product_EventDao sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+                so.setProduct_event((ArrayList<SM_SO_Product_Event>) sm_so_product_eventDao.query(new SM_SO_Product_Event_Sql_001(
+                        so.getCustomer_code(),
+                        so.getSo_prefix(),
+                        so.getSo_code()
+                ).toSqlQuery()));
 
             }
 
@@ -410,6 +423,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                             uAux.getSo_code()
                     ).toSqlQuery()));
 
+                    SM_SO_Product_EventDao sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+
+                    uAux.setProduct_event((ArrayList<SM_SO_Product_Event>) sm_so_product_eventDao.query(new SM_SO_Product_Event_Sql_001(
+                            uAux.getCustomer_code(),
+                            uAux.getSo_prefix(),
+                            uAux.getSo_code()
+                    ).toSqlQuery()));
 
                 }
 

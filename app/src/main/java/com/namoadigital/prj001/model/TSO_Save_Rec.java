@@ -215,6 +215,11 @@ public class TSO_Save_Rec {
         private ArrayList<SM_SO_Service_Exec_Task> task = new ArrayList<>();
         @Expose
         private ArrayList<SM_SO_Service_Exec_Task_File> task_file = new ArrayList<>();
+        @Expose
+        private ArrayList<SM_SO_Product_Event> product_event = new ArrayList<>();
+        @Expose
+        private ArrayList<SM_SO_Product_Event_File> product_event_file = new ArrayList<>();
+
 
         public ArrayList<SM_SO_Service_Exec_Task> getTask() {
             return task;
@@ -230,6 +235,22 @@ public class TSO_Save_Rec {
 
         public void setTask_file(ArrayList<SM_SO_Service_Exec_Task_File> task_file) {
             this.task_file = task_file;
+        }
+
+        public ArrayList<SM_SO_Product_Event> getProduct_event() {
+            return product_event;
+        }
+
+        public void setProduct_event(ArrayList<SM_SO_Product_Event> product_event) {
+            this.product_event = product_event;
+        }
+
+        public ArrayList<SM_SO_Product_Event_File> getProduct_event_file() {
+            return product_event_file;
+        }
+
+        public void setProduct_event_file(ArrayList<SM_SO_Product_Event_File> product_event_file) {
+            this.product_event_file = product_event_file;
         }
     }
 }

@@ -32,7 +32,7 @@ public class SM_SO_Service {
     private int manual_price;
     private int express;
     private int time_exec_standard;
-    @Expose
+    //@Expose
     private Double price;
     private Double cost;
     private String exec_type;

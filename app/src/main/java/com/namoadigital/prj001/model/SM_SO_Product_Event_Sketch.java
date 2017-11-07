@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by d.luche on 30/10/2017.
  */
@@ -12,7 +14,9 @@ public class SM_SO_Product_Event_Sketch {
     private int seq; //pk - server
     private int seq_tmp; //pk
     //
+    @Expose
     private int line;
+    @Expose
     private int col;
 
     public SM_SO_Product_Event_Sketch() {
