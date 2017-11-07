@@ -27,7 +27,7 @@
     <string name="msg_processing_data_step4">Processing Data - Step 3 of 4.\nThis step may take a few minutes</string>
     <string name="msg_version_invalid">Invalid APP Version</string>
     <string name="msg_version_expired">Expired APP Version</string>
-    <string name="msg_update_required">New Version Identified!\r\nDo you want to update?</string>
+    <string name="msg_update_required">New Version Identified!\nDo you want to update?</string>
     <string name="msg_user_invalid">Invalid User</string>
     <string name="msg_user_canceled">Canceled User</string>
     <string name="msg_user_other_device">User loggged in another device</string>
