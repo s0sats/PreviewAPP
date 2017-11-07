@@ -27,7 +27,7 @@
     <string name="msg_processing_data_step4">Processando dados - Etapa 3 de 4.\nEssa etapa pode demorar um pouco.</string>
     <string name="msg_version_invalid">Versão do app inválida.</string>
     <string name="msg_version_expired">Versão do app expirada</string>
-    <string name="msg_update_required">Nova versão identificada!\nDeseja atualizar ?</string>
+    <string name="msg_update_required">Nova Versão Disponível!\nDeseja atualizar?\n(Atenção: Dados ainda não transmitidos poderão ser perdidos!)</string>
     <string name="msg_user_invalid">Usuário inválido</string>
     <string name="msg_user_canceled">Usuário cancelado</string>
     <string name="msg_user_other_device">Usuário logado em outro aparelho</string>
