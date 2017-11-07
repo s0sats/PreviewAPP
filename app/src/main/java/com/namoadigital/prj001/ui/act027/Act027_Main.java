@@ -494,6 +494,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         //
         // Product_List
         act027_product_edit_ = new Act027_Product_Edit();
+        act027_product_edit_.setmSm_so(mSm_so);
+        act027_product_edit_.setBaInfra(this);
+        // Translation Access
+        act027_product_edit_.setHmAux_Trans(hmAux_Trans);
+
+        controls_frags.add(act027_product_edit_);
 
         // Services
         act027_services_ = new Act027_Services();

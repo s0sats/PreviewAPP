@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,8 +28,9 @@
 
             <TextView
                 android:id="@+id/act027_product_edit_content_tv_desc_ttl"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:gravity="right"
                 android:text="Desciption"
                 android:textSize="16sp" />
@@ -68,9 +68,10 @@
                 android:text="Inspection" />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act027_product_edit_content_mk_qtd"
+                android:id="@+id/act027_product_edit_content_mk_qty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 app:mBARCODE="false" />
 
         </LinearLayout>
@@ -86,10 +87,7 @@
                 android:id="@+id/act027_product_edit_content_pff_sketch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                app:mFName="foto.jpg"
-                app:mLabel="Titulo"
-                app:mOption="{'CONTENT':[{'LINES':2,'COLUMNS':5,'VALUE':'https:\/\/www.ipm-x.com\/blob.ws?b=0EA083F659F42785100707A1DEEC2DE7B3BA72DA252C5E1A345E731D46041FD430B9EC8302046871050D7DB20B3737EAe=0','COLOR':'#337AB7'}]}" />
+                android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
 
@@ -110,8 +108,7 @@
                 android:id="@+id/act027_product_edit_content_mk_comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                app:mBARCODE="false" />
+                android:inputType="text" />
 
         </LinearLayout>
 
