@@ -2516,5 +2516,44 @@ public class ToolBox_Inf {
         });
     }
 
+    public static void deleteFileListExceptionSafe(ArrayList<File> filesToDeleteList) {
+        for (File file : filesToDeleteList) {
+            if (file.exists()) {
+                try {
+                    file.delete();
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(CLASS_NAME, e);
+                    continue;
+                }
+            }
+        }
+    }
 
+    public static void deleteFileListExceptionSafe(File[] filesToDeleteList) {
+        for (File file : filesToDeleteList) {
+            if (file.exists()) {
+                try {
+                    file.delete();
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(CLASS_NAME, e);
+                    continue;
+                }
+            }
+        }
+    }
+
+    public static void deleteFileListExceptionSafe(String path, String prefix) {
+        File[] filesToDeleteList = getListOfFiles_v5(path,prefix);
+
+        for (File file : filesToDeleteList) {
+            if (file.exists()) {
+                try {
+                    file.delete();
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(CLASS_NAME, e);
+                    continue;
+                }
+            }
+        }
+    }
 }

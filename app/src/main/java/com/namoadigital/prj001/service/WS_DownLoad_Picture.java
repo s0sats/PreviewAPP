@@ -304,16 +304,16 @@ public class WS_DownLoad_Picture extends IntentService {
                 //
                 for (HMAux hmAux : event_file_list) {
                     String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4 );
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH)) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH_PHOTO)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH);
+                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH_PHOTO);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
-                                Constant.CACHE_PATH + "/" + fileName +  ".tmp"
+                                Constant.CACHE_PATH_PHOTO + "/" + fileName +  ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInf(fileName , ".jpg");
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(fileName , ".jpg");
                     }
                     //Atualiza campo com url local
                     productDao.addUpdate(

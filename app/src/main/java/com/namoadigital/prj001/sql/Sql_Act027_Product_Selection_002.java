@@ -45,8 +45,7 @@ public class Sql_Act027_Product_Selection_002 implements Specification {
                             " WHERE\n" +
                             "    p.customer_code= " + s_customer_code + " \n" +
                             "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
-                            "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) )\n" +
-                            "    and p.allow_new_serial_cl = 1\n" +
+                            "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) )" +
                             "  ORDER BY \n" +
                             "     p.product_id;")
                     .append("product_code#product_id#product_desc#full_product_desc#type")

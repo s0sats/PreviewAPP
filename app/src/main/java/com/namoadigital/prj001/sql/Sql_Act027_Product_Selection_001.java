@@ -23,48 +23,31 @@ public class Sql_Act027_Product_Selection_001 implements Specification {
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
-
-        //String teste =
-               return sb
-                .append(" SELECT\n" +
-                        "       T.*     \n" +
-                        " FROM (\n" +
-                        "      SELECT\n" +
-                        "         pg.group_code,\n" +
-                        "         pg.group_id,\n" +
-                        "         pg.group_desc,\n" +
-                        "         pg.group_id || ' - ' || pg.group_desc full_group_desc,\n" +
-                        "         pg.recursive_code,\n" +
-                        "         ifnull(pg.recursive_code_father,0) recursive_code_father,\n" +
-                        "                                'group' type\n" +
-                        "                \n" +
-                        "      FROM\n" +
-                        "         md_product_groups pg,\n" +
-                        "         (SELECT\n" +
-                        "          DISTINCT \n" +
-                        "            pgp.customer_code,\n" +
-                        "            pgp.group_code\n" +
-                        "          FROM\n" +
-                        "             md_products p,\n" +
-                        "             md_product_group_products pgp\n" +
-                        "          WHERE\n" +
-                        "             p.customer_code = pgp.customer_code\n" +
-                        "             and p.product_code = pgp.product_code\n" +
-                        "             and p.allow_new_serial_cl = 1\n" +
-                        "          ) pf \n" +
-                        "      WHERE\n" +
-                        "         pg.customer_code = pf.customer_code\n" +
-                        "         and pg.group_code = pf.group_code\n" +
-                        "         and pg.customer_code = " + s_customer_code  + "\n" +
-                        "      ) T\n" +
-                        " WHERE\n" +
-                        "    t.recursive_code_father = " + s_recursive_code_father  + "\n" +
-                        "    and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
-                        " ORDER BY\n" +
-                        "    t.group_id;")
+        return sb
+                .append("   SELECT\n" +
+                        "         T.*     \n" +
+                        "   FROM (\n" +
+                        "        SELECT\n" +
+                        "           pg.group_code,\n" +
+                        "           pg.group_id,\n" +
+                        "           pg.group_desc,\n" +
+                        "           pg.group_id || ' - ' || pg.group_desc full_group_desc,\n" +
+                        "           pg.recursive_code,\n" +
+                        "           ifnull(pg.recursive_code_father,0) recursive_code_father,\n" +
+                        "                                  'group' type\n" +
+                        "                  \n" +
+                        "        FROM\n" +
+                        "           md_product_groups pg \n" +
+                        "        WHERE\n" +
+                        "           pg.customer_code = " + s_customer_code  + "\n" +
+                        "        ) T\n" +
+                        "   WHERE\n" +
+                        "      t.recursive_code_father = " + s_recursive_code_father  + "\n" +
+                        "      and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
+                        "   ORDER BY\n" +
+                        "      t.group_id;")
                 .append("group_code#group_id#group_desc#full_group_desc#type#recursive_code")
                 .toString().replace("'%null%'","null").replace("'null'","null");
 
-       // return teste;
     }
 }
