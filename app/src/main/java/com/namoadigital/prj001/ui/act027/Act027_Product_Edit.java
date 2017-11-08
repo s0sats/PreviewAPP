@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act027;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,11 +18,13 @@ import com.namoa_digital.namoa_library.ctls.ApplyRepairImageFF;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Gallery_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_SketchDao;
@@ -29,9 +34,17 @@ import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+
+import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
 
 /**
  * Created by neomatrix on 31/10/17.
@@ -46,6 +59,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private ApplyRepairImageFF arff_applyrepair;
     private CheckBox cb_inspection;
     private MKEditTextNM mk_qty;
+    private TextView tv_unit;
     private PictureFF pff_sketch;
     private TextView tv_comments_lbl;
     private MKEditTextNM mk_comments;
@@ -71,6 +85,8 @@ public class Act027_Product_Edit extends BaseFragment {
     private StringBuilder sSketchs;
 
     private String sFileName;
+
+    private String mErrorMSG;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -119,10 +135,13 @@ public class Act027_Product_Edit extends BaseFragment {
 
         context = getActivity();
 
+        hideSoftKeyboard(getActivity());
+
         tv_id_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_id_ttl);
         tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_desc_ttl);
         arff_applyrepair = (ApplyRepairImageFF) view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
         cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
+        tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
         mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
         pff_sketch = (PictureFF) view.findViewById(R.id.act027_product_edit_content_pff_sketch);
         tv_comments_lbl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
@@ -164,30 +183,59 @@ public class Act027_Product_Edit extends BaseFragment {
                     ).toSqlQuery()
             );
 
-            // Tirar
-            MD_Product md_product = md_productDao.getByString(
-                    new MD_Product_Sql_001(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            (long) mProductCode
-
-                    ).toSqlQuery()
-            );
-
-            sFileName = md_product.getSketch_url_local();
-
         } else {
-            MD_Product md_product = md_productDao.getByString(
+            md_product = md_productDao.getByString(
                     new MD_Product_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             (long) mProductCode
 
                     ).toSqlQuery()
             );
+
+
+            HMAux hmTmp = sm_so_product_eventDao.getByStringHM(
+                    new SM_SO_Product_Event_Sql_002(
+                            mSm_so.getCustomer_code(),
+                            mSm_so.getSo_prefix(),
+                            mSm_so.getSo_code()
+                    ).toSqlQuery()
+            );
+
+            int seq_tmp = ToolBox_Inf.convertStringToInt(hmTmp.get(SM_SO_Product_Event_Sql_002.NEXT_TMP));
 
             mSm_so_product_event = new SM_SO_Product_Event();
+            mSm_so_product_event.setCustomer_code(mSm_so.getCustomer_code());
+            mSm_so_product_event.setSo_prefix(mSm_so.getSo_prefix());
+            mSm_so_product_event.setSo_code(mSm_so.getSo_code());
+            mSm_so_product_event.setSeq(0);
+            mSm_so_product_event.setSeq_tmp(seq_tmp);
+            mSm_so_product_event.setProduct_code((int) md_product.getProduct_code());
+            mSm_so_product_event.setProduct_id(md_product.getProduct_id());
+            mSm_so_product_event.setProduct_desc(md_product.getProduct_desc());
+            mSm_so_product_event.setUn(md_product.getUn());
+            mSm_so_product_event.setFlag_apply(0);
+            mSm_so_product_event.setFlag_repair(0);
+            mSm_so_product_event.setFlag_inspection(0);
+            mSm_so_product_event.setQty_apply("");
+            mSm_so_product_event.setSketch_code(md_product.getSketch_code());
+            mSm_so_product_event.setSketch_name(md_product.getSketch_url_local());
+            mSm_so_product_event.setSketch_url(md_product.getSketch_url());
+            mSm_so_product_event.setSketch_url_local(md_product.getSketch_url_local());
+            mSm_so_product_event.setSketch_lines(md_product.getSketch_lines());
+            mSm_so_product_event.setSketch_columns(md_product.getSketch_columns());
+            mSm_so_product_event.setSketch_color(md_product.getSketch_color());
+            mSm_so_product_event.setComments("");
+            mSm_so_product_event.setStatus("");
+            mSm_so_product_event.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+            mSm_so_product_event.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+            mSm_so_product_event.setCreate_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+            mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+            mSm_so_product_event.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+            mSm_so_product_event.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+            mSm_so_product_event.setIntegrated(0);
         }
 
-        mSm_so_product_event.setSketch_url_local(sFileName);
+        //mSm_so_product_event.setSketch_url_local(sFileName);
 
         controls_iv.add(iv_gallery);
         controls_sta.add(mk_comments);
@@ -214,6 +262,8 @@ public class Act027_Product_Edit extends BaseFragment {
         }
 
         mk_comments.setText(mSm_so_product_event.getComments());
+
+        tv_unit.setText(mSm_so_product_event.getUn());
 
         mk_qty.setText(mSm_so_product_event.getQty_apply());
 
@@ -264,14 +314,20 @@ public class Act027_Product_Edit extends BaseFragment {
         if (mSm_so_product_event.getFlag_apply() == 1) {
             arff_applyrepair.setmValue("10");
             mk_qty.setText(mSm_so_product_event.getQty_apply());
+            mk_qty.setmRequired(true);
             //
             mk_qty.setVisibility(View.VISIBLE);
+            tv_unit.setVisibility(View.VISIBLE);
         } else if (mSm_so_product_event.getFlag_repair() == 1) {
             arff_applyrepair.setmValue("01");
             mk_qty.setVisibility(View.INVISIBLE);
+            mk_qty.setmRequired(false);
+            tv_unit.setVisibility(View.INVISIBLE);
         } else {
             arff_applyrepair.setmValue("00");
             mk_qty.setVisibility(View.INVISIBLE);
+            mk_qty.setmRequired(true);
+            tv_unit.setVisibility(View.INVISIBLE);
         }
 
         if (mSm_so_product_event.getFlag_inspection() == 1) {
@@ -297,12 +353,18 @@ public class Act027_Product_Edit extends BaseFragment {
                 switch (status) {
                     case "10":
                         mk_qty.setVisibility(View.VISIBLE);
+                        mk_qty.setmRequired(true);
+                        tv_unit.setVisibility(View.VISIBLE);
                         break;
                     case "01":
                         mk_qty.setVisibility(View.INVISIBLE);
+                        mk_qty.setmRequired(false);
+                        tv_unit.setVisibility(View.INVISIBLE);
                         break;
                     default:
                         mk_qty.setVisibility(View.INVISIBLE);
+                        mk_qty.setmRequired(false);
+                        tv_unit.setVisibility(View.INVISIBLE);
                         break;
                 }
 
@@ -340,6 +402,9 @@ public class Act027_Product_Edit extends BaseFragment {
             }
 
             upImgGallery();
+
+            processTaskStatus();
+
         }
     }
 
@@ -376,7 +441,8 @@ public class Act027_Product_Edit extends BaseFragment {
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "pp");
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) ||
+                mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
             mIntent.putExtra(ConstantBase.PENABLED, true);
         } else {
             mIntent.putExtra(ConstantBase.PENABLED, false);
@@ -387,5 +453,206 @@ public class Act027_Product_Edit extends BaseFragment {
         context.startActivity(mIntent);
     }
 
+    private void processTaskStatus() {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) ||
+                mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+
+            arff_applyrepair.setmEnabled(true);
+            cb_inspection.setEnabled(true);
+            mk_qty.setEnabled(true);
+            tv_unit.setEnabled(true);
+            pff_sketch.setmEnabled(true);
+            mk_comments.setEnabled(true);
+            iv_save.setVisibility(View.VISIBLE);
+            iv_save.setOnClickListener(save_listener);
+        } else {
+            arff_applyrepair.setmEnabled(false);
+            cb_inspection.setEnabled(false);
+            cb_inspection.setTextColor(0xFF000000);
+            mk_qty.setEnabled(false);
+            tv_unit.setEnabled(false);
+            pff_sketch.setmEnabled(false);
+            mk_comments.setEnabled(false);
+
+            String sFF = (String) iv_gallery.getTag();
+
+            if ( sFF.length() != 0) {
+                iv_gallery.setEnabled(true);
+            } else {
+                iv_gallery.setEnabled(false);
+            }
+
+            iv_save.setVisibility(View.GONE);
+        }
+
+    }
+
+    private View.OnClickListener save_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            if (isValid()) {
+                informEventActiveClosed();
+            } else {
+                informEventError(mErrorMSG);
+            }
+        }
+    };
+
+    private boolean isValid() {
+
+        mErrorMSG = "";
+
+        if (arff_applyrepair.getmValue().equalsIgnoreCase("00") && !cb_inspection.isChecked()) {
+            mErrorMSG = HMAUX_TRANS_LIB.get("msg_opc_selection_error");
+
+            return false;
+        }
+
+        if (arff_applyrepair.getmValue().equalsIgnoreCase("10") && !mk_qty.isValid()) {
+            mErrorMSG = HMAUX_TRANS_LIB.get("msg_qty_people_error");
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private void informEventActiveClosed() {
+
+        if (arff_applyrepair.getmValue().equalsIgnoreCase("10")) {
+            mSm_so_product_event.setFlag_apply(1);
+            mSm_so_product_event.setFlag_repair(0);
+            mSm_so_product_event.setQty_apply(mk_qty.getText().toString().trim());
+        }
+
+        if (arff_applyrepair.getmValue().equalsIgnoreCase("01")) {
+            mSm_so_product_event.setFlag_apply(0);
+            mSm_so_product_event.setFlag_repair(1);
+            mSm_so_product_event.setQty_apply(null);
+        }
+
+        if (cb_inspection.isChecked()) {
+            mSm_so_product_event.setFlag_inspection(1);
+        } else {
+            mSm_so_product_event.setFlag_inspection(0);
+        }
+
+        if (mk_comments.getText().toString().trim().length() != 0) {
+            mSm_so_product_event.setComments(mk_comments.getText().toString().trim());
+        } else {
+            mSm_so_product_event.setComments(null);
+        }
+
+        /**
+         * Re-create Sketches Marks
+         */
+        ArrayList<SM_SO_Product_Event_Sketch> sketches = new ArrayList<>();
+        String[] marks =  ToolBox.converterFromJson(pff_sketch.getmValue()).split("#");
+
+        if (!marks[0].isEmpty()) {
+            for (int i = 0; i < marks.length; i++) {
+                SM_SO_Product_Event_Sketch eventSketch = new SM_SO_Product_Event_Sketch();
+
+                eventSketch.setCustomer_code(mSm_so_product_event.getCustomer_code());
+                eventSketch.setSo_prefix(mSm_so_product_event.getSo_prefix());
+                eventSketch.setSo_code(mSm_so_product_event.getSo_code());
+                eventSketch.setSeq(0);
+                eventSketch.setSeq_tmp(mSm_so_product_event.getSeq_tmp());
+                //
+                String[] coord = marks[i].split(",");
+                //
+                eventSketch.setLine(Integer.parseInt(coord[0]));
+                eventSketch.setCol(Integer.parseInt(coord[1]));
+                //
+                sketches.add(eventSketch);
+            }
+        }
+
+        /**
+         * Re-create Photo-List File
+         */
+        ArrayList<SM_SO_Product_Event_File> eventFiles = new ArrayList<>();
+        String[] photos = ((String) iv_gallery.getTag()).split("#");
+
+        if (!photos[0].isEmpty()) {
+
+            HMAux auxFileTmp = new HMAux();
+
+            auxFileTmp =  sm_so_product_event_fileDao.getByStringHM(
+                    new SM_SO_Product_Event_File_Sql_002(
+                            mSm_so_product_event.getCustomer_code(),
+                            mSm_so_product_event.getSo_prefix(),
+                            mSm_so_product_event.getSo_code(),
+                            mSm_so_product_event.getSeq_tmp()
+                    ).toSqlQuery()
+            );
+
+            int fileTmp = Integer.parseInt(auxFileTmp.get(SM_SO_Product_Event_File_Sql_002.NEXT_TMP));
+
+            for (int i = 0; i < photos.length; i++) {
+                SM_SO_Product_Event_File eventFile = new SM_SO_Product_Event_File();
+
+                eventFile.setCustomer_code(mSm_so_product_event.getCustomer_code());
+                eventFile.setSo_prefix(mSm_so_product_event.getSo_prefix());
+                eventFile.setSo_code(mSm_so_product_event.getSo_code());
+                eventFile.setSeq(0);
+                eventFile.setSeq_tmp(mSm_so_product_event.getSeq_tmp());
+                eventFile.setFile_code(0);
+                eventFile.setFile_tmp(fileTmp++);
+                eventFile.setFile_name(photos[i]);
+                eventFile.setFile_url(null);
+                eventFile.setFile_url_local(photos[i]);
+
+                eventFiles.add(eventFile);
+            }
+        }
+
+        mSm_so_product_event.setSketch(sketches);
+        mSm_so_product_event.setFile(eventFiles);
+        mSm_so_product_event.setStatus(Constant.SO_STATUS_DONE);
+
+        sm_so_product_eventDao.addUpdateTmp(mSm_so_product_event);
+
+        processTaskStatus();
+
+        /**
+         * Calling WebService
+         */
+        SM_SODao soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        soDao.getByString(
+                new SM_SO_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+    }
+
+    private void informEventError(String msg) {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("product_edit_title_error"),
+                msg,
+                null,
+                -1
+        );
+    }
+
+    private void hideKeyBoard() {
+       getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        if (activity.getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
+    }
 
 }

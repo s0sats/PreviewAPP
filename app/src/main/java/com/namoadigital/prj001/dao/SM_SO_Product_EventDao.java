@@ -519,7 +519,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             if (cursor.isNull(cursor.getColumnIndex(QTY_APPLY))) {
                 sm_so_product_event.setQty_apply(null);
             } else {
-                sm_so_product_event.setQty_apply(cursor.getString(cursor.getColumnIndex(QTY_APPLY)).replace(".",""));
+                sm_so_product_event.setQty_apply(cursor.getString(cursor.getColumnIndex(QTY_APPLY)).replace(",","."));
             }
             if (cursor.isNull(cursor.getColumnIndex(SKETCH_CODE))) {
                 sm_so_product_event.setSketch_code(null);
@@ -633,6 +633,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             contentValues.put(SKETCH_CODE, sm_so_product_event.getSketch_code());
             contentValues.put(SKETCH_NAME, sm_so_product_event.getSketch_name());
             contentValues.put(SKETCH_URL, sm_so_product_event.getSketch_url());
+            contentValues.put(SKETCH_URL_LOCAL, sm_so_product_event.getSketch_url_local());
             contentValues.put(SKETCH_LINES, sm_so_product_event.getSketch_lines());
             contentValues.put(SKETCH_COLUMNS, sm_so_product_event.getSketch_columns());
             contentValues.put(SKETCH_COLOR, sm_so_product_event.getSketch_color());

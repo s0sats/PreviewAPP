@@ -2008,6 +2008,10 @@ public class ToolBox_Inf {
     public static long dateToMilliseconds(String date_tmz, String type) {
         String sFormat = "";
 
+        if (date_tmz.isEmpty()){
+            return 0L;
+        }
+
         if (type.equalsIgnoreCase("SECOND")) {
             sFormat = "yyyy-MM-dd HH:mm Z";
         } else {
