@@ -309,7 +309,7 @@ public class WS_DownLoad_Picture extends IntentService {
                         ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH);
                         //
                         ToolBox_Inf.downloadImagePDF(
-                                hmAux.get(MD_ProductDao.SKETCH_URL),
+                                hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
                                 Constant.CACHE_PATH + "/" + fileName +  ".tmp"
                         );
                         //

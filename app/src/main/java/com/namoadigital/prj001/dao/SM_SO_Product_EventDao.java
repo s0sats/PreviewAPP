@@ -629,7 +629,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
                 contentValues.put(FLAG_REPAIR, sm_so_product_event.getFlag_repair());
             }
             //campos que podem ser nulos
-            contentValues.put(QTY_APPLY, sm_so_product_event.getQty_apply().replace(".",","));
+            contentValues.put(QTY_APPLY, sm_so_product_event.getQty_apply() != null ? sm_so_product_event.getQty_apply().replace(".",",") : sm_so_product_event.getQty_apply());
             contentValues.put(SKETCH_CODE, sm_so_product_event.getSketch_code());
             contentValues.put(SKETCH_NAME, sm_so_product_event.getSketch_name());
             contentValues.put(SKETCH_URL, sm_so_product_event.getSketch_url());
