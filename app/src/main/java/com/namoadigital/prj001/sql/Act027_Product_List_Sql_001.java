@@ -76,8 +76,9 @@ public class Act027_Product_List_Sql_001 implements Specification {
                         "          or s.product_id like '%"+product_filter+"%' \n" +
                         "          or s.product_desc like '%"+product_filter+"%' \n" +
                         "        )\n" +
-                        " ORDER BY " +
-                        "   status_order")
+                        " ORDER BY \n" +
+                        "   status_order,\n" +
+                        "   s.create_date desc\n")
                 .append(";")
                 .append(HmAuxFields+"#"+SKETCH_SELECTED+"#"+FILE_QTY)
                 .toString()

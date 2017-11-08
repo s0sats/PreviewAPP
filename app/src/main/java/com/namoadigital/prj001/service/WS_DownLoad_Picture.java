@@ -9,6 +9,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
+import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
+import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
@@ -17,6 +19,10 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_005;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_005;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_004;
 import com.namoadigital.prj001.util.Constant;
@@ -235,7 +241,92 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) +".jpg"
                             ).toSqlQuery()
                     );
-                }
+                }//FIM CROQUI
+
+
+                /*
+                * Download croqui dos eventos(croquis da sm_so_product_events)
+                */
+                SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                ArrayList<HMAux> event_sketch_list = new ArrayList<>();
+
+                event_sketch_list = (ArrayList<HMAux>) eventDao.query_HM(
+                        new SM_SO_Product_Event_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                );
+                //
+                for (HMAux hmAux : event_sketch_list) {
+                    String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4 );
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH);
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(SM_SO_Product_EventDao.SKETCH_URL),
+                                Constant.CACHE_PATH + "/" + fileName +  ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(fileName , ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    eventDao.addUpdate(
+                            new SM_SO_Product_Event_Sql_005(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    hmAux.get(SM_SO_Product_EventDao.SO_PREFIX),
+                                    hmAux.get(SM_SO_Product_EventDao.SO_CODE),
+                                    hmAux.get(SM_SO_Product_EventDao.SEQ),
+                                    fileName +".jpg"
+                            ).toSqlQuery()
+                    );
+                }//FIM Event File
+                /*
+                * Download imagem dos eventos
+                */
+                SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                ArrayList<HMAux> event_file_list = new ArrayList<>();
+
+                event_file_list = (ArrayList<HMAux>) eventFileDao.query_HM(
+                        new SM_SO_Product_Event_File_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                        ).toSqlQuery()
+                );
+                //
+                for (HMAux hmAux : event_file_list) {
+                    String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4 );
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH);
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
+                                Constant.CACHE_PATH + "/" + fileName +  ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(fileName , ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    productDao.addUpdate(
+                            new SM_SO_Product_Event_File_Sql_005(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    hmAux.get(SM_SO_Product_Event_FileDao.SO_PREFIX),
+                                    hmAux.get(SM_SO_Product_Event_FileDao.SO_CODE),
+                                    hmAux.get(SM_SO_Product_Event_FileDao.SEQ),
+                                    hmAux.get(SM_SO_Product_Event_FileDao.FILE_CODE),
+                                    fileName +".jpg"
+                            ).toSqlQuery()
+                    );
+                }//FIM Event File
 
             }
             //fim SO

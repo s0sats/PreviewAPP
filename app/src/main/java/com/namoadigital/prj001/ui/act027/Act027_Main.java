@@ -383,7 +383,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("mket_product_search_hint");
         transList.add("new_product_event_ttl");
         transList.add("new_product_event_msg");
-
+        //Product Event Selection Fragment
+        transList.add("lbl_code");
+        transList.add("lbl_id");
+        transList.add("lbl_desc");
+        transList.add("mket_hint_msg");
+        transList.add("btn_back");
+        transList.add("btn_home");
         //
         sm_soDao = new SM_SODao(
                 context,
@@ -474,9 +480,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_product_list_.setOnNewEventClickListner(new Act027_Product_List.OnNewEventClickListner() {
             @Override
             public void onNewEventClick() {
-                //setFrag(act027_product_edit_,SELECTION_PRODUCT_EDIT);
+                setFrag(act027_product_selection_,SELECTION_PRODUCT_SELECTION);
                 //METODO ABAIXO, APENAS PARA TESTE.
-                createTestProdEvent();
+                //createTestProdEvent();
             }
         });
         //
@@ -501,6 +507,19 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         controls_frags.add(act027_product_edit_);
 
+        // Product_List
+        act027_product_selection_ = new Act027_Product_Selection();
+        act027_product_selection_.setBaInfra(this);
+        act027_product_selection_.setHmAux_Trans(hmAux_Trans);
+        act027_product_selection_.setmSm_so(mSm_so);
+        act027_product_selection_.setOnProductClickListner(new Act027_Product_Selection.onProductClickListner() {
+            @Override
+            public void onProductClick(int product_code) {
+                act027_product_edit_.setProductEventPk(product_code,-1);
+                //
+                setFrag(act027_product_edit_, SELECTION_PRODUCT_EDIT);
+            }
+        });
         // Services
         act027_services_ = new Act027_Services();
         // Dialog Acess
@@ -979,6 +998,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         act027_product_list_.setmSm_so(mSm_so);
         act027_product_list_.loadDataToScreen();
+
+        act027_product_edit_.setmSm_so(mSm_so);
+        act027_product_edit_.loadDataToScreen();
+
+        act027_product_selection_.setmSm_so(mSm_so);
+        act027_product_selection_.loadDataToScreen();
         //
         startDownloadServices();
     }
