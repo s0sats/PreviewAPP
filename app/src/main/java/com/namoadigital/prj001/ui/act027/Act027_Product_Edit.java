@@ -84,8 +84,6 @@ public class Act027_Product_Edit extends BaseFragment {
     private StringBuilder sFiles;
     private StringBuilder sSketchs;
 
-    private String sFileName;
-
     private String mErrorMSG;
 
     public void setmSm_so(SM_SO mSm_so) {
@@ -143,7 +141,9 @@ public class Act027_Product_Edit extends BaseFragment {
         cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
         tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
         mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
+
         pff_sketch = (PictureFF) view.findViewById(R.id.act027_product_edit_content_pff_sketch);
+
         tv_comments_lbl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
         mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
         iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
@@ -235,7 +235,9 @@ public class Act027_Product_Edit extends BaseFragment {
             mSm_so_product_event.setIntegrated(0);
         }
 
-        //mSm_so_product_event.setSketch_url_local(sFileName);
+        if (mSm_so_product_event.getQty_apply() != null) {
+            mSm_so_product_event.setQty_apply(mSm_so_product_event.getQty_apply().replace(",", "."));
+        }
 
         controls_iv.add(iv_gallery);
         controls_sta.add(mk_comments);
@@ -302,11 +304,12 @@ public class Act027_Product_Edit extends BaseFragment {
                     .append("\"}]}");
 
             pff_sketch.setmOption(sbOptions.toString());
-        }
 
-        pff_sketch.setmValue(
-                ToolBox.converterToJson(sSketchs.toString())
-        );
+            pff_sketch.setmValue(
+                    ToolBox.converterToJson(sSketchs.toString())
+            );
+
+        }
 
         pff_sketch.setmIv_Dots(0);
         pff_sketch.setmV_Line(0);
@@ -342,6 +345,11 @@ public class Act027_Product_Edit extends BaseFragment {
         tempValues.put("mk_comments", mk_comments.getText().toString());
         tempValues.put("mk_qty", mk_qty.getText().toString());
         tempValues.put("img", (String) iv_gallery.getTag());
+
+        tempValues.put("sketch_fname", pff_sketch.getmFName());
+        tempValues.put("sketch_options", pff_sketch.getmOption());
+        tempValues.put("sketch_mvalue", pff_sketch.getmValue());
+
     }
 
     private void iniAction() {
@@ -397,6 +405,10 @@ public class Act027_Product_Edit extends BaseFragment {
                     iv_gallery.setTag(tempValues.get("img"));
                 }
 
+                pff_sketch.setmFName(tempValues.get("sketch_fname"));
+                pff_sketch.setmOption(tempValues.get("sketch_options"));
+                pff_sketch.setmValue(tempValues.get("sketch_mvalue"));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -426,9 +438,14 @@ public class Act027_Product_Edit extends BaseFragment {
     @Override
     public void loadScreenToData() {
         if (bStatus) {
+
             tempValues.put("mk_comments", mk_comments.getText().toString());
             tempValues.put("mk_qty", mk_qty.getText().toString());
             tempValues.put("img", (String) iv_gallery.getTag());
+
+            tempValues.put("sketch_fname", pff_sketch.getmFName());
+            tempValues.put("sketch_options", pff_sketch.getmOption());
+            tempValues.put("sketch_mvalue", pff_sketch.getmValue());
         }
     }
 
@@ -476,7 +493,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
             String sFF = (String) iv_gallery.getTag();
 
-            if ( sFF.length() != 0) {
+            if (sFF.length() != 0) {
                 iv_gallery.setEnabled(true);
             } else {
                 iv_gallery.setEnabled(false);
@@ -523,7 +540,7 @@ public class Act027_Product_Edit extends BaseFragment {
         if (arff_applyrepair.getmValue().equalsIgnoreCase("10")) {
             mSm_so_product_event.setFlag_apply(1);
             mSm_so_product_event.setFlag_repair(0);
-            mSm_so_product_event.setQty_apply(mk_qty.getText().toString().trim());
+            mSm_so_product_event.setQty_apply(mk_qty.getText().toString().trim().replace(".", ","));
         }
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("01")) {
@@ -548,7 +565,7 @@ public class Act027_Product_Edit extends BaseFragment {
          * Re-create Sketches Marks
          */
         ArrayList<SM_SO_Product_Event_Sketch> sketches = new ArrayList<>();
-        String[] marks =  ToolBox.converterFromJson(pff_sketch.getmValue()).split("#");
+        String[] marks = ToolBox.converterFromJson(pff_sketch.getmValue()).split("#");
 
         if (!marks[0].isEmpty()) {
             for (int i = 0; i < marks.length; i++) {
@@ -579,7 +596,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
             HMAux auxFileTmp = new HMAux();
 
-            auxFileTmp =  sm_so_product_event_fileDao.getByStringHM(
+            auxFileTmp = sm_so_product_event_fileDao.getByStringHM(
                     new SM_SO_Product_Event_File_Sql_002(
                             mSm_so_product_event.getCustomer_code(),
                             mSm_so_product_event.getSo_prefix(),
@@ -645,7 +662,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void hideKeyBoard() {
-       getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     public static void hideSoftKeyboard(Activity activity) {
