@@ -148,6 +148,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     private Sync_ChecklistDao syncChecklistDao;
     private String currentFrag = "";
+    //Profile de EXECUTION
+    private boolean executionProfile = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -380,10 +382,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_open_n_form_msg");
         transList.add("progress_n_form_sync_ttl");
         transList.add("progress_n_form_sync_msg");
-        //Product Event Fragment
+        //Product Event List Fragment
         transList.add("mket_product_search_hint");
         transList.add("new_product_event_ttl");
         transList.add("new_product_event_msg");
+        transList.add("empty_list_lbl");
         //Product Event Selection Fragment
         transList.add("lbl_code");
         transList.add("lbl_id");
@@ -446,6 +449,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+        //
+        executionProfile = ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_SO,
+                Constant.PROFILE_MENU_SO_PARAM_EXECUTION
+        );
 
         // Drawer Opc
         act027_opc_ = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
@@ -567,6 +576,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     public void setCurrentFrag(String currentFrag) {
         this.currentFrag = currentFrag;
+    }
+
+    public boolean hasExecutionProfile() {
+        return executionProfile;
     }
 
     private void createTestProdEvent() {
@@ -1884,7 +1897,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1896,7 +1909,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
             //
             int id = item.getItemId();
             //

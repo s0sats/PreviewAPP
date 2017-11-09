@@ -39,13 +39,34 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/act027_product_list_content_lv_events"
+    <LinearLayout
+        android:id="@+id/act027_product_list_content_ll_event_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@color/namoa_color_light_blue3"
-        android:dividerHeight="1dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <ListView
+            android:id="@+id/act027_product_list_content_lv_events"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@color/namoa_color_light_blue3"
+            android:dividerHeight="1dp" />
+    </LinearLayout>
+    <!-- FIM LISTA DE EVENTO -->
+    <LinearLayout
+        android:id="@+id/act027_product_list_content_ll_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/act027_product_list_content_tv_empty_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Empty List"
+            />
+    </LinearLayout>
 
 </LinearLayout>

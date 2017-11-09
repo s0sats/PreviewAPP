@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -34,9 +36,12 @@ public class Act027_Product_List extends BaseFragment {
     private boolean bStatus = false;
     private Context context;
     private SM_SO mSm_so;
+    private LinearLayout ll_event_list;
+    private LinearLayout ll_empty_list;
     private MKEditTextNM mket_product_search;
     private ImageView iv_new_event;
     private ListView lv_events;
+    private TextView tv_empty_lbl;
     private Act027_Product_List_Adapter mAdapter;
     private Act027_Main mMain;
     private SM_SO_Product_EventDao sm_so_product_eventDao;
@@ -81,11 +86,17 @@ public class Act027_Product_List extends BaseFragment {
         //
         mMain = (Act027_Main) getActivity();
         //
+        ll_event_list = (LinearLayout) view.findViewById(R.id.act027_product_list_content_ll_event_list);
+        //
+        ll_empty_list = (LinearLayout) view.findViewById(R.id.act027_product_list_content_ll_empty_list);
+        //
         mket_product_search = (MKEditTextNM) view.findViewById(R.id.act027_product_list_content_mket_product);
         //
         iv_new_event = (ImageView) view.findViewById(R.id.act027_product_list_content_iv_new_event);
         //
         lv_events = (ListView) view.findViewById(R.id.act027_product_list_content_lv_events);
+        //
+        tv_empty_lbl = (TextView) view.findViewById(R.id.act027_product_list_content_tv_empty_lbl);
         //
         sm_so_product_eventDao = new SM_SO_Product_EventDao(
                 context,
@@ -168,7 +179,16 @@ public class Act027_Product_List extends BaseFragment {
         if (bStatus) {
             if (mSm_so != null) {
                 //
+                if(!mMain.hasExecutionProfile()){
+
+                    iv_new_event.setVisibility(View.GONE);
+                }else{
+                    iv_new_event.setVisibility(View.VISIBLE);
+                }
+                //
                 mket_product_search.setHint(hmAux_Trans.get("mket_product_search_hint"));
+                //
+                tv_empty_lbl.setText(hmAux_Trans.get("empty_list_lbl"));
                 //
                 loadEventList();
             }
@@ -188,13 +208,21 @@ public class Act027_Product_List extends BaseFragment {
                 Query
         );
         //
-        mAdapter = new Act027_Product_List_Adapter(
-                context,
-                R.layout.act027_product_list_content_adapter_cell,
-                eventList
-        );
-        //
-        lv_events.setAdapter(mAdapter);
-        //
+        if(eventList != null && eventList.size() > 0) {
+            //Remove lbl com vazio e exibe linear com a lista
+            ll_empty_list.setVisibility(View.GONE);
+            ll_event_list.setVisibility(View.VISIBLE);
+            //
+            mAdapter = new Act027_Product_List_Adapter(
+                    context,
+                    R.layout.act027_product_list_content_adapter_cell,
+                    eventList
+            );
+            //
+            lv_events.setAdapter(mAdapter);
+        }else{
+            ll_event_list.setVisibility(View.GONE);
+            ll_empty_list.setVisibility(View.VISIBLE);
+        }
     }
 }

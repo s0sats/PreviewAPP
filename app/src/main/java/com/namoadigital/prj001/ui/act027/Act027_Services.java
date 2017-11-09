@@ -67,6 +67,7 @@ public class Act027_Services extends BaseFragment {
     private HMAux partnerAux = new HMAux();
     private String lastServiceUpdated = "";
     private int original_update_required;
+    private Act027_Main mMain;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -123,7 +124,9 @@ public class Act027_Services extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
-
+        //
+        mMain = (Act027_Main) getActivity();
+        //
         sm_so_serviceDao = new SM_SO_ServiceDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -141,7 +144,7 @@ public class Act027_Services extends BaseFragment {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-
+        //
         tv_filter_lbl = (TextView) view.findViewById(R.id.act027_services_content_tv_filter_lbl);
         sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
@@ -169,12 +172,19 @@ public class Act027_Services extends BaseFragment {
                 //
                 //sw_filter.setChecked(true);
                 //
-                if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) &&
-                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                if ((!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) ||
+                    !mMain.hasExecutionProfile()
                         ){
                     sw_filter.setOnCheckedChangeListener(null);
                     sw_filter.setChecked(false);
-                    sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+                    sw_filter.setEnabled(false);
+                    //
+                    if(mMain.hasExecutionProfile()) {
+                        sw_filter.setEnabled(true);
+                        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+                    }
+
                 }
                 //
                 setServiceAdapter(sw_filter.isChecked());
@@ -207,7 +217,8 @@ public class Act027_Services extends BaseFragment {
                                 ToolBox_Con.getPreference_Zone_Code(context),
                                 isChecked//sw_filter != null && sw_filter.isChecked()
                         ).toSqlQuery()
-                )
+                ),
+                mMain.hasExecutionProfile()
         );
         //
         adp.setOnServiceSelectedListener(new Act027_Services_Adapter.IAct027_Services_Adapter() {
