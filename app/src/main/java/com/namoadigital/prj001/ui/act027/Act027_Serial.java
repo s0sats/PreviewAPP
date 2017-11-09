@@ -794,14 +794,7 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         //
         for (int i = 0; i < ll_tracking_content.getChildCount() ; i++) {
             TextViewCT viewCT = (TextViewCT) ll_tracking_content.getChildAt(i);
-
             viewCT.setmEnabled(false);
-            viewCT.setClickable(false);
-            viewCT.setOnRemoveViewsListener(null);
-
-            boolean teste = viewCT.isClickable();
-            String tit = ";";
-
         }
         iv_add_tracking.setEnabled(false);
         btn_action.setVisibility(View.GONE);
