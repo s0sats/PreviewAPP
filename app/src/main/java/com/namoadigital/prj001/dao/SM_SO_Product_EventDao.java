@@ -514,7 +514,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             sm_so_product_event.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
             sm_so_product_event.setUn(cursor.getString(cursor.getColumnIndex(UN)));
             sm_so_product_event.setFlag_apply(cursor.getInt(cursor.getColumnIndex(FLAG_APPLY)));
-            sm_so_product_event.setFlag_inspection(cursor.getInt(cursor.getColumnIndex(FLAG_APPLY)));
+            sm_so_product_event.setFlag_inspection(cursor.getInt(cursor.getColumnIndex(FLAG_INSPECTION)));
             sm_so_product_event.setFlag_repair(cursor.getInt(cursor.getColumnIndex(FLAG_REPAIR)));
             if (cursor.isNull(cursor.getColumnIndex(QTY_APPLY))) {
                 sm_so_product_event.setQty_apply(null);
