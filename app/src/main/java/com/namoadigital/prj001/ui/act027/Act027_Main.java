@@ -147,6 +147,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private String sFileNameSignature = "";
 
     private Sync_ChecklistDao syncChecklistDao;
+    private String currentFrag = "";
+    //Profile de EXECUTION
+    private boolean executionProfile = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -379,10 +382,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_open_n_form_msg");
         transList.add("progress_n_form_sync_ttl");
         transList.add("progress_n_form_sync_msg");
-        //Product Event Fragment
+        //Product Event List Fragment
         transList.add("mket_product_search_hint");
         transList.add("new_product_event_ttl");
         transList.add("new_product_event_msg");
+        transList.add("empty_list_lbl");
         //Product Event Selection Fragment
         transList.add("lbl_code");
         transList.add("lbl_id");
@@ -445,6 +449,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+        //
+        executionProfile = ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_SO,
+                Constant.PROFILE_MENU_SO_PARAM_EXECUTION
+        );
 
         // Drawer Opc
         act027_opc_ = (Act027_Opc) fm.findFragmentById(R.id.act027_opc);
@@ -480,7 +490,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_product_list_.setOnNewEventClickListner(new Act027_Product_List.OnNewEventClickListner() {
             @Override
             public void onNewEventClick() {
-                setFrag(act027_product_selection_,SELECTION_PRODUCT_SELECTION);
+                setFrag(act027_product_selection_, SELECTION_PRODUCT_SELECTION);
                 //METODO ABAIXO, APENAS PARA TESTE.
                 //createTestProdEvent();
             }
@@ -494,7 +504,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         Integer.parseInt(hmAux.get(SM_SO_Product_EventDao.SEQ_TMP))
                 );
                 //
-                setFrag(act027_product_edit_,SELECTION_PRODUCT_EDIT);
+                setFrag(act027_product_edit_, SELECTION_PRODUCT_EDIT);
             }
         });
         //
@@ -515,7 +525,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_product_selection_.setOnProductClickListner(new Act027_Product_Selection.onProductClickListner() {
             @Override
             public void onProductClick(int product_code) {
-                act027_product_edit_.setProductEventPk(product_code,-1);
+                act027_product_edit_.setProductEventPk(product_code, -1);
                 //
                 setFrag(act027_product_edit_, SELECTION_PRODUCT_EDIT);
             }
@@ -564,6 +574,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         checkSOAttachExists();
     }
 
+    public void setCurrentFrag(String currentFrag) {
+        this.currentFrag = currentFrag;
+    }
+
+    public boolean hasExecutionProfile() {
+        return executionProfile;
+    }
+
     private void createTestProdEvent() {
         SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(
                 context,
@@ -590,7 +608,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         SM_SO_Product_Event testEvent = new SM_SO_Product_Event();
         //
-        int r = new Random().nextInt(2 );
+        int r = new Random().nextInt(2);
         //
         testEvent.setCustomer_code(mSm_so.getCustomer_code());
         testEvent.setSo_prefix(mSm_so.getSo_prefix());
@@ -602,7 +620,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         testEvent.setProduct_desc(product_desc);
         testEvent.setUn("cm");
         testEvent.setFlag_apply(r);
-        testEvent.setFlag_repair(r == 0 ? 1: 0);
+        testEvent.setFlag_repair(r == 0 ? 1 : 0);
         testEvent.setFlag_inspection(r);
         testEvent.setQty_apply("0,62");
         testEvent.setSketch_code(118);
@@ -612,7 +630,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         testEvent.setSketch_lines(5);
         testEvent.setSketch_columns(5);
         testEvent.setSketch_color("#FF0000");
-        testEvent.setComments("TestFakeViaApp_"+seq_tmp);
+        testEvent.setComments("TestFakeViaApp_" + seq_tmp);
         testEvent.setStatus(Constant.SO_STATUS_DONE);
         testEvent.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         testEvent.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
@@ -627,23 +645,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
         SM_SO_Product_Event_Sketch sketch1 = new SM_SO_Product_Event_Sketch();
         sketch1.setPK(testEvent);
-        r = new Random().nextInt(5 )+ 1;
+        r = new Random().nextInt(5) + 1;
         sketch1.setLine(r > 5 ? 5 : r);
-        r = new Random().nextInt(5 )+ 1;
+        r = new Random().nextInt(5) + 1;
         sketch1.setCol(r > 5 ? 5 : r);
         //
         SM_SO_Product_Event_Sketch sketch2 = new SM_SO_Product_Event_Sketch();
         sketch2.setPK(testEvent);
-        r = new Random().nextInt(5 )+ 1;
+        r = new Random().nextInt(5) + 1;
         sketch2.setLine(r > 5 ? 5 : r);
-        r = new Random().nextInt(5 )+ 1;
+        r = new Random().nextInt(5) + 1;
         sketch2.setCol(r > 5 ? 5 : r);
         //
         SM_SO_Product_Event_Sketch sketch3 = new SM_SO_Product_Event_Sketch();
         sketch3.setPK(testEvent);
-        r = new Random().nextInt(5 )+ 1;
+        r = new Random().nextInt(5) + 1;
         sketch3.setLine(r > 5 ? 5 : r);
-        r = new Random().nextInt(5 )+ 1;
+        r = new Random().nextInt(5) + 1;
         sketch3.setCol(r > 5 ? 5 : r);
         //
         sketches.add(sketch1);
@@ -669,11 +687,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         eventFile1.setSeq_tmp(seq_tmp);
         eventFile1.setFile_tmp(fileTmp);
         eventFile1.setFile_name("sm_so_"
-                + eventFile1.getCustomer_code() +"_"+
-                + eventFile1.getSo_prefix() +"_"+
-                + eventFile1.getSo_code() +"_"+
-                + eventFile1.getSeq_tmp() +"_"+
-                + eventFile1.getFile_tmp() +".jpg"
+                + eventFile1.getCustomer_code() + "_" +
+                +eventFile1.getSo_prefix() + "_" +
+                +eventFile1.getSo_code() + "_" +
+                +eventFile1.getSeq_tmp() + "_" +
+                +eventFile1.getFile_tmp() + ".jpg"
         );
         //
         eventFiles.add(eventFile1);
@@ -1489,6 +1507,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act027_main_ll, type, sTag);
             ft.commit();
+            setCurrentFrag(sTag);
         } else {
             //type.loadDataToScreen();
         }
@@ -1496,24 +1515,39 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public void onBackPressed() {
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_so_exit_title"),
-                hmAux_Trans.get("alert_so_exit_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent mIntent = new Intent(context, Act005_Main.class);
-                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        //
-                        startActivity(mIntent);
-                        finish();
 
-                    }
-                },
-                1,
-                false
-        );
+        switch (currentFrag){
+            case SELECTION_PRODUCT_SELECTION:
+                setFrag(act027_product_list_,SELECTION_PRODUCT_LIST);
+                break;
+            case SELECTION_PRODUCT_EDIT:
+                setFrag(act027_product_list_,SELECTION_PRODUCT_LIST);
+                break;
+            case SELECTION_PRODUCT_LIST:default:
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_so_exit_title"),
+                        hmAux_Trans.get("alert_so_exit_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent mIntent = new Intent(context, Act005_Main.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                //
+                                startActivity(mIntent);
+                                finish();
+
+                            }
+                        },
+                        1,
+                        false
+
+                );
+                break;
+
+
+        }
+
     }
 
     @Override
@@ -1863,7 +1897,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1875,7 +1909,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST)) {
+        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
             //
             int id = item.getItemId();
             //

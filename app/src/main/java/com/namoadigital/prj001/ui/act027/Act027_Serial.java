@@ -140,11 +140,12 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private View.OnClickListener listnerSaveSerial;
 
+    private SM_SO mSm_so;
+    private Act027_Main mMain;
+
     public void setBundle(Bundle bundle) {
         this.bundle = bundle;
     }
-
-    private SM_SO mSm_so;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -189,6 +190,8 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
 
     private void iniVar(View view) {
         context = getActivity();
+        //
+        mMain = (Act027_Main) getActivity();
         //
         recoverIntentsInfo();
         //
@@ -770,6 +773,31 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         }
         //Chama metodo que carrea todas as listas do SS
         spinnersInitializer();
+        //
+        if(!mMain.hasExecutionProfile()){
+            disabledEdition();
+        }
+    }
+
+    private void disabledEdition() {
+
+        for (Object obj: serialProperties) {
+            if (obj instanceof SearchableSpinner) {
+                SearchableSpinner ss = (SearchableSpinner) obj;
+                ss.setmEnabled(false);
+            }
+            if (obj instanceof MKEditTextNM) {
+                MKEditTextNM mket = (MKEditTextNM) obj;
+                mket.setEnabled(false);
+            }
+        }
+        //
+        for (int i = 0; i < ll_tracking_content.getChildCount() ; i++) {
+            TextViewCT viewCT = (TextViewCT) ll_tracking_content.getChildAt(i);
+            viewCT.setmEnabled(false);
+        }
+        iv_add_tracking.setEnabled(false);
+        btn_action.setVisibility(View.GONE);
     }
 
     @Override

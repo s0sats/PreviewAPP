@@ -519,7 +519,7 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
             if (cursor.isNull(cursor.getColumnIndex(QTY_APPLY))) {
                 sm_so_product_event.setQty_apply(null);
             } else {
-                sm_so_product_event.setQty_apply(cursor.getString(cursor.getColumnIndex(QTY_APPLY)).replace(",","."));
+                sm_so_product_event.setQty_apply(cursor.getString(cursor.getColumnIndex(QTY_APPLY)).replace(".",","));
             }
             if (cursor.isNull(cursor.getColumnIndex(SKETCH_CODE))) {
                 sm_so_product_event.setSketch_code(null);

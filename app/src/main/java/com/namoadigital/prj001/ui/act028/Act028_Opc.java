@@ -99,6 +99,8 @@ public class Act028_Opc extends BaseFragment {
     private ImageView iv_new_exec;
     private ImageView iv_not_exec;
 
+    private Act028_Main_New  mMain;
+
     public void setmService(SM_SO_Service mService) {
         this.mService = mService;
     }
@@ -154,6 +156,8 @@ public class Act028_Opc extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
+        //
+        mMain = (Act028_Main_New) getActivity();
 
         sm_so_serviceDao = new SM_SO_ServiceDao(
                 context,
@@ -516,6 +520,11 @@ public class Act028_Opc extends BaseFragment {
                 if (data.get("full_status").equalsIgnoreCase("0")) {
                     iv_new_exec.setVisibility(View.GONE);
                 } else {
+                }
+
+                if(!mMain.hasExecutionProfile()){
+                    iv_new_exec.setVisibility(View.GONE);
+                    iv_not_exec.setVisibility(View.GONE);
                 }
             }
         }

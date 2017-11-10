@@ -249,7 +249,7 @@ public class Act028_Task_List extends BaseFragment {
                         ).toSqlQuery()
                 );
 
-                if (md_partner == null) {
+                if (md_partner == null || !mMain_new.hasExecutionProfile()) {
                     iv_new_task.setVisibility(View.GONE);
                 }
             }

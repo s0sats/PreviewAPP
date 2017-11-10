@@ -125,6 +125,8 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     private HMAux sm_so_n_form = new HMAux();
     private String ws_process = "";
     private int original_update_required;
+    //Profile de EXECUTION
+    private boolean executionProfile = false;
 
     public void setMTASK_STATUS(String MTASK_STATUS) {
         this.MTASK_STATUS = MTASK_STATUS;
@@ -295,7 +297,13 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-
+        //
+        executionProfile = ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_SO,
+                Constant.PROFILE_MENU_SO_PARAM_EXECUTION
+        );
+        //
         act028_opc = (Act028_Opc) fm.findFragmentById(R.id.act028_opc);
         act028_opc.setOnMenuOptionsSelected(this);
         act028_opc.setmService(mService);
@@ -329,6 +337,10 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         } else {
             setFrag(act028_empty_, SELECTION_EMPTY);
         }
+    }
+
+    public boolean hasExecutionProfile() {
+        return executionProfile;
     }
 
     //region Recover Intent Parameters
@@ -1540,7 +1552,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
         menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
         //
-        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST)) {
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);

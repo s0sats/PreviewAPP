@@ -30,6 +30,7 @@ import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -49,6 +50,7 @@ public class WS_Cleanning extends IntentService {
         try {
 
             deleteFormLocal();
+            deleteSO();
             deleteFCMMessages();
 
         } catch (Exception e) {
@@ -56,6 +58,45 @@ public class WS_Cleanning extends IntentService {
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
+    }
+
+    private void deleteSO() {
+
+        SM_SODao sm_soDao =
+                new SM_SODao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+        // Remove TODOS OS ARQUIVOS vinculados a S.O
+        ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) sm_soDao.query(
+                new WS_Cleaning_Sql_003(
+                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                ).toSqlQuery()
+        );
+
+        for (SM_SO sm_so : sm_sos) {
+            ArrayList<File> filesToDeleteList = new ArrayList<>();
+            //
+            sm_soDao.removeFull(sm_so);
+            //
+            String filePrefix = "sm_so_"
+                    + sm_so.getCustomer_code() +"_"
+                    + sm_so.getSo_prefix() +"_"
+                    + sm_so.getSo_code() +"_"
+                    ;
+            //Gera lista de arquivos na CC_CACHE
+            File[] soChaceFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, filePrefix);
+            //Gera lista de arquivos na CC_CACHE_PHOTO
+            File[] soChacePhotoFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH_PHOTO, filePrefix);
+            //Adiciona as lista de fil em uma lista só.
+            Collections.addAll(filesToDeleteList, soChaceFileList);
+            Collections.addAll(filesToDeleteList, soChacePhotoFileList);
+            //
+            ToolBox_Inf.deleteFileListExceptionSafe(filesToDeleteList);
+        }
+
     }
 
     private void deleteFormLocal() {
@@ -88,12 +129,6 @@ public class WS_Cleanning extends IntentService {
                         Constant.DB_VERSION_CUSTOM
                 );
 
-        SM_SODao sm_soDao =
-                new SM_SODao(
-                        getApplicationContext(),
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                        Constant.DB_VERSION_CUSTOM
-                );
 
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
                 new WS_Cleaning_Sql_001(
@@ -178,32 +213,6 @@ public class WS_Cleanning extends IntentService {
                         sbFiles.toString()
                 ).toSqlQuery()
         );
-
-        // Remove So Files
-        ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) sm_soDao.query(
-                new WS_Cleaning_Sql_003(
-                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
-                ).toSqlQuery()
-        );
-
-        for (SM_SO sm_so : sm_sos) {
-            sm_soDao.removeFull(sm_so);
-            //
-            String filePrefix = "sm_so_"
-                    + sm_so.getCustomer_code() +"_"
-                    + sm_so.getSo_prefix() +"_"
-                    + sm_so.getSo_code() +"_"
-                    ;
-
-           File[] soFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, filePrefix);
-           //
-            for (File file : soFileList) {
-                if(file.exists()){
-                    file.delete();
-                }
-            }
-
-        }
 
     }
 
