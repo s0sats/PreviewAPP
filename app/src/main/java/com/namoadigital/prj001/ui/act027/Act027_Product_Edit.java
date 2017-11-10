@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act027;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -52,6 +53,8 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
 
 public class Act027_Product_Edit extends BaseFragment {
 
+    public static final String EVENT_EDIT_MODE = "event_edit_mode";
+
     private Context context;
 
     private TextView tv_id_ttl;
@@ -65,6 +68,9 @@ public class Act027_Product_Edit extends BaseFragment {
     private MKEditTextNM mk_comments;
     private ImageView iv_gallery;
     private ImageView iv_save;
+
+    private TextView tv_nick;
+    private TextView tv_date;
 
     private MD_ProductDao md_productDao;
     private SM_SO_Product_EventDao sm_so_product_eventDao;
@@ -85,6 +91,8 @@ public class Act027_Product_Edit extends BaseFragment {
     private StringBuilder sSketchs;
 
     private String mErrorMSG;
+
+    private boolean bStatusNew = false;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -119,6 +127,18 @@ public class Act027_Product_Edit extends BaseFragment {
     public void onResume() {
         super.onResume();
 
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+            if (bStatusNew) {
+                bStatusNew = false;
+
+            } else {
+                if (!pff_sketch.getmValue().equalsIgnoreCase(tempValues.get("sketch_mvalue"))) {
+                    tempValues.put("sketch_mvalue", pff_sketch.getmValue());
+                }
+
+            }
+        }
+
         loadDataToScreen();
     }
 
@@ -148,6 +168,9 @@ public class Act027_Product_Edit extends BaseFragment {
         mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
         iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
         iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
+
+        tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
+        tv_date = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_date);
 
         md_productDao = new MD_ProductDao(
                 context,
@@ -342,6 +365,38 @@ public class Act027_Product_Edit extends BaseFragment {
         arff_applyrepair.setmIv_Dots(0);
         arff_applyrepair.setmV_Line(0);
 
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+            bStatusNew = true;
+        } else {
+            bStatusNew = false;
+        }
+
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
+            tv_nick.setText(mSm_so_product_event.getDone_user_nick());
+            tv_date.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getDone_date() != null ? mSm_so_product_event.getDone_date() : "", ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                    )
+            );
+        } else {
+            if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+                tv_nick.setText("");
+                tv_date.setText("");
+            } else {
+                tv_nick.setText(mSm_so_product_event.getCreate_user_nick());
+                tv_date.setText(
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getCreate_date() != null ? mSm_so_product_event.getCreate_date() : "", ""),
+                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
+                );
+            }
+        }
+
+        tempValues.put("arff_applyrepair", arff_applyrepair.getmValue());
+        tempValues.put("cb_inspection", cb_inspection.isChecked() ? "1" : "0");
+
         tempValues.put("mk_comments", mk_comments.getText().toString());
         tempValues.put("mk_qty", mk_qty.getText().toString());
         tempValues.put("img", (String) iv_gallery.getTag());
@@ -349,7 +404,6 @@ public class Act027_Product_Edit extends BaseFragment {
         tempValues.put("sketch_fname", pff_sketch.getmFName());
         tempValues.put("sketch_options", pff_sketch.getmOption());
         tempValues.put("sketch_mvalue", pff_sketch.getmValue());
-
     }
 
     private void iniAction() {
@@ -395,15 +449,24 @@ public class Act027_Product_Edit extends BaseFragment {
                     mk_comments.setText(tempValues.get("mk_comments"));
                 }
 
-                if (tempValues.get("mk_qty") != null && !tempValues.get("mk_qty").isEmpty()) {
-                    mk_qty.setText(tempValues.get("mk_qty"));
-                }
+//                if (tempValues.get("mk_qty") != null && !tempValues.get("mk_qty").isEmpty()) {
+//                    mk_qty.setText(tempValues.get("mk_qty"));
+//                }
+
 
                 if (sdAvoid) {
                     sdAvoid = false;
                 } else {
                     iv_gallery.setTag(tempValues.get("img"));
                 }
+
+                //arff_applyrepair.setmValue(tempValues.get("arff_applyrepair"));
+
+                arff_applyrepair.setmValue("00");
+
+                cb_inspection.setChecked(tempValues.get("cb_inspection").equalsIgnoreCase("1") ? true : false);
+
+                mk_qty.setText(tempValues.get("mk_qty"));
 
                 pff_sketch.setmFName(tempValues.get("sketch_fname"));
                 pff_sketch.setmOption(tempValues.get("sketch_options"));
@@ -438,6 +501,9 @@ public class Act027_Product_Edit extends BaseFragment {
     @Override
     public void loadScreenToData() {
         if (bStatus) {
+
+            tempValues.put("arff_applyrepair", arff_applyrepair.getmValue());
+            tempValues.put("cb_inspection", cb_inspection.isChecked() ? "1" : "0");
 
             tempValues.put("mk_comments", mk_comments.getText().toString());
             tempValues.put("mk_qty", mk_qty.getText().toString());
@@ -509,7 +575,19 @@ public class Act027_Product_Edit extends BaseFragment {
         public void onClick(View v) {
 
             if (isValid()) {
-                informEventActiveClosed();
+
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_product_edit_save_ttl"),
+                        hmAux_Trans.get("alert_product_edit_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                informEventActiveClosed();
+                            }
+                        },
+                        1
+                );
             } else {
                 informEventError(mErrorMSG);
             }
@@ -521,13 +599,13 @@ public class Act027_Product_Edit extends BaseFragment {
         mErrorMSG = "";
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("00") && !cb_inspection.isChecked()) {
-            mErrorMSG = HMAUX_TRANS_LIB.get("msg_opc_selection_error");
+            mErrorMSG = HMAUX_TRANS_LIB.get("opc_selection_error_msg");
 
             return false;
         }
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("10") && !mk_qty.isValid()) {
-            mErrorMSG = HMAUX_TRANS_LIB.get("msg_qty_people_error");
+            mErrorMSG = HMAUX_TRANS_LIB.get("qty_apply_error_msg");
 
             return false;
         }
@@ -654,7 +732,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private void informEventError(String msg) {
         ToolBox.alertMSG(
                 context,
-                hmAux_Trans.get("product_edit_title_error"),
+                hmAux_Trans.get("alert_product_edit_error_ttl"),
                 msg,
                 null,
                 -1
@@ -669,6 +747,18 @@ public class Act027_Product_Edit extends BaseFragment {
         if (activity.getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    public void removeEventPhotosOnLeave() {
+        ToolBox_Inf.deleteFileListExceptionSafe(null, (String) iv_gallery.getTag(), null);
+    }
+
+    public String getEventStatus() {
+        if (mSm_so_product_event != null && mSm_so_product_event.getStatus().isEmpty()) {
+            return EVENT_EDIT_MODE;
+        } else {
+            return mSm_so_product_event.getStatus();
         }
     }
 

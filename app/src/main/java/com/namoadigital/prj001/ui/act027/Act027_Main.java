@@ -394,7 +394,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("mket_hint_msg");
         transList.add("btn_back");
         transList.add("btn_home");
-        //
+        //Product Event Edit Fragment
+        transList.add("alert_product_edit_error_ttl");
+        transList.add("opc_selection_error_msg");
+        transList.add("qty_apply_error_msg");
+        transList.add("alert_product_edit_save_ttl");
+        transList.add("alert_product_edit_msg");
+        transList.add("alert_event_lose_data_ttl");
+        transList.add("alert_event_lose_data_msg");
+
         sm_soDao = new SM_SODao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -1516,14 +1524,40 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public void onBackPressed() {
 
-        switch (currentFrag){
+        if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)) {
+
+            if (act027_product_edit_.getEventStatus().equalsIgnoreCase(
+                    Act027_Product_Edit.EVENT_EDIT_MODE)
+                    ) {
+
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_event_lose_data_ttl"),
+                        hmAux_Trans.get("alert_event_lose_data_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                act027_product_edit_.removeEventPhotosOnLeave();
+                                //
+                                setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
+                            }
+                        },
+                        1
+                );
+
+                return;
+            }
+        }
+
+        switch (currentFrag) {
             case SELECTION_PRODUCT_SELECTION:
-                setFrag(act027_product_list_,SELECTION_PRODUCT_LIST);
+                setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
             case SELECTION_PRODUCT_EDIT:
-                setFrag(act027_product_list_,SELECTION_PRODUCT_LIST);
+                setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
-            case SELECTION_PRODUCT_LIST:default:
+            case SELECTION_PRODUCT_LIST:
+            default:
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_so_exit_title"),

@@ -2008,7 +2008,7 @@ public class ToolBox_Inf {
     public static long dateToMilliseconds(String date_tmz, String type) {
         String sFormat = "";
 
-        if (date_tmz.isEmpty()){
+        if (date_tmz.isEmpty()) {
             return 0L;
         }
 
@@ -2547,9 +2547,33 @@ public class ToolBox_Inf {
     }
 
     public static void deleteFileListExceptionSafe(String path, String prefix) {
-        File[] filesToDeleteList = getListOfFiles_v5(path,prefix);
+        File[] filesToDeleteList = getListOfFiles_v5(path, prefix);
 
         for (File file : filesToDeleteList) {
+            if (file.exists()) {
+                try {
+                    file.delete();
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(CLASS_NAME, e);
+                    continue;
+                }
+            }
+        }
+    }
+
+    public static void deleteFileListExceptionSafe(String path, String sFiles, String separatorChar) {
+        if (sFiles == null || sFiles.isEmpty()) {
+            return;
+        }
+
+        String _path = path != null ? path : Constant.CACHE_PATH_PHOTO;
+        String[] filesToDeleteList = sFiles.split(separatorChar != null ? separatorChar : "#");
+
+        File file;
+
+        for (String _file : filesToDeleteList) {
+            file = new File(_path + "/" + _file);
+            //
             if (file.exists()) {
                 try {
                     file.delete();
