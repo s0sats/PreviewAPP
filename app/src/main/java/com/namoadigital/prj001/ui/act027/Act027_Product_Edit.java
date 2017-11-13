@@ -24,16 +24,19 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Gallery_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_SketchDao;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
+import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
@@ -43,6 +46,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
@@ -460,9 +464,7 @@ public class Act027_Product_Edit extends BaseFragment {
                     iv_gallery.setTag(tempValues.get("img"));
                 }
 
-                //arff_applyrepair.setmValue(tempValues.get("arff_applyrepair"));
-
-                arff_applyrepair.setmValue("00");
+                arff_applyrepair.setmValue(tempValues.get("arff_applyrepair"));
 
                 cb_inspection.setChecked(tempValues.get("cb_inspection").equalsIgnoreCase("1") ? true : false);
 
@@ -537,6 +539,31 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void processTaskStatus() {
+
+        Act027_Main mMain = (Act027_Main) getActivity();
+
+        if (!mMain.hasExecutionProfile()) {
+            arff_applyrepair.setmEnabled(false);
+            cb_inspection.setEnabled(false);
+            cb_inspection.setTextColor(0xFF000000);
+            mk_qty.setEnabled(false);
+            tv_unit.setEnabled(false);
+            pff_sketch.setmEnabled(false);
+            mk_comments.setEnabled(false);
+
+            String sFF = (String) iv_gallery.getTag();
+
+            if (sFF.length() != 0) {
+                iv_gallery.setEnabled(true);
+            } else {
+                iv_gallery.setEnabled(false);
+            }
+
+            iv_save.setVisibility(View.GONE);
+
+            return;
+        }
+
         if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) ||
                 mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
 
@@ -727,6 +754,58 @@ public class Act027_Product_Edit extends BaseFragment {
                         mSm_so.getSo_code()
                 ).toSqlQuery()
         );
+
+        uploadFiles(eventFiles);
+
+        activateUpload(context);
+
+        Act027_Main mMain = (Act027_Main) getActivity();
+
+        if (ToolBox_Con.isOnline(context)) {
+            mMain.executeSoSave();
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+            //
+            mMain.setProductListFragOffLine();
+        }
+    }
+
+    private void uploadFiles(ArrayList<SM_SO_Product_Event_File> eventFiles) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+
+        ArrayList<GE_File> geFiles = new ArrayList<>();
+
+        for (int i = 0; i < eventFiles.size(); i++) {
+            String sFile_v = eventFiles.get(i).getFile_name();
+
+            if (sFile_v.endsWith(".jpg")) {
+                File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
+                if (sFile.exists()) {
+                    GE_File geFile = new GE_File();
+                    geFile.setFile_code(sFile_v.replace(".jpg", ""));
+                    geFile.setFile_path(sFile_v);
+                    geFile.setFile_status("OPENED");
+                    geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss"));
+
+                    geFiles.add(geFile);
+                }
+            }
+        }
+
+        geFileDao.addUpdate(geFiles, false);
+
+    }
+
+    private void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private void informEventError(String msg) {
