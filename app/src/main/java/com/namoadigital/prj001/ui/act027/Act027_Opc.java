@@ -249,6 +249,12 @@ public class Act027_Opc extends BaseFragment {
         }
     };
 
+    public void eventKeepColor(){
+        SELECTION_TYPE = Act027_Main.SELECTION_PRODUCT_LIST;
+        //
+        changeTabColor();
+    }
+
     private void changeTabColor() {
         switch (SELECTION_TYPE) {
             case Act027_Main.SELECTION_PRODUCT_LIST:

@@ -143,6 +143,18 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     //Profile de EXECUTION
     private boolean executionProfile = false;
 
+    private boolean eventEditOpenStatus = false;
+    private String eventEditOpenStatusType = "";
+    private boolean eventEditOpenStatusTypeDialog = false;
+
+    public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
+        this.eventEditOpenStatus = eventEditOpenStatus;
+        //
+        if (eventEditOpenStatus == false) {
+            this.eventEditOpenStatusType = "";
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,6 +200,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_author_validation");
         transList.add("alert_no_profile_ttl");
         transList.add("alert_no_profile_msg");
+
+        transList.add("exit_shortcut_ttl");
+        transList.add("exit_shortcut_msg");
 
         // ACT027_Opc Fragment
         transList.add("so_lbl");
@@ -395,6 +410,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_event_lose_data_ttl");
         transList.add("alert_event_lose_data_msg");
 
+        transList.add("event_inspection_lbl");
+        transList.add("event_comments_lbl");
+
         sm_soDao = new SM_SODao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -578,8 +596,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         this.currentFrag = currentFrag;
     }
 
-    public void setProductListFragOffLine(){
-        if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)){
+    public void setProductListFragOffLine() {
+        if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)) {
             setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
         }
     }
@@ -1029,7 +1047,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         act027_product_selection_.setmSm_so(mSm_so);
         act027_product_selection_.loadDataToScreen();
         //
-        if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)){
+        if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)) {
             setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
         }
         //
@@ -1542,6 +1560,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                                 act027_product_edit_.removeEventPhotosOnLeave();
                                 //
                                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
+                                //
+                                setEventEditOpenStatus(false);
                             }
                         },
                         1
@@ -1588,6 +1608,48 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public void menuOptionsSelected(String type) {
+
+        eventEditOpenStatusType = type;
+
+        if (eventEditOpenStatus) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            //
+            if (!eventEditOpenStatusTypeDialog) {
+                eventEditOpenStatusTypeDialog = true;
+
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_event_lose_data_ttl"),
+                        hmAux_Trans.get("alert_event_lose_data_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                act027_product_edit_.removeEventPhotosOnLeave();
+                                //
+                                eventEditOpenStatusTypeDialog = false;
+                                String sType = eventEditOpenStatusType;
+                                setEventEditOpenStatus(false);
+                                //
+                                menuOptionsSelected(sType);
+                            }
+                        },
+                        2,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                eventEditOpenStatusTypeDialog = false;
+                                //
+                                act027_opc_.eventKeepColor();
+                            }
+                        }
+                );
+            }
+
+            return;
+
+        } else {
+        }
+
         switch (type.toUpperCase()) {
 
             case Act027_Main.SELECTION_PRODUCT_LIST:
@@ -1951,9 +2013,75 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             //
             switch (id) {
                 case 3:
-                    callNFormMsg();
+
+                    if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT) && act027_product_edit_.eventStatusOpen()) {
+
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_event_lose_data_ttl"),
+                                hmAux_Trans.get("alert_event_lose_data_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        act027_product_edit_.removeEventPhotosOnLeave();
+                                        //
+                                        callNFormMsg();
+                                        //
+                                        setEventEditOpenStatus(false);
+                                    }
+                                },
+                                1
+                        );
+
+                    } else {
+                        callNFormMsg();
+                    }
+
+                    //callNFormMsg();
                     return true;
 
+                case 4:
+                    if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT) && act027_product_edit_.eventStatusOpen()) {
+
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_event_lose_data_ttl"),
+                                hmAux_Trans.get("alert_event_lose_data_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        act027_product_edit_.removeEventPhotosOnLeave();
+                                        //
+                                        callAct021();
+                                        //
+                                        setEventEditOpenStatus(false);
+                                    }
+                                },
+                                1
+                        );
+
+                    } else {
+
+                        super.onOptionsItemSelected(item);
+
+//                        ToolBox.alertMSG(
+//                                context,
+//                                hmAux_Trans.get("exit_shortcut_ttl"),
+//                                hmAux_Trans.get("exit_shortcut_msg"),
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        act027_product_edit_.removeEventPhotosOnLeave();
+//                                        //
+//                                        callAct021();
+//                                    }
+//                                },
+//                                1
+//                        );
+                    }
+
+                    //
+                    return true;
             }
             //
         }
@@ -1973,6 +2101,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 },
                 1
         );
+    }
+
+    protected void callAct021() {
+        try {
+            Intent mIntent = new Intent(context, Class.forName(ConstantBase.HM_ICON_NAMOA_GO_ACT021));
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mIntent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void processNFormFlow() {

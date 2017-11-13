@@ -49,8 +49,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
-
 /**
  * Created by neomatrix on 31/10/17.
  */
@@ -105,6 +103,14 @@ public class Act027_Product_Edit extends BaseFragment {
     public void setProductEventPk(int product_code, int seq_tmp) {
         mProductCode = product_code;
         mSeqTmp = seq_tmp;
+    }
+
+    public boolean eventStatusOpen() {
+        if (mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Nullable
@@ -163,12 +169,14 @@ public class Act027_Product_Edit extends BaseFragment {
         tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_desc_ttl);
         arff_applyrepair = (ApplyRepairImageFF) view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
         cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
+        cb_inspection.setText(hmAux_Trans.get("event_inspection_lbl"));
         tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
         mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
 
         pff_sketch = (PictureFF) view.findViewById(R.id.act027_product_edit_content_pff_sketch);
 
         tv_comments_lbl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
+        tv_comments_lbl.setText(hmAux_Trans.get("event_comments_lbl"));
         mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
         iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
         iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
@@ -253,10 +261,10 @@ public class Act027_Product_Edit extends BaseFragment {
             mSm_so_product_event.setSketch_color(md_product.getSketch_color());
             mSm_so_product_event.setComments("");
             mSm_so_product_event.setStatus("");
-            mSm_so_product_event.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+            mSm_so_product_event.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             mSm_so_product_event.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
             mSm_so_product_event.setCreate_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-            mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+            mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             mSm_so_product_event.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
             mSm_so_product_event.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
             mSm_so_product_event.setIntegrated(0);
@@ -561,6 +569,8 @@ public class Act027_Product_Edit extends BaseFragment {
 
             iv_save.setVisibility(View.GONE);
 
+            mMain.setEventEditOpenStatus(false);
+
             return;
         }
 
@@ -575,6 +585,8 @@ public class Act027_Product_Edit extends BaseFragment {
             mk_comments.setEnabled(true);
             iv_save.setVisibility(View.VISIBLE);
             iv_save.setOnClickListener(save_listener);
+
+            mMain.setEventEditOpenStatus(true);
         } else {
             arff_applyrepair.setmEnabled(false);
             cb_inspection.setEnabled(false);
@@ -593,6 +605,8 @@ public class Act027_Product_Edit extends BaseFragment {
             }
 
             iv_save.setVisibility(View.GONE);
+
+            mMain.setEventEditOpenStatus(false);
         }
 
     }
@@ -626,13 +640,13 @@ public class Act027_Product_Edit extends BaseFragment {
         mErrorMSG = "";
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("00") && !cb_inspection.isChecked()) {
-            mErrorMSG = HMAUX_TRANS_LIB.get("opc_selection_error_msg");
+            mErrorMSG = hmAux_Trans.get("opc_selection_error_msg");
 
             return false;
         }
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("10") && !mk_qty.isValid()) {
-            mErrorMSG = HMAUX_TRANS_LIB.get("qty_apply_error_msg");
+            mErrorMSG = hmAux_Trans.get("qty_apply_error_msg");
 
             return false;
         }
@@ -665,6 +679,10 @@ public class Act027_Product_Edit extends BaseFragment {
         } else {
             mSm_so_product_event.setComments(null);
         }
+
+        mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        mSm_so_product_event.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        mSm_so_product_event.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
 
         /**
          * Re-create Sketches Marks
@@ -760,6 +778,8 @@ public class Act027_Product_Edit extends BaseFragment {
         activateUpload(context);
 
         Act027_Main mMain = (Act027_Main) getActivity();
+
+        mMain.setEventEditOpenStatus(false);
 
         if (ToolBox_Con.isOnline(context)) {
             mMain.executeSoSave();
