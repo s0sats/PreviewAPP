@@ -1238,11 +1238,11 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
     public void getSerialInfo() {
         mPresenter.getSerialInfo(
                 product_code,
-                mSm_so.getSerial_id());
+                mSm_so.getSerial_code());
     }
 
-    public void callProcessSerialSaveResult(String product_code, String serial_id, HMAux hmSaveResult) {
-        mPresenter.processSerialSaveResult(product_code, serial_id, hmSaveResult);
+    public void callProcessSerialSaveResult(String product_code, int serial_code, HMAux hmSaveResult) {
+        mPresenter.processSerialSaveResult(product_code, serial_code, hmSaveResult);
     }
 
     public void callProcessTrackingResult(HMAux auxResult){

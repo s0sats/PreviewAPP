@@ -666,6 +666,10 @@ public class Act027_Product_Edit extends BaseFragment {
             mSm_so_product_event.setComments(null);
         }
 
+        mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        mSm_so_product_event.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+        mSm_so_product_event.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+
         /**
          * Re-create Sketches Marks
          */
