@@ -394,6 +394,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_product_edit_msg");
         transList.add("alert_event_lose_data_ttl");
         transList.add("alert_event_lose_data_msg");
+        transList.add("event_tmp_ref_lbl");
+        transList.add("event_product_ttl");
 
         sm_soDao = new SM_SODao(
                 context,
