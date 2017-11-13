@@ -14,13 +14,13 @@ public interface Act027_Serial_Presenter {
 
     void getProductInfo();
 
-    void executeSerialSave(Long product_code, String serial_id, boolean save_serial);
+    void executeSerialSave();
 
-    void getSerialInfo(Long product_code, String serial_id);
+    void getSerialInfo(Long product_code, int serial_code);
 
     void updateSerialInfo(MD_Product_Serial productSerial);
 
-    void processSerialSaveResult(String product_code, String serial_id, HMAux hmSaveResult);
+    void processSerialSaveResult(String product_code, int serial_code, HMAux hmSaveResult);
     /*
     * Review S.O - Adição do tracking
     */

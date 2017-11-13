@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.ApplyRepairImageFF;
@@ -59,16 +60,21 @@ public class Act027_Product_Edit extends BaseFragment {
 
     private Context context;
 
-    private TextView tv_id_ttl;
+    private TextView tv_tmp_ref_ttl;
+    private TextView tv_tmp_ref_val;
+    private TextView tv_prod_ttl;
     private TextView tv_desc_ttl;
+
     private ApplyRepairImageFF arff_applyrepair;
     private CheckBox cb_inspection;
+    private LinearLayout ll_qty;
     private MKEditTextNM mk_qty;
     private TextView tv_unit;
     private PictureFF pff_sketch;
     private TextView tv_comments_lbl;
     private MKEditTextNM mk_comments;
     private ImageView iv_gallery;
+    private LinearLayout ll_save;
     private ImageView iv_save;
 
     private TextView tv_nick;
@@ -165,11 +171,15 @@ public class Act027_Product_Edit extends BaseFragment {
 
         hideSoftKeyboard(getActivity());
 
-        tv_id_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_id_ttl);
-        tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_desc_ttl);
+        tv_tmp_ref_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_ttl);
+        tv_tmp_ref_val = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_val);
+
+        tv_prod_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_ttl);
+        tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_desc);
         arff_applyrepair = (ApplyRepairImageFF) view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
         cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
         cb_inspection.setText(hmAux_Trans.get("event_inspection_lbl"));
+        ll_qty = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_qty_apply);
         tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
         mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
 
@@ -179,6 +189,7 @@ public class Act027_Product_Edit extends BaseFragment {
         tv_comments_lbl.setText(hmAux_Trans.get("event_comments_lbl"));
         mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
         iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
+        ll_save = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_save);
         iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
 
         tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
@@ -354,18 +365,21 @@ public class Act027_Product_Edit extends BaseFragment {
             mk_qty.setText(mSm_so_product_event.getQty_apply());
             mk_qty.setmRequired(true);
             //
-            mk_qty.setVisibility(View.VISIBLE);
-            tv_unit.setVisibility(View.VISIBLE);
+            ll_qty.setVisibility(View.VISIBLE);
+//            mk_qty.setVisibility(View.VISIBLE);
+//            tv_unit.setVisibility(View.VISIBLE);
         } else if (mSm_so_product_event.getFlag_repair() == 1) {
             arff_applyrepair.setmValue("01");
-            mk_qty.setVisibility(View.INVISIBLE);
             mk_qty.setmRequired(false);
-            tv_unit.setVisibility(View.INVISIBLE);
+            ll_qty.setVisibility(View.GONE);
+//            mk_qty.setVisibility(View.INVISIBLE);
+//            tv_unit.setVisibility(View.INVISIBLE);
         } else {
             arff_applyrepair.setmValue("00");
-            mk_qty.setVisibility(View.INVISIBLE);
             mk_qty.setmRequired(true);
-            tv_unit.setVisibility(View.INVISIBLE);
+            ll_qty.setVisibility(View.GONE);
+//            mk_qty.setVisibility(View.INVISIBLE);
+//            tv_unit.setVisibility(View.INVISIBLE);
         }
 
         if (mSm_so_product_event.getFlag_inspection() == 1) {
@@ -426,19 +440,22 @@ public class Act027_Product_Edit extends BaseFragment {
 
                 switch (status) {
                     case "10":
-                        mk_qty.setVisibility(View.VISIBLE);
                         mk_qty.setmRequired(true);
-                        tv_unit.setVisibility(View.VISIBLE);
+                        ll_qty.setVisibility(View.VISIBLE);
+//                        mk_qty.setVisibility(View.VISIBLE);
+//                        tv_unit.setVisibility(View.VISIBLE);
                         break;
                     case "01":
-                        mk_qty.setVisibility(View.INVISIBLE);
                         mk_qty.setmRequired(false);
-                        tv_unit.setVisibility(View.INVISIBLE);
+                        ll_qty.setVisibility(View.GONE);
+//                        mk_qty.setVisibility(View.INVISIBLE);
+//                        tv_unit.setVisibility(View.INVISIBLE);
                         break;
                     default:
-                        mk_qty.setVisibility(View.INVISIBLE);
                         mk_qty.setmRequired(false);
-                        tv_unit.setVisibility(View.INVISIBLE);
+                        ll_qty.setVisibility(View.GONE);
+//                        mk_qty.setVisibility(View.INVISIBLE);
+//                        tv_unit.setVisibility(View.INVISIBLE);
                         break;
                 }
 
@@ -451,8 +468,11 @@ public class Act027_Product_Edit extends BaseFragment {
 
         if (bStatus) {
 
-            tv_id_ttl.setText(mSm_so_product_event.getProduct_id());
-            tv_desc_ttl.setText(mSm_so_product_event.getProduct_desc());
+            tv_tmp_ref_ttl.setText(hmAux_Trans.get("event_tmp_ref_lbl"));
+            tv_tmp_ref_val.setText(mSm_so_product_event.getSeq_tmp() > 0 ? String.valueOf(mSm_so_product_event.getSeq_tmp()) : "" );
+
+            tv_prod_ttl.setText(hmAux_Trans.get("event_product_ttl"));
+            tv_desc_ttl.setText(mSm_so_product_event.getProduct_id()+" - "+mSm_so_product_event.getProduct_desc());
 
             try {
                 if (widgetset) {
@@ -566,8 +586,8 @@ public class Act027_Product_Edit extends BaseFragment {
             } else {
                 iv_gallery.setEnabled(false);
             }
-
-            iv_save.setVisibility(View.GONE);
+            ll_save.setVisibility(View.GONE);
+            //iv_save.setVisibility(View.GONE);
 
             mMain.setEventEditOpenStatus(false);
 
@@ -583,7 +603,8 @@ public class Act027_Product_Edit extends BaseFragment {
             tv_unit.setEnabled(true);
             pff_sketch.setmEnabled(true);
             mk_comments.setEnabled(true);
-            iv_save.setVisibility(View.VISIBLE);
+            ll_save.setVisibility(View.VISIBLE);
+            //iv_save.setVisibility(View.VISIBLE);
             iv_save.setOnClickListener(save_listener);
 
             mMain.setEventEditOpenStatus(true);
@@ -604,9 +625,11 @@ public class Act027_Product_Edit extends BaseFragment {
                 iv_gallery.setEnabled(false);
             }
 
-            iv_save.setVisibility(View.GONE);
+            ll_save.setVisibility(View.GONE);
+            //iv_save.setVisibility(View.GONE);
 
             mMain.setEventEditOpenStatus(false);
+
         }
 
     }

@@ -282,15 +282,21 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     }
                 }
             } else {
+                if(item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_DONE)) {
 
-                if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
-                    ll_express.setVisibility(View.VISIBLE);
+                    if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
+                        ll_express.setVisibility(View.VISIBLE);
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
+                    } else {
+                        // ll_express.setVisibility(View.INVISIBLE);
+                        // iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+                        ll_express.setVisibility(View.VISIBLE);
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_verde_ns_states));
+                    }
+                }else{
+                    ll_express.setVisibility(View.GONE);
                     iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
-                } else {
-                    // ll_express.setVisibility(View.INVISIBLE);
-                    // iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
-                    ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_verde_ns_states));
+
                 }
 
             }

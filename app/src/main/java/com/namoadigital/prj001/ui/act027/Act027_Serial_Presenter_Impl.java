@@ -16,8 +16,8 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_001;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_008;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -93,7 +93,7 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
     }
 
     @Override
-    public void executeSerialSave(Long product_code, String serial_id, boolean save_serial) {
+    public void executeSerialSave() {
         //
         mView.showPD(
                 hmAux_Trans.get("progress_save_serial_ttl"),
@@ -109,20 +109,20 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
     }
 
     @Override
-    public void getSerialInfo(Long product_code, String serial_id) {
+    public void getSerialInfo(Long product_code, int serial_code) {
         HMAux md_product_serial = serialDao.getByStringHM(
-                new MD_Product_Serial_Sql_001(
+                new MD_Product_Serial_Sql_008(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
-                        serial_id
+                        serial_code
                 ).toSqlQuery()
         );
         ///
         MD_Product_Serial serialObjDb = serialDao.getByString(
-                new MD_Product_Serial_Sql_002(
+                new MD_Product_Serial_Sql_009(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
-                        serial_id
+                        serial_code
                 ).toSqlQuery()
         );
 
@@ -145,14 +145,14 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
         serialDao.addUpdateTmp(productSerial);
         if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
-            executeSerialSave(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
+            executeSerialSave();
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
     @Override
-    public void processSerialSaveResult(String product_code, String serial_id, HMAux hmSaveResult) {
+    public void processSerialSaveResult(String product_code, int serial_code, HMAux hmSaveResult) {
 
         if (hmSaveResult.size() > 0) {
             ArrayList<HMAux> returnList = new ArrayList<>();
@@ -179,7 +179,7 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
                 returnList.add(aux);
                 //
                 if (product_code.equals(pk[0])
-                        && serial_id.equalsIgnoreCase(pk[1])
+                        && serial_code == ToolBox_Inf.convertStringToInt(pk[2])
                         ) {
 
                     if (status.equals("OK")) {
@@ -193,7 +193,7 @@ public class Act027_Serial_Presenter_Impl implements Act027_Serial_Presenter {
                 }
             }
             //Atualiza dados dos serial na tela e spinners
-            getSerialInfo(Long.valueOf(product_code), serial_id);
+            getSerialInfo(Long.valueOf(product_code), serial_code);
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
