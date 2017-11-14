@@ -475,6 +475,26 @@ public class Act027_Product_Edit extends BaseFragment {
 
         if (bStatus) {
 
+
+            if (!ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
+
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_sketch_not_ready_title"),
+                        hmAux_Trans.get("alert_sketch_not_ready_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Act027_Main mMain = (Act027_Main) getActivity();
+                                //
+                                mMain.setProductListFragOffLine();
+                            }
+                        },
+                        -1
+                );
+            }
+
+
             tv_tmp_ref_ttl.setText(hmAux_Trans.get("event_tmp_ref_lbl"));
             tv_tmp_ref_val.setText(mSm_so_product_event.getSeq_tmp() > 0 ? String.valueOf(mSm_so_product_event.getSeq_tmp()) : "");
 

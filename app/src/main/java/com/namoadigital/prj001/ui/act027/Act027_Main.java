@@ -415,6 +415,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("event_inspection_lbl");
         transList.add("event_comments_lbl");
 
+        transList.add("alert_sketch_not_ready_title");
+        transList.add("alert_sketch_not_ready_msg");
+
         sm_soDao = new SM_SODao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
