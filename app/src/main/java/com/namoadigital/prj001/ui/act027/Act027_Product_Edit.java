@@ -484,7 +484,7 @@ public class Act027_Product_Edit extends BaseFragment {
         if (bStatus) {
 
 
-            if (!ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
+            if (mSm_so_product_event.getSketch_code() != null && !ToolBox_Inf.verifyDownloadFileInf(mSm_so_product_event.getSketch_url_local())) {
 
                 ToolBox.alertMSG(
                         context,
