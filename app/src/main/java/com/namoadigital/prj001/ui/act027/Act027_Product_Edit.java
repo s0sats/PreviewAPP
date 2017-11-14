@@ -119,6 +119,13 @@ public class Act027_Product_Edit extends BaseFragment {
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -143,7 +150,7 @@ public class Act027_Product_Edit extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
             if (bStatusNew) {
                 bStatusNew = false;
 
@@ -877,7 +884,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     public String getEventStatus() {
-        if (mSm_so_product_event != null && mSm_so_product_event.getStatus().isEmpty()) {
+        if (mSm_so_product_event != null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
             return EVENT_EDIT_MODE;
         } else {
             return mSm_so_product_event.getStatus();

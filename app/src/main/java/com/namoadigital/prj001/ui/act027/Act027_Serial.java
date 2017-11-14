@@ -153,6 +153,13 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         this.product_code = mSm_so.getProduct_code();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
