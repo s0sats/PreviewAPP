@@ -379,6 +379,17 @@ public class Act027_Opc extends BaseFragment {
                     ll_approval.setVisibility(View.GONE);
                 }
                 //
+                if( !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_SYNC)
+                ){
+                    ll_product.setVisibility(View.VISIBLE);
+                }else{
+                    ll_product.setVisibility(View.GONE);
+                }
+                //
                 switch (mSm_so.getStatus()) {
                     case Constant.SO_STATUS_PENDING:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_light_blue_9));
