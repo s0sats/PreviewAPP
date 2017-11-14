@@ -77,6 +77,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private LinearLayout ll_save;
     private ImageView iv_save;
 
+    private LinearLayout ll_log;
     private TextView tv_nick;
     private TextView tv_date;
 
@@ -199,6 +200,7 @@ public class Act027_Product_Edit extends BaseFragment {
         ll_save = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_save);
         iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
 
+        ll_log = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_log);
         tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
         tv_date = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_date);
 
@@ -405,6 +407,8 @@ public class Act027_Product_Edit extends BaseFragment {
         }
 
         if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
+            ll_log.setVisibility(View.VISIBLE);
+            //
             tv_nick.setText(mSm_so_product_event.getDone_user_nick());
             tv_date.setText(
                     ToolBox_Inf.millisecondsToString(
@@ -414,9 +418,13 @@ public class Act027_Product_Edit extends BaseFragment {
             );
         } else {
             if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+                ll_log.setVisibility(View.GONE);
+                //
                 tv_nick.setText("");
                 tv_date.setText("");
             } else {
+                ll_log.setVisibility(View.VISIBLE);
+                //
                 tv_nick.setText(mSm_so_product_event.getCreate_user_nick());
                 tv_date.setText(
                         ToolBox_Inf.millisecondsToString(
