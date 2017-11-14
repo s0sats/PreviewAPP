@@ -398,7 +398,7 @@ public class Act027_Product_Edit extends BaseFragment {
         arff_applyrepair.setmIv_Dots(0);
         arff_applyrepair.setmV_Line(0);
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
             bStatusNew = true;
         } else {
             bStatusNew = false;
@@ -476,10 +476,10 @@ public class Act027_Product_Edit extends BaseFragment {
         if (bStatus) {
 
             tv_tmp_ref_ttl.setText(hmAux_Trans.get("event_tmp_ref_lbl"));
-            tv_tmp_ref_val.setText(mSm_so_product_event.getSeq_tmp() > 0 ? String.valueOf(mSm_so_product_event.getSeq_tmp()) : "" );
+            tv_tmp_ref_val.setText(mSm_so_product_event.getSeq_tmp() > 0 ? String.valueOf(mSm_so_product_event.getSeq_tmp()) : "");
 
             tv_prod_ttl.setText(hmAux_Trans.get("event_product_ttl"));
-            tv_desc_ttl.setText(mSm_so_product_event.getProduct_id()+" - "+mSm_so_product_event.getProduct_desc());
+            tv_desc_ttl.setText(mSm_so_product_event.getProduct_id() + " - " + mSm_so_product_event.getProduct_desc());
 
             try {
                 if (widgetset) {
