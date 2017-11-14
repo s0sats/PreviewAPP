@@ -668,7 +668,7 @@ public class WS_SO_Save extends IntentService {
                         event.setDone_date(oldEvent.getDone_date());
                         event.setDone_user(oldEvent.getDone_user());
                         event.setDone_user_nick(oldEvent.getDone_user_nick());
-                        event.setIntegrated(oldEvent.getIntegrated());
+                        event.setIntegrated(1);
                         //
                         eventDao.addUpdateTmp(event);
                         //Atualiza pk do sketch
