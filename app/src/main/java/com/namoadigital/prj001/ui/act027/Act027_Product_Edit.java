@@ -884,7 +884,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     public String getEventStatus() {
-        if (mSm_so_product_event != null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+        if (mSm_so_product_event == null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
             return EVENT_EDIT_MODE;
         } else {
             return mSm_so_product_event.getStatus();
