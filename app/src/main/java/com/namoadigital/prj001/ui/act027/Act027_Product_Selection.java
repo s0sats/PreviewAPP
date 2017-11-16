@@ -216,7 +216,7 @@ public class Act027_Product_Selection extends BaseFragment {
             //Atualiza indice atual pegando o ultimo item da pilha
             currentIndex.putAll(mStack.pop());
             //
-            mket_product_search.setText(product_searched != null ? product_searched : "" );
+            mket_product_search.setText(product_searched != null ? product_searched : "");
             //
             if (mStack.size() != 0) {
                 btn_back.setVisibility(View.VISIBLE);
@@ -226,12 +226,15 @@ public class Act027_Product_Selection extends BaseFragment {
             resetSearch();
         }
     }
+
     public void setAdapterData(long group_code, Long recursive_code, String filter) {
         List<MD_Product> listProducts = getProductList();
 
+        // Mudar para salto automatico
         if (listProducts.size() == 1) {
             // SE APENAS UM ITEM, JA SELECIONAR E CARREGAR FRAGMENTO DE EDIÇÃO.
             //defineForwardFlow(String.valueOf(listProducts.get(0).getProduct_code()));
+            onProductClickListner.onProductClick((int) listProducts.get(0).getProduct_code());
         } else {
 
             ArrayList<HMAux> groups = (ArrayList<HMAux>) productGroupDao.query_HM(
@@ -325,7 +328,7 @@ public class Act027_Product_Selection extends BaseFragment {
                 //
                 btn_home.setText(hmAux_Trans.get("btn_home"));
                 //
-                if(mStack.size() == 0) {
+                if (mStack.size() == 0) {
                     setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
                 }
             }

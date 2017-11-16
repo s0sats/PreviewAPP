@@ -48,11 +48,11 @@ public class Act027_Product_List extends BaseFragment {
     private OnNewEventClickListner onNewEventClickListner;
     private OnItemEventClickListner onItemEventClickListner;
 
-    public interface OnNewEventClickListner{
+    public interface OnNewEventClickListner {
         void onNewEventClick();
     }
 
-    public interface OnItemEventClickListner{
+    public interface OnItemEventClickListner {
         void onItemEventClick(HMAux hmAux);
     }
 
@@ -137,7 +137,7 @@ public class Act027_Product_List extends BaseFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if(onNewEventClickListner != null){
+                                if (onNewEventClickListner != null) {
                                     onNewEventClickListner.onNewEventClick();
                                 }
                             }
@@ -150,7 +150,7 @@ public class Act027_Product_List extends BaseFragment {
         lv_events.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(onItemEventClickListner != null){
+                if (onItemEventClickListner != null) {
                     HMAux item = (HMAux) parent.getItemAtPosition(position);
                     //chamar fragment de edição.
                     onItemEventClickListner.onItemEventClick(item);
@@ -186,11 +186,13 @@ public class Act027_Product_List extends BaseFragment {
         if (bStatus) {
             if (mSm_so != null) {
                 //
-                if(!mMain.hasExecutionProfile()){
+                if (!mMain.hasExecutionProfile()) {
 
                     iv_new_event.setVisibility(View.GONE);
-                }else{
-                    iv_new_event.setVisibility(View.VISIBLE);
+                } else {
+                    checkStatus();
+                    //
+                    //iv_new_event.setVisibility(View.VISIBLE);
                 }
                 //
                 mket_product_search.setHint(hmAux_Trans.get("mket_product_search_hint"));
@@ -199,6 +201,20 @@ public class Act027_Product_List extends BaseFragment {
                 //
                 loadEventList();
             }
+        }
+    }
+
+    private void checkStatus() {
+
+        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_SYNC)
+                ) {
+            iv_new_event.setVisibility(View.VISIBLE);
+        } else {
+            iv_new_event.setVisibility(View.GONE);
         }
     }
 
@@ -215,7 +231,7 @@ public class Act027_Product_List extends BaseFragment {
                 Query
         );
         //
-        if(eventList != null && eventList.size() > 0) {
+        if (eventList != null && eventList.size() > 0) {
             //Remove lbl com vazio e exibe linear com a lista
             ll_empty_list.setVisibility(View.GONE);
             ll_event_list.setVisibility(View.VISIBLE);
@@ -227,7 +243,7 @@ public class Act027_Product_List extends BaseFragment {
             );
             //
             lv_events.setAdapter(mAdapter);
-        }else{
+        } else {
             ll_event_list.setVisibility(View.GONE);
             ll_empty_list.setVisibility(View.VISIBLE);
         }
