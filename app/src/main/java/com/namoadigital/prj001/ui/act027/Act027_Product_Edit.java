@@ -703,13 +703,24 @@ public class Act027_Product_Edit extends BaseFragment {
             return false;
         }
 
-        if (arff_applyrepair.getmValue().equalsIgnoreCase("10") && !mk_qty.isValid()) {
+        if (arff_applyrepair.getmValue().equalsIgnoreCase("10")
+                && convertToInt(mk_qty.getText().toString()) <= 0
+                ) {
             mErrorMSG = hmAux_Trans.get("qty_apply_error_msg");
 
             return false;
         }
 
         return true;
+    }
+
+    private int convertToInt(String texto) {
+        try {
+            return Integer.parseInt(texto);
+        } catch (Exception e) {
+            return -1;
+        }
+
     }
 
     private void informEventActiveClosed() {
@@ -808,6 +819,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
         mSm_so_product_event.setSketch(sketches);
         mSm_so_product_event.setFile(eventFiles);
+        mSm_so_product_event.setIntegrated(0);
         mSm_so_product_event.setStatus(Constant.SO_STATUS_DONE);
 
         sm_so_product_eventDao.addUpdateTmp(mSm_so_product_event);
@@ -842,7 +854,7 @@ public class Act027_Product_Edit extends BaseFragment {
         if (ToolBox_Con.isOnline(context)) {
             mMain.executeSoSave();
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
+            //ToolBox_Inf.showNoConnectionDialog(context);
             //
             mMain.setProductListFragOffLine();
         }

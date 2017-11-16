@@ -402,6 +402,7 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         views.add(tv_serial_location_ttl);
         views.add(tv_serial_properties_ttl);
         views.add(tv_tracking);
+        views.add(tv_serial_add_info_ttl);
         //Adiciona Componentes com dados do serial ao arrayList de validação
         serialProperties.add(ss_site);
         serialProperties.add(ss_site_zone);
