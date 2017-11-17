@@ -678,17 +678,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void executeSupport(String support_msg) {
-        mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
-        mView.showPD();
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
-        Intent mIntent = new Intent(context, WBR_Upload_Support.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.WS_SUPPORT_MSG, support_msg);
+            mView.showPD();
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            Intent mIntent = new Intent(context, WBR_Upload_Support.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.WS_SUPPORT_MSG, support_msg);
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     private int isSoWithinTokenFile() {
