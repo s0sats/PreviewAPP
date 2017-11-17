@@ -222,7 +222,7 @@ public class WS_Upload_Support extends IntentService {
             ToolBox_Inf.copyFile(file,dest);
         }
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_files"), "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_data"), "", "0");
 
         ToolBox_Inf.zipFolder(Constant.SUPPORT_PATH, Constant.ZIP_PATH + "/" + Constant.SUPPORT_NAME);
 
