@@ -720,7 +720,6 @@ public class Act027_Product_Edit extends BaseFragment {
         } catch (Exception e) {
             return -1.0;
         }
-
     }
 
     private void informEventActiveClosed() {
