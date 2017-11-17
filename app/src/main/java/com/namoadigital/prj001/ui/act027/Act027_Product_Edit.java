@@ -704,7 +704,7 @@ public class Act027_Product_Edit extends BaseFragment {
         }
 
         if (arff_applyrepair.getmValue().equalsIgnoreCase("10")
-                && convertToInt(mk_qty.getText().toString()) <= 0
+                && convertToDouble(mk_qty.getText().toString()) <= 0
                 ) {
             mErrorMSG = hmAux_Trans.get("qty_apply_error_msg");
 
@@ -714,11 +714,11 @@ public class Act027_Product_Edit extends BaseFragment {
         return true;
     }
 
-    private int convertToInt(String texto) {
+    private double convertToDouble(String texto) {
         try {
-            return Integer.parseInt(texto);
+            return Double.parseDouble(texto);
         } catch (Exception e) {
-            return -1;
+            return -1.0;
         }
 
     }
