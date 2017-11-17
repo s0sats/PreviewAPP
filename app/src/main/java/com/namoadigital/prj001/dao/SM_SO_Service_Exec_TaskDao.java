@@ -640,9 +640,35 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
                 sbCommand.append(STATUS).append(" = '");
                 sbCommand.append(Constant.SO_STATUS_PROCESS);
                 sbCommand.append("' ");
+
                 sbCommand.append(" ) ");
 
                 sbCommand.append("  ) = 0");
+
+                // Product Event
+                sbCommand.append("  AND ( ");
+
+                sbCommand.append("  SELECT ");
+                sbCommand.append("  COUNT(1) EXTRACT ");
+                sbCommand.append("  FROM ");
+                sbCommand.append(SM_SO_Product_EventDao.TABLE);
+                sbCommand.append("  WHERE ");
+
+                sbCommand.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(task.getCustomer_code())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_PREFIX).append(" = '").append(String.valueOf(task.getSo_prefix())).append("'");
+                sbCommand.append(" and ");
+                sbCommand.append(SO_CODE).append(" = '").append(String.valueOf(task.getSo_code())).append("'");
+                sbCommand.append(" and ");
+
+                sbCommand.append(" ( ");
+                sbCommand.append(STATUS).append(" = '");
+                sbCommand.append(Constant.SO_STATUS_PENDING);
+                sbCommand.append("' ");
+                sbCommand.append(" ) ");
+
+                sbCommand.append("  ) = 0");
+
 
                 db.execSQL(sbCommand.toString());
             }

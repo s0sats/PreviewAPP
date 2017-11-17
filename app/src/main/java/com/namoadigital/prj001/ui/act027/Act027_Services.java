@@ -270,6 +270,10 @@ public class Act027_Services extends BaseFragment {
         });
         //
         lv_services.setAdapter(adp);
+        //
+        if (adp.getCount() == 0){
+            mMain.openDrawerInternally();
+        }
 
         //Se possui var indicando qual seriviço foi alterado,
         //Aplica "auto scroll"

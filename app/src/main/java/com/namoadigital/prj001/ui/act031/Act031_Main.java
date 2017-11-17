@@ -358,10 +358,13 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         tv_serial_add_info_ttl.setTag("serial_add_info_ttl");
         //
         et_info1 = (MKEditTextNM) findViewById(R.id.act031_et_info1);
+        et_info1.setHint(hmAux_Trans.get("add_info1_lbl"));
         //
         et_info2 = (MKEditTextNM) findViewById(R.id.act031_et_info2);
+        et_info2.setHint(hmAux_Trans.get("add_info2_lbl"));
         //
         et_info3 = (MKEditTextNM) findViewById(R.id.act031_et_info3);
+        et_info3.setHint(hmAux_Trans.get("add_info3_lbl"));
         //
         ll_serial_properties = (LinearLayout) findViewById(R.id.act031_ll_serial_properties);
         //
