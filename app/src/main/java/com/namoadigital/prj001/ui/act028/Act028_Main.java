@@ -127,6 +127,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     private int original_update_required;
     //Profile de EXECUTION
     private boolean executionProfile = false;
+    private String so_status;
 
     public void setMTASK_STATUS(String MTASK_STATUS) {
         this.MTASK_STATUS = MTASK_STATUS;
@@ -366,7 +367,18 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                     Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_CODE)),
                     Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ))
             );
+            //
 
+            HMAux hmAuxSo = sm_soDao.getByStringHM(
+                    new SM_SO_Sql_002(
+                            mService.getCustomer_code(),
+                            mService.getSo_prefix(),
+                            mService.getSo_code()
+                    ).toSqlQuery()
+            );
+            //Força DONE se null, para não exibir o menu para N-form
+            so_status = hmAuxSo != null ? hmAuxSo.get(SM_SODao.STATUS) : Constant.SO_STATUS_DONE ;
+            //
             if (bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP) != null) {
                 mExec = loadExec(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -403,6 +415,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             }
 
         } else {
+            //Força DONE, para não exibir o menu para N-form
+            so_status = Constant.SO_STATUS_DONE ;
             mService = null;
             mExec = null;
             mTask = null;
@@ -1552,7 +1566,11 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
         //
-        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
+        if(
+            ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST) &&
+            hasExecutionProfile() &&
+            !so_status.equalsIgnoreCase(Constant.SO_STATUS_DONE)
+        ){
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);

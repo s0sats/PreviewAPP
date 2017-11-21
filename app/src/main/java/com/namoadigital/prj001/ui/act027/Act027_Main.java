@@ -2004,7 +2004,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
+        if (
+            ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
+            hasExecutionProfile() &&
+            !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)
+        ){
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
