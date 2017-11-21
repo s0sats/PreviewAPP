@@ -42,6 +42,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
+import com.namoadigital.prj001.sql.Sql_Act005_005;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
@@ -167,8 +168,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         ToolBox_Con.getPreference_Customer_Code(context)
                                 ).toSqlQuery()
                         ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
+                        //
 
+                        qtyBadge2 = soDao.getByStringHM(
+                                new Sql_Act005_005(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        ToolBox_Con.getPreference_Site_Code(context),
+                                        ToolBox_Con.getPreference_Zone_Code(context)
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_005.QTD_MY_PENDING_SO);
+                        //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
                         break;
 
                     case Act005_Main.MENU_ID_PENDING_DATA:
