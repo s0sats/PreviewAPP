@@ -7,7 +7,7 @@
         android:color="@color/namoa_color_light_blue"/>
     <!--Background -->
     <solid
-        android:color="@color/namoa_color_gray3"
+        android:color="@color/namoa_color_gray_4"
         />
 
 </shape>
