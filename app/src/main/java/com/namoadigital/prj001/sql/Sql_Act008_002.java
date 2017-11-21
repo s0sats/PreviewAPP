@@ -9,6 +9,11 @@ import com.namoadigital.prj001.database.Specification;
  * Query que retorna dados do produto, no modelo md_product, porem buscando da
  * tabela custom_form_local.
  * Usada no caso de um form agendado chamar a act008
+ * 21/11/2017
+ * Após a mudança do obj md_product, foi necessario adicionar os campos
+ * un, sketch_code, sketch_url, sketch_url_local, sketch_lines, sketch_columns e sketch_olor
+ * com valores chumbados para q o obj gerado pela query não desse NULL
+ *
  *
  */
 
@@ -41,7 +46,14 @@ public class Sql_Act008_002 implements Specification {
                         "   l.custom_product_id product_id,\n" +
                         "   l.custom_product_desc product_desc,\n" +
                         "   l.require_serial,\n" +
-                        "   l.allow_new_serial_cl\n" +
+                        "   l.allow_new_serial_cl,\n" +
+                        "   'TST' un,\n" +
+                        "   0 sketch_code,\n" +
+                        "   '' sketch_url,\n" +
+                        "   '' sketch_url_local,\n" +
+                        "   0 sketch_lines,\n" +
+                        "   0 sketch_columns,\n" +
+                        "   '#FFFFFF' sketch_color\n" +
                         " FROM\n " +
                             GE_Custom_Form_LocalDao.TABLE + " l \n" +
                         " \n" +

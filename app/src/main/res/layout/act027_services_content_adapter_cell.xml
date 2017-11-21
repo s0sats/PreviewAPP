@@ -14,8 +14,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        />
+        android:layout_height="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,6 +39,7 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="1"
+                android:textColor="@color/namoa_color_gray_4"
                 android:textSize="@dimen/font_size_title_md"
                 android:textStyle="bold" />
 
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_flag_black_24dp"
+                android:src="@drawable/ic_engrenagens_ns"
                 android:tint="@color/namoa_dark_blue"
                 android:visibility="visible" />
 
@@ -62,32 +62,6 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/act027_services_content_cell_ll_express"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:visibility="visible">
-
-                <ImageView
-                    android:id="@+id/act027_services_content_cell_iv_express"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/stroke_blue2_states"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="4dp"
-                    android:src="@drawable/ic_check_circle"
-                    android:text="Ex"
-                    android:tint="@color/namoa_dark_blue" />
-
-            </LinearLayout>
 
             <TextView
                 android:id="@+id/act027_services_content_cell_tv_status"
@@ -106,24 +80,18 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:gravity="right"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:paddingBottom="5dp">
+            android:padding="2dp">
 
             <ImageView
                 android:id="@+id/act027_services_content_cell_btn_normal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/stroke_blue2_states"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:focusable="false"
-                android:paddingBottom="4dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:paddingTop="4dp"
-                android:src="@drawable/ic_transfer_24px_black"
-                android:text="NO"
-                android:tint="@color/namoa_dark_blue" />
+                android:src="@drawable/ic_pontos_ns_states" />
         </LinearLayout>
 
 
@@ -186,81 +154,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/act027_services_content_cell_ll_pack"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/act027_services_content_cell_tv_pack_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pack"
-            android:textSize="@dimen/font_size_item_md"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/act027_services_content_cell_tv_pack_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Pack id - Pack Desc" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/act027_services_content_cell_ll_zone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/act027_services_content_cell_tv_zone_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Zone"
-            android:textSize="@dimen/font_size_item_md"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/act027_services_content_cell_tv_zone_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Zone id - Zone Desc" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/act027_services_content_cell_ll_partner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/act027_services_content_cell_tv_partner_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Partner"
-            android:textSize="@dimen/font_size_item_md"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/act027_services_content_cell_tv_partner_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Partner id - Partner Desc " />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/act027_services_content_cell_ll_qty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -273,15 +166,176 @@
             android:layout_height="wrap_content"
             android:text="Qty"
             android:textSize="@dimen/font_size_item_md"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/act027_services_content_cell_tv_qty_val"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="20/30 "
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="5"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/act027_services_content_cell_ll_pack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_pack_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="Pack"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_pack_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="Pack id - Pack Desc" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act027_services_content_cell_ll_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_zone_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="Zone"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_zone_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="Zone id - Zone Desc" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act027_services_content_cell_ll_partner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_partner_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="Partner"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_partner_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="Partner id - Partner Desc " />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Done/Total " />
+            android:focusable="false"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false">
+
+                <LinearLayout
+                    android:id="@+id/act027_services_content_cell_ll_express"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:focusable="false"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/act027_services_content_cell_iv_express"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="end"
+                        android:focusable="false"
+                        android:src="@drawable/ic_escolher_ns_states" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/badge"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="3dp"
+                    android:text="22"
+                    android:textColor="@color/padrao_WHITE"
+                    android:textSize="10sp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/act027_services_content_cell_iv_plus"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/badge_sqn"
+                    android:src="@drawable/ic_namoa_plus" />
+
+            </FrameLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

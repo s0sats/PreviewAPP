@@ -64,7 +64,7 @@ public class Act028_Task extends BaseFragment {
 
     private Context context;
 
-    private Act028_Main_New mMain_new;
+    private Act028_Main mMain_new;
 
     private TextView tv_exec_task_tmp_lbl;
     private TextView tv_exec_task_tmp_value;
@@ -192,7 +192,7 @@ public class Act028_Task extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act028_task_content_new_02, container, false);
+        View view = inflater.inflate(R.layout.act028_task_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -339,7 +339,7 @@ public class Act028_Task extends BaseFragment {
     private void iniVar(View view) {
         context = getActivity();
 
-        mMain_new = (Act028_Main_New) getActivity();
+        mMain_new = (Act028_Main) getActivity();
 
         user_code = ToolBox_Con.getPreference_User_Code(getActivity());
 
@@ -981,7 +981,7 @@ public class Act028_Task extends BaseFragment {
             );
         }
         //
-        mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_SAVE);
+        mMain_new.setMTASK_STATUS(Act028_Main.CREATE_SAVE);
         //
         callSoSave(mTask.getSo_prefix(), mTask.getSo_code());
     }

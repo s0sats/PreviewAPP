@@ -63,7 +63,7 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
-import com.namoadigital.prj001.ui.act028.Act028_Main_New;
+import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -158,7 +158,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act027_main_new);
+        setContentView(R.layout.act027_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -1830,7 +1830,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
 
     @Override
     public void callAct028(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act028_Main_New.class);
+        Intent mIntent = new Intent(context, Act028_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

@@ -75,7 +75,7 @@ import java.util.List;
  * Created by neomatrix on 18/08/17.
  */
 
-public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
+public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct028_Opc, Act028_Task_List.IAct028_Task_List, Act028_Task.IAct028_Task {
 
     public static final String SELECTION_EMPTY = "EMPTY";
     public static final String SELECTION_TASK_LIST = "TASK_LIST";
@@ -139,7 +139,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act028_main_new);
+        setContentView(R.layout.act028_main);
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -151,7 +151,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     }
 
     private void iniSetup() {
-        context = Act028_Main_New.this;
+        context = Act028_Main.this;
 
         fm = getSupportFragmentManager();
 
@@ -263,7 +263,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                 findViewById(R.id.act028_drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle(
-                Act028_Main_New.this,
+                Act028_Main.this,
                 mDrawerLayout,
                 R.string.act005_drawer_opened,
                 R.string.act005_drawer_closed
@@ -275,7 +275,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
                 mDrawerStatus = true;
 
-                ActivityCompat.invalidateOptionsMenu(Act028_Main_New.this);
+                ActivityCompat.invalidateOptionsMenu(Act028_Main.this);
 
             }
 
@@ -285,7 +285,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
 
                 mDrawerStatus = false;
 
-                ActivityCompat.invalidateOptionsMenu(Act028_Main_New.this);
+                ActivityCompat.invalidateOptionsMenu(Act028_Main.this);
 
             }
         };
@@ -1046,7 +1046,7 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
     }
 
     public void showPartnerOptDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Act028_Main_New.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Act028_Main.this);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act028_dialog_new_partner_opt, null);
@@ -1226,14 +1226,14 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                 ).toSqlQuery()
         );
 
-        setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+        setMTASK_STATUS(Act028_Main.CREATE_TASK);
 
         if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
-            setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+            setMTASK_STATUS(Act028_Main.CREATE_TASK);
             //
             callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
         } else {
-            setMTASK_STATUS(Act028_Main_New.CREATE_NULL);
+            setMTASK_STATUS(Act028_Main.CREATE_NULL);
         }
 
         menuTaskCreated(task);
@@ -1312,16 +1312,16 @@ public class Act028_Main_New extends Base_Activity_Frag implements Act028_Opc.IA
                 ).toSqlQuery()
         );
 
-        setMTASK_STATUS(Act028_Main_New.CREATE_NOT_EXEC);
+        setMTASK_STATUS(Act028_Main.CREATE_NOT_EXEC);
 
         callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
 
 //        if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
-//            setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+//            setMTASK_STATUS(Act028_Main.CREATE_TASK);
 //            //
 //            callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
 //        } else {
-//            setMTASK_STATUS(Act028_Main_New.CREATE_NULL);
+//            setMTASK_STATUS(Act028_Main.CREATE_NULL);
 //        }
 
 //        menuTaskCreated(task);
