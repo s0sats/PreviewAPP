@@ -769,7 +769,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         this.mSo_Prefix = formData.getSo_prefix();
         this.mSo_Code = formData.getSo_code();
 
-
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id) && !serial_id.isEmpty()) {
             formData.setSerial_id(serial_id);
         } else {

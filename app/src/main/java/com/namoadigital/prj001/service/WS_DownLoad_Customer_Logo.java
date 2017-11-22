@@ -32,9 +32,11 @@ public class WS_DownLoad_Customer_Logo extends IntentService {
         try {
             if(!ToolBox_Inf.isDownloadRunning()){
                 //Log.v("WS_Customer_Logo","true");
-                WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
+                //WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
+
+            WBR_DownLoad_Customer_Logo.IS_RUNNING = true;
 
             Bundle bundle = intent.getExtras();
 
