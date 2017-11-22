@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.DrawableContainer;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +84,8 @@ public class Act018_Adapter_Messages extends BaseAdapter {
         ImageView iv_003 = (ImageView)
                 convertView.findViewById(R.id.act018_main_content_cell_iv_003);
 
+        ImageView iv_007 = (ImageView)
+                convertView.findViewById(R.id.act018_main_content_cell_iv_007);
 
         TextView tv_title = (TextView)
                 convertView.findViewById(R.id.act018_main_content_cell_tv_title);
@@ -132,7 +132,15 @@ public class Act018_Adapter_Messages extends BaseAdapter {
 
 
         if (item.get("status").equalsIgnoreCase("1")) {
+            tv_customer.setTypeface(null, Typeface.NORMAL);
+
+            tv_customer.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.font_size_font_14));
+
             tv_title.setTypeface(null, Typeface.NORMAL);
+            tv_title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.font_size_font_14));
+
             tv_date.setTypeface(null, Typeface.NORMAL);
 
             Drawable bgDrawble = context.getDrawable(R.drawable.namoa_cell_8_states);
@@ -140,31 +148,44 @@ public class Act018_Adapter_Messages extends BaseAdapter {
 
             Drawable done_icon = context.getDrawable(R.drawable.ic_done_all_black_24dp);
             done_icon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
-            iv_001.setImageDrawable(done_icon);
+            iv_007.setImageDrawable(done_icon);
 
-            iv_001.setVisibility(View.VISIBLE);
+            iv_007.setVisibility(View.VISIBLE);
         } else {
+            tv_customer.setTypeface(null, Typeface.BOLD);
             tv_title.setTypeface(null, Typeface.BOLD);
+            tv_title.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.font_size_font_16));
+
             tv_date.setTypeface(null, Typeface.BOLD);
+
+            tv_customer.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.font_size_font_16));
+
+//            Drawable bgDrawble = context.getDrawable(R.drawable.namoa_cell_8_states);
+//            ll_background.setBackground(bgDrawble);
+
+
 //            tv_customer.setTextColor(context.getResources().getColor(R.color.font_required));
 //            tv_title.setTextColor(context.getResources().getColor(R.color.font_required));
 //            tv_date.setTextColor(context.getResources().getColor(R.color.font_required));
         }
         //Se o item for o selecionado,
         //muda cor da linha e do fundo drawable
-        if(position == msg_selected){
-            StateListDrawable drawble = (StateListDrawable) context.getDrawable(R.drawable.namoa_cell_4_states);//ll_background.getBackground();
-            DrawableContainer.DrawableContainerState dcs = (DrawableContainer.DrawableContainerState) drawble.getConstantState();
-            Drawable[] drawableItems = dcs.getChildren();
-
-            GradientDrawable  bgDrawble = (GradientDrawable) drawableItems[0];
-
-            bgDrawble.setStroke(2,context.getResources().getColor(R.color.namoa_color_orange));
-            bgDrawble.setColor(context.getResources().getColor(R.color.namoa_color_orange_light));
-
-            ll_background.setBackground(bgDrawble);
-        }
+//        if(position == msg_selected){
+//            StateListDrawable drawble = (StateListDrawable) context.getDrawable(R.drawable.namoa_cell_4_states);//ll_background.getBackground();
+//            DrawableContainer.DrawableContainerState dcs = (DrawableContainer.DrawableContainerState) drawble.getConstantState();
+//            Drawable[] drawableItems = dcs.getChildren();
+//
+//            GradientDrawable  bgDrawble = (GradientDrawable) drawableItems[0];
+//
+//            bgDrawble.setStroke(2,context.getResources().getColor(R.color.namoa_color_orange));
+//            bgDrawble.setColor(context.getResources().getColor(R.color.namoa_color_orange_light));
+//
+//            ll_background.setBackground(bgDrawble);
+//        }
 
         return convertView;
     }
+
 }
