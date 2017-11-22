@@ -66,7 +66,13 @@ public class Sql_Act013_001 implements Specification {
                         "  l.custom_product_id,\n" +
                         "  l.custom_form_data,\n" +
                         "  l.custom_form_status,\n" +
-                        "  l.serial_id,\n" +
+                        // "  l.serial_id,\n" +
+
+                        "  CASE WHEN LENGTH(l.serial_id) <> 0 \n" +
+                        "       THEN L.serial_id\n" +
+                        "       ELSE d.serial_id\n" +
+                        "  END  serial_id,\n" +
+
                         "  l.custom_form_data_serv,\n" +
 
                         "  d.so_prefix,\n" +
