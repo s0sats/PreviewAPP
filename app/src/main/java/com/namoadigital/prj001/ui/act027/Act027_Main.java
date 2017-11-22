@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -32,6 +33,7 @@ import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
@@ -53,6 +55,7 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_005;
@@ -146,6 +149,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private boolean eventEditOpenStatus = false;
     private String eventEditOpenStatusType = "";
     private boolean eventEditOpenStatusTypeDialog = false;
+    //N-Form, seleção de produto
+    private MD_ProductDao productDao;
+    private ArrayList<HMAux> nFormProductList = new ArrayList<>();
+    private long nFormProductSelected = -1;
 
     public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
         this.eventEditOpenStatus = eventEditOpenStatus;
@@ -389,6 +396,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_open_n_form_msg");
         transList.add("progress_n_form_sync_ttl");
         transList.add("progress_n_form_sync_msg");
+        transList.add("dialog_form_prod_selection_ttl");
+        transList.add("dialog_form_prod_ss_product_lbl");
+        transList.add("dialog_form_prod_ss_product_search_ttl");
+        transList.add("dialog_form_prod_serial_lbl");
         //Product Event List Fragment
         transList.add("mket_product_search_hint");
         transList.add("new_product_event_ttl");
@@ -594,7 +605,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 Constant.DB_VERSION_CUSTOM
         );
         //
+        productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        loadNFormProductList();
+        //
         checkSOAttachExists();
+    }
+
+    private void loadNFormProductList() {
+        nFormProductList = (ArrayList<HMAux>) productDao.query_HM(
+                new MD_Product_Sql_SS_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getProduct_code()
+                ).toSqlQuery()
+        );
     }
 
     public void setCurrentFrag(String currentFrag) {
@@ -2047,10 +2074,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         );
 
                     } else {
-                        callNFormMsg();
+                        if(nFormProductList != null && nFormProductList.size() > 0){
+                            showNFormProductDialog();
+                        }else{
+                            callNFormMsg();
+                        }
                     }
 
-                    //callNFormMsg();
                     return true;
 
                 case 4:
@@ -2101,6 +2131,85 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         return super.onOptionsItemSelected(item);
     }
 
+    private void showNFormProductDialog() {
+        nFormProductSelected = -1;
+        //
+        final AlertDialog.Builder productDialog = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.namoa_dialog_ss_selection,null);
+        //IniVar
+        TextView tv_main_ttl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_main_ttl);
+        final SearchableSpinner ss_product = (SearchableSpinner) view.findViewById(R.id.namoa_dialog_ss_selection_ss_main);
+        final TextView tv_serial_lbl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_item_lbl);
+        final TextView tv_serial_val = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_item_val);
+        //
+        tv_main_ttl.setText(hmAux_Trans.get("dialog_form_prod_selection_ttl"));
+        //
+        ss_product.setmLabel(hmAux_Trans.get("dialog_form_prod_ss_product_lbl"));
+        ss_product.setmTitle(hmAux_Trans.get("dialog_form_prod_ss_product_search_ttl"));
+        ss_product.setmOption(nFormProductList);
+        //
+        ToolBox_Inf.setSSmValue(
+                ss_product,
+                String.valueOf(mSm_so.getProduct_code()),
+                mSm_so.getProduct_desc(),
+                true,
+                false
+                );
+        //
+        tv_serial_lbl.setText(hmAux_Trans.get("dialog_form_prod_serial_lbl"));
+        tv_serial_val.setText(mSm_so.getSerial_id());
+        //
+        ss_product.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code()))){
+                    tv_serial_lbl.setVisibility(View.GONE);
+                    tv_serial_val.setVisibility(View.GONE);
+                    tv_serial_val.setText("");
+                }else{
+                    tv_serial_lbl.setVisibility(View.VISIBLE);
+                    tv_serial_val.setVisibility(View.VISIBLE);
+                    tv_serial_val.setText(mSm_so.getSerial_id());
+                }
+            }
+        });
+
+        //
+        productDialog
+                .setView(view)
+                .setPositiveButton(
+                        hmAux_Trans.get("sys_alert_btn_ok"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.ID));
+                                //
+                                processNFormFlow();
+                            }
+                        }
+                )
+                .setNegativeButton(
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                nFormProductSelected = -1;
+                            }
+                        }
+                )
+                .setCancelable(false);
+
+        productDialog.show();
+
+    }
+
     private void callNFormMsg() {
         ToolBox.alertMSG(
                 context,
@@ -2133,7 +2242,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 .getByStringHM(
                         new Sync_Checklist_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                mSm_so.getProduct_code()
+                                nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code()
                         ).toSqlQuery()
                 );
         //Se Forms do produto ainda não foram sincronizados,
@@ -2168,7 +2277,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             Bundle bundle = new Bundle();
             bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
             bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-            bundle.putLong(Constant.GS_PRODUCT_CODE, mSm_so.getProduct_code());
+            bundle.putLong(Constant.GS_PRODUCT_CODE, nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code());
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
 
@@ -2189,7 +2298,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         Sync_Checklist syncChecklist = new Sync_Checklist();
 
         syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-        syncChecklist.setProduct_code(mSm_so.getProduct_code());
+        syncChecklist.setProduct_code(nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code());
         syncChecklist.setLast_update(last_update);
 
         syncChecklistDao.addUpdate(syncChecklist);
@@ -2221,8 +2330,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSm_so.getSo_code()));
         bundle.putString(SM_SODao.SITE_CODE, String.valueOf(mSm_so.getSite_code()));
         bundle.putString(SM_SODao.OPERATION_CODE, String.valueOf(mSm_so.getOperation_code()));
-        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
-        bundle.putString(Constant.ACT008_SERIAL_ID, mSm_so.getSerial_id());
+        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code()));
+        bundle.putString(Constant.ACT008_SERIAL_ID,nFormProductSelected ==  mSm_so.getProduct_code() ? mSm_so.getSerial_id() : "" );
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT027);
         //
         mIntent.putExtras(bundle);
