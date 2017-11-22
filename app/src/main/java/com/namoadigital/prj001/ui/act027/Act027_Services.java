@@ -41,7 +41,7 @@ import com.namoadigital.prj001.sql.Sql_Act027_003;
 import com.namoadigital.prj001.sql.Sql_Act027_004;
 import com.namoadigital.prj001.sql.Sql_Act027_005;
 import com.namoadigital.prj001.sql.Sql_Act027_006;
-import com.namoadigital.prj001.ui.act028.Act028_Main_New;
+import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -100,7 +100,7 @@ public class Act027_Services extends BaseFragment {
 
         bStatus = true;
 
-        View view = inflater.inflate(R.layout.act027_services_content_new, container, false);
+        View view = inflater.inflate(R.layout.act027_services_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -202,8 +202,7 @@ public class Act027_Services extends BaseFragment {
     public void setServiceAdapter(boolean isChecked) {
         adp = new Act027_Services_Adapter(
                 getActivity(),
-                //R.layout.act027_services_content_adapter_cell,
-                R.layout.act027_services_content_adapter_cell_new,
+                R.layout.act027_services_content_adapter_cell,
                 sm_so_serviceDao.query_HM(
                                 /*new SM_SO_Service_Sql_003(
                                         mSm_so.getCustomer_code(),
@@ -367,7 +366,7 @@ public class Act027_Services extends BaseFragment {
 
         bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, true);
 
-        Intent mIntent = new Intent(context, Act028_Main_New.class);
+        Intent mIntent = new Intent(context, Act028_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

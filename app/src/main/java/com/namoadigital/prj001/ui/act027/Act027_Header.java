@@ -187,7 +187,7 @@ public class Act027_Header extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act027_header_content_new, container, false);
+        View view = inflater.inflate(R.layout.act027_header_content, container, false);
         //
         iniVar(view);
         iniAction();

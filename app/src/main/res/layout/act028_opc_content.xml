@@ -15,56 +15,233 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
-
-
-        <TextView
-            android:id="@+id/act028_opc_content_cell_tv_so_ttl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Service"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        android:padding="10dp"
+        android:paddingBottom="0dp">
 
         <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_service_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_service_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="MARTELINHO_01" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_pack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_pack_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pack"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_pack_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Pack id - Pack Desc" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_zone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_zone_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zone"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_zone_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Zone id - Zone Desc" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_comment_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Comment"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_comment_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Ronaldo" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_partner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_partner_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Partner"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_partner_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Partner id - Partner Desc " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_type_exec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_type_exec_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Type Exec"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_type_exec_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Type Exec Desc " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_qty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_qty_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Qty"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_qty_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Done/Total " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act028_opc_content_cell_ll_optional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act028_opc_content_cell_tv_optional_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Optional"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="right|center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/act028_opc_content_tv_service_id_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Service ID" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_service_id_value"
+                    android:id="@+id/act028_opc_content_cell_tv_optional_val"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="MARTELINHO_01" />
+                    android:text="YES"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -73,153 +250,43 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_desc_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Service Description" />
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_desc_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="MARTELINHO 01 Full Description" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_product_pack_id_label"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="right|center_vertical">
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Pack ID" />
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/act028_opc_content_content_iv_not_exec"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_rejeitar_states"
+                        android:visibility="gone"
+                        />
+                </LinearLayout>
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_product_pack_id_value"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="LIMPEZA_FULL" />
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/act028_opc_content_content_btn_new_exec"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_adicionar_filled_states"
+                        />
+                </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_pack_desc_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Pack Description" />
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_pack_desc_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="LIMPEZA FULL" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_partner_restriction_desc_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Partner Restriction" />
-
-            <TextView
-                android:id="@+id/act028_opc_content_tv_partner_restriction_desc_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Partner ID / Partner Desc" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_product_qty_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Quantity" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act028_opc_content_tv_product_qty_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="1" />
-
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -228,32 +295,17 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:background="@color/namoa_color_light_blue3" />
 
     <ListView
         android:id="@+id/act028_opc_content_lv_execs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/act028_opc_content_content_btn_new_exec"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:background="@drawable/btn_namoa_main_states"
-            android:textColor="@color/padrao_WHITE"
-            android:layout_weight="1"
-            android:text="New Exec" />
-
-    </LinearLayout>
+        android:layout_weight="1"
+        android:divider="@color/namoa_color_light_blue3"
+        android:dividerHeight="1dp" />
 
 </LinearLayout>
 

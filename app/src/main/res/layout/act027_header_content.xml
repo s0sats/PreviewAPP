@@ -8,6 +8,44 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp">
+
+        <RadioGroup
+            android:id="@+id/act027_header_content_rdo_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/act027_header_content_rdo_data"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/act027_radio_data"
+                android:button="@null" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:id="@+id/act027_header_content_rdo_attach"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/act027_radio_pdf"
+                android:button="@null" />
+
+        </RadioGroup>
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -17,720 +55,803 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="15dp"
+            >
 
             <LinearLayout
+                android:id="@+id/act027_header_content_ll_pdf_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp">
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:id="@+id/act027_header_content_ll_header_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="48dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:padding="5dp"
-
-                        android:src="@drawable/ic_produto" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="5"
-                    android:orientation="vertical"
+                    android:background="@color/namoa_color_gray"
+                    android:orientation="horizontal"
                     android:paddingBottom="10dp"
-                    android:paddingLeft="0dp"
                     android:paddingRight="10dp"
                     android:paddingTop="10dp">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="5dp">
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/act027_header_content_tv_product_code_lbl"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="left"
-                            android:padding="2dp"
-                            android:text="Code"
-                            android:textSize="@dimen/font_size_item_md"
-
-                            />
-
-                        <View
-                            android:layout_width="5dp"
-                            android:layout_height="match_parent" />
-
-                        <TextView
-                            android:id="@+id/act027_header_content_tv_product_id_lbl"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="right"
-                            android:padding="2dp"
-                            android:text="Id"
-                            android:textSize="@dimen/font_size_item_md" />
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:padding="5dp"
+                            android:src="@drawable/ic_produto" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/act027_header_content_tv_product_desc_value"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="2dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="2dp"
-                        android:paddingTop="2dp"
-                        android:text="Product Description"
-                        android:textSize="@dimen/font_size_title_md" />
+                        android:layout_weight="5"
+                        android:orientation="vertical"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="5dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/act027_header_content_tv_product_code_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="left"
+                                android:padding="2dp"
+                                android:text="Code"
+                                android:textSize="@dimen/font_size_item_md"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="5dp"
+                                android:layout_height="match_parent"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/act027_header_content_tv_product_id_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="left|center_vertical"
+                                android:padding="2dp"
+                                android:text="Id"
+                                android:textSize="@dimen/font_size_item_md" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/act027_header_content_tv_product_desc_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="2dp"
+                            android:paddingTop="2dp"
+                            android:text="Product Description"
+                            android:textSize="@dimen/font_size_title_md" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/act027_header_content_tv_so_id_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="SO ID"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_so_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="2017.30"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_prefix_code_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="SO Code"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_prefix_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="2017 / 30"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_so_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="SO Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_so_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="SO Desc"
+                    android:textSize="@dimen/font_size_title_md" />
+
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_serial_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Serial Data"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="2530"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_category_price_id_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Category Price ID"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_category_price_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="01 Pequenos"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_category_price_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Category Price Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_category_price_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Pequenos"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_segment_id_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Segment ID"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_segment_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="NOVOS"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_segment_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Segment Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_segment_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="NOVOS"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_site_id_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Site ID"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_site_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="SITE_TST_01"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_site_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Site Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_site_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="SITE TESTE 1"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_operation_id_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Operation ID"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_operation_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="2"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_operation_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Operation Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_operation_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="MERCEDES"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_deadline_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="DeadLine"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_deadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="01/01/2017"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_status_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Status"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="PENDING"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_priority_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Priority Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_priority_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="P001"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Contract Desc"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="CONTRATO TST 01"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_erp_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Contract PO ERP"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_erp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="ERP"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_client1_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Contract PO Client1"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_client1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="CLI1"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_client2_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Contract PO Client2"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_contract_po_client2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="CLI2"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_quality_approval_user_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Approval User"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_quality_approval_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="App User"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_quality_approval_user_nick_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Approval Nick"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_quality_approval_user_nick"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="App User Nick"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_quality_approval_date_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Approval Date"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_quality_approval_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="App User Date"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_comments_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Comments"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Comments ???"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_type_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Type"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client Type"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_user_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client User"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client User"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_code_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Code"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client Code"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_id_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client ID"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client ID"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_name_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Name"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client Name"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_email_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Email"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client Email"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_phone_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Phone"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Client Phone"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_approval_date_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Approval Date"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_approval_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="01/01/1900"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_approval_user_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Approval User"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_approval_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="N.Hugo"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_approval_user_nick_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Client Approval User Nick"
+                    android:textSize="@dimen/font_size_title_lib"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_client_approval_user_nick"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="N.Hugo"
+                    android:textSize="@dimen/font_size_title_md"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_total_qty_service_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Total Qty Service"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_total_qty_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="10"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_total_price_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Total Price"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_total_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="1200.00"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_add_inf1_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Info 1"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_add_inf1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Add Info 1"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_add_inf2_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Info 2"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_add_inf2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Add Info 22222"
+                    android:textSize="@dimen/font_size_title_md" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_add_inf3_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Info 3"
+                    android:textSize="@dimen/font_size_title_lib" />
+
+                <TextView
+                    android:id="@+id/act027_header_content_tv_add_inf3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/namoa_bg_1"
+                    android:padding="10dp"
+                    android:text="Add Info 3"
+                    android:textSize="@dimen/font_size_title_md" />
             </LinearLayout>
-
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_so_id_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="SO ID"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_so_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="2017.30"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_prefix_code_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="SO Code"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_prefix_code"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="2017 / 30"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-            android:id="@+id/act027_header_content_tv_so_desc_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="SO Desc"
-            android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-            android:id="@+id/act027_header_content_tv_so_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/namoa_bg_1"
-            android:padding="10dp"
-            android:text="SO Desc"
-            android:textSize="@dimen/font_size_title_md" />
-
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_serial_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Serial Data"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_serial"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="2530"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_category_price_id_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Category Price ID"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_category_price_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="01 Pequenos"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_category_price_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Category Price Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_category_price_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Pequenos"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_segment_id_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Segment ID"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_segment_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="NOVOS"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_segment_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Segment Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_segment_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="NOVOS"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_site_id_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Site ID"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_site_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="SITE_TST_01"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_site_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Site Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_site_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="SITE TESTE 1"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_operation_id_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Operation ID"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_operation_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="2"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_operation_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Operation Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_operation_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="MERCEDES"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_deadline_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="DeadLine"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_deadline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="01/01/2017"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_status_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Status"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="PENDING"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_priority_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Priority Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_priority_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="P001"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_desc_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Contract Desc"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="CONTRATO TST 01"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_po_erp_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Contract PO ERP"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_po_erp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="ERP"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_po_client1_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Contract PO Client1"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_po_client1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="CLI1"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_po_client2_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Contract PO Client2"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_contract_po_client2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="CLI2"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_quality_approval_user_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Approval User"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_quality_approval_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="App User"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_quality_approval_user_nick_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Approval Nick"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_quality_approval_user_nick"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="App User Nick"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_quality_approval_date_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Approval Date"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_quality_approval_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="App User Date"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_comments_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Comments"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_comments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Comments ???"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_type_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Type"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_type"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client Type"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_user_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client User"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client User"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_code_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Code"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_code"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client Code"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_id_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client ID"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client ID"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_name_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Name"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client Name"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_email_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Email"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client Email"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_phone_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Phone"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="Client Phone"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_approval_date_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Approval Date"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_approval_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="01/01/1900"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_approval_user_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Approval User"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_approval_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="N.Hugo"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_approval_user_nick_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Client Approval User Nick"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_client_approval_user_nick"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="N.Hugo"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_total_qty_service_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Total Qty Service"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_total_qty_service"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="10"
-                android:textSize="@dimen/font_size_title_md" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_total_price_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:text="Total Price"
-                android:textSize="@dimen/font_size_title_lib" />
-
-            <TextView
-                android:id="@+id/act027_header_content_tv_total_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/namoa_bg_1"
-                android:padding="10dp"
-                android:text="1200.00"
-                android:textSize="@dimen/font_size_title_md" />
-
-
         </LinearLayout>
 
     </ScrollView>
