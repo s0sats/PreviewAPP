@@ -199,7 +199,7 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
 
         adapterMessages = new Act018_Adapter_Messages(
                 context,
-                R.layout.act018_main_content_cell_01,
+                R.layout.act018_main_content_cell,
                 messages
         );
         //seta qual item é selecionado

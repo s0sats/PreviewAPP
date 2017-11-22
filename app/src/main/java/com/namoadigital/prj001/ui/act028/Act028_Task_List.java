@@ -267,7 +267,7 @@ public class Act028_Task_List extends BaseFragment {
 
                 new Act028_Task_Adapter(
                         context,
-                        R.layout.act028_task_content_cell_01,
+                        R.layout.act028_task_content_cell,
                         sm_so_service_exec_taskDao.query_HM(
                                 new SM_SO_Service_Exec_Task_Sql_003(
                                         sm_so_service_exec.getCustomer_code(),
