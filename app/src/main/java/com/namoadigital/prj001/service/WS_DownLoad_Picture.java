@@ -50,9 +50,11 @@ public class WS_DownLoad_Picture extends IntentService {
         try {
             if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_Picture","true");
-                WBR_DownLoad_Picture.IS_RUNNING = true;
+                //WBR_DownLoad_Picture.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
+
+            WBR_DownLoad_Picture.IS_RUNNING = true;
 
             Bundle bundle = intent.getExtras();
 
@@ -222,9 +224,9 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : product_sketch_list) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg",Constant.CACHE_PATH)) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp",Constant.CACHE_PATH);
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(MD_ProductDao.SKETCH_URL),
@@ -238,7 +240,7 @@ public class WS_DownLoad_Picture extends IntentService {
                             new MD_Product_Sql_005(
                                     ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                                     hmAux.get(MD_ProductDao.PRODUCT_CODE),
-                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) +".jpg"
+                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
                             ).toSqlQuery()
                     );
                 }//FIM CROQUI
@@ -262,17 +264,17 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : event_sketch_list) {
-                    String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4 );
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH)) {
+                    String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4);
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH);
+                        ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_Product_EventDao.SKETCH_URL),
-                                Constant.CACHE_PATH + "/" + fileName +  ".tmp"
+                                Constant.CACHE_PATH + "/" + fileName + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInf(fileName , ".jpg");
+                        ToolBox_Inf.renameDownloadFileInf(fileName, ".jpg");
                     }
                     //Atualiza campo com url local
                     eventDao.addUpdate(
@@ -281,7 +283,7 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(SM_SO_Product_EventDao.SO_PREFIX),
                                     hmAux.get(SM_SO_Product_EventDao.SO_CODE),
                                     hmAux.get(SM_SO_Product_EventDao.SEQ),
-                                    fileName +".jpg"
+                                    fileName + ".jpg"
                             ).toSqlQuery()
                     );
                 }//FIM Event File
@@ -303,17 +305,17 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : event_file_list) {
-                    String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4 );
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH_PHOTO)) {
+                    String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4);
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH_PHOTO)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH_PHOTO);
+                        ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH_PHOTO);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
-                                Constant.CACHE_PATH_PHOTO + "/" + fileName +  ".tmp"
+                                Constant.CACHE_PATH_PHOTO + "/" + fileName + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInfPHOTO(fileName , ".jpg");
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(fileName, ".jpg");
                     }
                     //Atualiza campo com url local
                     productDao.addUpdate(
@@ -323,7 +325,7 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(SM_SO_Product_Event_FileDao.SO_CODE),
                                     hmAux.get(SM_SO_Product_Event_FileDao.SEQ),
                                     hmAux.get(SM_SO_Product_Event_FileDao.FILE_CODE),
-                                    fileName +".jpg"
+                                    fileName + ".jpg"
                             ).toSqlQuery()
                     );
                 }//FIM Event File

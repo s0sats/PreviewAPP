@@ -37,10 +37,11 @@ public class WS_DownLoad_PDF extends IntentService {
 
             if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_PDF","true");
-                WBR_DownLoad_PDF.IS_RUNNING = true;
+                //WBR_DownLoad_PDF.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
+            WBR_DownLoad_PDF.IS_RUNNING = true;
 
             Bundle bundle = intent.getExtras();
             //
