@@ -613,6 +613,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         );
         loadNFormProductList();
         //
+        resetHmAuxProdutcSelected();
+        //
         checkSOAttachExists();
     }
 

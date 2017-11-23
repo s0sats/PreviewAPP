@@ -359,6 +359,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         );
         //carrega HmAux com list de produtos que o user
         loadNFormProductList();
+        //
+        resetHmAuxProdutcSelected();
     }
 
     public boolean hasExecutionProfile() {
