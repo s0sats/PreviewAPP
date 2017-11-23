@@ -1831,6 +1831,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         tv_product_code_val.setText(product_code);
         tv_product_desc.setText(product_desc);
 
+        tv_product_id_val.setText(product_id);
+
         tv_serial_val.setText(serial_id);
 
         tv_form_type_val.setText(type);
