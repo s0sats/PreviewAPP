@@ -41,6 +41,7 @@ public class Act027_Opc extends BaseFragment {
 
     private String SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
 
+    private LinearLayout ll_product;
     private LinearLayout ll_services;
     private LinearLayout ll_serial;
     private LinearLayout ll_header;
@@ -85,6 +86,7 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_serial_label;
     private TextView tv_serial_value;
 
+    private TextView tv_product_title;
     private TextView tv_services_title;
     private TextView tv_serial_title;
     private TextView tv_header_title;
@@ -112,7 +114,7 @@ public class Act027_Opc extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act027_opc_content_new, container, false);
+        View view = inflater.inflate(R.layout.act027_opc_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -183,12 +185,15 @@ public class Act027_Opc extends BaseFragment {
         tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
 
+
+        ll_product = (LinearLayout) view.findViewById(R.id.act027_opc_ll_product);
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
         ll_serial = (LinearLayout) view.findViewById(R.id.act027_opc_ll_serial);
         ll_header = (LinearLayout) view.findViewById(R.id.act027_opc_ll_header);
         ll_approval = (LinearLayout) view.findViewById(R.id.act027_opc_ll_approval);
         ll_approval.setVisibility(View.VISIBLE);
 
+        tv_product_title = (TextView) view.findViewById(R.id.act027_opc_tv_product_title);
         tv_services_title = (TextView) view.findViewById(R.id.act027_opc_tv_services_title);
         tv_serial_title = (TextView) view.findViewById(R.id.act027_opc_tv_serial_title);
         tv_header_title = (TextView) view.findViewById(R.id.act027_opc_tv_header_title);
@@ -196,6 +201,7 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private void iniAction() {
+        ll_product.setOnClickListener(menuOnClickListener);
         ll_services.setOnClickListener(menuOnClickListener);
         ll_serial.setOnClickListener(menuOnClickListener);
         ll_header.setOnClickListener(menuOnClickListener);
@@ -215,6 +221,9 @@ public class Act027_Opc extends BaseFragment {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.act027_opc_ll_product:
+                    SELECTION_TYPE = Act027_Main.SELECTION_PRODUCT_LIST;
+                    break;
                 case R.id.act027_opc_ll_services:
                     SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
                     break;
@@ -240,9 +249,24 @@ public class Act027_Opc extends BaseFragment {
         }
     };
 
+    public void eventKeepColor(){
+        SELECTION_TYPE = Act027_Main.SELECTION_PRODUCT_LIST;
+        //
+        changeTabColor();
+    }
+
     private void changeTabColor() {
         switch (SELECTION_TYPE) {
+            case Act027_Main.SELECTION_PRODUCT_LIST:
+                ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
+                ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
+                break;
+
             case Act027_Main.SELECTION_SERVICES:
+                ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
@@ -250,18 +274,21 @@ public class Act027_Opc extends BaseFragment {
 
                 break;
             case Act027_Main.SELECTION_SERIAL:
+                ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_HEADER:
+                ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_pressed));
                 ll_approval.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 break;
             case Act027_Main.SELECTION_APPROVAL:
+                ll_product.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_services.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_serial.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
                 ll_header.setBackground(getResources().getDrawable(R.drawable.namoa_cell_9_states));
@@ -318,11 +345,11 @@ public class Act027_Opc extends BaseFragment {
                 //
                 ArrayList<HMAux> tranckingAuxList =
                         (ArrayList<HMAux>) trackingDao.query_HM(
-                            new MD_Product_Serial_Tracking_Sql_003(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    mSm_so.getProduct_code(),
-                                    mSm_so.getSerial_code()
-                            ).toSqlQuery()
+                                new MD_Product_Serial_Tracking_Sql_003(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        mSm_so.getProduct_code(),
+                                        mSm_so.getSerial_code()
+                                ).toSqlQuery()
                         );
 
                 if (tranckingAuxList != null && tranckingAuxList.size() > 0) {
@@ -351,6 +378,19 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_approval.setVisibility(View.GONE);
                 }
+                //
+//                // Hugo Visibilidade
+//                if( !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
+//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) &&
+//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
+//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_SYNC)
+//                ){
+//                    ll_product.setVisibility(View.VISIBLE);
+//                }else{
+//                    ll_product.setVisibility(View.GONE);
+//                }
+                //
+                ll_product.setVisibility(View.VISIBLE);
                 //
                 switch (mSm_so.getStatus()) {
                     case Constant.SO_STATUS_PENDING:
@@ -381,6 +421,7 @@ public class Act027_Opc extends BaseFragment {
 
                 }
 
+                tv_product_title.setText(hmAux_Trans.get("product_ll_lbl"));
                 tv_approval_title.setText(hmAux_Trans.get("approval_ll_lbl"));
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
@@ -397,7 +438,7 @@ public class Act027_Opc extends BaseFragment {
         for (int i = 0; i < tranckingAuxList.size(); i++) {
             trackingList += " º " +
                     tranckingAuxList.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
-            if(i <   tranckingAuxList.size()){
+            if (i < tranckingAuxList.size()) {
                 trackingList += "\n";
             }
         }

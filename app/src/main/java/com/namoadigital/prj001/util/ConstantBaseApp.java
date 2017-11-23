@@ -14,8 +14,8 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "2.5.7";
-    public static final String PKG_CLEAN_APP = "45";
+    public static final String PRJ001_VERSION = "2.6.0";
+    public static final String PKG_CLEAN_APP = "51";
     //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -314,6 +314,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO = "PRJ001_SO";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
+    public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
 
 

@@ -12,6 +12,13 @@ public class MD_Product {
     private String product_desc;
     private int require_serial;
     private int allow_new_serial_cl;
+    private String un;
+    private Integer sketch_code;
+    private String sketch_url;
+    private String sketch_url_local;
+    private Integer sketch_lines;
+    private Integer sketch_columns;
+    private String sketch_color;
 
 
     public long getCustomer_code() {
@@ -60,5 +67,61 @@ public class MD_Product {
 
     public void setAllow_new_serial_cl(int allow_new_serial_cl) {
         this.allow_new_serial_cl = allow_new_serial_cl;
+    }
+
+    public String getUn() {
+        return un;
+    }
+
+    public void setUn(String un) {
+        this.un = un;
+    }
+
+    public Integer getSketch_code() {
+        return sketch_code;
+    }
+
+    public void setSketch_code(Integer sketch_code) {
+        this.sketch_code = sketch_code;
+    }
+
+    public String getSketch_url() {
+        return sketch_url;
+    }
+
+    public void setSketch_url(String sketch_url) {
+        this.sketch_url = sketch_url;
+    }
+
+    public String getSketch_url_local() {
+        return sketch_url_local;
+    }
+
+    public void setSketch_url_local(String sketch_url_local) {
+        this.sketch_url_local = sketch_url_local;
+    }
+
+    public Integer getSketch_lines() {
+        return sketch_lines;
+    }
+
+    public void setSketch_lines(Integer sketch_lines) {
+        this.sketch_lines = sketch_lines;
+    }
+
+    public Integer getSketch_columns() {
+        return sketch_columns;
+    }
+
+    public void setSketch_columns(Integer sketch_columns) {
+        this.sketch_columns = sketch_columns;
+    }
+
+    public String getSketch_color() {
+        return sketch_color;
+    }
+
+    public void setSketch_color(String sketch_color) {
+        this.sketch_color = sketch_color;
     }
 }

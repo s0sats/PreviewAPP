@@ -10,7 +10,7 @@
 		"product_code": "TST-SO",
 		"product_desc": "TESTE DE SO",
 		"serial_code": 1,
-		"serial_id": "promo",
+		"serial_code": "promo",
 		"category_price_code": 6,
 		"category_price_id": "01 Pequenos",
 		"category_price_desc": "Pequenos",

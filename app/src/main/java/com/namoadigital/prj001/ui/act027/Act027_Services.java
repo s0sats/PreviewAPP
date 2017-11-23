@@ -41,7 +41,7 @@ import com.namoadigital.prj001.sql.Sql_Act027_003;
 import com.namoadigital.prj001.sql.Sql_Act027_004;
 import com.namoadigital.prj001.sql.Sql_Act027_005;
 import com.namoadigital.prj001.sql.Sql_Act027_006;
-import com.namoadigital.prj001.ui.act028.Act028_Main_New;
+import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -67,6 +67,7 @@ public class Act027_Services extends BaseFragment {
     private HMAux partnerAux = new HMAux();
     private String lastServiceUpdated = "";
     private int original_update_required;
+    private Act027_Main mMain;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -86,13 +87,20 @@ public class Act027_Services extends BaseFragment {
         this.lastServiceUpdated = lastServiceUpdated;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         bStatus = true;
 
-        View view = inflater.inflate(R.layout.act027_services_content_new, container, false);
+        View view = inflater.inflate(R.layout.act027_services_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -123,7 +131,9 @@ public class Act027_Services extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
-
+        //
+        mMain = (Act027_Main) getActivity();
+        //
         sm_so_serviceDao = new SM_SO_ServiceDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -141,7 +151,7 @@ public class Act027_Services extends BaseFragment {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-
+        //
         tv_filter_lbl = (TextView) view.findViewById(R.id.act027_services_content_tv_filter_lbl);
         sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
@@ -169,12 +179,19 @@ public class Act027_Services extends BaseFragment {
                 //
                 //sw_filter.setChecked(true);
                 //
-                if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) &&
-                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                if ((!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) ||
+                    !mMain.hasExecutionProfile()
                         ){
                     sw_filter.setOnCheckedChangeListener(null);
                     sw_filter.setChecked(false);
-                    sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+                    sw_filter.setEnabled(false);
+                    //
+                    if(mMain.hasExecutionProfile()) {
+                        sw_filter.setEnabled(true);
+                        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+                    }
+
                 }
                 //
                 setServiceAdapter(sw_filter.isChecked());
@@ -185,8 +202,7 @@ public class Act027_Services extends BaseFragment {
     public void setServiceAdapter(boolean isChecked) {
         adp = new Act027_Services_Adapter(
                 getActivity(),
-                //R.layout.act027_services_content_adapter_cell,
-                R.layout.act027_services_content_adapter_cell_new,
+                R.layout.act027_services_content_adapter_cell,
                 sm_so_serviceDao.query_HM(
                                 /*new SM_SO_Service_Sql_003(
                                         mSm_so.getCustomer_code(),
@@ -207,7 +223,8 @@ public class Act027_Services extends BaseFragment {
                                 ToolBox_Con.getPreference_Zone_Code(context),
                                 isChecked//sw_filter != null && sw_filter.isChecked()
                         ).toSqlQuery()
-                )
+                ),
+                mMain.hasExecutionProfile()
         );
         //
         adp.setOnServiceSelectedListener(new Act027_Services_Adapter.IAct027_Services_Adapter() {
@@ -252,6 +269,10 @@ public class Act027_Services extends BaseFragment {
         });
         //
         lv_services.setAdapter(adp);
+        //
+        if (adp.getCount() == 0){
+            mMain.openDrawerInternally();
+        }
 
         //Se possui var indicando qual seriviço foi alterado,
         //Aplica "auto scroll"
@@ -345,7 +366,7 @@ public class Act027_Services extends BaseFragment {
 
         bundle.putBoolean(Constant.ACT027_IS_SHORTCUT, true);
 
-        Intent mIntent = new Intent(context, Act028_Main_New.class);
+        Intent mIntent = new Intent(context, Act028_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

@@ -99,6 +99,8 @@ public class Act028_Opc extends BaseFragment {
     private ImageView iv_new_exec;
     private ImageView iv_not_exec;
 
+    private Act028_Main mMain;
+
     public void setmService(SM_SO_Service mService) {
         this.mService = mService;
     }
@@ -123,7 +125,7 @@ public class Act028_Opc extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act028_opc_content_new, container, false);
+        View view = inflater.inflate(R.layout.act028_opc_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -154,6 +156,8 @@ public class Act028_Opc extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
+        //
+        mMain = (Act028_Main) getActivity();
 
         sm_so_serviceDao = new SM_SO_ServiceDao(
                 context,
@@ -488,7 +492,7 @@ public class Act028_Opc extends BaseFragment {
                 lv_execs.setAdapter(
                         new Act028_Exec_Adapter(
                                 getActivity(),
-                                R.layout.act028_opc_content_cell_03,
+                                R.layout.act028_opc_content_cell,
 
                                 sm_so_service_execDao.query_HM(
                                         new Sql_Act028_001(
@@ -516,6 +520,11 @@ public class Act028_Opc extends BaseFragment {
                 if (data.get("full_status").equalsIgnoreCase("0")) {
                     iv_new_exec.setVisibility(View.GONE);
                 } else {
+                }
+
+                if(!mMain.hasExecutionProfile()){
+                    iv_new_exec.setVisibility(View.GONE);
+                    iv_not_exec.setVisibility(View.GONE);
                 }
             }
         }

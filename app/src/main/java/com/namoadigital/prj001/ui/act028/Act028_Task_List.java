@@ -50,7 +50,7 @@ public class Act028_Task_List extends BaseFragment {
 
     private String full_status;
 
-    private Act028_Main_New mMain_new;
+    private Act028_Main mMain_new;
 
     private transient TextView tv_exec_tmp_value;
     private transient TextView tv_exec_status;
@@ -141,7 +141,7 @@ public class Act028_Task_List extends BaseFragment {
     private void iniVar(View view) {
         context = getActivity();
 
-        mMain_new = (Act028_Main_New) getActivity();
+        mMain_new = (Act028_Main) getActivity();
 
         partnerDao = new MD_PartnerDao(
                 context,
@@ -249,7 +249,7 @@ public class Act028_Task_List extends BaseFragment {
                         ).toSqlQuery()
                 );
 
-                if (md_partner == null) {
+                if (md_partner == null || !mMain_new.hasExecutionProfile()) {
                     iv_new_task.setVisibility(View.GONE);
                 }
             }
@@ -267,7 +267,7 @@ public class Act028_Task_List extends BaseFragment {
 
                 new Act028_Task_Adapter(
                         context,
-                        R.layout.act028_task_content_cell_02,
+                        R.layout.act028_task_content_cell,
                         sm_so_service_exec_taskDao.query_HM(
                                 new SM_SO_Service_Exec_Task_Sql_003(
                                         sm_so_service_exec.getCustomer_code(),
@@ -457,7 +457,7 @@ public class Act028_Task_List extends BaseFragment {
         processStatusUpdateOffLine(task);
 
         if (sm_so_service.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_START_STOP)) {
-            mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_TASK);
+            mMain_new.setMTASK_STATUS(Act028_Main.CREATE_TASK);
             //
             callSoSave(sm_so_service_exec.getSo_prefix(), sm_so_service_exec.getSo_code());
         }

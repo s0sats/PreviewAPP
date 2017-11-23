@@ -29,7 +29,18 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
     public static final String PRODUCT_DESC = "product_desc";
     public static final String REQUIRE_SERIAL = "require_serial";
     public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL};
+    public static final String UN = "un";
+    public static final String SKETCH_CODE = "sketch_code";
+    public static final String SKETCH_URL = "sketch_url";
+    public static final String SKETCH_URL_LOCAL = "sketch_url_local";
+    public static final String SKETCH_LINES = "sketch_lines";
+    public static final String SKETCH_COLUMNS = "sketch_columns";
+    public static final String SKETCH_COLOR = "sketch_color";
+
+    public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
+            REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
+            SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR
+    };
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -269,6 +280,35 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             md_product.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
             md_product.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
             md_product.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
+            md_product.setUn(cursor.getString(cursor.getColumnIndex(UN)));
+            if(cursor.isNull(cursor.getColumnIndex(SKETCH_CODE))){
+                md_product.setSketch_code(null);
+            }else{
+                md_product.setSketch_code(cursor.getInt(cursor.getColumnIndex(SKETCH_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SKETCH_URL))){
+                md_product.setSketch_url(null);
+            }else{
+                md_product.setSketch_url(cursor.getString(cursor.getColumnIndex(SKETCH_URL)));
+            }
+
+            md_product.setSketch_url_local(cursor.getString(cursor.getColumnIndex(SKETCH_URL_LOCAL)));
+
+            if(cursor.isNull(cursor.getColumnIndex(SKETCH_LINES))){
+                md_product.setSketch_lines(null);
+            }else{
+                md_product.setSketch_lines(cursor.getInt(cursor.getColumnIndex(SKETCH_LINES)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SKETCH_COLUMNS))){
+                md_product.setSketch_columns(null);
+            }else{
+                md_product.setSketch_columns(cursor.getInt(cursor.getColumnIndex(SKETCH_COLUMNS)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SKETCH_COLOR))){
+                md_product.setSketch_color(null);
+            }else{
+                md_product.setSketch_color(cursor.getString(cursor.getColumnIndex(SKETCH_COLOR)));
+            }
 
             return md_product;
         }
@@ -298,6 +338,17 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             if (md_product.getAllow_new_serial_cl() > -1) {
                 contentValues.put(ALLOW_NEW_SERIAL_CL, md_product.getAllow_new_serial_cl());
             }
+            if (md_product.getUn() != null) {
+                contentValues.put(UN, md_product.getUn());
+            }
+            contentValues.put(SKETCH_CODE,md_product.getSketch_code());
+            contentValues.put(SKETCH_URL,md_product.getSketch_url());
+            if (md_product.getSketch_url_local() != null) {
+                contentValues.put(SKETCH_URL_LOCAL, md_product.getSketch_url_local());
+            }
+            contentValues.put(SKETCH_LINES,md_product.getSketch_lines());
+            contentValues.put(SKETCH_COLUMNS,md_product.getSketch_columns());
+            contentValues.put(SKETCH_COLOR,md_product.getSketch_color());
 
             return contentValues;
 

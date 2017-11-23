@@ -35,6 +35,22 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
     private String mResource_Code;
     private HMAux hmAux_Trans;
+    private boolean hasExecutionProfile;
+
+    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile) {
+        this.context = context;
+        this.resource = resource;
+        this.source = source;
+        this.hasExecutionProfile = hasExecutionProfile;
+
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                "act027_service_adapter"
+        );
+
+        loadTranslation();
+    }
 
     public Act027_Services_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
@@ -200,9 +216,32 @@ public class Act027_Services_Adapter extends BaseAdapter {
         } else {
             iv_flag.setVisibility(View.INVISIBLE);
         }
-        //
-        if(item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_PENDING)) {
+        /*
+        *
+        * APLICAÇÃO DO PROFILE DE  EXECUÇÃO
+        *
+        */
+        if(!hasExecutionProfile){
+            ll_express.setVisibility(View.VISIBLE);
+            iv_express.setImageDrawable(null);
+            iv_express.setOnClickListener(null);
+            iv_plus.setVisibility(View.INVISIBLE);
             //
+            iv_normal.setTag(item);
+            iv_normal.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HMAux item = (HMAux) v.getTag();
+                    //
+                    if (delegate != null) {
+                        delegate.serviceSelected(item, Act027_Main.SELECTION_NORMAL);
+                    }
+                }
+            });
+        }else {
+            //
+            if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_PENDING)) {
+                //
             /*if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
                 iv_express.setVisibility(View.VISIBLE);
 
@@ -211,7 +250,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
                 //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_stop_circle_black_24px));
             }*/
-            if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
+                if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
 //                if(item.get(Sql_Act027_002.YES_NO_ICON).equals("1")){
 //                    ll_express.setVisibility(View.VISIBLE);
 //                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
@@ -222,106 +261,87 @@ public class Act027_Services_Adapter extends BaseAdapter {
 //                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
 //                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_azul_ns_states));
 //                }
-                //
-                ll_express.setVisibility(View.VISIBLE);
-                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_azul_ns_states));
-
-            }else{
-
-                if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)){
+                    //
                     ll_express.setVisibility(View.VISIBLE);
-                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_ns_states));
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
-                }else if(item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)){
-                    ll_express.setVisibility(View.VISIBLE);
-                    //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_finaliza_play_ns_states));
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_laranja_ns_states));
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_azul_ns_states));
+
+                } else {
+
+                    if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)) {
+                        ll_express.setVisibility(View.VISIBLE);
+                        //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_ns_states));
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
+                    } else if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)) {
+                        ll_express.setVisibility(View.VISIBLE);
+                        //iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_finaliza_play_ns_states));
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_laranja_ns_states));
+                    } else {
+                        //ll_express.setVisibility(View.GONE);
+                        ll_express.setVisibility(View.VISIBLE);
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
+                    }
+                }
+            } else {
+                if(item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_DONE)) {
+
+                    if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
+                        ll_express.setVisibility(View.VISIBLE);
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
+                    } else {
+                        // ll_express.setVisibility(View.INVISIBLE);
+                        // iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
+                        ll_express.setVisibility(View.VISIBLE);
+                        iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_verde_ns_states));
+                    }
                 }else{
-                    //ll_express.setVisibility(View.GONE);
-                    ll_express.setVisibility(View.VISIBLE);
-                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
+                    ll_express.setVisibility(View.GONE);
+                    iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
+
                 }
-            }
-        }else{
 
-            if(item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)){
-                ll_express.setVisibility(View.VISIBLE);
-                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
-            }else{
-               // ll_express.setVisibility(View.INVISIBLE);
-                // iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_escolher_ns_states));
-                ll_express.setVisibility(View.VISIBLE);
-                iv_express.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_verde_ns_states));
             }
+            //Add Badge
+            if (ToolBox_Inf.convertStringToInt(item.get(SM_SO_ServiceDao.QTY)) > 1
+                    && item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_START_STOP)) {
+                String qty = item.get(SM_SO_ServiceDao.QTY);
+                if (item.get(SM_SO_ServiceDao.QTY).length() == 1) {
+                    qty = " " + qty + " ";
+                }
+                tv_express_badge.setVisibility(View.GONE);
+                tv_express_badge.setText(qty);
+                //
+                iv_plus.setVisibility(View.VISIBLE);
 
-        }
-        //Add Badge
-        if(ToolBox_Inf.convertStringToInt(item.get(SM_SO_ServiceDao.QTY)) > 1
-                && item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_START_STOP) ){
-            String qty = item.get(SM_SO_ServiceDao.QTY);
-            if (item.get(SM_SO_ServiceDao.QTY).length() == 1) {
-                qty = " " + qty + " ";
+            } else {
+                tv_express_badge.setVisibility(View.GONE);
+                tv_express_badge.setText("");
+                iv_plus.setVisibility(View.GONE);
             }
-            tv_express_badge.setVisibility(View.GONE);
-            tv_express_badge.setText(qty);
             //
-            iv_plus.setVisibility(View.VISIBLE);
-
-        }else{
-            tv_express_badge.setVisibility(View.GONE);
-            tv_express_badge.setText("");
-            iv_plus.setVisibility(View.GONE);
+            iv_express.setTag(item);
+            iv_express.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HMAux item = (HMAux) v.getTag();
+                    //
+                    if (delegate != null) {
+                        delegate.serviceSelected(item, Act027_Main.SELECTION_EXPRESS);
+                    }
+                }
+            });
+            //
+            iv_normal.setTag(item);
+            iv_normal.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HMAux item = (HMAux) v.getTag();
+                    //
+                    if (delegate != null) {
+                        delegate.serviceSelected(item, Act027_Main.SELECTION_NORMAL);
+                    }
+                }
+            });
         }
-        //
-        iv_express.setTag(item);
-        iv_express.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HMAux item = (HMAux) v.getTag();
-                //
-                if (delegate != null) {
-                    delegate.serviceSelected(item, Act027_Main.SELECTION_EXPRESS);
-                }
-            }
-        });
-        //
-        iv_normal.setTag(item);
-        iv_normal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HMAux item = (HMAux) v.getTag();
-                //
-                if (delegate != null) {
-                    delegate.serviceSelected(item, Act027_Main.SELECTION_NORMAL);
-                }
-            }
-        });
-//        //
-//        SM_SO_Service_ExecDao execDao =
-//                new SM_SO_Service_ExecDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-//        String setFlag = execDao.getByStringHM(
-//                new Act027_Services_Adapter_Sql_001(
-//                        item.get(SM_SO_ServiceDao.CUSTOMER_CODE),
-//                        item.get(SM_SO_ServiceDao.SO_PREFIX),
-//                        item.get(SM_SO_ServiceDao.SO_CODE),
-//                        item.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
-//                        item.get(SM_SO_ServiceDao.PACK_CODE),
-//                        item.get(SM_SO_ServiceDao.PACK_SEQ),
-//                        item.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
-//                        item.get(SM_SO_ServiceDao.SERVICE_CODE),
-//                        item.get(SM_SO_ServiceDao.SERVICE_SEQ)
-//
-//                ).toSqlQuery()
-//        ).get(Act027_Services_Adapter_Sql_001.SET_FLAG);
-//        if (setFlag != null && !setFlag.equals("0")) {
-//            iv_flag.setVisibility(View.VISIBLE);
-//        } else {
-//            iv_flag.setVisibility(View.GONE);
-//        }
 
         return convertView;
     }

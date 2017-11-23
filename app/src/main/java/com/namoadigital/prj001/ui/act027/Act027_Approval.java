@@ -175,12 +175,19 @@ public class Act027_Approval extends BaseFragment {
         );
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act027_approval_content_2, container, false);
+        View view = inflater.inflate(R.layout.act027_approval_content, container, false);
         //
         iniVar(view);
         iniAction();

@@ -64,7 +64,7 @@ public class Act028_Task extends BaseFragment {
 
     private Context context;
 
-    private Act028_Main_New mMain_new;
+    private Act028_Main mMain_new;
 
     private TextView tv_exec_task_tmp_lbl;
     private TextView tv_exec_task_tmp_value;
@@ -192,7 +192,7 @@ public class Act028_Task extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act028_task_content_new_02, container, false);
+        View view = inflater.inflate(R.layout.act028_task_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -339,7 +339,7 @@ public class Act028_Task extends BaseFragment {
     private void iniVar(View view) {
         context = getActivity();
 
-        mMain_new = (Act028_Main_New) getActivity();
+        mMain_new = (Act028_Main) getActivity();
 
         user_code = ToolBox_Con.getPreference_User_Code(getActivity());
 
@@ -435,27 +435,29 @@ public class Act028_Task extends BaseFragment {
         if (bStatus) {
             if (mTask != null) {
 
-                String task_code = String.valueOf(mTask.getTask_code());
+                if (mMain_new.hasExecutionProfile()) {
 
-                tv_exec_task_tmp_lbl.setText(hmAux_Trans.get("exec_task_lbl"));
-                tv_exec_task_tmp_value.setText(
-                        String.valueOf(mTask.getExec_tmp()) + " / " + String.valueOf(mTask.getTask_tmp()) +
-                                (task_code.equalsIgnoreCase("0") ? "" : " / " + String.valueOf(mTask.getTask_code()))
-                );
-                //tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
-                //setExecStatusColor(tv_status, mTask.getStatus());
-                //ToolBox_Inf.setTaskStatusColor(context,tv_status, mTask.getStatus());
+                    String task_code = String.valueOf(mTask.getTask_code());
 
-                //tv_task_code_lbl.setText(hmAux_Trans.get("task_code_lbl"));
-                //tv_task_code_lbl.setText("Task Code");
-                //String task_code = String.valueOf(mTask.getTask_code());
-                //tv_task_code_value.setText(task_code.equalsIgnoreCase("0") ? "" : String.valueOf(mTask.getTask_code()));
+                    tv_exec_task_tmp_lbl.setText(hmAux_Trans.get("exec_task_lbl"));
+                    tv_exec_task_tmp_value.setText(
+                            String.valueOf(mTask.getExec_tmp()) + " / " + String.valueOf(mTask.getTask_tmp()) +
+                                    (task_code.equalsIgnoreCase("0") ? "" : " / " + String.valueOf(mTask.getTask_code()))
+                    );
+                    //tv_status.setText(hmAux_Trans.get(mTask.getStatus()));
+                    //setExecStatusColor(tv_status, mTask.getStatus());
+                    //ToolBox_Inf.setTaskStatusColor(context,tv_status, mTask.getStatus());
 
-                //tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
-                //tv_service_lbl.setText("Servide");
-                tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
+                    //tv_task_code_lbl.setText(hmAux_Trans.get("task_code_lbl"));
+                    //tv_task_code_lbl.setText("Task Code");
+                    //String task_code = String.valueOf(mTask.getTask_code());
+                    //tv_task_code_value.setText(task_code.equalsIgnoreCase("0") ? "" : String.valueOf(mTask.getTask_code()));
 
-                //mk_comments.setText(mTask.getComments());
+                    //tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
+                    //tv_service_lbl.setText("Servide");
+                    tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
+
+                    //mk_comments.setText(mTask.getComments());
 
 //                StringBuilder sFiles = new StringBuilder();
 //
@@ -476,76 +478,205 @@ public class Act028_Task extends BaseFragment {
 //                    }
 //                }
 //
-                //iv_gallery.setTag(sFiles.toString());
+                    //iv_gallery.setTag(sFiles.toString());
 
-                //iv_gallery.setTag(tempValues.get("img"));
+                    //iv_gallery.setTag(tempValues.get("img"));
 
 
-                tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
+                    tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
 
-                //tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
-                mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
-                mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+                    //tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
+                    mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
+                    mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
 
-                //tv_end_date_lbl.setText(hmAux_Trans.get("end_date_lbl"));
-                mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
-                mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
+                    //tv_end_date_lbl.setText(hmAux_Trans.get("end_date_lbl"));
+                    mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
+                    mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
 
-                rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(String.valueOf(mTask.getTask_perc())) - min) / interval));
+                    rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(String.valueOf(mTask.getTask_perc())) - min) / interval));
 
-                if (mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) ||
-                        mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
+                    if (mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) ||
+                            mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
 
+                        tv_stepped_txt_lbl.setVisibility(View.GONE);
+                        rb_stepped_perc.setVisibility(View.GONE);
+                        tv_stepped_txt_min_lbl.setVisibility(View.GONE);
+                        tv_stepped_txt_max_lbl.setVisibility(View.GONE);
+                    }
+
+                    //tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
+                    mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
+                    mk_qty_people.setmMaxSize(5);
+
+                    try {
+
+                        if (widgetset) {
+                            widgetset = false;
+                        } else {
+                            mk_comments.setText(tempValues.get("comments"));
+                        }
+
+                        //mk_comments.setText(tempValues.get("comments"));
+
+                        mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
+                        mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
+                        mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
+                        mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
+
+                        rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(tempValues.get("perc")) - min) / interval));
+                        mk_qty_people.setText(tempValues.get("qty"));
+
+                        if (iv_gallery.getTag() == null) {
+                            iv_gallery.setTag(tempValues.get("img"));
+                        }
+
+                        if (sdAvoid) {
+                            sdAvoid = false;
+                        } else {
+                            iv_gallery.setTag(tempValues.get("img"));
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    tv_nick.setText(mTask.getTask_user_nick());
+                    tv_date.setText(mk_end_date.getText().toString().trim().length() != 0 ? mk_end_date.getText().toString().trim() : mk_start_date.getText().toString().trim());
+
+                    upImgGallery();
+
+                    processTaskStatus();
+
+                }else{
+                    /*
+                    * Esse else aplica a inibição dos campos
+                    * caso o usuario não possua profile de execução.
+                    */
+
+                    //
+                    //Coloca dado na tela
+                    //
+                    String task_code = String.valueOf(mTask.getTask_code());
+
+                    tv_exec_task_tmp_lbl.setText(hmAux_Trans.get("exec_task_lbl"));
+                    tv_exec_task_tmp_value.setText(
+                            String.valueOf(mTask.getExec_tmp()) + " / " + String.valueOf(mTask.getTask_tmp()) +
+                                    (task_code.equalsIgnoreCase("0") ? "" : " / " + String.valueOf(mTask.getTask_code()))
+                    );
+
+                    tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
+                    //
+                    tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
+
+                    //tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
+                    mk_start_date.setMaskedText(ToolBox.reverseS(mTask.getStart_date()));
+                    mk_start_hour.setMaskedText(ToolBox.reverseSH(mTask.getStart_date()));
+
+                    //tv_end_date_lbl.setText(hmAux_Trans.get("end_date_lbl"));
+                    mk_end_date.setMaskedText(ToolBox.reverseS(mTask.getEnd_date()));
+                    mk_end_hour.setMaskedText(ToolBox.reverseSH(mTask.getEnd_date()));
+
+                    mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
+                    mk_qty_people.setmMaxSize(5);
+
+                    try {
+
+                        if (widgetset) {
+                            widgetset = false;
+                        } else {
+                            mk_comments.setText(tempValues.get("comments"));
+                        }
+
+                        mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
+                        mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
+                        mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
+                        mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
+
+                        rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(tempValues.get("perc")) - min) / interval));
+                        mk_qty_people.setText(tempValues.get("qty"));
+
+                        if (iv_gallery.getTag() == null) {
+                            iv_gallery.setTag(tempValues.get("img"));
+                        }
+                        //
+                        if (sdAvoid) {
+                            sdAvoid = false;
+                        } else {
+                            iv_gallery.setTag(tempValues.get("img"));
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    tv_nick.setText(mTask.getTask_user_nick());
+                    tv_date.setText(mk_end_date.getText().toString().trim().length() != 0 ? mk_end_date.getText().toString().trim() : mk_start_date.getText().toString().trim());
+                    //
+                    //
+                    // Desabilita tudo
+                    //
+
+                    //Btões de ação
+                    iv_cancel_task.setVisibility(View.GONE);
+                    iv_play_stop.setVisibility(View.GONE);
+                    iv_save.setVisibility(View.GONE);
+
+                    mk_qty_people.setEnabled(false);
+                    mk_start_date.setEnabled(false);
+                    mk_start_hour.setEnabled(false);
+                    mk_end_date.setEnabled(false);
+                    mk_end_hour.setEnabled(false);
+
+                    iv_play_stop.setEnabled(false);
+                    iv_save.setEnabled(false);
+                    rb_stepped_perc.setEnabled(false);
+                    iv_gallery.setEnabled(true);
+                    mk_comments.setEnabled(false);
+                    //
+                    rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(String.valueOf(mTask.getTask_perc())) - min) / interval));
                     tv_stepped_txt_lbl.setVisibility(View.GONE);
                     rb_stepped_perc.setVisibility(View.GONE);
                     tv_stepped_txt_min_lbl.setVisibility(View.GONE);
                     tv_stepped_txt_max_lbl.setVisibility(View.GONE);
+                    //
+                    if(mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_START_STOP)){
+                        tv_stepped_txt_lbl.setVisibility(View.VISIBLE);
+                        rb_stepped_perc.setVisibility(View.VISIBLE);
+                        tv_stepped_txt_min_lbl.setVisibility(View.VISIBLE);
+                        tv_stepped_txt_max_lbl.setVisibility(View.VISIBLE);
+                    }
+                    //
+                    //Galeria
+                    //
+                    String files = null;
+                    try{
+                        files = (String) iv_gallery.getTag();
+                    }catch (Exception e){
+                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    }
+                    boolean turnOnGallery = files != null && files.length() > 0;
+
+                    iv_gallery.setClickable(turnOnGallery);
+                    iv_gallery.setEnabled(turnOnGallery);
+                    //
+                    if(turnOnGallery){
+                        //configura icone
+                        iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_marcada_ns));
+                        //Redefine Listner para não deixar tirar nem editar foto
+                        iv_gallery.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                callCamera(false);
+                            }
+                        });
+                    }else{
+                        //configura icone
+                        iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_ns));
+                        //Remove listner
+                        iv_gallery.setOnClickListener(null);
+                    }
+
                 }
-
-                //tv_qty_people_lbl.setText(hmAux_Trans.get("qty_people_lbl"));
-                mk_qty_people.setText(String.valueOf(mTask.getQty_people()));
-                mk_qty_people.setmMaxSize(5);
-
-                try {
-
-                    if (widgetset) {
-                        widgetset = false;
-                    } else {
-                        mk_comments.setText(tempValues.get("comments"));
-                    }
-
-                    //mk_comments.setText(tempValues.get("comments"));
-
-                    mk_start_date.setMaskedText(ToolBox.reverseS(tempValues.get("dts")));
-                    mk_start_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dts")));
-                    mk_end_date.setMaskedText(ToolBox.reverseS(tempValues.get("dte")));
-                    mk_end_hour.setMaskedText(ToolBox.reverseSH(tempValues.get("dte")));
-
-                    rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(tempValues.get("perc")) - min) / interval));
-                    mk_qty_people.setText(tempValues.get("qty"));
-
-                    if (iv_gallery.getTag() == null) {
-                        iv_gallery.setTag(tempValues.get("img"));
-                    }
-
-
-                    if (sdAvoid) {
-                        sdAvoid = false;
-                    } else {
-                        iv_gallery.setTag(tempValues.get("img"));
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                tv_nick.setText(mTask.getTask_user_nick());
-                tv_date.setText(mk_end_date.getText().toString().trim().length() != 0 ? mk_end_date.getText().toString().trim() : mk_start_date.getText().toString().trim());
-
-                upImgGallery();
-
-                processTaskStatus();
-
             }
         }
     }
@@ -568,19 +699,21 @@ public class Act028_Task extends BaseFragment {
     @Override
     public void loadScreenToData() {
         if (bStatus) {
-            tempValues.put("comments", mk_comments.getText().toString());
-            tempValues.put("img", (String) iv_gallery.getTag());
-            String sDTS = reverseB(mk_start_date.getText().toString());
+            if(mMain_new.hasExecutionProfile()) {
+                tempValues.put("comments", mk_comments.getText().toString());
+                tempValues.put("img", (String) iv_gallery.getTag());
+                String sDTS = reverseB(mk_start_date.getText().toString());
 
-            tempValues.put("dts", sDTS + " " + mk_start_hour.getText().toString());
+                tempValues.put("dts", sDTS + " " + mk_start_hour.getText().toString());
 
-            String sDTE = reverseB(mk_end_date.getText().toString());
+                String sDTE = reverseB(mk_end_date.getText().toString());
 
-            tempValues.put("dte", sDTE + " " + mk_end_hour.getText().toString());
+                tempValues.put("dte", sDTE + " " + mk_end_hour.getText().toString());
 
-            tempValues.put("perc", String.valueOf(rb_stepped_perc.getProgress() * (int) interval + (int) min));
+                tempValues.put("perc", String.valueOf(rb_stepped_perc.getProgress() * (int) interval + (int) min));
 
-            tempValues.put("qty", mk_qty_people.getText().toString());
+                tempValues.put("qty", mk_qty_people.getText().toString());
+            }
         }
     }
 
@@ -848,7 +981,7 @@ public class Act028_Task extends BaseFragment {
             );
         }
         //
-        mMain_new.setMTASK_STATUS(Act028_Main_New.CREATE_SAVE);
+        mMain_new.setMTASK_STATUS(Act028_Main.CREATE_SAVE);
         //
         callSoSave(mTask.getSo_prefix(), mTask.getSo_code());
     }
@@ -1034,6 +1167,22 @@ public class Act028_Task extends BaseFragment {
             mIntent.putExtra(ConstantBase.PENABLED, false);
         }
 
+        mIntent.putExtra(ConstantBase.MAXIMAGES, 4);
+        //
+        context.startActivity(mIntent);
+    }
+
+    private void callCamera(boolean pEnabled) {
+        sdAvoid = true;
+
+        Intent mIntent = new Intent(context, Gallery_Activity.class);
+        mIntent.putExtra(ConstantBase.PID, iv_gallery.getId());
+        mIntent.putExtra(ConstantBase.PTYPE, 10);
+        mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
+        mIntent.putExtra(ConstantBase.MPRE, "p");
+        //
+        mIntent.putExtra(ConstantBase.PENABLED, pEnabled);
+        //
         mIntent.putExtra(ConstantBase.MAXIMAGES, 4);
         //
         context.startActivity(mIntent);

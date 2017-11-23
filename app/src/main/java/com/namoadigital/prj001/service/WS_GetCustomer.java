@@ -132,7 +132,6 @@ public class WS_GetCustomer extends IntentService {
 
         EV_User userInfo = null;
         int forIdx = 0;
-
         for (File _file : files_Users) {
 
             ArrayList<EV_User> users = gson.fromJson(
@@ -143,7 +142,7 @@ public class WS_GetCustomer extends IntentService {
                     }.getType()
             );
             userInfo = users.get(0);
-            //No primeiro loop, verifica se novo usr    é diferente ultimo logado
+            //No primeiro loop, verifica se novo usr igual é diferente ultimo logado
             //Se for apaga os bancos de dados, arquivos de token, exception e support
             if(forIdx == 0 && userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
                 ArrayList<File> listToDelete = new ArrayList<>();
@@ -169,7 +168,8 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
-        //Verifica se novo usr igual ao ultimo logado
+        //Verificação antiga, só apagava bancos mult
+        // Verifica se novo usr igual ao ultimo logado
         //Se for diferente apaga os bancos mult
 //        if(userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
 //            boolean del;
@@ -178,6 +178,12 @@ public class WS_GetCustomer extends IntentService {
 //            for (File _file : files_db) {
 //                del = _file.delete();
 //            }
+//            //Limpa arquivos de token S.O e Serial
+//            File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
+//            for (File _file : files_token) {
+//                del = _file.delete();
+//            }
+//
 //        }
 
         //Apaga dados da tabela

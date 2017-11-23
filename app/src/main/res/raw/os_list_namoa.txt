@@ -10,7 +10,7 @@
 		"product_code": "PROD1",
 		"product_desc": "CARRO",
 		"serial_code": 52,
-		"serial_id": "X",
+		"serial_code": "X",
 		"category_price_code": 8,
 		"category_price_id": "03 Grandes",
 		"category_price_desc": "Grandes",

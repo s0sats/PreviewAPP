@@ -184,7 +184,7 @@ public class WS_Serial_Save extends IntentService {
         HMAux hmAuxRet = new HMAux();
         //
         for (MD_Product_Serial serialAux : serialList) {
-            String hmKey = serialAux.getProduct_code() + Constant.MAIN_CONCAT_STRING + serialAux.getSerial_id();
+            String hmKey = serialAux.getProduct_code() + Constant.MAIN_CONCAT_STRING + serialAux.getSerial_id()+ Constant.MAIN_CONCAT_STRING + serialAux.getSerial_code();
             //
             hmAuxRet.put(hmKey, "");
             //

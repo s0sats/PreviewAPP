@@ -23,7 +23,7 @@ import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
-import com.namoadigital.prj001.ui.act028.Act028_Main_New;
+import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -260,7 +260,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     @Override
     public void callAct028(Context context) {
-        Intent mIntent = new Intent(context, Act028_Main_New.class);
+        Intent mIntent = new Intent(context, Act028_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(Constant.ACT008_SERIAL_ID);
