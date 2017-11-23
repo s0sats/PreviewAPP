@@ -31,6 +31,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
@@ -51,6 +52,7 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
+import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_005;
@@ -121,13 +123,18 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     private HMAux partnerAux = new HMAux();
 
     private int index = 0;
-    //Variavel só utilizada a criação de N-Form via N-Service
-    private HMAux sm_so_n_form = new HMAux();
+
     private String ws_process = "";
     private int original_update_required;
     //Profile de EXECUTION
     private boolean executionProfile = false;
+    //Variavel utilizada para validações de N-Service e criação do N-Form
+    private HMAux mSoAux = new HMAux();
     private String so_status;
+    //N-Form, seleção de produto
+    private MD_ProductDao productDao;
+    private ArrayList<HMAux> nFormProductList = new ArrayList<>();
+    private HMAux nFormProductSelected = new HMAux();
 
     public void setMTASK_STATUS(String MTASK_STATUS) {
         this.MTASK_STATUS = MTASK_STATUS;
@@ -217,6 +224,11 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         //
         transList.add("toolbar_info_lbl");
         transList.add("alert_unsaved_data_will_be_lost");
+        //
+        transList.add("dialog_form_prod_selection_ttl");
+        transList.add("dialog_form_prod_ss_product_lbl");
+        transList.add("dialog_form_prod_ss_product_search_ttl");
+        transList.add("dialog_form_prod_serial_lbl");
 
         sm_soDao = new SM_SODao(
                 context,
@@ -338,6 +350,15 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         } else {
             setFrag(act028_empty_, SELECTION_EMPTY);
         }
+        //
+        //N-Form via N-Service
+        productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //carrega HmAux com list de produtos que o user
+        loadNFormProductList();
     }
 
     public boolean hasExecutionProfile() {
@@ -368,8 +389,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                     Integer.parseInt(bundle.getString(SM_SO_Service_Exec_TaskDao.SERVICE_SEQ))
             );
             //
-
-            HMAux hmAuxSo = sm_soDao.getByStringHM(
+            mSoAux = sm_soDao.getByStringHM(
                     new SM_SO_Sql_002(
                             mService.getCustomer_code(),
                             mService.getSo_prefix(),
@@ -377,7 +397,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                     ).toSqlQuery()
             );
             //Força DONE se null, para não exibir o menu para N-form
-            so_status = hmAuxSo != null ? hmAuxSo.get(SM_SODao.STATUS) : Constant.SO_STATUS_DONE ;
+            so_status = mSoAux != null ? mSoAux.get(SM_SODao.STATUS) : Constant.SO_STATUS_DONE ;
             //
             if (bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP) != null) {
                 mExec = loadExec(
@@ -992,7 +1012,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             }
         }
        //
-       HMAux soAux = sm_soDao
+       mSoAux = sm_soDao
                .getByStringHM(
                        new SM_SO_Sql_002(
                                mService.getCustomer_code(),
@@ -1001,8 +1021,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                        ).toSqlQuery()
                );
         //
-        if (soAux != null && soAux.size() > 0){
-            original_update_required = Integer.parseInt(soAux.get(SM_SODao.UPDATE_REQUIRED));
+        if (mSoAux != null && mSoAux.size() > 0){
+            original_update_required = Integer.parseInt(mSoAux.get(SM_SODao.UPDATE_REQUIRED));
+            so_status = mSoAux.get(SM_SODao.STATUS);
         }
         //
         startDownloadServices();
@@ -1454,13 +1475,13 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         TextView tv_tracking_lbl = (TextView) view.findViewById(R.id.act028_dialog_info_tv_tracking_lbl);
         TextView tv_tracking_val = (TextView) view.findViewById(R.id.act028_dialog_info_tv_tracking_val);
         //Busca dados
-        HMAux so_info = sm_soDao.getByStringHM(
+        /*HMAux so_info = sm_soDao.getByStringHM(
                 new SM_SO_Sql_002(
                         mService.getCustomer_code(),
                         mService.getSo_prefix(),
                         mService.getSo_code()
                 ).toSqlQuery()
-        );
+        );*/
         //
         ArrayList<HMAux> tracking_list = (ArrayList<HMAux>)
                 new MD_Product_Serial_TrackingDao(
@@ -1469,26 +1490,26 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                         Constant.DB_VERSION_CUSTOM
                 ).query_HM(
                         new MD_Product_Serial_Tracking_Sql_003(
-                                Long.parseLong(so_info.get(SM_SODao.CUSTOMER_CODE)),
-                                Long.parseLong(so_info.get(SM_SODao.PRODUCT_CODE)),
-                                Long.parseLong(so_info.get(SM_SODao.SERIAL_CODE))
+                                Long.parseLong(mSoAux.get(SM_SODao.CUSTOMER_CODE)),
+                                Long.parseLong(mSoAux.get(SM_SODao.PRODUCT_CODE)),
+                                Long.parseLong(mSoAux.get(SM_SODao.SERIAL_CODE))
 
                         ).toSqlQuery()
                 );
         //
         tv_so_lbl.setText(hmAux_Trans.get("dialog_so_lbl"));
         //
-        String so_prefix_code = so_info.get(SM_SODao.SO_PREFIX) + "." + so_info.get(SM_SODao.SO_CODE);
-        tv_so_val.setText(so_info.get(SM_SODao.SO_ID).equals(so_prefix_code) ? so_prefix_code : so_info.get(SM_SODao.SO_ID));
+        String so_prefix_code = mSoAux.get(SM_SODao.SO_PREFIX) + "." + mSoAux.get(SM_SODao.SO_CODE);
+        tv_so_val.setText(mSoAux.get(SM_SODao.SO_ID).equals(so_prefix_code) ? so_prefix_code : mSoAux.get(SM_SODao.SO_ID));
         //
         tv_service_lbl.setText(hmAux_Trans.get("dialog_service_lbl"));
         tv_service_val.setText(mService.getService_id() + " - " + mService.getService_desc());
         //
         tv_product_lbl.setText(hmAux_Trans.get("dialog_product_lbl"));
-        tv_product_val.setText(so_info.get(SM_SODao.PRODUCT_ID) + " - " + so_info.get(SM_SODao.PRODUCT_DESC));
+        tv_product_val.setText(mSoAux.get(SM_SODao.PRODUCT_ID) + " - " + mSoAux.get(SM_SODao.PRODUCT_DESC));
         //
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_serial_lbl"));
-        tv_serial_val.setText(so_info.get(SM_SODao.SERIAL_ID));
+        tv_serial_val.setText(mSoAux.get(SM_SODao.SERIAL_ID));
         //
         if (tracking_list != null && tracking_list.size() > 0) {
             tv_tracking_lbl.setText(hmAux_Trans.get("dialog_tracking_lbl"));
@@ -1591,12 +1612,113 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                 showInfo();
                 return true;
             case 3 :
-                callNFormMsg();
+                if(nFormProductList != null && nFormProductList.size() > 0){
+                    showNFormProductDialog();
+                }else{
+                    callNFormMsg();
+                }
                 return true;
         }
         //
         return super.onOptionsItemSelected(item);
     }
+
+    private void loadNFormProductList() {
+        nFormProductList = (ArrayList<HMAux>) productDao.query_HM(
+                new MD_Product_Sql_SS_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSoAux.get(SM_SODao.PRODUCT_CODE)
+                ).toSqlQuery()
+        );
+    }
+
+    private void showNFormProductDialog() {
+        resetHmAuxProdutcSelected();
+        //
+        final AlertDialog.Builder productDialog = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.namoa_dialog_ss_selection,null);
+        //IniVar
+        TextView tv_main_ttl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_main_ttl);
+        final SearchableSpinner ss_product = (SearchableSpinner) view.findViewById(R.id.namoa_dialog_ss_selection_ss_main);
+        final TextView tv_serial_lbl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_item_lbl);
+        final TextView tv_serial_val = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_item_val);
+        //
+        tv_main_ttl.setText(hmAux_Trans.get("dialog_form_prod_selection_ttl"));
+        //
+        ss_product.setmLabel(hmAux_Trans.get("dialog_form_prod_ss_product_lbl"));
+        ss_product.setmTitle(hmAux_Trans.get("dialog_form_prod_ss_product_search_ttl"));
+        ss_product.setmOption(nFormProductList);
+        //
+        ToolBox_Inf.setSSmValue(
+                ss_product,
+                mSoAux.get(SM_SODao.PRODUCT_CODE),
+                mSoAux.get(SM_SODao.PRODUCT_DESC),
+                true,
+                false
+        );
+        //
+        tv_serial_lbl.setText(hmAux_Trans.get("dialog_form_prod_serial_lbl"));
+        tv_serial_val.setText(mSoAux.get(SM_SODao.SERIAL_ID));
+        //
+        ss_product.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE))){
+                    tv_serial_lbl.setVisibility(View.GONE);
+                    tv_serial_val.setVisibility(View.GONE);
+                    tv_serial_val.setText("");
+                }else{
+                    tv_serial_lbl.setVisibility(View.VISIBLE);
+                    tv_serial_val.setVisibility(View.VISIBLE);
+                    tv_serial_val.setText(mSoAux.get(SM_SODao.SERIAL_ID));
+                }
+            }
+        });
+
+        //
+        productDialog
+                .setView(view)
+                .setPositiveButton(
+                        hmAux_Trans.get("sys_alert_btn_ok"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                nFormProductSelected = ss_product.getmValue();
+                                //
+                                processNFormFlow();
+                            }
+                        }
+                )
+                .setNegativeButton(
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                resetHmAuxProdutcSelected();
+                            }
+                        }
+                )
+                .setCancelable(false);
+
+        productDialog.show();
+
+    }
+
+    private void resetHmAuxProdutcSelected() {
+        nFormProductSelected.put(SearchableSpinner.ID,"-1");
+        nFormProductSelected.put(SearchableSpinner.DESCRIPTION,"");
+        nFormProductSelected.put(SM_SODao.PRODUCT_CODE,"-1");
+        nFormProductSelected.put(SM_SODao.PRODUCT_ID,"");
+        nFormProductSelected.put(SM_SODao.PRODUCT_DESC,"");
+    }
+
 
     private void callNFormMsg() {
 
@@ -1626,21 +1748,21 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     private void processNFormFlow() {
-        HMAux mSm_so = sm_soDao.getByStringHM(
+        /*HMAux mSm_so = sm_soDao.getByStringHM(
                 new SM_SO_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         mService.getSo_prefix(),
                         mService.getSo_code()
                 ).toSqlQuery()
-        );
-        if (mSm_so != null && mSm_so.size() > 0){
-            sm_so_n_form = mSm_so;
+        );*/
+        if (mSoAux != null && mSoAux.size() > 0){
             //
             HMAux syncProduct = syncChecklistDao
                     .getByStringHM(
                             new Sync_Checklist_Sql_002(
                                     ToolBox_Con.getPreference_Customer_Code(context),
-                                    Long.parseLong(mSm_so.get(SM_SODao.PRODUCT_CODE))
+                                    !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : Long.parseLong(mSoAux.get(SM_SODao.PRODUCT_CODE))
+
                             ).toSqlQuery()
                     );
             //Se Forms do produto ainda não foram sincronizados,
@@ -1675,7 +1797,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             Bundle bundle = new Bundle();
             bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
             bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-            bundle.putLong(Constant.GS_PRODUCT_CODE, Long.parseLong(sm_so_n_form.get(SM_SODao.PRODUCT_CODE)));
+            bundle.putLong(Constant.GS_PRODUCT_CODE, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : Long.parseLong(mSoAux.get(SM_SODao.PRODUCT_CODE)));
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
 
@@ -1712,7 +1834,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         Sync_Checklist syncChecklist =  new Sync_Checklist();
 
         syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-        syncChecklist.setProduct_code(Long.parseLong(sm_so_n_form.get(SM_SODao.PRODUCT_CODE)));
+        syncChecklist.setProduct_code(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : Long.parseLong(mSoAux.get(SM_SODao.PRODUCT_CODE)));
         syncChecklist.setLast_update(last_update);
 
         syncChecklistDao.addUpdate(syncChecklist);
@@ -1740,12 +1862,14 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(SM_SODao.SO_PREFIX, sm_so_n_form.get(SM_SODao.SO_PREFIX));
-        bundle.putString(SM_SODao.SO_CODE, sm_so_n_form.get(SM_SODao.SO_CODE));
-        bundle.putString(SM_SODao.SITE_CODE, sm_so_n_form.get(SM_SODao.SITE_CODE));
-        bundle.putString(SM_SODao.OPERATION_CODE,sm_so_n_form.get(SM_SODao.OPERATION_CODE) );
-        bundle.putString(Constant.ACT007_PRODUCT_CODE,sm_so_n_form.get(SM_SODao.PRODUCT_CODE));
-        bundle.putString(Constant.ACT008_SERIAL_ID,sm_so_n_form.get(SM_SODao.SERIAL_ID));
+        bundle.putString(SM_SODao.SO_PREFIX, mSoAux.get(SM_SODao.SO_PREFIX));
+        bundle.putString(SM_SODao.SO_CODE, mSoAux.get(SM_SODao.SO_CODE));
+        bundle.putString(SM_SODao.SITE_CODE, mSoAux.get(SM_SODao.SITE_CODE));
+        bundle.putString(SM_SODao.OPERATION_CODE,mSoAux.get(SM_SODao.OPERATION_CODE) );
+        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_CODE) : mSoAux.get(SM_SODao.PRODUCT_CODE)));
+        bundle.putString(Constant.ACT008_PRODUCT_ID, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_ID) : mSoAux.get(SM_SODao.PRODUCT_ID));
+        bundle.putString(Constant.ACT008_PRODUCT_DESC, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_DESC) :mSoAux.get(SM_SODao.PRODUCT_DESC));
+        bundle.putString(Constant.ACT008_SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(mSoAux.get(SM_SODao.PRODUCT_CODE)) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSoAux.get(SM_SODao.SERIAL_ID) : "" );
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT028);
         //Dados do Serviço
         bundle.putString(SM_SO_Service_Exec_TaskDao.PRICE_LIST_CODE, String.valueOf(mService.getPrice_list_code()));

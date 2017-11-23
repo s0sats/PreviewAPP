@@ -18,6 +18,11 @@ public class MD_Product_Sql_SS_001 implements Specification {
         this.product_code = product_code;
     }
 
+    public MD_Product_Sql_SS_001(long customer_code, String product_code) {
+        this.customer_code = customer_code;
+        this.product_code = product_code == null ? -1 : Long.parseLong(product_code);
+    }
+
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
@@ -25,8 +30,10 @@ public class MD_Product_Sql_SS_001 implements Specification {
         return sb
                 .append(" SELECT \n" +
                         "    p.product_code " + SearchableSpinner.ID + ",\n"+
-                        "    p.product_id, \n"+
                         "    p.product_id ||' - '|| p.product_desc " + SearchableSpinner.DESCRIPTION + "\n," +
+                        "    p.product_code, \n"+
+                        "    p.product_id, \n"+
+                        "    p.product_desc, \n"+
                         "    CASE WHEN p.product_code = '"+product_code+"'\n" +
                         "         THEN 0 ELSE 1 \n" +
                         "    END prod_order \n"+
@@ -41,7 +48,7 @@ public class MD_Product_Sql_SS_001 implements Specification {
                         "     p.product_id,\n" +
                         "     p.product_desc \n")
                 .append(";")
-                .append(SearchableSpinner.ID + "#product_id#"+SearchableSpinner.DESCRIPTION)
+                .append(SearchableSpinner.ID + "#product_code#product_id#product_desc#"+SearchableSpinner.DESCRIPTION)
                 .toString();
     }
 }
