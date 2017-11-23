@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -32,6 +33,7 @@ import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
@@ -53,6 +55,7 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_005;
@@ -146,6 +149,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     private boolean eventEditOpenStatus = false;
     private String eventEditOpenStatusType = "";
     private boolean eventEditOpenStatusTypeDialog = false;
+    //N-Form, seleção de produto
+    private MD_ProductDao productDao;
+    private ArrayList<HMAux> nFormProductList = new ArrayList<>();
+    private HMAux nFormProductSelected = new HMAux();
+    //private long nFormProductSelected = -1;
 
     public void setEventEditOpenStatus(boolean eventEditOpenStatus) {
         this.eventEditOpenStatus = eventEditOpenStatus;
@@ -389,6 +397,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         transList.add("alert_open_n_form_msg");
         transList.add("progress_n_form_sync_ttl");
         transList.add("progress_n_form_sync_msg");
+        transList.add("dialog_form_prod_selection_ttl");
+        transList.add("dialog_form_prod_ss_product_lbl");
+        transList.add("dialog_form_prod_ss_product_search_ttl");
+        transList.add("dialog_form_prod_serial_lbl");
         //Product Event List Fragment
         transList.add("mket_product_search_hint");
         transList.add("new_product_event_ttl");
@@ -594,7 +606,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 Constant.DB_VERSION_CUSTOM
         );
         //
+        productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        loadNFormProductList();
+        //
         checkSOAttachExists();
+    }
+
+    private void loadNFormProductList() {
+        nFormProductList = (ArrayList<HMAux>) productDao.query_HM(
+                new MD_Product_Sql_SS_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mSm_so.getProduct_code()
+                ).toSqlQuery()
+        );
     }
 
     public void setCurrentFrag(String currentFrag) {
@@ -614,137 +642,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     public boolean hasExecutionProfile() {
         return executionProfile;
     }
-
-//    private void createTestProdEvent() {
-//        SM_SO_Product_EventDao eventDao = new SM_SO_Product_EventDao(
-//                context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM
-//        );
-//        SM_SO_Product_Event_FileDao eventFileDao = new SM_SO_Product_Event_FileDao(
-//                context,
-//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                Constant.DB_VERSION_CUSTOM
-//        );
-//
-//        int product_code = 12;
-//        String product_id = "18-10";
-//        String product_desc = "TESTE PK FINAL 18-10";
-//        HMAux hmTmp = eventDao.getByStringHM(
-//                new SM_SO_Product_Event_Sql_002(
-//                        mSm_so.getCustomer_code(),
-//                        mSm_so.getSo_prefix(),
-//                        mSm_so.getSo_code()
-//                ).toSqlQuery()
-//        );
-//        int seq_tmp = ToolBox_Inf.convertStringToInt(hmTmp.get(SM_SO_Product_Event_Sql_002.NEXT_TMP));
-//
-//        SM_SO_Product_Event testEvent = new SM_SO_Product_Event();
-//        //
-//        int r = new Random().nextInt(2);
-//        //
-//        testEvent.setCustomer_code(mSm_so.getCustomer_code());
-//        testEvent.setSo_prefix(mSm_so.getSo_prefix());
-//        testEvent.setSo_code(mSm_so.getSo_code());
-//        testEvent.setSeq(0);
-//        testEvent.setSeq_tmp(seq_tmp);
-//        testEvent.setProduct_code(product_code);
-//        testEvent.setProduct_id(product_id);
-//        testEvent.setProduct_desc(product_desc);
-//        testEvent.setUn("cm");
-//        testEvent.setFlag_apply(r);
-//        testEvent.setFlag_repair(r == 0 ? 1 : 0);
-//        testEvent.setFlag_inspection(r);
-//        testEvent.setQty_apply("0,62");
-//        testEvent.setSketch_code(118);
-//        testEvent.setSketch_name("prod_1_12_118.jpg");
-//        testEvent.setSketch_url("https://s3.amazonaws.com/dev.namoa.web/1/MD/FILE/118_OFFLINE");
-//        testEvent.setSketch_url_local("prod_1_12_118.jpg");
-//        testEvent.setSketch_lines(5);
-//        testEvent.setSketch_columns(5);
-//        testEvent.setSketch_color("#FF0000");
-//        testEvent.setComments("TestFakeViaApp_" + seq_tmp);
-//        testEvent.setStatus(Constant.SO_STATUS_DONE);
-//        testEvent.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
-//        testEvent.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-//        testEvent.setCreate_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-//        testEvent.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
-//        testEvent.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-//        testEvent.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-//        testEvent.setIntegrated(0);
-//        //
-//        ArrayList<SM_SO_Product_Event_Sketch> sketches = new ArrayList<>();
-//        //
-//
-//        SM_SO_Product_Event_Sketch sketch1 = new SM_SO_Product_Event_Sketch();
-//        sketch1.setPK(testEvent);
-//        r = new Random().nextInt(5) + 1;
-//        sketch1.setLine(r > 5 ? 5 : r);
-//        r = new Random().nextInt(5) + 1;
-//        sketch1.setCol(r > 5 ? 5 : r);
-//        //
-//        SM_SO_Product_Event_Sketch sketch2 = new SM_SO_Product_Event_Sketch();
-//        sketch2.setPK(testEvent);
-//        r = new Random().nextInt(5) + 1;
-//        sketch2.setLine(r > 5 ? 5 : r);
-//        r = new Random().nextInt(5) + 1;
-//        sketch2.setCol(r > 5 ? 5 : r);
-//        //
-//        SM_SO_Product_Event_Sketch sketch3 = new SM_SO_Product_Event_Sketch();
-//        sketch3.setPK(testEvent);
-//        r = new Random().nextInt(5) + 1;
-//        sketch3.setLine(r > 5 ? 5 : r);
-//        r = new Random().nextInt(5) + 1;
-//        sketch3.setCol(r > 5 ? 5 : r);
-//        //
-//        sketches.add(sketch1);
-//        sketches.add(sketch2);
-//        sketches.add(sketch3);
-//
-//        ArrayList<SM_SO_Product_Event_File> eventFiles = new ArrayList<>();
-//
-//        HMAux auxFileTmp = eventFileDao.getByStringHM(
-//                new SM_SO_Product_Event_File_Sql_002(
-//                        testEvent.getCustomer_code(),
-//                        testEvent.getSo_prefix(),
-//                        testEvent.getSo_code(),
-//                        testEvent.getSeq_tmp()
-//                ).toSqlQuery()
-//        );
-//
-//        int fileTmp = Integer.parseInt(auxFileTmp.get(SM_SO_Product_Event_File_Sql_002.NEXT_TMP));
-//        SM_SO_Product_Event_File eventFile1 = new SM_SO_Product_Event_File();
-//
-//        eventFile1.setPK(testEvent);
-//        eventFile1.setSeq(0);
-//        eventFile1.setSeq_tmp(seq_tmp);
-//        eventFile1.setFile_tmp(fileTmp);
-//        eventFile1.setFile_name("sm_so_"
-//                + eventFile1.getCustomer_code() + "_" +
-//                +eventFile1.getSo_prefix() + "_" +
-//                +eventFile1.getSo_code() + "_" +
-//                +eventFile1.getSeq_tmp() + "_" +
-//                +eventFile1.getFile_tmp() + ".jpg"
-//        );
-//        //
-//        eventFiles.add(eventFile1);
-//        //
-//        testEvent.setSketch(sketches);
-//        testEvent.setFile(eventFiles);
-//        //
-//        testEvent.setPK(mSm_so);
-//        //
-//        eventDao.addUpdateTmp(testEvent);
-//        //
-//        sm_soDao.addUpdate(
-//                new SM_SO_Sql_009(
-//                        ToolBox_Con.getPreference_Customer_Code(context),
-//                        mSm_so.getSo_prefix(),
-//                        mSm_so.getSo_code()
-//                ).toSqlQuery()
-//        );
-//
-//    }
 
     private void checkSOAttachExists() {
         if (!WBR_DownLoad_PDF.IS_RUNNING) {
@@ -2047,10 +1944,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         );
 
                     } else {
-                        callNFormMsg();
+                        if(nFormProductList != null && nFormProductList.size() > 0){
+                            showNFormProductDialog();
+                        }else{
+                            callNFormMsg();
+                        }
                     }
 
-                    //callNFormMsg();
                     return true;
 
                 case 4:
@@ -2101,6 +2001,98 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         return super.onOptionsItemSelected(item);
     }
 
+    private void showNFormProductDialog() {
+        //nFormProductSelected = -1;
+        resetHmAuxProdutcSelected();
+        //
+        final AlertDialog.Builder productDialog = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.namoa_dialog_ss_selection,null);
+        //IniVar
+        TextView tv_main_ttl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_main_ttl);
+        final SearchableSpinner ss_product = (SearchableSpinner) view.findViewById(R.id.namoa_dialog_ss_selection_ss_main);
+        final TextView tv_serial_lbl = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_item_lbl);
+        final TextView tv_serial_val = (TextView) view.findViewById(R.id.namoa_dialog_ss_selection_tv_item_val);
+        //
+        tv_main_ttl.setText(hmAux_Trans.get("dialog_form_prod_selection_ttl"));
+        //
+        ss_product.setmLabel(hmAux_Trans.get("dialog_form_prod_ss_product_lbl"));
+        ss_product.setmTitle(hmAux_Trans.get("dialog_form_prod_ss_product_search_ttl"));
+        ss_product.setmOption(nFormProductList);
+        //
+        ToolBox_Inf.setSSmValue(
+                ss_product,
+                String.valueOf(mSm_so.getProduct_code()),
+                mSm_so.getProduct_desc(),
+                true,
+                false
+                );
+        //
+        tv_serial_lbl.setText(hmAux_Trans.get("dialog_form_prod_serial_lbl"));
+        tv_serial_val.setText(mSm_so.getSerial_id());
+        //
+        ss_product.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(!hmAux.get(SearchableSpinner.ID).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code()))){
+                    tv_serial_lbl.setVisibility(View.GONE);
+                    tv_serial_val.setVisibility(View.GONE);
+                    tv_serial_val.setText("");
+                }else{
+                    tv_serial_lbl.setVisibility(View.VISIBLE);
+                    tv_serial_val.setVisibility(View.VISIBLE);
+                    tv_serial_val.setText(mSm_so.getSerial_id());
+                }
+            }
+        });
+
+        //
+        productDialog
+                .setView(view)
+                .setPositiveButton(
+                        hmAux_Trans.get("sys_alert_btn_ok"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                               // nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.ID));
+                                //
+                                nFormProductSelected = ss_product.getmValue();
+                                //
+                                processNFormFlow();
+                            }
+                        }
+                )
+                .setNegativeButton(
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                               // nFormProductSelected = -1;
+                                resetHmAuxProdutcSelected();
+                            }
+                        }
+                )
+                .setCancelable(false);
+
+        productDialog.show();
+
+    }
+
+    private void resetHmAuxProdutcSelected() {
+        nFormProductSelected.put(SearchableSpinner.ID,"-1");
+        nFormProductSelected.put(SearchableSpinner.DESCRIPTION,"");
+        nFormProductSelected.put(SM_SODao.PRODUCT_CODE,"-1");
+        nFormProductSelected.put(SM_SODao.PRODUCT_ID,"");
+        nFormProductSelected.put(SM_SODao.PRODUCT_DESC,"");
+    }
+
+
     private void callNFormMsg() {
         ToolBox.alertMSG(
                 context,
@@ -2133,7 +2125,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 .getByStringHM(
                         new Sync_Checklist_Sql_002(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                mSm_so.getProduct_code()
+                                //nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code()
+                                !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : mSm_so.getProduct_code()
                         ).toSqlQuery()
                 );
         //Se Forms do produto ainda não foram sincronizados,
@@ -2168,7 +2161,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             Bundle bundle = new Bundle();
             bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
             bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-            bundle.putLong(Constant.GS_PRODUCT_CODE, mSm_so.getProduct_code());
+            //bundle.putLong(Constant.GS_PRODUCT_CODE, nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code());
+            bundle.putLong(Constant.GS_PRODUCT_CODE, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : mSm_so.getProduct_code());
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
 
@@ -2189,7 +2183,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         Sync_Checklist syncChecklist = new Sync_Checklist();
 
         syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-        syncChecklist.setProduct_code(mSm_so.getProduct_code());
+        //syncChecklist.setProduct_code(nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code());
+        syncChecklist.setProduct_code(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : mSm_so.getProduct_code());
         syncChecklist.setLast_update(last_update);
 
         syncChecklistDao.addUpdate(syncChecklist);
@@ -2221,8 +2216,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         bundle.putString(SM_SODao.SO_CODE, String.valueOf(mSm_so.getSo_code()));
         bundle.putString(SM_SODao.SITE_CODE, String.valueOf(mSm_so.getSite_code()));
         bundle.putString(SM_SODao.OPERATION_CODE, String.valueOf(mSm_so.getOperation_code()));
-        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
-        bundle.putString(Constant.ACT008_SERIAL_ID, mSm_so.getSerial_id());
+        //bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(nFormProductSelected != -1 ? nFormProductSelected : mSm_so.getProduct_code()));
+        bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(!nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_CODE) : mSm_so.getProduct_code()));
+        bundle.putString(Constant.ACT008_PRODUCT_ID, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_ID) : mSm_so.getProduct_id());
+        bundle.putString(Constant.ACT008_PRODUCT_DESC, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? nFormProductSelected.get(SM_SODao.PRODUCT_DESC) : mSm_so.getProduct_desc());
+        //bundle.putString(Constant.ACT008_SERIAL_ID,nFormProductSelected ==  mSm_so.getProduct_code() || nFormProductSelected == -1 ? mSm_so.getSerial_id() : "" );
+        bundle.putString(Constant.ACT008_SERIAL_ID, nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase(String.valueOf(mSm_so.getProduct_code())) || nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? mSm_so.getSerial_id() : "" );
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT027);
         //
         mIntent.putExtras(bundle);
