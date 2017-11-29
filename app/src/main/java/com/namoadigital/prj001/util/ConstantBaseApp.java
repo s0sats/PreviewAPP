@@ -54,6 +54,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT031 = "act031";
     public static final String ACT032 = "act032";
     public static final String ACT033 = "act033";
+    public static final String ACT034 = "act034";
     public static final String ACT035 = "act035";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
@@ -298,7 +299,7 @@ public class ConstantBaseApp extends ConstantBase {
     //Helper
     public static final String BACK_ACTION = "back_action";
 
-    //Parametros de Permissões
+    //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
     public static final String PARAM_CHECKLIST = "CHECKLIST";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
@@ -306,6 +307,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PARAM_SO_MOV = "SO_MOV";
     public static final String CLIENT_TYPE_CLIENT = "CLIENT";
     public static final String CLIENT_TYPE_USER = "USER";
+    public static final String PARAM_CHAT = "CHAT";
 
     /**
      * Parametros EV_PROFILE

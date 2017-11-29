@@ -62,6 +62,7 @@ import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
+import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -96,6 +97,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
+    public static final String MENU_ID_CHAT = "menu_chat";
     public static final String MENU_ID_CLOSE = "menu_close_app";
 
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
@@ -846,6 +848,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     private void callAct033(Context context) {
         Intent mIntent = new Intent(context, Act033_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct034(Context context) {
+        Intent mIntent = new Intent(context, Act034_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);

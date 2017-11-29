@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/namoa_color_beige_chat"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        >
+
+        <TextView
+            android:id="@+id/act034_main_msg_alert_cell_tv_alert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Batata"
+            android:textColor="@color/namoa_color_black"
+            android:textSize="@dimen/font_size_title" />
+        <View
+            android:layout_width="2dp"
+            android:layout_height="1dp"/>
+        <TextView
+            android:id="@+id/act034_main_msg_alert_cell_tv_alert_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="22/11/2017 19:58:00"
+            android:textColor="@color/namoa_color_black"
+            android:textSize="@dimen/font_size_item" />         
+        
+    </LinearLayout>
+
+</LinearLayout>

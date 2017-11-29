@@ -258,6 +258,14 @@
 
 
         <activity
+            android:name=".ui.act034.Act034_Main"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <activity
             android:name=".ui.act035.Act035_Main"
             android:excludeFromRecents="true"
             android:label="@string/app_name"

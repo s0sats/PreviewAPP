@@ -97,6 +97,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             Act005_Main.MENU_ID_MESSAGES,
             Act005_Main.MENU_ID_SEND_DATA,
             //       Act005_Main.MENU_ID_SYNC_DATA,
+            Act005_Main.MENU_ID_CHAT,
             Act005_Main.MENU_ID_CLOSE
     };
 
@@ -110,6 +111,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             "lbl_messages",
             "lbl_send_data",
             //        "lbl_sync_data",
+            "lbl_chat",
             "lbl_close_app"
     };
 
@@ -123,6 +125,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_notificacao),
             String.valueOf(R.drawable.ic_enviar),
             //       String.valueOf(R.drawable.ic_sincronizar),
+            String.valueOf(R.drawable.ic_user_msg_on),
             String.valueOf(R.drawable.ic_sair)
     };
 
@@ -136,6 +139,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             {""},
             {""},
             // {""},
+            {Constant.PARAM_CHAT},
             {""}
     };
 
@@ -345,6 +349,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     } else {
                         mView.showNoConnectionDialog();
                     }
+                    break;
+
+                case Act005_Main.MENU_ID_CHAT:
+                    mView.callAct034(context);
                     break;
 
                 case Act005_Main.MENU_ID_CLOSE:
