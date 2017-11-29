@@ -63,7 +63,7 @@ public class Sql_Act027_002 implements Specification {
         return
                 sb
                         .append(" SELECT\n" +
-                                "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_YES_NO+"' AND TTT.QTY_DONE < TTT.qty AND TTT.PARTNER_RESTRICTION IN (-1,1)\n" +
+                                "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_YES_NO+"' AND TTT.QTY_DONE < TTT.qty AND TTT.PARTNER_RESTRICTION IN (-1,1) and TTT.HAS_EXEC_IN_PROCESS_YES_NO = 0\n" +
                                 "       THEN\n" +
                                 "        1\n" +
                                 "       ELSE\n" +
@@ -272,7 +272,7 @@ public class Sql_Act027_002 implements Specification {
                                 "             ) MY_PROCESS_EXEC\n" +
                                 "        \n" +
                                 "        FROM\n" +
-                                         SM_SO_Service_ExecDao.TABLE+" e1\n" +
+                                SM_SO_Service_ExecDao.TABLE+" e1\n" +
                                 "         \n" +
                                 "        INNER JOIN \n" +
                                 "                "+ SM_SO_Service_Exec_TaskDao.TABLE+" t ON\n" +
@@ -307,7 +307,42 @@ public class Sql_Act027_002 implements Specification {
                                 "               E1.category_price_code,\n" +
                                 "               E1.service_code,\n" +
                                 "               E1.service_seq   \n" +
-                                "    ),0) HAS_MINE_EXEC_IN_PROCESS," +
+                                "    ),0) HAS_MINE_EXEC_IN_PROCESS,\n" +//Verifica se existe execuçã/task do usuario
+                                "    \n" +
+                                "       IFNULL(            \n" +
+                                "       (SELECT\n" +
+                                "         SUM(\n" +
+                                "             CASE WHEN e1.status = '"+Constant.SO_STATUS_PROCESS+"'\n" +
+                                "                  THEN\n" +
+                                "                    1\n" +
+                                "                  ELSE\n" +
+                                "                    0\n" +
+                                "             END\n" +
+                                "             ) IN_PROCESS_EXEC\n" +
+                                "        \n" +
+                                "        FROM\n" +
+                                SM_SO_Service_ExecDao.TABLE+" e1\n" +
+                                "        WHERE\n" +
+                                "           E1.customer_code = E.customer_code\n" +
+                                "           and E1.so_prefix = E.so_prefix\n" +
+                                "           and E1.so_code = E.so_code\n" +
+                                "           and E1.price_list_code = E.price_list_code\n" +
+                                "           and E1.pack_code = E.pack_code\n" +
+                                "           and E1.pack_seq = E.pack_seq\n" +
+                                "           and E1.category_price_code = E.category_price_code\n" +
+                                "           and E1.service_code = E.service_code\n" +
+                                "           and E1.service_seq = E.service_seq  \n" +
+                                "        GROUP BY\n" +
+                                "               E1.customer_code,\n" +
+                                "               E1.so_prefix, \n" +
+                                "               E1.so_code,\n" +
+                                "               E1.price_list_code,\n" +
+                                "               E1.pack_code, \n" +
+                                "               E1.pack_seq,  \n" +
+                                "               E1.category_price_code,\n" +
+                                "               E1.service_code,\n" +
+                                "               E1.service_seq   \n" +
+                                "    ),0) HAS_EXEC_IN_PROCESS_YES_NO, \n" +//Verifica se existe uma exec IN_PROCESS, ajuste para yes/no transmitida e depois cancelada.
                                 "    (SELECT \n" +
                                 "       so.status \n" +
                                 "     FROM \n" +
