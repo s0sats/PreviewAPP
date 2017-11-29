@@ -68,14 +68,7 @@ public class SingletonWebSocket {
 
             mSocket.connect();
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("user_code", ToolBox_Con.getPreference_User_Code(context));
-            jsonObject.put("customer_code", String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
-            jsonObject.put("session_id", ToolBox_Con.getPreference_Session_App(context));
-            jsonObject.put("session_type", "APP");
-            jsonObject.put("translate_code", ToolBox_Con.getPreference_Translate_Code(context));
-
-            attemptSendLogin(jsonObject.toString());
+            attemptSendLogin();
 
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
@@ -116,9 +109,20 @@ public class SingletonWebSocket {
         }
     }
 
-    public void attemptSendLogin(String message) {
-        if (mSocket != null) {
-            mSocket.emit("sLogin", message);
+    public void attemptSendLogin() {
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_code", ToolBox_Con.getPreference_User_Code(context));
+            jsonObject.put("customer_code", String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+            jsonObject.put("session_id", ToolBox_Con.getPreference_Session_App(context));
+            jsonObject.put("session_type", "APP");
+            jsonObject.put("translate_code", ToolBox_Con.getPreference_Translate_Code(context));
+
+            if (mSocket != null) {
+                mSocket.emit("sLogin", jsonObject.toString());
+            }
+        } catch (Exception e){
         }
     }
 
