@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -24,12 +26,6 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_02;
     //
     private List<HMAux> data;
-
-    private int tipo_1 = 0;
-    private boolean btipo_1 = false;
-    //
-    private int tipo_2 = 0;
-    private boolean btipo_2 = false;
 
     public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, List<HMAux> data) {
         this.context = context;
@@ -66,55 +62,77 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        btipo_1 = false;
-        btipo_2 = false;
-
         if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
             switch (getItemViewType(position)) {
                 case 0:
                     convertView = mInflater.inflate(resource_01, parent, false);
-                    //
-                    btipo_1 = true;
-                    //
-                    tipo_1 += 1;
                     break;
                 case 1:
                     convertView = mInflater.inflate(resource_02, parent, false);
-                    //
-                    btipo_2 = true;
-                    //
-                    tipo_2 += 1;
                     break;
             }
         }
         //
         HMAux hmAux = data.get(position);
         //
-        TextView tv_contador;
-        TextView tv_valor;
-        //
+        View v_space_left;
+        ImageView iv_other_img;
+        LinearLayout ll_item;
+        TextView tv_name;
+        ImageView iv_foto;
+        TextView tv_message;
+        TextView tv_hour;
+        ImageView iv_me_img;
+        View v_space_right;
+
         switch (getItemViewType(position)) {
             case 0:
-                tv_contador = (TextView) convertView.findViewById(R.id.cell_01_tv_contador);
-                tv_valor = (TextView) convertView.findViewById(R.id.cell_01_tv_valor);
-                //
-                if (btipo_1) {
-                    tv_contador.setText(String.valueOf(tipo_1));
-                }
-                //
-                tv_valor.setText(hmAux.get(HMAux.TEXTO_01));
+
+                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+                iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+
+                v_space_left.setVisibility(View.INVISIBLE);
+                iv_other_img.setVisibility(View.VISIBLE);
+                ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
+                tv_name.setText("Nome");
+                iv_foto.setImageResource(R.mipmap.ic_namoa);
+                tv_message.setText("Message");
+                tv_hour.setText("11:25");
+                iv_me_img.setVisibility(View.INVISIBLE);
+                v_space_right.setVisibility(View.VISIBLE);
+
                 break;
             case 1:
-                tv_contador = (TextView) convertView.findViewById(R.id.cell_02_tv_contador);
-                tv_valor = (TextView) convertView.findViewById(R.id.cell_02_tv_valor);
-                //
-                if (btipo_2) {
-                    tv_contador.setText(String.valueOf(tipo_2));
-                }
-                //
-                tv_valor.setText(hmAux.get(HMAux.TEXTO_01));
+
+                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+                iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+
+                v_space_left.setVisibility(View.VISIBLE);
+                iv_other_img.setVisibility(View.INVISIBLE);
+                ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
+                tv_name.setVisibility(View.GONE);
+                iv_foto.setImageResource(R.mipmap.ic_namoa);
+                tv_message.setText("Message");
+                tv_hour.setText("11:25");
+                iv_me_img.setVisibility(View.VISIBLE);
+                v_space_right.setVisibility(View.INVISIBLE);
+
                 break;
         }
         //

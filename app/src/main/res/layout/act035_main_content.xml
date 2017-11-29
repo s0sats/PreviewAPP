@@ -9,6 +9,7 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act035.Act035_Main"
+    android:background="@drawable/whatsapp_fundo"
     tools:showIn="@layout/act035_main">
 
     <LinearLayout

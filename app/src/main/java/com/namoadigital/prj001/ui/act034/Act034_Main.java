@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Msg_Adapter;
+import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -136,104 +137,104 @@ public class Act034_Main extends Base_Activity implements Act034_Main_View {
 
         //
         HMAux aux5 = new HMAux();
-        aux5.put("type","alert");
-        aux5.put("user","");
-        aux5.put("date","");
-        aux5.put("status","");
-        aux5.put("msg","");
-        aux5.put("alert","User Add: ");
-        aux5.put("alert_msg","Luche entrou");
+        aux5.put("type", "alert");
+        aux5.put("user", "");
+        aux5.put("date", "");
+        aux5.put("status", "");
+        aux5.put("msg", "");
+        aux5.put("alert", "User Add: ");
+        aux5.put("alert_msg", "Luche entrou");
         auxList.add(aux5);
 
         HMAux aux1 = new HMAux();
-        aux1.put("type","others");
-        aux1.put("user","Cesar(3)");
-        aux1.put("date","22/01/1988 16:00:32");
-        aux1.put("status","0");
-        aux1.put("msg","Olá batata");
-        aux1.put("alert","");
-        aux1.put("alert_msg","");
+        aux1.put("type", "others");
+        aux1.put("user", "Cesar(3)");
+        aux1.put("date", "22/01/1988 16:00:32");
+        aux1.put("status", "0");
+        aux1.put("msg", "Olá batata");
+        aux1.put("alert", "");
+        aux1.put("alert_msg", "");
         auxList.add(aux1);
         //
         HMAux aux2 = new HMAux();
-        aux2.put("type","mine");
-        aux2.put("user","Luche(52)");
-        aux2.put("date","28/11/2017 11:00:32");
-        aux2.put("status","0");
-        aux2.put("msg","Fala viado");
-        aux2.put("alert","");
-        aux2.put("alert_msg","");
+        aux2.put("type", "mine");
+        aux2.put("user", "Luche(52)");
+        aux2.put("date", "28/11/2017 11:00:32");
+        aux2.put("status", "0");
+        aux2.put("msg", "Fala viado");
+        aux2.put("alert", "");
+        aux2.put("alert_msg", "");
         auxList.add(aux2);
         //
         HMAux aux3 = new HMAux();
-        aux3.put("type","mine");
-        aux3.put("user","Luche(52)");
-        aux3.put("date","28/11/2017 11:01:32");
-        aux3.put("status","1");
-        aux3.put("msg","ta ouvindo viado?!");
-        aux3.put("alert","");
-        aux3.put("alert_msg","");
+        aux3.put("type", "mine");
+        aux3.put("user", "Luche(52)");
+        aux3.put("date", "28/11/2017 11:01:32");
+        aux3.put("status", "1");
+        aux3.put("msg", "ta ouvindo viado?!");
+        aux3.put("alert", "");
+        aux3.put("alert_msg", "");
         auxList.add(aux3);
         //
         HMAux aux4 = new HMAux();
-        aux4.put("type","mine");
-        aux4.put("user","Luche(52)");
-        aux4.put("date","28/11/2017 11:10:32");
-        aux4.put("status","2");
-        aux4.put("msg","ta ouvindo peste ???");
-        aux4.put("alert","");
-        aux4.put("alert_msg","");
+        aux4.put("type", "mine");
+        aux4.put("user", "Luche(52)");
+        aux4.put("date", "28/11/2017 11:10:32");
+        aux4.put("status", "2");
+        aux4.put("msg", "ta ouvindo peste ???");
+        aux4.put("alert", "");
+        aux4.put("alert_msg", "");
         auxList.add(aux4);
         //
         //
         HMAux aux6 = new HMAux();
-        aux6.put("type","alert");
-        aux6.put("user","");
-        aux6.put("date","");
-        aux6.put("status","");
-        aux6.put("msg","");
-        aux6.put("alert","User Add: ");
-        aux6.put("alert_msg","Luche entrou");
+        aux6.put("type", "alert");
+        aux6.put("user", "");
+        aux6.put("date", "");
+        aux6.put("status", "");
+        aux6.put("msg", "");
+        aux6.put("alert", "User Add: ");
+        aux6.put("alert_msg", "Luche entrou");
         auxList.add(aux6);
 
         HMAux aux7 = new HMAux();
-        aux7.put("type","others");
-        aux7.put("user","Cesar(3)");
-        aux7.put("date","22/01/1988 16:00:32");
-        aux7.put("status","0");
-        aux7.put("msg","Olá batata");
-        aux7.put("alert","");
-        aux7.put("alert_msg","");
+        aux7.put("type", "others");
+        aux7.put("user", "Cesar(3)");
+        aux7.put("date", "22/01/1988 16:00:32");
+        aux7.put("status", "0");
+        aux7.put("msg", "Olá batata");
+        aux7.put("alert", "");
+        aux7.put("alert_msg", "");
         auxList.add(aux7);
         //
         HMAux aux8 = new HMAux();
-        aux8.put("type","mine");
-        aux8.put("user","Luche(52)");
-        aux8.put("date","28/11/2017 11:00:32");
-        aux8.put("status","0");
-        aux8.put("msg","Fala viado");
-        aux8.put("alert","");
-        aux8.put("alert_msg","");
+        aux8.put("type", "mine");
+        aux8.put("user", "Luche(52)");
+        aux8.put("date", "28/11/2017 11:00:32");
+        aux8.put("status", "0");
+        aux8.put("msg", "Fala viado");
+        aux8.put("alert", "");
+        aux8.put("alert_msg", "");
         auxList.add(aux8);
         //
         HMAux aux9 = new HMAux();
-        aux9.put("type","mine");
-        aux9.put("user","Luche(52)");
-        aux9.put("date","28/11/2017 11:01:32");
-        aux9.put("status","1");
-        aux9.put("msg","ta ouvindo viado?!");
-        aux9.put("alert","");
-        aux9.put("alert_msg","");
+        aux9.put("type", "mine");
+        aux9.put("user", "Luche(52)");
+        aux9.put("date", "28/11/2017 11:01:32");
+        aux9.put("status", "1");
+        aux9.put("msg", "ta ouvindo viado?!");
+        aux9.put("alert", "");
+        aux9.put("alert_msg", "");
         auxList.add(aux9);
         //
         HMAux aux10 = new HMAux();
-        aux10.put("type","mine");
-        aux10.put("user","Luche(52)");
-        aux10.put("date","28/11/2017 11:10:32");
-        aux10.put("status","2");
-        aux10.put("msg","ta ouvindo peste ???");
-        aux10.put("alert","");
-        aux10.put("alert_msg","");
+        aux10.put("type", "mine");
+        aux10.put("user", "Luche(52)");
+        aux10.put("date", "28/11/2017 11:10:32");
+        aux10.put("status", "2");
+        aux10.put("msg", "ta ouvindo peste ???");
+        aux10.put("alert", "");
+        aux10.put("alert_msg", "");
         auxList.add(aux10);
         mAdapter = new Act034_Msg_Adapter(
                 context,
@@ -279,7 +280,9 @@ public class Act034_Main extends Base_Activity implements Act034_Main_View {
     public void onBackPressed() {
         //super.onBackPressed();
 
-        mPresenter.onBackPressedClicked();
+        //mPresenter.onBackPressedClicked();
+
+        callAct005(context);
     }
 
     @Override

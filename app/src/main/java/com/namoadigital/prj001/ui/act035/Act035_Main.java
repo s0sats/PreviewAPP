@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +12,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -148,6 +151,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             dados.add(hmAux);
         }
     }
+
+
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+        //mPresenter.onBackPressedClicked();
+
+        callAct005(context);
+    }
+
+    public void callAct005(Context context) {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+
 
 
 }
