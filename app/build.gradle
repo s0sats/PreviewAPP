@@ -64,6 +64,10 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     testCompile 'junit:junit:4.12'
 
+    compile ('io.socket:socket.io-client:0.8.3') {
+        exclude group: 'org.json', module: 'json'
+    }
+
     provided files('json-20160212.jar')
 }
 

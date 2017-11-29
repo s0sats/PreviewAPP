@@ -257,6 +257,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
 
+        <activity
+            android:name=".ui.act035.Act035_Main"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
@@ -396,6 +404,8 @@
         <receiver android:name=".receiver.WBR_UserAuthor" />
 
         <service android:name=".service.WS_UserAuthor" />
+
+        <service android:name=".service.AppBackgroundService" />
 
     </application>
 

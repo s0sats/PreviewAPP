@@ -45,6 +45,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
@@ -61,6 +62,7 @@ import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -205,6 +207,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
 
         context = Act005_Main.this;
+        //
+        // Teste hugo remover
+
+        Intent mIntent = new Intent(context, AppBackgroundService.class);
+        startService(mIntent);
+
+
         //
         ToolBox_Inf.cleanningFormLocal(context);
         Constant.DATEFORMATDT = ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m", "M").replaceAll("r", "y");
@@ -738,6 +747,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     public void callAct006(Context context) {
+        // Teste Hugo Remover
+        Intent mIntent2 = new Intent(context, AppBackgroundService.class);
+        stopService(mIntent2);
+        //
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
@@ -836,6 +849,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void callAct035(Context context) {
+        Intent mIntent = new Intent(context, Act035_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+//        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -1263,6 +1286,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
+
+        //Jogar Fora
+        menu.add(0, TOOLBAR_SUPPORT+1, Menu.FIRST + 4, "Lista");
+        menu.findItem(TOOLBAR_SUPPORT+1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
+        menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Lista");
+
         return true;
     }
 
@@ -1318,6 +1348,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 };*/
                 break;
+
+            case TOOLBAR_SUPPORT+1:
+                callAct035(context);
+                /*alertTitle = hmAux_Trans.get("alert_support_ttl");
+                alertMsg = hmAux_Trans.get("alert_support_nfc_msg");
+                listener =  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.showSupportDialog();
+                        //mPresenter.executeSupport("MSG");
+                    }
+                };*/
+                break;
+
 
             default:
                 return true;
