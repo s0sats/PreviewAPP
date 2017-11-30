@@ -377,5 +377,12 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String WS_FCM = "WS_FCM";
 
+    /*
+    * Constantes CHAT
+    */
+
+    public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
+    public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
+
 
 }

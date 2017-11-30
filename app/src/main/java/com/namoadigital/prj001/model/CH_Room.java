@@ -8,7 +8,7 @@ public class CH_Room {
     private String room_code;
     private String room_type;
     private String room_desc;
-    private long customer_code;
+    private Long customer_code;
     private String room_obj;
     private String room_image;
     private String room_image_local;
@@ -37,11 +37,11 @@ public class CH_Room {
         this.room_desc = room_desc;
     }
 
-    public long getCustomer_code() {
+    public Long getCustomer_code() {
         return customer_code;
     }
 
-    public void setCustomer_code(long customer_code) {
+    public void setCustomer_code(Long customer_code) {
         this.customer_code = customer_code;
     }
 

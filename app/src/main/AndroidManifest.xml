@@ -415,6 +415,10 @@
 
         <service android:name=".service.AppBackgroundService" />
 
+        <receiver android:name=".receiver_chat.WBR_C_Room" />
+
+        <service android:name=".service_chat.WS_C_Room" />
+
     </application>
 
 </manifest>

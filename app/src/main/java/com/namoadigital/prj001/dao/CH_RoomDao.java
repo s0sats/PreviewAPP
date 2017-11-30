@@ -250,10 +250,22 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             ch_room.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             ch_room.setRoom_type(cursor.getString(cursor.getColumnIndex(ROOM_TYPE)));
             ch_room.setRoom_desc(cursor.getString(cursor.getColumnIndex(ROOM_DESC)));
-            ch_room.setCustomer_code(cursor.getInt(cursor.getColumnIndex(CUSTOMER_CODE)));
+            if(!cursor.isNull(cursor.getColumnIndex(CUSTOMER_CODE))){
+                ch_room.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
+            }else{
+                ch_room.setCustomer_code(null);
+            }
             ch_room.setRoom_obj(cursor.getString(cursor.getColumnIndex(ROOM_OBJ)));
-            ch_room.setRoom_image(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE)));
-            ch_room.setRoom_image_local(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE_LOCAL)));
+            if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE))){
+                ch_room.setRoom_image(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE)));
+            }else{
+                ch_room.setRoom_image(null);
+            }
+            if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_LOCAL))){
+                ch_room.setRoom_image_local(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE_LOCAL)));
+            }else{
+                ch_room.setRoom_image_local(null);
+            }
 
             return ch_room;
         }
@@ -276,21 +288,11 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
                 contentValues.put(ROOM_DESC, ch_room.getRoom_desc());
             }
 
-            if (ch_room.getCustomer_code() > -1) {
-                contentValues.put(CUSTOMER_CODE, ch_room.getCustomer_code());
-            }
+            contentValues.put(CUSTOMER_CODE, ch_room.getCustomer_code());
+            contentValues.put(ROOM_OBJ, ch_room.getRoom_obj());
+            contentValues.put(ROOM_IMAGE, ch_room.getRoom_image());
+            contentValues.put(ROOM_IMAGE_LOCAL, ch_room.getRoom_image_local());
 
-            if (ch_room.getRoom_obj() != null) {
-                contentValues.put(ROOM_OBJ, ch_room.getRoom_obj());
-            }
-
-            if (ch_room.getRoom_image() != null) {
-                contentValues.put(ROOM_IMAGE, ch_room.getRoom_image());
-            }
-
-            if (ch_room.getRoom_image_local() != null) {
-                contentValues.put(ROOM_IMAGE_LOCAL, ch_room.getRoom_image_local());
-            }
             return contentValues;
         }
     }

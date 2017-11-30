@@ -25,7 +25,7 @@ public class DatabaseHelperChat extends SQLiteOpenHelper {
             StringBuilder script = new StringBuilder();
             StringBuilder script_dados = new StringBuilder();
             //
-            script.append("create table if not exists [ch_rooms] ([room_code] text not null, [room_type] text not null COLLATE NOCASE, [room_desc] text not null COLLATE NOCASE, [customer_code] int not null , [room_obj] text DEFAULT '' COLLATE NOCASE,[room_image] text DEFAULT '' COLLATE NOCASE,[room_image_local] text DEFAULT '' COLLATE NOCASE, constraint pk_rooms primary key(room_code));");
+            script.append("create table if not exists [ch_rooms] ([room_code] text not null, [room_type] text not null COLLATE NOCASE, [room_desc] text not null COLLATE NOCASE, [customer_code] int , [room_obj] text DEFAULT '' COLLATE NOCASE,[room_image] text DEFAULT '' COLLATE NOCASE,[room_image_local] text DEFAULT '' COLLATE NOCASE, constraint pk_rooms primary key(room_code));");
             //
             String[] scripts        = script.toString().split(";");
             String[] scripts_dados =  script_dados.toString().split(";");
