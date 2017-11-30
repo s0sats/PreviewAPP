@@ -32,7 +32,7 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
     public static final String ROOM_IMAGE = "room_image";
     public static final String ROOM_IMAGE_LOCAL = "room_image_local";
 
-    private String[] columns = {
+    public static String[] columns = {
             ROOM_CODE, ROOM_TYPE, ROOM_DESC, CUSTOMER_CODE, ROOM_OBJ, ROOM_IMAGE, ROOM_IMAGE_LOCAL
     };
 

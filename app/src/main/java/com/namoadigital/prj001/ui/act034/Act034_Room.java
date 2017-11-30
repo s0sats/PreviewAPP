@@ -12,7 +12,10 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act034_Msg_Adapter;
+import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
@@ -27,7 +30,9 @@ public class Act034_Room extends BaseFragment {
     private TextView tv_others_customer_msg_lbl;
     private TextView tv_others_customer_msg_qty;
     private ListView lv_msg;
-    private Act034_Msg_Adapter mAdapter;
+    //private Act034_Msg_Adapter mAdapter;
+    private Act034_Room_Adapter mAdapter;
+    private CH_RoomDao roomDao;
 
 
     @Nullable
@@ -52,7 +57,31 @@ public class Act034_Room extends BaseFragment {
         //
         lv_msg = (ListView) view.findViewById(R.id.act034_room_lv_msg);
         //
-        loadMsgList();
+        roomDao = new CH_RoomDao(getActivity());
+        //
+        //loadMsgList();
+        loadRoomList();
+
+    }
+
+    private void loadRoomList() {
+        ArrayList<HMAux> roomList =
+                (ArrayList<HMAux>) roomDao.query_HM(
+                        new CH_Room_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(getActivity())
+                        ).toSqlQuery()
+                );
+        //
+        if(roomList != null && roomList.size() > 0){
+            mAdapter = new Act034_Room_Adapter(
+                    getActivity(),
+                    roomList,
+                    R.layout.act034_room_cell
+            );
+            //
+            lv_msg.setAdapter(mAdapter);
+        }
+
     }
 
     private void iniAction() {
@@ -169,12 +198,12 @@ public class Act034_Room extends BaseFragment {
         aux10.put("alert_msg", "");
         auxList.add(aux10);
         //
-        mAdapter = new Act034_Msg_Adapter(
-                getActivity(),
-                auxList
-        );
-        //
-        lv_msg.setAdapter(mAdapter);
+//        mAdapter = new Act034_Msg_Adapter(
+//                getActivity(),
+//                auxList
+//        );
+//        //
+//        lv_msg.setAdapter(mAdapter);
     }
 }
 
