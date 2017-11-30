@@ -212,7 +212,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         // Teste hugo remover
 
-        //Intent mIntent = new Intent(context, AppBackgroundService.class);
+        Intent mIntent = new Intent(context, AppBackgroundService.class);
         //startService(mIntent);
 
         //
@@ -315,7 +315,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     private void initVars() {
-
         wsProcess = "";
         wsSoProcess = "";
 
@@ -748,10 +747,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     public void callAct006(Context context) {
-        // Teste Hugo Remover
-        //Intent mIntent2 = new Intent(context, AppBackgroundService.class);
-        //stopService(mIntent2);
-        //
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
@@ -1429,7 +1424,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         context.sendBroadcast(mIntent);
         //
         ToolBox_Con.cleanPreferences(context);
-
+        //
+        Intent socketService = new Intent(context, AppBackgroundService.class);
+        stopService(socketService);
+        //
         finish();
     }
 
