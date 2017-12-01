@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 
@@ -60,6 +62,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     @Override
+    public boolean isEnabled(int position) {
+        return getItemViewType(position) == 0 ? false : true;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
@@ -100,11 +107,14 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
                 v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
 
-                v_space_left.setVisibility(View.INVISIBLE);
+                v_space_left.setVisibility(View.GONE);
                 iv_other_img.setVisibility(View.VISIBLE);
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
                 tv_name.setText("Nome");
-                iv_foto.setImageResource(R.mipmap.ic_namoa);
+
+                //iv_foto.setImageResource(R.drawable.bt);
+                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "sm_so_1_2017_35_2_1078_thumb.jpg"));
+
                 tv_message.setText("Message");
                 tv_hour.setText("11:25");
                 iv_me_img.setVisibility(View.INVISIBLE);
@@ -117,21 +127,26 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
                 ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
                 tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+
                 iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+
                 tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
                 tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
                 iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
                 v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
 
                 v_space_left.setVisibility(View.VISIBLE);
-                iv_other_img.setVisibility(View.INVISIBLE);
+                iv_other_img.setVisibility(View.GONE);
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
-                tv_name.setVisibility(View.GONE);
-                iv_foto.setImageResource(R.mipmap.ic_namoa);
+                tv_name.setVisibility(View.INVISIBLE);
+
+                //iv_foto.setImageResource(R.drawable.bt);
+                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "sm_so_1_2017_35_2_1078_thumb.jpg"));
+
                 tv_message.setText("Message");
                 tv_hour.setText("11:25");
                 iv_me_img.setVisibility(View.VISIBLE);
-                v_space_right.setVisibility(View.INVISIBLE);
+                v_space_right.setVisibility(View.GONE);
 
                 break;
         }
