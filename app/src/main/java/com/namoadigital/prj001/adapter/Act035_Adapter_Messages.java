@@ -26,13 +26,19 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     //
     private int resource_01;
     private int resource_02;
+    private int resource_03;
+    private int resource_04;
+
     //
     private List<HMAux> data;
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, List<HMAux> data) {
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02,  int resource_03, int resource_04, List<HMAux> data) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
+        this.resource_03 = resource_03;
+        this.resource_04 = resource_04;
+
         this.data = data;
     }
 
@@ -53,7 +59,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 4;
     }
 
     @Override
@@ -79,6 +85,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 case 1:
                     convertView = mInflater.inflate(resource_02, parent, false);
                     break;
+                case 2:
+                    convertView = mInflater.inflate(resource_03, parent, false);
+                    break;
+                case 3:
+                    convertView = mInflater.inflate(resource_04, parent, false);
+                    break;
+
             }
         }
         //
@@ -147,6 +160,51 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_hour.setText("11:25");
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
+
+                break;
+
+            case 2:
+                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+
+                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+
+                v_space_left.setVisibility(View.VISIBLE);
+                iv_other_img.setVisibility(View.GONE);
+                ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
+                tv_name.setVisibility(View.GONE);
+
+                tv_message.setText("Message Me");
+                tv_hour.setText("11:25");
+                iv_me_img.setVisibility(View.VISIBLE);
+                v_space_right.setVisibility(View.GONE);
+                break;
+
+            case 3:
+                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+
+                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+
+                v_space_left.setVisibility(View.GONE);
+                iv_other_img.setVisibility(View.VISIBLE);
+                ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
+                tv_name.setVisibility(View.VISIBLE);
+
+                tv_message.setText("Message from");
+                tv_hour.setText("11:25");
+                iv_me_img.setVisibility(View.GONE);
+                v_space_right.setVisibility(View.VISIBLE);
 
                 break;
         }

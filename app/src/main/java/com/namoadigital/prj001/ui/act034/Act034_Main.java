@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act034;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -96,6 +97,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 R.string.act005_drawer_opened,
                 R.string.act005_drawer_opened
         ) {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -105,6 +107,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 invalidateOptionsMenu();
             }
 
+            @SuppressLint("RestrictedApi")
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);

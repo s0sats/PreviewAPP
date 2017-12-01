@@ -7,11 +7,13 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -43,9 +45,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private ArrayList<HMAux> dados;
 
+    private Act035_Adapter_Messages act035_adapter_messages;
+
     private Bundle bundle;
     private int backAction;
     private String requestingAct;
+
+    private MKEditTextNM mkEditTextNM;
+
+    private int lastvisibleposition = -1;
+    private int lastposition = -1;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,17 +109,44 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         tv_customer_val = (TextView) findViewById(R.id.act0035_tv_customer_val);
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);
+        mkEditTextNM = (MKEditTextNM) findViewById(R.id.act035_mket_serial);
 
-        gerarDados(10000);
+        mkEditTextNM.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+
+                lastvisibleposition = lv_messages.getLastVisiblePosition();
+                lastposition = act035_adapter_messages.getCount() - 1;
+
+                v.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (lastvisibleposition == lastposition){
+                            lv_messages.setSelection(lastposition);
+                        }
+                    }
+                }, 100);
+
+                return false;
+            }
+        });
+
+        gerarDados(10);
+
+        act035_adapter_messages = new Act035_Adapter_Messages(
+                getBaseContext(),
+                R.layout.act035_main_content_cell_whats,
+                R.layout.act035_main_content_cell_whats,
+                R.layout.act035_main_content_cell_whats_text,
+                R.layout.act035_main_content_cell_whats_text,
+
+                dados
+        );
 
         lv_messages.setAdapter(
-                new Act035_Adapter_Messages(
-                        getBaseContext(),
-                        R.layout.act035_main_content_cell_whats,
-                        R.layout.act035_main_content_cell_whats,
-                        dados
-                )
+                act035_adapter_messages
         );
+
+
     }
 
     private void recoverIntentsInfo() {
@@ -171,6 +208,21 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             dados.add(hmAux);
         }
+
+        HMAux hmAux1 = new HMAux();
+        hmAux1.put(HMAux.ID, "100");
+        hmAux1.put(HMAux.TEXTO_01, "Mensagem");
+        hmAux1.put(HMAux.TEXTO_02, "2");
+
+        dados.add(hmAux1);
+
+        HMAux hmAux2 = new HMAux();
+        hmAux2.put(HMAux.ID, "1001");
+        hmAux2.put(HMAux.TEXTO_01, "Mensagem GG");
+        hmAux2.put(HMAux.TEXTO_02, "3");
+
+        dados.add(hmAux2);
+
     }
 
 

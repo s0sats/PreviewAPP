@@ -10,16 +10,16 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <View
-            android:id="@+id/act035_main_content_cell_whats_v_space_left"
-            android:layout_width="100dp"
-            android:layout_height="1dp" />
+        <!--<View-->
+            <!--android:id="@+id/act035_main_content_cell_whats_v_space_left"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="1dp" />-->
 
         <ImageView
             android:id="@+id/act035_main_content_cell_whats_iv_other_img"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginRight="-4dp"
+            android:layout_marginRight="-10dp"
             android:background="@drawable/ic_play" />
 
         <LinearLayout
@@ -29,7 +29,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_msg_from"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="5dp">
 
             <TextView
                 android:id="@+id/act035_main_content_cell_whats_tv_name"
@@ -41,12 +41,6 @@
                 android:textStyle="bold"
                 android:typeface="normal" />
 
-            <ImageView
-                android:id="@+id/act035_main_content_cell_whats_iv_foto"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_camera" />
 
             <TextView
                 android:id="@+id/act035_main_content_cell_whats_tv_message"
@@ -75,13 +69,13 @@
             android:id="@+id/act035_main_content_cell_whats_iv_me_img"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginLeft="-4dp"
+            android:layout_marginLeft="-10dp"
             android:background="@drawable/ic_play_2" />
 
-        <View
-            android:id="@+id/act035_main_content_cell_whats_v_space_right"
-            android:layout_width="100dp"
-            android:layout_height="1dp" />
+        <!--<View-->
+            <!--android:id="@+id/act035_main_content_cell_whats_v_space_right"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="1dp" />-->
 
     </LinearLayout>
 

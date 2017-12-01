@@ -5,11 +5,12 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/whatsapp_fundo2"
     android:gravity="center_vertical"
     android:orientation="vertical"
+    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act035.Act035_Main"
-    android:background="@drawable/whatsapp_fundo2"
     tools:showIn="@layout/act035_main">
 
     <LinearLayout
@@ -49,10 +50,46 @@
         android:orientation="vertical">
 
         <ListView
+            android:stackFromBottom="true"
             android:id="@+id/act0035_lv_messages"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@color/padrao_TRANSPARENT" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/border_back_round"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp">
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act035_mket_serial"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false" />
+
+        <ImageView
+            android:id="@+id/act035_iv_search_serial"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:focusable="false"
+            android:paddingBottom="4dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="4dp"
+            android:src="@drawable/ic_lupa_states" />
 
     </LinearLayout>
 

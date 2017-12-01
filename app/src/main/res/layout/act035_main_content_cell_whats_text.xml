@@ -12,8 +12,9 @@
 
         <View
             android:id="@+id/act035_main_content_cell_whats_v_space_left"
-            android:layout_width="100dp"
-            android:layout_height="1dp" />
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/act035_main_content_cell_whats_iv_other_img"
@@ -24,16 +25,15 @@
 
         <LinearLayout
             android:id="@+id/act035_main_content_cell_whats_ll_item"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:background="@drawable/bg_msg_from"
             android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
                 android:id="@+id/act035_main_content_cell_whats_tv_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="N.Hugo"
                 android:textColor="#f1194f"
@@ -41,16 +41,9 @@
                 android:textStyle="bold"
                 android:typeface="normal" />
 
-            <ImageView
-                android:id="@+id/act035_main_content_cell_whats_iv_foto"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_camera" />
-
             <TextView
                 android:id="@+id/act035_main_content_cell_whats_tv_message"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Clima na região central de São Bernando do Campo "
                 android:textColor="#FF000000"
@@ -80,8 +73,9 @@
 
         <View
             android:id="@+id/act035_main_content_cell_whats_v_space_right"
-            android:layout_width="100dp"
-            android:layout_height="1dp" />
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
