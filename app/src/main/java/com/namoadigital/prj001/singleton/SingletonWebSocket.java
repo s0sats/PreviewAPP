@@ -14,6 +14,8 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.Random;
+
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -95,21 +97,22 @@ public class SingletonWebSocket {
                 }
             });
 
-            /*
+            mSocket.connect();
+
+                        /*
             *TESTE ENVIO DE MSG APAGAR DEPOIS
             */
 
             Chat_S_Message sMessage = new Chat_S_Message();
             sMessage.setRoom_code("2017.F");
             sMessage.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
-            sMessage.setData("Msg teste padrão do app.");
-            sMessage.setTmp("1");
+            sMessage.setData("Msg teste padrão do app n:"+ new Random().nextInt(100));
+            sMessage.setTmp(1);
 
             Gson gson = new GsonBuilder().serializeNulls().create();
 
             attemptSendMessages(gson.toJson(sMessage));
-
-            mSocket.connect();
+            //  attemptSendMessages(gson.toJson(chatObj));
 
         } catch (Exception e) {
             e.printStackTrace();
