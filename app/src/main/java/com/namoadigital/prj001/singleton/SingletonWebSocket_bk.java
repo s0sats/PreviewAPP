@@ -14,8 +14,8 @@ import io.socket.emitter.Emitter;
  * Created by neomatrix on 27/11/17.
  */
 
-public class SingletonWebSocket {
-    private static volatile SingletonWebSocket sSoleInstance;
+public class SingletonWebSocket_bk {
+    private static volatile SingletonWebSocket_bk sSoleInstance;
 
     private Context context;
 
@@ -45,7 +45,7 @@ public class SingletonWebSocket {
         this.mSocketReconnect = mSocketReconnect;
     }
 
-    private SingletonWebSocket() {
+    private SingletonWebSocket_bk() {
         //Prevent form the reflection api.
         if (sSoleInstance != null) {
             throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
@@ -185,14 +185,14 @@ public class SingletonWebSocket {
      *
      * @return
      */
-    public static SingletonWebSocket getInstance(Context context) {
+    public static SingletonWebSocket_bk getInstance(Context context) {
         //Double check locking pattern
         if (sSoleInstance == null) { //Check for the first time
 
-            synchronized (SingletonWebSocket.class) {   //Check for the second time.
+            synchronized (SingletonWebSocket_bk.class) {   //Check for the second time.
                 //if there is no instance available... create new one
                 if (sSoleInstance == null) {
-                    sSoleInstance = new SingletonWebSocket();
+                    sSoleInstance = new SingletonWebSocket_bk();
                     sSoleInstance.context = context;
                 }
             }

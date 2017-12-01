@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="20dp">
+        android:padding="5dp">
 
         <View
             android:id="@+id/act035_main_content_cell_whats_v_space_left"
@@ -45,7 +45,7 @@
                 android:id="@+id/act035_main_content_cell_whats_iv_foto"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="center"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_camera" />
 
             <TextView
@@ -71,7 +71,6 @@
 
         </LinearLayout>
 
-
         <ImageView
             android:id="@+id/act035_main_content_cell_whats_iv_me_img"
             android:layout_width="18dp"
@@ -83,7 +82,6 @@
             android:id="@+id/act035_main_content_cell_whats_v_space_right"
             android:layout_width="30dp"
             android:layout_height="1dp" />
-
 
     </LinearLayout>
 

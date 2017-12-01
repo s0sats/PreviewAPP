@@ -2,21 +2,31 @@ package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +46,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private Bundle bundle;
     private int backAction;
     private String requestingAct;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,13 +100,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         tv_customer_val = (TextView) findViewById(R.id.act0035_tv_customer_val);
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);
 
-        gerarDados(100);
+        gerarDados(10000);
 
         lv_messages.setAdapter(
                 new Act035_Adapter_Messages(
                         getBaseContext(),
-                        R.layout.act035_main_content_cell_me,
-                        R.layout.act035_main_content_cell_other,
+                        R.layout.act035_main_content_cell_whats,
+                        R.layout.act035_main_content_cell_whats,
                         dados
                 )
         );
@@ -121,6 +130,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void initActions() {
         tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+        //
+        //createThumbNail_Images("sm_so_1_2017_35_2_1078.jpg");
+        lv_messages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux item = (HMAux) parent.getItemAtPosition(position);
+                //
+                if (item.get(HMAux.TEXTO_02).equalsIgnoreCase("1")) {
+                    callAct036(context);
+                }
+            }
+        });
     }
     //
 
@@ -153,6 +174,44 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
 
+    private void createThumbNail_Images(String original) {
+
+        try {
+            File image = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + original);
+
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(image.getPath(), bounds);
+            if ((bounds.outWidth == -1) || (bounds.outHeight == -1))
+                return;
+
+            int originalSize = (bounds.outHeight > bounds.outWidth) ? bounds.outHeight
+                    : bounds.outWidth;
+
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inSampleSize = originalSize / 512;
+
+            Bitmap imgFinal = BitmapFactory.decodeFile(image.getPath(), opts);
+
+            File file = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + original.replace(".jpg", "") + "_thumb.jpg");
+
+            if (file.exists()) {
+                file.delete();
+            }
+//
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+//
+            imgFinal.compress(Bitmap.CompressFormat.JPEG, 25, os);
+
+            os.flush();
+            os.close();
+
+        } catch (Exception e) {
+            return;
+        }
+
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -170,7 +229,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         finish();
     }
 
-
+    public void callAct036(Context context) {
+        Intent mIntent = new Intent(context, Act036_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
 
 
 }
