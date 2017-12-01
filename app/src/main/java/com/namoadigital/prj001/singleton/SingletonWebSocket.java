@@ -1,10 +1,20 @@
 package com.namoadigital.prj001.singleton;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.namoadigital.prj001.model.Chat_Login_Env;
+import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import org.json.JSONObject;
+import java.util.Random;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -53,6 +63,7 @@ public class SingletonWebSocket {
     }
 
     public void initConnection() {
+        Log.d("Chat", "initConnection");
 
         IO.Options options = new IO.Options();
         options.timeout = 1000;
@@ -69,6 +80,7 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    Log.d("Chat", "onConnect");
                     mSocketRunning = true;
                 }
             });
@@ -76,6 +88,7 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    Log.d("Chat", "onDisconect");
                     reconnect();
                 }
             });
@@ -84,22 +97,39 @@ public class SingletonWebSocket {
 
             attemptSendLogin();
 
+                        /*
+            *TESTE ENVIO DE MSG APAGAR DEPOIS
+            */
+
+            Chat_S_Message sMessage = new Chat_S_Message();
+            sMessage.setRoom_code("2017.F");
+            sMessage.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
+            sMessage.setData("Msg teste padrão do app n:"+ new Random().nextInt(100));
+            sMessage.setTmp(1);
+
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            attemptSendMessages(gson.toJson(sMessage));
+            //  attemptSendMessages(gson.toJson(chatObj));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void reconnect() {
+        Log.d("Chat", "Reconect");
         disconnect();
         //
         if (mSocketReconnect) {
+            Log.d("Chat", "Reconect -> initConnection");
             initConnection();
         }
     }
 
     public void disconnect() {
         mSocketRunning = false;
-
+        Log.d("Chat", "disconnect");
         if (mSocket != null) {
             mSocket.off();
             mSocket.disconnect();
@@ -108,19 +138,23 @@ public class SingletonWebSocket {
     }
 
     public void attemptSendLogin() {
+        Log.d("Chat", "attemptSendLogin");
 
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("user_code", ToolBox_Con.getPreference_User_Code(context));
-            jsonObject.put("customer_code", String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
-            jsonObject.put("session_id", ToolBox_Con.getPreference_Session_App(context));
-            jsonObject.put("session_type", "APP");
-            jsonObject.put("translate_code", ToolBox_Con.getPreference_Translate_Code(context));
-
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            Chat_Login_Env env = new Chat_Login_Env();
+            //
+            env.setUser_code(ToolBox_Con.getPreference_User_Code(context));
+            env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+            env.setSession_id(ToolBox_Con.getPreference_Session_App(context));
+            env.setSession_type("APP");
+            env.setTranslate_code(ToolBox_Con.getPreference_Translate_Code(context));
+            //
             if (mSocket != null) {
-                mSocket.emit("sLogin", jsonObject.toString());
+                mSocket.emit("sLogin", gson.toJson(env));
+                Log.d("Chat", "sLogin");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
         }
     }
 
@@ -153,7 +187,26 @@ public class SingletonWebSocket {
     private Emitter.Listener onRoomReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            attemptSendPendingMessages("");
+            //retorna rooms
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cRoomIntent = new Intent(context,WBR_C_Room.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cRoomIntent.putExtras(bundle);
+                    context.sendBroadcast(cRoomIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+            //
+            //attemptSendPendingMessages("");
         }
     };
 

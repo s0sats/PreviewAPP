@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -50,6 +52,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
+import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
@@ -2583,5 +2586,21 @@ public class ToolBox_Inf {
                 }
             }
         }
+    }
+
+    public static String getWebSocketJsonParam(String socket_arg){
+        try {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //
+            Chat_Obj obj = gson.fromJson(socket_arg, Chat_Obj.class);
+            //
+            if (obj != null) {
+                return obj.getObj().toString();
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return null;
+        }
+        return null;
     }
 }

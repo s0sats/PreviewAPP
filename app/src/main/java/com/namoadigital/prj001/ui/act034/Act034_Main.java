@@ -5,20 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.BaseFragment;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Msg_Adapter;
-import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,18 +30,17 @@ import java.util.List;
  * Created by d.luche on 27/11/2017.
  */
 
-public class Act034_Main extends Base_Activity implements Act034_Main_View {
+public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View {
 
+    public static final String FRAG_TAG_ROOM = "ROOM";
 
     private Act034_Main_Presenter mPresenter;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private FragmentManager fm;
     private Act034_Opc act034_opc;
-    private TextView tv_customer_msg_lbl;
-    private TextView tv_customer_msg_qty;
-    private ListView lv_msg;
-    private Act034_Msg_Adapter mAdapter;
+    private Act034_Room act034_room;
+    private String currentFrag = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,127 +119,40 @@ public class Act034_Main extends Base_Activity implements Act034_Main_View {
         //
         mDrawerToggle.syncState();
         //
-        act034_opc = (Act034_Opc) fm.findFragmentById(R.id.act034_opc);
+        initFragments();
         //
-        act034_opc.setHmAux_Trans(hmAux_Trans);
-        //
-        lv_msg = (ListView) findViewById(R.id.act034_lv_msg);
-
-        loadMsgList();
-
+        setFrag(act034_room,FRAG_TAG_ROOM);
 
     }
 
-    private void loadMsgList() {
-        ArrayList<HMAux> auxList = new ArrayList<>();
+    private void initFragments() {
+        //Drawer
+        act034_opc = (Act034_Opc) fm.findFragmentById(R.id.act034_opc);
+        //
+        act034_opc.setHmAux_Trans(hmAux_Trans);
 
+        /*
+        * Room Fragment
+        */
+        act034_room = new Act034_Room();
         //
-        HMAux aux5 = new HMAux();
-        aux5.put("type", "alert");
-        aux5.put("user", "");
-        aux5.put("date", "");
-        aux5.put("status", "");
-        aux5.put("msg", "");
-        aux5.put("alert", "User Add: ");
-        aux5.put("alert_msg", "Luche entrou");
-        auxList.add(aux5);
+        act034_room.setBaInfra(this);
+        act034_room.setHmAux_Trans(hmAux_Trans);
+        act034_room.loadDataToScreen();
 
-        HMAux aux1 = new HMAux();
-        aux1.put("type", "others");
-        aux1.put("user", "Cesar(3)");
-        aux1.put("date", "22/01/1988 16:00:32");
-        aux1.put("status", "0");
-        aux1.put("msg", "Olá batata");
-        aux1.put("alert", "");
-        aux1.put("alert_msg", "");
-        auxList.add(aux1);
-        //
-        HMAux aux2 = new HMAux();
-        aux2.put("type", "mine");
-        aux2.put("user", "Luche(52)");
-        aux2.put("date", "28/11/2017 11:00:32");
-        aux2.put("status", "0");
-        aux2.put("msg", "Fala viado");
-        aux2.put("alert", "");
-        aux2.put("alert_msg", "");
-        auxList.add(aux2);
-        //
-        HMAux aux3 = new HMAux();
-        aux3.put("type", "mine");
-        aux3.put("user", "Luche(52)");
-        aux3.put("date", "28/11/2017 11:01:32");
-        aux3.put("status", "1");
-        aux3.put("msg", "ta ouvindo viado?!");
-        aux3.put("alert", "");
-        aux3.put("alert_msg", "");
-        auxList.add(aux3);
-        //
-        HMAux aux4 = new HMAux();
-        aux4.put("type", "mine");
-        aux4.put("user", "Luche(52)");
-        aux4.put("date", "28/11/2017 11:10:32");
-        aux4.put("status", "2");
-        aux4.put("msg", "ta ouvindo peste ???");
-        aux4.put("alert", "");
-        aux4.put("alert_msg", "");
-        auxList.add(aux4);
-        //
-        //
-        HMAux aux6 = new HMAux();
-        aux6.put("type", "alert");
-        aux6.put("user", "");
-        aux6.put("date", "");
-        aux6.put("status", "");
-        aux6.put("msg", "");
-        aux6.put("alert", "User Add: ");
-        aux6.put("alert_msg", "Luche entrou");
-        auxList.add(aux6);
+    }
 
-        HMAux aux7 = new HMAux();
-        aux7.put("type", "others");
-        aux7.put("user", "Cesar(3)");
-        aux7.put("date", "22/01/1988 16:00:32");
-        aux7.put("status", "0");
-        aux7.put("msg", "Olá batata");
-        aux7.put("alert", "");
-        aux7.put("alert_msg", "");
-        auxList.add(aux7);
-        //
-        HMAux aux8 = new HMAux();
-        aux8.put("type", "mine");
-        aux8.put("user", "Luche(52)");
-        aux8.put("date", "28/11/2017 11:00:32");
-        aux8.put("status", "0");
-        aux8.put("msg", "Fala viado");
-        aux8.put("alert", "");
-        aux8.put("alert_msg", "");
-        auxList.add(aux8);
-        //
-        HMAux aux9 = new HMAux();
-        aux9.put("type", "mine");
-        aux9.put("user", "Luche(52)");
-        aux9.put("date", "28/11/2017 11:01:32");
-        aux9.put("status", "1");
-        aux9.put("msg", "ta ouvindo viado?!");
-        aux9.put("alert", "");
-        aux9.put("alert_msg", "");
-        auxList.add(aux9);
-        //
-        HMAux aux10 = new HMAux();
-        aux10.put("type", "mine");
-        aux10.put("user", "Luche(52)");
-        aux10.put("date", "28/11/2017 11:10:32");
-        aux10.put("status", "2");
-        aux10.put("msg", "ta ouvindo peste ???");
-        aux10.put("alert", "");
-        aux10.put("alert_msg", "");
-        auxList.add(aux10);
-        mAdapter = new Act034_Msg_Adapter(
-                context,
-                auxList
-        );
-        //
-        lv_msg.setAdapter(mAdapter);
+    private <T extends BaseFragment> void setFrag(T type, String sTag) {
+        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act034_main_ll, type, sTag);
+            ft.commit();
+            setCurrentFrag(sTag);
+        }
+    }
+
+    public void setCurrentFrag(String currentFrag) {
+        this.currentFrag = currentFrag;
     }
 
     private void iniUIFooter() {

@@ -32,6 +32,13 @@ public class EV_UserDao extends BaseDao implements Dao<EV_User> {
 
     private String[] columns = {USER_CODE, USER_NICK, EMAIL_P, ADMIN, EXIST_NFC, NFC_BLOCKED};
 
+    public EV_UserDao(Context context) {
+        super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
+
+        this.toContentValuesMapper = new UserToContentValuesMapper();
+        this.toUserMapper = new CursorToUserMapper();
+    }
+
     public EV_UserDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
 

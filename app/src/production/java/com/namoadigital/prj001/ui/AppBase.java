@@ -12,11 +12,14 @@ import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
+import static com.namoadigital.prj001.util.Constant.DB_FULL_CHAT;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_NAME_BASE;
+import static com.namoadigital.prj001.util.Constant.DB_NAME_CHAT;
 import static com.namoadigital.prj001.util.Constant.DB_NAME_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_PATH;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION_BASE;
+import static com.namoadigital.prj001.util.Constant.DB_VERSION_CHAT;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.IMG_PATH;
 import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
@@ -76,6 +79,10 @@ public class AppBase extends Application {
         DB_NAME_CUSTOM = "cc.db3";
         DB_VERSION_CUSTOM = 19;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
+
+        DB_NAME_CHAT = "namoa_chat.db3";
+        DB_VERSION_CHAT = 1;
+        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
 
         PKG_CLEAN = PKG_CLEAN_APP;
 
