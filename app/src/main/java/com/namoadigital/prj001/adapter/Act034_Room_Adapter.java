@@ -12,11 +12,16 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by d.luche on 27/11/2017.
@@ -69,7 +74,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
         Bitmap imgBitmap = BitmapFactory.decodeFile(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
         iv_room_image.setImageBitmap(imgBitmap);
         //
-        switch (item.get(CH_RoomDao.ROOM_TYPE)){
+        switch (item.get(CH_RoomDao.ROOM_TYPE)) {
 
             case Constant.CHAT_ROOM_TYPE_WORKGROUP:
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_group_black_24dp));
@@ -82,22 +87,41 @@ public class Act034_Room_Adapter extends BaseAdapter {
         //
         tv_room_desc.setText(item.get(CH_RoomDao.ROOM_DESC));
         //
-        tv_msg_date.setText("01/01/1900 00:00:00");
+        tv_msg_date.setText(
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.get(CH_MessageDao.MSG_DATE)),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                )
+        );
         //
-        tv_msg.setText("Last Msg ?!");
+        String msg = null;
+        String type = null;
+        try {
+            JSONObject message = new JSONObject(item.get(CH_MessageDao.MSG_OBJ));
+            JSONObject msgJson = new JSONObject(message.getString("message"));
+            type = msgJson.getString("type");
+            msg = msgJson.getString("data");
+            //
+            if(!type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
+                msg = type;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        tv_msg.setText(msg);
         //
-        Random random = new Random();
+        int i = ToolBox_Inf.convertStringToInt(item.get(CH_Room_Sql_001.BADGE));
         //
-        int i = random.nextInt( 5);
-        //
-        if(i <=2){
+        if (i == 0) {
             tv_badge.setText("");
             tv_badge.setVisibility(View.INVISIBLE);
-        }else{
+        } else if(i > 9){
             tv_badge.setVisibility(View.VISIBLE);
-            tv_badge.setText(" " +String.valueOf(i) +" ");
+            tv_badge.setText(String.valueOf(i));
+        }else {
+            tv_badge.setVisibility(View.VISIBLE);
+            tv_badge.setText(" " + String.valueOf(i) + " ");
         }
-
         //
         return convertView;
     }

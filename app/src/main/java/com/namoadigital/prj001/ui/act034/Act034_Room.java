@@ -71,7 +71,8 @@ public class Act034_Room extends BaseFragment {
         ArrayList<HMAux> roomList =
                 (ArrayList<HMAux>) roomDao.query_HM(
                         new CH_Room_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(getActivity())
+                                ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                                ToolBox_Con.getPreference_User_Code(getActivity())
                         ).toSqlQuery()
                 );
         //
