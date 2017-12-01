@@ -426,6 +426,10 @@
 
         <service android:name=".service_chat.WS_C_Room" />
 
+        <receiver android:name=".receiver_chat.WBR_C_Message" />
+
+        <service android:name=".service_chat.WS_C_Message" />
+
     </application>
 
 </manifest>
