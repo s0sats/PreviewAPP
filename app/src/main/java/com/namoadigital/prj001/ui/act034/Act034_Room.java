@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ public class Act034_Room extends BaseFragment {
     //private Act034_Msg_Adapter mAdapter;
     private Act034_Room_Adapter mAdapter;
     private CH_RoomDao roomDao;
+    private Act034_Main mMain;
 
 
     @Nullable
@@ -48,7 +50,8 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void iniVar(View view) {
-
+        mMain = (Act034_Main) getActivity();
+        //
         ll_header = (LinearLayout) view.findViewById(R.id.act034_room_ll_header);
         //
         tv_others_customer_msg_lbl = (TextView) view.findViewById(R.id.act034_room_tv_others_customers_msg_lbl);
@@ -85,6 +88,16 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void iniAction() {
+
+        lv_msg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux room = (HMAux) parent.getItemAtPosition(position);
+                room.put("position", String.valueOf(position));
+                //
+                mMain.callAct035(getActivity(),room);
+            }
+        });
 
     }
 
@@ -205,5 +218,7 @@ public class Act034_Room extends BaseFragment {
 //        //
 //        lv_msg.setAdapter(mAdapter);
     }
+
+
 }
 

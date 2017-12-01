@@ -865,16 +865,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         finish();
     }
 
-    private void callAct035(Context context) {
-        Intent mIntent = new Intent(context, Act035_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
-//        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
-
     @Override
     public void closeApp() {
 
@@ -1297,13 +1287,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
 
-
-        //Jogar Fora
-        menu.add(0, TOOLBAR_SUPPORT+1, Menu.FIRST + 4, "Lista");
-        menu.findItem(TOOLBAR_SUPPORT+1).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-        menu.findItem(TOOLBAR_SUPPORT+1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT+1).setTitle("Lista");
-
         return true;
     }
 
@@ -1359,21 +1342,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 };*/
                 break;
-
-            case TOOLBAR_SUPPORT+1:
-                callAct035(context);
-                /*alertTitle = hmAux_Trans.get("alert_support_ttl");
-                alertMsg = hmAux_Trans.get("alert_support_nfc_msg");
-                listener =  new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.showSupportDialog();
-                        //mPresenter.executeSupport("MSG");
-                    }
-                };*/
-                break;
-
-
             default:
                 return true;
         }

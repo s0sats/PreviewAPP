@@ -17,8 +17,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act034_Msg_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -183,6 +184,21 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct035(Context context, HMAux item) {
+        Intent mIntent = new Intent(context, Act035_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(CH_RoomDao.ROOM_CODE,item.get(CH_RoomDao.ROOM_CODE));
+        bundle.putString("position",item.get("position"));
+        //
+        mIntent.putExtras(bundle);
+        //
         startActivity(mIntent);
         finish();
     }

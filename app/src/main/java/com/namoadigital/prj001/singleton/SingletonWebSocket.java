@@ -109,7 +109,7 @@ public class SingletonWebSocket {
 
             Gson gson = new GsonBuilder().serializeNulls().create();
 
-            attemptSendMessages(gson.toJson(sMessage));
+            //attemptSendMessages(gson.toJson(sMessage));
             //  attemptSendMessages(gson.toJson(chatObj));
 
         } catch (Exception e) {
