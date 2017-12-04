@@ -9,7 +9,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -72,11 +74,13 @@ public class SingletonWebSocket {
         try {
             mSocket = IO.socket("https://chat.namoadigital.com", options);
 
-            mSocket.on("cLogin", onLoginReturn);
-            mSocket.on("error", onErrorReturn);
-            mSocket.on("cRoom", onRoomReturn);
-            mSocket.on("cPendingMessages", onPendingMessagesReturn);
-            mSocket.on("cMessage", onMessagesReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_LOGIN, onLoginReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_ERROR, onErrorReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_ROOM, onRoomReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_PENDING_MESSAGES, onPendingMessagesReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_MESSAGE, onMessagesReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_ADD_ROOM, onAddRoom);
+            mSocket.on(Constant.CHAT_EVENT_C_REMOVE_ROOM, onRemoveRoom);
 
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
@@ -152,7 +156,7 @@ public class SingletonWebSocket {
             env.setTranslate_code(ToolBox_Con.getPreference_Translate_Code(context));
             //
             if (mSocket != null) {
-                mSocket.emit("sLogin", gson.toJson(env));
+                mSocket.emit(Constant.CHAT_EVENT_S_LOGIN, gson.toJson(env));
                 Log.d("Chat", "sLogin");
             }
         } catch (Exception e) {
@@ -161,19 +165,19 @@ public class SingletonWebSocket {
 
     public void attemptSendRoom(String message) {
         if (mSocket != null) {
-            mSocket.emit("sRoom", message);
+            mSocket.emit(Constant.CHAT_EVENT_S_ROOM, message);
         }
     }
 
     public void attemptSendPendingMessages(String message) {
         if (mSocket != null) {
-            mSocket.emit("sPendingMessages", message);
+            mSocket.emit(Constant.CHAT_EVENT_S_PENDING_MESSAGES, message);
         }
     }
 
     public void attemptSendMessages(String message) {
         if (mSocket != null) {
-            mSocket.emit("sMessage", message);
+            mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE, message);
         }
     }
 
@@ -247,6 +251,53 @@ public class SingletonWebSocket {
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
                     cMessageIntent.putExtras(bundle);
                     context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+
+    private Emitter.Listener onAddRoom = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            //retorna rooms
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cRoomIntent = new Intent(context,WBR_C_Add_Room.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cRoomIntent.putExtras(bundle);
+                    context.sendBroadcast(cRoomIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+
+    private Emitter.Listener onRemoveRoom = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cRoomIntent = new Intent(context, WBR_C_Remove_Room.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cRoomIntent.putExtras(bundle);
+                    context.sendBroadcast(cRoomIntent);
                 } else {
                     String tst = "No Json";
                     /*

@@ -433,6 +433,16 @@
 
         <service android:name=".service_chat.WS_C_Message" />
 
+        <receiver android:name=".receiver_chat.WBR_C_Add_Room" />
+
+        <service android:name=".service_chat.WS_C_Add_Room" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Remove_Room" />
+
+        <service android:name=".service_chat.WS_C_Remove_Room" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Remove_Room" />
+
     </application>
 
 </manifest>

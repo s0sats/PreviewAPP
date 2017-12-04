@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -13,6 +14,8 @@ import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.sql.CH_Room_Sql_002;
+import com.namoadigital.prj001.sql.CH_Room_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
@@ -332,6 +335,44 @@ public class WS_DownLoad_Picture extends IntentService {
 
             }
             //fim SO
+            /**
+             *
+             * Download de files do CHAT
+             *
+             */
+
+            if (ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)) {
+                //
+                CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
+
+                ArrayList<HMAux> roomImgList = new ArrayList<>();
+                roomImgList.addAll(roomDao.query_HM(
+                        new CH_Room_Sql_002().toSqlQuery()
+                ));
+                //
+                for (HMAux hmAux : roomImgList) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(CH_RoomDao.ROOM_IMAGE),
+                                Constant.CACHE_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase()+ ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                        //
+                        ToolBox_Inf.createThumbNail_Images(Constant.CACHE_PATH, (hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg"));
+                    }
+                    //Atualiza campo com url local
+                    roomDao.addUpdate(
+                            new CH_Room_Sql_003(
+                                    hmAux.get(CH_RoomDao.ROOM_CODE),
+                                    hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
+                            ).toSqlQuery().toLowerCase()
+                    );
+                }
+            }//FIM chat
 
         } catch (Exception e) {
             String results = e.toString();

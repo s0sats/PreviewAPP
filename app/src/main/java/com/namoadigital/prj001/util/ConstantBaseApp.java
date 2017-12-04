@@ -381,10 +381,32 @@ public class ConstantBaseApp extends ConstantBase {
     /*
     * Constantes CHAT
     */
+    //Eventos Client
+    public static final String CHAT_EVENT_C_LOGIN = "cLogin";
+    public static final String CHAT_EVENT_C_ROOM = "cRoom";
+    public static final String CHAT_EVENT_C_ERROR = "error";
+    public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
+    public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
+    public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
+    public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
 
+    //Eventos Server
+    public static final String CHAT_EVENT_S_LOGIN = "sLogin";
+    public static final String CHAT_EVENT_S_ROOM = "sRoom";
+    public static final String CHAT_EVENT_S_PENDING_MESSAGES = "sPendingMessages";
+    public static final String CHAT_EVENT_S_MESSAGE = "sMessage";
+
+    //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
     public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
+    //filters
+    public static final String CHAT_BR_FILTER_ROOM = "CHAT_BR_FILTER_ROOM";
+    public static final String CHAT_BR_FILTER = "CHAT_BR_FILTER";
+    //
+    public static final String CHAT_BR_TYPE = "CHAT_BR_TYPE";
+    public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
+    public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
 
 
 }

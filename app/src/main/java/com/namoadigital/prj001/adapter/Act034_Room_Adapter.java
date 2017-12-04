@@ -18,9 +18,6 @@ import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 /**
@@ -71,7 +68,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
         TextView tv_msg = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_msg);
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_badge);
         //
-        Bitmap imgBitmap = BitmapFactory.decodeFile(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
+        Bitmap imgBitmap = BitmapFactory.decodeFile(Constant.THU_PATH +"/"+ item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
         iv_room_image.setImageBitmap(imgBitmap);
         //
         switch (item.get(CH_RoomDao.ROOM_TYPE)) {
@@ -94,21 +91,14 @@ public class Act034_Room_Adapter extends BaseAdapter {
                 )
         );
         //
-        String msg = null;
-        String type = null;
-        try {
-            JSONObject message = new JSONObject(item.get(CH_MessageDao.MSG_OBJ));
-            JSONObject msgJson = new JSONObject(message.getString("message"));
-            type = msgJson.getString("type");
-            msg = msgJson.getString("data");
-            //
-            if(!type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
-                msg = type;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        String msg = item.containsKey(CH_MessageDao.MSG_OBJ+"_data")?item.get(CH_MessageDao.MSG_OBJ+"_data"):null ;
+        String type = item.containsKey(CH_MessageDao.MSG_OBJ+"_type") ? item.get(CH_MessageDao.MSG_OBJ+"_type") : null;
+
+        if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
+            tv_msg.setText(msg);
+        }else{
+            tv_msg.setText(type);
         }
-        tv_msg.setText(msg);
         //
         int i = ToolBox_Inf.convertStringToInt(item.get(CH_Room_Sql_001.BADGE));
         //

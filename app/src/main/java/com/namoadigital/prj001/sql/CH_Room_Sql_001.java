@@ -46,30 +46,31 @@ public class CH_Room_Sql_001 implements Specification {
                         "    WHERE\n" +
                         "      m2.room_code = r.room_code \n" +
                         "      and m2.user_code <> '"+user_code+"'\n" +
+                        "      and m2.read = 0\n" +
                         "    ) "+BADGE+" \n" +
                         " FROM\n" +
-                        CH_RoomDao.TABLE +" r,\n" +
+                        "      " + CH_RoomDao.TABLE +" r\n" +
+                        " LEFT JOIN \n" +
                         "   (SELECT\n" +
                         "      m.room_code room_code_m,\n" +
                         "      m.msg_date,\n" +
                         "      m.msg_obj\n" +
                         "    FROM\n" +
-                        CH_MessageDao.TABLE +" m\n" +
+                        "      " + CH_MessageDao.TABLE +" m\n" +
                         "    WHERE\n" +
                         "      m.msg_pk = (SELECT\n" +
                         "                    max(msg_pk)\n" +
                         "                  FROM\n" +
-                        CH_MessageDao.TABLE +" m1,\n" +
-                           CH_RoomDao.TABLE +" r1\n" +
+                        "      " +    CH_MessageDao.TABLE +" m1,\n" +
+                        "      " +   CH_RoomDao.TABLE +" r1\n" +
                         "                  WHERE\n" +
                         "                    m1.room_code = r1.room_code\n" +
                         "                    and (r1.customer_code = '"+customer_code+"'\n" +
                         "                        or r1.customer_code is null)\n" +
                         "                  )\n" +
-                        "    ) t \n" +
+                        "    ) t  on  t.room_code_m = r.room_code\n" +
                         " WHERE\n" +
-                        "   r.room_code = t.room_code_m\n" +
-                        "   and (r.customer_code = '"+customer_code+"'\n" +
+                        "  (r.customer_code = '"+customer_code+"'\n" +
                         "   or r.customer_code is null)\n" +
                         " ORDER BY\n" +
                         "   r.room_desc\n")

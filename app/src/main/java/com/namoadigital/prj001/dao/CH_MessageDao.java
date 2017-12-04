@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.sql.CH_Message_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -151,7 +152,14 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
 
             for (CH_Message ch_message : ch_messages) {
                 //Atualiza valor do tmp
-                tmp++;
+                //
+                tmp = Long.parseLong((
+                        this.getByStringHMTmp(
+                                new CH_Message_Sql_002(
+                                        ch_message.getMsg_prefix()
+                                ).toSqlQuery())
+                ).get(CH_Message_Sql_002.NEXT_TMP));
+                //
                 //Seta Tmp
                 ch_message.setTmp(tmp);
                 //
@@ -257,6 +265,33 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
         }
 
         closeDB();
+
+        return hmAux;
+    }
+
+    private HMAux getByStringHMTmp(String sQuery) {
+        HMAux hmAux = null;
+        //openDB();
+
+        String s_query_div[] = sQuery.split(";");
+
+        Mapper<Cursor, HMAux> toHMAuxMapper = new CursorToHMAuxMapper(s_query_div[1]);
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query_div[0], null);
+
+            while (cursor.moveToNext()) {
+                hmAux = toHMAuxMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        //closeDB();
 
         return hmAux;
     }

@@ -14,9 +14,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -67,7 +69,7 @@ public class Act034_Room extends BaseFragment {
 
     }
 
-    private void loadRoomList() {
+    public void loadRoomList() {
         ArrayList<HMAux> roomList =
                 (ArrayList<HMAux>) roomDao.query_HM(
                         new CH_Room_Sql_001(
@@ -77,6 +79,9 @@ public class Act034_Room extends BaseFragment {
                 );
         //
         if(roomList != null && roomList.size() > 0){
+            //
+            ToolBox_Inf.addJsonObjAsHmAuxKey(roomList, CH_MessageDao.MSG_OBJ);
+            //
             mAdapter = new Act034_Room_Adapter(
                     getActivity(),
                     roomList,
