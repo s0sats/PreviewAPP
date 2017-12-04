@@ -32,7 +32,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/act0035_tv_customer_val"
+                android:id="@+id/act035_tv_customer_val"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
@@ -80,7 +80,7 @@
             app:mOCR="false" />
 
         <ImageView
-            android:id="@+id/act035_iv_search_serial"
+            android:id="@+id/act035_iv_photo"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="7dp"
@@ -89,7 +89,19 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="4dp"
-            android:src="@drawable/ic_lupa_states" />
+            android:src="@drawable/ic_camera_add_black" />
+
+        <ImageView
+            android:id="@+id/act035_iv_send"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:focusable="false"
+            android:paddingBottom="4dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="4dp"
+            android:src="@drawable/ic_send" />
 
     </LinearLayout>
 

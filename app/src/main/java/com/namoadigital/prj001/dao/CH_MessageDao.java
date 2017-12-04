@@ -18,7 +18,7 @@ import java.util.List;
  * Created by d.luche on 01/12/2017.
  */
 
-public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_Message> {
+public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH_Message> {
 
 
     private final Mapper<CH_Message, ContentValues> toContentValuesMapper;
@@ -32,6 +32,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
     public static final String ROOM_CODE = "room_code";
     public static final String MSG_DATE = "msg_date";
     public static final String MSG_OBJ = "msg_obj";
+    public static final String MESSAGE_IMAGE_LOCAL = "message_image_local";
     public static final String MSG_ORIGIN = "msg_origin";
     public static final String DELIVERED = "delivered";
     public static final String DELIVERED_DATE = "delivered_date";
@@ -42,7 +43,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
     public static final String USER_NICK = "user_nick";
 
     public static String[] columns = {
-            MSG_PREFIX,MSG_CODE,TMP,ROOM_CODE,MSG_DATE,MSG_OBJ,MSG_ORIGIN,DELIVERED,DELIVERED_DATE,READ,READ_DATE,MSG_PK,USER_CODE,USER_NICK
+            MSG_PREFIX, MSG_CODE, TMP, ROOM_CODE, MSG_DATE, MSG_OBJ, MESSAGE_IMAGE_LOCAL, MSG_ORIGIN, DELIVERED, DELIVERED_DATE, READ, READ_DATE, MSG_PK, USER_CODE, USER_NICK
     };
 
     public CH_MessageDao(Context context) {
@@ -316,7 +317,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
         return ch_messages;
     }
 
-    private class CursorToCH_MessageMapper implements Mapper<Cursor,CH_Message> {
+    private class CursorToCH_MessageMapper implements Mapper<Cursor, CH_Message> {
         @Override
         public CH_Message map(Cursor cursor) {
             CH_Message ch_message = new CH_Message();
@@ -327,24 +328,30 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
             ch_message.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             ch_message.setMsg_date(cursor.getString(cursor.getColumnIndex(MSG_DATE)));
             ch_message.setMsg_obj(cursor.getString(cursor.getColumnIndex(MSG_OBJ)));
+            ch_message.setMessage_image_local(cursor.getString(cursor.getColumnIndex(MSG_OBJ)));
             ch_message.setMsg_origin(cursor.getString(cursor.getColumnIndex(MSG_ORIGIN)));
             ch_message.setDelivered(cursor.getInt(cursor.getColumnIndex(DELIVERED)));
 
-            if(!cursor.isNull(cursor.getColumnIndex(DELIVERED_DATE))){
+            if (!cursor.isNull(cursor.getColumnIndex(DELIVERED_DATE))) {
                 ch_message.setDelivered_date(cursor.getString(cursor.getColumnIndex(DELIVERED_DATE)));
-            }else{
+            } else {
                 ch_message.setDelivered_date(null);
             }
 
             ch_message.setRead(cursor.getInt(cursor.getColumnIndex(READ)));
 
-            if(!cursor.isNull(cursor.getColumnIndex(READ_DATE))){
+            if (!cursor.isNull(cursor.getColumnIndex(READ_DATE))) {
                 ch_message.setRead_date(cursor.getString(cursor.getColumnIndex(READ_DATE)));
-            }else{
+            } else {
                 ch_message.setRead_date(null);
             }
 
-            ch_message.setMsg_pk(cursor.getString(cursor.getColumnIndex(MSG_PK)));
+            if (!cursor.isNull(cursor.getColumnIndex(MSG_PK))) {
+                ch_message.setMsg_pk(cursor.getString(cursor.getColumnIndex(MSG_PK)));
+            } else {
+                ch_message.setMsg_pk(null);
+            }
+
             ch_message.setUser_code(cursor.getInt(cursor.getColumnIndex(USER_CODE)));
             ch_message.setUser_nick(cursor.getString(cursor.getColumnIndex(USER_NICK)));
 
@@ -352,52 +359,55 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>,DaoTmp<CH_
         }
     }
 
-    private class CH_MessageToContentValuesMapper implements Mapper<CH_Message,ContentValues> {
+    private class CH_MessageToContentValuesMapper implements Mapper<CH_Message, ContentValues> {
         @Override
         public ContentValues map(CH_Message ch_message) {
             ContentValues contentValues = new ContentValues();
             //
-            if(ch_message.getMsg_prefix() > -1){
-                contentValues.put(MSG_PREFIX,ch_message.getMsg_prefix());
+            if (ch_message.getMsg_prefix() > -1) {
+                contentValues.put(MSG_PREFIX, ch_message.getMsg_prefix());
             }
-            if(ch_message.getMsg_code() > -1){
-                contentValues.put(MSG_CODE,ch_message.getMsg_code());
+            if (ch_message.getMsg_code() > -1) {
+                contentValues.put(MSG_CODE, ch_message.getMsg_code());
             }
-            if(ch_message.getTmp() > -1){
-                contentValues.put(TMP,ch_message.getTmp());
+            if (ch_message.getTmp() > -1) {
+                contentValues.put(TMP, ch_message.getTmp());
             }
-            if(ch_message.getRoom_code() != null){
-                contentValues.put(ROOM_CODE,ch_message.getRoom_code());
+            if (ch_message.getRoom_code() != null) {
+                contentValues.put(ROOM_CODE, ch_message.getRoom_code());
             }
-            if(ch_message.getMsg_date() != null){
-                contentValues.put(MSG_DATE,ch_message.getMsg_date());
+            if (ch_message.getMsg_date() != null) {
+                contentValues.put(MSG_DATE, ch_message.getMsg_date());
             }
-            if(ch_message.getMsg_obj() != null){
-                contentValues.put(MSG_OBJ,ch_message.getMsg_obj());
+            if (ch_message.getMsg_obj() != null) {
+                contentValues.put(MSG_OBJ, ch_message.getMsg_obj());
             }
-            if(ch_message.getMsg_origin() != null){
-                contentValues.put(MSG_ORIGIN,ch_message.getMsg_origin());
+            if (ch_message.getMessage_image_local() != null) {
+                contentValues.put(MESSAGE_IMAGE_LOCAL, ch_message.getMessage_image_local());
             }
-            if(ch_message.getDelivered() > -1){
-                contentValues.put(DELIVERED,ch_message.getDelivered());
+            if (ch_message.getMsg_origin() != null) {
+                contentValues.put(MSG_ORIGIN, ch_message.getMsg_origin());
             }
-
-            contentValues.put(DELIVERED_DATE,ch_message.getDelivered_date());
-
-            if(ch_message.getRead() > -1){
-                contentValues.put(READ,ch_message.getRead());
+            if (ch_message.getDelivered() > -1) {
+                contentValues.put(DELIVERED, ch_message.getDelivered());
             }
 
-            contentValues.put(READ_DATE,ch_message.getRead_date());
+            contentValues.put(DELIVERED_DATE, ch_message.getDelivered_date());
 
-            if(ch_message.getMsg_pk() != null){
-                contentValues.put(MSG_PK,ch_message.getMsg_pk());
+            if (ch_message.getRead() > -1) {
+                contentValues.put(READ, ch_message.getRead());
             }
-            if(ch_message.getUser_code() > -1){
-                contentValues.put(USER_CODE,ch_message.getUser_code());
+
+            contentValues.put(READ_DATE, ch_message.getRead_date());
+
+            //if (ch_message.getMsg_pk() != null) {
+                contentValues.put(MSG_PK, ch_message.getMsg_pk());
+            //}
+            if (ch_message.getUser_code() > -1) {
+                contentValues.put(USER_CODE, ch_message.getUser_code());
             }
-            if(ch_message.getUser_nick() != null){
-                contentValues.put(USER_NICK,ch_message.getUser_nick());
+            if (ch_message.getUser_nick() != null) {
+                contentValues.put(USER_NICK, ch_message.getUser_nick());
             }
 
             return contentValues;

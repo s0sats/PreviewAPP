@@ -65,6 +65,6 @@ public class WS_C_Message extends IntentService {
         //
         CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
         //
-        messageDao.addUpdate(chMessages, true);
+        messageDao.addUpdate(chMessages, false);
     }
 }

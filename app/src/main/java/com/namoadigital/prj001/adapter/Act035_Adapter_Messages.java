@@ -13,8 +13,13 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by neomatrix on 28/11/17.
@@ -28,11 +33,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_02;
     private int resource_03;
     private int resource_04;
-
     //
-    private List<HMAux> data;
+    private ArrayList<HMAux> data;
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02,  int resource_03, int resource_04, List<HMAux> data) {
+    private String mUser_Code;
+
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
@@ -40,6 +46,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.resource_04 = resource_04;
 
         this.data = data;
+
+        this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
     }
 
     @Override
@@ -54,7 +62,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return Long.parseLong(data.get(position).get(HMAux.ID));
+        return position;
     }
 
     @Override
@@ -64,12 +72,38 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return Integer.parseInt(data.get(position).get(HMAux.TEXTO_02));
+
+        try {
+            HMAux item = data.get(position);
+            JSONObject msg_obj = new JSONObject(item.get("msg_obj"));
+            JSONObject message = msg_obj.getJSONObject("message");
+
+            if (message.getString("type").equalsIgnoreCase("IMAGE")) {
+
+                if (!item.get("user_code").equalsIgnoreCase(mUser_Code)) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+
+            } else {
+                if (item.get("user_code").equalsIgnoreCase(mUser_Code)) {
+                    return 2;
+                } else {
+                    return 3;
+                }
+
+            }
+
+        } catch (Exception e) {
+            return 0;
+        }
+
     }
 
     @Override
     public boolean isEnabled(int position) {
-        return getItemViewType(position) == 0 ? false : true;
+        return getItemViewType(position) == 0 || getItemViewType(position) == 1 ? true : false;
     }
 
     @Override
@@ -95,7 +129,15 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             }
         }
         //
+        JSONObject message = null;
         HMAux hmAux = data.get(position);
+
+        try {
+            JSONObject msg_obj = new JSONObject(hmAux.get("msg_obj"));
+            message = msg_obj.getJSONObject("message");
+        } catch (JSONException e) {
+            message = new JSONObject();
+        }
         //
         View v_space_left;
         ImageView iv_other_img;
@@ -126,14 +168,27 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_name.setText("Nome");
 
                 //iv_foto.setImageResource(R.drawable.bt);
-                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "sm_so_1_2017_35_2_1078_thumb.jpg"));
+                //iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "10.jpg"));
 
-                tv_message.setText("Message");
-                tv_hour.setText("11:25");
+                //tv_message.setText("Message");
+
+                tv_hour.setText(
+
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+//                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                " HH:mm"
+                        )
+                );
+
+                tv_name.setText(hmAux.get("user_nick"));
+
                 iv_me_img.setVisibility(View.INVISIBLE);
                 v_space_right.setVisibility(View.VISIBLE);
 
                 break;
+
             case 1:
 
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
@@ -154,16 +209,30 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_name.setVisibility(View.INVISIBLE);
 
                 //iv_foto.setImageResource(R.drawable.bt);
-                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "sm_so_1_2017_35_2_1078_thumb.jpg"));
+                //iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "10.jpg"));
 
-                tv_message.setText("Message");
-                tv_hour.setText("11:25");
+                //tv_message.setText("Message");
+
+                tv_hour.setText(
+
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+//                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                " HH:mm"
+
+                        )
+                );
+
+                tv_name.setText(hmAux.get("user_nick"));
+
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
 
                 break;
 
             case 2:
+
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
                 iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
                 ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
@@ -179,13 +248,31 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
                 tv_name.setVisibility(View.GONE);
 
-                tv_message.setText("Message Me");
-                tv_hour.setText("11:25");
+                try {
+                    tv_message.setText(message.getString("data").trim());
+                } catch (JSONException e) {
+                    tv_message.setText("Error data");
+                }
+
+                tv_hour.setText(
+
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+//                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                " HH:mm"
+
+                        )
+                );
+
+
+                tv_name.setText(hmAux.get("user_nick"));
+
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
                 break;
 
             case 3:
+
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
                 iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
                 ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
@@ -201,8 +288,25 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
                 tv_name.setVisibility(View.VISIBLE);
 
-                tv_message.setText("Message from");
-                tv_hour.setText("11:25");
+                try {
+                    tv_message.setText(message.getString("data").trim());
+                } catch (JSONException e) {
+                    tv_message.setText("Error data");
+                }
+
+
+                tv_hour.setText(
+
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+//                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                " HH:mm"
+
+                        )
+                );
+
+                tv_name.setText(hmAux.get("user_nick"));
+
                 iv_me_img.setVisibility(View.GONE);
                 v_space_right.setVisibility(View.VISIBLE);
 

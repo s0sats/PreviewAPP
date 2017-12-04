@@ -12,6 +12,7 @@ public class CH_Message {
     private String room_code;
     private String msg_date;
     private String msg_obj;
+    private String message_image_local;
     private String msg_origin;
     private int delivered;
     private String delivered_date;
@@ -67,6 +68,14 @@ public class CH_Message {
 
     public void setMsg_obj(String msg_obj) {
         this.msg_obj = msg_obj;
+    }
+
+    public String getMessage_image_local() {
+        return message_image_local;
+    }
+
+    public void setMessage_image_local(String message_image_local) {
+        this.message_image_local = message_image_local;
     }
 
     public String getMsg_origin() {

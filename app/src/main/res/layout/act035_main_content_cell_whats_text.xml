@@ -53,9 +53,9 @@
 
             <TextView
                 android:id="@+id/act035_main_content_cell_whats_tv_hour"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:layout_gravity="right"
                 android:text="11:30"
                 android:textColor="#9c9b9b"
                 android:textSize="12sp"
