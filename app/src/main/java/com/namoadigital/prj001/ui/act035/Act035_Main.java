@@ -79,7 +79,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     //
     private BR_Room brRoomReceiver;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

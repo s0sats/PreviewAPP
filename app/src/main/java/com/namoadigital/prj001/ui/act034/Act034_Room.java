@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act034;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 
 public class Act034_Room extends BaseFragment {
 
+    private Context context;
+
     private LinearLayout ll_header;
     private TextView tv_others_customer_msg_lbl;
     private TextView tv_others_customer_msg_qty;
@@ -38,6 +41,13 @@ public class Act034_Room extends BaseFragment {
     private CH_RoomDao roomDao;
     private Act034_Main mMain;
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -52,6 +62,8 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void iniVar(View view) {
+        context = getActivity();
+        //
         mMain = (Act034_Main) getActivity();
         //
         ll_header = (LinearLayout) view.findViewById(R.id.act034_room_ll_header);
@@ -62,19 +74,26 @@ public class Act034_Room extends BaseFragment {
         //
         lv_msg = (ListView) view.findViewById(R.id.act034_room_lv_msg);
         //
-        roomDao = new CH_RoomDao(getActivity());
+        roomDao = new CH_RoomDao(context);
         //
         //loadMsgList();
-        loadRoomList();
+        //loadRoomList();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        loadRoomList();
     }
 
     public void loadRoomList() {
         ArrayList<HMAux> roomList =
                 (ArrayList<HMAux>) roomDao.query_HM(
                         new CH_Room_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(getActivity()),
-                                ToolBox_Con.getPreference_User_Code(getActivity())
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_User_Code(context)
                         ).toSqlQuery()
                 );
         //
@@ -83,7 +102,7 @@ public class Act034_Room extends BaseFragment {
             ToolBox_Inf.addJsonObjAsHmAuxKey(roomList, CH_MessageDao.MSG_OBJ);
             //
             mAdapter = new Act034_Room_Adapter(
-                    getActivity(),
+                    context,
                     roomList,
                     R.layout.act034_room_cell
             );
@@ -101,7 +120,7 @@ public class Act034_Room extends BaseFragment {
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
                 room.put("position", String.valueOf(position));
                 //
-                mMain.callAct035(getActivity(),room);
+                mMain.callAct035(context,room);
             }
         });
 
@@ -225,6 +244,11 @@ public class Act034_Room extends BaseFragment {
 //        lv_msg.setAdapter(mAdapter);
     }
 
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //
+        this.context = context;
+    }
 }
 

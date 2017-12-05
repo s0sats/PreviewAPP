@@ -2693,13 +2693,12 @@ public class ToolBox_Inf {
 
     }
 
-    public static void sendBRChat(Context context,String type) {
+    public static void sendBRChat(Context context, String type) {
         Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
-
         mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
 
-        context.sendBroadcast(mIntent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
 
 
