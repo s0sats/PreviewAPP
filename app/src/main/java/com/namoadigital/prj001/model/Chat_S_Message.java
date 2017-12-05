@@ -9,7 +9,7 @@ public class Chat_S_Message {
     private String room_code;
     private String type;
     private String data;
-    private int tmp;
+    private long tmp;
 
     public String getRoom_code() {
         return room_code;
@@ -35,11 +35,11 @@ public class Chat_S_Message {
         this.data = data;
     }
 
-    public int getTmp() {
+    public long getTmp() {
         return tmp;
     }
 
-    public void setTmp(int tmp) {
+    public void setTmp(long tmp) {
         this.tmp = tmp;
     }
 }

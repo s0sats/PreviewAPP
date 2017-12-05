@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui.act035;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -23,6 +27,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -70,6 +76,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private String mRoom_code;
     private CH_MessageDao ch_messageDao;
+    //
+    private BR_Room brRoomReceiver;
 
 
     @Override
@@ -151,6 +159,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_send = (ImageView) findViewById(R.id.act035_iv_send);
 
         reloadMessages();
+        //
+        startReceivers(true);
     }
 
     private void reloadMessages() {
@@ -179,6 +189,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
         } else {
         }
+    }
+
+
+    private void startReceivers(boolean start_stop) {
+        brRoomReceiver = new Act035_Main.BR_Room();
+        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
+        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        //
+        if(start_stop){
+            registerReceiver(brRoomReceiver,brRoomFilter);
+        }else{
+            unregisterReceiver(brRoomReceiver);
+        }
+
     }
 
     private void iniUIFooter() {
@@ -266,6 +290,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //
                     reloadMessages();
                     //
+                    /*
+                    * Teste envio para server
+                    * */
+                    Chat_S_Message s_message = new Chat_S_Message();
+                    //
+                    s_message.setRoom_code(mRoom_code);
+                    s_message.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
+                    s_message.setData(mkEditTextNM.getText().toString());
+                    s_message.setTmp(nMessageTemp);
+                    //
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+                    Gson gson = new GsonBuilder().serializeNulls().create();
+
+                    singletonWebSocket.attemptSendMessages(gson.toJson(s_message));
+                    //
                     mkEditTextNM.setText("");
                 }
             }
@@ -348,6 +388,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    private class BR_Room extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
+            //
+            switch (type){
+                case Constant.CHAT_BR_TYPE_MSG:
+                    reloadMessages();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 
