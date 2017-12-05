@@ -8,7 +8,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.model.Chat_Login_Env;
-import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
@@ -17,11 +16,13 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.util.Random;
+import java.io.File;
+import java.io.IOException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
 
 /**
  * Created by neomatrix on 27/11/17.
@@ -31,6 +32,7 @@ public class SingletonWebSocket {
     private static volatile SingletonWebSocket sSoleInstance;
 
     private Context context;
+    private File log_file = null;
 
     /*
     Indica se é necessário refazer a conexao em caso de queda do servico
@@ -66,15 +68,31 @@ public class SingletonWebSocket {
     }
 
     public void initConnection() {
+
+        if(log_file == null){
+            log_file = new File(Constant.SUPPORT_PATH,"webSocket_log.txt");
+
+        }
+
+
         Log.d("Chat", "initConnection");
+
+        try {
+            ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - initConnection\n",log_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         IO.Options options = new IO.Options();
         options.timeout = 1000;
+        options.query = "transport=websocket";
+        options.reconnection = true;
 
         try {
             mSocket = IO.socket("https://chat.namoadigital.com", options);
 
             mSocket.on(Constant.CHAT_EVENT_C_LOGIN, onLoginReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_ERROR_LOGIN, onErrorLoginReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ERROR, onErrorReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ROOM, onRoomReturn);
             mSocket.on(Constant.CHAT_EVENT_C_PENDING_MESSAGES, onPendingMessagesReturn);
@@ -82,10 +100,21 @@ public class SingletonWebSocket {
             mSocket.on(Constant.CHAT_EVENT_C_ADD_ROOM, onAddRoom);
             mSocket.on(Constant.CHAT_EVENT_C_REMOVE_ROOM, onRemoveRoom);
 
+            mSocket.on(Socket.EVENT_RECONNECT, onReconnectReturn);
+            mSocket.on(Socket.EVENT_RECONNECTING, onReconnectingReturn);
+            mSocket.on(Socket.EVENT_RECONNECT_ERROR, onReconnectError);
+            mSocket.on(Socket.EVENT_RECONNECT_ERROR, onReconnectError);
+            mSocket.on(Socket.EVENT_RECONNECT_FAILED, onReconnectFailed);
+
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("Chat", "onConnect");
+                    Log.d("Chat", "onConnect   -  Socket_id: " + mSocket.id());
+                    try {
+                        ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - onConnect   -  Socket_id: " + mSocket.id()+"\n",log_file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     mSocketRunning = true;
                 }
             });
@@ -93,29 +122,19 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("Chat", "onDisconect");
-                    reconnect();
+                    Log.d("Chat", "onDisconect   -  Socket_id: " + mSocket.id());
+                    try {
+                        ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - onDisconect\nSocket_id: " + mSocket.id()+"\n",log_file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                   // reconnect();
                 }
             });
 
             mSocket.connect();
 
             attemptSendLogin();
-
-            /*
-            *TESTE ENVIO DE MSG APAGAR DEPOIS
-            */
-
-            Chat_S_Message sMessage = new Chat_S_Message();
-            sMessage.setRoom_code("2017.F");
-            sMessage.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
-            sMessage.setData("Msg teste padrão do app n:"+ new Random().nextInt(100));
-            sMessage.setTmp(1);
-
-            Gson gson = new GsonBuilder().serializeNulls().create();
-
-            //attemptSendMessages(gson.toJson(sMessage));
-            //  attemptSendMessages(gson.toJson(chatObj));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,10 +143,20 @@ public class SingletonWebSocket {
 
     public void reconnect() {
         Log.d("Chat", "Reconect");
+        try {
+            ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - Reconect   -  Socket_id: " + mSocket.id()+"\n",log_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         disconnect();
         //
         if (mSocketReconnect) {
             Log.d("Chat", "Reconect -> initConnection");
+            try {
+                ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - Reconect -> initConnection \n",log_file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             initConnection();
         }
     }
@@ -144,6 +173,11 @@ public class SingletonWebSocket {
 
     public void attemptSendLogin() {
         Log.d("Chat", "attemptSendLogin");
+        try {
+            ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - attemptSendLogin ->  Socket_id: " + mSocket.id()+"\n",log_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         try {
             Gson gson = new GsonBuilder().serializeNulls().create();
@@ -158,6 +192,11 @@ public class SingletonWebSocket {
             if (mSocket != null) {
                 mSocket.emit(Constant.CHAT_EVENT_S_LOGIN, gson.toJson(env));
                 Log.d("Chat", "sLogin");
+                try {
+                    ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - emit sLogin ->  Socket_id: " + mSocket.id()+"\n",log_file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
         }
@@ -166,6 +205,7 @@ public class SingletonWebSocket {
     public void attemptSendRoom(String message) {
         if (mSocket != null) {
             mSocket.emit(Constant.CHAT_EVENT_S_ROOM, message);
+
         }
     }
 
@@ -187,6 +227,50 @@ public class SingletonWebSocket {
         public void call(Object... args) {
             attemptSendRoom("");
             //attemptSendRoom("");
+        }
+    };
+
+    private Emitter.Listener onReconnectReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if(mSocket!=null) {
+                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+            }else{
+                Log.d("Chat", "EVENT_RECONNECT");
+            }
+        }
+    };
+
+    private Emitter.Listener onReconnectingReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if(mSocket!=null) {
+                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+            }else{
+                Log.d("Chat", "EVENT_RECONNECT");
+            }
+        }
+    };
+
+    private Emitter.Listener onReconnectError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if(mSocket!=null) {
+                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+            }else{
+                Log.d("Chat", "EVENT_RECONNECT");
+            }
+        }
+    };
+
+    private Emitter.Listener onReconnectFailed = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if(mSocket!=null) {
+                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+            }else{
+                Log.d("Chat", "EVENT_RECONNECT");
+            }
         }
     };
 
@@ -306,6 +390,14 @@ public class SingletonWebSocket {
                     * */
                 }
             }
+        }
+    };
+
+
+    private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            int i = 10;
         }
     };
 

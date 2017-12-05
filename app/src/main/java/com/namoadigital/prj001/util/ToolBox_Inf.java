@@ -2699,7 +2699,8 @@ public class ToolBox_Inf {
 
         mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
 
-        context.sendBroadcast(mIntent);
+       // LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+       context.sendBroadcast(mIntent);
     }
 
 

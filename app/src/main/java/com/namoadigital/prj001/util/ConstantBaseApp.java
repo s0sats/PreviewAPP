@@ -384,7 +384,8 @@ public class ConstantBaseApp extends ConstantBase {
     //Eventos Client
     public static final String CHAT_EVENT_C_LOGIN = "cLogin";
     public static final String CHAT_EVENT_C_ROOM = "cRoom";
-    public static final String CHAT_EVENT_C_ERROR = "error";
+    public static final String CHAT_EVENT_C_ERROR = "cError";
+    public static final String CHAT_EVENT_C_ERROR_LOGIN = "cErrorLogin";
     public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
     public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
     public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";

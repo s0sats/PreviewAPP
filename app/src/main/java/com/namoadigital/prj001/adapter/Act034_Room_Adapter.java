@@ -3,6 +3,8 @@ package com.namoadigital.prj001.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,15 @@ public class Act034_Room_Adapter extends BaseAdapter {
     private Context context;
     private ArrayList<HMAux> source;
     private int resource;
+    private OnIvRoomClickListner OnIvRoomClickListner;
+
+    public interface OnIvRoomClickListner{
+        void onIvRoomClick(String image_path);
+    }
+
+    public void setOnIvRoomClickListner(Act034_Room_Adapter.OnIvRoomClickListner onIvRoomClickListner) {
+        OnIvRoomClickListner = onIvRoomClickListner;
+    }
 
     public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource) {
         this.context = context;
@@ -59,7 +70,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
             convertView = inflater.inflate(resource, parent, false);
         }
         //
-        HMAux item = source.get(position);
+        final HMAux item = source.get(position);
         //
         ImageView iv_room_image = (ImageView) convertView.findViewById(R.id.act034_room_cell_iv_image);
         ImageView iv_room_icon = (ImageView) convertView.findViewById(R.id.act034_room_cell_iv_icon);
@@ -68,8 +79,22 @@ public class Act034_Room_Adapter extends BaseAdapter {
         TextView tv_msg = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_msg);
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_badge);
         //
-        Bitmap imgBitmap = BitmapFactory.decodeFile(Constant.THU_PATH +"/"+ item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
-        iv_room_image.setImageBitmap(imgBitmap);
+        Bitmap imgBitmap = BitmapFactory.decodeFile(getImageThumbnail(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(context.getResources(),imgBitmap);
+        drawable.setCircular(true);
+
+        //iv_room_image.setImageBitmap(imgBitmap);
+        iv_room_image.setImageDrawable(drawable);
+        //
+        iv_room_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(OnIvRoomClickListner != null){
+                    OnIvRoomClickListner.onIvRoomClick(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
+                }
+            }
+        });
         //
         switch (item.get(CH_RoomDao.ROOM_TYPE)) {
 
@@ -114,5 +139,9 @@ public class Act034_Room_Adapter extends BaseAdapter {
         }
         //
         return convertView;
+    }
+
+    private String getImageThumbnail(String image_path){
+        return Constant.THU_PATH +"/"+ image_path.replace(".jpg","_thumb.jpg");
     }
 }
