@@ -10,6 +10,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act034_Main_View {
 
+    void startReceivers(boolean start_stop);
+
     void callAct005(Context context);
 
     void callAct035(Context context, HMAux item);

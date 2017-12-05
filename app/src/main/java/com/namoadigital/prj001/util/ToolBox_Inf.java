@@ -90,7 +90,11 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -101,6 +105,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
@@ -112,6 +117,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -2603,4 +2609,99 @@ public class ToolBox_Inf {
         }
         return null;
     }
+
+    public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key){
+        boolean ret = true;
+        //
+        for (HMAux hmAux:hmAuxList) {
+            boolean hasError = addJsonObjAsHmAuxKey(hmAux,key);
+            if(ret){
+                ret = hasError;
+            }
+        }
+        return ret;
+    }
+
+    public static boolean addJsonObjAsHmAuxKey(HMAux hmAux, String key){
+        JSONObject json = null;
+        //
+        try {
+            json = new JSONObject(String .valueOf(hmAux.get(key)));
+            //
+            if(json.length() > 0){
+                Iterator<String> root = json.keys();
+
+                if(root.hasNext()) {
+                    JSONObject innerJson = json.getJSONObject(root.next());
+
+                    for (Iterator<String> iter = innerJson.keys(); iter.hasNext(); ) {
+                        String json_key = iter.next();
+
+                        String json_new_key = key + "_" + json_key;
+
+                        hmAux.put(json_new_key,innerJson.getString(json_key));
+                    }
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        } catch (JSONException e) {
+            registerException(CLASS_NAME,e);
+            return false;
+        }
+    }
+
+    public static void createThumbNail_Images(String path, String original) {
+
+        try {
+            File image = new File(path + "/" + original);
+
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(image.getPath(), bounds);
+            if ((bounds.outWidth == -1) || (bounds.outHeight == -1))
+                return;
+
+            int originalSize = (bounds.outHeight > bounds.outWidth) ? bounds.outHeight
+                    : bounds.outWidth;
+
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inSampleSize = originalSize / 512;
+
+            Bitmap imgFinal = BitmapFactory.decodeFile(image.getPath(), opts);
+
+            File file = new File(Constant.THU_PATH + "/" + original.replace(".jpg", "") + "_thumb.jpg");
+
+            if (file.exists()) {
+                file.delete();
+            }
+
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+
+            imgFinal.compress(Bitmap.CompressFormat.JPEG, 25, os);
+
+            os.flush();
+            os.close();
+
+        } catch (Exception e) {
+            registerException(CLASS_NAME,e);
+            return;
+        }
+
+    }
+
+    public static void sendBRChat(Context context,String type) {
+        Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+
+        mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
+
+        context.sendBroadcast(mIntent);
+    }
+
+
+
 }

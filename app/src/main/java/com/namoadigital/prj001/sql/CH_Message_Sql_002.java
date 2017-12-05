@@ -9,7 +9,7 @@ import com.namoadigital.prj001.database.Specification;
 
 public class CH_Message_Sql_002 implements Specification {
 
-    public static final String NEXT_TMP = "tmp";
+    public static final String NEXT_TMP = "next_tmp";
 
     private int msg_prefix;
 
@@ -23,12 +23,13 @@ public class CH_Message_Sql_002 implements Specification {
 
         return  sb
                 .append(" SELECT\n" +
-                        "   IFNULL(MAX(m.tmp),100) + 1 tmp\n" +
+                        "   IFNULL(MAX(m.tmp),100) + 1 "+NEXT_TMP+"\n" +
                         " FROM\n" +
                         CH_MessageDao.TABLE +" m\n" +
                         " WHERE\n" +
                         "   m.msg_prefix = '"+msg_prefix+"' \n")
-                .append(";"+NEXT_TMP)
+                .append(";")
+                .append(NEXT_TMP)
                 .toString();
     }
 }

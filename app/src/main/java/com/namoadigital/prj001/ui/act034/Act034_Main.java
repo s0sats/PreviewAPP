@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.ui.act034;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -43,6 +45,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private Act034_Opc act034_opc;
     private Act034_Room act034_room;
     private String currentFrag = "";
+    private BR_Room brRoomReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +100,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 R.string.act005_drawer_opened,
                 R.string.act005_drawer_opened
         ) {
-            @SuppressLint("RestrictedApi")
+            //@SuppressLint("RestrictedApi")
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -107,7 +110,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 invalidateOptionsMenu();
             }
 
-            @SuppressLint("RestrictedApi")
+            //@SuppressLint("RestrictedApi")
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -123,9 +126,30 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         mDrawerToggle.syncState();
         //
+        mPresenter = new Act034_Main_Presenter_Impl(
+                context,
+                this,
+                hmAux_Trans
+        );
+        //
         initFragments();
         //
         setFrag(act034_room,FRAG_TAG_ROOM);
+        //
+        startReceivers(true);
+    }
+
+    @Override
+    public void startReceivers(boolean start_stop) {
+        brRoomReceiver = new BR_Room();
+        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
+        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        //
+        if(start_stop){
+            registerReceiver(brRoomReceiver,brRoomFilter);
+        }else{
+            unregisterReceiver(brRoomReceiver);
+        }
 
     }
 
@@ -206,13 +230,44 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         finish();
     }
 
+    /*
+    * Receivers
+    */
+
+    private class BR_Room extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
+
+            type += "";
+
+            switch (type){
+                case Constant.CHAT_BR_TYPE_ROOM:
+                case Constant.CHAT_BR_TYPE_MSG:
+                    if(currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)){
+                        act034_room.loadRoomList();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
 
-        //mPresenter.onBackPressedClicked();
+    }
 
-        callAct005(context);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+      //  startReceivers(false);
     }
 
     @Override

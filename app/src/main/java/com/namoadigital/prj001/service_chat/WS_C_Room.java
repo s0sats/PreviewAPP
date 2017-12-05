@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -66,5 +67,17 @@ public class WS_C_Room extends IntentService {
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
         roomDao.addUpdate(chRooms, true);
+        //
+        startDownloadService();
+        //
+        //
+        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+    }
+
+    private void startDownloadService() {
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        //
+        getApplicationContext().sendBroadcast(mIntentPIC);
+
     }
 }
