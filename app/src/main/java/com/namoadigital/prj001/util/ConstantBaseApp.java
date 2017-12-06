@@ -407,6 +407,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE = "CHAT_BR_TYPE";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
+    public static final String CHAT_MSG_CODE = "CHAT_MSG_CODE";
+    public static String CHAT_PREFIX_MESSAGE_CODE = "";
 
 
 }

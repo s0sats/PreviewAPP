@@ -2649,7 +2649,8 @@ public class ToolBox_Inf {
                 return false;
             }
         } catch (JSONException e) {
-            registerException(CLASS_NAME,e);
+            //registerException(CLASS_NAME,e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -2691,6 +2692,29 @@ public class ToolBox_Inf {
             return;
         }
 
+    }
+
+
+    synchronized public static long chatNextMSGCode(Context context) {
+
+        long nextID = ToolBox_Con.getPreference_Chat_Msg_Code(context);
+        //
+        String mPrefix = yearMonthPrefix();
+        //
+        if (mPrefix.equalsIgnoreCase(Constant.CHAT_PREFIX_MESSAGE_CODE)){
+            return ++nextID;
+        } else {
+            Constant.CHAT_PREFIX_MESSAGE_CODE = mPrefix;
+            return 101L;
+        }
+    }
+
+    public static String yearMonthPrefix(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        //
+        Calendar cAux = Calendar.getInstance();
+        //
+        return sdf.format(cAux.getTime());
     }
 
     public static void sendBRChat(Context context,String type) {

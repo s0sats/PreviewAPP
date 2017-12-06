@@ -324,6 +324,29 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region Chat_Msg_Code
+    public static void setPreference_Chat_Msg_Code(Context context, long chat_msg_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.CHAT_MSG_CODE,
+                chat_msg_code
+        ).apply();
+    }
+
+    public static long getPreference_Chat_Msg_Code(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.CHAT_MSG_CODE,
+                100L
+        );
+    }
+//endregion
+
+
     //region Translate_Code
     public static void setPreference_Translate_Code(Context context, String translate_code) {
         SharedPreferences sharedPreferences =

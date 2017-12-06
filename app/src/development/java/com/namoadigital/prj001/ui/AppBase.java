@@ -101,5 +101,7 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
 
+
+
     }
 }
