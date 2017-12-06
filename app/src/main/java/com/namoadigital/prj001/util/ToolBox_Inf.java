@@ -2610,6 +2610,24 @@ public class ToolBox_Inf {
         return null;
     }
 
+    public static String setWebSocketJsonParam(Object emit_param){
+        try {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            Chat_Obj chatObj = new Chat_Obj();
+
+            chatObj.setObj(gson.toJsonTree(emit_param));
+
+            if (chatObj.getObj() != null) {
+                return gson.toJson(chatObj);
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return null;
+        }
+        return null;
+    }
+
     public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key){
         boolean ret = true;
         //
@@ -2722,5 +2740,10 @@ public class ToolBox_Inf {
         mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+    }
+
+    public static String lPad(int qtd, int msg) {
+        return String.format("%0"+qtd+"d", msg);
+
     }
 }

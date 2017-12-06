@@ -443,6 +443,11 @@
 
         <receiver android:name=".receiver_chat.WBR_C_Remove_Room" />
 
+        <receiver android:name=".receiver_chat.WBR_C_Message_Tmp" />
+
+        <service android:name=".service_chat.WS_C_Message_Tmp" />
+
+
     </application>
 
 </manifest>

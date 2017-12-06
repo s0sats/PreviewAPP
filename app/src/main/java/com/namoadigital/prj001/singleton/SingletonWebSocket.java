@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.util.Constant;
@@ -97,6 +98,7 @@ public class SingletonWebSocket {
             mSocket.on(Constant.CHAT_EVENT_C_ROOM, onRoomReturn);
             mSocket.on(Constant.CHAT_EVENT_C_PENDING_MESSAGES, onPendingMessagesReturn);
             mSocket.on(Constant.CHAT_EVENT_C_MESSAGE, onMessagesReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_MESSAGE_TMP, onMessagesTmpReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ADD_ROOM, onAddRoom);
             mSocket.on(Constant.CHAT_EVENT_C_REMOVE_ROOM, onRemoveRoom);
 
@@ -221,6 +223,12 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptSendMessageTmp(String message) {
+        if (mSocket != null) {
+            mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE_TMP, message);
+        }
+    }
+
 
     private Emitter.Listener onLoginReturn = new Emitter.Listener() {
         @Override
@@ -230,6 +238,7 @@ public class SingletonWebSocket {
         }
     };
 
+    //region RECONNECT EVENTS
     private Emitter.Listener onReconnectReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -273,7 +282,9 @@ public class SingletonWebSocket {
             }
         }
     };
+    //endregion
 
+    //region ROOM EVENTS
     private Emitter.Listener onRoomReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -297,52 +308,6 @@ public class SingletonWebSocket {
             }
             //
             attemptSendPendingMessages("");
-        }
-    };
-
-    private Emitter.Listener onPendingMessagesReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-
-    private Emitter.Listener onMessagesReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
         }
     };
 
@@ -392,8 +357,80 @@ public class SingletonWebSocket {
             }
         }
     };
+    //endregion
 
+    //region MSGs EVENTS
+    private Emitter.Listener onPendingMessagesReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
 
+    private Emitter.Listener onMessagesReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+
+    private Emitter.Listener onMessagesTmpReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cMessageIntent = new Intent(context,WBR_C_Message_Tmp.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+    //endregion
+
+    //region ERROR EVENTS
     private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -407,7 +444,7 @@ public class SingletonWebSocket {
             int i = 10;
         }
     };
-
+    //endregion
 
     /**
      * OnConnection Changed precisa chamar esse método para reiniciar a conexao em caso de falha.

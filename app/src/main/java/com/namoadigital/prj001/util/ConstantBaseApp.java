@@ -388,6 +388,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_ERROR_LOGIN = "cErrorLogin";
     public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
     public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
+    public static final String CHAT_EVENT_C_MESSAGE_TMP = "cMessageTmp";
     public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
     public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
 
@@ -396,6 +397,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_S_ROOM = "sRoom";
     public static final String CHAT_EVENT_S_PENDING_MESSAGES = "sPendingMessages";
     public static final String CHAT_EVENT_S_MESSAGE = "sMessage";
+    public static final String CHAT_EVENT_S_MESSAGE_TMP = "sMessageTmp";
 
     //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
