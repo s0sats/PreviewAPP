@@ -2694,7 +2694,6 @@ public class ToolBox_Inf {
 
     }
 
-
     synchronized public static long chatNextMSGCode(Context context) {
 
         long nextID = ToolBox_Con.getPreference_Chat_Msg_Code(context);
