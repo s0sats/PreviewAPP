@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
@@ -14,6 +15,7 @@ import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.sql.CH_Message_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
@@ -36,11 +38,13 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     private EV_User_CustomerDao ev_user_customerDao;
     private HMAux HMCustomer;
     private GE_Custom_Form_LocalDao customFormLocalDao;
+    private CH_MessageDao messageDao;
 
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
         this.mView = mView;
         this.ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
+        this.messageDao = new CH_MessageDao(context);
     }
 
     @Override
@@ -153,8 +157,27 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         context.sendBroadcast(mIntent);
         //Se Possui Acesso ao Chat, inicia serviço
         if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)){
-            Intent chatIntent = new Intent(context, AppBackgroundService.class);
-            context.startService(chatIntent);
+            //
+            HMAux msgAux = messageDao.getByStringHM(
+                    new CH_Message_Sql_004().toSqlQuery()
+            );
+            //
+            if(msgAux.size() > 0){
+                //
+                ToolBox_Con.setPreference_Chat_Msg_Prefix(
+                        context,
+                        msgAux.get(CH_MessageDao.MSG_PREFIX)
+                );
+                //
+                ToolBox_Con.setPreference_Chat_Msg_Code(
+                        context,
+                        Long.parseLong(msgAux.get(CH_MessageDao.TMP))
+                );
+                //
+                Intent chatIntent = new Intent(context, AppBackgroundService.class);
+                context.startService(chatIntent);
+            }
+
         }
         //
         ToolBox_Inf.sendBCStatus(context, "STATUS", context.getString(R.string.msg_start_to_sync), "", "0");

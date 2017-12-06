@@ -2718,10 +2718,11 @@ public class ToolBox_Inf {
         //
         String mPrefix = yearMonthPrefix();
         //
-        if (mPrefix.equalsIgnoreCase(Constant.CHAT_PREFIX_MESSAGE_CODE)){
-            return ++nextID;
+        if (mPrefix.equalsIgnoreCase(ToolBox_Con.getPreference_Chat_Msg_Prefix(context))){
+            ToolBox_Con.setPreference_Chat_Msg_Code(context,++nextID);
+            return nextID;
         } else {
-            Constant.CHAT_PREFIX_MESSAGE_CODE = mPrefix;
+            ToolBox_Con.setPreference_Chat_Msg_Prefix(context,mPrefix);
             return 101L;
         }
     }

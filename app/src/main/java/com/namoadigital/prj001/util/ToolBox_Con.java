@@ -330,7 +330,7 @@ public class ToolBox_Con {
                 PreferenceManager.getDefaultSharedPreferences(context);
 
         sharedPreferences.edit().putLong(
-                Constant.CHAT_MSG_CODE,
+                Constant.CHAT_PREFERENCE_MSG_CODE,
                 chat_msg_code
         ).apply();
     }
@@ -340,11 +340,34 @@ public class ToolBox_Con {
                 PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getLong(
-                Constant.CHAT_MSG_CODE,
+                Constant.CHAT_PREFERENCE_MSG_CODE,
                 100L
         );
     }
 //endregion
+
+
+    //region Chat_Msg_Prefix
+    public static void setPreference_Chat_Msg_Prefix(Context context, String chat_msg_prefix ) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.CHAT_PREFERENCE_MSG_PREFIX,
+                chat_msg_prefix
+        ).apply();
+    }
+
+    public static String getPreference_Chat_Msg_Prefix(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.CHAT_PREFERENCE_MSG_PREFIX,
+                ""
+        );
+    }
+    //endregion
 
 
     //region Translate_Code
