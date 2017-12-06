@@ -207,14 +207,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     private void iniSetup() {
 
-
         context = Act005_Main.this;
-        //
-        // Teste hugo remover
-
-        Intent mIntent = new Intent(context, AppBackgroundService.class);
-        startService(mIntent);
-
         //
         ToolBox_Inf.cleanningFormLocal(context);
         Constant.DATEFORMATDT = ToolBox_Con.getPreference_Customer_nls_date_format(context).toLowerCase().replaceAll("m", "M").replaceAll("r", "y");

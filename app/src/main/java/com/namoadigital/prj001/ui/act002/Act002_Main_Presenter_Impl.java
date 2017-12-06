@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
@@ -150,6 +151,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+        //Se Possui Acesso ao Chat, inicia serviço
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)){
+            Intent chatIntent = new Intent(context, AppBackgroundService.class);
+            context.startService(chatIntent);
+        }
+        //
         ToolBox_Inf.sendBCStatus(context, "STATUS", context.getString(R.string.msg_start_to_sync), "", "0");
 
     }

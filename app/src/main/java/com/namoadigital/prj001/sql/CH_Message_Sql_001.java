@@ -6,6 +6,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by d.luche on 30/11/2017.
+ *
+ * Selecion todas as mensagens de uma sala
  */
 
 public class CH_Message_Sql_001 implements Specification {
