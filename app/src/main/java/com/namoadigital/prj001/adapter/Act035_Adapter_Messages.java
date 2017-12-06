@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -209,8 +210,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_name.setVisibility(View.INVISIBLE);
 
                 //iv_foto.setImageResource(R.drawable.bt);
-                //iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "10.jpg"));
+                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                //iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "10.jpg"));
 
                 //tv_message.setText("Message");
 

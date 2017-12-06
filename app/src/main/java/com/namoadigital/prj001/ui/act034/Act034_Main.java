@@ -150,7 +150,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }else{
             LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(brRoomReceiver);
         }
-
     }
 
     private void initFragments() {

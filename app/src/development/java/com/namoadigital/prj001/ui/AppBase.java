@@ -102,6 +102,5 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
 
 
-
     }
 }

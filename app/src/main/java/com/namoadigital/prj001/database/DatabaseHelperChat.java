@@ -27,6 +27,7 @@ public class DatabaseHelperChat extends SQLiteOpenHelper {
             //
             script.append("create table if not exists [ch_rooms] ([room_code] text not null COLLATE NOCASE, [room_type] text not null COLLATE NOCASE, [room_desc] text not null COLLATE NOCASE, [customer_code] int , [room_obj] text DEFAULT '' COLLATE NOCASE,[room_image] text DEFAULT '' COLLATE NOCASE,[room_image_local] text DEFAULT '' COLLATE NOCASE, constraint pk_rooms primary key(room_code));");script.append("create table if not exists [ch_rooms] ([room_code] text not null, [room_type] text not null COLLATE NOCASE, [room_desc] text not null COLLATE NOCASE, [customer_code] int , [room_obj] text DEFAULT '' COLLATE NOCASE,[room_image] text DEFAULT '' COLLATE NOCASE,[room_image_local] text DEFAULT '' COLLATE NOCASE, constraint pk_rooms primary key(room_code));");
             script.append("create table if not exists [ch_messages] ([msg_prefix] int not null, [msg_code] int not null, [tmp] int not null, [room_code] text not null COLLATE NOCASE,[msg_date] text not null COLLATE NOCASE,[msg_obj] text not null COLLATE NOCASE, [message_image_local] text DEFAULT '' COLLATE NOCASE,[msg_origin] text not null COLLATE NOCASE,[delivered]  int not null DEFAULT 0,[delivered_date] text COLLATE NOCASE,[read]  int not null DEFAULT 0,[read_date] text COLLATE NOCASE,[msg_pk] text COLLATE NOCASE,[user_code]  int not null ,[user_nick] text not null COLLATE NOCASE, constraint pk_ch_messages primary key(msg_prefix,tmp));");
+            script.append("create table if not exists [ch_files] ([file_code] text not null DEFAULT '' COLLATE NOCASE, [file_path] text not null DEFAULT '' COLLATE NOCASE,[file_path_new] text collate nocase, [file_status] text not null DEFAULT '' COLLATE NOCASE, [file_date] text not null DEFAULT '' COLLATE NOCASE, primary key(file_code));");
             //
             String[] scripts        = script.toString().split(";");
             String[] scripts_dados =  script_dados.toString().split(";");
@@ -50,6 +51,7 @@ public class DatabaseHelperChat extends SQLiteOpenHelper {
         //
         script.append("drop table if exists [ch_rooms];");
         script.append("drop table if exists [ch_messages];");
+        script.append("drop table if exists [ch_files];");
         //
         String[] scripts = script.toString().split(";");
         //
