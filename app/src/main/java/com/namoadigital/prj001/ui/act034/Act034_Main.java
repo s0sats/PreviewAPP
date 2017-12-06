@@ -287,9 +287,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         int id = item.getItemId();
 
-        /*if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
-        }*/
+        }
 
         return true;
     }

@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.ui.act034;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +23,7 @@ import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -31,7 +37,6 @@ import java.util.ArrayList;
 public class Act034_Room extends BaseFragment {
 
     private Context context;
-
     private LinearLayout ll_header;
     private TextView tv_others_customer_msg_lbl;
     private TextView tv_others_customer_msg_qty;
@@ -107,8 +112,44 @@ public class Act034_Room extends BaseFragment {
                     R.layout.act034_room_cell
             );
             //
+            mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
+                @Override
+                public void onIvRoomClick(String image_path) {
+                    showRoomImageDialog(image_path);
+                }
+            });
+            //
             lv_msg.setAdapter(mAdapter);
         }
+
+    }
+
+    private void showRoomImageDialog(String image_path) {
+
+        AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
+        LinearLayout linearLayout = new LinearLayout(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+
+        linearLayout.setLayoutParams(params);
+        //
+        ImageView iv_room = new ImageView(context);
+        LinearLayout.LayoutParams iv_params = new LinearLayout.LayoutParams(
+                200,
+                200
+        );
+        iv_room.setLayoutParams(iv_params);
+
+        Bitmap image = BitmapFactory.decodeFile(Constant.CACHE_PATH +"/"+ image_path);
+
+        iv_room.setImageBitmap(image);
+
+        imageBuilder.setView(iv_room);
+        imageBuilder.setCancelable(true);
+
+        imageBuilder.create().show();
 
     }
 
@@ -237,7 +278,7 @@ public class Act034_Room extends BaseFragment {
         auxList.add(aux10);
         //
 //        mAdapter = new Act034_Msg_Adapter(
-//                getActivity(),
+//                context,
 //                auxList
 //        );
 //        //
