@@ -113,8 +113,21 @@ public class Act034_Room extends BaseFragment {
     private void showRoomImageDialog(String image_path) {
 
         AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
+        LinearLayout linearLayout = new LinearLayout(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
 
+        linearLayout.setLayoutParams(params);
+        //
         ImageView iv_room = new ImageView(context);
+        LinearLayout.LayoutParams iv_params = new LinearLayout.LayoutParams(
+                200,
+                200
+        );
+        iv_room.setLayoutParams(iv_params);
+
         Bitmap image = BitmapFactory.decodeFile(Constant.CACHE_PATH +"/"+ image_path);
 
         iv_room.setImageBitmap(image);
