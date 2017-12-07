@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -9,6 +11,8 @@ import com.namoadigital.prj001.dao.CH_FileDao;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -99,6 +103,27 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         setData(mRoom_code);
         //
         mView.cleanTextControl();
+        //
+        //enviarMensagemServer(mRoom_code, message, chMessage);
+    }
+
+    private void enviarMensagemServer(String mRoom_code, String message, CH_Message chMessage) {
+        Chat_S_Message s_message = new Chat_S_Message();
+        //
+        s_message.setRoom_code(mRoom_code);
+        if (message.isEmpty()){
+            s_message.setType(Constant.CHAT_MESSAGE_TYPE_IMAGE);
+        } else {
+            s_message.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
+        }
+        s_message.setData(message);
+        s_message.setTmp(chMessage.getTmp());
+        //
+        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
+        singletonWebSocket.attemptSendMessages(gson.toJson(s_message));
     }
 
     @Override

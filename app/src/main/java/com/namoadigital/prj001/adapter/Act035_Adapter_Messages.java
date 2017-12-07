@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -168,9 +168,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
                 tv_name.setText("Nome");
 
-                //iv_foto.setImageResource(R.drawable.bt);
-                //iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "10.jpg"));
+                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()){
+                    iv_foto.setImageResource(R.drawable.sand_watch_transp);
+                } else {
+                    iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
+                            hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg","") + "_thumb.jpg"
+                    ));
+                }
 
                 //tv_message.setText("Message");
 
@@ -209,11 +213,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
                 tv_name.setVisibility(View.INVISIBLE);
 
-                //iv_foto.setImageResource(R.drawable.bt);
-                iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-                //iv_foto.setImageBitmap(BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + "10.jpg"));
-
-                //tv_message.setText("Message");
+                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()){
+                    iv_foto.setImageResource(R.drawable.sand_watch_transp);
+                } else {
+                    iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
+                            hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg","") + "_thumb.jpg"
+                    ));
+                }
 
                 tv_hour.setText(
 

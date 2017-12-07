@@ -206,7 +206,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             public void onClick(View v) {
                 statusCameraNew = true;
 
-                String sCustomName = "CHAT" + "_" + ToolBox_Inf.yearMonthPrefix() + "_" + UUID.randomUUID().toString() + ".jpg";
+                String sCustomName = ToolBox_Inf.yearMonthPrefix() + "." + UUID.randomUUID().toString() + ".jpg";
 
                 callCamera(-1, 1, sCustomName, true, true);
             }
@@ -243,6 +243,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mValue);
             if (sFile.exists()) {
+                ToolBox_Inf.createThumbNail_Images(ConstantBase.CACHE_PATH_PHOTO, mValue);
+                //
                 mPresenter.sendMessage(mRoom_code, "", mValue);
             }
         }
