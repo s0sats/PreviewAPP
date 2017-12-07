@@ -104,14 +104,14 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         //
         mView.cleanTextControl();
         //
-        //enviarMensagemServer(mRoom_code, message, chMessage);
+        enviarMensagemServer(mRoom_code, message, chMessage);
     }
 
     private void enviarMensagemServer(String mRoom_code, String message, CH_Message chMessage) {
         Chat_S_Message s_message = new Chat_S_Message();
         //
         s_message.setRoom_code(mRoom_code);
-        if (message.isEmpty()){
+        if (message.isEmpty()) {
             s_message.setType(Constant.CHAT_MESSAGE_TYPE_IMAGE);
         } else {
             s_message.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
