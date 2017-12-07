@@ -126,7 +126,7 @@ public class Act034_Room extends BaseFragment {
     private void showRoomImageDialog(String image_path) {
 
         AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
-        LinearLayout linearLayout = new LinearLayout(context);
+        /*LinearLayout linearLayout = new LinearLayout(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
@@ -139,13 +139,17 @@ public class Act034_Room extends BaseFragment {
                 200,
                 200
         );
-        iv_room.setLayoutParams(iv_params);
+        iv_room.setLayoutParams(iv_params);*/
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view  = inflater.inflate(R.layout.act034_room_image,null);
+
+        ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_image_iv_image);
 
         Bitmap image = BitmapFactory.decodeFile(Constant.CACHE_PATH +"/"+ image_path);
 
         iv_room.setImageBitmap(image);
 
-        imageBuilder.setView(iv_room);
+        imageBuilder.setView(view);
         imageBuilder.setCancelable(true);
 
         imageBuilder.create().show();
