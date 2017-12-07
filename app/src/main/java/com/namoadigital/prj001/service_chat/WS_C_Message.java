@@ -12,7 +12,9 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -23,6 +25,9 @@ import java.util.ArrayList;
 
 public class WS_C_Message extends IntentService {
 
+    private CH_MessageDao messageDao;
+
+
     public WS_C_Message() {
         super("WS_C_Message");
     }
@@ -32,10 +37,13 @@ public class WS_C_Message extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
 
-        try {
-            String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
 
-            processC_Message(json_param);
+        try {
+            messageDao = new CH_MessageDao(getApplicationContext());
+            String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
+            String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM,"");
+
+            processC_Message(json_param, ws_event);
 
         } catch (Exception e) {
 
@@ -52,7 +60,7 @@ public class WS_C_Message extends IntentService {
 
     }
 
-    private void processC_Message(String json_param) {
+    private void processC_Message(String json_param, String ws_event) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
         ArrayList<Chat_C_Message> messages =
@@ -60,13 +68,34 @@ public class WS_C_Message extends IntentService {
                         json_param,
                         new TypeToken<ArrayList<Chat_C_Message>>() {
                         }.getType());
-        //
-        ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
-        //
-        CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
-        //
-        messageDao.addUpdate(chMessages, false);
-        //
-        ToolBox_Inf.sendBRChat(getApplicationContext(),Constant.CHAT_BR_TYPE_MSG);
+        //Se é um "cMessage" de uma msg minha,
+        //atualiza data da msg pra a data do server.
+        if (ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_MESSAGE)
+                && ToolBox_Con.getPreference_User_Code(getApplicationContext())
+                .equalsIgnoreCase(String.valueOf(messages.get(0).getUser_code()))
+                )
+        {
+
+            CH_Message chMessage = messageDao.getByString(
+                    new CH_Message_Sql_005(
+                            messages.get(0).getMsg_prefix(),
+                            messages.get(0).getMsg_code()
+                    ).toSqlQuery()
+            );
+            //
+            if(chMessage != null && chMessage.getMsg_prefix() > -1){
+                chMessage.setMsg_date(messages.get(0).getMsg_date());
+                messageDao.addUpdate(chMessage);
+            }
+
+        }else {
+            //Transforma list de objs recebido(Chat_C_Message)
+            //em objs do banco(CH_Message)
+            ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
+            //Salva lista no banco de dados.
+            messageDao.addUpdate(chMessages, false);
+            //
+        }
+        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
     }
 }

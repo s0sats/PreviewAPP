@@ -8,7 +8,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.CH_Message;
-import com.namoadigital.prj001.sql.CH_Message_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -148,18 +147,9 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
                 db.delete(TABLE, null, null);
             }
 
-            //Define contador inicial para o criação do temp;
-            long tmp = 100;
-
             for (CH_Message ch_message : ch_messages) {
-                //Atualiza valor do tmp
-                //
-                tmp = Long.parseLong((
-                        this.getByStringHMTmp(
-                                new CH_Message_Sql_002(
-                                        ch_message.getMsg_prefix()
-                                ).toSqlQuery())
-                ).get(CH_Message_Sql_002.NEXT_TMP));
+                //Resgata proximo tmp
+                long tmp = ToolBox_Inf.chatNextMSGCode(context);
                 //
                 //Seta Tmp
                 ch_message.setTmp(tmp);

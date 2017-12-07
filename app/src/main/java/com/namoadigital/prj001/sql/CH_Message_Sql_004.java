@@ -18,8 +18,10 @@ public class CH_Message_Sql_004 implements Specification {
 
         return  sb
                 .append(" SELECT\n" +
-                        "   m.msg_prefix msg_prefix,\n" +
-                        "   max(m.tmp) tmp\n" +
+                        "   IFNULL(m.msg_prefix, \n" +
+                        "    (select strftime('%Y%m','now','localtime')) \n" +
+                        "  )msg_prefix,\n" +
+                        "  IFNULL(max(m.tmp),100) tmp\n" +
                         " FROM\n" +
                         "   "+ CH_MessageDao.TABLE+" m\n" +
                         " WHERE\n" +

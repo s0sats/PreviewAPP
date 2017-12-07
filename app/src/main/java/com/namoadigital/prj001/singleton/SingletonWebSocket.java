@@ -75,7 +75,6 @@ public class SingletonWebSocket {
 
         }
 
-
         Log.d("Chat", "initConnection");
 
         try {
@@ -244,6 +243,9 @@ public class SingletonWebSocket {
         public void call(Object... args) {
             if(mSocket!=null) {
                 Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+                //
+                //attemptSendLogin();
+                //
             }else{
                 Log.d("Chat", "EVENT_RECONNECT");
             }
@@ -254,9 +256,9 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if(mSocket!=null) {
-                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+                Log.d("Chat", "EVENT_RECONNECTING   -  Socket_id: " + mSocket.id());
             }else{
-                Log.d("Chat", "EVENT_RECONNECT");
+                Log.d("Chat", "EVENT_RECONNECTING");
             }
         }
     };
@@ -265,9 +267,9 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if(mSocket!=null) {
-                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+                Log.d("Chat", "EVENT_RECONNECT_ERROR   -  Socket_id: " + mSocket.id());
             }else{
-                Log.d("Chat", "EVENT_RECONNECT");
+                Log.d("Chat", "EVENT_RECONNECT_ERROR");
             }
         }
     };
@@ -276,9 +278,9 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if(mSocket!=null) {
-                Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+                Log.d("Chat", "EVENT_RECONNECT_FAILED   -  Socket_id: " + mSocket.id());
             }else{
-                Log.d("Chat", "EVENT_RECONNECT");
+                Log.d("Chat", "EVENT_RECONNECT_FAILED");
             }
         }
     };
@@ -393,6 +395,7 @@ public class SingletonWebSocket {
                     Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM,Constant.CHAT_EVENT_C_MESSAGE);
                     cMessageIntent.putExtras(bundle);
                     context.sendBroadcast(cMessageIntent);
                 } else {
