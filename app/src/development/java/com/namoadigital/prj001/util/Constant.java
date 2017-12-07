@@ -6,6 +6,7 @@ package com.namoadigital.prj001.util;
 
 public class Constant extends ConstantBaseApp {
 
+
     /**
      * WebService
      */
