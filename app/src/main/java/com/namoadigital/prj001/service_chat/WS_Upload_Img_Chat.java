@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.service;
+package com.namoadigital.prj001.service_chat;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -8,14 +8,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
-import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.TUploadImg_Env;
-import com.namoadigital.prj001.model.TUploadImg_Rec;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.sql.GE_File_Sql_001;
+import com.namoadigital.prj001.dao.CH_FileDao;
+import com.namoadigital.prj001.model.CH_File;
+import com.namoadigital.prj001.model.TUploadImg_Chat_Env;
+import com.namoadigital.prj001.model.TUploadImg_Chat_Rec;
+import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_File_Sql_001;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -25,10 +25,10 @@ import java.util.Calendar;
  * Created by neomatrix on 20/01/17.
  */
 
-public class WS_Upload_Img extends IntentService {
+public class WS_Upload_Img_Chat extends IntentService {
 
-    public WS_Upload_Img() {
-        super("WS_Upload_Img");
+    public WS_Upload_Img_Chat() {
+        super("WS_Upload_Img_Chat");
     }
 
     @Override
@@ -44,59 +44,58 @@ public class WS_Upload_Img extends IntentService {
                 );
             }
 
-            WBR_Upload_Img.IS_RUNNING = true;
+            WBR_Upload_Img_Chat.IS_RUNNING = true;
 
             Gson gson = new Gson();
-            TUploadImg_Env env = new TUploadImg_Env();
-            env.setApp_code(Constant.PRJ001_CODE);
-            env.setApp_version(Constant.PRJ001_VERSION);
-            env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
-
+            TUploadImg_Chat_Env env = new TUploadImg_Chat_Env();
+            //
             Bundle bundle = intent.getExtras();
             //
-            ArrayList<GE_File> geFiles;
+            ArrayList<CH_File> chFiles;
             //
-            GE_FileDao geFileDao = new GE_FileDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                    Constant.DB_VERSION_CUSTOM
+            CH_FileDao chFileDao = new CH_FileDao(
+                    getApplicationContext()
             );
             //
-            geFiles = (ArrayList<GE_File>) geFileDao.query(
-                    new GE_File_Sql_001().toSqlQuery()
+            chFiles = (ArrayList<CH_File>) chFileDao.query(
+                    new CH_File_Sql_001().toSqlQuery()
             );
             //
-            for (GE_File geFile : geFiles) {
-
-                env.setFile_path(geFile.getFile_path());
+            for (CH_File chFile : chFiles) {
+                String[] vals = chFile.getFile_path().split(".");
+                //
+                env.setMsg_prefix(Long.parseLong(vals[0]));
+                env.setMsg_code(Long.parseLong(vals[1]));
+                env.setSocket_id(SingletonWebSocket.getmSocket_ID());
                 //
                 String sResults = ToolBox_Inf.uploadFile(
                         gson.toJson(env),
-                        geFile.getFile_path(),
-                        geFile.getFile_path_new()
+                        chFile.getFile_path(),
+                        chFile.getFile_path_new()
                 );
 
-                TUploadImg_Rec rec = gson.fromJson(
+                TUploadImg_Chat_Rec rec = gson.fromJson(
                         sResults,
-                        TUploadImg_Rec.class
+                        TUploadImg_Chat_Rec.class
                 );
 
-                if (rec.getSave().equalsIgnoreCase("OK")) {
-                    geFile.setFile_status("SENT");
-                    geFileDao.addUpdate(geFile);
-                }
+//              Deverá ser feito pelo cMessage
+//                if (rec.getSave().equalsIgnoreCase("OK")) {
+//                    geFile.setFile_status("SENT");
+//                    geFileDao.addUpdate(geFile);
+//                }
             }
 
 
         } catch (Exception e) {
             programAlarm(getApplicationContext());
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            WBR_Upload_Img.IS_RUNNING = false;
-            WBR_Upload_Img.completeWakefulIntent(intent);
+            WBR_Upload_Img_Chat.IS_RUNNING = false;
+            WBR_Upload_Img_Chat.completeWakefulIntent(intent);
             //
-            if(!ToolBox_Inf.isUploadRunning()){
-                ToolBox_Inf.cancelNotification(getApplicationContext(),Constant.NOTIFICATION_UPLOAD);
+            if (!ToolBox_Inf.isUploadRunning()) {
+                ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_UPLOAD);
             }
         }
     }
@@ -111,7 +110,7 @@ public class WS_Upload_Img extends IntentService {
         //
         Intent mIntent = new Intent(
                 context,
-                WBR_Upload_Img.class
+                WBR_Upload_Img_Chat.class
         );
         //
         PendingIntent pi = PendingIntent.getBroadcast(

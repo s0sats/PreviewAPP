@@ -32,6 +32,12 @@ import io.socket.emitter.Emitter;
 public class SingletonWebSocket {
     private static volatile SingletonWebSocket sSoleInstance;
 
+    private static String mSocket_ID;
+
+    public static String getmSocket_ID() {
+        return mSocket_ID;
+    }
+
     private Context context;
     private File log_file = null;
 
@@ -90,6 +96,8 @@ public class SingletonWebSocket {
 
         try {
             mSocket = IO.socket("https://chat.namoadigital.com", options);
+
+            mSocket_ID = mSocket.id();
 
             mSocket.on(Constant.CHAT_EVENT_C_LOGIN, onLoginReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ERROR_LOGIN, onErrorLoginReturn);
@@ -242,6 +250,8 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if(mSocket!=null) {
+                mSocket_ID = mSocket.id();
+
                 Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
                 //
                 //attemptSendLogin();
