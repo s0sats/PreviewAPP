@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message_Tmp;
@@ -97,6 +98,7 @@ public class WS_C_Message_Tmp extends IntentService {
                 JSONObject msg_obj = new JSONObject(ch_message.getMsg_obj());
                 JSONObject msg_obj_content = (JSONObject) msg_obj.get("message");
                 String msg_obj_type = (String) msg_obj_content.get("type");
+                String msg_obj_data = (String) msg_obj_content.get("data");
                 //
                 if (!msg_obj_type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)) {
                     //
@@ -117,13 +119,18 @@ public class WS_C_Message_Tmp extends IntentService {
                     renameImage(Constant.CACHE_PATH_PHOTO,curr_name,new_name);
                     //
                     curr_name = curr_name.replace(".jpg", "_thumb.jpg");
-                    new_name = curr_name.replace(".jpg", "_thumb.jpg");
+                    new_name = new_name.replace(".jpg", "_thumb.jpg");
                     //
                     renameImage(Constant.THU_PATH,curr_name,new_name);
 
                     // chamar o upload da Imagem com os códigos atualizados
                     // para incluir a imagem na lista com nome / novo nome iguais
 
+                    HMAux hmAux = new HMAux();
+                    hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
+                    hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));
+                    //
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE , hmAux);
                 }
             }
 

@@ -410,8 +410,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_FILTER = "CHAT_BR_FILTER";
     //
     public static final String CHAT_BR_TYPE = "CHAT_BR_TYPE";
+    public static final String CHAT_BR_PARAM = "CHAT_BR_PARAM";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
+    public static final String CHAT_BR_TYPE_MSG_IMAGE = "CHAT_BR_TYPE_MSG_IMAGE";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
     public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
 

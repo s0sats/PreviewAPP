@@ -106,6 +106,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
@@ -2741,6 +2742,15 @@ public class ToolBox_Inf {
         Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
         mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+    }
+
+    public static void sendBRChat(Context context,String type, HMAux param) {
+        Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
+        mIntent.putExtra(Constant.CHAT_BR_PARAM, (Serializable) param);
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }

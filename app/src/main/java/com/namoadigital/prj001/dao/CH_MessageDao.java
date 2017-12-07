@@ -353,7 +353,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             ch_message.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             ch_message.setMsg_date(cursor.getString(cursor.getColumnIndex(MSG_DATE)));
             ch_message.setMsg_obj(cursor.getString(cursor.getColumnIndex(MSG_OBJ)));
-            ch_message.setMessage_image_local(cursor.getString(cursor.getColumnIndex(MSG_OBJ)));
+            ch_message.setMessage_image_local(cursor.getString(cursor.getColumnIndex(MESSAGE_IMAGE_LOCAL)));
             ch_message.setMsg_origin(cursor.getString(cursor.getColumnIndex(MSG_ORIGIN)));
             ch_message.setDelivered(cursor.getInt(cursor.getColumnIndex(DELIVERED)));
 
