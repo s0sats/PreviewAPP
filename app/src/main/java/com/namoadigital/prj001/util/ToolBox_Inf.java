@@ -2721,7 +2721,7 @@ public class ToolBox_Inf {
         //
         if (mPrefix.equalsIgnoreCase(ToolBox_Con.getPreference_Chat_Msg_Prefix(context))){
             ToolBox_Con.setPreference_Chat_Msg_Code(context,++nextID);
-            Log.d("Chat","NEXT_TMP ->" + String.valueOf(nextID));
+            //Log.d("Chat","NEXT_TMP ->" + String.valueOf(nextID));
             return nextID;
         } else {
             ToolBox_Con.setPreference_Chat_Msg_Prefix(context,mPrefix);

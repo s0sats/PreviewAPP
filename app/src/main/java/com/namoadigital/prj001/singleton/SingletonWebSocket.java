@@ -32,7 +32,7 @@ import io.socket.emitter.Emitter;
 public class SingletonWebSocket {
     private static volatile SingletonWebSocket sSoleInstance;
 
-    private static String mSocket_ID;
+    private static String mSocket_ID = "";
 
     public static String getmSocket_ID() {
         return mSocket_ID;
@@ -93,11 +93,10 @@ public class SingletonWebSocket {
         options.timeout = 1000;
         options.query = "transport=websocket";
         options.reconnection = true;
+        //options.reconnectionAttempts = 2;
 
         try {
             mSocket = IO.socket("https://chat.namoadigital.com", options);
-
-            mSocket_ID = mSocket.id();
 
             mSocket.on(Constant.CHAT_EVENT_C_LOGIN, onLoginReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ERROR_LOGIN, onErrorLoginReturn);
@@ -208,6 +207,7 @@ public class SingletonWebSocket {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -236,6 +236,12 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptDisconnect(String message) {
+        if (mSocket != null) {
+            mSocket.emit(Socket.EVENT_DISCONNECT, message);
+        }
+    }
+
 
     private Emitter.Listener onLoginReturn = new Emitter.Listener() {
         @Override
@@ -250,12 +256,12 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if(mSocket!=null) {
-                mSocket_ID = mSocket.id();
-
                 Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
-                //
-                //attemptSendLogin();
-                //
+                if(!mSocket_ID.equalsIgnoreCase(mSocket.id())){
+                    mSocket_ID = mSocket.id();
+                    //
+                    attemptSendLogin();
+                }
             }else{
                 Log.d("Chat", "EVENT_RECONNECT");
             }

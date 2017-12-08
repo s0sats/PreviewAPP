@@ -28,6 +28,8 @@ public interface Act005_Main_Presenter {
 
     void executeSoSaveApproval();
 
+    void stopChatService();
+
     //void generateWsListProcess();
 
     //void executeNextProcess(String next_ws);
