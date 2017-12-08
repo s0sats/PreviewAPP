@@ -6,9 +6,18 @@ package com.namoadigital.prj001.model;
 
 public class TUploadImg_Chat_Env {
 
+    private String app_code;
     private long msg_prefix;
     private long msg_code;
     private String socket_id;
+
+    public String getApp_code() {
+        return app_code;
+    }
+
+    public void setApp_code(String app_code) {
+        this.app_code = app_code;
+    }
 
     public long getMsg_prefix() {
         return msg_prefix;

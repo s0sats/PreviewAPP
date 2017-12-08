@@ -6,13 +6,22 @@ package com.namoadigital.prj001.model;
 
 public class TUploadImg_Chat_Rec {
 
-    private String save;
+    private String app;
+    private String result;
 
-    public String getSave() {
-        return save;
+    public String getApp() {
+        return app;
     }
 
-    public void setSave(String save) {
-        this.save = save;
+    public void setApp(String app) {
+        this.app = app;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

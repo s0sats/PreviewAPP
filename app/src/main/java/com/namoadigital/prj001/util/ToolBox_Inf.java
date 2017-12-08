@@ -383,6 +383,26 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String uploadFileChat(String json, String sFile, String sNewName) {
+        try {
+            //Como no processo de SO a foto pode mudar de nome,
+            //Verifica qual o nome o arquivo esta no momento.
+            String sRealFileName = sNewName != null ? sNewName : sFile;
+            // Set your file path here
+            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sRealFileName);
+
+            // Set your server page url (and the file title/description)
+            HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD_CHAT, json);
+
+            return hfu.Send_Now(fstrm, sFile);
+
+        } catch (Exception e) {
+            String error = e.toString();
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return "Error: " + e.toString();
+        }
+    }
+
     public static String uploadFileSupport(String ws_url, String json, String sPath, String sFile) {
         try {
             // Set your file path here
@@ -566,6 +586,11 @@ public class ToolBox_Inf {
         deleteDownloadFileInf(sName, Constant.CACHE_PATH);
     }
 
+    public static void deleteDownloadFileInfV2(String sName) {
+        deleteDownloadFileInf(sName, Constant.CACHE_PATH_PHOTO);
+    }
+
+
     public static void deleteDownloadFileInf(String sName, String path) {
         File file = new File(path + "/" + sName);
 
@@ -608,6 +633,10 @@ public class ToolBox_Inf {
 
     public static boolean verifyDownloadFileInf(String sName) {
         return verifyDownloadFileInf(sName, Constant.CACHE_PATH);
+    }
+
+    public static boolean verifyDownloadFileInfV2(String sName) {
+        return verifyDownloadFileInf(sName, Constant.CACHE_PATH_PHOTO);
     }
 
     public static boolean verifyFileExists(String sName) {

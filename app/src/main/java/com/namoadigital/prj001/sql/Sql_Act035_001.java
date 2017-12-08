@@ -27,7 +27,7 @@ public class Sql_Act035_001 implements Specification {
                         CH_MessageDao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S.room_code =  '" + room_code + "'\n" +
-                        "    order by case when msg_pk is null then 1 else 0 end, msg_prefix, tmp")
+                        "    order by case when msg_pk is null then 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZ' else msg_pk end, msg_prefix, tmp")
                 .append(";msg_prefix#msg_code#tmp#room_code#msg_date#msg_obj#message_image_local#msg_origin#delivered#delivered_date#read#read_date#msg_pk#user_code#user_nick")
 
                 .toString();

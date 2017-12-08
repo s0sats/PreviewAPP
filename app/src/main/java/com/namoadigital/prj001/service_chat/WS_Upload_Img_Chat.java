@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.namoadigital.prj001.dao.CH_FileDao;
@@ -61,14 +62,18 @@ public class WS_Upload_Img_Chat extends IntentService {
                     new CH_File_Sql_001().toSqlQuery()
             );
             //
+            env.setApp_code(Constant.PRJ001_CODE);
+            //
             for (CH_File chFile : chFiles) {
-                String[] vals = chFile.getFile_path().split(".");
+                String val = chFile.getFile_path().replace(".", "_");
+                //String[] vals = chFile.getFile_path().split("_");
+                String[] vals = val.split("_");
                 //
                 env.setMsg_prefix(Long.parseLong(vals[0]));
                 env.setMsg_code(Long.parseLong(vals[1]));
                 env.setSocket_id(SingletonWebSocket.getmSocket_ID());
                 //
-                String sResults = ToolBox_Inf.uploadFile(
+                String sResults = ToolBox_Inf.uploadFileChat(
                         gson.toJson(env),
                         chFile.getFile_path(),
                         chFile.getFile_path_new()
@@ -79,14 +84,13 @@ public class WS_Upload_Img_Chat extends IntentService {
                         TUploadImg_Chat_Rec.class
                 );
 
-//              Deverá ser feito pelo cMessage
-//                if (rec.getSave().equalsIgnoreCase("OK")) {
-//                    geFile.setFile_status("SENT");
-//                    geFileDao.addUpdate(geFile);
-//                }
+                if (rec.getResult().toUpperCase().contains(("OK"))) {
+                    chFile.setFile_status("SENT");
+                    chFileDao.addUpdate(chFile);
+                }
+
+                Log.d("CHFILE", rec.getResult());
             }
-
-
         } catch (Exception e) {
             programAlarm(getApplicationContext());
             ToolBox_Inf.registerException(getClass().getName(), e);

@@ -87,9 +87,16 @@ public class WS_C_Message_Tmp extends IntentService {
                                         messageTmp.getTmp()
                                 ).toSqlQuery()
                         );
+
+                String oldNameFile = null;
+
                 if (ch_message != null && ch_message.getMsg_prefix() > -1) {
                     ch_message.setMsg_code(messageTmp.getMsg_code());
                     ch_message.setMsg_pk(String.valueOf(messageTmp.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, messageTmp.getMsg_code())));
+
+                    oldNameFile = ch_message.getMessage_image_local();
+                    ch_message.setMessage_image_local(ch_message.getMsg_prefix() + "." + ch_message.getMsg_code() + ".jpg");
+
                     messageDao.addUpdateTmp(ch_message);
                 }
                 //
@@ -113,15 +120,15 @@ public class WS_C_Message_Tmp extends IntentService {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                 } else {
                     //
-                    String curr_name = ch_message.getMessage_image_local();
-                    String new_name = ch_message.getMsg_prefix() + "." + ch_message.getMsg_code() + ".jpg";
+                    String curr_name = oldNameFile; //ch_message.getMessage_image_local();
+                    String new_name = ch_message.getMessage_image_local(); //ch_message.getMsg_prefix() + "." + ch_message.getMsg_code() + ".jpg";
                     //
-                    renameImage(Constant.CACHE_PATH_PHOTO,curr_name,new_name);
+                    renameImage(Constant.CACHE_PATH_PHOTO, curr_name, new_name);
                     //
                     curr_name = curr_name.replace(".jpg", "_thumb.jpg");
                     new_name = new_name.replace(".jpg", "_thumb.jpg");
                     //
-                    renameImage(Constant.THU_PATH,curr_name,new_name);
+                    renameImage(Constant.THU_PATH, curr_name, new_name);
 
                     // chamar o upload da Imagem com os códigos atualizados
                     // para incluir a imagem na lista com nome / novo nome iguais
@@ -130,10 +137,9 @@ public class WS_C_Message_Tmp extends IntentService {
                     hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
                     hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));
                     //
-                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE , hmAux);
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE, hmAux);
                 }
             }
-
         }
     }
 

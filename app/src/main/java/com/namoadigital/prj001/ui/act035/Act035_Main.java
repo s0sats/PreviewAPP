@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +24,8 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -281,12 +284,28 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
-            //
+
             switch (type) {
                 case Constant.CHAT_BR_TYPE_MSG:
                     mPresenter.setData(mRoom_code);
                 case Constant.CHAT_BR_TYPE_MSG_IMAGE:
-                    int i =0;
+                    try {
+                        HMAux mAux = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
+                        //
+                        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+                        CH_Message chMessage = chMessageDao.getByString(
+                                new CH_Message_Sql_003(
+                                        Integer.parseInt(mAux.get(CH_MessageDao.MSG_PREFIX)),
+                                        Long.parseLong(mAux.get(CH_MessageDao.TMP))
+
+                                ).toSqlQuery()
+                        );
+                        //
+                        mPresenter.uploadFile(chMessage.getMessage_image_local());
+                        mPresenter.activateUpload(context);
+                    } catch (Exception e) {
+                        Log.d("hmaux", e.toString());
+                    }
                     break;
                 default:
                     break;

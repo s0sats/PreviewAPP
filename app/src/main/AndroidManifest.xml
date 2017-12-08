@@ -319,6 +319,11 @@
 
         <service android:name=".service.WS_Upload_Img" />
 
+
+        <receiver android:name=".receiver_chat.WBR_Upload_Img_Chat" />
+
+        <service android:name=".service_chat.WS_Upload_Img_Chat" />
+
         <receiver android:name=".receiver.WBR_DownLoad_Customer_Logo" />
 
         <service android:name=".service.WS_DownLoad_Customer_Logo" />

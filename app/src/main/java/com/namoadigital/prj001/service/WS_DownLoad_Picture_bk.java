@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
@@ -15,7 +14,6 @@ import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
-import com.namoadigital.prj001.sql.CH_Message_Sql_006;
 import com.namoadigital.prj001.sql.CH_Room_Sql_002;
 import com.namoadigital.prj001.sql.CH_Room_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
@@ -44,9 +42,9 @@ import java.util.ArrayList;
  * Created by neomatrix on 28/10/16.
  */
 
-public class WS_DownLoad_Picture extends IntentService {
+public class WS_DownLoad_Picture_bk extends IntentService {
 
-    public WS_DownLoad_Picture() {
+    public WS_DownLoad_Picture_bk() {
         super("WS_DownLoad_Picture");
     }
 
@@ -343,9 +341,8 @@ public class WS_DownLoad_Picture extends IntentService {
              *
              */
 
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+            if (ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)) {
                 //
-                // Room
                 CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
 
                 ArrayList<HMAux> roomImgList = new ArrayList<>();
@@ -360,7 +357,7 @@ public class WS_DownLoad_Picture extends IntentService {
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(CH_RoomDao.ROOM_IMAGE),
-                                Constant.CACHE_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                                Constant.CACHE_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase()+ ".tmp"
                         );
                         //
                         ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
@@ -375,49 +372,7 @@ public class WS_DownLoad_Picture extends IntentService {
                             ).toSqlQuery().toLowerCase()
                     );
                 }
-
-                // Messages
-                CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
-
-                ArrayList<HMAux> messageImgList = new ArrayList<>();
-                messageImgList.addAll(messageDao.query_HM(
-                        new CH_Message_Sql_006().toSqlQuery()
-                ));
-                //
-                for (HMAux hmAux : messageImgList) {
-
-                    JSONObject jsonObject = new JSONObject(hmAux.get("msg_obj"));
-                    JSONObject jsonObject1 = jsonObject.getJSONObject("message");
-
-                    String sFileD = jsonObject1.getString("data");
-                    String arr[] = sFileD.split("/");
-                    String sFile = arr[arr.length-1].replace(".jpg", "").replace(".png", "");
-
-
-                    if (!ToolBox_Inf.verifyDownloadFileInfV2(sFile + ".jpg")) {
-
-                        ToolBox_Inf.deleteDownloadFileInfV2(sFile + ".tmp");
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                sFileD,
-                                Constant.CACHE_PATH_PHOTO + "/" + sFile + ".tmp"
-                        );
-                        //
-                        ToolBox_Inf.renameDownloadFileInfPHOTO(sFile, ".jpg");
-                        //
-                        ToolBox_Inf.createThumbNail_Images(Constant.CACHE_PATH_PHOTO, sFile + ".jpg");
-                    }
-                    //Atualiza campo com url local
-//                    messageDao.addUpdate(
-//                            new CH_Room_Sql_003(
-//                                    hmAux.get(CH_RoomDao.ROOM_CODE),
-//                                    hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
-//                            ).toSqlQuery().toLowerCase()
-//                    );
-                }
-
             }//FIM chat
-
 
         } catch (Exception e) {
             String results = e.toString();

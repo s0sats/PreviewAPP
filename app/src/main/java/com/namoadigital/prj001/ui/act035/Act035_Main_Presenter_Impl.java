@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +14,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
@@ -65,7 +68,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         chMessage.setTmp(ToolBox_Inf.chatNextMSGCode(context));
         //
         chMessage.setRoom_code(mRoom_code);
-        chMessage.setMsg_date(ToolBox_Inf.convertToDeviceTMZ(""));
+        chMessage.setMsg_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         try {
 
@@ -76,7 +79,8 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                 jsonObject.put("data", message);
             } else {
                 jsonObject.put("type", "IMAGE");
-                jsonObject.put("data", imagem);
+                //jsonObject.put("data", imagem);
+                jsonObject.put("data", "");
             }
 
             JSONObject jMessage = new JSONObject();
@@ -141,11 +145,9 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         mView.callAct005(context);
     }
 
+    @Override
     public void uploadFile(String sCh_file) {
-        CH_FileDao chFileDao = new CH_FileDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-        );
+        CH_FileDao chFileDao = new CH_FileDao(context);
 
         CH_File chFile = null;
 
@@ -155,11 +157,22 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                 chFile = new CH_File();
                 chFile.setFile_code(sCh_file.replace(".jpg", ""));
                 chFile.setFile_path(sCh_file);
+                chFile.setFile_path_new(sCh_file);
                 chFile.setFile_status("OPENED");
-                chFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss"));
+                chFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             }
         }
 
         chFileDao.addUpdate(chFile);
+    }
+
+    @Override
+    public void activateUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }

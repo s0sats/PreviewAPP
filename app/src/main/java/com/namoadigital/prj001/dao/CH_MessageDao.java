@@ -209,7 +209,6 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     public CH_Message getByString(String sQuery) {
         CH_Message ch_message = new CH_Message();
 
-
         openDB();
 
         try {

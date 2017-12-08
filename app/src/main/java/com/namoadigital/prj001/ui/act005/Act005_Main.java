@@ -168,6 +168,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
         //
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        mIntentPIC.putExtras(bundle);
+        context.sendBroadcast(mIntentPIC);
+        //
         fcmReceiver = new FCMReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.WS_FCM);
