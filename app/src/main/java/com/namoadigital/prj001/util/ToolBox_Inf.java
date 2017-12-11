@@ -183,6 +183,12 @@ public class ToolBox_Inf {
             dirToken.mkdir();
         }
 
+//        //Teste de Aberracao
+//        File dirAberracao = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
+//        if (!dirAberracao.exists()) {
+//            dirAberracao.mkdir();
+//        }
+
     }
 
     public static String md5(String s) {
@@ -2624,7 +2630,7 @@ public class ToolBox_Inf {
         }
     }
 
-    public static String getWebSocketJsonParam(String socket_arg){
+    public static String getWebSocketJsonParam(String socket_arg) {
         try {
             Gson gson = new GsonBuilder().serializeNulls().create();
             //
@@ -2633,14 +2639,14 @@ public class ToolBox_Inf {
             if (obj != null) {
                 return obj.getObj().toString();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
             return null;
         }
         return null;
     }
 
-    public static String setWebSocketJsonParam(Object emit_param){
+    public static String setWebSocketJsonParam(Object emit_param) {
         try {
             Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -2651,35 +2657,35 @@ public class ToolBox_Inf {
             if (chatObj.getObj() != null) {
                 return gson.toJson(chatObj);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
             return null;
         }
         return null;
     }
 
-    public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key){
+    public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key) {
         boolean ret = true;
         //
-        for (HMAux hmAux:hmAuxList) {
-            boolean hasError = addJsonObjAsHmAuxKey(hmAux,key);
-            if(ret){
+        for (HMAux hmAux : hmAuxList) {
+            boolean hasError = addJsonObjAsHmAuxKey(hmAux, key);
+            if (ret) {
                 ret = hasError;
             }
         }
         return ret;
     }
 
-    public static boolean addJsonObjAsHmAuxKey(HMAux hmAux, String key){
+    public static boolean addJsonObjAsHmAuxKey(HMAux hmAux, String key) {
         JSONObject json = null;
         //
         try {
-            json = new JSONObject(String .valueOf(hmAux.get(key)));
+            json = new JSONObject(String.valueOf(hmAux.get(key)));
             //
-            if(json.length() > 0){
+            if (json.length() > 0) {
                 Iterator<String> root = json.keys();
 
-                if(root.hasNext()) {
+                if (root.hasNext()) {
                     JSONObject innerJson = json.getJSONObject(root.next());
 
                     for (Iterator<String> iter = innerJson.keys(); iter.hasNext(); ) {
@@ -2687,13 +2693,13 @@ public class ToolBox_Inf {
 
                         String json_new_key = key + "_" + json_key;
 
-                        hmAux.put(json_new_key,innerJson.getString(json_key));
+                        hmAux.put(json_new_key, innerJson.getString(json_key));
                     }
                     return true;
-                }else{
+                } else {
                     return false;
                 }
-            }else{
+            } else {
                 return false;
             }
         } catch (JSONException e) {
@@ -2736,7 +2742,7 @@ public class ToolBox_Inf {
             os.close();
 
         } catch (Exception e) {
-            registerException(CLASS_NAME,e);
+            registerException(CLASS_NAME, e);
             return;
         }
 
@@ -2748,18 +2754,18 @@ public class ToolBox_Inf {
         //
         String mPrefix = yearMonthPrefix();
         //
-        if (mPrefix.equalsIgnoreCase(ToolBox_Con.getPreference_Chat_Msg_Prefix(context))){
-            ToolBox_Con.setPreference_Chat_Msg_Code(context,++nextID);
+        if (mPrefix.equalsIgnoreCase(ToolBox_Con.getPreference_Chat_Msg_Prefix(context))) {
+            ToolBox_Con.setPreference_Chat_Msg_Code(context, ++nextID);
             //Log.d("Chat","NEXT_TMP ->" + String.valueOf(nextID));
             return nextID;
         } else {
-            ToolBox_Con.setPreference_Chat_Msg_Prefix(context,mPrefix);
-            Log.d("Chat","NEXT_TMP ->" + String.valueOf(nextID));
+            ToolBox_Con.setPreference_Chat_Msg_Prefix(context, mPrefix);
+            Log.d("Chat", "NEXT_TMP ->" + String.valueOf(nextID));
             return 101L;
         }
     }
 
-    public static String yearMonthPrefix(){
+    public static String yearMonthPrefix() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         //
         Calendar cAux = Calendar.getInstance();
@@ -2767,7 +2773,7 @@ public class ToolBox_Inf {
         return sdf.format(cAux.getTime());
     }
 
-    public static void sendBRChat(Context context,String type) {
+    public static void sendBRChat(Context context, String type) {
         Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
         mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
@@ -2775,7 +2781,7 @@ public class ToolBox_Inf {
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
 
-    public static void sendBRChat(Context context,String type, HMAux param) {
+    public static void sendBRChat(Context context, String type, HMAux param) {
         Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
         mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
@@ -2784,8 +2790,16 @@ public class ToolBox_Inf {
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
 
+    public static void sendBRChatDownloadUpdate(Context context, HMAux param) {
+        Intent mIntent = new Intent(Constant.CHAT_BR_FILTER_DOWNLOAD);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(Constant.CHAT_BR_PARAM, (Serializable) param);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+    }
+
     public static String lPad(int qtd, int msg) {
-        return String.format("%0"+qtd+"d", msg);
+        return String.format("%0" + qtd + "d", msg);
 
     }
 }

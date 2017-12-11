@@ -33,6 +33,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,6 +62,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private String mRoom_code;
 
     private BR_Room brRoomReceiver;
+    private BR_RoomStatus brRoomStatus;
 
     private boolean statusCameraNew = false;
 
@@ -144,6 +146,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mPresenter.setData(mRoom_code);
         //
         startReceivers(true);
+        startReceiversStatus(true);
     }
 
     @Override
@@ -181,6 +184,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
         } else {
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brRoomReceiver);
+        }
+    }
+
+    private void startReceiversStatus(boolean start_stop) {
+        brRoomStatus = new Act035_Main.BR_RoomStatus();
+        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER_DOWNLOAD);
+        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        //
+        if (start_stop) {
+            LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brRoomStatus, brRoomFilter);
+        } else {
+            LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brRoomStatus);
         }
     }
 
@@ -256,6 +271,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onDestroy() {
         startReceivers(false);
+        startReceiversStatus(false);
         //
         super.onDestroy();
     }
@@ -301,6 +317,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 ).toSqlQuery()
                         );
                         //
+                        HMAux hmAuxStatus = new HMAux();
+                        hmAuxStatus.put(chMessageDao.MSG_PREFIX, String.valueOf(chMessage.getMsg_prefix()));
+                        hmAuxStatus.put(chMessageDao.MSG_CODE, String.valueOf(chMessage.getMsg_code()));
+                        hmAuxStatus.put(chMessageDao.MESSAGE_IMAGE_LOCAL, String.valueOf(chMessage.getMessage_image_local()));
+                        callImagesStatus(hmAuxStatus);
+                        //
                         mPresenter.uploadFile(chMessage.getMessage_image_local());
                         mPresenter.activateUpload(context);
                     } catch (Exception e) {
@@ -311,6 +333,23 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     break;
             }
         }
+    }
+
+    private class BR_RoomStatus extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            HashMap<String, String> hmAux = (HashMap<String, String>) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
+
+            callImagesStatus((HMAux) hmAux);
+        }
+    }
+
+    private void callImagesStatus(HMAux hmAux) {
+        int firstP = lv_messages.getFirstVisiblePosition();
+        int lastP = lv_messages.getLastVisiblePosition();
+
+
+        act035_adapter_messages.setMessegeUpt(hmAux, firstP, lastP);
     }
 
 }

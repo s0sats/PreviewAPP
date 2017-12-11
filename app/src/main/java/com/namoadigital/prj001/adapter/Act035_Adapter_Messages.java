@@ -51,6 +51,29 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
     }
 
+    public void setMessegeUpt(HMAux hmAux, int first, int last) {
+        HMAux hmAuxOld = null;
+        //
+        for (int i = 0; i < data.size(); i++) {
+            hmAuxOld = data.get(i);
+            //
+            if (hmAux.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_PREFIX)) &&
+                    hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_CODE))
+                    ) {
+
+                data.get(i).put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));
+                //
+                if (i >= first && i <= last){
+                    notifyDataSetChanged();
+                }
+                //
+                break;
+
+            }
+
+        }
+    }
+
     @Override
     public int getCount() {
         return data.size();
@@ -168,11 +191,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
                 tv_name.setText("Nome");
 
-                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()){
+                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
                     iv_foto.setImageResource(R.drawable.sand_watch_transp);
                 } else {
                     iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
-                            hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg","") + "_thumb.jpg"
+                            hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg", "") + "_thumb.jpg"
                     ));
                 }
 
@@ -213,11 +236,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
                 tv_name.setVisibility(View.INVISIBLE);
 
-                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()){
+                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
                     iv_foto.setImageResource(R.drawable.sand_watch_transp);
                 } else {
                     iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
-                            hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg","") + "_thumb.jpg"
+                            hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg", "") + "_thumb.jpg"
                     ));
                 }
 

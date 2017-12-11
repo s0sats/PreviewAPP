@@ -408,6 +408,7 @@ public class ConstantBaseApp extends ConstantBase {
     //filters
     public static final String CHAT_BR_FILTER_ROOM = "CHAT_BR_FILTER_ROOM";
     public static final String CHAT_BR_FILTER = "CHAT_BR_FILTER";
+    public static final String CHAT_BR_FILTER_DOWNLOAD = "CHAT_BR_FILTER_DOWNLOAD";
     //
     public static final String CHAT_BR_TYPE = "CHAT_BR_TYPE";
     public static final String CHAT_BR_PARAM = "CHAT_BR_PARAM";

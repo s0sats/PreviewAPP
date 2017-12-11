@@ -416,6 +416,9 @@ public class WS_DownLoad_Picture extends IntentService {
                                     sFile + ".jpg"
                             ).toSqlQuery().toLowerCase()
                     );
+                    //
+                    hmAux.put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, sFile + ".jpg");
+                    ToolBox_Inf.sendBRChatDownloadUpdate(getApplicationContext(), hmAux);
                 }
 
             }//FIM chat
