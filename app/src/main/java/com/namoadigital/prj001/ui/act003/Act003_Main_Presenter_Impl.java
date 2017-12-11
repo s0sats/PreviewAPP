@@ -1,12 +1,17 @@
 package com.namoadigital.prj001.ui.act003;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.sql.CH_Message_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 17/01/17.
@@ -18,12 +23,14 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     private Act003_Main_View mView;
     private MD_SiteDao md_siteDao;
     private HMAux item;
+    private CH_MessageDao messageDao;
 
     public Act003_Main_Presenter_Impl(Context context, Act003_Main_View mView) {
         this.context = context;
         this.mView = mView;
         //
         this.md_siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        this.messageDao = new CH_MessageDao(context);
     }
 
     @Override
@@ -43,6 +50,33 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void startChatService() {
+        //Se Possui Acesso ao Chat, inicia serviço
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)){
+            //
+            HMAux msgAux = messageDao.getByStringHM(
+                    new CH_Message_Sql_004().toSqlQuery()
+            );
+            //
+            if(msgAux.size() > 0){
+                //
+                ToolBox_Con.setPreference_Chat_Msg_Prefix(
+                        context,
+                        msgAux.get(CH_MessageDao.MSG_PREFIX)
+                );
+                //
+                ToolBox_Con.setPreference_Chat_Msg_Code(
+                        context,
+                        Long.parseLong(msgAux.get(CH_MessageDao.TMP))
+                );
+                //
+                Intent chatIntent = new Intent(context, AppBackgroundService.class);
+                context.startService(chatIntent);
+            }
+        }
     }
 
     @Override

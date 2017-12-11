@@ -33,7 +33,9 @@ public class AppBackgroundService extends Service {
     public void onDestroy() {
         this.isRunning = false;
         //
-        singletonWebSocket.disconnect();
+        singletonWebSocket.attemptDisconnect("App Socket.disconnect()");
+        //
+       // singletonWebSocket.disconnect();
     }
 
 

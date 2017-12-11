@@ -36,6 +36,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -735,6 +736,27 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             ToolBox_Inf.registerException(getClass().getName(), e);
             //
             return 0;
+        }
+    }
+
+    @Override
+    public void stopChatService() {
+        //No logoff, caso o serviço de chat esteja rodando,
+        //E o user não tiver outra sessão ativa no app, para o serviço
+        if(AppBackgroundService.isRunning) {
+            //
+            List<HMAux> sessionsOn = userCustomerDao
+                    .query_HM(
+                            new EV_User_Customer_Sql_004(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    ToolBox_Con.getPreference_User_Code(context)
+                            ).toSqlQuery()
+                    );
+
+            if (sessionsOn != null && sessionsOn.size() == 0) {
+                Intent socketService = new Intent(context, AppBackgroundService.class);
+                context.stopService(socketService);
+            }
         }
     }
 }

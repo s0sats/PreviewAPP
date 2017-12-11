@@ -47,6 +47,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -746,8 +747,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void callAct006(Context context) {
         //
-        Intent socketService = new Intent(context, AppBackgroundService.class);
-        stopService(socketService);
+        //Intent socketService = new Intent(context, AppBackgroundService.class);
+        //stopService(socketService);
+        //SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+        //singletonWebSocket.attemptDisconnect("");
 
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -918,6 +921,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 progressDialog.dismiss();
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     processLogin();
+                    //
+                    mPresenter.stopChatService();
                 }
             } else {
 
@@ -1394,9 +1399,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         context.sendBroadcast(mIntent);
         //
         ToolBox_Con.cleanPreferences(context);
-        //
-        Intent socketService = new Intent(context, AppBackgroundService.class);
-        stopService(socketService);
         //
         finish();
     }

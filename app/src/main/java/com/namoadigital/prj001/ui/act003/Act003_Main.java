@@ -85,6 +85,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         startLogoDownload();
 
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
+        //Chama start do serviço do Chat.
+        mPresenter.startChatService();
         //
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
