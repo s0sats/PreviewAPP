@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
@@ -262,6 +263,7 @@ public class SingletonWebSocket {
                     //
                     attemptSendLogin();
                 }
+                ToolBox_Inf.sendBRChat(context,Constant.CHAT_BR_TYPE_RECONNECTED);
             }else{
                 Log.d("Chat", "EVENT_RECONNECT");
             }
@@ -276,6 +278,10 @@ public class SingletonWebSocket {
             }else{
                 Log.d("Chat", "EVENT_RECONNECTING");
             }
+            //
+            HMAux hmAux = new HMAux();
+            hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD,String.valueOf(args[0]));
+            ToolBox_Inf.sendBRChat(context,Constant.CHAT_BR_TYPE_RECONNECTING,hmAux);
         }
     };
 

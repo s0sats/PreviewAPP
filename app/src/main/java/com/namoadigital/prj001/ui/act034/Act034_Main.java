@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act034;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +13,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -46,6 +52,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private Act034_Room act034_room;
     private String currentFrag = "";
     private BR_Room brRoomReceiver;
+    private AlertDialog infoDialog = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,6 +144,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         initFragments();
         //
         setFrag(act034_room,FRAG_TAG_ROOM);
+        //
+        //TESTE REMOVER
+        infoDialog = showReconnectingDialog(context,null,null);
     }
 
     @Override
@@ -238,7 +248,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
-
+            HMAux auxParam = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
             type += "";
 
             switch (type){
@@ -248,14 +258,77 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                         act034_room.loadRoomList();
                     }
                     break;
+                case Constant.CHAT_BR_TYPE_RECONNECTED:
+                    hideShowReconnectingDialog(0,0);
+                    break;
+                case Constant.CHAT_BR_TYPE_RECONNECTING:
+                    int qtd = Integer.parseInt(String.valueOf(auxParam == null ? 0 : auxParam.get(Constant.CHAT_BR_PARAM_RECONNECTING_QTD)));
+                    hideShowReconnectingDialog(1, qtd);
+                    break;
                 default:
                     break;
             }
         }
     }
 
+    private void hideShowReconnectingDialog(int on_off, int qtd) {
 
+        if(on_off == 0){
+            if(infoDialog != null && infoDialog.isShowing()){
+                infoDialog.dismiss();
+                return;
+            }
+        }
+        //
+        if(on_off == 1){
+            if(infoDialog != null && !infoDialog.isShowing()){
+                infoDialog = showReconnectingDialog(context,"Try connecting", qtd != 0 ? String.valueOf(qtd)  : null );
+                return;
+            }
+        }
+    }
 
+    public static AlertDialog showReconnectingDialog(Context context, @Nullable String msg_1, @Nullable String msg_2) {
+        int w = (int) ToolBox_Inf.convertDpToPixel(context,100 * 1.1f);
+        int h = (int) ToolBox_Inf.convertDpToPixel(context,100 * 1.1f);
+        //
+        AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view  = inflater.inflate(R.layout.act034_reconnecting_dialog,null);
+
+        ImageView iv_room = (ImageView) view.findViewById(R.id.act034_reconnecting_iv_icon);
+        TextView tv_msg1 = (TextView) view.findViewById(R.id.act034_reconnecting_tv_msg_1);
+        TextView tv_msg2 = (TextView) view.findViewById(R.id.act034_reconnecting_tv_msg_2);
+
+        Animation animation = AnimationUtils.loadAnimation(context,R.anim.rotation_anim);
+        iv_room.startAnimation(animation);
+        //
+        if(msg_1 != null){
+            tv_msg1.setText(msg_1);
+            tv_msg1.setVisibility(View.VISIBLE);
+        }else{
+            tv_msg1.setVisibility(View.GONE);
+        }
+        //
+        if(msg_2 != null){
+            tv_msg2.setText(msg_2);
+            tv_msg2.setVisibility(View.VISIBLE);
+        }else{
+            tv_msg2.setVisibility(View.GONE);
+        }
+
+        imageBuilder.setView(view);
+        imageBuilder.setCancelable(true);
+
+        android.app.AlertDialog imageDialog = imageBuilder.create();
+        //imageDialog.setContentView(view);
+        imageDialog.show();
+        //imageDialog.getWindow().setLayout(w,h);
+        //imageDialog.getWindow().setLayout( w ,h );
+
+        return imageDialog;
+    }
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
