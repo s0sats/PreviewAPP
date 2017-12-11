@@ -16,6 +16,7 @@ import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.sql.CH_Message_Sql_006;
+import com.namoadigital.prj001.sql.CH_Message_Sql_007;
 import com.namoadigital.prj001.sql.CH_Room_Sql_002;
 import com.namoadigital.prj001.sql.CH_Room_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
@@ -391,7 +392,7 @@ public class WS_DownLoad_Picture extends IntentService {
 
                     String sFileD = jsonObject1.getString("data");
                     String arr[] = sFileD.split("/");
-                    String sFile = arr[arr.length-1].replace(".jpg", "").replace(".png", "");
+                    String sFile = arr[arr.length - 1].replace(".jpg", "").replace(".png", "");
 
 
                     if (!ToolBox_Inf.verifyDownloadFileInfV2(sFile + ".jpg")) {
@@ -408,12 +409,13 @@ public class WS_DownLoad_Picture extends IntentService {
                         ToolBox_Inf.createThumbNail_Images(Constant.CACHE_PATH_PHOTO, sFile + ".jpg");
                     }
                     //Atualiza campo com url local
-//                    messageDao.addUpdate(
-//                            new CH_Room_Sql_003(
-//                                    hmAux.get(CH_RoomDao.ROOM_CODE),
-//                                    hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
-//                            ).toSqlQuery().toLowerCase()
-//                    );
+                    messageDao.addUpdate(
+                            new CH_Message_Sql_007(
+                                    Integer.parseInt(hmAux.get(CH_MessageDao.MSG_PREFIX)),
+                                    Long.parseLong(hmAux.get(CH_MessageDao.MSG_CODE)),
+                                    sFile + ".jpg"
+                            ).toSqlQuery().toLowerCase()
+                    );
                 }
 
             }//FIM chat
