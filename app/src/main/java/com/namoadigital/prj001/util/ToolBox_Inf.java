@@ -183,11 +183,11 @@ public class ToolBox_Inf {
             dirToken.mkdir();
         }
 
-//        //Teste de Aberracao
-//        File dirAberracao = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
-//        if (!dirAberracao.exists()) {
-//            dirAberracao.mkdir();
-//        }
+        //Teste de Aberracao
+        File dirAberracao = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
+        if (!dirAberracao.exists()) {
+            dirAberracao.mkdir();
+        }
 
     }
 

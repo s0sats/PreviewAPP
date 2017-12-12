@@ -45,9 +45,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.WS_SO_Save;
-import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -64,7 +62,6 @@ import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
-import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -348,6 +345,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
         //
+        ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
                 context,
                 new SM_SODao(
@@ -1366,6 +1364,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
+        //
+        ToolBox_Inf.mkDirectory();
         //
         mPresenter.getMenuItens(hmAux_Trans);
     }

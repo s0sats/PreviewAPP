@@ -304,6 +304,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             switch (type) {
                 case Constant.CHAT_BR_TYPE_MSG:
                     mPresenter.setData(mRoom_code);
+                    break;
                 case Constant.CHAT_BR_TYPE_MSG_IMAGE:
                     try {
                         HMAux mAux = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
