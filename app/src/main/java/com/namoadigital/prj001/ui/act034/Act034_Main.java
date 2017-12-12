@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -53,6 +54,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private String currentFrag = "";
     private BR_Room brRoomReceiver;
     private AlertDialog infoDialog = null;
+    //
+    private LinearLayout ll_info;
+    private ImageView iv_info_icon;
+    private TextView tv_info_msg_1;
+    private TextView tv_info_msg_2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,12 +147,21 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 hmAux_Trans
         );
         //
+        ll_info = (LinearLayout) findViewById(R.id.act034_main_ll_info);
+        //
+        iv_info_icon = (ImageView) findViewById(R.id.act034_main_iv_icon);
+        iv_info_icon.startAnimation(AnimationUtils.loadAnimation(context,R.anim.rotation_anim));
+        //
+        tv_info_msg_1 = (TextView) findViewById(R.id.act034_main_tv_msg_1);
+        //
+        tv_info_msg_2 = (TextView) findViewById(R.id.act034_main_tv_msg_2);
+        //
         initFragments();
         //
         setFrag(act034_room,FRAG_TAG_ROOM);
         //
         //TESTE REMOVER
-        infoDialog = showReconnectingDialog(context,null,null);
+        //infoDialog = showReconnectingDialog(context,null,null);
     }
 
     @Override
@@ -259,16 +274,31 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     }
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTED:
-                    hideShowReconnectingDialog(0,0);
+                    toogleInfoMsg(false,null);
+                    //hideShowReconnectingDialog(0,0);
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTING:
-                    int qtd = Integer.parseInt(String.valueOf(auxParam == null ? 0 : auxParam.get(Constant.CHAT_BR_PARAM_RECONNECTING_QTD)));
-                    hideShowReconnectingDialog(1, qtd);
+                    String qtd = String.valueOf(auxParam == null ? 0 : auxParam.get(Constant.CHAT_BR_PARAM_RECONNECTING_QTD));
+                    toogleInfoMsg(true,qtd);
+                    //hideShowReconnectingDialog(1, qtd);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void toogleInfoMsg(boolean visible, String qtd) {
+
+        if(visible){
+            ll_info.setVisibility(View.VISIBLE);
+            tv_info_msg_1.setText("Trying -trad"/*hmAux_Trans.get("try_conecting_lbl")*/);
+            tv_info_msg_2.setText(qtd);
+        }else{
+            ll_info.setVisibility(View.GONE);
+            tv_info_msg_2.setText(null);
+        }
+
     }
 
     private void hideShowReconnectingDialog(int on_off, int qtd) {
