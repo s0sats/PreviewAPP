@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Chat_Login_Env;
+import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
@@ -104,6 +105,7 @@ public class SingletonWebSocket {
             mSocket.on(Constant.CHAT_EVENT_C_ERROR, onErrorReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ROOM, onRoomReturn);
             mSocket.on(Constant.CHAT_EVENT_C_PENDING_MESSAGES, onPendingMessagesReturn);
+            mSocket.on(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES, onHistoricalMessagesReturn);
             mSocket.on(Constant.CHAT_EVENT_C_MESSAGE, onMessagesReturn);
             mSocket.on(Constant.CHAT_EVENT_C_MESSAGE_TMP, onMessagesTmpReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ADD_ROOM, onAddRoom);
@@ -225,6 +227,12 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptSendHistoricalMessages(String message) {
+        if (mSocket != null) {
+            mSocket.emit(Constant.CHAT_EVENT_S_HISTORICAL_MESSAGES, message);
+        }
+    }
+
     public void attemptSendMessages(String message) {
         if (mSocket != null) {
             mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE, message);
@@ -331,7 +339,11 @@ public class SingletonWebSocket {
                 }
             }
             //
-            attemptSendPendingMessages("");
+            //attemptSendPendingMessages("");
+            Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
+            sHistoricalMessage.setNot_delivered(0);
+            //
+            attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
         }
     };
 
@@ -394,6 +406,30 @@ public class SingletonWebSocket {
                     Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+
+    private Emitter.Listener onHistoricalMessagesReturn = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cMessageIntent = new Intent(context,WBR_C_Message.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,param);
+                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM,Constant.CHAT_EVENT_C_MESSAGE);
                     cMessageIntent.putExtras(bundle);
                     context.sendBroadcast(cMessageIntent);
                 } else {

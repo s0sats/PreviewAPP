@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
  */
 
 public class WS_C_Message extends IntentService {
+
+    private final String START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
 
     private CH_MessageDao messageDao;
 
@@ -95,7 +98,22 @@ public class WS_C_Message extends IntentService {
             //Salva lista no banco de dados.
             messageDao.addUpdate(chMessages, false);
             //
+            //Se ao menos uma msg é uma imagem, dispara serviço de download.
+            for (CH_Message ch_message: chMessages) {
+                if(ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)){
+                    startDownloadService();
+                    break;
+                }
+            }
+
         }
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+    }
+
+    private void startDownloadService() {
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        //
+        getApplicationContext().sendBroadcast(mIntentPIC);
+
     }
 }

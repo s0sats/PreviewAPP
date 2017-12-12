@@ -36,7 +36,7 @@
                 android:visibility="gone"
                 android:background="@drawable/border_black"
                 android:padding="5dp"
-                android:clickable="false">
+                android:clickable="true">
 
                 <ImageView
                     android:id="@+id/act034_main_iv_icon"
