@@ -305,7 +305,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     private void initVars() {
-
+        //
         wsProcess = "";
         wsSoProcess = "";
 
@@ -339,6 +339,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
+        //Metodo que criar os diretorio basicos do app.
+        //Contingencia para diretorio da camtest
+        ToolBox_Inf.mkDirectory();
         //
         ToolBox_Inf.cleanUpApproval(
                 context,
@@ -1340,6 +1343,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
+        //Metodo que criar os diretorio basicos do app.
+        //Contingencia para diretorio da camtest
+        ToolBox_Inf.mkDirectory();
         //
         mPresenter.getMenuItens(hmAux_Trans);
     }

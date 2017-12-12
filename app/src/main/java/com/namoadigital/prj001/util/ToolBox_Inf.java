@@ -173,6 +173,11 @@ public class ToolBox_Inf {
             dirToken.mkdir();
         }
 
+        File dirCamTest = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
+        if (!dirCamTest.exists()) {
+            dirCamTest.mkdir();
+        }
+
     }
 
     public static String md5(String s) {
