@@ -2,12 +2,10 @@ package com.namoadigital.prj001.ui.act034;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -155,8 +153,8 @@ public class Act034_Room extends BaseFragment {
         //image.setWidth(w);
         //image.setHeight(h);
         LinearLayout.LayoutParams iv_params = new LinearLayout.LayoutParams(
-                (int) convertDpToPixel(200,context),
-                (int) convertDpToPixel(200,context)
+                (int) ToolBox_Inf.convertDpToPixel(context,200),
+                (int) ToolBox_Inf.convertDpToPixel(context,200)
         );
         iv_room.setLayoutParams(iv_params);
         iv_room.setImageBitmap(image);
@@ -169,19 +167,12 @@ public class Act034_Room extends BaseFragment {
         imageDialog.show();
         //imageDialog.getWindow().setLayout(w,h);
         imageDialog.getWindow().setLayout(
-                (int) convertDpToPixel(240,context)
+                (int) ToolBox_Inf.convertDpToPixel(context,240)
                 ,
-                (int) convertDpToPixel(240,context)
+                (int) ToolBox_Inf.convertDpToPixel(context,240)
         );
 
 
-    }
-
-    public static float convertDpToPixel(float dp, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
     }
 
     private void iniAction() {
