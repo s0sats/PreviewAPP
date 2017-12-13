@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
@@ -106,7 +107,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         //
         setData(mRoom_code);
         //
-        mView.cleanTextControl();
+        //mView.cleanTextControl();
         //
         enviarMensagemServer(mRoom_code, message, chMessage);
     }
@@ -174,5 +175,15 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    // Tirar
+    @Override
+    public void startDownloadServices() {
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        mIntentPIC.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentPIC);
     }
 }

@@ -235,7 +235,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             public void onClick(View v) {
 
                 if (!mkEditTextNM.getText().toString().trim().equals("")) {
-                    mPresenter.sendMessage(mRoom_code, mkEditTextNM.getText().toString().trim(), "");
+                    String texto = mkEditTextNM.getText().toString().trim();
+                    //
+                    mkEditTextNM.setText("");
+                    //
+                    mPresenter.sendMessage(mRoom_code, texto, "");
                 }
             }
         });
@@ -301,37 +305,49 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
 
-            switch (type) {
-                case Constant.CHAT_BR_TYPE_MSG:
-                    mPresenter.setData(mRoom_code);
-                    break;
-                case Constant.CHAT_BR_TYPE_MSG_IMAGE:
-                    try {
-                        HMAux mAux = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
-                        //
-                        CH_MessageDao chMessageDao = new CH_MessageDao(context);
-                        CH_Message chMessage = chMessageDao.getByString(
-                                new CH_Message_Sql_003(
-                                        Integer.parseInt(mAux.get(CH_MessageDao.MSG_PREFIX)),
-                                        Long.parseLong(mAux.get(CH_MessageDao.TMP))
+            try {
+                switch (type) {
+                    case Constant.CHAT_BR_TYPE_MSG:
+                        HMAux mAux2 = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
 
-                                ).toSqlQuery()
-                        );
-                        //
-                        HMAux hmAuxStatus = new HMAux();
-                        hmAuxStatus.put(chMessageDao.MSG_PREFIX, String.valueOf(chMessage.getMsg_prefix()));
-                        hmAuxStatus.put(chMessageDao.MSG_CODE, String.valueOf(chMessage.getMsg_code()));
-                        hmAuxStatus.put(chMessageDao.MESSAGE_IMAGE_LOCAL, String.valueOf(chMessage.getMessage_image_local()));
-                        callImagesStatus(hmAuxStatus);
-                        //
-                        mPresenter.uploadFile(chMessage.getMessage_image_local());
-                        mPresenter.activateUpload(context);
-                    } catch (Exception e) {
-                        Log.d("hmaux", e.toString());
-                    }
-                    break;
-                default:
-                    break;
+                        HMAux temp = new HMAux();
+
+                        ToolBox_Inf.addJsonStringAsHmAux(temp, mAux2.get(Constant.CHAT_BR_PARAM));
+
+                        act035_adapter_messages.setHMAuxMSG(temp, mRoom_code);
+                        act035_adapter_messages.notifyDataSetChanged();
+
+                        break;
+                    case Constant.CHAT_BR_TYPE_MSG_IMAGE:
+                        try {
+                            HMAux mAux = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
+                            //
+                            CH_MessageDao chMessageDao = new CH_MessageDao(context);
+                            CH_Message chMessage = chMessageDao.getByString(
+                                    new CH_Message_Sql_003(
+                                            Integer.parseInt(mAux.get(CH_MessageDao.MSG_PREFIX)),
+                                            Long.parseLong(mAux.get(CH_MessageDao.TMP))
+
+                                    ).toSqlQuery()
+                            );
+                            //
+                            HMAux hmAuxStatus = new HMAux();
+                            hmAuxStatus.put(chMessageDao.MSG_PREFIX, String.valueOf(chMessage.getMsg_prefix()));
+                            hmAuxStatus.put(chMessageDao.MSG_CODE, String.valueOf(chMessage.getMsg_code()));
+                            hmAuxStatus.put(chMessageDao.MESSAGE_IMAGE_LOCAL, String.valueOf(chMessage.getMessage_image_local()));
+                            callImagesStatus(hmAuxStatus);
+                            //
+                            mPresenter.uploadFile(chMessage.getMessage_image_local());
+                            mPresenter.activateUpload(context);
+                        } catch (Exception e) {
+                            Log.d("hmaux", e.toString());
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -22,4 +22,6 @@ public interface Act035_Main_Presenter {
 
     void activateUpload(Context context);
 
+    void startDownloadServices();
+
 }

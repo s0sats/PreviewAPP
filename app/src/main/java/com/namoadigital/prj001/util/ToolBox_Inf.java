@@ -2709,6 +2709,31 @@ public class ToolBox_Inf {
         }
     }
 
+    public static boolean addJsonStringAsHmAux(HMAux hmAux, String value) {
+        JSONObject json = null;
+        //
+        try {
+            json = new JSONObject(value);
+            //
+            if (json.length() > 0) {
+
+                for (Iterator<String> iter = json.keys(); iter.hasNext(); ) {
+                    String json_key = iter.next();
+                    hmAux.put(json_key, json.getString(json_key));
+                }
+                return true;
+
+            } else {
+                return false;
+            }
+        } catch (JSONException e) {
+            //registerException(CLASS_NAME,e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     public static void createThumbNail_Images(String path, String original) {
 
         try {

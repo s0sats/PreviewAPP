@@ -63,7 +63,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 data.get(i).put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));
                 //
-                if (i >= first && i <= last){
+                if (i >= first && i <= last) {
                     notifyDataSetChanged();
                 }
                 //
@@ -71,6 +71,28 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
             }
 
+        }
+    }
+
+    public void setHMAuxMSG(HMAux hmAuxMSG, String mRoom_code) {
+        boolean status = false;
+
+        if (hmAuxMSG.get("room_code").equalsIgnoreCase(mRoom_code)) {
+            for (int i = 0; i < data.size(); i++) {
+                HMAux item = data.get(i);
+                //
+                if (item.get("msg_prefix").equalsIgnoreCase(hmAuxMSG.get("msg_prefix")) &&
+                        item.get("msg_code").equalsIgnoreCase(hmAuxMSG.get("msg_code"))
+                        ) {
+
+                    status = true;
+                }
+            }
+
+            if(!status){
+                data.add(hmAuxMSG);
+            }
+        } else {
         }
     }
 
