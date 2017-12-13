@@ -94,7 +94,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("customer_ttl");
+        transList.add("customer_list_ttl");
+        transList.add("other_customers_msg_lbl");
+        transList.add("trying_to_reconnect_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -182,7 +184,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         act034_opc = (Act034_Opc) fm.findFragmentById(R.id.act034_opc);
         //
         act034_opc.setHmAux_Trans(hmAux_Trans);
-
         /*
         * Room Fragment
         */
@@ -292,7 +293,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         if(visible){
             ll_info.setVisibility(View.VISIBLE);
-            tv_info_msg_1.setText("Trying -trad"/*hmAux_Trans.get("try_conecting_lbl")*/);
+            tv_info_msg_1.setText(hmAux_Trans.get("trying_to_reconnect_lbl"));
             tv_info_msg_2.setText(qtd);
         }else{
             ll_info.setVisibility(View.GONE);

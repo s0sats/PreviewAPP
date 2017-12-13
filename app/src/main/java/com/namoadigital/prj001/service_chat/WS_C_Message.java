@@ -7,12 +7,16 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message;
+import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -92,20 +96,40 @@ public class WS_C_Message extends IntentService {
             }
 
         }else {
+            JsonArray sDeliveredList = new JsonArray();
+            boolean startDownloadService = false;
             //Transforma list de objs recebido(Chat_C_Message)
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
+            //Se ao menos uma msg é uma imagem, dispara serviço de download.
+            for (CH_Message ch_message: chMessages) {
+                //Verifica se precisa iniciar serviço de download
+                if(!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)){
+                    startDownloadService = true;
+                }
+                //Atualiza valor de dado entregue
+                ch_message.setDelivered(1);
+                ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                //Monta obj para chamar sDelivered
+                Chat_S_Delivered sDelivered = new Chat_S_Delivered();
+                //
+                sDelivered.setMsg_prefix(ch_message.getMsg_prefix());
+                sDelivered.setMsg_code(ch_message.getMsg_code());
+                sDelivered.setRead(0);
+                //
+                sDeliveredList.add(gson.toJsonTree(sDelivered));
+            }
             //Salva lista no banco de dados.
             messageDao.addUpdate(chMessages, false);
             //
-            //Se ao menos uma msg é uma imagem, dispara serviço de download.
-            for (CH_Message ch_message: chMessages) {
-                if(ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)){
-                    startDownloadService();
-                    break;
-                }
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+            singletonWebSocket.attemptToDeliveryMessage(
+                    ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
+            );
+            //
+            if(startDownloadService){
+                startDownloadService();
             }
-
         }
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
     }

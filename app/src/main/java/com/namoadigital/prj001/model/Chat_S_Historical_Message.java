@@ -7,8 +7,8 @@ package com.namoadigital.prj001.model;
 public class Chat_S_Historical_Message {
 
     private String room_code;
-    private int msg_older_prefix;
-    private int msg_older_code;
+    private Integer msg_older_prefix;
+    private Integer msg_older_code;
     private int not_delivered;
 
     public String getRoom_code() {
@@ -19,19 +19,19 @@ public class Chat_S_Historical_Message {
         this.room_code = room_code;
     }
 
-    public int getMsg_older_prefix() {
+    public Integer getMsg_older_prefix() {
         return msg_older_prefix;
     }
 
-    public void setMsg_older_prefix(int msg_older_prefix) {
+    public void setMsg_older_prefix(Integer msg_older_prefix) {
         this.msg_older_prefix = msg_older_prefix;
     }
 
-    public int getMsg_older_code() {
+    public Integer getMsg_older_code() {
         return msg_older_code;
     }
 
-    public void setMsg_older_code(int msg_older_code) {
+    public void setMsg_older_code(Integer msg_older_code) {
         this.msg_older_code = msg_older_code;
     }
 

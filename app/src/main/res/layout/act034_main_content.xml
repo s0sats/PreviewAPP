@@ -34,7 +34,7 @@
                 android:layout_gravity="center"
                 android:orientation="horizontal"
                 android:visibility="gone"
-                android:background="@drawable/border_black"
+                android:background="@drawable/bg_white_border_black"
                 android:padding="5dp"
                 android:clickable="true">
 

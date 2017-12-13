@@ -12,7 +12,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Opc_Adapter;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.sql.Sql_Act034_001;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
@@ -25,13 +27,14 @@ public class Act034_Opc extends BaseFragment {
     private TextView tv_customer_ttl;
     private ListView lv_customer_list;
     private Act034_Opc_Adapter mAdapter;
+    private CH_RoomDao roomDao;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.act034_opc_content,container,false);
+        View view = inflater.inflate(R.layout.act034_opc_content, container, false);
 
         iniVar(view);
         iniAction();
@@ -40,7 +43,8 @@ public class Act034_Opc extends BaseFragment {
     }
 
     private void iniVar(View view) {
-
+        roomDao = new CH_RoomDao(getContext());
+        //
         tv_customer_ttl = (TextView) view.findViewById(R.id.act034_opc_content_tv_customer_ttl);
         //
         lv_customer_list = (ListView) view.findViewById(R.id.act034_opc_content_lv_customer);
@@ -48,22 +52,25 @@ public class Act034_Opc extends BaseFragment {
         loadCustomerList();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        tv_customer_ttl.setText(hmAux_Trans.get("customer_list_ttl"));
+    }
+
     private void loadCustomerList() {
-        ArrayList<HMAux> auxList = new ArrayList<>();
-        //
-        HMAux aux = new HMAux();
-        aux.put(EV_User_CustomerDao.CUSTOMER_NAME,"Namoa");
-        aux.put("badge","0");
-        auxList.add(aux);
-        //
-        HMAux aux2 = new HMAux();
-        aux2.put(EV_User_CustomerDao.CUSTOMER_NAME,"BttTst");
-        aux2.put("badge","15");
-        auxList.add(aux2);
+        ArrayList<HMAux> customerList = (ArrayList<HMAux>)
+                roomDao.query_HM(
+                        new Sql_Act034_001(
+                                ToolBox_Con.getPreference_User_Code(getContext())
+                        ).toSqlQuery()
+                );
+
         //
         mAdapter = new Act034_Opc_Adapter(
                 getActivity(),
-                auxList,
+                customerList,
                 R.layout.act034_opc_cell
         );
         //
@@ -74,12 +81,10 @@ public class Act034_Opc extends BaseFragment {
     private void iniAction() {
 
 
-
     }
 
     @Override
     public void loadDataToScreen() {
         //super.loadDataToScreen();
-        tv_customer_ttl.setText(hmAux_Trans.get("customer_ttl"));
     }
 }
