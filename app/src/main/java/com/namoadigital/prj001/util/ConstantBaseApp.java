@@ -387,6 +387,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_ERROR = "cError";
     public static final String CHAT_EVENT_C_ERROR_LOGIN = "cErrorLogin";
     public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
+    public static final String CHAT_EVENT_C_HISTORICAL_MESSAGES = "cHistoricalMessages";
     public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
     public static final String CHAT_EVENT_C_MESSAGE_TMP = "cMessageTmp";
     public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
@@ -396,8 +397,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_S_LOGIN = "sLogin";
     public static final String CHAT_EVENT_S_ROOM = "sRoom";
     public static final String CHAT_EVENT_S_PENDING_MESSAGES = "sPendingMessages";
+    public static final String CHAT_EVENT_S_HISTORICAL_MESSAGES = "sHistoricalMessages";
     public static final String CHAT_EVENT_S_MESSAGE = "sMessage";
     public static final String CHAT_EVENT_S_MESSAGE_TMP = "sMessageTmp";
+    public static final String CHAT_EVENT_S_DELIVERED = "sDelivered";
+    public static final String CHAT_EVENT_S_READ = "sRead";
 
     //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
@@ -420,6 +424,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
     public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
+    //Errors
+    public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
+    public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";
+
 
 
 }

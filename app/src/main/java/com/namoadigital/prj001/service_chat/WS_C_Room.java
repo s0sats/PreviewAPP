@@ -66,7 +66,7 @@ public class WS_C_Room extends IntentService {
         //
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
-        roomDao.addUpdate(chRooms, true);
+        roomDao.addUpdate(chRooms, false);
         //
         startDownloadService();
         //
