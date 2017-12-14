@@ -31,9 +31,13 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
     public static final String ROOM_OBJ = "room_obj";
     public static final String ROOM_IMAGE = "room_image";
     public static final String ROOM_IMAGE_LOCAL = "room_image_local";
+    public static final String FIRST_MSG_PREFIX = "first_msg_prefix";
+    public static final String FIRST_MSG_CODE = "first_msg_code";
 
     public static String[] columns = {
-            ROOM_CODE, ROOM_TYPE, ROOM_DESC, CUSTOMER_CODE, ROOM_OBJ, ROOM_IMAGE, ROOM_IMAGE_LOCAL
+            ROOM_CODE, ROOM_TYPE, ROOM_DESC, CUSTOMER_CODE, ROOM_OBJ, ROOM_IMAGE,
+            ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE
+
     };
 
     public CH_RoomDao(Context context) {
@@ -266,7 +270,8 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             }else{
                 ch_room.setRoom_image_local(null);
             }
-
+            ch_room.setFirst_msg_prefix(cursor.getInt(cursor.getColumnIndex(FIRST_MSG_PREFIX)));
+            ch_room.setFirst_msg_code(cursor.getInt(cursor.getColumnIndex(FIRST_MSG_CODE)));
             return ch_room;
         }
     }
@@ -292,7 +297,12 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             contentValues.put(ROOM_OBJ, ch_room.getRoom_obj());
             contentValues.put(ROOM_IMAGE, ch_room.getRoom_image());
             //contentValues.put(ROOM_IMAGE_LOCAL, ch_room.getRoom_image_local());
-
+            if (ch_room.getFirst_msg_prefix() > -1) {
+                contentValues.put(FIRST_MSG_PREFIX, ch_room.getFirst_msg_prefix());
+            }
+            if (ch_room.getFirst_msg_code() > -1) {
+                contentValues.put(FIRST_MSG_CODE, ch_room.getFirst_msg_code());
+            }
             return contentValues;
         }
     }

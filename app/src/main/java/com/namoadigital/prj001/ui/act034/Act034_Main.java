@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +29,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -59,6 +61,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private ImageView iv_info_icon;
     private TextView tv_info_msg_1;
     private TextView tv_info_msg_2;
+    private ArrayList<HMAux> customer_list = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,7 +149,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         mPresenter = new Act034_Main_Presenter_Impl(
                 context,
                 this,
-                hmAux_Trans
+                hmAux_Trans,
+                new EV_User_CustomerDao(context),
+                new CH_RoomDao(context)
         );
         //
         ll_info = (LinearLayout) findViewById(R.id.act034_main_ll_info);
@@ -157,6 +162,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         tv_info_msg_1 = (TextView) findViewById(R.id.act034_main_tv_msg_1);
         //
         tv_info_msg_2 = (TextView) findViewById(R.id.act034_main_tv_msg_2);
+        //Recebe lista com nome dos customers
+        /*customer_list = mPresenter.getCustomerMessageList(
+                mPresenter.getCustomerNameList()
+        );*/
         //
         initFragments();
         //
@@ -184,6 +193,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         act034_opc = (Act034_Opc) fm.findFragmentById(R.id.act034_opc);
         //
         act034_opc.setHmAux_Trans(hmAux_Trans);
+        //
+        toogleDrawerVisibility();
+        //
+        act034_opc.loadDataToScreen();
+        //
         /*
         * Room Fragment
         */
@@ -191,8 +205,64 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         act034_room.setBaInfra(this);
         act034_room.setHmAux_Trans(hmAux_Trans);
+        act034_room.setSelected_customer(customer_list.size() > 0 ? Long.parseLong(customer_list.get(0).get(EV_User_CustomerDao.CUSTOMER_CODE)) : 0);
         act034_room.loadDataToScreen();
 
+    }
+
+    private void toogleDrawerVisibility() {
+        customer_list = mPresenter.getCustomerMessageList(
+                mPresenter.getCustomerNameList()
+        );
+        //
+        act034_opc.setCustomerList(customer_list);
+        //
+        setDrawerState(customer_list.size() > 1);
+
+        //
+        /*if(customer_list.size() > 1){
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }else{
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }*/
+    }
+
+    public void setSelectedCustomer(long customer_code){
+        act034_room.setSelected_customer(customer_code);
+        act034_room.loadDataToScreen();
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    public void setDrawerState(boolean isEnabled) {
+        if (isEnabled) {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            mDrawerLayout.openDrawer(GravityCompat.START);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+
+            //mDrawerStatus = true;
+
+            mDrawerToggle.syncState();
+
+        } else {
+
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+
+            //mDrawerStatus = false;
+
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+
+            mDrawerToggle.syncState();
+        }
     }
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
@@ -273,6 +343,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     if(currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)){
                         act034_room.loadRoomList();
                     }
+                    //Atualiza drawer
+                    toogleDrawerVisibility();
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTED:
                     toogleInfoMsg(false,null);

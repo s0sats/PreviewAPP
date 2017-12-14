@@ -113,17 +113,19 @@ public class WS_C_Message extends IntentService {
                 if(!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)){
                     startDownloadService = true;
                 }
-                //Atualiza valor de dado entregue
-                ch_message.setDelivered(1);
-                ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                //Monta obj para chamar sDelivered
-                Chat_S_Delivered sDelivered = new Chat_S_Delivered();
-                //
-                sDelivered.setMsg_prefix(ch_message.getMsg_prefix());
-                sDelivered.setMsg_code(ch_message.getMsg_code());
-                sDelivered.setRead(0);
-                //
-                sDeliveredList.add(gson.toJsonTree(sDelivered));
+                if(ch_message.getDelivered() == 0) {
+                    //Atualiza valor de dado entregue
+                    ch_message.setDelivered(1);
+                    ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    //Monta obj para chamar sDelivered
+                    Chat_S_Delivered sDelivered = new Chat_S_Delivered();
+                    //
+                    sDelivered.setMsg_prefix(ch_message.getMsg_prefix());
+                    sDelivered.setMsg_code(ch_message.getMsg_code());
+                    sDelivered.setRead(0);
+                    //
+                    sDeliveredList.add(gson.toJsonTree(sDelivered));
+                }
                 //Salva lista no banco de dados.
                 messageDao.addUpdate(ch_message);
                 //
@@ -132,10 +134,12 @@ public class WS_C_Message extends IntentService {
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG, msgParam);
             }
             //
-            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-            singletonWebSocket.attemptToDeliveryMessage(
-                    ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
-            );
+            if(sDeliveredList.size() > 0) {
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                singletonWebSocket.attemptToDeliveryMessage(
+                        ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
+                );
+            }
             //
             if(startDownloadService){
                 startDownloadService();

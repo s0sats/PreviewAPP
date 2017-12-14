@@ -12,6 +12,8 @@ public class CH_Room {
     private String room_obj;
     private String room_image;
     private String room_image_local;
+    private int first_msg_prefix;
+    private int first_msg_code;
 
     public String getRoom_type() {
         return room_type;
@@ -67,5 +69,21 @@ public class CH_Room {
 
     public void setRoom_image_local(String room_image_local) {
         this.room_image_local = room_image_local;
+    }
+
+    public int getFirst_msg_prefix() {
+        return first_msg_prefix;
+    }
+
+    public void setFirst_msg_prefix(int first_msg_prefix) {
+        this.first_msg_prefix = first_msg_prefix;
+    }
+
+    public int getFirst_msg_code() {
+        return first_msg_code;
+    }
+
+    public void setFirst_msg_code(int first_msg_code) {
+        this.first_msg_code = first_msg_code;
     }
 }

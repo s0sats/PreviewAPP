@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class Act034_Opc_Adapter extends BaseAdapter {
         TextView tv_customer_desc = (TextView) convertView.findViewById(R.id.act034_opc_cell_tv_customer_desc);
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_opc_cell_tv_badge);
         //
-        tv_customer_desc.setText(item.get(CH_RoomDao.CUSTOMER_CODE));
+        tv_customer_desc.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
         //
         if(item.get(Sql_Act034_001.MSG_QTY).equalsIgnoreCase("0")){
             tv_badge.setVisibility(View.INVISIBLE);

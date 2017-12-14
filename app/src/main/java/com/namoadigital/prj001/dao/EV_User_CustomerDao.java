@@ -38,6 +38,13 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
 
     private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP, PENDING, LOGO_URL};
 
+    public EV_User_CustomerDao(Context context) {
+        super(context,Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
+
+        this.toContentValuesMapper = new EV_CustomerToContentValuesMapper();
+        this.toEV_User_CustomerMapper = new CursorToEV_CustomerMapper();
+    }
+
     public EV_User_CustomerDao(Context context,String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_SINGLE);
 
