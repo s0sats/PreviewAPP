@@ -124,9 +124,11 @@ public class SingletonWebSocket {
                 public void call(Object... args) {
                     Log.d("Chat", "onConnect   -  Socket_id: " + mSocket.id());
                     try {
-                        ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - onConnect   -  Socket_id: " + mSocket.id() + "\n", log_file);
+                        //Chama metodo que verifica se precisa
+                        checkForNewLogin();
                         //
-                        //attemptSendLogin();
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onConnect   -  Socket_id: " + mSocket.id() + "\n", log_file);
+                        //
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -140,7 +142,7 @@ public class SingletonWebSocket {
                     Log.d("Chat", "onDisconect   -  Socket_id: " + mSocket.id());
                     try {
                         mSocketRunning = false;
-                        ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - onDisconect\nSocket_id: " + mSocket.id() + "\n", log_file);
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect\nSocket_id: " + mSocket.id() + "\n", log_file);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -162,7 +164,7 @@ public class SingletonWebSocket {
     public void reconnect() {
         Log.d("Chat", "Reconect");
         try {
-            ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - Reconect   -  Socket_id: " + mSocket.id() + "\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect   -  Socket_id: " + mSocket.id() + "\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -171,7 +173,7 @@ public class SingletonWebSocket {
         if (mSocketReconnect) {
             Log.d("Chat", "Reconect -> initConnection");
             try {
-                ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - Reconect -> initConnection \n", log_file);
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect -> initConnection \n", log_file);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -192,7 +194,7 @@ public class SingletonWebSocket {
     public void attemptSendLogin() {
         Log.d("Chat", "attemptSendLogin");
         try {
-            ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,7 +213,7 @@ public class SingletonWebSocket {
                 mSocket.emit(Constant.CHAT_EVENT_S_LOGIN, gson.toJson(env));
                 Log.d("Chat", "sLogin");
                 try {
-                    ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - emit sLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
+                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - emit sLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -290,17 +292,22 @@ public class SingletonWebSocket {
         public void call(Object... args) {
             if (mSocket != null) {
                 Log.d("Chat", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
-                if (!mSocket_ID.equalsIgnoreCase(mSocket.id()) && mSocket.id() != null) {
-                    mSocket_ID = mSocket.id();
-                    //
-                    attemptSendLogin();
-                }
-                ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTED);
+                //Chama metodo que verifica se precisa
+                checkForNewLogin();
             } else {
                 Log.d("Chat", "EVENT_RECONNECT");
             }
         }
     };
+
+    private void checkForNewLogin() {
+        if (!mSocket_ID.equalsIgnoreCase(mSocket.id()) && mSocket.id() != null) {
+            mSocket_ID = mSocket.id();
+            //
+            attemptSendLogin();
+        }
+        ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTED);
+    }
 
     private Emitter.Listener onReconnectingReturn = new Emitter.Listener() {
         @Override
