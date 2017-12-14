@@ -125,6 +125,8 @@ public class SingletonWebSocket {
                     Log.d("Chat", "onConnect   -  Socket_id: " + mSocket.id());
                     try {
                         ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - onConnect   -  Socket_id: " + mSocket.id() + "\n", log_file);
+                        //
+                        //attemptSendLogin();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -150,7 +152,7 @@ public class SingletonWebSocket {
             //NUNCA INICIALIZAR O mSocket_ID AQUI!!!!
             //mSocket_ID = mSocket.id();
             //Log.d("Chat","Pos connect -> mSocket_ID: " +mSocket_ID);
-            attemptSendLogin();
+
 
         } catch (Exception e) {
             e.printStackTrace();
