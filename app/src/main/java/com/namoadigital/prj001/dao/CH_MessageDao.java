@@ -118,6 +118,12 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     public void addUpdate(CH_Message ch_message) {
         openDB();
         try {
+
+            if(ch_message.getTmp() == 0) {
+                //Resgata proximo tmp
+                ch_message.setTmp(ToolBox_Inf.chatNextMSGCode(context));
+            }
+
             StringBuilder sbWhere = new StringBuilder();
             sbWhere.append(MSG_PREFIX).append(" = '").append(String.valueOf(ch_message.getMsg_prefix())).append("'");
             sbWhere.append(" and ");
@@ -148,11 +154,11 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             }
 
             for (CH_Message ch_message : ch_messages) {
-                //Resgata proximo tmp
-                long tmp = ToolBox_Inf.chatNextMSGCode(context);
-                //
-                //Seta Tmp
-                ch_message.setTmp(tmp);
+
+                if(ch_message.getTmp() == 0) {
+                    //Resgata proximo tmp
+                    ch_message.setTmp(ToolBox_Inf.chatNextMSGCode(context));
+                }
                 //
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(MSG_PREFIX).append(" = '").append(String.valueOf(ch_message.getMsg_prefix())).append("'");
