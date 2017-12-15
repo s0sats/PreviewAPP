@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -114,13 +115,16 @@ public class WS_C_Message extends IntentService {
                 }
                 msgParam.put(Constant.CHAT_BR_PARAM, gson.toJson(ch_message));
                 //
-                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG, msgParam);
+                //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG, msgParam);
+                //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+                //
+                Log.d("Chat", ch_message.getMsg_pk());
             }
 
             //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG, msgParam);
         }
         //
-        //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
     }
 
     private void startDownloadService() {
