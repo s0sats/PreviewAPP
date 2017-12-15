@@ -79,11 +79,14 @@ public class Act034_Room_Adapter extends BaseAdapter {
         TextView tv_msg = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_msg);
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_badge);
         //
-        Bitmap imgBitmap = BitmapFactory.decodeFile(getImageThumbnail(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
-
-        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(context.getResources(),imgBitmap);
+        Bitmap imgBitmap = null;
+        if(!item.get(CH_RoomDao.ROOM_IMAGE_LOCAL).equalsIgnoreCase("")) {
+            imgBitmap = BitmapFactory.decodeFile(getImageThumbnail(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+        }else{
+            imgBitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_namoa);
+        }
+        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(context.getResources(), imgBitmap);
         drawable.setCircular(true);
-
         //iv_room_image.setImageBitmap(imgBitmap);
         iv_room_image.setImageDrawable(drawable);
         //

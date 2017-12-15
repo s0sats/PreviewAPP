@@ -37,6 +37,7 @@ public class Act034_Room extends BaseFragment {
 
     public static final String ROOM_POSITION = "position";
 
+    private boolean bStatus = false;
     private Context context;
     private LinearLayout ll_header;
     private TextView tv_others_customer_msg_lbl;
@@ -45,7 +46,11 @@ public class Act034_Room extends BaseFragment {
     private Act034_Room_Adapter mAdapter;
     private CH_RoomDao roomDao;
     private Act034_Main mMain;
+    private long selected_customer;
 
+    public void setSelected_customer(long selected_customer) {
+        this.selected_customer = selected_customer;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +63,8 @@ public class Act034_Room extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //super.onCreateView(inflater, container, savedInstanceState);
+        bStatus = true;
+        //
         View view = inflater.inflate(R.layout.act034_room_content,container,false);
         //
         iniVar(view);
@@ -101,7 +108,7 @@ public class Act034_Room extends BaseFragment {
         ArrayList<HMAux> roomList =
                 (ArrayList<HMAux>) roomDao.query_HM(
                         new CH_Room_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
+                                selected_customer,
                                 ToolBox_Con.getPreference_User_Code(context)
                         ).toSqlQuery()
                 );
@@ -131,32 +138,20 @@ public class Act034_Room extends BaseFragment {
     private void showRoomImageDialog(String image_path) {
 
         AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
-        /*LinearLayout linearLayout = new LinearLayout(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-        );
 
-        linearLayout.setLayoutParams(params);
-        //
-        ImageView iv_room = new ImageView(context);
-        LinearLayout.LayoutParams iv_params = new LinearLayout.LayoutParams(
-                200,
-                200
-        );
-        iv_room.setLayoutParams(iv_params);*/
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view  = inflater.inflate(R.layout.act034_room_image,null);
 
         ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_image_iv_image);
 
-        Bitmap image = BitmapFactory.decodeFile(Constant.CACHE_PATH +"/"+ image_path);
+        Bitmap image = null;
 
-        int w =  image.getWidth();
-        int h = image.getHeight();
-        //
-        //image.setWidth(w);
-        //image.setHeight(h);
+        if(!image_path.equalsIgnoreCase("")){
+            image = BitmapFactory.decodeFile(Constant.CACHE_PATH +"/"+ image_path);
+        }else{
+            image = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_namoa);
+        }
+
         LinearLayout.LayoutParams iv_params = new LinearLayout.LayoutParams(
                 (int) ToolBox_Inf.convertDpToPixel(context,200),
                 (int) ToolBox_Inf.convertDpToPixel(context,200)
@@ -196,10 +191,10 @@ public class Act034_Room extends BaseFragment {
 
     @Override
     public void loadDataToScreen() {
-        //super.loadDataToScreen();
+        if(bStatus){
+            loadRoomList();
+        }
     }
-
-
 
     @Override
     public void onAttach(Context context) {
@@ -207,5 +202,13 @@ public class Act034_Room extends BaseFragment {
         //
         this.context = context;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //
+        bStatus = false;
+    }
+
 }
 
