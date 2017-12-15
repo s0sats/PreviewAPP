@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,25 +75,41 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
     }
 
-    public void setHMAuxMSG(HMAux hmAuxMSG, String mRoom_code) {
-        boolean status = false;
+    public void setHMAuxMSG(final HMAux hmAuxMSG, final String mRoom_code) {
 
-        if (hmAuxMSG.get("room_code").equalsIgnoreCase(mRoom_code)) {
-            for (int i = 0; i < data.size(); i++) {
-                HMAux item = data.get(i);
-                //
-                if (item.get("msg_prefix").equalsIgnoreCase(hmAuxMSG.get("msg_prefix")) &&
-                        item.get("msg_code").equalsIgnoreCase(hmAuxMSG.get("msg_code"))
-                        ) {
+        try {
 
-                    status = true;
+            Thread mThread = new Thread() {
+
+                @Override
+                public void run() {
+
+
+                    boolean status = false;
+
+                    if (hmAuxMSG.get("room_code").equalsIgnoreCase(mRoom_code)) {
+                        for (int i = 0; i < data.size(); i++) {
+                            HMAux item = data.get(i);
+                            //
+                            if (item.get("msg_prefix").equalsIgnoreCase(hmAuxMSG.get("msg_prefix")) &&
+                                    item.get("msg_code").equalsIgnoreCase(hmAuxMSG.get("msg_code"))
+                                    ) {
+
+                                status = true;
+                            }
+                        }
+
+                        if (!status) {
+                            data.add(hmAuxMSG);
+                        }
+                    } else {
+                    }
                 }
-            }
-
-            if(!status){
-                data.add(hmAuxMSG);
-            }
-        } else {
+            };
+            //
+            mThread.start();
+        } catch (Exception e) {
+            Log.d("MSG", e.toString());
         }
     }
 

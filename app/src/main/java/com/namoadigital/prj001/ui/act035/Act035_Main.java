@@ -308,14 +308,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             try {
                 switch (type) {
                     case Constant.CHAT_BR_TYPE_MSG:
-                        HMAux mAux2 = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
+                        //HMAux mAux2 = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
 
-                        HMAux temp = new HMAux();
+                        //HMAux temp = new HMAux();
 
-                        ToolBox_Inf.addJsonStringAsHmAux(temp, mAux2.get(Constant.CHAT_BR_PARAM));
+                        //ToolBox_Inf.addJsonStringAsHmAux(temp, mAux2.get(Constant.CHAT_BR_PARAM));
 
-                        act035_adapter_messages.setHMAuxMSG(temp, mRoom_code);
-                        act035_adapter_messages.notifyDataSetChanged();
+                        //act035_adapter_messages.setHMAuxMSG(temp, mRoom_code);
+                        //act035_adapter_messages.notifyDataSetChanged();
+
+                        //setResultData(mRoom_code);
 
                         break;
                     case Constant.CHAT_BR_TYPE_MSG_IMAGE:
