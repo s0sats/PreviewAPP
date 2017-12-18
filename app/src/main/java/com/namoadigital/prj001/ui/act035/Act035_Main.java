@@ -43,6 +43,9 @@ import java.util.UUID;
 
 public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
+
+    public static boolean isProcessing_C_Message = false;
+
     private TextView tv_customer_val;
     private ListView lv_messages;
     private Act035_Main_Presenter mPresenter;
@@ -307,7 +310,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             try {
                 switch (type) {
-                    case Constant.CHAT_BR_TYPE_MSG:
+                    case Constant.CHAT_BR_TYPE_MSG: // cMessage
                         //HMAux mAux2 = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
 
                         //HMAux temp = new HMAux();

@@ -113,6 +113,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
     }
 
+
     @Override
     public int getCount() {
         return data.size();

@@ -83,6 +83,8 @@ public class HttpFileUpload {
             dos.writeBytes(twoHyphens + boundary + lineEnd);
 
             dos.writeBytes("Content-Disposition: form-data; name=\"file_post\";filename=\"" + iFileName + "\"" + lineEnd);
+
+            //dos.writeBytes("Content-Type: image/jpeg" + lineEnd);
             dos.writeBytes(lineEnd);
 
             Log.e(Tag, "Headers are written");
