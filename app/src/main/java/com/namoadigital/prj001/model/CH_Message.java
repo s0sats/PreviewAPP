@@ -21,6 +21,8 @@ public class CH_Message {
     private String msg_pk;
     private int user_code;
     private String user_nick;
+    private int all_delivered;
+    private int all_read;
     private int status_update;
 
     public int getMsg_prefix() {
@@ -141,6 +143,22 @@ public class CH_Message {
 
     public void setUser_nick(String user_nick) {
         this.user_nick = user_nick;
+    }
+
+    public int getAll_delivered() {
+        return all_delivered;
+    }
+
+    public void setAll_delivered(int all_delivered) {
+        this.all_delivered = all_delivered;
+    }
+
+    public int getAll_read() {
+        return all_read;
+    }
+
+    public void setAll_read(int all_read) {
+        this.all_read = all_read;
     }
 
     public int getStatus_update() {

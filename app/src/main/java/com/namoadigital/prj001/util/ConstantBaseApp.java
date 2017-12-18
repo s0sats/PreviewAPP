@@ -392,6 +392,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_MESSAGE_TMP = "cMessageTmp";
     public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
     public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
+    public static final String CHAT_EVENT_C_ALL_DELIVERED = "cAllDelivered";
+    public static final String CHAT_EVENT_C_ALL_READ = "cAllRead";
 
     //Eventos Server
     public static final String CHAT_EVENT_S_LOGIN = "sLogin";
@@ -417,9 +419,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE = "CHAT_BR_TYPE";
     public static final String CHAT_BR_PARAM = "CHAT_BR_PARAM";
     public static final String CHAT_BR_PARAM_RECONNECTING_QTD = "CHAT_BR_PARAM_RECONNECTING_QTD";
+    public static final String CHAT_BR_TYPE_CHAT_STATUS_CHANGE = "CHAT_BR_TYPE_CHAT_STATUS_CHANGE";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
     public static final String CHAT_BR_TYPE_MSG_TMP = "CHAT_BR_TYPE_MSG_TMP";
+    public static final String CHAT_BR_TYPE_MSG_ALL_DELIVERED = "CHAT_BR_TYPE_MSG_ALL_DELIVERED";
+    public static final String CHAT_BR_TYPE_MSG_ALL_READ = "CHAT_BR_TYPE_MSG_ALL_READ";
     public static final String CHAT_BR_TYPE_RECONNECTED = "CHAT_BR_TYPE_RECONNECTED";
     public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
@@ -427,6 +432,8 @@ public class ConstantBaseApp extends ConstantBase {
     //Errors
     public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
     public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";
+    //
+    public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
 
 
 

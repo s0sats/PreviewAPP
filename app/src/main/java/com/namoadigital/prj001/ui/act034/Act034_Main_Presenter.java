@@ -14,5 +14,7 @@ public interface Act034_Main_Presenter {
 
     ArrayList<HMAux> getCustomerMessageList(ArrayList<HMAux> customerNameList);
 
+    void tryToRestartChatService();
+
     void onBackPressedClicked();
 }

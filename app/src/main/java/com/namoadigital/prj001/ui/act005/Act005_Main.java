@@ -147,6 +147,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
     private FCMReceiver fcmReceiver;
+    private BR_Chat chatReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -176,11 +177,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         filter.addAction(Constant.WS_FCM);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+        //
+        chatReceiver = new BR_Chat();
+        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
+        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver,brRoomFilter);
     }
 
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
         super.onDestroy();
     }
 
@@ -292,6 +299,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("drawer_change_zone_one_zone_alert_msg");
         transList.add("drawer_change_zone_alert_ttl");
         transList.add("drawer_change_zone_alert_msg");
+        //
+        transList.add("lbl_chat");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1407,6 +1416,21 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         @Override
         public void onReceive(Context context, Intent intent) {
             mPresenter.getMenuItens(hmAux_Trans);
+        }
+    }
+
+    private class BR_Chat extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
+
+            switch (type){
+                case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
+                    mPresenter.getMenuItens(hmAux_Trans);
+                    break;
+                default:
+            }
+
         }
     }
 }

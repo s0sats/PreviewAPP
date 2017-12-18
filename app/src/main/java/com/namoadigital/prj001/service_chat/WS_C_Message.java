@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
+import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -96,12 +97,23 @@ public class WS_C_Message extends IntentService {
 
         }else {
             JsonArray sDeliveredList = new JsonArray();
+            JsonArray sReadList = new JsonArray();
+            //
             boolean startDownloadService = false;
             //Transforma list de objs recebido(Chat_C_Message)
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
             for (CH_Message ch_message: chMessages) {
+                //
+                CH_Message dbMessage =
+                        messageDao.getByString(
+                                new CH_Message_Sql_005(
+                                        ch_message.getMsg_prefix(),
+                                        ch_message.getMsg_code()
+                                ).toSqlQuery()
+                        );
+
                 //Verifica se precisa iniciar serviço de download
                 if(!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)){
                     startDownloadService = true;
@@ -120,6 +132,22 @@ public class WS_C_Message extends IntentService {
                     //
                     sDeliveredList.add(gson.toJsonTree(sDelivered));
                 }
+                //Se o Read do server esta como 0, mas o Read local é 1
+                //não atualiza banco de dados e chama evento de leitura
+                if(dbMessage.getRead() == 1 && ch_message.getRead() == 0){
+                    //Seta valores do banco no obj
+                    ch_message.setRead(dbMessage.getRead());
+                    ch_message.setRead_date(dbMessage.getRead_date());
+                    //Cria obj para chamar evento de sRead
+                    Chat_S_Read sRead = new Chat_S_Read();
+                    //
+                    sRead.setMsg_prefix(ch_message.getMsg_prefix());
+                    sRead.setMsg_code(ch_message.getMsg_code());
+                    sRead.setRoom_code(ch_message.getRoom_code());
+                    //
+                    sReadList.add(gson.toJsonTree(sRead));
+                }
+
                 //Salva lista no banco de dados.
                 messageDao.addUpdate(ch_message);
             }
@@ -134,6 +162,13 @@ public class WS_C_Message extends IntentService {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                 singletonWebSocket.attemptToDeliveryMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
+                );
+            }
+            //
+            if(sReadList.size() > 0) {
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                singletonWebSocket.attemptToReadMessage(
+                        ToolBox_Inf.setWebSocketJsonParam(sReadList)
                 );
             }
         }

@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.dao.CH_RoomDao;
-import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.sql.CH_Room_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -43,7 +43,7 @@ public class WS_C_Remove_Room extends IntentService {
 
         } finally {
 
-            WBR_C_Room.completeWakefulIntent(intent);
+            WBR_C_Remove_Room.completeWakefulIntent(intent);
         }
 
     }

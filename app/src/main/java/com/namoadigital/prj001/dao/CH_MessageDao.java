@@ -41,12 +41,15 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     public static final String MSG_PK = "msg_pk";
     public static final String USER_CODE = "user_code";
     public static final String USER_NICK = "user_nick";
+    public static final String ALL_DELIVERED = "all_delivered";
+    public static final String ALL_READ = "all_read";
     public static final String STATUS_UPDATE = "status_update";
 
     public static String[] columns = {
             MSG_PREFIX, MSG_CODE, TMP, ROOM_CODE, MSG_DATE, MSG_OBJ,
             MESSAGE_IMAGE_LOCAL, MSG_ORIGIN, DELIVERED, DELIVERED_DATE,
-            READ, READ_DATE, MSG_PK, USER_CODE, USER_NICK, STATUS_UPDATE
+            READ, READ_DATE, MSG_PK, USER_CODE, USER_NICK, ALL_DELIVERED,
+            ALL_READ, STATUS_UPDATE
     };
 
     public CH_MessageDao(Context context) {
@@ -387,6 +390,8 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
 
             ch_message.setUser_code(cursor.getInt(cursor.getColumnIndex(USER_CODE)));
             ch_message.setUser_nick(cursor.getString(cursor.getColumnIndex(USER_NICK)));
+            ch_message.setAll_delivered(cursor.getInt(cursor.getColumnIndex(ALL_DELIVERED)));
+            ch_message.setAll_read(cursor.getInt(cursor.getColumnIndex(ALL_READ)));
             ch_message.setStatus_update(cursor.getInt(cursor.getColumnIndex(STATUS_UPDATE)));
 
             return ch_message;
@@ -442,6 +447,12 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             }
             if (ch_message.getUser_nick() != null) {
                 contentValues.put(USER_NICK, ch_message.getUser_nick());
+            }
+            if (ch_message.getAll_delivered() > -1) {
+                contentValues.put(ALL_DELIVERED, ch_message.getAll_delivered());
+            }
+            if (ch_message.getAll_read() > -1) {
+                contentValues.put(ALL_READ, ch_message.getAll_read());
             }
             if (ch_message.getStatus_update() > -1) {
                 contentValues.put(STATUS_UPDATE, ch_message.getStatus_update());

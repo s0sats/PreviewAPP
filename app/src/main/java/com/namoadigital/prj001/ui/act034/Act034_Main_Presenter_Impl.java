@@ -1,13 +1,17 @@
 package com.namoadigital.prj001.ui.act034;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.sql.Sql_Act034_002;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -66,6 +70,14 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
         }
 
         return customerList;
+    }
+
+    @Override
+    public void tryToRestartChatService() {
+        if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && !AppBackgroundService.isRunning){
+            Intent mIntent = new Intent(context, AppBackgroundService.class);
+            context.startService(mIntent);
+        }
     }
 
     @Override
