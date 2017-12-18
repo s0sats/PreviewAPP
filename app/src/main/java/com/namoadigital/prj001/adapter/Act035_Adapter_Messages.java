@@ -2,7 +2,6 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     private String mUser_Code;
 
+    public static boolean processingHMAux = false;
+
     public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
         this.context = context;
         this.resource_01 = resource_01;
@@ -55,13 +56,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     public void setMessegeUpt(HMAux hmAux, int first, int last) {
         HMAux hmAuxOld = null;
         //
-        for (int i = 0; i < data.size(); i++) {
+        processingHMAux = true;
+        //
+        for (int i = 0; i < data.size() && processingHMAux; i++) {
             hmAuxOld = data.get(i);
             //
             if (hmAux.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_PREFIX)) &&
-                    hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_CODE))
+                    hmAux.get(CH_MessageDao.TMP).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.TMP))
                     ) {
 
+                data.get(i).put(CH_MessageDao.MSG_CODE, hmAux.get(CH_MessageDao.MSG_CODE));
                 data.get(i).put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));
                 //
                 if (i >= first && i <= last) {
@@ -69,50 +73,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 }
                 //
                 break;
-
             }
-
         }
+        //
+        processingHMAux = false;
     }
-
-    public void setHMAuxMSG(final HMAux hmAuxMSG, final String mRoom_code) {
-
-        try {
-
-            Thread mThread = new Thread() {
-
-                @Override
-                public void run() {
-
-
-                    boolean status = false;
-
-                    if (hmAuxMSG.get("room_code").equalsIgnoreCase(mRoom_code)) {
-                        for (int i = 0; i < data.size(); i++) {
-                            HMAux item = data.get(i);
-                            //
-                            if (item.get("msg_prefix").equalsIgnoreCase(hmAuxMSG.get("msg_prefix")) &&
-                                    item.get("msg_code").equalsIgnoreCase(hmAuxMSG.get("msg_code"))
-                                    ) {
-
-                                status = true;
-                            }
-                        }
-
-                        if (!status) {
-                            data.add(hmAuxMSG);
-                        }
-                    } else {
-                    }
-                }
-            };
-            //
-            mThread.start();
-        } catch (Exception e) {
-            Log.d("MSG", e.toString());
-        }
-    }
-
 
     @Override
     public int getCount() {

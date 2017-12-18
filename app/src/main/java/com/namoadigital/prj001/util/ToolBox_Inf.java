@@ -415,7 +415,6 @@ public class ToolBox_Inf {
         }
     }
 
-
     // Testar como substituto
     public static String multiPartRequest(String urlTo, String post, String filepath, String filefield) throws ParseException, IOException {
         HttpURLConnection connection = null;

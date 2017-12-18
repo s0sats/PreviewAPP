@@ -20,4 +20,6 @@ public interface Act035_Main_View {
 
     void cleanTextControl();
 
+    void scroolToPosition(int position);
+
 }
