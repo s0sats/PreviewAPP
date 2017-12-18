@@ -419,7 +419,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_PARAM_RECONNECTING_QTD = "CHAT_BR_PARAM_RECONNECTING_QTD";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
-    public static final String CHAT_BR_TYPE_MSG_IMAGE = "CHAT_BR_TYPE_MSG_IMAGE";
+    public static final String CHAT_BR_TYPE_MSG_TMP = "CHAT_BR_TYPE_MSG_TMP";
     public static final String CHAT_BR_TYPE_RECONNECTED = "CHAT_BR_TYPE_RECONNECTED";
     public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";

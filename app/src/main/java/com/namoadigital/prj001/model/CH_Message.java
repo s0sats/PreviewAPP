@@ -21,6 +21,7 @@ public class CH_Message {
     private String msg_pk;
     private int user_code;
     private String user_nick;
+    private int status_update;
 
     public int getMsg_prefix() {
         return msg_prefix;
@@ -142,5 +143,11 @@ public class CH_Message {
         this.user_nick = user_nick;
     }
 
+    public int getStatus_update() {
+        return status_update;
+    }
 
+    public void setStatus_update(int status_update) {
+        this.status_update = status_update;
+    }
 }

@@ -398,7 +398,10 @@ public class ToolBox_Inf {
             FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sRealFileName);
 
             // Set your server page url (and the file title/description)
-            HttpFileUpload hfu = new HttpFileUpload(Constant.WS_UPLOAD_CHAT, json);
+            HttpFileUpload hfu = new HttpFileUpload(
+                    //Constant.WS_UPLOAD_CHAT
+                    Constant.WS_UPLOAD_NODE_CHAT
+                    , json);
 
             return hfu.Send_Now(fstrm, sFile);
 
