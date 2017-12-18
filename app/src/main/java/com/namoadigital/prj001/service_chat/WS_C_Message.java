@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
@@ -71,8 +70,6 @@ public class WS_C_Message extends IntentService {
     private void processC_Message(String json_param, String ws_event) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
-        HMAux msgParam = new HMAux();
-        //
         ArrayList<Chat_C_Message> messages =
                 gson.fromJson(
                         json_param,
@@ -96,10 +93,6 @@ public class WS_C_Message extends IntentService {
                 chMessage.setMsg_date(messages.get(0).getMsg_date());
                 messageDao.addUpdate(chMessage);
             }
-            //
-            msgParam.put(Constant.CHAT_BR_PARAM, gson.toJson(chMessage));
-            //
-            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG, msgParam);
 
         }else {
             JsonArray sDeliveredList = new JsonArray();
@@ -117,6 +110,7 @@ public class WS_C_Message extends IntentService {
                     //Atualiza valor de dado entregue
                     ch_message.setDelivered(1);
                     ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    ch_message.setStatus_update(1);
                     //Monta obj para chamar sDelivered
                     Chat_S_Delivered sDelivered = new Chat_S_Delivered();
                     //
@@ -128,10 +122,12 @@ public class WS_C_Message extends IntentService {
                 }
                 //Salva lista no banco de dados.
                 messageDao.addUpdate(ch_message);
-                //
-                msgParam.put(Constant.CHAT_BR_PARAM, gson.toJson(ch_message));
-                //
-                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG, msgParam);
+            }
+            //
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+            //
+            if(startDownloadService){
+                startDownloadService();
             }
             //
             if(sDeliveredList.size() > 0) {
@@ -140,12 +136,7 @@ public class WS_C_Message extends IntentService {
                         ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
                 );
             }
-            //
-            if(startDownloadService){
-                startDownloadService();
-            }
         }
-       //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
     }
 
     private void startDownloadService() {

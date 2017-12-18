@@ -28,6 +28,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
 
     public static final String WS_UPLOAD_CHAT = "https://dev.namoadigital.com/inc/ws/aws_file_node.ws";
+    public static final String WS_UPLOAD_NODE_CHAT = "https://chat.namoadigital.com/messageFile";
 
     public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SO_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_so.ws";

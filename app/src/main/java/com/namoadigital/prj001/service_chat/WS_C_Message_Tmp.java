@@ -116,13 +116,6 @@ public class WS_C_Message_Tmp extends IntentService {
                     singletonWebSocket.attemptSendMessageTmp(
                             ToolBox_Inf.setWebSocketJsonParam(sMessageTmp)
                     );
-
-                    HMAux hmAux = new HMAux();
-                    hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
-                    hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));
-
-                    //Notifica telas
-                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG,hmAux);
                 } else {
                     //
                     String curr_name = oldNameFile; //ch_message.getMessage_image_local();
@@ -135,15 +128,13 @@ public class WS_C_Message_Tmp extends IntentService {
                     //
                     renameImage(Constant.THU_PATH, curr_name, new_name);
 
-                    // chamar o upload da Imagem com os códigos atualizados
-                    // para incluir a imagem na lista com nome / novo nome iguais
-
-                    HMAux hmAux = new HMAux();
-                    hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
-                    hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));
-                    //
-                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE, hmAux);
                 }
+
+                HMAux hmAux = new HMAux();
+                hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
+                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));
+                //
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP, hmAux);
             }
         }
     }
