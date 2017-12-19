@@ -467,25 +467,30 @@ public class SingletonWebSocket {
     private Emitter.Listener onHistoricalMessagesReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.d("ChatEvent", "cHistoricalMessages");
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
+            try {
+                Log.d("ChatEvent", "cHistoricalMessages");
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                    } else {
+                        String tst = "No Json";
                     /*
                     * Verificar como proceder caso o retorno não seja uma string
                     *
                     * */
+                    }
+                    //
+                    attempSendOfflineMessages();
                 }
-                //
-                attempSendOfflineMessages();
+            }catch (Exception e){
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
         }
     };
