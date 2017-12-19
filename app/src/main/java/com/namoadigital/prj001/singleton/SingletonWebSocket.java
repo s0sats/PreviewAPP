@@ -23,7 +23,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.sql.CH_Message_Sql_009;
+import com.namoadigital.prj001.sql.CH_Message_Sql_011;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -683,7 +683,7 @@ public class SingletonWebSocket {
         //
         ArrayList<CH_Message> offlineMsgs =
                 (ArrayList<CH_Message>) messageDao.query(
-                        new CH_Message_Sql_009().toSqlQuery()
+                        new CH_Message_Sql_011().toSqlQuery()
                 );
         //
         if (offlineMsgs != null && offlineMsgs.size() > 0) {

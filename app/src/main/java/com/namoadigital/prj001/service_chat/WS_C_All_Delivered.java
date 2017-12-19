@@ -11,7 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.Chat_C_All_Delivered_Read;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
-import com.namoadigital.prj001.sql.CH_Message_Sql_008;
+import com.namoadigital.prj001.sql.CH_Message_Sql_010;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -66,10 +66,10 @@ public class WS_C_All_Delivered extends IntentService {
         //
         for (Chat_C_All_Delivered_Read delivered : allDelivereds) {
             messageDao.addUpdate(
-                    new CH_Message_Sql_008(
+                    new CH_Message_Sql_010(
                             delivered.getMsg_prefix(),
                             delivered.getMsg_code(),
-                            CH_Message_Sql_008.FLAG_ALL_DELIVERED
+                            CH_Message_Sql_010.FLAG_ALL_DELIVERED
                     ).toSqlQuery()
             );
 
