@@ -452,6 +452,13 @@
 
         <service android:name=".service_chat.WS_C_Message_Tmp" />
 
+        <receiver android:name=".receiver_chat.WBR_C_All_Delivered" />
+
+        <service android:name=".service_chat.WS_C_All_Delivered" />
+
+        <receiver android:name=".receiver_chat.WBR_C_All_Read" />
+
+        <service android:name=".service_chat.WS_C_All_Read" />
 
     </application>
 

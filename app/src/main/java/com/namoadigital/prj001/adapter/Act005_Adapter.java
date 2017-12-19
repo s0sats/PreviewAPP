@@ -85,6 +85,16 @@ public class Act005_Adapter extends BaseAdapter {
             tvBadge.setText(" ");
         }
 
+        if(item.get(Act005_Main.MENU_ID).equals(Act005_Main.MENU_ID_CHAT)){
+            tvBadge.setVisibility(View.GONE);
+            //
+            if(badgeNum == 1) {
+                ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+            }else{
+                ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+            }
+        }
+
         //Se chave Badge2 tiver preenchida exibe no menu
         if (badge2Num > 0) {
             tvBadge2.setVisibility(View.VISIBLE);

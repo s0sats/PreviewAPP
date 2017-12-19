@@ -13,7 +13,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message_Tmp;
 import com.namoadigital.prj001.model.Chat_S_Message_Tmp;
-import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -30,7 +30,6 @@ import java.util.ArrayList;
  */
 
 public class WS_C_Message_Tmp extends IntentService {
-
     private CH_MessageDao messageDao;
 
     public WS_C_Message_Tmp() {
@@ -63,7 +62,7 @@ public class WS_C_Message_Tmp extends IntentService {
 
         } finally {
 
-            WBR_C_Message.completeWakefulIntent(intent);
+            WBR_C_Message_Tmp.completeWakefulIntent(intent);
         }
 
     }
@@ -93,10 +92,10 @@ public class WS_C_Message_Tmp extends IntentService {
                 if (ch_message != null && ch_message.getMsg_prefix() > -1) {
                     ch_message.setMsg_code(messageTmp.getMsg_code());
                     ch_message.setMsg_pk(String.valueOf(messageTmp.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, messageTmp.getMsg_code())));
-
-                    oldNameFile = ch_message.getMessage_image_local();
-                    ch_message.setMessage_image_local(ch_message.getMsg_prefix() + "." + ch_message.getMsg_code() + ".jpg");
-
+                    if(ch_message.getMsg_obj().startsWith(Constant.CHAT_START_WITH_IMAGE_MSG)) {
+                        oldNameFile = ch_message.getMessage_image_local();
+                        ch_message.setMessage_image_local(ch_message.getMsg_prefix() + "." + ch_message.getMsg_code() + ".jpg");
+                    }
                     messageDao.addUpdateTmp(ch_message);
                 }
                 //

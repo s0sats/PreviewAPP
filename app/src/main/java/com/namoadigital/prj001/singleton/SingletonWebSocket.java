@@ -9,20 +9,31 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
+import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
+import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
+import com.namoadigital.prj001.receiver_chat.WBR_C_All_Read;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
+import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -112,6 +123,8 @@ public class SingletonWebSocket {
             mSocket.on(Constant.CHAT_EVENT_C_MESSAGE_TMP, onMessagesTmpReturn);
             mSocket.on(Constant.CHAT_EVENT_C_ADD_ROOM, onAddRoom);
             mSocket.on(Constant.CHAT_EVENT_C_REMOVE_ROOM, onRemoveRoom);
+            mSocket.on(Constant.CHAT_EVENT_C_ALL_DELIVERED, onAllDelivered);
+            mSocket.on(Constant.CHAT_EVENT_C_ALL_READ, onAllRead);
 
             mSocket.on(Socket.EVENT_RECONNECT, onReconnectReturn);
             mSocket.on(Socket.EVENT_RECONNECTING, onReconnectingReturn);
@@ -256,14 +269,14 @@ public class SingletonWebSocket {
         }
     }
 
-    public void attemptToDeliveryMessage(String deliveryObj){
+    public void attemptToDeliveryMessage(String deliveryObj) {
         if (mSocket != null) {
             mSocket.emit(Constant.CHAT_EVENT_S_DELIVERED, deliveryObj);
             Log.d("ChatEvent", "sDeliveryMessage");
         }
     }
 
-    public void attemptToReadMessage(String readObj){
+    public void attemptToReadMessage(String readObj) {
         if (mSocket != null) {
             mSocket.emit(Constant.CHAT_EVENT_S_READ, readObj);
             Log.d("ChatEvent", "sReadMessage");
@@ -471,6 +484,8 @@ public class SingletonWebSocket {
                     *
                     * */
                 }
+                //
+                attempSendOfflineMessages();
             }
         }
     };
@@ -523,6 +538,56 @@ public class SingletonWebSocket {
     };
     //endregion
 
+    //region DELIVERY AND READ EVENTS
+    private Emitter.Listener onAllDelivered = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Log.d("ChatEvent", "cAllDelivery");
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cMessageIntent = new Intent(context, WBR_C_All_Delivered.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+
+    private Emitter.Listener onAllRead = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Log.d("ChatEvent", "cAllRead");
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    //
+                    Intent cMessageIntent = new Intent(context, WBR_C_All_Read.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+    //endregion
+
     //region ERROR EVENTS
     private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {
         @Override
@@ -539,25 +604,19 @@ public class SingletonWebSocket {
                                     Chat_C_Error.class
                             );
                     //
-                    if(cError != null && cError.getError_msg() != null){
-                        switch (cError.getError_msg()){
+                    if (cError != null && cError.getError_msg() != null) {
+                        switch (cError.getError_msg()) {
                             case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
-                            case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
-                                //mSocket.emit(Socket.EVENT_DISCONNECT,Constant.CHAT_ERROR_SESSION_NOT_FOUND);
-                                //Chama deslogin do app
-                                ToolBox.sendBCStatus(
-                                        context,
-                                        "ERROR_3",
-                                        "",
-                                        null,
-                                        "0"
-                                );
+                                Intent chatService = new Intent(context, AppBackgroundService.class);
+                                context.stopService(chatService);
                                 break;
+                            case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                             default:
+                                break;
                         }
 
-                    }else{
-                       //Como tratar
+                    } else {
+                        //Como tratar
                     }
                 } else {
                     String tst = "No Json";
@@ -585,24 +644,18 @@ public class SingletonWebSocket {
                                     Chat_C_Error.class
                             );
                     //
-                    if(cError != null && cError.getError_msg() != null){
-                        switch (cError.getError_msg()){
+                    if (cError != null && cError.getError_msg() != null) {
+                        switch (cError.getError_msg()) {
                             case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
-                            case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
-                                //mSocket.emit(Socket.EVENT_DISCONNECT,Constant.CHAT_ERROR_SESSION_NOT_FOUND);
-                                //Chama deslogin do app
-                                ToolBox.sendBCStatus(
-                                        context,
-                                        "ERROR_3",
-                                        "",
-                                        null,
-                                        "0"
-                                );
+                                Intent chatService = new Intent(context, AppBackgroundService.class);
+                                context.stopService(chatService);
                                 break;
+                            case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                             default:
+                                break;
                         }
 
-                    }else{
+                    } else {
                         //Como tratar
                     }
                 } else {
@@ -624,6 +677,44 @@ public class SingletonWebSocket {
             attemptSendLogin();
         }
     }
+
+    private void attempSendOfflineMessages() {
+        CH_MessageDao messageDao = new CH_MessageDao(context);
+        //
+        ArrayList<CH_Message> offlineMsgs =
+                (ArrayList<CH_Message>) messageDao.query(
+                        new CH_Message_Sql_009().toSqlQuery()
+                );
+        //
+        if (offlineMsgs != null && offlineMsgs.size() > 0) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            for (CH_Message chMessage : offlineMsgs) {
+
+                JSONObject msg_obj = null;
+                try {
+                    msg_obj = new JSONObject(chMessage.getMsg_obj());
+
+                    JSONObject msg_obj_content = (JSONObject) msg_obj.get("message");
+                    String msg_obj_type = (String) msg_obj_content.get("type");
+                    String msg_obj_data = (String) msg_obj_content.get("data");
+
+                    Chat_S_Message sMessage = new Chat_S_Message();
+                    //
+                    sMessage.setRoom_code(chMessage.getRoom_code());
+                    sMessage.setTmp(chMessage.getTmp());
+                    sMessage.setType(msg_obj_type);
+                    sMessage.setData(msg_obj_data);
+                    //
+                    attemptSendMessages(gson.toJson(sMessage));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ToolBox_Inf.registerException(getClass().getName(),e);
+                }
+            }
+        }
+
+    }
+
     /**
      * OnConnection Changed precisa chamar esse método para reiniciar a conexao em caso de falha.
      *

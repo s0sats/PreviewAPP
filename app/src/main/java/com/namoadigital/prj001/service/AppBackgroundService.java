@@ -6,6 +6,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 27/11/17.
@@ -26,6 +28,8 @@ public class AppBackgroundService extends Service {
         //
         singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
         //
+        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
+        //
         return START_STICKY;
     }
 
@@ -34,6 +38,8 @@ public class AppBackgroundService extends Service {
         this.isRunning = false;
         //
         singletonWebSocket.attemptDisconnect("App Socket.disconnect()");
+        //
+        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
         //
        // singletonWebSocket.disconnect();
     }

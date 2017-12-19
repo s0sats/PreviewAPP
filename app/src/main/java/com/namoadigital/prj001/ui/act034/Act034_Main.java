@@ -154,6 +154,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 new CH_RoomDao(context)
         );
         //
+        mPresenter.tryToRestartChatService();
+        //
         ll_info = (LinearLayout) findViewById(R.id.act034_main_ll_info);
         //
         iv_info_icon = (ImageView) findViewById(R.id.act034_main_iv_icon);

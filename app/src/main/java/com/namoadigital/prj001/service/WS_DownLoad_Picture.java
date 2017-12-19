@@ -375,6 +375,8 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
                             ).toSqlQuery().toLowerCase()
                     );
+                    //
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
                 }
 
                 // Messages

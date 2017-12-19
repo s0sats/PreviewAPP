@@ -251,6 +251,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                    case Act005_Main.MENU_ID_CHAT:
+                        qty = String.valueOf(AppBackgroundService.isRunning ? 1: 0);
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
 
                     default:
                         Aux.put(Act005_Main.MENU_BADGE, qty);

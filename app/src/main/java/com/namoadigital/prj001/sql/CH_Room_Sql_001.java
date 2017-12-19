@@ -73,6 +73,7 @@ public class CH_Room_Sql_001 implements Specification {
                         "  (r.customer_code = '"+customer_code+"'\n" +
                         "   or r.customer_code is null)\n" +
                         " ORDER BY\n" +
+                        "   t.msg_date desc,\n" +
                         "   r.room_desc\n")
                 .append(";")
                 .append(HmAuxFields+"#"+CH_MessageDao.MSG_DATE+"#"+CH_MessageDao.MSG_OBJ+"#"+BADGE)

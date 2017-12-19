@@ -55,7 +55,8 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     @Override
     public void startChatService() {
         //Se Possui Acesso ao Chat, inicia serviço
-        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)){
+        if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)
+           && !AppBackgroundService.isRunning){
             //
             HMAux msgAux = messageDao.getByStringHM(
                     new CH_Message_Sql_004().toSqlQuery()
