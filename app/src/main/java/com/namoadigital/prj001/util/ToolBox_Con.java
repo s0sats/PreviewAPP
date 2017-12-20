@@ -81,6 +81,43 @@ public class ToolBox_Con {
         return sb.toString();
     }
 
+    //Teste de chama GET "https://chat.namoadigital.com/messageDist?msg_prefix=201712&msg_code=2267"
+    public static String connHttpGet(String urlEnd, String params) throws Exception {
+        StringBuilder sb = new StringBuilder();
+
+        URL url;
+        HttpsURLConnection conn = null;
+
+        url = new URL(urlEnd);
+
+        SSLContext contextS = SSLContext.getInstance("TLS");
+        TrustManager[] tmlist = {new MyTrustManager()};
+
+        contextS.init(null, tmlist, null);
+        conn = (HttpsURLConnection) url.openConnection();
+        conn.setSSLSocketFactory(contextS.getSocketFactory());
+        conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+
+        conn.setReadTimeout(60000);
+        conn.setConnectTimeout(60000);
+
+        conn.setRequestMethod("GET");
+
+        int httpStatus = conn.getResponseCode();
+        if (httpStatus == HttpURLConnection.HTTP_OK) {
+            sb.append(readStreamAux(conn.getInputStream()));
+        } else {
+            throw new Exception(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR);
+            //sb.append("Error: " + "HTTP_STATUS " + httpStatus);
+        }
+
+        if (conn != null) {
+            conn.disconnect();
+        }
+
+        return sb.toString();
+    }
+
     private static String readStreamAux(InputStream inputStream) {
         Reader reader = null;
         Writer writer = new StringWriter();

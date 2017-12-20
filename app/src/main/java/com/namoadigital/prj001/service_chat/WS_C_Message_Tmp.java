@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.service_chat;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,12 +9,16 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.CH_FileDao;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message_Tmp;
 import com.namoadigital.prj001.model.Chat_S_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
+import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -77,7 +82,7 @@ public class WS_C_Message_Tmp extends IntentService {
                         }.getType());
         //
         if (messageTmpList != null) {
-
+            boolean hasImage = false;
             for (Chat_C_Message_Tmp messageTmp : messageTmpList) {
                 CH_Message ch_message =
                         messageDao.getByString(
@@ -116,25 +121,34 @@ public class WS_C_Message_Tmp extends IntentService {
                             ToolBox_Inf.setWebSocketJsonParam(sMessageTmp)
                     );
                 } else {
+                    if(!hasImage){
+                        hasImage = true;
+                    }
                     //
                     String curr_name = oldNameFile; //ch_message.getMessage_image_local();
                     String new_name = ch_message.getMessage_image_local(); //ch_message.getMsg_prefix() + "." + ch_message.getMsg_code() + ".jpg";
                     //
                     renameImage(Constant.CACHE_PATH_PHOTO, curr_name, new_name);
                     //
+                    addImageToUploadList(new_name);
+                    //
                     curr_name = curr_name.replace(".jpg", "_thumb.jpg");
                     new_name = new_name.replace(".jpg", "_thumb.jpg");
                     //
                     renameImage(Constant.THU_PATH, curr_name, new_name);
-
                 }
 
-                HMAux hmAux = new HMAux();
+                /*HMAux hmAux = new HMAux();
                 hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
-                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));
+                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));*/
                 //
-                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP, hmAux);
             }
+            //
+            if(hasImage){
+                startUpload(getApplicationContext());
+            }
+            //
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
         }
     }
 
@@ -144,4 +158,36 @@ public class WS_C_Message_Tmp extends IntentService {
         //
         return from.renameTo(to);
     }
+
+
+    private void addImageToUploadList(String sCh_file) {
+        CH_FileDao chFileDao = new CH_FileDao(getApplicationContext());
+
+        CH_File chFile = null;
+
+        if (sCh_file.endsWith(".jpg")) {
+            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sCh_file);
+            if (sFile.exists()) {
+                chFile = new CH_File();
+                chFile.setFile_code(sCh_file.replace(".jpg", ""));
+                chFile.setFile_path(sCh_file);
+                chFile.setFile_path_new(sCh_file);
+                chFile.setFile_status("OPENED");
+                chFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            }
+        }
+
+        chFileDao.addUpdate(chFile);
+    }
+    //
+
+    private void startUpload(Context context) {
+        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
 }
