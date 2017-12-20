@@ -27,7 +27,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
-import com.namoadigital.prj001.sql.CH_Message_Sql_012;
+import com.namoadigital.prj001.sql.CH_Message_Sql_013;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -388,7 +388,7 @@ public class SingletonWebSocket {
             //
             //attemptSendPendingMessages("");
             CH_MessageDao messageDao = new CH_MessageDao(context);
-            HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_012().toSqlQuery());
+            HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_013().toSqlQuery());
             //
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
             sHistoricalMessage.setMsg_ref_prefix(Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
