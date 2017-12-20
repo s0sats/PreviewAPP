@@ -23,10 +23,7 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
 import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.model.CH_Message;
-import com.namoadigital.prj001.sql.CH_Message_Sql_003;
-import com.namoadigital.prj001.sql.CH_Message_Sql_008;
-import com.namoadigital.prj001.sql.CH_Message_Sql_009;
+import com.namoadigital.prj001.sql.CH_Message_Sql_012;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -46,6 +43,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
 
     public static boolean isProcessing_C_Message = false;
+
     private Thread mThread;
 
     private TextView tv_customer_val;
@@ -355,33 +353,47 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 public void run() {
                     try {
                         CH_MessageDao chMessageDao = new CH_MessageDao(context);
-                        ArrayList<HMAux> messages = (ArrayList<HMAux>) chMessageDao.query_HM(
-                                new CH_Message_Sql_008().toSqlQuery()
+                        dados = (ArrayList<HMAux>) chMessageDao.query_HM(
+                                new CH_Message_Sql_012(dados).toSqlQuery()
                         );
-
-                        while (messages.size() > 0) {
-                            setHMAuxUptList(messages, mRoom_code);
-                            //
-                            messages = (ArrayList<HMAux>) chMessageDao.query_HM(
-                                    new CH_Message_Sql_008().toSqlQuery()
-                            );
-                        }
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                //mPresenter.setData(mRoom_code);
+                                act035_adapter_messages.notifyDataSetChanged();
+                                //lv_messages.setSelection();
                             }
                         });
 
-                        chMessageDao.addUpdate(
-                                new CH_Message_Sql_009(
-                                        messages
-                                ).toSqlQuery()
-                        );
+
+//                        ArrayList<HMAux> messages = (ArrayList<HMAux>) chMessageDao.query_HM(
+//                                new CH_Message_Sql_008().toSqlQuery()
+//                        );
+//
+//                        while (messages.size() > 0) {
+//                            setHMAuxUptList(messages, mRoom_code);
+//                            //
+//                            chMessageDao.addUpdate(
+//                                    new CH_Message_Sql_009(
+//                                            messages
+//                                    ).toSqlQuery()
+//                            );
+//                            //
+//                            messages = (ArrayList<HMAux>) chMessageDao.query_HM(
+//                                    new CH_Message_Sql_008().toSqlQuery()
+//                            );
+//                        }
+//
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                //mPresenter.setData(mRoom_code);
+//                            }
+//                        });
 
 
                     } catch (Exception e) {
+                        String res = e.toString();
                     } finally {
                         isProcessing_C_Message = false;
                     }
@@ -391,57 +403,83 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-    public void setHMAuxUptList(ArrayList<HMAux> messages, String mRoom_code) {
-        boolean statusNew = false;
-
-        for (HMAux message : messages) {
-
-            if (message.get("room_code").equalsIgnoreCase(mRoom_code)) {
-
-                statusNew = false;
-
-                for (int i = 0; i < dados.size(); i++) {
-                    HMAux item = dados.get(i);
-                    //
-                    if (item.get("msg_prefix") != null &&  item.get("msg_prefix").equalsIgnoreCase(message.get("msg_prefix")) &&
-                            item.get("tmp").equalsIgnoreCase(message.get("tmp"))
-                            ) {
-
-
-                        if (message.get("msg_pk").compareToIgnoreCase(item.get("msg_pk") ) > 0 ){
-                            statusNew = true;
-                        }
-                    }
-                }
-
-                if (!statusNew) {
-                    dados.add(message);
-                }
-            } else {
-            }
-        }
-
-        act035_adapter_messages.notifyDataSetChanged();
-    }
+//    public void setHMAuxUptList(ArrayList<HMAux> messages, String mRoom_code) {
+//        boolean disorderedList = false;
+//
+//        for (HMAux message : messages) {
+//
+//            if (message.get("room_code").equalsIgnoreCase(mRoom_code)) {
+//
+//                boolean bFound = false;
+//                String msg_pk_greater = "";
+//                String msg_pk_lower = "";
+//
+//                for (int i = 0; i < dados.size(); i++) {
+//                    HMAux item = dados.get(i);
+//                    //
+//                    if (item.get("msg_pk") != null) {
+//                        //
+//                        if (message.get("msg_pk").compareToIgnoreCase(item.get("msg_pk")) == 0) {
+//                            // igual
+//                            bFound = true;
+//                            break;
+//                        } else if (message.get("msg_pk").compareToIgnoreCase(item.get("msg_pk")) > 0) {
+//                            // maior
+//                            if (msg_pk_greater.compareToIgnoreCase(message.get("msg_pk")) > 0) {
+//                                msg_pk_greater = message.get("msg_pk");
+//                            }
+//                        } else {
+//                            // menor
+//                            if (msg_pk_lower.compareToIgnoreCase(message.get("msg_pk")) < 0) {
+//                                msg_pk_lower = message.get("msg_pk");
+//                            }
+//
+//                        }
+//                    }
+//                }
+//
+//                if (!bFound) {
+//                    dados.add(message);
+//                }
+//
+//
+//            } else {
+//            }
+//        }
+//
+//        act035_adapter_messages.notifyDataSetChanged();
+//
+////        if (statusNew) {
+////            lv_messages.setSelection(dados.size() - 1);
+////        }
+//    }
 
     private void processing_FromTo(Context context, HMAux mAux) {
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
-        CH_Message chMessage = chMessageDao.getByString(
-                new CH_Message_Sql_003(
-                        Integer.parseInt(mAux.get(CH_MessageDao.MSG_PREFIX)),
-                        Long.parseLong(mAux.get(CH_MessageDao.TMP))
-                ).toSqlQuery()
+        dados = (ArrayList<HMAux>) chMessageDao.query_HM(
+                new CH_Message_Sql_012(dados).toSqlQuery()
         );
-        //
-        HMAux hmAuxStatus = new HMAux();
-        hmAuxStatus.put(chMessageDao.MSG_PREFIX, String.valueOf(chMessage.getMsg_prefix()));
-        hmAuxStatus.put(chMessageDao.MSG_CODE, String.valueOf(chMessage.getMsg_code()));
-        hmAuxStatus.put(chMessageDao.TMP, String.valueOf(chMessage.getTmp()));
-        hmAuxStatus.put(chMessageDao.MESSAGE_IMAGE_LOCAL, chMessage.getMessage_image_local());
-        callImagesStatus(hmAuxStatus);
-        //
-        mPresenter.uploadFile(chMessage.getMessage_image_local());
-        mPresenter.activateUpload(context);
+
+        act035_adapter_messages.notifyDataSetChanged();
+
+
+//        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+//        CH_Message chMessage = chMessageDao.getByString(
+//                new CH_Message_Sql_003(
+//                        Integer.parseInt(mAux.get(CH_MessageDao.MSG_PREFIX)),
+//                        Long.parseLong(mAux.get(CH_MessageDao.TMP))
+//                ).toSqlQuery()
+//        );
+//        //
+//        HMAux hmAuxStatus = new HMAux();
+//        hmAuxStatus.put(chMessageDao.MSG_PREFIX, String.valueOf(chMessage.getMsg_prefix()));
+//        hmAuxStatus.put(chMessageDao.MSG_CODE, String.valueOf(chMessage.getMsg_code()));
+//        hmAuxStatus.put(chMessageDao.TMP, String.valueOf(chMessage.getTmp()));
+//        hmAuxStatus.put(chMessageDao.MESSAGE_IMAGE_LOCAL, chMessage.getMessage_image_local());
+//        callImagesStatus(hmAuxStatus);
+//        //
+//        mPresenter.uploadFile(chMessage.getMessage_image_local());
+//        mPresenter.activateUpload(context);
     }
 
     // Update Image on the ListView

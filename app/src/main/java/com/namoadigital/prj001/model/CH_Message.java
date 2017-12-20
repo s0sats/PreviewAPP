@@ -9,6 +9,7 @@ public class CH_Message {
     private int msg_prefix;
     private int msg_code;
     private long tmp;
+    private String msg_token;
     private String room_code;
     private String msg_date;
     private String msg_obj;
@@ -47,6 +48,14 @@ public class CH_Message {
 
     public void setTmp(long tmp) {
         this.tmp = tmp;
+    }
+
+    public String getMsg_token() {
+        return msg_token;
+    }
+
+    public void setMsg_token(String msg_token) {
+        this.msg_token = msg_token;
     }
 
     public String getRoom_code() {

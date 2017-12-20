@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by d.luche on 06/12/2017.
@@ -10,6 +11,8 @@ import com.namoadigital.prj001.database.Specification;
  */
 
 public class CH_Message_Sql_008 implements Specification {
+
+    private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_MessageDao.columns);
 
     public CH_Message_Sql_008() {
     }
@@ -26,6 +29,7 @@ public class CH_Message_Sql_008 implements Specification {
                         " WHERE \n" +
                         "   m.status_update = '1' \n")
                 .append(";")
+                .append(HmAuxFields)
                 .toString();
     }
 }
