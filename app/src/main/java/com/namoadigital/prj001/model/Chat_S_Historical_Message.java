@@ -6,10 +6,13 @@ package com.namoadigital.prj001.model;
 
 public class Chat_S_Historical_Message {
 
+    public static final String ACTION_LOGIN = "LOGIN";
+    public static final String ACTION_SCROLL_UP = "SCROLL_UP";
+
     private String room_code;
-    private Integer msg_older_prefix;
-    private Integer msg_older_code;
-    private int not_delivered;
+    private Integer msg_ref_prefix;
+    private Integer msg_ref_code;
+    private String action;
 
     public String getRoom_code() {
         return room_code;
@@ -19,27 +22,27 @@ public class Chat_S_Historical_Message {
         this.room_code = room_code;
     }
 
-    public Integer getMsg_older_prefix() {
-        return msg_older_prefix;
+    public Integer getMsg_ref_prefix() {
+        return msg_ref_prefix;
     }
 
-    public void setMsg_older_prefix(Integer msg_older_prefix) {
-        this.msg_older_prefix = msg_older_prefix;
+    public void setMsg_ref_prefix(Integer msg_ref_prefix) {
+        this.msg_ref_prefix = msg_ref_prefix;
     }
 
-    public Integer getMsg_older_code() {
-        return msg_older_code;
+    public Integer getMsg_ref_code() {
+        return msg_ref_code;
     }
 
-    public void setMsg_older_code(Integer msg_older_code) {
-        this.msg_older_code = msg_older_code;
+    public void setMsg_ref_code(Integer msg_ref_code) {
+        this.msg_ref_code = msg_ref_code;
     }
 
-    public int getNot_delivered() {
-        return not_delivered;
+    public String getAction() {
+        return action;
     }
 
-    public void setNot_delivered(int not_delivered) {
-        this.not_delivered = not_delivered;
+    public void setAction(String action) {
+        this.action = action;
     }
 }

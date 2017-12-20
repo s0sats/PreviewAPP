@@ -187,6 +187,11 @@ public class ToolBox_Inf {
             dirToken.mkdir();
         }
 
+        File dirChat = new File(Constant.CHAT_PATH);
+        if (!dirChat.exists()) {
+            dirChat.mkdir();
+        }
+
         File dirCamTest = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
         if (!dirCamTest.exists()) {
             dirCamTest.mkdir();

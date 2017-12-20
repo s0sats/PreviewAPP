@@ -27,6 +27,9 @@ import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
@@ -55,6 +58,7 @@ public class AppBase extends Application {
         THU_PATH = DB_PATH + "/thumbnail";
         SUPPORT_PATH = DB_PATH + "/support";
         TOKEN_PATH = DB_PATH + "/token";
+        CHAT_PATH = DB_PATH + "/chat";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
@@ -67,6 +71,9 @@ public class AppBase extends Application {
 
         TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
         TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
+
+        CHAT_PREFIX = "chat_";
+        CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
         CACHE_PATH = DB_PATH + "/CC_CACHE";
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
