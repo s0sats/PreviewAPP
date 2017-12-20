@@ -13,21 +13,24 @@ import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
-import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_FULL_CHAT;
+import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_NAME_BASE;
-import static com.namoadigital.prj001.util.Constant.DB_NAME_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_NAME_CHAT;
+import static com.namoadigital.prj001.util.Constant.DB_NAME_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_PATH;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION_BASE;
-import static com.namoadigital.prj001.util.Constant.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.DB_VERSION_CHAT;
+import static com.namoadigital.prj001.util.Constant.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.Constant.IMG_PATH;
 import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
 import static com.namoadigital.prj001.util.Constant.THU_PATH;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
@@ -36,6 +39,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FUL
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
+
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -55,6 +59,7 @@ public class AppBase extends Application {
         THU_PATH = DB_PATH + "/thumbnail";
         SUPPORT_PATH = DB_PATH + "/support";
         TOKEN_PATH = DB_PATH + "/token";
+        CHAT_PATH = DB_PATH + "/chat";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
@@ -67,6 +72,9 @@ public class AppBase extends Application {
 
         TOKEN_SO_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SO_PREFIX;
         TOKEN_SERIAL_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SERIAL_PREFIX;
+
+        CHAT_PREFIX = "chat_";
+        CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
         CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
         CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";

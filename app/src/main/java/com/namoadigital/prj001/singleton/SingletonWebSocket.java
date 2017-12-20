@@ -7,11 +7,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Error;
+import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.model.Chat_Login_Env;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
@@ -23,11 +25,14 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
+import com.namoadigital.prj001.sql.CH_Message_Sql_012;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -382,8 +387,14 @@ public class SingletonWebSocket {
             }
             //
             //attemptSendPendingMessages("");
+            CH_MessageDao messageDao = new CH_MessageDao(context);
+            HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_012().toSqlQuery());
+            //
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
-            sHistoricalMessage.setNot_delivered(0);
+            sHistoricalMessage.setMsg_ref_prefix(Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
+            sHistoricalMessage.setMsg_ref_code(Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
+            sHistoricalMessage.setAction(Chat_S_Historical_Message.ACTION_LOGIN);
+
             //
             attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
         }
@@ -467,25 +478,35 @@ public class SingletonWebSocket {
     private Emitter.Listener onHistoricalMessagesReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.d("ChatEvent", "cHistoricalMessages");
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
+            try {
+                Log.d("ChatEvent", "cHistoricalMessages");
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //processMessages(param);
+
+                        String msgFilePath = createMsgsFile(param);
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                        Bundle bundle = new Bundle();
+                        //bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, msgFilePath);
+                        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                    } else {
+                        String tst = "No Json";
                     /*
                     * Verificar como proceder caso o retorno não seja uma string
                     *
                     * */
+                    }
+                    //
+      //              attempSendOfflineMessages();
                 }
-                //
-                attempSendOfflineMessages();
+            }catch (Exception e){
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
         }
     };
@@ -670,6 +691,7 @@ public class SingletonWebSocket {
     };
     //endregion
 
+    //region AUX METHODS
     private void checkForNewLogin() {
         if (!mSocket_ID.equalsIgnoreCase(mSocket.id()) && mSocket.id() != null) {
             mSocket_ID = mSocket.id();
@@ -714,6 +736,96 @@ public class SingletonWebSocket {
         }
 
     }
+
+    private String createMsgsFile(String param) {
+        String fileName =   Constant.CHAT_PREFIX +
+                ToolBox_Inf.getToken(context) +
+                ".txt";
+        //
+        File msgListFile = new File(Constant.CHAT_PATH, fileName);
+        try {
+            ToolBox_Inf.writeIn(param, msgListFile);
+            return msgListFile.getAbsolutePath();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return null;
+        }
+    }
+
+    private void processMessages(String param) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        CH_MessageDao messageDao = new CH_MessageDao(context);
+        //
+        ArrayList<Chat_C_Message> messagesTmp = new ArrayList<>();
+        ArrayList<Chat_C_Message> messagesNew = new ArrayList<>();
+        ArrayList<Chat_C_Message> messagesMineToInsert = new ArrayList<>();
+
+        ArrayList<Chat_C_Message> messages = gson.fromJson(
+                param,
+                new TypeToken<ArrayList<Chat_C_Message>>() {
+                }.getType());
+        //
+        for (Chat_C_Message chatCMessage : messages) {
+            //Analise da lista de de - para
+            if(ToolBox_Con.getPreference_User_Code(context).equals(
+                    String.valueOf(chatCMessage.getUser_code()))
+                    && chatCMessage.getDelivered() == 0
+            ){
+                CH_Message localMessage =
+                        messageDao.getByString(
+                                new CH_Message_Sql_003(
+                                        chatCMessage.getMsg_prefix(),
+                                        chatCMessage.getMsg_tmp()
+                                ).toSqlQuery()
+                        );
+                if(localMessage != null && localMessage.getMsg_code() == 0){
+                    messagesTmp.add(chatCMessage);
+                }else if(chatCMessage.getMsg_tmp() != 0 && localMessage != null && localMessage.getTmp() == 0){
+                    messagesMineToInsert.add(chatCMessage);
+                }
+                continue;
+            }else{
+                messagesNew.add(chatCMessage);
+            }
+        }
+
+        if(messagesNew.size() > 0){
+            JSONArray cMessages = new JSONArray(messagesNew);
+            //
+            //processMessages(param);
+
+            //String msgFilePath = createMsgsFile(param);
+            //
+            Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+            Bundle bundle = new Bundle();
+            //bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+            bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessages.toString());
+            bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+            cMessageIntent.putExtras(bundle);
+            context.sendBroadcast(cMessageIntent);
+            //
+        }
+        //
+        if(messagesTmp.size() > 0){
+            JSONArray cMessagesTmp = new JSONArray(messagesNew);
+            //
+            Intent cMessageTmpIntent = new Intent(context, WBR_C_Message_Tmp.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessagesTmp.toString());
+            cMessageTmpIntent.putExtras(bundle);
+            context.sendBroadcast(cMessageTmpIntent);
+        }
+        //
+        if(messagesMineToInsert.size() > 0){
+            ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
+            //
+            messageDao.addUpdate(chMessages,false);
+        }
+    }
+
+    //endregion
 
     /**
      * OnConnection Changed precisa chamar esse método para reiniciar a conexao em caso de falha.

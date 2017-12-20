@@ -23,6 +23,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -70,12 +71,23 @@ public class WS_C_Message extends IntentService {
 
     private void processC_Message(String json_param, String ws_event) {
         Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<Chat_C_Message> messages = new ArrayList<>();
+        File msgListFile = null;
         //
-        ArrayList<Chat_C_Message> messages =
-                gson.fromJson(
-                        json_param,
-                        new TypeToken<ArrayList<Chat_C_Message>>() {
-                        }.getType());
+        if (ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
+            msgListFile = new File(json_param);
+            //
+            messages = gson.fromJson(
+                    ToolBox_Inf.getContents(msgListFile),
+                    new TypeToken<ArrayList<Chat_C_Message>>() {
+                    }.getType());
+        } else {
+            //
+            messages = gson.fromJson(
+                    json_param,
+                    new TypeToken<ArrayList<Chat_C_Message>>() {
+                    }.getType());
+        }
         //Se é um "cMessage" de uma msg minha,
         //atualiza data da msg pra a data do server.
         if (ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_MESSAGE)
@@ -95,7 +107,7 @@ public class WS_C_Message extends IntentService {
                 messageDao.addUpdate(chMessage);
             }
 
-        }else {
+        } else {
             JsonArray sDeliveredList = new JsonArray();
             JsonArray sReadList = new JsonArray();
             //
@@ -104,7 +116,7 @@ public class WS_C_Message extends IntentService {
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
-            for (CH_Message ch_message: chMessages) {
+            for (CH_Message ch_message : chMessages) {
                 //
                 CH_Message dbMessage =
                         messageDao.getByString(
@@ -115,10 +127,10 @@ public class WS_C_Message extends IntentService {
                         );
 
                 //Verifica se precisa iniciar serviço de download
-                if(!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)){
+                if (!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)) {
                     startDownloadService = true;
                 }
-                if(ch_message.getDelivered() == 0) {
+                if (ch_message.getDelivered() == 0) {
                     //Atualiza valor de dado entregue
                     ch_message.setDelivered(1);
                     ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -134,7 +146,7 @@ public class WS_C_Message extends IntentService {
                 }
                 //Se o Read do server esta como 0, mas o Read local é 1
                 //não atualiza banco de dados e chama evento de leitura
-                if(dbMessage.getRead() == 1 && ch_message.getRead() == 0){
+                if (dbMessage.getRead() == 1 && ch_message.getRead() == 0) {
                     //Seta valores do banco no obj
                     ch_message.setRead(dbMessage.getRead());
                     ch_message.setRead_date(dbMessage.getRead_date());
@@ -152,20 +164,24 @@ public class WS_C_Message extends IntentService {
                 messageDao.addUpdate(ch_message);
             }
             //
+            if (msgListFile != null){
+                msgListFile.delete();
+            }
+            //
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
             //
-            if(startDownloadService){
+            if (startDownloadService) {
                 startDownloadService();
             }
             //
-            if(sDeliveredList.size() > 0) {
+            if (sDeliveredList.size() > 0) {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                 singletonWebSocket.attemptToDeliveryMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
                 );
             }
             //
-            if(sReadList.size() > 0) {
+            if (sReadList.size() > 0) {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                 singletonWebSocket.attemptToReadMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sReadList)
@@ -180,4 +196,5 @@ public class WS_C_Message extends IntentService {
         getApplicationContext().sendBroadcast(mIntentPIC);
 
     }
+
 }

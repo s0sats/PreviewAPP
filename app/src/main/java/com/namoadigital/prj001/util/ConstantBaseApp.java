@@ -130,6 +130,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String THU_PATH;
     public static String SUPPORT_PATH;
     public static String TOKEN_PATH;
+    public static String CHAT_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -142,6 +143,9 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static String TOKEN_SO_NAME_FULL;
     public static String TOKEN_SERIAL_NAME_FULL;
+
+    public static String CHAT_PREFIX;
+    public static String CHAT_NAME_FULL;
 
     /**
      * SM_SO_Service Login Parameter
