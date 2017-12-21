@@ -50,6 +50,8 @@ import io.socket.emitter.Emitter;
  */
 
 public class SingletonWebSocket {
+    public static final String CHAT_TYPE_FILE_TMP = "tmp_";
+
     private static volatile SingletonWebSocket sSoleInstance;
 
     private static String mSocket_ID = "";
@@ -104,7 +106,7 @@ public class SingletonWebSocket {
         Log.d("ChatEvent", "initConnection");
 
         try {
-            ToolBox_Inf.writeIn(ToolBox_Inf.convertToDeviceTMZ("") + " - initConnection\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")+ " - initConnection\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -391,8 +393,8 @@ public class SingletonWebSocket {
             HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_013().toSqlQuery());
             //
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
-            sHistoricalMessage.setMsg_ref_prefix( msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
-            sHistoricalMessage.setMsg_ref_code( msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
+            sHistoricalMessage.setMsg_ref_prefix(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
+            sHistoricalMessage.setMsg_ref_code(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
             sHistoricalMessage.setAction(Chat_S_Historical_Message.ACTION_LOGIN);
 
             //
@@ -483,17 +485,7 @@ public class SingletonWebSocket {
                 if (args != null && args.length > 0) {
                     if (args[0] instanceof String) {
                         String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                        //processMessages(param);
-
-                        String msgFilePath = createMsgsFile(param);
-                        //
-                        Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                        Bundle bundle = new Bundle();
-                        //bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, msgFilePath);
-                        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
-                        cMessageIntent.putExtras(bundle);
-                        context.sendBroadcast(cMessageIntent);
+                        processMessages(param);
                     } else {
                         String tst = "No Json";
                     /*
@@ -501,12 +493,11 @@ public class SingletonWebSocket {
                     *
                     * */
                     }
-                    //
-      //              attempSendOfflineMessages();
+
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
         }
     };
@@ -700,7 +691,7 @@ public class SingletonWebSocket {
         }
     }
 
-    private void attempSendOfflineMessages() {
+    public void attempSendOfflineMessages() {
         CH_MessageDao messageDao = new CH_MessageDao(context);
         //
         ArrayList<CH_Message> offlineMsgs =
@@ -730,15 +721,16 @@ public class SingletonWebSocket {
                     attemptSendMessages(gson.toJson(sMessage));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ToolBox_Inf.registerException(getClass().getName(),e);
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
             }
         }
 
     }
 
-    private String createMsgsFile(String param) {
-        String fileName =   Constant.CHAT_PREFIX +
+    private String createMsgsFile(String param,String type) {
+        String fileName = Constant.CHAT_PREFIX +
+                (type != null ? type : "") +
                 ToolBox_Inf.getToken(context) +
                 ".txt";
         //
@@ -749,7 +741,7 @@ public class SingletonWebSocket {
 
         } catch (IOException e) {
             e.printStackTrace();
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             return null;
         }
     }
@@ -757,71 +749,73 @@ public class SingletonWebSocket {
     private void processMessages(String param) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         CH_MessageDao messageDao = new CH_MessageDao(context);
-        //
-        ArrayList<Chat_C_Message> messagesTmp = new ArrayList<>();
-        ArrayList<Chat_C_Message> messagesNew = new ArrayList<>();
+
+        JSONArray cMessagesTmp = new JSONArray();
+        JSONArray cMessagesNew = new JSONArray();
         ArrayList<Chat_C_Message> messagesMineToInsert = new ArrayList<>();
-
-        ArrayList<Chat_C_Message> messages = gson.fromJson(
-                param,
-                new TypeToken<ArrayList<Chat_C_Message>>() {
-                }.getType());
         //
-        for (Chat_C_Message chatCMessage : messages) {
-            //Analise da lista de de - para
-            if(ToolBox_Con.getPreference_User_Code(context).equals(
-                    String.valueOf(chatCMessage.getUser_code()))
-                    && chatCMessage.getDelivered() == 0
-            ){
-                CH_Message localMessage =
-                        messageDao.getByString(
-                                new CH_Message_Sql_003(
-                                        chatCMessage.getMsg_prefix(),
-                                        chatCMessage.getMsg_tmp()
-                                ).toSqlQuery()
-                        );
-                if(localMessage != null && localMessage.getMsg_code() == 0){
-                    messagesTmp.add(chatCMessage);
-                }else if(chatCMessage.getMsg_tmp() != 0 && localMessage != null && localMessage.getTmp() == 0){
-                    messagesMineToInsert.add(chatCMessage);
+        String cMessageFilePath = "";
+        String cMessageTmpFilePath = "";
+
+        try {
+            ArrayList<Chat_C_Message> messages = gson.fromJson(
+                    param,
+                    new TypeToken<ArrayList<Chat_C_Message>>() {
+                    }.getType());
+            //
+            for (Chat_C_Message chatCMessage : messages) {
+                //Analise da lista de de - para
+                if (ToolBox_Con.getPreference_User_Code(context).equals(
+                        String.valueOf(chatCMessage.getUser_code()))
+                        && chatCMessage.getDelivered() == 0
+                        ) {
+                    CH_Message localMessage =
+                            messageDao.getByString(
+                                    new CH_Message_Sql_003(
+                                            chatCMessage.getMsg_prefix(),
+                                            chatCMessage.getMsg_tmp()
+                                    ).toSqlQuery()
+                            );
+                    if (localMessage != null && localMessage.getMsg_code() == 0) {
+                        cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
+
+                    } else if (chatCMessage.getMsg_tmp() != 0 && localMessage != null && localMessage.getTmp() == 0) {
+                        messagesMineToInsert.add(chatCMessage);
+                    }
+                } else {
+                    cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
                 }
-                continue;
-            }else{
-                messagesNew.add(chatCMessage);
             }
-        }
+            //Se existir, insere msg minhas que não estão locais.
+            //Esse caso só acontece com msg que eu criei em outro device e
+            //recebe ela no cMessage em outro device.
+            if (messagesMineToInsert.size() > 0) {
+                ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
+                //
+                messageDao.addUpdate(chMessages, false);
+            }
+            //Se existe alguma msg minha que recebeu msg_code, mas aind anão processei de-para
+            //Gera arquivo texto com as msg
+            if (cMessagesTmp.length() > 0) {
+                cMessageTmpFilePath = createMsgsFile(cMessagesTmp.toString(),CHAT_TYPE_FILE_TMP );
+            }
 
-        if(messagesNew.size() > 0){
-            JSONArray cMessages = new JSONArray(messagesNew);
-            //
-            //processMessages(param);
+            if (cMessagesNew.length() > 0) {
+                cMessageFilePath = createMsgsFile(cMessagesNew.toString(),null);
+                //
+                Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
+                bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+                bundle.putString(Constant.CHAT_WS_MSG_TMP_PARAM, cMessageTmpFilePath);
 
-            //String msgFilePath = createMsgsFile(param);
-            //
-            Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-            Bundle bundle = new Bundle();
-            //bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-            bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessages.toString());
-            bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
-            cMessageIntent.putExtras(bundle);
-            context.sendBroadcast(cMessageIntent);
-            //
-        }
-        //
-        if(messagesTmp.size() > 0){
-            JSONArray cMessagesTmp = new JSONArray(messagesNew);
-            //
-            Intent cMessageTmpIntent = new Intent(context, WBR_C_Message_Tmp.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessagesTmp.toString());
-            cMessageTmpIntent.putExtras(bundle);
-            context.sendBroadcast(cMessageTmpIntent);
-        }
-        //
-        if(messagesMineToInsert.size() > 0){
-            ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
-            //
-            messageDao.addUpdate(chMessages,false);
+                cMessageIntent.putExtras(bundle);
+                context.sendBroadcast(cMessageIntent);
+                //
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

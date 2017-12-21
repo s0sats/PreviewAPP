@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
@@ -51,8 +52,9 @@ public class WS_C_Message extends IntentService {
             messageDao = new CH_MessageDao(getApplicationContext());
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
             String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM, "");
+            String messageTmpFile = bundle.getString(Constant.CHAT_WS_MSG_TMP_PARAM, null);
 
-            processC_Message(json_param, ws_event);
+            processC_Message(json_param, ws_event, messageTmpFile);
 
         } catch (Exception e) {
 
@@ -69,7 +71,7 @@ public class WS_C_Message extends IntentService {
 
     }
 
-    private void processC_Message(String json_param, String ws_event) {
+    private void processC_Message(String json_param, String ws_event, String messageTmpFile) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<Chat_C_Message> messages = new ArrayList<>();
         File msgListFile = null;
@@ -187,7 +189,29 @@ public class WS_C_Message extends IntentService {
                         ToolBox_Inf.setWebSocketJsonParam(sReadList)
                 );
             }
+            //
+            //Se diferente de null, o serviço foi chamado do cHistoricalMessage
+            if(messageTmpFile != null){
+                //Se maior que 0, existe arquivo para ser processado.
+                //Se não houver arquivo, tenta enviar msg offline
+                if(messageTmpFile.length() > 0) {
+                    startCMessageTmpService(messageTmpFile);
+                }else{
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                    singletonWebSocket.attempSendOfflineMessages();
+                }
+            }
         }
+    }
+
+    private void startCMessageTmpService(String messageTmpFile) {
+        Intent cMessageTmpIntent = new Intent(getApplicationContext(), WBR_C_Message_Tmp.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.CHAT_WS_JSON_PARAM, messageTmpFile);
+        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+        cMessageTmpIntent.putExtras(bundle);
+        //
+        getApplicationContext().sendBroadcast(cMessageTmpIntent);
     }
 
     private void startDownloadService() {
