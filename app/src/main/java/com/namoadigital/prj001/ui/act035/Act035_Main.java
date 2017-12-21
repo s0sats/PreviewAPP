@@ -456,11 +456,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void processing_FromTo(Context context, HMAux mAux) {
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
-        dados = (ArrayList<HMAux>) chMessageDao.query_HM(
-                new CH_Message_Sql_012(dados).toSqlQuery()
-        );
 
-        act035_adapter_messages.notifyDataSetChanged();
+        act035_adapter_messages.refill(chMessageDao.query_HM(
+                new CH_Message_Sql_012(dados).toSqlQuery()
+        ));
 
 
 //        CH_MessageDao chMessageDao = new CH_MessageDao(context);
@@ -488,17 +487,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         public void onReceive(Context context, Intent intent) {
             HashMap<String, String> hmAux = (HashMap<String, String>) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
 
-            callImagesStatus((HMAux) hmAux);
+            //callImagesStatus((HMAux) hmAux);
         }
     }
 
-    private void callImagesStatus(HMAux hmAux) {
-        int firstP = lv_messages.getFirstVisiblePosition();
-        int lastP = lv_messages.getLastVisiblePosition();
-
-
-        act035_adapter_messages.setMessegeUpt(hmAux, firstP, lastP);
-    }
+//    private void callImagesStatus(HMAux hmAux) {
+//        int firstP = lv_messages.getFirstVisiblePosition();
+//        int lastP = lv_messages.getLastVisiblePosition();
+//
+//
+//        //act035_adapter_messages.setMessegeUpt(hmAux, firstP, lastP);
+//    }
 
     @Override
     public void scroolToPosition(int position) {

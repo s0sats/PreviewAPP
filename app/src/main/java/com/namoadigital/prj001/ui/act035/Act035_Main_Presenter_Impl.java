@@ -9,13 +9,10 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.CH_FileDao;
 import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
-import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
@@ -146,36 +143,36 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         mView.callAct005(context);
     }
 
-    @Override
-    public void uploadFile(String sCh_file) {
-        CH_FileDao chFileDao = new CH_FileDao(context);
-
-        CH_File chFile = null;
-
-        if (sCh_file.endsWith(".jpg")) {
-            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sCh_file);
-            if (sFile.exists()) {
-                chFile = new CH_File();
-                chFile.setFile_code(sCh_file.replace(".jpg", ""));
-                chFile.setFile_path(sCh_file);
-                chFile.setFile_path_new(sCh_file);
-                chFile.setFile_status("OPENED");
-                chFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            }
-        }
-
-        chFileDao.addUpdate(chFile);
-    }
-
-    @Override
-    public void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
-        Bundle bundle = new Bundle();
-
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
+//    @Override
+//    public void uploadFile(String sCh_file) {
+//        CH_FileDao chFileDao = new CH_FileDao(context);
+//
+//        CH_File chFile = null;
+//
+//        if (sCh_file.endsWith(".jpg")) {
+//            File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sCh_file);
+//            if (sFile.exists()) {
+//                chFile = new CH_File();
+//                chFile.setFile_code(sCh_file.replace(".jpg", ""));
+//                chFile.setFile_path(sCh_file);
+//                chFile.setFile_path_new(sCh_file);
+//                chFile.setFile_status("OPENED");
+//                chFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+//            }
+//        }
+//
+//        chFileDao.addUpdate(chFile);
+//    }
+//
+//    @Override
+//    public void activateUpload(Context context) {
+//        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
+//        Bundle bundle = new Bundle();
+//
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//    }
 
     // Tirar
     @Override

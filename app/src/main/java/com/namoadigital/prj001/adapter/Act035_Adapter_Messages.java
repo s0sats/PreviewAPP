@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 28/11/17.
@@ -53,31 +54,38 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
     }
 
-    public void setMessegeUpt(HMAux hmAux, int first, int last) {
-        HMAux hmAuxOld = null;
+    public void refill(List<HMAux> dadosR) {
+        data.clear();
+        data.addAll(dadosR);
         //
-        processingHMAux = true;
-        //
-        for (int i = 0; i < data.size() && processingHMAux; i++) {
-            hmAuxOld = data.get(i);
-            //
-            if (hmAux.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_PREFIX)) &&
-                    hmAux.get(CH_MessageDao.TMP).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.TMP))
-                    ) {
-
-                data.get(i).put(CH_MessageDao.MSG_CODE, hmAux.get(CH_MessageDao.MSG_CODE));
-                data.get(i).put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));
-                //
-                if (i >= first && i <= last) {
-                    notifyDataSetChanged();
-                }
-                //
-                break;
-            }
-        }
-        //
-        processingHMAux = false;
+        notifyDataSetChanged();
     }
+
+//    public void setMessegeUpt(HMAux hmAux, int first, int last) {
+//        HMAux hmAuxOld = null;
+//        //
+//        processingHMAux = true;
+//        //
+//        for (int i = 0; i < data.size() && processingHMAux; i++) {
+//            hmAuxOld = data.get(i);
+//            //
+//            if (hmAux.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_PREFIX)) &&
+//                    hmAux.get(CH_MessageDao.TMP).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.TMP))
+//                    ) {
+//
+//                data.get(i).put(CH_MessageDao.MSG_CODE, hmAux.get(CH_MessageDao.MSG_CODE));
+//                data.get(i).put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));
+//                //
+//                if (i >= first && i <= last) {
+//                    notifyDataSetChanged();
+//                }
+//                //
+//                break;
+//            }
+//        }
+//        //
+//        processingHMAux = false;
+//    }
 
     @Override
     public int getCount() {

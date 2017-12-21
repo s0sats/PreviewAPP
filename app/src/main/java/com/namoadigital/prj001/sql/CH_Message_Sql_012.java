@@ -39,6 +39,7 @@ public class CH_Message_Sql_012 implements Specification {
         }
 
         sb
+                .append(" ORDER BY case when msg_pk is null then 1 else 0 end, msg_pk, msg_prefix, tmp")
                 .append(";")
                 .append(HmAuxFields);
 

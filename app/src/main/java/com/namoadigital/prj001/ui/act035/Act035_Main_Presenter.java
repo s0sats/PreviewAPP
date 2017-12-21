@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.ui.act035;
 
-import android.content.Context;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 
 /**
@@ -18,9 +16,9 @@ public interface Act035_Main_Presenter {
 
     void onBackPressedClicked();
 
-    void uploadFile(String sCh_file);
-
-    void activateUpload(Context context);
+//    void uploadFile(String sCh_file);
+//
+//    void activateUpload(Context context);
 
     void startDownloadServices();
 
