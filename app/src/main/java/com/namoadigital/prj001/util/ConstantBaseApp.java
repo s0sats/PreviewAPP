@@ -412,6 +412,7 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
     public static final String CHAT_WS_EVENT_PARAM = "WS_EVENT_PARAM";
+    public static final String CHAT_WS_MSG_TMP_PARAM = "WS_MSG_TMP_PARAM";
     public static final String CHAT_MESSAGE_TYPE_IMAGE = "IMAGE";
     public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";

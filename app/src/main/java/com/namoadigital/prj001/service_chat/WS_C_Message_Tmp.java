@@ -50,12 +50,13 @@ public class WS_C_Message_Tmp extends IntentService {
             messageDao = new CH_MessageDao(getApplicationContext());
 
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM, null);
+            String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM, "");
 
             if (json_param == null) {
                 throw new Exception();
             }
 
-            processC_Message_Tmp(json_param);
+            processC_Message_Tmp(json_param,ws_event);
 
         } catch (Exception e) {
 
@@ -72,14 +73,26 @@ public class WS_C_Message_Tmp extends IntentService {
 
     }
 
-    private void processC_Message_Tmp(String json_param) throws JSONException {
+    private void processC_Message_Tmp(String json_param, String ws_event) throws JSONException {
         Gson gson = new GsonBuilder().serializeNulls().create();
+        ArrayList<Chat_C_Message_Tmp> messageTmpList = new ArrayList<>();
+        File msgTmpListFile = null;
         //
-        ArrayList<Chat_C_Message_Tmp> messageTmpList =
-                gson.fromJson(
-                        json_param,
-                        new TypeToken<ArrayList<Chat_C_Message_Tmp>>() {
-                        }.getType());
+        if(ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)){
+            msgTmpListFile = new File(json_param);
+            //
+            messageTmpList = gson.fromJson(
+                    ToolBox_Inf.getContents(msgTmpListFile),
+                    new TypeToken<ArrayList<Chat_C_Message_Tmp>>() {
+                    }.getType());
+
+        }else {
+            messageTmpList =
+                    gson.fromJson(
+                            json_param,
+                            new TypeToken<ArrayList<Chat_C_Message_Tmp>>() {
+                            }.getType());
+        }
         //
         if (messageTmpList != null) {
             boolean hasImage = false;
@@ -88,7 +101,7 @@ public class WS_C_Message_Tmp extends IntentService {
                         messageDao.getByString(
                                 new CH_Message_Sql_003(
                                         messageTmp.getMsg_prefix(),
-                                        messageTmp.getTmp()
+                                        messageTmp.getMsg_tmp()
                                 ).toSqlQuery()
                         );
 
@@ -140,7 +153,7 @@ public class WS_C_Message_Tmp extends IntentService {
 
                 /*HMAux hmAux = new HMAux();
                 hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
-                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));*/
+                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getMsg_tmp()));*/
                 //
             }
             //
@@ -149,6 +162,13 @@ public class WS_C_Message_Tmp extends IntentService {
             }
             //
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
+            //
+            if(msgTmpListFile != null){
+                msgTmpListFile.delete();
+                //
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                singletonWebSocket.attempSendOfflineMessages();
+            }
         }
     }
 
