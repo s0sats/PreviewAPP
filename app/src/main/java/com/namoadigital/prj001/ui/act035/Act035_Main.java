@@ -473,7 +473,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 //        HMAux hmAuxStatus = new HMAux();
 //        hmAuxStatus.put(chMessageDao.MSG_PREFIX, String.valueOf(chMessage.getMsg_prefix()));
 //        hmAuxStatus.put(chMessageDao.MSG_CODE, String.valueOf(chMessage.getMsg_code()));
-//        hmAuxStatus.put(chMessageDao.TMP, String.valueOf(chMessage.getTmp()));
+//        hmAuxStatus.put(chMessageDao.TMP, String.valueOf(chMessage.getMsg_tmp()));
 //        hmAuxStatus.put(chMessageDao.MESSAGE_IMAGE_LOCAL, chMessage.getMessage_image_local());
 //        callImagesStatus(hmAuxStatus);
 //        //

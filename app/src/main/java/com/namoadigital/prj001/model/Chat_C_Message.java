@@ -179,7 +179,7 @@ public class Chat_C_Message {
         //
         ch_message.setMsg_prefix(chat_c_message.getMsg_prefix());
         ch_message.setMsg_code(chat_c_message.getMsg_code());
-        //ch_message.setTmp(0);
+        //ch_message.setMsg_tmp(0);
         ch_message.setTmp(chat_c_message.getMsg_tmp());
         ch_message.setRoom_code(chat_c_message.getRoom_code());
         ch_message.setMsg_date(chat_c_message.getMsg_date());
@@ -202,7 +202,7 @@ public class Chat_C_Message {
         ch_message.setMsg_prefix(chat_c_message.getMsg_prefix());
         ch_message.setMsg_code(chat_c_message.getMsg_code());
         ch_message.setMsg_date(chat_c_message.getMsg_date());
-        //ch_message.setTmp(0);
+        //ch_message.setMsg_tmp(0);
         ch_message.setTmp(chat_c_message.getMsg_tmp());
         ch_message.setRoom_code(chat_c_message.getRoom_code());
         ch_message.setRoom_code(chat_c_message.getRoom_code());

@@ -101,7 +101,7 @@ public class WS_C_Message_Tmp extends IntentService {
                         messageDao.getByString(
                                 new CH_Message_Sql_003(
                                         messageTmp.getMsg_prefix(),
-                                        messageTmp.getTmp()
+                                        messageTmp.getMsg_tmp()
                                 ).toSqlQuery()
                         );
 
@@ -153,7 +153,7 @@ public class WS_C_Message_Tmp extends IntentService {
 
                 /*HMAux hmAux = new HMAux();
                 hmAux.put(CH_MessageDao.MSG_PREFIX, String.valueOf(ch_message.getMsg_prefix()));
-                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getTmp()));*/
+                hmAux.put(CH_MessageDao.TMP, String.valueOf(ch_message.getMsg_tmp()));*/
                 //
             }
             //

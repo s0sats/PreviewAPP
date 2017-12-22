@@ -6,17 +6,17 @@ package com.namoadigital.prj001.model;
 
 public class Chat_C_Message_Tmp {
 
-    private long tmp;
+    private long msg_tmp;
     private String room_code;
     private int msg_prefix;
     private int msg_code;
 
-    public long getTmp() {
-        return tmp;
+    public long getMsg_tmp() {
+        return msg_tmp;
     }
 
-    public void setTmp(long tmp) {
-        this.tmp = tmp;
+    public void setMsg_tmp(long msg_tmp) {
+        this.msg_tmp = msg_tmp;
     }
 
     public String getRoom_code() {
