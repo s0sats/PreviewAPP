@@ -25,9 +25,9 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
 import com.namoadigital.prj001.sql.CH_Message_Sql_013;
+import com.namoadigital.prj001.sql.CH_Message_Sql_014;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -771,15 +771,27 @@ public class SingletonWebSocket {
                         ) {
                     CH_Message localMessage =
                             messageDao.getByString(
-                                    new CH_Message_Sql_003(
+                                    new CH_Message_Sql_014(
                                             chatCMessage.getMsg_prefix(),
-                                            chatCMessage.getMsg_tmp()
+                                            chatCMessage.getMsg_tmp(),
+                                            ToolBox_Con.getPreference_User_Code(context)
                                     ).toSqlQuery()
                             );
-                    if (localMessage != null && localMessage.getMsg_code() == 0) {
+                    if (
+                            chatCMessage.getMsg_tmp() > 0 &&
+                            chatCMessage.getMsg_code() > 0 &&
+                            localMessage != null &&
+                            localMessage.getTmp() > -1 &&
+                            localMessage.getMsg_code() == 0
+                        ) {
                         cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
 
-                    } else if (chatCMessage.getMsg_tmp() != 0 && localMessage != null && localMessage.getTmp() == 0) {
+                    } else if (
+                                chatCMessage.getMsg_tmp() > 0 &&
+                                chatCMessage.getMsg_code() > 0 &&
+                                localMessage != null &&
+                                localMessage.getTmp() == -1
+                            ) {
                         messagesMineToInsert.add(chatCMessage);
                     }
                 } else {

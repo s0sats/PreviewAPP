@@ -26,6 +26,28 @@ public class CH_Message {
     private int all_read;
     private int status_update;
 
+    public CH_Message() {
+        this.msg_prefix = -1;
+        this.msg_code = -1;
+        this.tmp = -1;
+        this.msg_token = null;
+        this.room_code = null;
+        this.msg_date= null;
+        this.msg_obj= null;
+        this.message_image_local= null;
+        this.msg_origin= null;
+        this.delivered = -1;
+        this.delivered_date = null;
+        this.read = -1;
+        this.read_date= null;
+        this.msg_pk= null;
+        this.user_code = -1;
+        this.user_nick = null;
+        this.all_delivered= -1 ;
+        this.all_read= -1;
+        this.status_update= -1;
+    }
+
     public int getMsg_prefix() {
         return msg_prefix;
     }

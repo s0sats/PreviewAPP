@@ -383,7 +383,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 //
                                 //act035_adapter_messages.notifyDataSetChanged();
 
-                                //lv_messages.setSelection(mSelection);
+                                lv_messages.setSelection(mSelection);
                                 //lv_messages.smoothScrollToPositionFromTop(mSelection, 0, 5);
                             }
                         });
