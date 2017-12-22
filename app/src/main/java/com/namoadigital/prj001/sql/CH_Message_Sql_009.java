@@ -30,7 +30,7 @@ public class CH_Message_Sql_009 implements Specification {
 
         for (HMAux message : messages) {
             sb
-                    .append(" or ( (msg_prefix = '" + message.get("msg_prefix") + "') and (tmp = '" + message.get("tmp") + "') and (tmp = '" + message.get("tmp") + "') )");
+                    .append(" or ( (msg_prefix = '" + message.get("msg_prefix") + "') and (tmp = '" + message.get("tmp") + "') and (msg_token = '" + message.get("msg_token") + "') )");
         }
 
         sb.append(";");

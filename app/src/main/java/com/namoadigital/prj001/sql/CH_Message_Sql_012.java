@@ -35,7 +35,7 @@ public class CH_Message_Sql_012 implements Specification {
 
         for (HMAux message : messages) {
             sb
-                    .append(" or ( (msg_prefix = '" + message.get("msg_prefix") + "') and (tmp = '" + message.get("tmp") + "') and (tmp = '" + message.get("tmp") + "') )");
+                    .append(" or ( (msg_prefix = '" + message.get("msg_prefix") + "') and (tmp = '" + message.get("tmp") + "')  )");
         }
 
         sb

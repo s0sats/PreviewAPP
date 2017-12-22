@@ -15,11 +15,4 @@ public interface Act035_Main_Presenter {
     void onOnItemClicked(HMAux item);
 
     void onBackPressedClicked();
-
-//    void uploadFile(String sCh_file);
-//
-//    void activateUpload(Context context);
-
-    void startDownloadServices();
-
 }

@@ -13,8 +13,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class CH_Message_Sql_008 implements Specification {
 
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_MessageDao.columns);
+    private String room_code;
 
-    public CH_Message_Sql_008() {
+    public CH_Message_Sql_008(String room_code) {
+        this.room_code = room_code;
     }
 
     @Override
@@ -27,7 +29,10 @@ public class CH_Message_Sql_008 implements Specification {
                         " FROM \n" +
                         CH_MessageDao.TABLE + " m \n" +
                         " WHERE \n" +
-                        "   m.status_update = '1' \n")
+                        "   m.room_code = '" + room_code + "' \n" +
+                        "   and m.status_update = '1' \n" +
+                        " ORDER BY\n" +
+                        "   m.msg_pk asc\n")
                 .append(";")
                 .append(HmAuxFields)
                 .toString();

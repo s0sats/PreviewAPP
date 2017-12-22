@@ -61,6 +61,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void addMessages(List<HMAux> dadosR) {
+        data.addAll(dadosR);
+        //
+        notifyDataSetChanged();
+    }
+
 //    public void setMessegeUpt(HMAux hmAux, int first, int last) {
 //        HMAux hmAuxOld = null;
 //        //

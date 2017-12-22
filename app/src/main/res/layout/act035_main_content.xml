@@ -50,7 +50,6 @@
         android:orientation="vertical">
 
         <ListView
-            android:stackFromBottom="true"
             android:id="@+id/act0035_lv_messages"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
