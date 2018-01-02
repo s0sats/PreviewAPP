@@ -67,32 +67,6 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-//    public void setMessegeUpt(HMAux hmAux, int first, int last) {
-//        HMAux hmAuxOld = null;
-//        //
-//        processingHMAux = true;
-//        //
-//        for (int i = 0; i < data.size() && processingHMAux; i++) {
-//            hmAuxOld = data.get(i);
-//            //
-//            if (hmAux.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.MSG_PREFIX)) &&
-//                    hmAux.get(CH_MessageDao.TMP).equalsIgnoreCase(hmAuxOld.get(CH_MessageDao.TMP))
-//                    ) {
-//
-//                data.get(i).put(CH_MessageDao.MSG_CODE, hmAux.get(CH_MessageDao.MSG_CODE));
-//                data.get(i).put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));
-//                //
-//                if (i >= first && i <= last) {
-//                    notifyDataSetChanged();
-//                }
-//                //
-//                break;
-//            }
-//        }
-//        //
-//        processingHMAux = false;
-//    }
-
     @Override
     public int getCount() {
         return data.size();

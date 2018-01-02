@@ -71,6 +71,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private BR_Room brRoomReceiver;
 
     private boolean statusCameraNew = false;
+    private boolean statusReorder = false;
 
     private int mSelection;
     private int mTotal = 0;
@@ -162,6 +163,21 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void reloadMessages(ArrayList<HMAux> dados) {
         this.dados = dados;
         //
+        int firstUnRead = 0;
+        //
+        if (statusReorder && dados.size() > 0) {
+            firstUnRead = dados.size() - 1;
+
+            for (int i = 0; i < dados.size(); i++) {
+                HMAux aux = dados.get(i);
+                //
+                if (aux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+                    firstUnRead = i;
+                }
+
+            }
+        }
+        //
         act035_adapter_messages = new Act035_Adapter_Messages(
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats,
@@ -175,7 +191,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 act035_adapter_messages
         );
         //
-        lv_messages.setSelection(dados.size() - 1);
+        if (statusReorder) {
+            statusReorder = false;
+            lv_messages.setSelection(firstUnRead);
+        } else {
+            lv_messages.setSelection(dados.size() - 1);
+        }
+        //
+        iv_reorder.setVisibility(View.GONE);
     }
 
     private void recoverIntentsInfo() {
@@ -248,9 +271,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_reorder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.setData(mRoom_code);
+                statusReorder = true;
                 //
-                // Detect Last Not Visible position
+                mPresenter.setData(mRoom_code);
             }
         });
     }
@@ -372,6 +395,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    turnOnReorderIcon(dados, messages);
                                     act035_adapter_messages.addMessages(messages);
                                 }
                             });
@@ -403,6 +427,30 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 }
             });
             mThread.start();
+        }
+    }
+
+    private void turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
+        String sMessages = messages.get(messages.size() - 1).get("msg_pk");
+        //
+        for (int i = dados.size() - 1; i >= 0; i--) {
+            HMAux aux = dados.get(i);
+            //
+            if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
+
+                int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
+
+                if (compare < 0) {
+                    //aux é menor do que sMessage
+                } else if (compare > 0) {
+                    //aux é maior do que sMessage
+                    iv_reorder.setVisibility(View.VISIBLE);
+                } else {
+                    //aux é igual a sMessage
+                }
+
+                break;
+            }
         }
     }
 
