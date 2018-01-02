@@ -22,6 +22,7 @@ import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act034_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -47,6 +48,7 @@ public class Act034_Room extends BaseFragment {
     private CH_RoomDao roomDao;
     private Act034_Main mMain;
     private long selected_customer;
+    private CH_MessageDao messageDao;
 
     public void setSelected_customer(long selected_customer) {
         this.selected_customer = selected_customer;
@@ -88,6 +90,8 @@ public class Act034_Room extends BaseFragment {
         //
         roomDao = new CH_RoomDao(context);
         //
+        messageDao = new CH_MessageDao(context);
+        //
         //loadMsgList();
         //loadRoomList();
 
@@ -99,9 +103,11 @@ public class Act034_Room extends BaseFragment {
         //
         tv_others_customer_msg_lbl.setText(hmAux_Trans.get("other_customers_msg_lbl"));
         //
-        tv_others_customer_msg_qty.setText("666");
+        //tv_others_customer_msg_qty.setText("666");
         //
         loadRoomList();
+        //
+        updateOtherMsgInfo();
     }
 
     public void loadRoomList() {
@@ -133,6 +139,29 @@ public class Act034_Room extends BaseFragment {
             lv_msg.setAdapter(mAdapter);
         }
 
+    }
+
+    public void updateOtherMsgInfo(){
+        HMAux otherMsgQty =
+                messageDao.getByStringHM(
+                        new Sql_Act034_003(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        if(otherMsgQty != null){
+           if(!otherMsgQty.containsKey(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG) ||
+               otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG).equalsIgnoreCase("0")
+           ){
+               ll_header.setVisibility(View.GONE);
+               tv_others_customer_msg_qty.setText("");
+
+           }else{
+               tv_others_customer_msg_qty.setText(otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG));
+               ll_header.setVisibility(View.VISIBLE);
+           }
+        }
     }
 
     private void showRoomImageDialog(String image_path) {
@@ -193,6 +222,8 @@ public class Act034_Room extends BaseFragment {
     public void loadDataToScreen() {
         if(bStatus){
             loadRoomList();
+            //
+            updateOtherMsgInfo();
         }
     }
 

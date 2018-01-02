@@ -343,7 +343,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 case Constant.CHAT_BR_TYPE_ROOM:
                 case Constant.CHAT_BR_TYPE_MSG:
                     if(currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)){
-                        act034_room.loadRoomList();
+                        //act034_room.loadRoomList();
+                        act034_room.loadDataToScreen();
                     }
                     //Atualiza drawer
                     toogleDrawerVisibility();

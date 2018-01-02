@@ -113,13 +113,15 @@ public class WS_C_Message extends IntentService {
                     //Atualiza valor de dado entregue
                     chMessage.setDelivered(1);
                     chMessage.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                    chMessage.setStatus_update(1);
+                    chMessage.setRead(1);
+                    chMessage.setRead_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    chMessage.setStatus_update(1);//verificar a necessidade disso
                     //Monta obj para chamar sDelivered
                     Chat_S_Delivered sDelivered = new Chat_S_Delivered();
                     //
                     sDelivered.setMsg_prefix(chMessage.getMsg_prefix());
                     sDelivered.setMsg_code(chMessage.getMsg_code());
-                    sDelivered.setRead(0);
+                    sDelivered.setRead(1);
                     //
                     sDeliveredList.add(gson.toJsonTree(sDelivered));
                 }

@@ -430,7 +430,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-    private void turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
+    private boolean turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
+
+        if (messages.size() == 0) {
+            return false;
+        }
+
         String sMessages = messages.get(messages.size() - 1).get("msg_pk");
         //
         for (int i = dados.size() - 1; i >= 0; i--) {
@@ -442,16 +447,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                 if (compare < 0) {
                     //aux é menor do que sMessage
+                    return false;
                 } else if (compare > 0) {
                     //aux é maior do que sMessage
                     iv_reorder.setVisibility(View.VISIBLE);
+                    //
+                    return true;
                 } else {
                     //aux é igual a sMessage
+                    return false;
                 }
-
-                break;
             }
         }
+
+        return false;
     }
 
     private void processing_FromTo(Context context, HMAux mAux) {
