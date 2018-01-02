@@ -54,6 +54,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
     }
 
+    public interface IAct035_Adapter_Messages {
+        void updateReadStatus(HMAux hmAux, int position);
+    }
+
+    private IAct035_Adapter_Messages delegate;
+
+    public void setOnUpdateReadStatus(IAct035_Adapter_Messages delegate) {
+        this.delegate = delegate;
+    }
+
     public void refill(List<HMAux> dadosR) {
         data.clear();
         data.addAll(dadosR);
@@ -205,7 +215,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 tv_name.setText(hmAux.get("user_nick"));
 
-                iv_me_img.setVisibility(View.INVISIBLE);
+                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")){
+                    if (delegate != null){
+                        delegate.updateReadStatus(hmAux, position);
+                    }
+                }
+
+                iv_me_img.setVisibility(View.GONE);
                 v_space_right.setVisibility(View.VISIBLE);
 
                 break;
@@ -329,6 +345,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 );
 
                 tv_name.setText(hmAux.get("user_nick"));
+
+                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")){
+                    if (delegate != null){
+                        delegate.updateReadStatus(hmAux, position);
+                    }
+                }
 
                 iv_me_img.setVisibility(View.GONE);
                 v_space_right.setVisibility(View.VISIBLE);

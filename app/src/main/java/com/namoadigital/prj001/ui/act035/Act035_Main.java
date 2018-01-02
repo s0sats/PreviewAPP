@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
@@ -72,6 +74,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private boolean statusCameraNew = false;
     private boolean statusReorder = false;
+
+    private boolean statusReorderProcess = false;
+
 
     private int mSelection;
     private int mTotal = 0;
@@ -185,6 +190,21 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_whats_text_bk_r,
                 R.layout.act035_main_content_cell_whats_text_bk,
                 dados
+        );
+
+        act035_adapter_messages.setOnUpdateReadStatus(
+                new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
+                    @Override
+                    public void updateReadStatus(HMAux hmAux, int position) {
+                        hmAux.put(CH_MessageDao.READ, "1");
+                        hmAux.put(CH_MessageDao.READ_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                        //
+                        Log.d("LEITURA", "FIZ A LEITURA - POSITION: " + String.valueOf(position));
+
+                        //
+                        // atualiza banco de dados local chama sRead para atualizar o servico
+                    }
+                }
         );
 
         lv_messages.setAdapter(
@@ -381,7 +401,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         mSelection = dados.size();
                         //
                         mTotal = 0;
-
+                        //
+                        statusReorderProcess = false;
+                        //
                         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
                         messages = (ArrayList<HMAux>) chMessageDao.query_HM(
@@ -395,7 +417,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    turnOnReorderIcon(dados, messages);
+                                    if (turnOnReorderIcon(dados, messages)) {
+                                        statusReorderProcess = true;
+                                    }
+                                    //
                                     act035_adapter_messages.addMessages(messages);
                                 }
                             });
@@ -414,8 +439,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (mTotal == 1) {
-                                    mPresenter.setData(mRoom_code);
+                                if (statusReorderProcess) {
+                                } else {
+                                    if (mTotal == 1) {
+                                        mPresenter.setData(mRoom_code);
+                                    }
                                 }
                             }
                         });
@@ -430,7 +458,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-    private void turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
+    private boolean turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
+
+        if (messages.size() == 0) {
+            return false;
+        }
+
         String sMessages = messages.get(messages.size() - 1).get("msg_pk");
         //
         for (int i = dados.size() - 1; i >= 0; i--) {
@@ -442,16 +475,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                 if (compare < 0) {
                     //aux é menor do que sMessage
+                    return false;
                 } else if (compare > 0) {
                     //aux é maior do que sMessage
                     iv_reorder.setVisibility(View.VISIBLE);
+                    //
+                    return true;
                 } else {
                     //aux é igual a sMessage
+                    return false;
                 }
-
-                break;
             }
         }
+
+        return false;
     }
 
     private void processing_FromTo(Context context, HMAux mAux) {
