@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.sql.CH_Message_Sql_012;
+import com.namoadigital.prj001.sql.CH_Message_Sql_015;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -194,15 +195,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         act035_adapter_messages.setOnUpdateReadStatus(
                 new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
+
                     @Override
                     public void updateReadStatus(HMAux hmAux, int position) {
+                        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+                        //
                         hmAux.put(CH_MessageDao.READ, "1");
                         hmAux.put(CH_MessageDao.READ_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                         //
                         Log.d("LEITURA", "FIZ A LEITURA - POSITION: " + String.valueOf(position));
-
                         //
-                        // atualiza banco de dados local chama sRead para atualizar o servico
+                        chMessageDao.addUpdate(
+                                new CH_Message_Sql_015(
+                                        hmAux.get(CH_MessageDao.MSG_PREFIX),
+                                        hmAux.get(CH_MessageDao.MSG_CODE),
+                                        hmAux.get(CH_MessageDao.READ),
+                                        hmAux.get(CH_MessageDao.READ_DATE)
+                                ).toSqlQuery()
+                        );
+                        // sRead
                     }
                 }
         );

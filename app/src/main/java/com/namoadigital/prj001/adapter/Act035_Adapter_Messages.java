@@ -54,6 +54,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
     }
 
+    // Interface só é chamada como para as mensagens que não forem as minhas.
     public interface IAct035_Adapter_Messages {
         void updateReadStatus(HMAux hmAux, int position);
     }
@@ -215,8 +216,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 tv_name.setText(hmAux.get("user_nick"));
 
-                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")){
-                    if (delegate != null){
+                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+                    if (delegate != null) {
                         delegate.updateReadStatus(hmAux, position);
                     }
                 }
@@ -346,8 +347,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 tv_name.setText(hmAux.get("user_nick"));
 
-                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")){
-                    if (delegate != null){
+                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+                    if (delegate != null) {
                         delegate.updateReadStatus(hmAux, position);
                     }
                 }
