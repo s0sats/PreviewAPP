@@ -30,7 +30,7 @@ public class CH_Message {
         this.msg_prefix = -1;
         this.msg_code = -1;
         this.tmp = -1;
-        this.msg_token = null;
+        /*this.msg_token = null;
         this.room_code = null;
         this.msg_date= null;
         this.msg_obj= null;
@@ -45,7 +45,7 @@ public class CH_Message {
         this.user_nick = null;
         this.all_delivered= -1 ;
         this.all_read= -1;
-        this.status_update= -1;
+        this.status_update= -1;*/
     }
 
     public int getMsg_prefix() {

@@ -792,6 +792,9 @@ public class SingletonWebSocket {
                                 localMessage != null &&
                                 localMessage.getTmp() == -1
                             ) {
+                        //Se msg é minha, ja teve de para processado em outro device,
+                        //zera o tmp vindo do server e para gerar um novo.
+                        chatCMessage.setMsg_tmp(0);
                         messagesMineToInsert.add(chatCMessage);
                     }
                 } else {
