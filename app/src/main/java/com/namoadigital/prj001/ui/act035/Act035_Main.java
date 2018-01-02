@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,6 +53,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private ImageView iv_photo;
     private ImageView iv_send;
+    private ImageView iv_reorder;
 
     private Act035_Adapter_Messages act035_adapter_messages;
     private ArrayList<HMAux> dados;
@@ -151,6 +151,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         iv_photo = (ImageView) findViewById(R.id.act035_iv_photo);
         iv_send = (ImageView) findViewById(R.id.act035_iv_send);
+        iv_reorder = (ImageView) findViewById(R.id.act035_iv_reorder);
 
         mPresenter.setData(mRoom_code);
         //
@@ -243,7 +244,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 }
             }
         });
-
+        //
+        iv_reorder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.setData(mRoom_code);
+                //
+                // Detect Last Not Visible position
+            }
+        });
     }
 
     @Override
@@ -346,8 +355,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 @Override
                 public void run() {
                     try {
-
-                        Log.d("LISTA", "INICIO - " + String.valueOf(dados.size()));
                         mSelection = dados.size();
                         //
                         mTotal = 0;
@@ -383,10 +390,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
-                                Log.d("LISTA", "FIM - " + String.valueOf(dados.size()));
-                                Log.d("LISTA", "FIM2 - " + String.valueOf(mSelection));
-                                //
                                 if (mTotal == 1) {
                                     mPresenter.setData(mRoom_code);
                                 }
@@ -394,9 +397,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         });
 
                     } catch (Exception e) {
-                        String res = e.toString();
-                        //
-                        Log.d("LISTA", e.toString());
                     } finally {
                         isProcessing_C_Message = false;
                     }
@@ -416,6 +416,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     @Override
     public void scroolToPosition(int position) {
-
+        lv_messages.setSelection(position);
     }
 }

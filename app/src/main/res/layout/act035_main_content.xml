@@ -43,19 +43,43 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-        <ListView
-            android:id="@+id/act0035_lv_messages"
+        <!--<Button-->
+        <!--android:id="@+id/act035_btn_reorder"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:layout_margin="20dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:text="ListOrder" />-->
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/padrao_TRANSPARENT" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <ListView
+                android:id="@+id/act0035_lv_messages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/padrao_TRANSPARENT" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/act035_iv_reorder"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
