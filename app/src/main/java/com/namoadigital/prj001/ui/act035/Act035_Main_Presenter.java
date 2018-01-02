@@ -12,6 +12,8 @@ public interface Act035_Main_Presenter {
 
     void sendMessage(String mRoom_code, String message, String image);
 
+    void sendRead(HMAux hmAux);
+
     void onOnItemClicked(HMAux item);
 
     void onBackPressedClicked();

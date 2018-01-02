@@ -126,6 +126,30 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
+    public void sendRead(HMAux hmAux) {
+        enviarReadServer(hmAux);
+    }
+
+    private void enviarReadServer(HMAux hmAux) {
+        Chat_S_Message s_message = new Chat_S_Message();
+        //
+//        s_message.setRoom_code(mRoom_code);
+//        if (message.isEmpty()) {
+//            s_message.setType(Constant.CHAT_MESSAGE_TYPE_IMAGE);
+//        } else {
+//            s_message.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
+//        }
+//        s_message.setData(message);
+//        s_message.setTmp(chMessage.getTmp());
+        //
+        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
+        singletonWebSocket.attemptToReadMessage(gson.toJson(s_message));
+    }
+
+    @Override
     public void onOnItemClicked(HMAux item) {
         if (!item.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).equalsIgnoreCase("")) {
             File file = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + item.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL));

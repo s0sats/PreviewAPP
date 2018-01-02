@@ -213,7 +213,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                         hmAux.get(CH_MessageDao.READ_DATE)
                                 ).toSqlQuery()
                         );
-                        // sRead
+                        //
+                        mPresenter.sendRead(hmAux);
                     }
                 }
         );
