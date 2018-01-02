@@ -96,17 +96,42 @@ public class WS_C_Message extends IntentService {
                 && ToolBox_Con.getPreference_User_Code(getApplicationContext())
                 .equalsIgnoreCase(String.valueOf(messages.get(0).getUser_code()))
                 ) {
+            JsonArray sDeliveredList = new JsonArray();
+            Chat_C_Message chatMessage  = messages.get(0);
 
             CH_Message chMessage = messageDao.getByString(
                     new CH_Message_Sql_005(
-                            messages.get(0).getMsg_prefix(),
-                            messages.get(0).getMsg_code()
+                            chatMessage.getMsg_prefix(),
+                            chatMessage.getMsg_code()
                     ).toSqlQuery()
             );
             //
             if (chMessage != null && chMessage.getMsg_prefix() > -1) {
-                chMessage.setMsg_date(messages.get(0).getMsg_date());
+                chMessage.setMsg_date(chatMessage.getMsg_date());
+                //
+                if (chatMessage.getDelivered() == 0) {
+                    //Atualiza valor de dado entregue
+                    chMessage.setDelivered(1);
+                    chMessage.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    chMessage.setStatus_update(1);
+                    //Monta obj para chamar sDelivered
+                    Chat_S_Delivered sDelivered = new Chat_S_Delivered();
+                    //
+                    sDelivered.setMsg_prefix(chMessage.getMsg_prefix());
+                    sDelivered.setMsg_code(chMessage.getMsg_code());
+                    sDelivered.setRead(0);
+                    //
+                    sDeliveredList.add(gson.toJsonTree(sDelivered));
+                }
+                //
                 messageDao.addUpdate(chMessage);
+                //
+                if (sDeliveredList.size() > 0) {
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                    singletonWebSocket.attemptToDeliveryMessage(
+                            ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
+                    );
+                }
             }
 
         } else {
