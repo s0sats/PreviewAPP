@@ -44,7 +44,7 @@ public class CH_Room_Sql_001 implements Specification {
                         "                THEN 1\n" +
                         "                ELSE 0\n" +
                         "           END) HAS_NULL,\n" +
-                        "           SUM(CASE WHEN m.read = 0 AND m.user_code <> '52'\n" +
+                        "           SUM(CASE WHEN m.read = 0 AND m.user_code <> '"+user_code+"'\n" +
                         "               THEN 1\n" +
                         "               ELSE 0\n" +
                         "           END) BADGE              \n" +
@@ -53,7 +53,7 @@ public class CH_Room_Sql_001 implements Specification {
                         "           "+CH_RoomDao.TABLE+" r\n" +
                         "      WHERE\n" +
                         "           r.room_code = m.room_code\n" +
-                        "           and (r.customer_code = 1 or r.customer_code is null)                   \n" +
+                        "           and (r.customer_code = '"+customer_code+"' or r.customer_code is null)  \n" +
                         "      GROUP BY\n" +
                         "           m.room_code) T\n" +
                         " WHERE\n" +
