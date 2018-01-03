@@ -146,7 +146,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
-        singletonWebSocket.attemptToReadMessage(gson.toJson(s_message));
+        //singletonWebSocket.attemptToReadMessage(gson.toJson(s_message));
     }
 
     @Override

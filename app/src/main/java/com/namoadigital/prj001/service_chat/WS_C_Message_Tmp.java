@@ -160,14 +160,21 @@ public class WS_C_Message_Tmp extends IntentService {
             if(hasImage){
                 startUpload(getApplicationContext());
             }
-            //
-            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
+
             //
             if(msgTmpListFile != null){
                 msgTmpListFile.delete();
                 //
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-                singletonWebSocket.attempSendOfflineMessages();
+                //Verifica se todas as msg foram processadas
+                //Se foram, reseta contador, dispara broadcast e envia offlines
+                if(singletonWebSocket.processAllMsgs()){
+                    singletonWebSocket.resetProcessMsgCounter();
+                    //
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
+                    //
+                    singletonWebSocket.attempSendOfflineMessages();
+                }
             }
         }
     }
