@@ -62,11 +62,18 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ListView
-                android:id="@+id/act0035_lv_messages"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/act035_sw_messages"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@color/padrao_TRANSPARENT" />
+                android:layout_height="match_parent">
+
+                <ListView
+                    android:id="@+id/act0035_lv_messages"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@color/padrao_TRANSPARENT" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
 
         </LinearLayout>
 

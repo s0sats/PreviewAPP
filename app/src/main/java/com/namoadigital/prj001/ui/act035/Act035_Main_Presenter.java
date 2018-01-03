@@ -8,9 +8,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act035_Main_Presenter {
 
-    void setData(String mRoom_code);
+    void setData(String mRoom_code, String offSet);
 
-    void sendMessage(String mRoom_code, String message, String image);
+    void sendMessage(String mRoom_code, String message, String image, String offSet);
 
     void sendRead(HMAux hmAux);
 

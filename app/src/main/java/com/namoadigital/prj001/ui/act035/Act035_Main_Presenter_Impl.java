@@ -44,18 +44,19 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
-    public void setData(String mRoom_code) {
+    public void setData(String mRoom_code, String offSet) {
         mView.reloadMessages(
                 (ArrayList<HMAux>) ch_messageDao.query_HM(
                         new Sql_Act035_001(
-                                mRoom_code
+                                mRoom_code,
+                                offSet
                         ).toSqlQuery()
 
                 ));
     }
 
     @Override
-    public void sendMessage(String mRoom_code, String message, String imagem) {
+    public void sendMessage(String mRoom_code, String message, String imagem, String offSet) {
 
         CH_Message chMessage = new CH_Message();
         chMessage.setMsg_prefix(Integer.parseInt(ToolBox_Inf.yearMonthPrefix()));
@@ -99,7 +100,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         //
         ch_messageDao.addUpdateTmp(chMessage);
         //
-        setData(mRoom_code);
+        setData(mRoom_code, offSet);
         //
         //mView.cleanTextControl();
         //
@@ -142,11 +143,12 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 //        s_message.setData(message);
 //        s_message.setTmp(chMessage.getTmp());
         //
-        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 
-        Gson gson = new GsonBuilder().serializeNulls().create();
-
-        singletonWebSocket.attemptToReadMessage(gson.toJson(s_message));
+//        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+//
+//        Gson gson = new GsonBuilder().serializeNulls().create();
+//
+//        singletonWebSocket.attemptToReadMessage(gson.toJson(s_message));
     }
 
     @Override

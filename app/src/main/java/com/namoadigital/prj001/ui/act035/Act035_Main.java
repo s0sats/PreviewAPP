@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -51,7 +52,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private Thread mThread;
 
     private TextView tv_customer_val;
+
     private ListView lv_messages;
+    private SwipeRefreshLayout sw_messages;
+
     private Act035_Main_Presenter mPresenter;
 
     private ImageView iv_photo;
@@ -81,6 +85,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private int mSelection;
     private int mTotal = 0;
+
+    private int offSetV = 100;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,6 +141,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         tv_customer_val = (TextView) findViewById(R.id.act035_tv_customer_val);
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);
+        sw_messages = (SwipeRefreshLayout) findViewById(R.id.act035_sw_messages);
         mkEditTextNM = (MKEditTextNM) findViewById(R.id.act035_mket_serial);
 
         mkEditTextNM.setOnTouchListener(new View.OnTouchListener() {
@@ -160,7 +167,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_send = (ImageView) findViewById(R.id.act035_iv_send);
         iv_reorder = (ImageView) findViewById(R.id.act035_iv_reorder);
 
-        mPresenter.setData(mRoom_code);
+        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
         //
         startReceivers(true);
     }
@@ -231,6 +238,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         //
         iv_reorder.setVisibility(View.GONE);
+        //
+        sw_messages.setRefreshing(false);
     }
 
     private void recoverIntentsInfo() {
@@ -266,6 +275,29 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void initActions() {
         tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
         //
+        sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sw_messages.setRefreshing(true);
+                //
+                int dadosSize = dados.size();
+                //
+                if (offSetV > dados.size()) {
+                    offSetV = dados.size();
+                } else {
+                    offSetV += 100;
+                }
+
+                mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+
+                if (dados.size() == dadosSize) {
+                    lv_messages.setSelection(0);
+                } else {
+                    lv_messages.setSelection(dados.size() > dadosSize ? dados.size() - dadosSize - 1 : 0);
+                }
+            }
+        });
+        //
         lv_messages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -295,7 +327,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //
                     mkEditTextNM.setText("");
                     //
-                    mPresenter.sendMessage(mRoom_code, texto, "");
+                    mPresenter.sendMessage(mRoom_code, texto, "", String.valueOf(offSetV));
                 }
             }
         });
@@ -305,7 +337,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             public void onClick(View v) {
                 statusReorder = true;
                 //
-                mPresenter.setData(mRoom_code);
+                mPresenter.setData(mRoom_code, String.valueOf(offSetV));
             }
         });
     }
@@ -331,7 +363,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             if (sFile.exists()) {
                 ToolBox_Inf.createThumbNail_Images(ConstantBase.CACHE_PATH_PHOTO, mValue);
                 //
-                mPresenter.sendMessage(mRoom_code, "", mValue);
+                mPresenter.sendMessage(mRoom_code, "", mValue, String.valueOf(offSetV));
             }
         }
     }
@@ -454,7 +486,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 if (statusReorderProcess) {
                                 } else {
                                     if (mTotal == 1) {
-                                        mPresenter.setData(mRoom_code);
+                                        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
                                     }
                                 }
                             }
@@ -474,6 +506,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         if (messages.size() == 0) {
             return false;
+        }
+
+        if (iv_reorder.getVisibility() == View.VISIBLE){
+            return true;
         }
 
         String sMessages = messages.get(messages.size() - 1).get("msg_pk");
@@ -515,4 +551,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void scroolToPosition(int position) {
         lv_messages.setSelection(position);
     }
+
+
 }
