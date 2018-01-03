@@ -104,10 +104,14 @@ public class Act034_Room_Adapter extends BaseAdapter {
             case Constant.CHAT_ROOM_TYPE_WORKGROUP:
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_group_black_24dp));
                 break;
-
+            case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_person_black_24dp));
+                break;
+            case Constant.CHAT_ROOM_TYPE_SO:
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_date_range_black_24dp));
+                break;
             default:
-                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_block_helper_black_48dp));
-
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_block_helper_black_18dp));
         }
         //
         tv_room_desc.setText(item.get(CH_RoomDao.ROOM_DESC));
