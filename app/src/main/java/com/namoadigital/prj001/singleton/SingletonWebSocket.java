@@ -776,7 +776,6 @@ public class SingletonWebSocket {
                     }.getType());
             //Atualiza total de msg e contador de msg
             total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
-            count_msg += messages.size();
 
             for (Chat_C_Message chatCMessage : messages) {
                 //Analise da lista de de - para
@@ -841,8 +840,9 @@ public class SingletonWebSocket {
 
                 cMessageIntent.putExtras(bundle);
                 context.sendBroadcast(cMessageIntent);
-                //
             }
+
+            count_msg += messages.size();
 
         } catch (Exception e) {
             e.printStackTrace();

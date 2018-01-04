@@ -17,9 +17,4 @@ public interface Act035_Main_View {
     void callAct005(Context context);
 
     void callCamera(int mId, int mType, String mFName, boolean mEdit, boolean mEnabled);
-
-    void cleanTextControl();
-
-    void scroolToPosition(int position);
-
 }

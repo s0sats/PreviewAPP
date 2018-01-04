@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
@@ -29,7 +27,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.sql.CH_Message_Sql_012;
-import com.namoadigital.prj001.sql.CH_Message_Sql_015;
+import com.namoadigital.prj001.sql.CH_Message_Sql_017;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -82,10 +80,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private boolean statusReorderProcess = false;
 
-
-    private int mSelection;
     private int mTotal = 0;
-
     private int offSetV = 100;
 
     @Override
@@ -167,6 +162,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_send = (ImageView) findViewById(R.id.act035_iv_send);
         iv_reorder = (ImageView) findViewById(R.id.act035_iv_reorder);
 
+        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+
+        mPresenter.updateReadStatus(
+                (ArrayList<HMAux>) chMessageDao.query_HM(
+                        new CH_Message_Sql_017(
+                                mRoom_code
+                        ).toSqlQuery()
+                ),
+                "FULL"
+        );
+        //
         mPresenter.setData(mRoom_code, String.valueOf(offSetV));
         //
         startReceivers(true);
@@ -200,32 +206,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 dados
         );
 
-        act035_adapter_messages.setOnUpdateReadStatus(
-                new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
-
-                    @Override
-                    public void updateReadStatus(HMAux hmAux, int position) {
-                        CH_MessageDao chMessageDao = new CH_MessageDao(context);
-                        //
-                        hmAux.put(CH_MessageDao.READ, "1");
-                        hmAux.put(CH_MessageDao.READ_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                        //
-                        Log.d("LEITURA", "FIZ A LEITURA - POSITION: " + String.valueOf(position));
-                        //
-                        chMessageDao.addUpdate(
-                                new CH_Message_Sql_015(
-                                        hmAux.get(CH_MessageDao.MSG_PREFIX),
-                                        hmAux.get(CH_MessageDao.MSG_CODE),
-                                        hmAux.get(CH_MessageDao.READ),
-                                        hmAux.get(CH_MessageDao.READ_DATE)
-                                ).toSqlQuery()
-                        );
-                        //
-                        mPresenter.sendRead(hmAux);
-                    }
-                }
-        );
-
         lv_messages.setAdapter(
                 act035_adapter_messages
         );
@@ -250,7 +230,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         } else {
         }
     }
-
 
     private void startReceivers(boolean start_stop) {
         brRoomReceiver = new Act035_Main.BR_Room();
@@ -393,11 +372,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
-    public void cleanTextControl() {
-        mkEditTextNM.setText("");
-    }
-
-    @Override
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -421,7 +395,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         break;
 
                     case Constant.CHAT_BR_TYPE_MSG_TMP:
-                        processing_FromTo(context, mAux);
+                        //processing_FromTo(context, mAux);
+                        processing_FromTo(context);
                         break;
 
                     // delivered
@@ -442,8 +417,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 @Override
                 public void run() {
                     try {
-                        mSelection = dados.size();
-                        //
                         mTotal = 0;
                         //
                         statusReorderProcess = false;
@@ -464,6 +437,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                     if (turnOnReorderIcon(dados, messages)) {
                                         statusReorderProcess = true;
                                     }
+                                    //
+                                    mPresenter.updateReadStatus(messages);
                                     //
                                     act035_adapter_messages.addMessages(messages);
                                 }
@@ -508,11 +483,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             return false;
         }
 
-        if (iv_reorder.getVisibility() == View.VISIBLE){
+        if (iv_reorder.getVisibility() == View.VISIBLE) {
             return true;
         }
 
-        String sMessages = messages.get(messages.size() - 1).get("msg_pk");
+        String sMessages = messages.get(0).get("msg_pk");
         //
         for (int i = dados.size() - 1; i >= 0; i--) {
             HMAux aux = dados.get(i);
@@ -539,7 +514,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         return false;
     }
 
-    private void processing_FromTo(Context context, HMAux mAux) {
+    private void processing_FromTo(Context context) {
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
         act035_adapter_messages.refill(chMessageDao.query_HM(
@@ -547,10 +522,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         ));
     }
 
-    @Override
-    public void scroolToPosition(int position) {
-        lv_messages.setSelection(position);
+    private void processing_FromTo(Context context, HMAux mAux) {
+        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+
+        act035_adapter_messages.refill(chMessageDao.query_HM(
+                new CH_Message_Sql_012(dados).toSqlQuery()
+        ));
     }
-
-
 }

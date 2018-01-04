@@ -83,7 +83,7 @@
             android:layout_height="45dp"
             android:layout_gravity="bottom|right"
             android:layout_margin="20dp"
-            android:src="@drawable/ic_arrow_drop_down_black_24dp"
+            android:src="@drawable/ic_double_down_24px"
             android:visibility="gone" />
 
     </FrameLayout>

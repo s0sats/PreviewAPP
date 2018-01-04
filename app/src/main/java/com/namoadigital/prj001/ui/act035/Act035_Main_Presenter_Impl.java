@@ -4,13 +4,16 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Message_Sql_016;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -53,6 +56,66 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                         ).toSqlQuery()
 
                 ));
+    }
+
+    @Override
+    public void updateReadStatus(ArrayList<HMAux> hmAuxs) {
+        updateReadStatus(hmAuxs, "");
+    }
+
+    @Override
+    public void updateReadStatus(ArrayList<HMAux> hmAuxs, String type) {
+        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+        //
+        String sRead = "1";
+        String sRead_Date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+        //
+        switch (type) {
+            case "FULL":
+                for (HMAux hmAux : hmAuxs) {
+                    if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+                        hmAux.put(CH_MessageDao.READ, sRead);
+                        hmAux.put(CH_MessageDao.READ_DATE, sRead_Date);
+                    }
+                }
+                //
+                chMessageDao.addUpdate(
+                        new CH_Message_Sql_016(
+                                hmAuxs,
+                                sRead,
+                                sRead_Date
+                        ).toSqlQuery()
+                );
+                //
+                sendRead(hmAuxs);
+
+                break;
+            default:
+                ArrayList<HMAux> hmAuxsForUpdate = new ArrayList<>();
+                //
+                for (HMAux hmAux : hmAuxs) {
+                    if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+                        hmAux.put(CH_MessageDao.READ, sRead);
+                        hmAux.put(CH_MessageDao.READ_DATE, sRead_Date);
+                        //
+                        hmAuxsForUpdate.add(hmAux);
+                    }
+                }
+                //
+                if (hmAuxsForUpdate.size() != 0) {
+                    chMessageDao.addUpdate(
+                            new CH_Message_Sql_016(
+                                    hmAuxsForUpdate,
+                                    sRead,
+                                    sRead_Date
+                            ).toSqlQuery()
+                    );
+                    //
+                    sendRead(hmAuxsForUpdate);
+                }
+
+                break;
+        }
     }
 
     @Override
@@ -127,28 +190,32 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
-    public void sendRead(HMAux hmAux) {
-        enviarReadServer(hmAux);
+    public void sendRead(ArrayList<HMAux> hmAuxs) {
+        enviarReadServer(hmAuxs);
     }
 
-    private void enviarReadServer(HMAux hmAux) {
-        Chat_S_Message s_message = new Chat_S_Message();
-        //
-//        s_message.setRoom_code(mRoom_code);
-//        if (message.isEmpty()) {
-//            s_message.setType(Constant.CHAT_MESSAGE_TYPE_IMAGE);
-//        } else {
-//            s_message.setType(Constant.CHAT_MESSAGE_TYPE_TEXT);
-//        }
-//        s_message.setData(message);
-//        s_message.setTmp(chMessage.getTmp());
-        //
+    private void enviarReadServer(ArrayList<HMAux> hmAuxs) {
 
-//        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-//
-//        Gson gson = new GsonBuilder().serializeNulls().create();
-//
-//        singletonWebSocket.attemptToReadMessage(gson.toJson(s_message));
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
+        JsonArray sReadList = new JsonArray();
+
+        for (HMAux hmAux: hmAuxs) {
+            Chat_S_Read sRead = new Chat_S_Read();
+            //
+            sRead.setMsg_prefix(Integer.parseInt(hmAux.get(CH_MessageDao.MSG_PREFIX)));
+            sRead.setMsg_code(Integer.parseInt(hmAux.get(CH_MessageDao.MSG_CODE)));
+            //sRead.setRoom_code(hmAux.get(CH_MessageDao.ROOM_CODE));
+            //
+            sReadList.add(gson.toJsonTree(sRead));
+        }
+
+        if (sReadList.size() > 0) {
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+            singletonWebSocket.attemptToReadMessage(
+                    ToolBox_Inf.setWebSocketJsonParam(sReadList)
+            );
+        }
     }
 
     @Override

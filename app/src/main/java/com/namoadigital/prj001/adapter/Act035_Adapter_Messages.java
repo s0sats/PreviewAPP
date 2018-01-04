@@ -2,6 +2,8 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,15 +57,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     // Interface só é chamada como para as mensagens que não forem as minhas.
-    public interface IAct035_Adapter_Messages {
-        void updateReadStatus(HMAux hmAux, int position);
-    }
+//    public interface IAct035_Adapter_Messages {
+//        //void updateReadStatus(HMAux hmAux, int position);
+//        void updateReadStatus(ArrayList<HMAux> hmAuxs);
+//    }
 
-    private IAct035_Adapter_Messages delegate;
+//    private IAct035_Adapter_Messages delegate;
 
-    public void setOnUpdateReadStatus(IAct035_Adapter_Messages delegate) {
-        this.delegate = delegate;
-    }
+//    public void setOnUpdateReadStatus(IAct035_Adapter_Messages delegate) {
+//        this.delegate = delegate;
+//    }
 
     public void refill(List<HMAux> dadosR) {
         data.clear();
@@ -176,8 +179,10 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         TextView tv_hour;
         ImageView iv_me_img;
         View v_space_right;
+        ImageView iv_badge = null;
 
         switch (getItemViewType(position)) {
+            // Other IMG
             case 0:
 
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
@@ -189,6 +194,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
                 iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
                 v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.GONE);
                 iv_other_img.setVisibility(View.VISIBLE);
@@ -216,17 +222,19 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 tv_name.setText(hmAux.get("user_nick"));
 
-                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
-                    if (delegate != null) {
-                        delegate.updateReadStatus(hmAux, position);
-                    }
-                }
+//                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+//                    if (delegate != null) {
+//                        delegate.updateReadStatus(hmAux, position);
+//                    }
+//                }
 
                 iv_me_img.setVisibility(View.GONE);
                 v_space_right.setVisibility(View.VISIBLE);
+                iv_badge.setVisibility(View.GONE);
 
                 break;
 
+            // Me IMG
             case 1:
 
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
@@ -240,6 +248,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
                 iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
                 v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.VISIBLE);
                 iv_other_img.setVisibility(View.GONE);
@@ -268,9 +277,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
+                iv_badge.setVisibility(View.VISIBLE);
 
                 break;
 
+            // Me TXT
             case 2:
 
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
@@ -282,6 +293,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
                 iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
                 v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.VISIBLE);
                 iv_other_img.setVisibility(View.GONE);
@@ -309,8 +321,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
+                iv_badge.setVisibility(View.VISIBLE);
+
                 break;
 
+            // Other TXT
             case 3:
 
                 v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
@@ -322,6 +337,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
                 iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
                 v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.GONE);
                 iv_other_img.setVisibility(View.VISIBLE);
@@ -347,16 +363,35 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 tv_name.setText(hmAux.get("user_nick"));
 
-                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
-                    if (delegate != null) {
-                        delegate.updateReadStatus(hmAux, position);
-                    }
-                }
+//                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+//                    if (delegate != null) {
+//                        delegate.updateReadStatus(hmAux, position);
+//                    }
+//                }
 
                 iv_me_img.setVisibility(View.GONE);
                 v_space_right.setVisibility(View.VISIBLE);
+                iv_badge.setVisibility(View.GONE);
 
                 break;
+        }
+        //
+        // Badge Status for All
+        if (hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
+            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_clock_chat));
+        } else {
+            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_black_24dp));
+        }
+        //
+        if (hmAux.get(CH_MessageDao.ALL_DELIVERED).equalsIgnoreCase("1")) {
+            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp));
+        }
+        //
+        if (hmAux.get(CH_MessageDao.ALL_READ).equalsIgnoreCase("1")) {
+            Drawable done_icon = context.getDrawable(R.drawable.ic_done_all_black_24dp);
+            done_icon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green), PorterDuff.Mode.SRC_ATOP);
+            //
+            iv_badge.setImageDrawable(done_icon);
         }
         //
         return convertView;
