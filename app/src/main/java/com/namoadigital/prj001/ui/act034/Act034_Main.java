@@ -100,6 +100,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("customer_list_ttl");
         transList.add("other_customers_msg_lbl");
         transList.add("trying_to_reconnect_lbl");
+        transList.add("search_room_hint");
+        transList.add("no_room_found_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

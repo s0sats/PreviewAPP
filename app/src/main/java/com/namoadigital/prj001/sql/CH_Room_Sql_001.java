@@ -15,12 +15,14 @@ public class CH_Room_Sql_001 implements Specification {
 
     private Long customer_code;
     private String user_code;
+    private String room_desc;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_RoomDao.columns);
     private String sqlite_db_format = "%Y-%m-%d %H:%M:%S";//formatação para comparação não exibição
 
-    public CH_Room_Sql_001(Long customer_code, String user_code) {
+    public CH_Room_Sql_001(Long customer_code, String user_code, String room_desc) {
         this.customer_code = customer_code;
         this.user_code = user_code;
+        this.room_desc = room_desc.trim().length() == 0 ? null : room_desc.trim() ;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class CH_Room_Sql_001 implements Specification {
                         "       GROUP BY\n" +
                         "            r.room_code) T\n" +
                         " LEFT JOIN\n" +
-                        "      "+ CH_MessageDao.TABLE+" m ON r.room_code = m.room_code    " +
+                        "      "+ CH_MessageDao.TABLE+" m ON r.room_code = m.room_code\n" +
                         " WHERE\n" +
                         "    (\n" +
                         "     (t.HAS_NULL = 0 and t.msg_pk = m.msg_pk)\n" +
@@ -65,13 +67,14 @@ public class CH_Room_Sql_001 implements Specification {
                         "      or\n" +
                         "     (t.HAS_NULL = 1 AND t.msg_pk is null and t.room_code= r.room_code) \n" +
                         "    \n" +
-                        "    )" +
+                        "    )\n" +
+                        "    and ('"+room_desc+"' is null or r.room_desc like '%"+room_desc+"%')\n" +
                         " ORDER BY  \n" +
                         "    strftime('"+sqlite_db_format+"',m.msg_date,'localtime') desc,\n" +
-                        "    r.room_desc")
+                        "    r.room_desc\n")
                 .append(";")
                 .append(HmAuxFields+"#"+CH_MessageDao.MSG_DATE+"#"+CH_MessageDao.MSG_OBJ+"#"+BADGE)
-                .toString();
+                .toString().replace("'%null%'","null").replace("'null'","null");
 
     }
 }

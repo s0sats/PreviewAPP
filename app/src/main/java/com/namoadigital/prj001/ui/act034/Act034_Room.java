@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
@@ -49,6 +50,9 @@ public class Act034_Room extends BaseFragment {
     private Act034_Main mMain;
     private long selected_customer;
     private CH_MessageDao messageDao;
+    private LinearLayout ll_room_content;
+    private MKEditTextNM mket_search_room;
+    private TextView tv_no_result;
 
     public void setSelected_customer(long selected_customer) {
         this.selected_customer = selected_customer;
@@ -86,28 +90,25 @@ public class Act034_Room extends BaseFragment {
         //
         tv_others_customer_msg_qty = (TextView) view.findViewById(R.id.act034_room_tv_others_customers_msg_qty);
         //
+        ll_room_content = (LinearLayout) view.findViewById(R.id.act034_room_ll_room_content);
+        //
+        mket_search_room = (MKEditTextNM) view.findViewById(R.id.act034_room_mket_search_room);
+        //
         lv_msg = (ListView) view.findViewById(R.id.act034_room_lv_msg);
+        //
+        tv_no_result = (TextView) view.findViewById(R.id.act034_room_tv_no_result);
         //
         roomDao = new CH_RoomDao(context);
         //
         messageDao = new CH_MessageDao(context);
         //
-        //loadMsgList();
-        //loadRoomList();
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         //
-        tv_others_customer_msg_lbl.setText(hmAux_Trans.get("other_customers_msg_lbl"));
-        //
-        //tv_others_customer_msg_qty.setText("666");
-        //
-        loadRoomList();
-        //
-        updateOtherMsgInfo();
+        loadDataToScreen();
     }
 
     public void loadRoomList() {
@@ -115,7 +116,8 @@ public class Act034_Room extends BaseFragment {
                 (ArrayList<HMAux>) roomDao.query_HM(
                         new CH_Room_Sql_001(
                                 selected_customer,
-                                ToolBox_Con.getPreference_User_Code(context)
+                                ToolBox_Con.getPreference_User_Code(context),
+                                mket_search_room.getText().toString()
                         ).toSqlQuery()
                 );
         //
@@ -137,6 +139,13 @@ public class Act034_Room extends BaseFragment {
             });
             //
             lv_msg.setAdapter(mAdapter);
+            //Esconde de nenhuma sala encontrada e exibe lista
+            tv_no_result.setVisibility(View.GONE);
+            lv_msg.setVisibility(View.VISIBLE);
+        }else{
+            //Esconde lista e exibe msg de nenhuma sala encontrada
+            lv_msg.setVisibility(View.GONE);
+            tv_no_result.setVisibility(View.VISIBLE);
         }
 
     }
@@ -215,12 +224,32 @@ public class Act034_Room extends BaseFragment {
                 mMain.callAct035(context,room);
             }
         });
+        //
+        mket_search_room.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+                loadRoomList();
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+
+            }
+
+        });
+
 
     }
 
     @Override
     public void loadDataToScreen() {
         if(bStatus){
+            tv_others_customer_msg_lbl.setText(hmAux_Trans.get("other_customers_msg_lbl"));
+            //
+            mket_search_room.setHint(hmAux_Trans.get("search_room_hint"));
+            //
+            tv_no_result.setText(hmAux_Trans.get("no_room_found_lbl"));
+            //
             loadRoomList();
             //
             updateOtherMsgInfo();
