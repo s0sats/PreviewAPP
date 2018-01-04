@@ -8,7 +8,7 @@ public class Chat_S_Read {
 
     int msg_prefix;
     int msg_code;
-    String room_code;
+    //String room_code;
 
     public int getMsg_prefix() {
         return msg_prefix;
@@ -26,12 +26,12 @@ public class Chat_S_Read {
         this.msg_code = msg_code;
     }
 
-    public String getRoom_code() {
+   /* public String getRoom_code() {
         return room_code;
     }
 
     public void setRoom_code(String room_code) {
         this.room_code = room_code;
-    }
+    }*/
 
 }

@@ -405,7 +405,7 @@ public class SingletonWebSocket {
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
             sHistoricalMessage.setMsg_ref_prefix(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
             sHistoricalMessage.setMsg_ref_code(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
-            sHistoricalMessage.setAction(Chat_S_Historical_Message.ACTION_LOGIN);
+            sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
 
             //
             attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
@@ -774,87 +774,112 @@ public class SingletonWebSocket {
                     param,
                     new TypeToken<ArrayList<Chat_C_Message>>() {
                     }.getType());
-            //Atualiza total de msg e contador de msg
-            total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
-            count_msg += messages.size();
-
-            for (Chat_C_Message chatCMessage : messages) {
-                //Analise da lista de de - para
-                if (ToolBox_Con.getPreference_User_Code(context).equals(
-                        String.valueOf(chatCMessage.getUser_code()))
-                        && chatCMessage.getDelivered() == 0
-                        ) {
-                    CH_Message localMessage =
-                            messageDao.getByString(
-                                    new CH_Message_Sql_014(
-                                            chatCMessage.getMsg_prefix(),
-                                            chatCMessage.getMsg_tmp(),
-                                            ToolBox_Con.getPreference_User_Code(context)
-                                    ).toSqlQuery()
-                            );
-                    if (
-                            chatCMessage.getMsg_tmp() > 0 &&
-                            chatCMessage.getMsg_code() > 0 &&
-                            localMessage != null &&
-                            localMessage.getTmp() > -1 &&
-                            localMessage.getMsg_code() == 0
-                        ) {
-                        cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
-
-                    } else if (
-                                chatCMessage.getMsg_tmp() > 0 &&
-                                chatCMessage.getMsg_code() > 0 &&
-                                localMessage != null &&
-                                localMessage.getTmp() == -1
-                            ) {
-                        //Se msg é minha, ja teve de para processado em outro device,
-                        //zera o tmp vindo do server e para gerar um novo.
-                        chatCMessage.setMsg_tmp(0);
-                        messagesMineToInsert.add(chatCMessage);
-                    }
-                } else {
-                    cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
-                }
-            }
-            //Se existir, insere msg minhas que não estão locais.
-            //Esse caso só acontece com msg que eu criei em outro device e
-            //recebe ela no cMessage em outro device.
-            if (messagesMineToInsert.size() > 0) {
-                ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
-                //
-                messageDao.addUpdate(chMessages, false);
-            }
-            //Se existe alguma msg minha que recebeu msg_code, mas aind anão processei de-para
-            //Gera arquivo texto com as msg
-            if (cMessagesTmp.length() > 0) {
-                cMessageTmpFilePath = createMsgsFile(cMessagesTmp.toString(),CHAT_TYPE_FILE_TMP );
-            }
-
-            if (cMessagesNew.length() > 0) {
-                cMessageFilePath = createMsgsFile(cMessagesNew.toString(),null);
+            /*
+            * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
+            * e direciona msgs para o serviço.
+            */
+            if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
+                cMessageFilePath = createMsgsFile(param,null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
                 bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
-                bundle.putString(Constant.CHAT_WS_MSG_TMP_PARAM, cMessageTmpFilePath);
-
+                bundle.putString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
+                //
                 cMessageIntent.putExtras(bundle);
                 context.sendBroadcast(cMessageIntent);
-                //
-            }
 
+            }else {
+                //Atualiza total de msg e contador de msg
+                total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
+
+                for (Chat_C_Message chatCMessage : messages) {
+                    //Analise da lista de de - para
+                    if (ToolBox_Con.getPreference_User_Code(context).equals(
+                            String.valueOf(chatCMessage.getUser_code()))
+                            && chatCMessage.getDelivered() == 0
+                            ) {
+                        CH_Message localMessage =
+                                messageDao.getByString(
+                                        new CH_Message_Sql_014(
+                                                chatCMessage.getMsg_prefix(),
+                                                chatCMessage.getMsg_tmp(),
+                                                ToolBox_Con.getPreference_User_Code(context)
+                                        ).toSqlQuery()
+                                );
+                        if (
+                                chatCMessage.getMsg_tmp() > 0 &&
+                                        chatCMessage.getMsg_code() > 0 &&
+                                        localMessage != null &&
+                                        localMessage.getTmp() > -1 &&
+                                        localMessage.getMsg_code() == 0
+                                ) {
+                            cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
+
+                        } else if (
+                                chatCMessage.getMsg_tmp() > 0 &&
+                                        chatCMessage.getMsg_code() > 0 &&
+                                        localMessage != null &&
+                                        localMessage.getTmp() == -1
+                                ) {
+                            //Se msg é minha, ja teve de para processado em outro device,
+                            //zera o tmp vindo do server e para gerar um novo.
+                            chatCMessage.setMsg_tmp(0);
+                            messagesMineToInsert.add(chatCMessage);
+                        }
+                    } else {
+                        cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
+                    }
+                }
+                //Se existir, insere msg minhas que não estão locais.
+                //Esse caso só acontece com msg que eu criei em outro device e
+                //recebe ela no cMessage em outro device.
+                if (messagesMineToInsert.size() > 0) {
+                    ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
+                    //
+                    messageDao.addUpdate(chMessages, false);
+                }
+                //Se existe alguma msg minha que recebeu msg_code, mas aind anão processei de-para
+                //Gera arquivo texto com as msg
+                if (cMessagesTmp.length() > 0) {
+                    cMessageTmpFilePath = createMsgsFile(cMessagesTmp.toString(), CHAT_TYPE_FILE_TMP);
+                }
+
+                if (cMessagesNew.length() > 0) {
+                    cMessageFilePath = createMsgsFile(cMessagesNew.toString(), null);
+                    //
+                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
+                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+                    bundle.putString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
+                    bundle.putString(Constant.CHAT_WS_MSG_TMP_PARAM, cMessageTmpFilePath);
+                    bundle.putLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, messages.size());
+
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
+                    //
+                }
+                //Atualiza contador
+                count_msg += messages.size();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean processAllMsgs(){
+    public boolean areAllMsgProcessed(){
         return count_msg == total_msg;
     }
 
     public void resetProcessMsgCounter(){
         total_msg  = count_msg = 0;
+    }
+
+    public long updateCounterMsg(long increment){
+        count_msg += increment;
+        return count_msg;
     }
 
     //endregion

@@ -51,12 +51,13 @@ public class WS_C_Message_Tmp extends IntentService {
 
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM, null);
             String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM, "");
+            long messageIncrement = bundle.getLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, 0);
 
             if (json_param == null) {
                 throw new Exception();
             }
 
-            processC_Message_Tmp(json_param,ws_event);
+            processC_Message_Tmp(json_param,ws_event,messageIncrement);
 
         } catch (Exception e) {
 
@@ -73,7 +74,7 @@ public class WS_C_Message_Tmp extends IntentService {
 
     }
 
-    private void processC_Message_Tmp(String json_param, String ws_event) throws JSONException {
+    private void processC_Message_Tmp(String json_param, String ws_event, long messageIncrement) throws JSONException {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<Chat_C_Message_Tmp> messageTmpList = new ArrayList<>();
         File msgTmpListFile = null;
@@ -166,9 +167,11 @@ public class WS_C_Message_Tmp extends IntentService {
                 msgTmpListFile.delete();
                 //
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                //
+                singletonWebSocket.updateCounterMsg(messageIncrement);
                 //Verifica se todas as msg foram processadas
                 //Se foram, reseta contador, dispara broadcast e envia offlines
-                if(singletonWebSocket.processAllMsgs()){
+                if(singletonWebSocket.areAllMsgProcessed()){
                     singletonWebSocket.resetProcessMsgCounter();
                     //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
