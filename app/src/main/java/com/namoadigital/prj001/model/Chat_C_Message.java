@@ -28,6 +28,7 @@ public class Chat_C_Message {
     private String user_nick;
     private int delivered_user;
     private String socket_id;
+    private long msg_count;
 
     public String getRoom_type() {
         return room_type;
@@ -171,6 +172,14 @@ public class Chat_C_Message {
 
     public void setSocket_id(String socket_id) {
         this.socket_id = socket_id;
+    }
+
+    public long getMsg_count() {
+        return msg_count;
+    }
+
+    public void setMsg_count(long msg_count) {
+        this.msg_count = msg_count;
     }
 
     public CH_Message toCH_MessageObj(){

@@ -62,6 +62,16 @@ public class SingletonWebSocket {
 
     private Context context;
     private File log_file = null;
+    private long total_msg = 0;
+    private long count_msg = 0;
+
+    public long getTotal_msg() {
+        return total_msg;
+    }
+
+    public long getCount_msg() {
+        return count_msg;
+    }
 
     /*
     Indica se é necessário refazer a conexao em caso de queda do servico
@@ -686,6 +696,8 @@ public class SingletonWebSocket {
     private void checkForNewLogin() {
         if (!mSocket_ID.equalsIgnoreCase(mSocket.id()) && mSocket.id() != null) {
             mSocket_ID = mSocket.id();
+            //Reseta variaveis do cHistoricalMessage
+            resetProcessMsgCounter();
             //
             attemptSendLogin();
         }
@@ -756,13 +768,16 @@ public class SingletonWebSocket {
         //
         String cMessageFilePath = "";
         String cMessageTmpFilePath = "";
-
+        //
         try {
             ArrayList<Chat_C_Message> messages = gson.fromJson(
                     param,
                     new TypeToken<ArrayList<Chat_C_Message>>() {
                     }.getType());
-            //
+            //Atualiza total de msg e contador de msg
+            total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
+            count_msg += messages.size();
+
             for (Chat_C_Message chatCMessage : messages) {
                 //Analise da lista de de - para
                 if (ToolBox_Con.getPreference_User_Code(context).equals(
@@ -832,6 +847,14 @@ public class SingletonWebSocket {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean processAllMsgs(){
+        return count_msg == total_msg;
+    }
+
+    public void resetProcessMsgCounter(){
+        total_msg  = count_msg = 0;
     }
 
     //endregion

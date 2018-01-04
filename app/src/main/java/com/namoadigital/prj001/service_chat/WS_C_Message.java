@@ -125,6 +125,11 @@ public class WS_C_Message extends IntentService {
                     //
                     sDeliveredList.add(gson.toJsonTree(sDelivered));
                 }
+                /*
+                *
+                * TRATAR SE VEI READ 0 E JA ESTA READ 1 NO BANCO ?!
+                *
+                * */
                 //
                 messageDao.addUpdate(chMessage);
                 //
@@ -197,8 +202,6 @@ public class WS_C_Message extends IntentService {
                 msgListFile.delete();
             }
             //
-            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
-            //
             if (startDownloadService) {
                 startDownloadService();
             }
@@ -225,7 +228,15 @@ public class WS_C_Message extends IntentService {
                     startCMessageTmpService(messageTmpFile);
                 }else{
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-                    singletonWebSocket.attempSendOfflineMessages();
+                    //Verifica se todas as msg foram processadas
+                    //Se foram, reseta contador, dispara broadcast e envia offlines
+                    if(singletonWebSocket.processAllMsgs()){
+                        singletonWebSocket.resetProcessMsgCounter();
+                        //
+                        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+                        //
+                        singletonWebSocket.attempSendOfflineMessages();
+                    }
                 }
             }
         }
