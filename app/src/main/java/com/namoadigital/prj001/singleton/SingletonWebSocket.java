@@ -862,7 +862,7 @@ public class SingletonWebSocket {
                     //
                 }
                 //Atualiza contador
-                count_msg += messages.size();
+               // count_msg += messages.size();
             }
         } catch (Exception e) {
             e.printStackTrace();
