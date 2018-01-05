@@ -6,9 +6,6 @@ package com.namoadigital.prj001.model;
 
 public class Chat_S_Historical_Message {
 
-    public static final String ACTION_LOGIN = "LOGIN";
-    public static final String ACTION_SCROLL_UP = "SCROLL_UP";
-
     private String room_code;
     private Integer msg_ref_prefix;
     private Integer msg_ref_code;

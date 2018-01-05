@@ -53,8 +53,10 @@ public class WS_C_Message extends IntentService {
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
             String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM, "");
             String messageTmpFile = bundle.getString(Constant.CHAT_WS_MSG_TMP_PARAM, null);
+            String historicalAction = bundle.getString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, null);
+            long messageIncrement = bundle.getLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, 0);
 
-            processC_Message(json_param, ws_event, messageTmpFile);
+            processC_Message(json_param, ws_event, messageTmpFile,historicalAction, messageIncrement);
 
         } catch (Exception e) {
 
@@ -71,7 +73,7 @@ public class WS_C_Message extends IntentService {
 
     }
 
-    private void processC_Message(String json_param, String ws_event, String messageTmpFile) {
+    private void processC_Message(String json_param, String ws_event, String messageTmpFile, String historicalAction, long messageIncrement) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<Chat_C_Message> messages = new ArrayList<>();
         File msgListFile = null;
@@ -189,7 +191,7 @@ public class WS_C_Message extends IntentService {
                     //
                     sRead.setMsg_prefix(ch_message.getMsg_prefix());
                     sRead.setMsg_code(ch_message.getMsg_code());
-                    sRead.setRoom_code(ch_message.getRoom_code());
+                    //sRead.setRoom_code(ch_message.getRoom_code());
                     //
                     sReadList.add(gson.toJsonTree(sRead));
                 }
@@ -220,17 +222,19 @@ public class WS_C_Message extends IntentService {
                 );
             }
             //
-            //Se diferente de null, o serviço foi chamado do cHistoricalMessage
+            //Se diferente de null, o serviço foi chamado do cHistoricalMessage Action Login
             if(messageTmpFile != null){
                 //Se maior que 0, existe arquivo para ser processado.
                 //Se não houver arquivo, tenta enviar msg offline
                 if(messageTmpFile.length() > 0) {
-                    startCMessageTmpService(messageTmpFile);
+                    startCMessageTmpService(messageTmpFile, messageIncrement);
                 }else{
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                    //Incrementa contador
+                    singletonWebSocket.updateCounterMsg(messageIncrement);
                     //Verifica se todas as msg foram processadas
                     //Se foram, reseta contador, dispara broadcast e envia offlines
-                    if(singletonWebSocket.processAllMsgs()){
+                    if(singletonWebSocket.areAllMsgProcessed()){
                         singletonWebSocket.resetProcessMsgCounter();
                         //
                         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
@@ -238,15 +242,19 @@ public class WS_C_Message extends IntentService {
                         singletonWebSocket.attempSendOfflineMessages();
                     }
                 }
+            }else{
+
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
             }
         }
     }
 
-    private void startCMessageTmpService(String messageTmpFile) {
+    private void startCMessageTmpService(String messageTmpFile, long messageIncrement) {
         Intent cMessageTmpIntent = new Intent(getApplicationContext(), WBR_C_Message_Tmp.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.CHAT_WS_JSON_PARAM, messageTmpFile);
         bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+        bundle.putLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, messageIncrement);
         cMessageTmpIntent.putExtras(bundle);
         //
         getApplicationContext().sendBroadcast(cMessageTmpIntent);

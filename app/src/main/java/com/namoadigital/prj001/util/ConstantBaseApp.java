@@ -412,7 +412,9 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
     public static final String CHAT_WS_EVENT_PARAM = "WS_EVENT_PARAM";
+    public static final String CHAT_WS_HISTORICAL_ACTION_PARAM = "WS_HISTORICAL_ACTION_PARAM";
     public static final String CHAT_WS_MSG_TMP_PARAM = "WS_MSG_TMP_PARAM";
+    public static final String CHAT_WS_MSG_COUNTER_PARAM = "WS_MSG_COUNTER_PARAM";
     public static final String CHAT_MESSAGE_TYPE_IMAGE = "IMAGE";
     public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
@@ -429,6 +431,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE_CHAT_STATUS_CHANGE = "CHAT_BR_TYPE_CHAT_STATUS_CHANGE";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
+    public static final String CHAT_BR_TYPE_MSG_SCROLL_UP = "CHAT_BR_TYPE_MSG_SCROLL_UP";
     public static final String CHAT_BR_TYPE_MSG_TMP = "CHAT_BR_TYPE_MSG_TMP";
     public static final String CHAT_BR_TYPE_MSG_ALL_DELIVERED = "CHAT_BR_TYPE_MSG_ALL_DELIVERED";
     public static final String CHAT_BR_TYPE_MSG_ALL_READ = "CHAT_BR_TYPE_MSG_ALL_READ";
@@ -436,6 +439,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
     public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
+    public static final String CHAT_HISTORICAL_MSG_ACTION_LOGIN = "LOGIN";
+    public static final String CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP = "SCROLL_UP";
     //Errors
     public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
     public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";

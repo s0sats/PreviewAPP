@@ -40,16 +40,35 @@
 
     </LinearLayout>
 
+    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+        android:id="@+id/act034_room_mket_search_room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mBARCODE="false"
+        app:mOCR="false"
+        app:mNFC="false"
+        android:padding="10dp"
+        android:inputType="text"
+        />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/act034_room_lv_msg"
+        <LinearLayout
+            android:id="@+id/act034_room_ll_room_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="5dp" />
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/act034_room_lv_msg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/padrao_TRANSPARENT"
+                android:dividerHeight="5dp" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/act034_room_tv_no_result"
