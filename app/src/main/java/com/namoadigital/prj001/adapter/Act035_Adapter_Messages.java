@@ -42,6 +42,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     private String mUser_Code;
 
+    private int mSizeAddUpdate = 0;
+
     public static boolean processingHMAux = false;
 
     public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
@@ -68,6 +70,14 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 //        this.delegate = delegate;
 //    }
 
+
+    public int getmSizeAddUpdate() {
+        int localValue = mSizeAddUpdate;
+        mSizeAddUpdate = 0;
+        //
+        return localValue;
+    }
+
     public void refill(List<HMAux> dadosR) {
         data.clear();
         data.addAll(dadosR);
@@ -76,7 +86,38 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     public void addMessages(List<HMAux> dadosR) {
-        data.addAll(dadosR);
+        //
+        List<HMAux> dadosRNew = new ArrayList<>();
+        //
+        for (int i = 0; i < dadosR.size(); i++) {
+            HMAux msg = dadosR.get(i);
+            //
+            boolean sFound = false;
+            //
+            for (int j = data.size() - 1; j >= 0; j--) {
+                HMAux item = data.get(j);
+                if (msg.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(item.get(CH_MessageDao.MSG_PREFIX)) &&
+                        msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
+                    sFound = true;
+                    //
+                    data.set(j, msg);
+                    //
+                    break;
+                }
+            }
+            //
+            if (!sFound) {
+                dadosRNew.add(msg);
+            }
+        }
+        //
+        if (dadosRNew.size() > 0) {
+            data.addAll(dadosRNew);
+            //
+            mSizeAddUpdate = dadosRNew.size();
+        } else {
+            mSizeAddUpdate = 0;
+        }
         //
         notifyDataSetChanged();
     }

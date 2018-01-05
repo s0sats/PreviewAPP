@@ -135,6 +135,8 @@ public class WS_C_Message extends IntentService {
                 //
                 messageDao.addUpdate(chMessage);
                 //
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+                //
                 if (sDeliveredList.size() > 0) {
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                     singletonWebSocket.attemptToDeliveryMessage(
@@ -243,8 +245,11 @@ public class WS_C_Message extends IntentService {
                     }
                 }
             }else{
-
-                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
+                if(ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
+                }else{
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+                }
             }
         }
     }

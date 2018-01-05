@@ -83,6 +83,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private int mTotal = 0;
     private int offSetV = 100;
 
+    private CH_MessageDao chMessageDao;
+
+    private MyRunnable_01 m1;
+    private MyRunnable_02 m2;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -409,6 +414,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
+
     private void processing_cMessage(final Context context) {
         if (!isProcessing_C_Message) {
             isProcessing_C_Message = true;
@@ -416,33 +422,31 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             mThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+
+                    CH_MessageDao chMessageDao = new CH_MessageDao(context);
+                    mTotal = 0;
+                    statusReorderProcess = false;
+
+                    m1 = new MyRunnable_01();
+                    m2 = new MyRunnable_02();
+
                     try {
-                        mTotal = 0;
-                        //
-                        statusReorderProcess = false;
-                        //
-                        CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
                         messages = (ArrayList<HMAux>) chMessageDao.query_HM(
                                 new CH_Message_Sql_008(mRoom_code).toSqlQuery()
                         );
 
                         while (messages.size() > 0) {
-
-                            mTotal += messages.size();
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (turnOnReorderIcon(dados, messages)) {
-                                        statusReorderProcess = true;
-                                    }
+                            //
+                            // Update Screen
+                            synchronized (m1) {
+                                try {
+                                    runOnUiThread(m1);
                                     //
-                                    mPresenter.updateReadStatus(messages);
-                                    //
-                                    act035_adapter_messages.addMessages(messages);
+                                    m1.wait();
+                                } catch (InterruptedException e) {
                                 }
-                            });
+                            }
 
                             chMessageDao.addUpdate(
                                     new CH_Message_Sql_009(
@@ -455,17 +459,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             );
                         }
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (statusReorderProcess) {
-                                } else {
-                                    if (mTotal == 1) {
-                                        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-                                    }
-                                }
+                        //
+                        // Update Screen
+                        synchronized (m2) {
+                            try {
+                                runOnUiThread(m2);
+                                //
+                                m2.wait();
+                            } catch (InterruptedException e) {
                             }
-                        });
+                        }
 
                     } catch (Exception e) {
                     } finally {
@@ -473,9 +476,132 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     }
                 }
             });
+            //
             mThread.start();
         }
     }
+
+    private class MyRunnable_01 implements Runnable {
+
+        public void run() {
+
+            synchronized (this) {
+
+                try {
+                    if (turnOnReorderIcon(dados, messages)) {
+                        statusReorderProcess = true;
+                    }
+                    //
+                    mPresenter.updateReadStatus(messages);
+                    //
+                    act035_adapter_messages.addMessages(messages);
+                    //
+                    mTotal += act035_adapter_messages.getmSizeAddUpdate();
+                } catch (Exception e) {
+                    String erro = e.toString();
+                }
+                //
+                this.notify();
+            }
+        }
+    }
+
+    private class MyRunnable_02 implements Runnable {
+
+        public void run() {
+
+            synchronized (this) {
+
+                try {
+                    if (statusReorderProcess) {
+                    } else {
+                        if (mTotal == 1) {
+                            mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+                        }
+                    }
+                } catch (Exception e) {
+                    String erro = e.toString();
+                }
+                //
+                this.notify();
+            }
+        }
+    }
+
+//    private void processing_cMessage(final Context context) {
+//        if (!isProcessing_C_Message) {
+//            isProcessing_C_Message = true;
+//
+//            mThread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    CH_MessageDao chMessageDao = new CH_MessageDao(context);
+//                    mTotal = 0;
+//                    statusReorderProcess = false;
+//
+//                    try {
+//                        messages = (ArrayList<HMAux>) chMessageDao.query_HM(
+//                                new CH_Message_Sql_008(mRoom_code).toSqlQuery()
+//                        );
+//
+//                        while (messages.size() > 0) {
+//
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//
+//                                    if (turnOnReorderIcon(dados, messages)) {
+//                                        statusReorderProcess = true;
+//                                    }
+//                                    //
+//                                    ArrayList<HMAux> messagesTMP = new ArrayList<>();
+//                                    messagesTMP.addAll(messages);
+//
+//                                    mPresenter.updateReadStatus(messagesTMP);
+//                                    //
+//                                    act035_adapter_messages.addMessages(messagesTMP);
+//                                    //
+//                                    mTotal += act035_adapter_messages.getmSizeAddUpdate();
+//                                }
+//                            });
+//
+//                            chMessageDao.addUpdate(
+//                                    new CH_Message_Sql_009(
+//                                            messages
+//                                    ).toSqlQuery()
+//                            );
+//
+//                            messages = (ArrayList<HMAux>) chMessageDao.query_HM(
+//                                    new CH_Message_Sql_008(mRoom_code).toSqlQuery()
+//                            );
+//
+//                        }
+//
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (statusReorderProcess) {
+//                                } else {
+//                                    if (mTotal == 1) {
+//                                        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+//                                    }
+//                                }
+//
+//
+//                            }
+//                        });
+//
+//                    } catch (Exception e) {
+//                    } finally {
+//                        isProcessing_C_Message = false;
+//                    }
+//                }
+//            });
+//
+//            mThread.start();
+//        }
+//    }
 
     private boolean turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
 
@@ -515,14 +641,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void processing_FromTo(Context context) {
-        CH_MessageDao chMessageDao = new CH_MessageDao(context);
-
-        act035_adapter_messages.refill(chMessageDao.query_HM(
-                new CH_Message_Sql_012(dados).toSqlQuery()
-        ));
-    }
-
-    private void processing_FromTo(Context context, HMAux mAux) {
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
         act035_adapter_messages.refill(chMessageDao.query_HM(

@@ -161,7 +161,6 @@ public class WS_C_Message_Tmp extends IntentService {
             if(hasImage){
                 startUpload(getApplicationContext());
             }
-
             //
             if(msgTmpListFile != null){
                 msgTmpListFile.delete();
@@ -178,6 +177,8 @@ public class WS_C_Message_Tmp extends IntentService {
                     //
                     singletonWebSocket.attempSendOfflineMessages();
                 }
+            } else {
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
             }
         }
     }
