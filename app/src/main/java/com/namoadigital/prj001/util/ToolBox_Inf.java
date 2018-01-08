@@ -3,6 +3,7 @@ package com.namoadigital.prj001.util;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -39,6 +41,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.EV_ProfileDao;
@@ -87,6 +90,7 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
+import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -2957,5 +2961,101 @@ public class ToolBox_Inf {
         return px;
     }
 
+    public static void showChatNotification(Context context, String type, String attempt) {
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        RemoteViews view =
+                new RemoteViews(context.getPackageName(), R.layout.notification_chat_msg);
+        //
+        try {
+            switch (type){
+                case Constant.CHAT_NOTIFICATION_TYPE_MESSAGE:
+                    CH_RoomDao roomDao = new CH_RoomDao(context);
+                    //
+                    HMAux msgInfo =
+                            roomDao.getByStringHM(
+                                    new Sql_Chat_Notification_001(
+                                            ToolBox_Con.getPreference_User_Code(context)
+                                    ).toSqlQuery()
+                            );
+                    //
+                    if (msgInfo != null && msgInfo.size() > 0) {
+                        view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_user_msg_on);
+                        if (
+                                msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
+                                        msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
+                                ) {
+                            view.setTextViewText(
+                                    R.id.notification_chat_msg_tv_msg_1,
+                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " disse:"
+                            );
+                            HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
+                            //
+                            view.setTextViewText(
+                                    R.id.notification_chat_msg_tv_msg_2,
+                                    msgAux.get("type").equals("TEXT") ? msgAux.get("data") :msgAux.get("type")
+                            );
 
+                        }else{
+                            view.setTextViewText(
+                                    R.id.notification_chat_msg_tv_msg_1,
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " conversas"
+                            );
+                            view.setTextViewText(
+                                    R.id.notification_chat_msg_tv_msg_2,
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " salas"
+                            );
+                        }
+
+                    }
+                    break;
+                case  Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING:
+                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.sync_notification_animation);
+                    view.setTextViewText(
+                            R.id.notification_chat_msg_tv_msg_1,
+                            "Sem conexão ao N-Chat"
+                    );
+                    view.setTextViewText(
+                            R.id.notification_chat_msg_tv_msg_2,
+                            "Tentativa " +attempt
+                    );
+                    break;
+
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+            builder.setSmallIcon( type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
+            builder.setAutoCancel(true);
+            builder.setContent(view);
+
+            Notification notification = builder.build();
+            //
+            nm.notify(Constant.NOTIFICATION_CHAT, notification);
+
+        } catch (Exception e) {
+            registerException(CLASS_NAME,e);
+        }
+
+    }
+
+    public static void cancelChatNotification(Context context) {
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(Constant.NOTIFICATION_CHAT);
+    }
+
+    public static HMAux getChatMsgContent(String msg_obj){
+        HMAux hmAux = new HMAux();
+        //
+        try{
+            JSONObject jsonObj = new JSONObject(msg_obj);
+            JSONObject jsonMsg = jsonObj.getJSONObject("message");
+            hmAux.put("type",String.valueOf(jsonMsg.getString("type")));
+            hmAux.put("data",String.valueOf(jsonMsg.getString("data")));
+            return hmAux;
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
 }

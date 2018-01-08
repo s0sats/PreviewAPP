@@ -324,6 +324,8 @@ public class SingletonWebSocket {
     private Emitter.Listener onReconnectReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            //Cancela notificação de reconnectando
+            ToolBox_Inf.cancelChatNotification(context);
             if (mSocket != null) {
                 Log.d("ChatEvent", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
                 //Chama metodo que verifica se precisa
@@ -348,6 +350,7 @@ public class SingletonWebSocket {
             HMAux hmAux = new HMAux();
             hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
             ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
+            ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING,String.valueOf(args[0]));
         }
     };
 

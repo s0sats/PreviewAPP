@@ -239,6 +239,8 @@ public class WS_C_Message extends IntentService {
                     if(singletonWebSocket.areAllMsgProcessed()){
                         singletonWebSocket.resetProcessMsgCounter();
                         //
+                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                        //
                         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                         //
                         singletonWebSocket.attempSendOfflineMessages();
@@ -248,6 +250,8 @@ public class WS_C_Message extends IntentService {
                 if(ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 }else{
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                    //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                 }
             }
