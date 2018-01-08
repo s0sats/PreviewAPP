@@ -185,7 +185,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     @Override
     public void startReceivers(boolean start_stop) {
-        brRoomReceiver = new BR_Room();
+        if (brRoomReceiver == null) {
+            brRoomReceiver = new BR_Room();
+        }
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
         //
@@ -193,6 +195,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(brRoomReceiver,brRoomFilter);
         }else{
             LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(brRoomReceiver);
+            //
+            brRoomReceiver = null;
         }
     }
 
