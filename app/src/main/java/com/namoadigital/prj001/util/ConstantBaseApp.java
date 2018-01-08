@@ -114,7 +114,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
     public static int DB_VERSION_CUSTOM;
 
-    public static String DB_NAME_CHAT;
+    public static String DB_NAME_CHAT = "namoa_chat.db3";
     public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
     public static int DB_VERSION_CHAT;
 
