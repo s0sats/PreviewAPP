@@ -149,7 +149,7 @@ public class WS_GetCustomer extends IntentService {
                 //
                 File[] files_db = getListDB("namoa_sms");
                 File[] files_db_mult = getListDB("C_");
-                File[] files_db_chat = getListDB(Constant.DB_MODE_CHAT);
+                File[] files_db_chat = getListDB(Constant.DB_NAME_CHAT.substring(0,Constant.DB_NAME_CHAT.length() -4));
                 File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
                 File[] files_support = ToolBox_Inf.getListOfFiles_v5(Constant.SUPPORT_PATH,"");
                 //

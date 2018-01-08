@@ -25,6 +25,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act034_003;
 import com.namoadigital.prj001.util.Constant;
@@ -129,6 +130,10 @@ public class Act034_Room extends BaseFragment {
         lv_msg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Chama msgs pendentes
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                singletonWebSocket.attemptSendPendingMessages("");
+                //Resgata sala clicada, e chama proxima tela.
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
                 room.put(ROOM_POSITION, String.valueOf(position));
                 //
