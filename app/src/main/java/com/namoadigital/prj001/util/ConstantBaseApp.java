@@ -114,7 +114,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
     public static int DB_VERSION_CUSTOM;
 
-    public static String DB_NAME_CHAT;
+    public static String DB_NAME_CHAT = "namoa_chat.db3";
     public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
     public static int DB_VERSION_CHAT;
 
@@ -305,6 +305,7 @@ public class ConstantBaseApp extends ConstantBase {
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
     public static final int NOTIFICATION_DOWNLOAD = 667;
+    public static final int NOTIFICATION_CHAT = 668;
 
     //Helper
     public static final String BACK_ACTION = "back_action";
@@ -441,6 +442,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
     public static final String CHAT_HISTORICAL_MSG_ACTION_LOGIN = "LOGIN";
     public static final String CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP = "SCROLL_UP";
+    public static final String CHAT_NOTIFICATION_TYPE_MESSAGE = "MESSAGE";
+    public static final String CHAT_NOTIFICATION_TYPE_RECONNECTING = "RECONNECTING";
     //Errors
     public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
     public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";

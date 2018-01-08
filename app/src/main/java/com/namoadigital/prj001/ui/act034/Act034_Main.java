@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -179,8 +180,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         setFrag(act034_room,FRAG_TAG_ROOM);
         //
-        //TESTE REMOVER
-        //infoDialog = showReconnectingDialog(context,null,null);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
