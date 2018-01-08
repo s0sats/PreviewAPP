@@ -78,6 +78,18 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         return localValue;
     }
 
+    public void refreshData(HMAux hmAux) {
+        for (int i = data.size() - 1; i >= 0; i--) {
+            if (hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase(data.get(i).get(CH_MessageDao.MSG_CODE))) {
+                data.set(i, hmAux);
+                //
+                notifyDataSetChanged();
+                //
+                break;
+            }
+        }
+    }
+
     public void refill(List<HMAux> dadosR) {
         data.clear();
         data.addAll(dadosR);
@@ -85,7 +97,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void addMessages(List<HMAux> dadosR) {
+    public boolean addMessages(List<HMAux> dadosR) {
+        boolean reOrder = false;
         //
         List<HMAux> dadosRNew = new ArrayList<>();
         //
@@ -112,15 +125,50 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
         //
         if (dadosRNew.size() > 0) {
+            //
+            reOrder = checkReOrder(data, (ArrayList<HMAux>) dadosRNew);
+            //
             data.addAll(dadosRNew);
             //
             mSizeAddUpdate = dadosRNew.size();
+            //
         } else {
             mSizeAddUpdate = 0;
+            //
+            reOrder = false;
         }
         //
         notifyDataSetChanged();
+        //
+        return reOrder;
     }
+
+    public boolean checkReOrder(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
+        String sMessages = messages.get(0).get("msg_pk");
+        //
+        for (int i = dados.size() - 1; i >= 0; i--) {
+            HMAux aux = dados.get(i);
+            //
+            if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
+
+                int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
+
+                if (compare < 0) {
+                    //aux é menor do que sMessage
+                    return false;
+                } else if (compare > 0) {
+                    //aux é maior do que sMessage
+                    return true;
+                } else {
+                    //aux é igual a sMessage
+                    return false;
+                }
+            }
+        }
+        //
+        return false;
+    }
+
 
     @Override
     public int getCount() {

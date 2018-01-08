@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -60,6 +61,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private ImageView iv_photo;
     private ImageView iv_send;
     private ImageView iv_reorder;
+    private ImageView iv_down;
 
     private Act035_Adapter_Messages act035_adapter_messages;
     private ArrayList<HMAux> dados;
@@ -75,6 +77,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private String mRoom_code;
 
     private BR_Room brRoomReceiver;
+    private BR_Download_Image brDownloadImageReceiver;
 
     private boolean statusCameraNew = false;
     private boolean statusReorder = false;
@@ -164,9 +167,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
         });
 
+        lv_messages.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    turnOnDownIcon();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
+
+
         iv_photo = (ImageView) findViewById(R.id.act035_iv_photo);
         iv_send = (ImageView) findViewById(R.id.act035_iv_send);
         iv_reorder = (ImageView) findViewById(R.id.act035_iv_reorder);
+        iv_down = (ImageView) findViewById(R.id.act035_iv_down);
 
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
@@ -179,9 +198,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 "FULL"
         );
         //
+        iv_reorder.setVisibility(View.GONE);
+        iv_down.setVisibility(View.GONE);
+        //
         mPresenter.setData(mRoom_code, String.valueOf(offSetV));
         //
         startReceivers(true);
+    }
+
+    private void turnOnDownIcon() {
+        int lastVisiblePosition = lv_messages.getLastVisiblePosition();
+        //
+        if (lastVisiblePosition != (dados.size() - 1)) {
+            iv_down.setVisibility(View.VISIBLE);
+        } else {
+            iv_down.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -198,6 +230,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 //
                 if (aux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
                     firstUnRead = i;
+                    //
+                    break;
                 }
 
             }
@@ -223,8 +257,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             lv_messages.setSelection(dados.size() - 1);
         }
         //
-        iv_reorder.setVisibility(View.GONE);
-        //
         sw_messages.setRefreshing(false);
     }
 
@@ -239,17 +271,28 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void startReceivers(boolean start_stop) {
         if (brRoomReceiver == null) {
-            brRoomReceiver = new Act035_Main.BR_Room();
+            brRoomReceiver = new BR_Room();
         }
+        //
+        if (brDownloadImageReceiver == null) {
+            brDownloadImageReceiver = new BR_Download_Image();
+        }
+        //
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        IntentFilter brDownloadImageFilter = new IntentFilter(Constant.CHAT_BR_FILTER_DOWNLOAD);
+        brDownloadImageFilter.addCategory(Intent.CATEGORY_DEFAULT);
         //
         if (start_stop) {
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
+            LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brDownloadImageReceiver, brDownloadImageFilter);
         } else {
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brRoomReceiver);
+            LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brDownloadImageReceiver);
             //
             brRoomReceiver = null;
+            brDownloadImageReceiver = null;
         }
     }
 
@@ -327,8 +370,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 statusReorder = true;
                 //
                 mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+                //
+                iv_reorder.setVisibility(View.GONE);
             }
         });
+        //
+        iv_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lv_messages.setSelection(dados.size() - 1);
+                //
+                iv_down.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override
@@ -371,7 +426,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onDestroy() {
         startReceivers(false);
-        //startReceiversStatus(false);
         //
         super.onDestroy();
     }
@@ -419,6 +473,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
+    private class BR_Download_Image extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            HMAux hmAux = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
+
+            if (hmAux.get(CH_MessageDao.ROOM_CODE).equalsIgnoreCase(mRoom_code)) {
+                act035_adapter_messages.refreshData(hmAux);
+            }
+        }
+    }
 
     private void processing_cMessage(final Context context) {
 
@@ -445,6 +510,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         );
 
                         Log.d("PC", messages.get(0).get("msg_obj"));
+                        //messages.get(0).put(CH_MessageDao.MSG_PK, "201601_00000000000000000000");
 
                         while (messages.size() > 0) {
                             //
@@ -501,13 +567,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             synchronized (this) {
 
                 try {
-                    if (turnOnReorderIcon(dados, messages)) {
-                        statusReorderProcess = true;
-                    }
-                    //
+//                    if (turnOnReorderIcon(dados, messages)) {
+//                        statusReorderProcess = true;
+//                    }
+//                    //
                     mPresenter.updateReadStatus(messages);
                     //
-                    act035_adapter_messages.addMessages(messages);
+                    boolean reOrder = act035_adapter_messages.addMessages(messages);
+                    //
+                    //
+                    if (iv_reorder.getVisibility() == View.GONE) {
+                        if (reOrder == true) {
+                            iv_reorder.setVisibility(View.VISIBLE);
+                        }
+                    }
                     //
                     mTotal += act035_adapter_messages.getmSizeAddUpdate();
                 } catch (Exception e) {
@@ -528,8 +601,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 try {
                     if (statusReorderProcess) {
                     } else {
-                        if (mTotal == 1) {
-                            mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+                        int lastVisiblePosition = lv_messages.getLastVisiblePosition();
+
+                        if (lastVisiblePosition == (dados.size() - 1)) {
+                            if (mTotal == 1) {
+                                mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -541,117 +618,42 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-//    private void processing_cMessage(final Context context) {
-//        if (!isProcessing_C_Message) {
-//            isProcessing_C_Message = true;
+//    private boolean turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
 //
-//            mThread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    CH_MessageDao chMessageDao = new CH_MessageDao(context);
-//                    mTotal = 0;
-//                    statusReorderProcess = false;
-//
-//                    try {
-//                        messages = (ArrayList<HMAux>) chMessageDao.query_HM(
-//                                new CH_Message_Sql_008(mRoom_code).toSqlQuery()
-//                        );
-//
-//                        while (messages.size() > 0) {
-//
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//
-//                                    if (turnOnReorderIcon(dados, messages)) {
-//                                        statusReorderProcess = true;
-//                                    }
-//                                    //
-//                                    ArrayList<HMAux> messagesTMP = new ArrayList<>();
-//                                    messagesTMP.addAll(messages);
-//
-//                                    mPresenter.updateReadStatus(messagesTMP);
-//                                    //
-//                                    act035_adapter_messages.addMessages(messagesTMP);
-//                                    //
-//                                    mTotal += act035_adapter_messages.getmSizeAddUpdate();
-//                                }
-//                            });
-//
-//                            chMessageDao.addUpdate(
-//                                    new CH_Message_Sql_009(
-//                                            messages
-//                                    ).toSqlQuery()
-//                            );
-//
-//                            messages = (ArrayList<HMAux>) chMessageDao.query_HM(
-//                                    new CH_Message_Sql_008(mRoom_code).toSqlQuery()
-//                            );
-//
-//                        }
-//
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (statusReorderProcess) {
-//                                } else {
-//                                    if (mTotal == 1) {
-//                                        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-//                                    }
-//                                }
-//
-//
-//                            }
-//                        });
-//
-//                    } catch (Exception e) {
-//                    } finally {
-//                        isProcessing_C_Message = false;
-//                    }
-//                }
-//            });
-//
-//            mThread.start();
+//        if (messages.size() == 0) {
+//            return false;
 //        }
+//
+//        if (iv_reorder.getVisibility() == View.VISIBLE) {
+//            return true;
+//        }
+//
+//        String sMessages = messages.get(0).get("msg_pk");
+//        //
+//        for (int i = dados.size() - 1; i >= 0; i--) {
+//            HMAux aux = dados.get(i);
+//            //
+//            if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
+//
+//                int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
+//
+//                if (compare < 0) {
+//                    //aux é menor do que sMessage
+//                    return false;
+//                } else if (compare > 0) {
+//                    //aux é maior do que sMessage
+//                    iv_reorder.setVisibility(View.VISIBLE);
+//                    //
+//                    return true;
+//                } else {
+//                    //aux é igual a sMessage
+//                    return false;
+//                }
+//            }
+//        }
+//
+//        return false;
 //    }
-
-    private boolean turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
-
-        if (messages.size() == 0) {
-            return false;
-        }
-
-        if (iv_reorder.getVisibility() == View.VISIBLE) {
-            return true;
-        }
-
-        String sMessages = messages.get(0).get("msg_pk");
-        //
-        for (int i = dados.size() - 1; i >= 0; i--) {
-            HMAux aux = dados.get(i);
-            //
-            if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
-
-                int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
-
-                if (compare < 0) {
-                    //aux é menor do que sMessage
-                    return false;
-                } else if (compare > 0) {
-                    //aux é maior do que sMessage
-                    iv_reorder.setVisibility(View.VISIBLE);
-                    //
-                    return true;
-                } else {
-                    //aux é igual a sMessage
-                    return false;
-                }
-            }
-        }
-
-        return false;
-    }
 
     private void processing_FromTo(Context context) {
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
