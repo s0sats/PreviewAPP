@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -237,7 +238,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void startReceivers(boolean start_stop) {
-        brRoomReceiver = new Act035_Main.BR_Room();
+        if (brRoomReceiver == null) {
+            brRoomReceiver = new Act035_Main.BR_Room();
+        }
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
         //
@@ -245,6 +248,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
         } else {
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brRoomReceiver);
+            //
+            brRoomReceiver = null;
         }
     }
 
@@ -416,6 +421,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
 
     private void processing_cMessage(final Context context) {
+
+        Log.d("PC", "PC ENTREI");
+
         if (!isProcessing_C_Message) {
             isProcessing_C_Message = true;
 
@@ -436,8 +444,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 new CH_Message_Sql_008(mRoom_code).toSqlQuery()
                         );
 
+                        Log.d("PC", messages.get(0).get("msg_obj"));
+
                         while (messages.size() > 0) {
                             //
+                            Log.d("PC", "PC LOOP");
                             // Update Screen
                             synchronized (m1) {
                                 try {
@@ -473,6 +484,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     } catch (Exception e) {
                     } finally {
                         isProcessing_C_Message = false;
+                        //
+                        Log.d("PC", "PC SAI");
                     }
                 }
             });
