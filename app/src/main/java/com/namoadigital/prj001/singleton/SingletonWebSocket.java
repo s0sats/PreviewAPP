@@ -403,8 +403,8 @@ public class SingletonWebSocket {
             HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_013().toSqlQuery());
             //
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
-            sHistoricalMessage.setMsg_ref_prefix(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
-            sHistoricalMessage.setMsg_ref_code(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
+            //sHistoricalMessage.setMsg_ref_prefix(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
+            //sHistoricalMessage.setMsg_ref_code(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
             sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
 
             //
@@ -862,7 +862,7 @@ public class SingletonWebSocket {
                     //
                 }
                 //Atualiza contador
-                //count_msg += messages.size();
+               // count_msg += messages.size();
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -18,11 +19,25 @@ public class CH_Room_Sql_001 implements Specification {
     private String room_desc;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(CH_RoomDao.columns);
     private String sqlite_db_format = "%Y-%m-%d %H:%M:%S";//formatação para comparação não exibição
+    private String room_type_filter = "";
 
-    public CH_Room_Sql_001(Long customer_code, String user_code, String room_desc) {
+    public CH_Room_Sql_001(Long customer_code, String user_code, String room_desc, boolean filter_workgroup, boolean filter_private,boolean filter_so) {
         this.customer_code = customer_code;
         this.user_code = user_code;
         this.room_desc = room_desc.trim().length() == 0 ? null : room_desc.trim() ;
+        //
+        if(filter_workgroup || filter_private || filter_so){
+            String inFilter ="";
+            inFilter +=  filter_workgroup ? "'" + Constant.CHAT_ROOM_TYPE_WORKGROUP +"'," : "";
+            inFilter +=  filter_private ?"'" + Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER +"'," : "";
+            inFilter +=  filter_so ? "'" + Constant.CHAT_ROOM_TYPE_SO +"'," : "";
+            //
+            room_type_filter = "and r.room_type in ("
+                        +inFilter.substring(0,inFilter.length()-1) +
+                    ")\n";
+
+        }
+
     }
 
     @Override
@@ -69,6 +84,7 @@ public class CH_Room_Sql_001 implements Specification {
                         "    \n" +
                         "    )\n" +
                         "    and ('"+room_desc+"' is null or r.room_desc like '%"+room_desc+"%')\n" +
+                        room_type_filter+ //filtro de tipo
                         " ORDER BY  \n" +
                         "    strftime('"+sqlite_db_format+"',m.msg_date,'localtime') desc,\n" +
                         "    r.room_desc\n")

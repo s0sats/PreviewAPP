@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act034;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -53,6 +56,11 @@ public class Act034_Room extends BaseFragment {
     private LinearLayout ll_room_content;
     private MKEditTextNM mket_search_room;
     private TextView tv_no_result;
+    private ImageView iv_filter;
+    //
+    private boolean filter_workgroup;
+    private boolean filter_private;
+    private boolean filter_so;
 
     public void setSelected_customer(long selected_customer) {
         this.selected_customer = selected_customer;
@@ -71,7 +79,7 @@ public class Act034_Room extends BaseFragment {
         //super.onCreateView(inflater, container, savedInstanceState);
         bStatus = true;
         //
-        View view = inflater.inflate(R.layout.act034_room_content,container,false);
+        View view = inflater.inflate(R.layout.act034_room_content, container, false);
         //
         iniVar(view);
         iniAction();
@@ -94,6 +102,8 @@ public class Act034_Room extends BaseFragment {
         //
         mket_search_room = (MKEditTextNM) view.findViewById(R.id.act034_room_mket_search_room);
         //
+        iv_filter = (ImageView) view.findViewById(R.id.act034_room_iv_filter);
+        //
         lv_msg = (ListView) view.findViewById(R.id.act034_room_lv_msg);
         //
         tv_no_result = (TextView) view.findViewById(R.id.act034_room_tv_no_result);
@@ -102,6 +112,9 @@ public class Act034_Room extends BaseFragment {
         //
         messageDao = new CH_MessageDao(context);
         //
+        filter_workgroup = filter_private = filter_so = false;
+        //
+        setFilterIconColor();
     }
 
     @Override
@@ -111,17 +124,68 @@ public class Act034_Room extends BaseFragment {
         loadDataToScreen();
     }
 
+    private void iniAction() {
+
+        lv_msg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux room = (HMAux) parent.getItemAtPosition(position);
+                room.put(ROOM_POSITION, String.valueOf(position));
+                //
+                mMain.callAct035(context, room);
+            }
+        });
+        //
+        mket_search_room.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+                loadRoomList();
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+
+            }
+        });
+        //
+        iv_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRoomFilterDialog();
+            }
+        });
+    }
+
+    @Override
+    public void loadDataToScreen() {
+        if (bStatus) {
+            tv_others_customer_msg_lbl.setText(hmAux_Trans.get("other_customers_msg_lbl"));
+            //
+            mket_search_room.setHint(hmAux_Trans.get("search_room_hint"));
+            //
+            tv_no_result.setText(hmAux_Trans.get("no_room_found_lbl"));
+            //
+            loadRoomList();
+            //
+            updateOtherMsgInfo();
+        }
+    }
+
+
     public void loadRoomList() {
         ArrayList<HMAux> roomList =
                 (ArrayList<HMAux>) roomDao.query_HM(
                         new CH_Room_Sql_001(
                                 selected_customer,
                                 ToolBox_Con.getPreference_User_Code(context),
-                                mket_search_room.getText().toString()
+                                mket_search_room.getText().toString(),
+                                filter_workgroup,
+                                filter_private,
+                                filter_so
                         ).toSqlQuery()
                 );
         //
-        if(roomList != null && roomList.size() > 0){
+        if (roomList != null && roomList.size() > 0) {
             //
             ToolBox_Inf.addJsonObjAsHmAuxKey(roomList, CH_MessageDao.MSG_OBJ);
             //
@@ -142,7 +206,7 @@ public class Act034_Room extends BaseFragment {
             //Esconde de nenhuma sala encontrada e exibe lista
             tv_no_result.setVisibility(View.GONE);
             lv_msg.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             //Esconde lista e exibe msg de nenhuma sala encontrada
             lv_msg.setVisibility(View.GONE);
             tv_no_result.setVisibility(View.VISIBLE);
@@ -150,7 +214,7 @@ public class Act034_Room extends BaseFragment {
 
     }
 
-    public void updateOtherMsgInfo(){
+    public void updateOtherMsgInfo() {
         HMAux otherMsgQty =
                 messageDao.getByStringHM(
                         new Sql_Act034_003(
@@ -159,18 +223,82 @@ public class Act034_Room extends BaseFragment {
                         ).toSqlQuery()
                 );
         //
-        if(otherMsgQty != null){
-           if(!otherMsgQty.containsKey(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG) ||
-               otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG).equalsIgnoreCase("0")
-           ){
-               ll_header.setVisibility(View.GONE);
-               tv_others_customer_msg_qty.setText("");
+        if (otherMsgQty != null) {
+            if (!otherMsgQty.containsKey(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG) ||
+                    otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG).equalsIgnoreCase("0")
+                    ) {
+                ll_header.setVisibility(View.GONE);
+                tv_others_customer_msg_qty.setText("");
 
-           }else{
-               tv_others_customer_msg_qty.setText(otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG));
-               ll_header.setVisibility(View.VISIBLE);
-           }
+            } else {
+                tv_others_customer_msg_qty.setText(otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG));
+                ll_header.setVisibility(View.VISIBLE);
+            }
         }
+    }
+
+    private void showRoomFilterDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act034_room_filter_dialog, null);
+        //
+        CheckBox chk_workgroup = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_workgroup);
+        CheckBox chk_private = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_private);
+        CheckBox chk_so = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_so);
+        //
+        chk_workgroup.setText(hmAux_Trans.get("room_type_workgroup_lbl"));
+        chk_workgroup.setChecked(filter_workgroup);
+        //
+        chk_private.setText(hmAux_Trans.get("room_type_private_lbl"));
+        chk_private.setChecked(filter_private);
+        //
+        chk_so.setText(hmAux_Trans.get("room_type_so_lbl"));
+        chk_so.setChecked(filter_so);
+        //
+        builder
+                .setTitle(hmAux_Trans.get("room_dialog_filter_ttl"))
+                .setView(view)
+                .setCancelable(true)
+                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setFilterIconColor();
+                        loadRoomList();
+                    }
+                });
+        //
+        AlertDialog filterDialog = builder.create();
+
+        filterDialog.show();
+        //
+        chk_workgroup.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        filter_workgroup = isChecked;
+                    }
+                }
+        );
+        //
+        chk_private.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        filter_private = isChecked;
+                    }
+                }
+        );
+        //
+        chk_so.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        filter_so = isChecked;
+                    }
+                }
+        );
+
     }
 
     private void showRoomImageDialog(String image_path) {
@@ -178,21 +306,21 @@ public class Act034_Room extends BaseFragment {
         AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view  = inflater.inflate(R.layout.act034_room_image,null);
+        View view = inflater.inflate(R.layout.act034_room_image, null);
 
         ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_image_iv_image);
 
         Bitmap image = null;
 
-        if(!image_path.equalsIgnoreCase("")){
-            image = BitmapFactory.decodeFile(Constant.CACHE_PATH +"/"+ image_path);
-        }else{
-            image = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_namoa);
+        if (!image_path.equalsIgnoreCase("")) {
+            image = BitmapFactory.decodeFile(Constant.CACHE_PATH + "/" + image_path);
+        } else {
+            image = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_namoa);
         }
 
         LinearLayout.LayoutParams iv_params = new LinearLayout.LayoutParams(
-                (int) ToolBox_Inf.convertDpToPixel(context,200),
-                (int) ToolBox_Inf.convertDpToPixel(context,200)
+                (int) ToolBox_Inf.convertDpToPixel(context, 200),
+                (int) ToolBox_Inf.convertDpToPixel(context, 200)
         );
         iv_room.setLayoutParams(iv_params);
         iv_room.setImageBitmap(image);
@@ -205,56 +333,20 @@ public class Act034_Room extends BaseFragment {
         imageDialog.show();
         //imageDialog.getWindow().setLayout(w,h);
         imageDialog.getWindow().setLayout(
-                (int) ToolBox_Inf.convertDpToPixel(context,240)
+                (int) ToolBox_Inf.convertDpToPixel(context, 240)
                 ,
-                (int) ToolBox_Inf.convertDpToPixel(context,240)
+                (int) ToolBox_Inf.convertDpToPixel(context, 240)
         );
-
-
     }
 
-    private void iniAction() {
-
-        lv_msg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux room = (HMAux) parent.getItemAtPosition(position);
-                room.put(ROOM_POSITION, String.valueOf(position));
-                //
-                mMain.callAct035(context,room);
-            }
-        });
-        //
-        mket_search_room.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-                loadRoomList();
-            }
-
-            @Override
-            public void reportTextChange(String s, boolean b) {
-
-            }
-
-        });
-
-
-    }
-
-    @Override
-    public void loadDataToScreen() {
-        if(bStatus){
-            tv_others_customer_msg_lbl.setText(hmAux_Trans.get("other_customers_msg_lbl"));
-            //
-            mket_search_room.setHint(hmAux_Trans.get("search_room_hint"));
-            //
-            tv_no_result.setText(hmAux_Trans.get("no_room_found_lbl"));
-            //
-            loadRoomList();
-            //
-            updateOtherMsgInfo();
+    private void setFilterIconColor() {
+        if(filter_workgroup||filter_private||filter_so){
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        }else{
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
