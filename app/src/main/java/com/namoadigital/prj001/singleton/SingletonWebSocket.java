@@ -116,7 +116,7 @@ public class SingletonWebSocket {
         Log.d("ChatEvent", "initConnection");
 
         try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")+ " - initConnection\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - initConnection\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -214,7 +214,7 @@ public class SingletonWebSocket {
     public void disconnect() {
         mSocketRunning = false;
         Log.d("ChatEvent", "disconnect");
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.off();
             mSocket.disconnect();
             mSocket = null;
@@ -254,54 +254,54 @@ public class SingletonWebSocket {
     }
 
     public void attemptSendRoom(String message) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_ROOM, message);
             Log.d("ChatEvent", "sRoom");
         }
     }
 
     public void attemptSendPendingMessages(String message) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_PENDING_MESSAGES, message);
             Log.d("ChatEvent", "sPendingMessages");
         }
     }
 
     public void attemptSendHistoricalMessages(String message) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_HISTORICAL_MESSAGES, message);
             Log.d("ChatEvent", "sHistoricalMessages");
         }
     }
 
     public void attemptSendMessages(String message) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE, message);
         }
     }
 
     public void attemptSendMessageTmp(String message) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE_TMP, message);
         }
     }
 
     public void attemptToDeliveryMessage(String deliveryObj) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_DELIVERED, deliveryObj);
             Log.d("ChatEvent", "sDeliveryMessage");
         }
     }
 
     public void attemptToReadMessage(String readObj) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_READ, readObj);
             Log.d("ChatEvent", "sReadMessage");
         }
     }
 
     public void attemptDisconnect(String message) {
-        if (mSocket != null) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Socket.EVENT_DISCONNECT, message);
         }
     }
@@ -350,7 +350,7 @@ public class SingletonWebSocket {
             HMAux hmAux = new HMAux();
             hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
             ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
-            ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING,String.valueOf(args[0]));
+            ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
         }
     };
 
@@ -743,7 +743,7 @@ public class SingletonWebSocket {
 
     }
 
-    private String createMsgsFile(String param,String type) {
+    private String createMsgsFile(String param, String type) {
         String fileName = Constant.CHAT_PREFIX +
                 (type != null ? type : "") +
                 ToolBox_Inf.getToken(context) +
@@ -781,8 +781,8 @@ public class SingletonWebSocket {
             * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
             * e direciona msgs para o serviço.
             */
-            if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
-                cMessageFilePath = createMsgsFile(param,null);
+            if (messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)) {
+                cMessageFilePath = createMsgsFile(param, null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
                 Bundle bundle = new Bundle();
@@ -793,7 +793,7 @@ public class SingletonWebSocket {
                 cMessageIntent.putExtras(bundle);
                 context.sendBroadcast(cMessageIntent);
 
-            }else {
+            } else {
                 //Atualiza total de msg e contador de msg
                 total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
 
@@ -865,22 +865,22 @@ public class SingletonWebSocket {
                     //
                 }
                 //Atualiza contador
-               // count_msg += messages.size();
+                // count_msg += messages.size();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean areAllMsgProcessed(){
+    public boolean areAllMsgProcessed() {
         return count_msg == total_msg;
     }
 
-    public void resetProcessMsgCounter(){
-        total_msg  = count_msg = 0;
+    public void resetProcessMsgCounter() {
+        total_msg = count_msg = 0;
     }
 
-    public long updateCounterMsg(long increment){
+    public long updateCounterMsg(long increment) {
         count_msg += increment;
         return count_msg;
     }
@@ -901,13 +901,15 @@ public class SingletonWebSocket {
                 if (sSoleInstance == null) {
                     sSoleInstance = new SingletonWebSocket();
                     sSoleInstance.context = context;
+                    //
+                    sSoleInstance.initConnection();
                 }
             }
         }
 
-        if (!sSoleInstance.mSocketRunning) {
-            sSoleInstance.initConnection();
-        }
+//        if (!sSoleInstance.mSocketRunning) {
+//            sSoleInstance.initConnection();
+//        }
 
         return sSoleInstance;
     }

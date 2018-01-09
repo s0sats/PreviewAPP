@@ -178,11 +178,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                if (dados != null && dados.size() > 0){
-                    turnOnDownIcon();
-                }
-
             }
         });
 
@@ -213,7 +208,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void turnOnDownIcon() {
         int lastVisiblePosition = lv_messages.getLastVisiblePosition();
         //
-        if (lastVisiblePosition != (dados.size() - 1)) {
+        if (lastVisiblePosition < (dados.size() - 1)) {
             iv_down.setVisibility(View.VISIBLE);
         } else {
             iv_down.setVisibility(View.GONE);
@@ -571,18 +566,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             synchronized (this) {
 
                 try {
-//                    if (turnOnReorderIcon(dados, messages)) {
-//                        statusReorderProcess = true;
-//                    }
-//                    //
                     mPresenter.updateReadStatus(messages);
                     //
                     boolean reOrder = act035_adapter_messages.addMessages(messages);
                     //
-                    //
                     if (iv_reorder.getVisibility() == View.GONE) {
-                        if (reOrder == true) {
-                            iv_reorder.setVisibility(View.VISIBLE);
+                        if (reOrder) {
+                            statusReorderProcess = true;
+                        } else {
+                            statusReorderProcess = false;
                         }
                     }
                     //
@@ -604,13 +596,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                 try {
                     if (statusReorderProcess) {
+                        iv_reorder.setVisibility(View.VISIBLE);
                     } else {
                         int lastVisiblePosition = lv_messages.getLastVisiblePosition();
-
+                        //
                         if (lastVisiblePosition == (dados.size() - 1)) {
                             if (mTotal == 1) {
+                                iv_down.setVisibility(View.GONE);
                                 mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+                            } else if (mTotal != 0){
+                                    iv_down.setVisibility(View.VISIBLE);
+                                } else {
                             }
+                        } else {
+                            iv_down.setVisibility(View.VISIBLE);
                         }
                     }
                 } catch (Exception e) {
@@ -621,43 +620,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
         }
     }
-
-//    private boolean turnOnReorderIcon(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
-//
-//        if (messages.size() == 0) {
-//            return false;
-//        }
-//
-//        if (iv_reorder.getVisibility() == View.VISIBLE) {
-//            return true;
-//        }
-//
-//        String sMessages = messages.get(0).get("msg_pk");
-//        //
-//        for (int i = dados.size() - 1; i >= 0; i--) {
-//            HMAux aux = dados.get(i);
-//            //
-//            if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
-//
-//                int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
-//
-//                if (compare < 0) {
-//                    //aux é menor do que sMessage
-//                    return false;
-//                } else if (compare > 0) {
-//                    //aux é maior do que sMessage
-//                    iv_reorder.setVisibility(View.VISIBLE);
-//                    //
-//                    return true;
-//                } else {
-//                    //aux é igual a sMessage
-//                    return false;
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
 
     private void processing_FromTo(Context context) {
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
