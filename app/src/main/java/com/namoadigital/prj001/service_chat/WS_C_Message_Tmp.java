@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_FileDao;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -25,7 +26,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,6 +109,7 @@ public class WS_C_Message_Tmp extends IntentService {
                 String oldNameFile = null;
 
                 if (ch_message != null && ch_message.getMsg_prefix() > -1) {
+                    ch_message.setMsg_prefix(messageTmp.getMsg_prefix());
                     ch_message.setMsg_code(messageTmp.getMsg_code());
                     ch_message.setMsg_pk(String.valueOf(messageTmp.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, messageTmp.getMsg_code())));
                     if(ch_message.getMsg_obj().startsWith(Constant.CHAT_START_WITH_IMAGE_MSG)) {
@@ -120,10 +121,13 @@ public class WS_C_Message_Tmp extends IntentService {
                 //
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
 
-                JSONObject msg_obj = new JSONObject(ch_message.getMsg_obj());
+                /*JSONObject msg_obj = new JSONObject(ch_message.getMsg_obj());
                 JSONObject msg_obj_content = (JSONObject) msg_obj.get("message");
                 String msg_obj_type = (String) msg_obj_content.get("type");
-                String msg_obj_data = (String) msg_obj_content.get("data");
+                String msg_obj_data = (String) msg_obj_content.get("data");*/
+                HMAux msgObjAux = ToolBox_Inf.getChatMsgContent(ch_message.getMsg_obj());
+                String msg_obj_type = msgObjAux.get("type");
+                String msg_obj_data = msgObjAux.get("data");
                 //
                 if (!msg_obj_type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)) {
                     //

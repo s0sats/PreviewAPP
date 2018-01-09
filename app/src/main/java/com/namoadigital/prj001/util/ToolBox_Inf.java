@@ -2902,7 +2902,7 @@ public class ToolBox_Inf {
 
         long nextID = ToolBox_Con.getPreference_Chat_Msg_Code(context);
         //
-        String mPrefix = yearMonthPrefix();
+        /*String mPrefix = yearMonthPrefix();
         //
         if (mPrefix.equalsIgnoreCase(ToolBox_Con.getPreference_Chat_Msg_Prefix(context))) {
             ToolBox_Con.setPreference_Chat_Msg_Code(context, ++nextID);
@@ -2912,15 +2912,20 @@ public class ToolBox_Inf {
             ToolBox_Con.setPreference_Chat_Msg_Prefix(context, mPrefix);
             Log.d("Chat", "NEXT_TMP ->" + String.valueOf(nextID));
             return 101L;
-        }
+        }*/
+        ToolBox_Con.setPreference_Chat_Msg_Code(context, ++nextID);
+        return nextID;
     }
 
     public static String yearMonthPrefix() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        /*SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         //
         Calendar cAux = Calendar.getInstance();
         //
-        return sdf.format(cAux.getTime());
+        return sdf.format(cAux.getTime());*/
+        //Como não existirá mais prefix temporario, retorna 0
+        //Remover a chamada desse metodo após modificação da pk
+        return "0";
     }
 
     public static void sendBRChat(Context context, String type) {
