@@ -178,9 +178,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (dados != null && dados.size() > 0){
+                    turnOnDownIcon();
+                }
+
             }
         });
-
 
         iv_photo = (ImageView) findViewById(R.id.act035_iv_photo);
         iv_send = (ImageView) findViewById(R.id.act035_iv_send);
