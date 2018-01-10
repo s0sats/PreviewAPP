@@ -122,7 +122,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     public void sendMessage(String mRoom_code, String message, String imagem, String offSet) {
 
         CH_Message chMessage = new CH_Message();
-        chMessage.setMsg_prefix(Integer.parseInt(ToolBox_Inf.yearMonthPrefix()));
+        chMessage.setMsg_prefix(0);
         chMessage.setMsg_code(0);
         chMessage.setTmp(ToolBox_Inf.chatNextMSGCode(context));
         //
