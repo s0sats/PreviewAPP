@@ -806,7 +806,6 @@ public class SingletonWebSocket {
                         CH_Message localMessage =
                                 messageDao.getByString(
                                         new CH_Message_Sql_014(
-                                                chatCMessage.getMsg_prefix(),
                                                 chatCMessage.getMsg_tmp(),
                                                 ToolBox_Con.getPreference_User_Code(context)
                                         ).toSqlQuery()

@@ -118,6 +118,7 @@ public class WS_C_Message extends IntentService {
                     chMessage.setRead(1);
                     chMessage.setRead_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     chMessage.setStatus_update(1);//verificar a necessidade disso
+                    chMessage.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                     //Monta obj para chamar sDelivered
                     Chat_S_Delivered sDelivered = new Chat_S_Delivered();
                     //
@@ -173,6 +174,7 @@ public class WS_C_Message extends IntentService {
                     ch_message.setDelivered(1);
                     ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     ch_message.setStatus_update(1);
+                    ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                     //Monta obj para chamar sDelivered
                     Chat_S_Delivered sDelivered = new Chat_S_Delivered();
                     //

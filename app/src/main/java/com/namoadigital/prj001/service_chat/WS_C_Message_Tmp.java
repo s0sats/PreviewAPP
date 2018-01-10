@@ -101,7 +101,6 @@ public class WS_C_Message_Tmp extends IntentService {
                 CH_Message ch_message =
                         messageDao.getByString(
                                 new CH_Message_Sql_003(
-                                        messageTmp.getMsg_prefix(),
                                         messageTmp.getMsg_tmp()
                                 ).toSqlQuery()
                         );

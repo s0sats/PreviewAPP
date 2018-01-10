@@ -2917,6 +2917,13 @@ public class ToolBox_Inf {
         return nextID;
     }
 
+    synchronized public static long chatNextMSGToken(Context context) {
+        long nextToken = ToolBox_Con.getPreference_Chat_Msg_Token(context);
+        //
+        ToolBox_Con.setPreference_Chat_Msg_Token(context, ++nextToken);
+        return nextToken;
+    }
+
     public static String yearMonthPrefix() {
         /*SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         //

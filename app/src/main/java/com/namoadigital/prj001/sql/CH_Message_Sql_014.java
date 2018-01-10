@@ -11,12 +11,10 @@ import com.namoadigital.prj001.database.Specification;
 
 public class CH_Message_Sql_014 implements Specification {
 
-    private int msg_prefix;
     private long tmp;
     private String user_code;
 
-    public CH_Message_Sql_014(int msg_prefix, long tmp, String user_code) {
-        this.msg_prefix = msg_prefix;
+    public CH_Message_Sql_014(long tmp, String user_code) {
         this.tmp = tmp;
         this.user_code = user_code;
     }
@@ -31,8 +29,7 @@ public class CH_Message_Sql_014 implements Specification {
                         " FROM\n" +
                         CH_MessageDao.TABLE +" m\n" +
                         " WHERE\n" +
-                        "   m.msg_prefix = '"+msg_prefix+"' \n"+
-                        "   and m.tmp = '"+tmp+"' \n" +
+                        "   m.tmp = '"+tmp+"' \n" +
                         "   and m.user_code = '"+user_code+"'")
                 .append(";\n")
                 .toString();

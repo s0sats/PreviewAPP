@@ -440,6 +440,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
     public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
+    public static final String CHAT_PREFERENCE_MSG_TOKEN = "CHAT_PREFERENCE_MSG_TOKEN";
     public static final String CHAT_HISTORICAL_MSG_ACTION_LOGIN = "LOGIN";
     public static final String CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP = "SCROLL_UP";
     public static final String CHAT_NOTIFICATION_TYPE_MESSAGE = "MESSAGE";
