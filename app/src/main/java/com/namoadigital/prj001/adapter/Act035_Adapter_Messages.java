@@ -163,6 +163,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     //aux é igual a sMessage
                     return false;
                 }
+            }else{
+                return true;
             }
         }
         //

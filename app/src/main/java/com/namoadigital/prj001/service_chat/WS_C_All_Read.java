@@ -76,7 +76,7 @@ public class WS_C_All_Read extends IntentService {
 
         }
         //
-        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_ALL_DELIVERED);
+        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
     }
 
 }

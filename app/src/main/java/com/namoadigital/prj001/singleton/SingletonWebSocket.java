@@ -473,12 +473,13 @@ public class SingletonWebSocket {
             if (args != null && args.length > 0) {
                 if (args[0] instanceof String) {
                     String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                    processMessages(param);
                     //
-                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                   /* Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
                     cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
+                    context.sendBroadcast(cMessageIntent);*/
                 } else {
                     String tst = "No Json";
                     /*
