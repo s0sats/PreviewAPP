@@ -296,7 +296,7 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             contentValues.put(CUSTOMER_CODE, ch_room.getCustomer_code());
             contentValues.put(ROOM_OBJ, ch_room.getRoom_obj());
             contentValues.put(ROOM_IMAGE, ch_room.getRoom_image());
-            //contentValues.put(ROOM_IMAGE_LOCAL, ch_room.getRoom_image_local());
+            contentValues.put(ROOM_IMAGE_LOCAL, ch_room.getRoom_image_local());
             if (ch_room.getFirst_msg_prefix() > -1) {
                 contentValues.put(FIRST_MSG_PREFIX, ch_room.getFirst_msg_prefix());
             }

@@ -421,6 +421,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
     public static final String CHAT_ROOM_TYPE_SO = "SO";
     public static final String CHAT_ROOM_TYPE_PRIVATE_CUSTOMER = "PRIVATE_CUSTOMER";
+    public static final String CHAT_WS_SOCKET_ID_PARAM = "WS_SOCKET_ID_PARAM";
+    public static final String CHAT_WS_ROOM_CODE_PARAM = "WS_ROOM_CODE_PARAM";
     //filters
     public static final String CHAT_BR_FILTER_ROOM = "CHAT_BR_FILTER_ROOM";
     public static final String CHAT_BR_FILTER = "CHAT_BR_FILTER";
@@ -432,6 +434,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE_CHAT_STATUS_CHANGE = "CHAT_BR_TYPE_CHAT_STATUS_CHANGE";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
+    public static final String CHAT_BR_TYPE_ROOM_INFO = "CHAT_BR_TYPE_ROOM_INFO";
     public static final String CHAT_BR_TYPE_MSG_SCROLL_UP = "CHAT_BR_TYPE_MSG_SCROLL_UP";
     public static final String CHAT_BR_TYPE_MSG_TMP = "CHAT_BR_TYPE_MSG_TMP";
     public static final String CHAT_BR_TYPE_MSG_ALL_DELIVERED = "CHAT_BR_TYPE_MSG_ALL_DELIVERED";

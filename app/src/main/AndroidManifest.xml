@@ -460,6 +460,10 @@
 
         <service android:name=".service_chat.WS_C_All_Read" />
 
+        <receiver android:name=".receiver_chat.WBR_Room_Info" />
+
+        <service android:name=".service_chat.WS_Room_Info" />
+
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act034;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -25,9 +26,10 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.receiver_chat.WBR_Room_Info;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act034_003;
+import com.namoadigital.prj001.sql.Sql_Act034_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -180,7 +182,7 @@ public class Act034_Room extends BaseFragment {
     public void loadRoomList() {
         ArrayList<HMAux> roomList =
                 (ArrayList<HMAux>) roomDao.query_HM(
-                        new CH_Room_Sql_001(
+                        new Sql_Act034_004(
                                 selected_customer,
                                 ToolBox_Con.getPreference_User_Code(context),
                                 mket_search_room.getText().toString(),
@@ -202,8 +204,18 @@ public class Act034_Room extends BaseFragment {
             //
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
-                public void onIvRoomClick(String image_path) {
-                    showRoomImageDialog(image_path);
+                public void onIvRoomClick(String room_code, String image_path) {
+                    //
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                    //
+                    Intent mIntent = new Intent(context,WBR_Room_Info.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_SOCKET_ID_PARAM,singletonWebSocket.mSocket.id());
+                    bundle.putString(Constant.CHAT_WS_ROOM_CODE_PARAM,room_code);
+                    mIntent.putExtras(bundle);
+                    context.sendBroadcast(mIntent);
+                    //
+                    //showRoomImageDialog(image_path);
                 }
             });
             //
