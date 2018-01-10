@@ -368,10 +368,26 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     toogleInfoMsg(true,qtd);
                     //hideShowReconnectingDialog(1, qtd);
                     break;
+                case Constant.CHAT_BR_TYPE_ROOM_INFO:
+                    if(currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)){
+                        showRoomInfoDialog(auxParam);
+                    }
+
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    private void showRoomInfoDialog(HMAux auxParam) {
+        AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view  = inflater.inflate(R.layout.act034_room_info,null);
+        //
+        //TextView tv_room_desc = view
+
     }
 
     private void toogleInfoMsg(boolean visible, String qtd) {
