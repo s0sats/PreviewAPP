@@ -6,8 +6,7 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * Created by d.luche on 06/12/2017.
  *
- * Seleciona ultimo msg_prefix e ultimo tmp
- * para serem armazenados.
+ * Selecionar maior tmp e token para alimentar preferencias
  */
 
 public class CH_Message_Sql_004 implements Specification {
@@ -18,21 +17,12 @@ public class CH_Message_Sql_004 implements Specification {
 
         return  sb
                 .append(" SELECT\n" +
-                        "   IFNULL(m.msg_prefix, \n" +
-                        "    (select strftime('%Y%m','now','localtime')) \n" +
-                        "  )msg_prefix,\n" +
-                        "  IFNULL(max(m.tmp),100) tmp\n" +
+                        "   IFNULL(max(m.tmp),100) "+CH_MessageDao.TMP+",\n" +
+                        "   IFNULL(max(m.msg_token),0) "+CH_MessageDao.MSG_TOKEN+"\n" +
                         " FROM\n" +
-                        "   "+ CH_MessageDao.TABLE+" m\n" +
-                        " WHERE\n" +
-                        "  m.msg_prefix = (\n" +
-                        "                   SELECT\n" +
-                        "                         MAX(m.msg_prefix)\n" +
-                        "                   FROM\n" +
-                        "                       "+ CH_MessageDao.TABLE+" m\n" +
-                        "                   )\n")
+                        "   ch_messages m\n")
                 .append(";")
-                .append(CH_MessageDao.MSG_PREFIX+"#"+CH_MessageDao.TMP)
+                .append(CH_MessageDao.TMP+"#"+CH_MessageDao.MSG_TOKEN)
                 .toString();
     }
 }

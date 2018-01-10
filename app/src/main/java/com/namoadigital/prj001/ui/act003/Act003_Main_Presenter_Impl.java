@@ -64,14 +64,19 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
             //
             if(msgAux.size() > 0){
                 //
-                ToolBox_Con.setPreference_Chat_Msg_Prefix(
-                        context,
-                        msgAux.get(CH_MessageDao.MSG_PREFIX)
-                );
+//                ToolBox_Con.setPreference_Chat_Msg_Prefix(
+//                        context,
+//                        msgAux.get(CH_MessageDao.MSG_PREFIX)
+//                );
                 //
                 ToolBox_Con.setPreference_Chat_Msg_Code(
                         context,
                         Long.parseLong(msgAux.get(CH_MessageDao.TMP))
+                );
+                //
+                ToolBox_Con.setPreference_Chat_Msg_Token(
+                        context,
+                        Long.parseLong(msgAux.get(CH_MessageDao.MSG_TOKEN))
                 );
                 //
                 Intent chatIntent = new Intent(context, AppBackgroundService.class);

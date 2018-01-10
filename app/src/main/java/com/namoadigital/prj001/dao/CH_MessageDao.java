@@ -74,8 +74,8 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(ch_message)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(MSG_PREFIX).append(" = '").append(String.valueOf(ch_message.getMsg_prefix())).append("'");
-                sbWhere.append(" and ");
+                /*sbWhere.append(MSG_PREFIX).append(" = '").append(String.valueOf(ch_message.getMsg_prefix())).append("'");
+                sbWhere.append(" and ");*/
                 sbWhere.append(TMP).append(" = '").append(String.valueOf(ch_message.getTmp())).append("'");
                 //
                 db.update(TABLE, toContentValuesMapper.map(ch_message), sbWhere.toString(), null);
@@ -104,8 +104,8 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             for (CH_Message ch_message : ch_messages) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(ch_message)) == -1) {
                     StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(MSG_PREFIX).append(" = '").append(String.valueOf(ch_message.getMsg_prefix())).append("'");
-                    sbWhere.append(" and ");
+                    /*sbWhere.append(MSG_PREFIX).append(" = '").append(String.valueOf(ch_message.getMsg_prefix())).append("'");
+                    sbWhere.append(" and ");*/
                     sbWhere.append(TMP).append(" = '").append(String.valueOf(ch_message.getTmp())).append("'");
                     db.update(TABLE, toContentValuesMapper.map(ch_message), sbWhere.toString(), null);
                 }
@@ -362,7 +362,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             ch_message.setMsg_prefix(cursor.getInt(cursor.getColumnIndex(MSG_PREFIX)));
             ch_message.setMsg_code(cursor.getInt(cursor.getColumnIndex(MSG_CODE)));
             ch_message.setTmp(cursor.getLong(cursor.getColumnIndex(TMP)));
-            ch_message.setRoom_code(cursor.getString(cursor.getColumnIndex(MSG_TOKEN)));
+            ch_message.setMsg_token(cursor.getLong(cursor.getColumnIndex(MSG_TOKEN)));
             ch_message.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             ch_message.setMsg_date(cursor.getString(cursor.getColumnIndex(MSG_DATE)));
             ch_message.setMsg_obj(cursor.getString(cursor.getColumnIndex(MSG_OBJ)));
@@ -414,7 +414,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             if (ch_message.getTmp() > -1) {
                 contentValues.put(TMP, ch_message.getTmp());
             }
-            if (ch_message.getMsg_token() != null) {
+            if (ch_message.getMsg_token() > -1) {
                 contentValues.put(MSG_TOKEN, ch_message.getMsg_token());
             }
             if (ch_message.getRoom_code() != null) {

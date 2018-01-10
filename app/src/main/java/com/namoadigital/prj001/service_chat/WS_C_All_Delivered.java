@@ -69,6 +69,7 @@ public class WS_C_All_Delivered extends IntentService {
                     new CH_Message_Sql_010(
                             delivered.getMsg_prefix(),
                             delivered.getMsg_code(),
+                            ToolBox_Inf.chatNextMSGToken(getApplicationContext()),
                             CH_Message_Sql_010.FLAG_ALL_DELIVERED
                     ).toSqlQuery()
             );

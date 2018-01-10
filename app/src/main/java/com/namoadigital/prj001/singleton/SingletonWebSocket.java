@@ -83,7 +83,7 @@ public class SingletonWebSocket {
      */
     private boolean mSocketRunning = false;
 
-    public Socket mSocket;
+    public Socket mSocket = null;
 
     public interface ISingletonWebSocket {
         void chat(String user, String message);
@@ -145,7 +145,6 @@ public class SingletonWebSocket {
 
             mSocket.on(Socket.EVENT_RECONNECT, onReconnectReturn);
             mSocket.on(Socket.EVENT_RECONNECTING, onReconnectingReturn);
-            mSocket.on(Socket.EVENT_RECONNECT_ERROR, onReconnectError);
             mSocket.on(Socket.EVENT_RECONNECT_ERROR, onReconnectError);
             mSocket.on(Socket.EVENT_RECONNECT_FAILED, onReconnectFailed);
 
@@ -358,7 +357,8 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + mSocket.id());
+                Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + mSocket.id()
+                        +" - Error:  "+ String.valueOf(args[0]));
             } else {
                 Log.d("ChatEvent", "EVENT_RECONNECT_ERROR");
             }
@@ -617,7 +617,7 @@ public class SingletonWebSocket {
     private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.d("ChatEvent", "cErrorLogin");
+            Log.d("ChatEvent", "cErrorLogin  -> " + String.valueOf(args[0]));
             if (args != null && args.length > 0) {
                 if (args[0] instanceof String) {
                     Gson gson = new GsonBuilder().serializeNulls().create();
@@ -657,7 +657,7 @@ public class SingletonWebSocket {
     private Emitter.Listener onErrorReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.d("ChatEvent", "cError");
+            Log.d("ChatEvent", "cError  -> " + String.valueOf(args[0]));
             if (args != null && args.length > 0) {
                 if (args[0] instanceof String) {
                     Gson gson = new GsonBuilder().serializeNulls().create();
@@ -781,8 +781,8 @@ public class SingletonWebSocket {
             * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
             * e direciona msgs para o serviço.
             */
-            if (messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)) {
-                cMessageFilePath = createMsgsFile(param, null);
+            if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
+                cMessageFilePath = createMsgsFile(param,null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
                 Bundle bundle = new Bundle();
@@ -793,7 +793,7 @@ public class SingletonWebSocket {
                 cMessageIntent.putExtras(bundle);
                 context.sendBroadcast(cMessageIntent);
 
-            } else {
+            }else {
                 //Atualiza total de msg e contador de msg
                 total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
 
@@ -806,7 +806,6 @@ public class SingletonWebSocket {
                         CH_Message localMessage =
                                 messageDao.getByString(
                                         new CH_Message_Sql_014(
-                                                chatCMessage.getMsg_prefix(),
                                                 chatCMessage.getMsg_tmp(),
                                                 ToolBox_Con.getPreference_User_Code(context)
                                         ).toSqlQuery()
@@ -865,22 +864,22 @@ public class SingletonWebSocket {
                     //
                 }
                 //Atualiza contador
-                // count_msg += messages.size();
+               // count_msg += messages.size();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean areAllMsgProcessed() {
+    public boolean areAllMsgProcessed(){
         return count_msg == total_msg;
     }
 
-    public void resetProcessMsgCounter() {
-        total_msg = count_msg = 0;
+    public void resetProcessMsgCounter(){
+        total_msg  = count_msg = 0;
     }
 
-    public long updateCounterMsg(long increment) {
+    public long updateCounterMsg(long increment){
         count_msg += increment;
         return count_msg;
     }
@@ -906,7 +905,7 @@ public class SingletonWebSocket {
                 }
             }
         }
-
+//
 //        if (!sSoleInstance.mSocketRunning) {
 //            sSoleInstance.initConnection();
 //        }

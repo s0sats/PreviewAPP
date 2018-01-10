@@ -69,6 +69,7 @@ public class WS_C_All_Read extends IntentService {
                     new CH_Message_Sql_010(
                             read.getMsg_prefix(),
                             read.getMsg_code(),
+                            ToolBox_Inf.chatNextMSGToken(getApplicationContext()),
                             CH_Message_Sql_010.FLAG_ALL_READ
                     ).toSqlQuery()
             );

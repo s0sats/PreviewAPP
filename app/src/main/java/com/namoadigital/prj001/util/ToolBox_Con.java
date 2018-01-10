@@ -381,7 +381,29 @@ public class ToolBox_Con {
                 100L
         );
     }
-//endregion
+    //endregion
+
+    //region Chat_Msg_Token
+    public static void setPreference_Chat_Msg_Token(Context context, long chat_msg_token) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.CHAT_PREFERENCE_MSG_TOKEN,
+                chat_msg_token
+        ).apply();
+    }
+
+    public static long getPreference_Chat_Msg_Token(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.CHAT_PREFERENCE_MSG_TOKEN,
+                1L
+        );
+    }
+    //endregion
 
 
     //region Chat_Msg_Prefix
