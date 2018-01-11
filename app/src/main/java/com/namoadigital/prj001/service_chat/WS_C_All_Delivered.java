@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -65,6 +66,9 @@ public class WS_C_All_Delivered extends IntentService {
         CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
         //
         for (Chat_C_All_Delivered_Read delivered : allDelivereds) {
+
+            Log.d("ALL_DE_RE", " DELIVERED " + delivered.getMsg_code());
+
             messageDao.addUpdate(
                     new CH_Message_Sql_010(
                             delivered.getMsg_prefix(),
@@ -78,6 +82,8 @@ public class WS_C_All_Delivered extends IntentService {
         //
         //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_ALL_DELIVERED);
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
+
+
     }
 
 }
