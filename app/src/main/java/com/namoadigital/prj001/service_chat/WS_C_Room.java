@@ -13,9 +13,11 @@ import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -55,6 +57,7 @@ public class WS_C_Room extends IntentService {
 
     private void processC_Room(String json_param) {
         Gson gson = new GsonBuilder().serializeNulls().create();
+        CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
         ArrayList<Chat_C_Room> rooms =
                 gson.fromJson(
@@ -64,12 +67,35 @@ public class WS_C_Room extends IntentService {
         //
         ArrayList<CH_Room> chRooms = Chat_C_Room.toCH_RoomList(rooms);
         //
-        CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
+        for (CH_Room chRoom : chRooms) {
+            CH_Room dbRoom = roomDao.getByString(
+                    new CH_Room_Sql_001(
+                            chRoom.getRoom_code()
+                    ).toSqlQuery()
+            );
+            //Valida retornou registro do banco.
+            if(dbRoom != null && dbRoom.getRoom_code().length() > 0){
+                //Se existe o registro, valida se a url da imagem enviada é a mesma
+                //que do registro no banco.
+                //Se não for, zera url local e apaga imagem do app para que a nova
+                //imagem seja baixada.
+                if( chRoom.getRoom_image() == null ||
+                    !chRoom.getRoom_image().equalsIgnoreCase(dbRoom.getRoom_image())
+                ){
+                    File file = new File(Constant.CACHE_PATH + "/"+dbRoom.getRoom_image_local());
+                    //
+                    if(file.exists() && file.isFile()) {
+                        file.delete();
+                    }
+                }else{
+                    chRoom.setRoom_image_local(dbRoom.getRoom_image_local());
+                }
+            }
+        }
         //
         roomDao.addUpdate(chRooms, false);
         //
         startDownloadService();
-        //
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
     }

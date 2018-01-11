@@ -16,7 +16,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
-import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act034_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -34,7 +34,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
     private OnIvRoomClickListner OnIvRoomClickListner;
 
     public interface OnIvRoomClickListner{
-        void onIvRoomClick(String image_path);
+        void onIvRoomClick(String room_code, String room_desc, String image_path);
     }
 
     public void setOnIvRoomClickListner(Act034_Room_Adapter.OnIvRoomClickListner onIvRoomClickListner) {
@@ -94,7 +94,11 @@ public class Act034_Room_Adapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if(OnIvRoomClickListner != null){
-                    OnIvRoomClickListner.onIvRoomClick(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
+                    OnIvRoomClickListner.onIvRoomClick(
+                            item.get(CH_RoomDao.ROOM_CODE),
+                            item.get(CH_RoomDao.ROOM_DESC),
+                            item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)
+                    );
                 }
             }
         });
@@ -132,7 +136,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
             tv_msg.setText(type);
         }
         //
-        int i = ToolBox_Inf.convertStringToInt(item.get(CH_Room_Sql_001.BADGE));
+        int i = ToolBox_Inf.convertStringToInt(item.get(Sql_Act034_004.BADGE));
         //
         if (i == 0) {
             tv_badge.setText("");

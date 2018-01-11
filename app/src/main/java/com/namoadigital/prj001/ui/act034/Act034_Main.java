@@ -1,10 +1,14 @@
 package com.namoadigital.prj001.ui.act034;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +18,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,12 +30,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.model.Chat_C_Error;
+import com.namoadigital.prj001.model.Chat_Room_Info_Env;
+import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -63,6 +75,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private TextView tv_info_msg_1;
     private TextView tv_info_msg_2;
     private ArrayList<HMAux> customer_list = new ArrayList<>();
+    private RoomInfoTask roomInfoTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -166,7 +179,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         ll_info = (LinearLayout) findViewById(R.id.act034_main_ll_info);
         //
         iv_info_icon = (ImageView) findViewById(R.id.act034_main_iv_icon);
-        iv_info_icon.startAnimation(AnimationUtils.loadAnimation(context,R.anim.rotation_anim));
+        iv_info_icon.startAnimation(AnimationUtils.loadAnimation(context, R.anim.rotation_anim));
         //
         tv_info_msg_1 = (TextView) findViewById(R.id.act034_main_tv_msg_1);
         //
@@ -178,7 +191,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         initFragments();
         //
-        setFrag(act034_room,FRAG_TAG_ROOM);
+        setFrag(act034_room, FRAG_TAG_ROOM);
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
@@ -191,9 +204,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
         //
-        if(start_stop){
-            LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(brRoomReceiver,brRoomFilter);
-        }else{
+        if (start_stop) {
+            LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
+        } else {
             LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(brRoomReceiver);
             //
             brRoomReceiver = null;
@@ -240,7 +253,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }*/
     }
 
-    public void setSelectedCustomer(long customer_code){
+    public void setSelectedCustomer(long customer_code) {
         act034_room.setSelected_customer(customer_code);
         act034_room.loadDataToScreen();
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -328,8 +341,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(CH_RoomDao.ROOM_CODE,item.get(CH_RoomDao.ROOM_CODE));
-        bundle.putString("position",item.get("position"));
+        bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
+        bundle.putString("position", item.get("position"));
         //
         mIntent.putExtras(bundle);
         //
@@ -341,7 +354,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     * Receivers
     */
 
-    private class BR_Room extends BroadcastReceiver{
+    private class BR_Room extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -349,10 +362,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             HMAux auxParam = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
             type += "";
 
-            switch (type){
+            switch (type) {
                 case Constant.CHAT_BR_TYPE_ROOM:
                 case Constant.CHAT_BR_TYPE_MSG:
-                    if(currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)){
+                    if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
                         //act034_room.loadRoomList();
                         act034_room.loadDataToScreen();
                     }
@@ -360,13 +373,20 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     toogleDrawerVisibility();
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTED:
-                    toogleInfoMsg(false,null);
+                    toogleInfoMsg(false, null);
                     //hideShowReconnectingDialog(0,0);
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTING:
                     String qtd = String.valueOf(auxParam == null ? 0 : auxParam.get(Constant.CHAT_BR_PARAM_RECONNECTING_QTD));
-                    toogleInfoMsg(true,qtd);
+                    toogleInfoMsg(true, qtd);
                     //hideShowReconnectingDialog(1, qtd);
+                    break;
+                case Constant.CHAT_BR_TYPE_ROOM_INFO:
+                    if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
+                        //showRoomInfoDialog(auxParam);
+                        //act034_room.showRoomInfoDialog(auxParam);
+                    }
+
                     break;
                 default:
                     break;
@@ -374,13 +394,40 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }
     }
 
+    @Override
+    public void showPD(String ttl, String msg) {
+        //
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        progressDialog.setCancelable(true);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if(roomInfoTask != null){
+                    roomInfoTask.cancel(true);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void disablePD() {
+        disableProgressDialog();
+    }
+
     private void toogleInfoMsg(boolean visible, String qtd) {
 
-        if(visible){
+        if (visible) {
             ll_info.setVisibility(View.VISIBLE);
             tv_info_msg_1.setText(hmAux_Trans.get("trying_to_reconnect_lbl"));
             tv_info_msg_2.setText(qtd);
-        }else{
+        } else {
             ll_info.setVisibility(View.GONE);
             tv_info_msg_2.setText(null);
         }
@@ -389,48 +436,48 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     private void hideShowReconnectingDialog(int on_off, int qtd) {
 
-        if(on_off == 0){
-            if(infoDialog != null && infoDialog.isShowing()){
+        if (on_off == 0) {
+            if (infoDialog != null && infoDialog.isShowing()) {
                 infoDialog.dismiss();
                 return;
             }
         }
         //
-        if(on_off == 1){
-            if(infoDialog != null && !infoDialog.isShowing()){
-                infoDialog = showReconnectingDialog(context,"Try connecting", qtd != 0 ? String.valueOf(qtd)  : null );
+        if (on_off == 1) {
+            if (infoDialog != null && !infoDialog.isShowing()) {
+                infoDialog = showReconnectingDialog(context, "Try connecting", qtd != 0 ? String.valueOf(qtd) : null);
                 return;
             }
         }
     }
 
     public static AlertDialog showReconnectingDialog(Context context, @Nullable String msg_1, @Nullable String msg_2) {
-        int w = (int) ToolBox_Inf.convertDpToPixel(context,100 * 1.1f);
-        int h = (int) ToolBox_Inf.convertDpToPixel(context,100 * 1.1f);
+        int w = (int) ToolBox_Inf.convertDpToPixel(context, 100 * 1.1f);
+        int h = (int) ToolBox_Inf.convertDpToPixel(context, 100 * 1.1f);
         //
         AlertDialog.Builder imageBuilder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view  = inflater.inflate(R.layout.act034_reconnecting_dialog,null);
+        View view = inflater.inflate(R.layout.act034_reconnecting_dialog, null);
 
         ImageView iv_room = (ImageView) view.findViewById(R.id.act034_reconnecting_iv_icon);
         TextView tv_msg1 = (TextView) view.findViewById(R.id.act034_reconnecting_tv_msg_1);
         TextView tv_msg2 = (TextView) view.findViewById(R.id.act034_reconnecting_tv_msg_2);
 
-        Animation animation = AnimationUtils.loadAnimation(context,R.anim.rotation_anim);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.rotation_anim);
         iv_room.startAnimation(animation);
         //
-        if(msg_1 != null){
+        if (msg_1 != null) {
             tv_msg1.setText(msg_1);
             tv_msg1.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             tv_msg1.setVisibility(View.GONE);
         }
         //
-        if(msg_2 != null){
+        if (msg_2 != null) {
             tv_msg2.setText(msg_2);
             tv_msg2.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             tv_msg2.setVisibility(View.GONE);
         }
 
@@ -445,6 +492,113 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         return imageDialog;
     }
+
+    @Override
+    public void startRoomInfoTask(String socket_id, String room_code) {
+        roomInfoTask = new RoomInfoTask();
+        roomInfoTask.execute(socket_id,room_code);
+    }
+
+    //region AsyncTask
+
+    private class RoomInfoTask extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("ChatEvent","RoomAsyncTask PreExecute");
+            //
+            showPD(
+                    /*hmAux_Trans.get("ws_room_info_ttl"),
+                    hmAux_Trans.get("ws_room_info_msg")*/
+                    "Informações da Sala - Trad",
+                    "Buscando informações da sala - Trad"
+            );
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("ChatEvent","RoomAsyncTask DoInBackground");
+            String resultado = "";
+            try {
+                String socket_id = params[0];
+                String room_code = params[1];
+                //
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                Chat_Room_Info_Env env = new Chat_Room_Info_Env();
+                env.setSocket_id(socket_id);
+                env.setRoom_code(room_code);
+                env.setActive(1);
+                //
+                resultado = ToolBox_Con.connWebService(
+                        Constant.WS_CHAT_ROOM_INFO,
+                        gson.toJson(env)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            Log.d("ChatEvent","RoomAsyncTask OnPost");
+            super.onPostExecute(resultado);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //
+            if (resultado.contains("error_msg")) {
+                //
+                Chat_C_Error cError =
+                        gson.fromJson(
+                                ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                Chat_C_Error.class
+                        );
+                //
+                ToolBox.sendBCStatus(
+                        context,
+                        "ERROR_1",
+                        cError != null ? cError.getError_msg() : "Error",
+                        "",
+                        "0"
+                );
+
+            } else {
+                //
+                disablePD();
+                ArrayList<Chat_Room_Info_Rec> roomInfoList = gson
+                        .fromJson(
+                                ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                new TypeToken<ArrayList<Chat_Room_Info_Rec>>() {
+                                }.getType()
+                        );
+                //
+                act034_room.showRoomInfoDialog(roomInfoList);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.d("ChatEvent","RoomAsyncTask Cancelada");
+            disablePD();
+        }
+    }
+
+    private class DownloadMemberImgTask extends AsyncTask<String, Integer, Void> {
+
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            return null;
+        }
+    }
+
+    //endregion
+
+
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
@@ -455,6 +609,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void onDestroy() {
         startReceivers(false);
+        if(roomInfoTask != null) {
+            roomInfoTask.cancel(true);
+        }
         //
         super.onDestroy();
     }
