@@ -34,7 +34,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
     private OnIvRoomClickListner OnIvRoomClickListner;
 
     public interface OnIvRoomClickListner{
-        void onIvRoomClick(String room_code, String image_path);
+        void onIvRoomClick(String room_code, String room_desc, String image_path);
     }
 
     public void setOnIvRoomClickListner(Act034_Room_Adapter.OnIvRoomClickListner onIvRoomClickListner) {
@@ -96,6 +96,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
                 if(OnIvRoomClickListner != null){
                     OnIvRoomClickListner.onIvRoomClick(
                             item.get(CH_RoomDao.ROOM_CODE),
+                            item.get(CH_RoomDao.ROOM_DESC),
                             item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)
                     );
                 }

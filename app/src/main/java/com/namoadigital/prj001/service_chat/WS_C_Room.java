@@ -97,7 +97,6 @@ public class WS_C_Room extends IntentService {
         //
         startDownloadService();
         //
-        //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
     }
 

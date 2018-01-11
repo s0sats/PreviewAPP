@@ -15,4 +15,10 @@ public interface Act034_Main_View {
     void callAct005(Context context);
 
     void callAct035(Context context, HMAux item);
+
+    void showPD(String ttl,String msg);
+
+    void disablePD();
+
+    void startRoomInfoTask(String socket_id,String room_code);
 }

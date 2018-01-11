@@ -65,7 +65,7 @@ public class WS_Room_Info extends IntentService {
         );
         //
         HMAux hmAux = new HMAux();
-        hmAux.put(Constant.CHAT_BR_TYPE_ROOM_INFO,resultado);
+        hmAux.put(Constant.CHAT_BR_TYPE_ROOM_INFO,ToolBox_Inf.getWebSocketJsonParam(resultado));
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_INFO,hmAux);
     }
