@@ -76,6 +76,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private TextView tv_info_msg_2;
     private ArrayList<HMAux> customer_list = new ArrayList<>();
     private RoomInfoTask roomInfoTask;
+    private DownloadMemberImgTask downloadMemberImgTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -498,6 +499,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         roomInfoTask = new RoomInfoTask();
         roomInfoTask.execute(socket_id,room_code);
     }
+    //
+
+    @Override
+    public void startDownloadMemberImgTask(String[] imgUrlList) {
+        downloadMemberImgTask = new DownloadMemberImgTask();
+        downloadMemberImgTask.execute(imgUrlList);
+    }
+
 
     //region AsyncTask
 
@@ -575,7 +584,17 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                                 }.getType()
                         );
                 //
+                ArrayList<String> auxList = new ArrayList<>();
+                for (Chat_Room_Info_Rec info_rec:roomInfoList) {
+                    if(info_rec.getSys_user_image() != null) {
+                        auxList.add(info_rec.getSys_user_image());
+                    }
+                }
+                //
                 act034_room.showRoomInfoDialog(roomInfoList);
+                //
+                String[] imgUrlList = new String[auxList.size()];
+                startDownloadMemberImgTask(auxList.toArray(imgUrlList));
             }
         }
 
@@ -592,6 +611,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected Void doInBackground(String... strings) {
+            for (int i = 0; i < strings.length ; i++) {
+                String oi = strings[i];
+            }
+
             return null;
         }
     }
@@ -611,6 +634,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         startReceivers(false);
         if(roomInfoTask != null) {
             roomInfoTask.cancel(true);
+        }
+        if(downloadMemberImgTask != null){
+            downloadMemberImgTask.cancel(true);
+
         }
         //
         super.onDestroy();

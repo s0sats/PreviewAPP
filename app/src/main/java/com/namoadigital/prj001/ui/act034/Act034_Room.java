@@ -18,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -336,10 +334,8 @@ public class Act034_Room extends BaseFragment {
 
     //public void showRoomInfoDialog(HMAux auxParam) {
     public void showRoomInfoDialog(ArrayList<Chat_Room_Info_Rec> roomInfoList) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        //String jsonRoomInfo = auxParam.get(Constant.CHAT_BR_TYPE_ROOM_INFO);
         ArrayList<HMAux> memberList = new ArrayList<>();
-        ArrayList<String> memberImgs = new ArrayList<>();
+
         try {
             //
             if(roomInfoList != null && roomInfoList.size() > 0){
@@ -350,11 +346,9 @@ public class Act034_Room extends BaseFragment {
                     aux.put(Chat_Member_Adapter.IS_ONLINE, String.valueOf(infoRec.getOn_line()));
                     aux.put(Chat_Member_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
                     //
-                    memberImgs.add(infoRec.getSys_user_image());
                     memberList.add(aux);
                 }
             }
-            //String[] teste = Array.
             //
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
