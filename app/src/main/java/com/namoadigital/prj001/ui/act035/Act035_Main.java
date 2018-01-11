@@ -80,12 +80,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private BR_Download_Image brDownloadImageReceiver;
 
     private boolean statusCameraNew = false;
-    private boolean statusReorder = false;
+    //private boolean statusReorder = false;
 
     private boolean statusReorderProcess = false;
 
     private int mTotal = 0;
-    private int offSetV = 100;
+    private int offSetV = 500;
 
     private CH_MessageDao chMessageDao;
 
@@ -161,7 +161,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             lv_messages.setSelection(lastposition);
                         }
                     }
-                }, 100);
+                }, 250);
 
                 return false;
             }
@@ -219,42 +219,46 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void reloadMessages(ArrayList<HMAux> dados) {
         this.dados = dados;
         //
+        Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
+        //
         int firstUnRead = 0;
         //
-        if (statusReorder && dados.size() > 0) {
-            firstUnRead = dados.size() - 1;
-
-            for (int i = 0; i < dados.size(); i++) {
-                HMAux aux = dados.get(i);
-                //
-                if (aux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
-                    firstUnRead = i;
-                    //
-                    break;
-                }
-
-            }
-        }
+//        if (statusReorder && dados.size() > 0) {
+//            firstUnRead = dados.size() - 1;
+//
+//            for (int i = 0; i < dados.size(); i++) {
+//                HMAux aux = dados.get(i);
+//                //
+//                if (aux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
+//                    firstUnRead = i;
+//                    //
+//                    break;
+//                }
+//
+//            }
+//        }
         //
+
         act035_adapter_messages = new Act035_Adapter_Messages(
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats,
                 R.layout.act035_main_content_cell_whats,
                 R.layout.act035_main_content_cell_whats_text_bk_r,
                 R.layout.act035_main_content_cell_whats_text_bk,
-                dados
+                this.dados
         );
 
         lv_messages.setAdapter(
                 act035_adapter_messages
         );
         //
-        if (statusReorder) {
-            statusReorder = false;
-            lv_messages.setSelection(firstUnRead);
-        } else {
-            lv_messages.setSelection(dados.size() - 1);
-        }
+//        if (statusReorder) {
+//            statusReorder = false;
+//            lv_messages.setSelection(firstUnRead);
+//        } else {
+//            lv_messages.setSelection(dados.size() - 1);
+//        }
+        lv_messages.setSelection(this.dados.size() - 1);
         //
         sw_messages.setRefreshing(false);
     }
@@ -314,7 +318,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 int dadosSize = dados.size();
                 //
                 if (offSetV > dados.size()) {
-                    offSetV = dados.size();
+                    offSetV = 100;
                 } else {
                     offSetV += 100;
                 }
@@ -366,7 +370,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_reorder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                statusReorder = true;
+                statusReorderProcess = false;
                 //
                 mPresenter.setData(mRoom_code, String.valueOf(offSetV));
                 //
@@ -451,6 +455,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             HMAux mAux = (HMAux) intent.getSerializableExtra(Constant.CHAT_BR_PARAM);
 
+            Log.d("PROCESSOS", "Receiver " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
+
+
             try {
                 switch (type) {
                     case Constant.CHAT_BR_TYPE_MSG:
@@ -488,6 +495,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         Log.d("PC", "PC ENTREI");
 
+        Log.d("PROCESSOS", "cMessage " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
+
         if (!isProcessing_C_Message) {
             isProcessing_C_Message = true;
 
@@ -509,7 +518,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         );
 
                         Log.d("PC", messages.get(0).get("msg_obj"));
-                        //messages.get(0).put(CH_MessageDao.MSG_PK, "201601_00000000000000000000");
 
                         while (messages.size() > 0) {
                             //
@@ -524,11 +532,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 }
                             }
 
-                            chMessageDao.addUpdate(
-                                    new CH_Message_Sql_009(
-                                            messages
-                                    ).toSqlQuery()
-                            );
+                            Log.d("PROCESSO_ASYN", "continuei apos m1");
+
+                            for (HMAux message : messages) {
+                                chMessageDao.addUpdate(
+                                        new CH_Message_Sql_009(
+                                                message
+                                        ).toSqlQuery()
+                                );
+                            }
 
                             messages = (ArrayList<HMAux>) chMessageDao.query_HM(
                                     new CH_Message_Sql_008(mRoom_code).toSqlQuery()
@@ -545,6 +557,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             } catch (InterruptedException e) {
                             }
                         }
+
+                        Log.d("PROCESSO_ASYN", "continuei apos m2");
 
                     } catch (Exception e) {
                     } finally {
@@ -566,6 +580,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             synchronized (this) {
 
                 try {
+                    Log.d("PROCESSO_ASYN", "entrei m1");
+
                     mPresenter.updateReadStatus(messages);
                     //
                     boolean reOrder = act035_adapter_messages.addMessages(messages);
@@ -576,9 +592,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         } else {
                             statusReorderProcess = false;
                         }
+                    } else {
+                        statusReorderProcess = true;
                     }
                     //
                     mTotal += act035_adapter_messages.getmSizeAddUpdate();
+
+                    Log.d("PROCESSO_ASYN", "sai m1");
                 } catch (Exception e) {
                     String erro = e.toString();
                 }
@@ -595,6 +615,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             synchronized (this) {
 
                 try {
+                    Log.d("PROCESSO_ASYN", "entrei m2");
                     if (statusReorderProcess) {
                         iv_reorder.setVisibility(View.VISIBLE);
                     } else {
@@ -604,14 +625,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             if (mTotal == 1) {
                                 iv_down.setVisibility(View.GONE);
                                 mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-                            } else if (mTotal != 0){
-                                    iv_down.setVisibility(View.VISIBLE);
-                                } else {
+                            } else if (mTotal != 0) {
+                                iv_down.setVisibility(View.VISIBLE);
+                            } else {
+                                turnOnDownIcon();
                             }
                         } else {
                             iv_down.setVisibility(View.VISIBLE);
                         }
                     }
+
+                    Log.d("PROCESSO_ASYN", "sai m2");
+
                 } catch (Exception e) {
                     String erro = e.toString();
                 }
@@ -622,6 +647,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void processing_FromTo(Context context) {
+        Log.d("PROCESSOS", "DePara " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
+
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
         act035_adapter_messages.refill(chMessageDao.query_HM(

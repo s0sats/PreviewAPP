@@ -91,14 +91,32 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     public void refill(List<HMAux> dadosR) {
-        data.clear();
-        data.addAll(dadosR);
-        //
+        for (int i = 0; i < dadosR.size(); i++) {
+            HMAux msg = dadosR.get(i);
+            //
+            for (int j = data.size() - 1; j >= 0; j--) {
+                HMAux item = data.get(j);
+                if (msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
+
+                    data.set(j, msg);
+
+                    break;
+                }
+            }
+        }
+
         notifyDataSetChanged();
+
+
+//        data.clear();
+//        data.addAll(dadosR);
+//        //
+//        notifyDataSetChanged();
     }
 
     public boolean addMessages(List<HMAux> dadosR) {
         boolean reOrder = false;
+        int countFound = 0;
         //
         List<HMAux> dadosRNew = new ArrayList<>();
         //
@@ -109,11 +127,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             //
             for (int j = data.size() - 1; j >= 0; j--) {
                 HMAux item = data.get(j);
-                if (msg.get(CH_MessageDao.MSG_PREFIX).equalsIgnoreCase(item.get(CH_MessageDao.MSG_PREFIX)) &&
-                        msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
+                if (msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
                     sFound = true;
                     //
                     data.set(j, msg);
+                    //
+                    countFound++;
                     //
                     break;
                 }
@@ -132,11 +151,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             //
             mSizeAddUpdate = dadosRNew.size();
             //
+//            notifyDataSetChanged();
         } else {
             mSizeAddUpdate = 0;
             //
             reOrder = false;
         }
+        //
+//        if (countFound > 0){
+//            notifyDataSetChanged();
+//        }
         //
         notifyDataSetChanged();
         //
@@ -163,6 +187,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     //aux é igual a sMessage
                     return false;
                 }
+            } else {
+                return true;
             }
         }
         //

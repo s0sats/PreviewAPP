@@ -4,18 +4,16 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.database.Specification;
 
-import java.util.ArrayList;
-
 /**
  * Created by d.luche on 30/11/2017.
  */
 
 public class CH_Message_Sql_009 implements Specification {
 
-    private ArrayList<HMAux> messages;
+    private HMAux message;
 
-    public CH_Message_Sql_009(ArrayList<HMAux> messages) {
-        this.messages = messages;
+    public CH_Message_Sql_009(HMAux message) {
+        this.message = message;
     }
 
     @Override
@@ -25,13 +23,10 @@ public class CH_Message_Sql_009 implements Specification {
         sb
                 .append(" UPDATE " + CH_MessageDao.TABLE + " SET\n" +
                         "    status_update = '0' \n" +
-                        " WHERE\n" +
-                        " (1 != 1) \n");
+                        " WHERE \n" );
+        sb
+                .append(" ( (tmp = '" + message.get("tmp") + "') and (msg_token = '" + message.get("msg_token") + "') )");
 
-        for (HMAux message : messages) {
-            sb
-                    .append(" or ( (msg_prefix = '" + message.get("msg_prefix") + "') and (tmp = '" + message.get("tmp") + "') and (msg_token = '" + message.get("msg_token") + "') )");
-        }
 
         sb.append(";");
 

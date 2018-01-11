@@ -156,6 +156,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         chMessage.setDelivered(0);
         chMessage.setDelivered_date(null);
         chMessage.setRead(0);
+        chMessage.setStatus_update(1);
         chMessage.setRead_date(null);
         chMessage.setMsg_pk(null);
         chMessage.setUser_code(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
@@ -164,8 +165,6 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         ch_messageDao.addUpdateTmp(chMessage);
         //
         setData(mRoom_code, offSet);
-        //
-        //mView.cleanTextControl();
         //
         enviarMensagemServer(mRoom_code, message, chMessage);
     }
