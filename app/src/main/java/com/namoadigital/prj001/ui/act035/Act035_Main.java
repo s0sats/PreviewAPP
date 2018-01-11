@@ -362,6 +362,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //
                     mkEditTextNM.setText("");
                     //
+                    iv_reorder.setVisibility(View.GONE);
+                    iv_down.setVisibility(View.GONE);
+                    //
                     mPresenter.sendMessage(mRoom_code, texto, "", String.valueOf(offSetV));
                 }
             }
@@ -614,19 +617,27 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             synchronized (this) {
 
+                int lastVisiblePosition = lv_messages.getLastVisiblePosition();
+                int firstVisiblePosition = lv_messages.getFirstVisiblePosition();
+
                 try {
                     Log.d("PROCESSO_ASYN", "entrei m2");
                     if (statusReorderProcess) {
                         iv_reorder.setVisibility(View.VISIBLE);
-                    } else {
-                        int lastVisiblePosition = lv_messages.getLastVisiblePosition();
                         //
+                        if (mTotal == 1) {
+                            lv_messages.setSelection(lastVisiblePosition);
+                        } else {
+//                            lv_messages.setSelection(firstVisiblePosition + 2);
+                        }
+                    } else {
                         if (lastVisiblePosition == (dados.size() - 1)) {
                             if (mTotal == 1) {
                                 iv_down.setVisibility(View.GONE);
                                 mPresenter.setData(mRoom_code, String.valueOf(offSetV));
                             } else if (mTotal != 0) {
                                 iv_down.setVisibility(View.VISIBLE);
+//                                lv_messages.setSelection(firstVisiblePosition + 2);
                             } else {
                                 turnOnDownIcon();
                             }
