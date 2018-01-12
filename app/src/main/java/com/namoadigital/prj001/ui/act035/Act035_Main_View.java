@@ -14,7 +14,7 @@ public interface Act035_Main_View {
 
     void reloadMessages(ArrayList<HMAux> dados);
 
-    void callAct005(Context context);
+    void callAct034(Context context);
 
     void callCamera(int mId, int mType, String mFName, boolean mEdit, boolean mEnabled);
 }

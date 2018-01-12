@@ -778,20 +778,16 @@ public class SingletonWebSocket {
                     param,
                     new TypeToken<ArrayList<Chat_C_Message>>() {
                     }.getType());
+
+            if(messages.size() == 0 ){
+                ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
+                return;
+            }
             /*
             * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
             * e direciona msgs para o serviço.
             */
             if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
-                //
-                if (messages.size() > 0) {
-                    ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
-                    //
-                    messageDao.addUpdate(chMessages, false);
-                } else {
-
-                }
-                //
                 cMessageFilePath = createMsgsFile(param,null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);

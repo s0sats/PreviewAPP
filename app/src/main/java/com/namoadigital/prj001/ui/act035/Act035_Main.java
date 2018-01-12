@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,11 +27,14 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.sql.CH_Message_Sql_012;
 import com.namoadigital.prj001.sql.CH_Message_Sql_017;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -51,7 +55,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private Thread mThread;
 
-    private TextView tv_customer_val;
+    private TextView tv_room_name_val;
+    private ImageView iv_room_thumbnail;
 
     private ListView lv_messages;
     private SwipeRefreshLayout sw_messages;
@@ -76,20 +81,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private int lastvisibleposition = -1;
     private int lastposition = -1;
 
+    private CH_RoomDao ch_roomDao;
     private String mRoom_code;
 
     private BR_Room brRoomReceiver;
     private BR_Download_Image brDownloadImageReceiver;
 
     private boolean statusCameraNew = false;
-    //private boolean statusReorder = false;
 
     private boolean statusReorderProcess = false;
 
     private int mTotal = 0;
     private int offSetV = 100;
-
-    private CH_MessageDao chMessageDao;
 
     private MyRunnable_01 m1;
     private MyRunnable_02 m2;
@@ -145,7 +148,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         new CH_MessageDao(context)
                 );
         //
-        tv_customer_val = (TextView) findViewById(R.id.act035_tv_customer_val);
+        tv_room_name_val = (TextView) findViewById(R.id.act035_tv_room_name_val);
+        iv_room_thumbnail = (ImageView) findViewById(R.id.act035_iv_room_thumbnail_val);
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);
         sw_messages = (SwipeRefreshLayout) findViewById(R.id.act035_sw_messages);
         mkEditTextNM = (MKEditTextNM) findViewById(R.id.act035_mket_serial);
@@ -188,6 +192,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_reorder = (ImageView) findViewById(R.id.act035_iv_reorder);
         iv_down = (ImageView) findViewById(R.id.act035_iv_down);
 
+        ch_roomDao = new CH_RoomDao(context);
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
         mPresenter.updateReadStatus(
@@ -223,24 +228,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
         //
-        int firstUnRead = 0;
-        //
-//        if (statusReorder && dados.size() > 0) {
-//            firstUnRead = dados.size() - 1;
-//
-//            for (int i = 0; i < dados.size(); i++) {
-//                HMAux aux = dados.get(i);
-//                //
-//                if (aux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
-//                    firstUnRead = i;
-//                    //
-//                    break;
-//                }
-//
-//            }
-//        }
-        //
-
         act035_adapter_messages = new Act035_Adapter_Messages(
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats,
@@ -254,12 +241,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 act035_adapter_messages
         );
         //
-//        if (statusReorder) {
-//            statusReorder = false;
-//            lv_messages.setSelection(firstUnRead);
-//        } else {
-//            lv_messages.setSelection(dados.size() - 1);
-//        }
         lv_messages.setSelection(this.dados.size() - 1);
         //
         sw_messages.setRefreshing(false);
@@ -310,7 +291,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void initActions() {
-        tv_customer_val.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+        CH_Room mRoom = ch_roomDao.getByString(
+
+                new CH_Room_Sql_001(
+                        mRoom_code
+                ).toSqlQuery()
+        );
+
+        tv_room_name_val.setText(mRoom.getRoom_desc());
+        iv_room_thumbnail.setImageBitmap(
+                BitmapFactory.decodeFile(ConstantBase.CACHE_PATH + "/" + mRoom.getRoom_image_local())
+        );
         //
         sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -319,14 +310,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 //
                 dadosSizePreRefresh = dados.size();
                 //
-                if (offSetV > dados.size()) {
-                    offSetV = dadosSizePreRefresh + 100;
-                    //
-                    mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(0).get(CH_MessageDao.MSG_PREFIX), dados.get(0).get(CH_MessageDao.MSG_CODE));
-                } else {
-                    offSetV += 100;
-                    //
-                    rearrange_list();
+                if (dados.size() > 0) {
+                    if (offSetV > dados.size()) {
+                        offSetV = dadosSizePreRefresh + 100;
+                        //
+                        mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(0).get(CH_MessageDao.MSG_PREFIX), dados.get(0).get(CH_MessageDao.MSG_CODE));
+                    } else {
+                        offSetV += 100;
+                        //
+                        rearrange_list();
+                    }
                 }
             }
         });
@@ -450,8 +443,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
-    public void callAct005(Context context) {
-        Intent mIntent = new Intent(context, Act005_Main.class);
+    public void callAct034(Context context) {
+        Intent mIntent = new Intent(context, Act034_Main.class);
+        mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -483,7 +477,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     case Constant.CHAT_BR_TYPE_MSG_SCROLL_UP:
                         processing_Scroll_Up();
                         break;
-                    // delivered
                     default:
                         break;
                 }
@@ -677,6 +670,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void processing_Scroll_Up() {
-        rearrange_list();
+        if (sw_messages.isRefreshing()) {
+            rearrange_list();
+        }
     }
 }

@@ -16,31 +16,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="15dp">
 
         <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:id="@+id/act035_iv_room_thumbnail_val"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
             android:padding="5dp"
             android:src="@drawable/ic_site" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/act035_tv_room_name_val"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="Customer"
+            android:layout_marginLeft="20dp"
+            android:textSize="@dimen/font_size_title_md"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/act035_tv_customer_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:text="Customer"
-                android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold" />
-
-        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
@@ -82,8 +78,8 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="bottom|right"
-            android:layout_marginRight="20dp"
             android:layout_marginBottom="70dp"
+            android:layout_marginRight="20dp"
             android:src="@drawable/ic_double_down_gray_24px"
             android:visibility="visible" />
 
@@ -92,8 +88,8 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="bottom|right"
-            android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
             android:src="@drawable/ic_double_down_24px"
             android:visibility="visible" />
 

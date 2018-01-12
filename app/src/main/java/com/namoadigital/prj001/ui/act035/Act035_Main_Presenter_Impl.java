@@ -247,6 +247,6 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct005(context);
+        mView.callAct034(context);
     }
 }
