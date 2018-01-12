@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.ui.act034;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,9 +38,11 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -587,7 +587,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 ArrayList<String> auxList = new ArrayList<>();
                 for (Chat_Room_Info_Rec info_rec:roomInfoList) {
                     if(info_rec.getSys_user_image() != null) {
-                        auxList.add(info_rec.getSys_user_image());
+                        auxList.add(info_rec.getUser_code()+Constant.MAIN_CONCAT_STRING+ info_rec.getSys_user_image());
                     }
                 }
                 //
@@ -606,16 +606,48 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }
     }
 
-    private class DownloadMemberImgTask extends AsyncTask<String, Integer, Void> {
+    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
 
 
         @Override
         protected Void doInBackground(String... strings) {
+            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
+            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
+            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
             for (int i = 0; i < strings.length ; i++) {
-                String oi = strings[i];
+                try {
+                    String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
+                    String user_code = downloadParam[0];
+                    String url = downloadParam[1];
+                    String image_name = "ch_" + user_code;
+                    //
+                    if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
+                        //
+
+                        ToolBox_Inf.downloadImagePDF(
+                                url,
+                                Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg",Constant.CACHE_CHAT_PATH);
+                    }
+                    publishProgress(user_code,image_name+".jpg");
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            //
+            act034_room.updateMemberImage(values[0],values[1]);
         }
     }
 

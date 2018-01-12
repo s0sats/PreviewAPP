@@ -465,6 +465,12 @@ public class Act034_Room extends BaseFragment {
         }
     }
 
+    public void updateMemberImage(String user_code,String local_url){
+        if(mDialogAdapter != null) {
+            mDialogAdapter.updateMemberImage(user_code,local_url);
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
