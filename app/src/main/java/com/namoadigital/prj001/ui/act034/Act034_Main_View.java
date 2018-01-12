@@ -21,4 +21,6 @@ public interface Act034_Main_View {
     void disablePD();
 
     void startRoomInfoTask(String socket_id,String room_code);
+
+    void startDownloadMemberImgTask(String[] imgUrlList);
 }
