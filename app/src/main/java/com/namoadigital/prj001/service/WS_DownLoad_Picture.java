@@ -355,18 +355,18 @@ public class WS_DownLoad_Picture extends IntentService {
                 ));
                 //
                 for (HMAux hmAux : roomImgList) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg")) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_CHAT_PATH)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_CHAT_PATH);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(CH_RoomDao.ROOM_IMAGE),
-                                Constant.CACHE_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                                Constant.CACHE_CHAT_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg");
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg",Constant.CACHE_CHAT_PATH );
                         //
-                        ToolBox_Inf.createThumbNail_Images(Constant.CACHE_PATH, (hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg"));
+                        ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH, (hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg"));
                     }
                     //Atualiza campo com url local
                     roomDao.addUpdate(

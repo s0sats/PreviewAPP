@@ -196,6 +196,11 @@ public class ToolBox_Inf {
             dirChat.mkdir();
         }
 
+        File dirChatImage = new File(Constant.CACHE_CHAT_PATH);
+        if (!dirChatImage.exists()) {
+            dirChatImage.mkdir();
+        }
+
         File dirCamTest = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
         if (!dirCamTest.exists()) {
             dirCamTest.mkdir();
@@ -733,6 +738,13 @@ public class ToolBox_Inf {
     public static void renameDownloadFileInf(String sName, String ext) {
         File from = new File(Constant.CACHE_PATH + "/", sName + ".tmp");
         File to = new File(Constant.CACHE_PATH + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
+
+    public static void renameDownloadFileInf(String sName, String ext,String path) {
+        File from = new File(path+ "/", sName + ".tmp");
+        File to = new File(path+ "/", sName + ext);
         //
         from.renameTo(to);
     }

@@ -51,8 +51,8 @@ public class Chat_Member_Adapter extends BaseAdapter {
         return 0l;
     }
 
-    public void updateMemberImage(int userCode, String image_path){
-        String user_code = String.valueOf(userCode);
+    public void updateMemberImage(String userCode, String image_path){
+        String user_code = userCode;
         for (HMAux item : source) {
             if(item.get(USER_CODE).equalsIgnoreCase(user_code)){
                 item.put(SYS_USER_IMAGE,image_path);
@@ -79,8 +79,7 @@ public class Chat_Member_Adapter extends BaseAdapter {
         ImageView iv_online_icon = (ImageView) convertView.findViewById(R.id.act034_room_info_cell_iv_online);
         //
         if(item.get(SYS_USER_IMAGE) != null){
-            BitmapFactory.decodeFile(Constant.CACHE_PATH+"/"+item.get(SYS_USER_IMAGE));
-            iv_member_img.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH+"/"+item.get(SYS_USER_IMAGE)));
+            iv_member_img.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH+"/"+item.get(SYS_USER_IMAGE)));
         }else{
             iv_member_img.setImageDrawable(context.getDrawable(R.drawable.ic_person_black_24dp));
         }

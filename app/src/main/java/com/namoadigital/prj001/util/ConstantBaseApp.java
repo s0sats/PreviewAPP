@@ -131,6 +131,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String SUPPORT_PATH;
     public static String TOKEN_PATH;
     public static String CHAT_PATH;
+    public static String CACHE_CHAT_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;

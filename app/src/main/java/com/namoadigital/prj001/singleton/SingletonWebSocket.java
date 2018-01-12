@@ -778,7 +778,7 @@ public class SingletonWebSocket {
                     param,
                     new TypeToken<ArrayList<Chat_C_Message>>() {
                     }.getType());
-
+            //Se não houver msg, envia broadcast de Scrool_Up
             if(messages.size() == 0 ){
                 ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 return;
@@ -788,6 +788,7 @@ public class SingletonWebSocket {
             * e direciona msgs para o serviço.
             */
             if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
+                //
                 cMessageFilePath = createMsgsFile(param,null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);

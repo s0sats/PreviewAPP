@@ -28,6 +28,7 @@ import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
 import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PKG_CLEAN_APP;
@@ -76,8 +77,10 @@ public class AppBase extends Application {
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
         CACHE_PATH = DB_PATH + "/CC_CACHE";
+        CACHE_CHAT_PATH = DB_PATH + "/CC_CACHE_CHAT";
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
         CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
+
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 7;
