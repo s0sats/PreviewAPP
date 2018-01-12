@@ -367,7 +367,7 @@ public class Act034_Room extends BaseFragment {
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
             }else{
                 iv_room.setImageBitmap(
-                        BitmapFactory.decodeFile(Constant.CACHE_PATH+"/"+ info_room_image)
+                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH+"/"+ info_room_image)
                 );
             }
             //
