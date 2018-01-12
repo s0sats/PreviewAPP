@@ -783,6 +783,15 @@ public class SingletonWebSocket {
             * e direciona msgs para o serviço.
             */
             if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
+                //
+                if (messages.size() > 0) {
+                    ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
+                    //
+                    messageDao.addUpdate(chMessages, false);
+                } else {
+
+                }
+                //
                 cMessageFilePath = createMsgsFile(param,null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);

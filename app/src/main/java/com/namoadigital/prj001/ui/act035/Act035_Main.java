@@ -69,6 +69,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private Bundle bundle;
 
+    private int dadosSizePreRefresh = 0;
+
     private MKEditTextNM mkEditTextNM;
 
     private int lastvisibleposition = -1;
@@ -85,7 +87,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private boolean statusReorderProcess = false;
 
     private int mTotal = 0;
-    private int offSetV = 500;
+    private int offSetV = 100;
 
     private CH_MessageDao chMessageDao;
 
@@ -315,20 +317,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             public void onRefresh() {
                 sw_messages.setRefreshing(true);
                 //
-                int dadosSize = dados.size();
+                dadosSizePreRefresh = dados.size();
                 //
                 if (offSetV > dados.size()) {
-                    offSetV = 100;
+                    offSetV = dadosSizePreRefresh + 100;
+                    //
+                    mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(0).get(CH_MessageDao.MSG_PREFIX), dados.get(0).get(CH_MessageDao.MSG_CODE));
                 } else {
                     offSetV += 100;
-                }
-
-                mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-
-                if (dados.size() == dadosSize) {
-                    lv_messages.setSelection(0);
-                } else {
-                    lv_messages.setSelection(dados.size() > dadosSize ? dados.size() - dadosSize - 1 : 0);
+                    //
+                    rearrange_list();
                 }
             }
         });
@@ -390,6 +388,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
         });
 
+    }
+
+    private void rearrange_list() {
+        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+
+        if (dados.size() == dadosSizePreRefresh) {
+            lv_messages.setSelection(0);
+        } else {
+            lv_messages.setSelection(dados.size() > dadosSizePreRefresh ? dados.size() - dadosSizePreRefresh - 1 : 0);
+        }
     }
 
     @Override
@@ -472,6 +480,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         processing_FromTo(context);
                         break;
 
+                    case Constant.CHAT_BR_TYPE_MSG_SCROLL_UP:
+                        processing_Scroll_Up();
+                        break;
                     // delivered
                     default:
                         break;
@@ -628,7 +639,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         if (mTotal == 1) {
                             lv_messages.setSelection(lastVisiblePosition);
                         } else {
-//                            lv_messages.setSelection(firstVisiblePosition + 2);
                         }
                     } else {
                         if (lastVisiblePosition == (dados.size() - 1)) {
@@ -637,7 +647,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 mPresenter.setData(mRoom_code, String.valueOf(offSetV));
                             } else if (mTotal != 0) {
                                 iv_down.setVisibility(View.VISIBLE);
-//                                lv_messages.setSelection(firstVisiblePosition + 2);
                             } else {
                                 turnOnDownIcon();
                             }
@@ -665,5 +674,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         act035_adapter_messages.refill(chMessageDao.query_HM(
                 new CH_Message_Sql_012(dados).toSqlQuery()
         ));
+    }
+
+    private void processing_Scroll_Up() {
+        rearrange_list();
     }
 }

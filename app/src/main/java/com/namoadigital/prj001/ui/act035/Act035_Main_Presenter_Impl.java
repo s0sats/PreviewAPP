@@ -10,6 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -119,6 +120,23 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
+    public void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code) {
+        if (!msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
+            Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
+            sHistoricalMessage.setRoom_code(mRoom_code);
+            sHistoricalMessage.setMsg_ref_prefix(Integer.parseInt(msg_prefix));
+            sHistoricalMessage.setMsg_ref_code(Integer.parseInt(msg_code));
+            sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
+            //
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            singletonWebSocket.attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
+        }
+    }
+
+    @Override
     public void sendMessage(String mRoom_code, String message, String imagem, String offSet) {
 
         CH_Message chMessage = new CH_Message();
@@ -199,7 +217,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
         JsonArray sReadList = new JsonArray();
 
-        for (HMAux hmAux: hmAuxs) {
+        for (HMAux hmAux : hmAuxs) {
             Chat_S_Read sRead = new Chat_S_Read();
             //
             sRead.setMsg_prefix(Integer.parseInt(hmAux.get(CH_MessageDao.MSG_PREFIX)));
