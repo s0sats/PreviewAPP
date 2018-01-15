@@ -84,10 +84,10 @@ public class WS_C_Room extends IntentService {
                 //que do registro no banco.
                 //Se não for, zera url local e apaga imagem do app para que a nova
                 //imagem seja baixada.
-                if( chRoom.getRoom_image() == null ||
-                    !chRoom.getRoom_image().equalsIgnoreCase(dbRoom.getRoom_image())
+                if( chRoom.getRoom_image() == null || chRoom.getRoom_image_name() == null ||
+                    !chRoom.getRoom_image_name().equalsIgnoreCase(dbRoom.getRoom_image_name())
                 ){
-                    File file = new File(Constant.CACHE_PATH + "/"+dbRoom.getRoom_image_local());
+                    File file = new File(Constant.CACHE_CHAT_PATH + "/"+dbRoom.getRoom_image_local());
                     //
                     if(file.exists() && file.isFile()) {
                         file.delete();

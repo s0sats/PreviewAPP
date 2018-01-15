@@ -587,15 +587,18 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 ArrayList<String> auxList = new ArrayList<>();
                 for (Chat_Room_Info_Rec info_rec:roomInfoList) {
                     if(info_rec.getSys_user_image() != null) {
-                        auxList.add(info_rec.getUser_code()+Constant.MAIN_CONCAT_STRING+ info_rec.getSys_user_image());
+                        auxList.add(
+                                info_rec.getUser_code()
+                                +Constant.MAIN_CONCAT_STRING+ info_rec.getSys_user_image()
+                                +Constant.MAIN_CONCAT_STRING+ info_rec.getSys_user_image_name()
+                        );
                     }
                 }
                 //
                 act034_room.showRoomInfoDialog(roomInfoList);
                 //
                 String[] imgUrlList = new String[auxList.size()];
-                startDownloadMemberImgTask(auxList.toArray(imgUrlList));
-            }
+                startDownloadMemberImgTask(auxList.toArray(imgUrlList));}
         }
 
         @Override
@@ -619,13 +622,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
                     String user_code = downloadParam[0];
                     String url = downloadParam[1];
-                    String image_name = "ch_" + user_code;
+
+                    String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0,downloadParam[2].length() -4) : Constant.CHAT_NO_USER_IMAGE );
                     //
                     if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
 
                         ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
                         //
-
                         ToolBox_Inf.downloadImagePDF(
                                 url,
                                 Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"

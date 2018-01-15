@@ -29,14 +29,15 @@
 
         <ImageView
             android:id="@+id/act034_room_info_iv_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200px"
+            android:layout_height="200px"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             android:background="@color/padrao_TRANSPARENT"
             android:src="@mipmap/ic_namoa"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
+
             />
 
         <TextView

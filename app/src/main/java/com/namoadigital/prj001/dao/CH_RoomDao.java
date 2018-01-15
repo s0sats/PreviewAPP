@@ -30,13 +30,14 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String ROOM_OBJ = "room_obj";
     public static final String ROOM_IMAGE = "room_image";
+    public static final String ROOM_IMAGE_NAME = "room_image_name";
     public static final String ROOM_IMAGE_LOCAL = "room_image_local";
     public static final String FIRST_MSG_PREFIX = "first_msg_prefix";
     public static final String FIRST_MSG_CODE = "first_msg_code";
 
     public static String[] columns = {
             ROOM_CODE, ROOM_TYPE, ROOM_DESC, CUSTOMER_CODE, ROOM_OBJ, ROOM_IMAGE,
-            ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE
+            ROOM_IMAGE_NAME, ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE
 
     };
 
@@ -265,6 +266,11 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             }else{
                 ch_room.setRoom_image(null);
             }
+            if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_NAME))){
+                ch_room.setRoom_image_name(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE_NAME)));
+            }else{
+                ch_room.setRoom_image_name(null);
+            }
             if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_LOCAL))){
                 ch_room.setRoom_image_local(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE_LOCAL)));
             }else{
@@ -296,6 +302,7 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             contentValues.put(CUSTOMER_CODE, ch_room.getCustomer_code());
             contentValues.put(ROOM_OBJ, ch_room.getRoom_obj());
             contentValues.put(ROOM_IMAGE, ch_room.getRoom_image());
+            contentValues.put(ROOM_IMAGE_NAME, ch_room.getRoom_image_name());
             contentValues.put(ROOM_IMAGE_LOCAL, ch_room.getRoom_image_local());
             if (ch_room.getFirst_msg_prefix() > -1) {
                 contentValues.put(FIRST_MSG_PREFIX, ch_room.getFirst_msg_prefix());

@@ -62,6 +62,7 @@ public class SingletonWebSocket {
     private File log_file = null;
     private long total_msg = 0;
     private long count_msg = 0;
+    private boolean show_notification = false;
 
     public long getTotal_msg() {
         return total_msg;
@@ -71,9 +72,17 @@ public class SingletonWebSocket {
         return count_msg;
     }
 
+    public boolean isShow_notification() {
+        return show_notification;
+    }
+
+    public void setShow_notification(boolean show_notification) {
+        this.show_notification = show_notification;
+    }
+
     /*
-    Indica se é necessário refazer a conexao em caso de queda do servico
-     */
+        Indica se é necessário refazer a conexao em caso de queda do servico
+         */
     private boolean mSocketReconnect = true;
 
     /*
@@ -905,6 +914,7 @@ public class SingletonWebSocket {
 
     public void resetProcessMsgCounter() {
         total_msg = count_msg = 0;
+        show_notification = false;
     }
 
     public long updateCounterMsg(long increment) {
