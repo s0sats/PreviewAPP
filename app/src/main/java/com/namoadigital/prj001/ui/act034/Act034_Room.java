@@ -213,23 +213,34 @@ public class Act034_Room extends BaseFragment {
                     info_room_image = image_path;
                     //
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                    mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(),room_code);
-                    //
-                    /*Intent mIntent = new Intent(context,WBR_Room_Info.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_SOCKET_ID_PARAM,singletonWebSocket.mSocket.id());
-                    bundle.putString(Constant.CHAT_WS_ROOM_CODE_PARAM,room_code);
-                    mIntent.putExtras(bundle);
-                    context.sendBroadcast(mIntent);
-                    //
-                    mMain.showPD(
-                            "Informações da Sala - Trad",
-                            "Buscando informações da sala - Trad"
+                    //mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(),room_code);
+                    //region MoverAct035
+                    HMAux msgAux = messageDao.getByStringHM(
+                            " SELECT r.msg_prefix,r.msg_code \n" +
+                                    " FROM \n" +
+                                    messageDao.TABLE +" r\n " +
+                                    " WHERE r.room_code =  '"+room_code+"'\n" +
+                                    " and r.msg_prefix = '201801'\n" +
+                                    " and r.user_code = '"+ToolBox_Con.getPreference_User_Code(context)+"'\n" +
+                                    ";msg_prefix#msg_code"
 
-                    );*/
-
+                    );
                     //
-                    //showRoomImageDialog(image_path);
+                    String msg_prefix = "201801";
+                    String msg_code = "";
+                    if(msgAux != null && msgAux.size() > 0){
+                        msg_code = msgAux.get("msg_code");
+                        //
+                        mMain.startMessageInfoTask(
+                                singletonWebSocket.mSocket.id(),
+                                msg_prefix,
+                                msg_code
+                                );
+
+                    }
+                    //endregion
+
+
                 }
             });
             //

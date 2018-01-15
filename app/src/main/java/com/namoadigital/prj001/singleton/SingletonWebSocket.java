@@ -80,9 +80,13 @@ public class SingletonWebSocket {
         this.show_notification = show_notification;
     }
 
+    public boolean ismSocketRunning() {
+        return mSocketRunning;
+    }
+
     /*
-        Indica se é necessário refazer a conexao em caso de queda do servico
-         */
+            Indica se é necessário refazer a conexao em caso de queda do servico
+             */
     private boolean mSocketReconnect = true;
 
     /*
@@ -365,7 +369,7 @@ public class SingletonWebSocket {
             HMAux hmAux = new HMAux();
             hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
             ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
-            ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
+            //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
         }
     };
 

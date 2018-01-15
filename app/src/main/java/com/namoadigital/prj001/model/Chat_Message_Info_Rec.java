@@ -16,6 +16,7 @@ public class Chat_Message_Info_Rec {
     private String read_date;
     private int on_line;
     private String sys_user_image;
+    private String sys_user_image_name;
 
     public int getMsg_prefix() {
         return msg_prefix;
@@ -95,5 +96,13 @@ public class Chat_Message_Info_Rec {
 
     public void setSys_user_image(String sys_user_image) {
         this.sys_user_image = sys_user_image;
+    }
+
+    public String getSys_user_image_name() {
+        return sys_user_image_name;
+    }
+
+    public void setSys_user_image_name(String sys_user_image_name) {
+        this.sys_user_image_name = sys_user_image_name;
     }
 }
