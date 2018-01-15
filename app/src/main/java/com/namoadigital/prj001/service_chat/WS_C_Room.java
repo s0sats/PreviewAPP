@@ -8,11 +8,16 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
+import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Message_Sql_013;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -98,6 +103,21 @@ public class WS_C_Room extends IntentService {
         startDownloadService();
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+        //
+        callCHistoricalMsg();
+    }
+
+    private void callCHistoricalMsg() {
+        CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
+        HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_013().toSqlQuery());
+        //
+        Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
+        sHistoricalMessage.setMsg_ref_prefix(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
+        sHistoricalMessage.setMsg_ref_code(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
+        sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
+        //
+        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+        singletonWebSocket.attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
     }
 
     private void startDownloadService() {
@@ -106,4 +126,5 @@ public class WS_C_Room extends IntentService {
         getApplicationContext().sendBroadcast(mIntentPIC);
 
     }
+
 }

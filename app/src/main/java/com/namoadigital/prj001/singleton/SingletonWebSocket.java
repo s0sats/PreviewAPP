@@ -15,7 +15,6 @@ import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.model.Chat_Login_Env;
-import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
@@ -26,7 +25,6 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
-import com.namoadigital.prj001.sql.CH_Message_Sql_013;
 import com.namoadigital.prj001.sql.CH_Message_Sql_014;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -147,6 +145,10 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_RECONNECTING, onReconnectingReturn);
             mSocket.on(Socket.EVENT_RECONNECT_ERROR, onReconnectError);
             mSocket.on(Socket.EVENT_RECONNECT_FAILED, onReconnectFailed);
+            //Ping Pong
+            //mSocket.on(Socket.EVENT_PING, onPing);
+            mSocket.on("nping", onPing);
+
 
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
@@ -218,6 +220,11 @@ public class SingletonWebSocket {
             mSocket.disconnect();
             mSocket = null;
         }
+    }
+
+    private void attemptSendPong() {
+     //   mSocket.emit(Socket.EVENT_PONG,"APP_PONG" );
+        mSocket.emit("npong","APP_PONG" );
     }
 
     public void attemptSendLogin() {
@@ -358,7 +365,7 @@ public class SingletonWebSocket {
         public void call(Object... args) {
             if (mSocket != null) {
                 Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + mSocket.id()
-                        +" - Error:  "+ String.valueOf(args[0]));
+                        + " - Error:  " + String.valueOf(args[0]));
             } else {
                 Log.d("ChatEvent", "EVENT_RECONNECT_ERROR");
             }
@@ -372,6 +379,19 @@ public class SingletonWebSocket {
                 Log.d("ChatEvent", "EVENT_RECONNECT_FAILED   -  Socket_id: " + mSocket.id());
             } else {
                 Log.d("ChatEvent", "EVENT_RECONNECT_FAILED");
+            }
+        }
+    };
+    //endregion
+
+    //region PING/PONG  onPing
+    private Emitter.Listener onPing = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if(mSocket != null){
+                Log.d("ChatEvent", "onPing -  Socket_id: " + mSocket.id());
+
+                attemptSendPong();
             }
         }
     };
@@ -401,17 +421,6 @@ public class SingletonWebSocket {
                 }
             }
             //
-            //attemptSendPendingMessages("");
-            CH_MessageDao messageDao = new CH_MessageDao(context);
-            HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_013().toSqlQuery());
-            //
-            Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
-            //sHistoricalMessage.setMsg_ref_prefix(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_PREFIX)));
-            //sHistoricalMessage.setMsg_ref_code(msgAux == null ? null : Integer.valueOf(msgAux.get(CH_MessageDao.MSG_CODE)));
-            sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
-
-            //
-            attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
         }
     };
 
@@ -630,6 +639,12 @@ public class SingletonWebSocket {
                                     Chat_C_Error.class
                             );
                     //
+                    try {
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cLoginError -> "+ (cError != null && cError.getError_msg() != null ? cError.getError_msg():" null  ")+" Socket_id: " + mSocket.id() + "\n", log_file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //
                     if (cError != null && cError.getError_msg() != null) {
                         switch (cError.getError_msg()) {
                             case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
@@ -669,6 +684,12 @@ public class SingletonWebSocket {
                                     param,
                                     Chat_C_Error.class
                             );
+                    //
+                    try {
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cError -> "+ (cError != null && cError.getError_msg() != null ? cError.getError_msg():" null  ")+" Socket_id: " + mSocket.id() + "\n", log_file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     //
                     if (cError != null && cError.getError_msg() != null) {
                         switch (cError.getError_msg()) {
@@ -779,7 +800,7 @@ public class SingletonWebSocket {
                     new TypeToken<ArrayList<Chat_C_Message>>() {
                     }.getType());
             //Se não houver msg, envia broadcast de Scrool_Up
-            if(messages.size() == 0 ){
+            if (messages.size() == 0) {
                 ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 return;
             }
@@ -787,9 +808,9 @@ public class SingletonWebSocket {
             * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
             * e direciona msgs para o serviço.
             */
-            if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
+            if (messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)) {
                 //
-                cMessageFilePath = createMsgsFile(param,null);
+                cMessageFilePath = createMsgsFile(param, null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
                 Bundle bundle = new Bundle();
@@ -800,7 +821,7 @@ public class SingletonWebSocket {
                 cMessageIntent.putExtras(bundle);
                 context.sendBroadcast(cMessageIntent);
 
-            }else {
+            } else {
                 //Atualiza total de msg e contador de msg
                 total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
 
@@ -871,22 +892,22 @@ public class SingletonWebSocket {
                     //
                 }
                 //Atualiza contador
-               // count_msg += messages.size();
+                // count_msg += messages.size();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean areAllMsgProcessed(){
+    public boolean areAllMsgProcessed() {
         return count_msg == total_msg;
     }
 
-    public void resetProcessMsgCounter(){
-        total_msg  = count_msg = 0;
+    public void resetProcessMsgCounter() {
+        total_msg = count_msg = 0;
     }
 
-    public long updateCounterMsg(long increment){
+    public long updateCounterMsg(long increment) {
         count_msg += increment;
         return count_msg;
     }
