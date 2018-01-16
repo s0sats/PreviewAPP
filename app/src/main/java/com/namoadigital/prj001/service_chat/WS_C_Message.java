@@ -149,6 +149,8 @@ public class WS_C_Message extends IntentService {
         } else {
             JsonArray sDeliveredList = new JsonArray();
             JsonArray sReadList = new JsonArray();
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+
             //
             boolean startDownloadService = false;
             //Transforma list de objs recebido(Chat_C_Message)
@@ -164,6 +166,10 @@ public class WS_C_Message extends IntentService {
                                         ch_message.getMsg_code()
                                 ).toSqlQuery()
                         );
+                //Verifica se a necessidade de notificação
+                if(!singletonWebSocket.isShow_notification() && dbMessage.getTmp() < 0){
+                    singletonWebSocket.setShow_notification(true);
+                }
 
                 //Verifica se precisa iniciar serviço de download
                 if (!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)) {
@@ -213,14 +219,12 @@ public class WS_C_Message extends IntentService {
             }
             //
             if (sDeliveredList.size() > 0) {
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                 singletonWebSocket.attemptToDeliveryMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
                 );
             }
             //
             if (sReadList.size() > 0) {
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                 singletonWebSocket.attemptToReadMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sReadList)
                 );
@@ -233,15 +237,15 @@ public class WS_C_Message extends IntentService {
                 if(messageTmpFile.length() > 0) {
                     startCMessageTmpService(messageTmpFile, messageIncrement);
                 }else{
-                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
                     //Incrementa contador
                     singletonWebSocket.updateCounterMsg(messageIncrement);
                     //Verifica se todas as msg foram processadas
                     //Se foram, reseta contador, dispara broadcast e envia offlines
                     if(singletonWebSocket.areAllMsgProcessed()){
+                        if(singletonWebSocket.isShow_notification()){
+                            ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                        }
                         singletonWebSocket.resetProcessMsgCounter();
-                        //
-                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
                         //
                         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                         //
@@ -252,7 +256,11 @@ public class WS_C_Message extends IntentService {
                 if(ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 }else{
-                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                    if(singletonWebSocket.isShow_notification()){
+                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                        //
+                        singletonWebSocket.setShow_notification(false);
+                    }
                     //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                 }

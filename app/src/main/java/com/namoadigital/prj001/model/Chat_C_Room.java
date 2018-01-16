@@ -16,6 +16,7 @@ public class Chat_C_Room {
     private Long customer_code;
     private JsonObject room_obj;
     private String room_image;
+    private String room_image_name;
 
     public String getRoom_type() {
         return room_type;
@@ -65,6 +66,14 @@ public class Chat_C_Room {
         this.room_image = room_image;
     }
 
+    public String getRoom_image_name() {
+        return room_image_name;
+    }
+
+    public void setRoom_image_name(String room_image_name) {
+        this.room_image_name = room_image_name;
+    }
+
     public CH_Room toCH_RoomObj(){
         CH_Room ch_room = new CH_Room();
         //
@@ -74,6 +83,7 @@ public class Chat_C_Room {
         ch_room.setCustomer_code(this.customer_code);
         ch_room.setRoom_obj(this.room_obj.toString());
         ch_room.setRoom_image(this.room_image);
+        ch_room.setRoom_image_name(this.room_image_name);
         ch_room.setRoom_image_local(null);
 
         return ch_room;
@@ -91,6 +101,7 @@ public class Chat_C_Room {
             ch_room.setCustomer_code(cRoom.getCustomer_code());
             ch_room.setRoom_obj(cRoom.getRoom_obj().toString());
             ch_room.setRoom_image(cRoom.getRoom_image());
+            ch_room.setRoom_image_name(cRoom.getRoom_image_name());
             ch_room.setRoom_image_local(null);
             //
             chRooms.add(ch_room);

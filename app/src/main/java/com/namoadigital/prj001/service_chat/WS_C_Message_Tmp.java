@@ -175,9 +175,10 @@ public class WS_C_Message_Tmp extends IntentService {
                 //Verifica se todas as msg foram processadas
                 //Se foram, reseta contador, dispara broadcast e envia offlines
                 if(singletonWebSocket.areAllMsgProcessed()){
+                    if(singletonWebSocket.isShow_notification()){
+                        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
+                    }
                     singletonWebSocket.resetProcessMsgCounter();
-                    //
-                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);
                     //
                     singletonWebSocket.attempSendOfflineMessages();
                 }

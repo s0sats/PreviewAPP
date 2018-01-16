@@ -11,6 +11,7 @@ public class CH_Room {
     private Long customer_code;
     private String room_obj;
     private String room_image;
+    private String room_image_name;
     private String room_image_local;
     private int first_msg_prefix;
     private int first_msg_code;
@@ -61,6 +62,14 @@ public class CH_Room {
 
     public void setRoom_image(String room_image) {
         this.room_image = room_image;
+    }
+
+    public String getRoom_image_name() {
+        return room_image_name;
+    }
+
+    public void setRoom_image_name(String room_image_name) {
+        this.room_image_name = room_image_name;
     }
 
     public String getRoom_image_local() {

@@ -4,23 +4,34 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 10/01/2018.
  */
 
-public class Chat_Room_Info_Rec {
+public class Chat_Message_Info_Rec {
 
-    private String room_code;
+    private int msg_prefix;
+    private int msg_code;
     private int user_code;
     private String user_nick;
-    private int admin;
-    private int active;
+    private int delivered;
+    private String delivered_date;
+    private int read;
+    private String read_date;
     private int on_line;
     private String sys_user_image;
     private String sys_user_image_name;
 
-    public String getRoom_code() {
-        return room_code;
+    public int getMsg_prefix() {
+        return msg_prefix;
     }
 
-    public void setRoom_code(String room_code) {
-        this.room_code = room_code;
+    public void setMsg_prefix(int msg_prefix) {
+        this.msg_prefix = msg_prefix;
+    }
+
+    public int getMsg_code() {
+        return msg_code;
+    }
+
+    public void setMsg_code(int msg_code) {
+        this.msg_code = msg_code;
     }
 
     public int getUser_code() {
@@ -39,20 +50,36 @@ public class Chat_Room_Info_Rec {
         this.user_nick = user_nick;
     }
 
-    public int getAdmin() {
-        return admin;
+    public int getDelivered() {
+        return delivered;
     }
 
-    public void setAdmin(int admin) {
-        this.admin = admin;
+    public void setDelivered(int delivered) {
+        this.delivered = delivered;
     }
 
-    public int getActive() {
-        return active;
+    public String getDelivered_date() {
+        return delivered_date;
     }
 
-    public void setActive(int active) {
-        this.active = active;
+    public void setDelivered_date(String delivered_date) {
+        this.delivered_date = delivered_date;
+    }
+
+    public int getRead() {
+        return read;
+    }
+
+    public void setRead(int read) {
+        this.read = read;
+    }
+
+    public String getRead_date() {
+        return read_date;
+    }
+
+    public void setRead_date(String read_date) {
+        this.read_date = read_date;
     }
 
     public int getOn_line() {

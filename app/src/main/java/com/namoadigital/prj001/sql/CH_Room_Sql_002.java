@@ -21,7 +21,7 @@ public class CH_Room_Sql_002 implements Specification {
         return  sb
                 .append(" SELECT\n" +
                         "   r.*,\n" +
-                        "  'ch_room_'||r.room_code " + FILE_LOCAL_NAME+"\n"+
+                        "  'ch_'|| substr(r.room_image_name, 1, length(r.room_image_name) -4) " + FILE_LOCAL_NAME+"\n"+
                         " FROM\n" +
                             CH_RoomDao.TABLE +" r\n" +
                         " WHERE \n" +

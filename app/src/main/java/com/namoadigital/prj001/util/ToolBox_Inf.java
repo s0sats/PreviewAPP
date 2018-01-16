@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
@@ -3047,12 +3049,18 @@ public class ToolBox_Inf {
                     break;
 
             }
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
             builder.setSmallIcon( type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
             builder.setAutoCancel(true);
             builder.setContent(view);
 
+            if(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE)){
+               // builder.setSound(alarmSound);
+                builder.setSound( Uri.parse("android.resource://"
+                        + context.getPackageName() + "/" + R.raw.morfador));
+            }
             Notification notification = builder.build();
             //
             nm.notify(Constant.NOTIFICATION_CHAT, notification);

@@ -213,23 +213,34 @@ public class Act034_Room extends BaseFragment {
                     info_room_image = image_path;
                     //
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                    mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
-                    //
-                    /*Intent mIntent = new Intent(context,WBR_Room_Info.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_SOCKET_ID_PARAM,singletonWebSocket.mSocket.id());
-                    bundle.putString(Constant.CHAT_WS_ROOM_CODE_PARAM,room_code);
-                    mIntent.putExtras(bundle);
-                    context.sendBroadcast(mIntent);
-                    //
-                    mMain.showPD(
-                            "Informações da Sala - Trad",
-                            "Buscando informações da sala - Trad"
+                    //mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(),room_code);
+                    //region MoverAct035
+                    HMAux msgAux = messageDao.getByStringHM(
+                            " SELECT r.msg_prefix,r.msg_code \n" +
+                                    " FROM \n" +
+                                    messageDao.TABLE +" r\n " +
+                                    " WHERE r.room_code =  '"+room_code+"'\n" +
+                                    " and r.msg_prefix = '201801'\n" +
+                                    " and r.user_code = '"+ToolBox_Con.getPreference_User_Code(context)+"'\n" +
+                                    ";msg_prefix#msg_code"
 
-                    );*/
-
+                    );
                     //
-                    //showRoomImageDialog(image_path);
+                    String msg_prefix = "201801";
+                    String msg_code = "";
+                    if(msgAux != null && msgAux.size() > 0){
+                        msg_code = msgAux.get("msg_code");
+                        //
+                        mMain.startMessageInfoTask(
+                                singletonWebSocket.mSocket.id(),
+                                msg_prefix,
+                                msg_code
+                                );
+
+                    }
+                    //endregion
+
+
                 }
             });
             //
@@ -363,17 +374,17 @@ public class Act034_Room extends BaseFragment {
             //
             tv_room_desc.setText(info_room_desc);
             //
-            if (info_room_image.equals("")) {
+            if(info_room_image.equals("")){
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
-            } else {
+            }else{
                 iv_room.setImageBitmap(
-                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + info_room_image)
+                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH+"/"+ info_room_image)
                 );
             }
             //
             tv_members_lbl.setText("Membros - Trad");
             //
-            if (memberList.size() > 0) {
+            if(memberList.size() > 0) {
                 mDialogAdapter = new Chat_Member_Adapter(
                         context,
                         memberList,
@@ -383,7 +394,7 @@ public class Act034_Room extends BaseFragment {
                 lv_members.setAdapter(
                         mDialogAdapter
                 );
-            } else {
+            }else{
                 lv_members.setVisibility(View.GONE);
                 //
                 tv_members_lbl.setText("Nenhum membro encontrado - Trad");
@@ -412,8 +423,8 @@ public class Act034_Room extends BaseFragment {
                 }
             });
 
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
             mMain.disablePD();
         }
 
@@ -458,16 +469,16 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void setFilterIconColor() {
-        if (filter_workgroup || filter_private || filter_so) {
+        if(filter_workgroup||filter_private||filter_so){
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        } else {
+        }else{
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
 
-    public void updateMemberImage(String user_code, String local_url) {
-        if (mDialogAdapter != null) {
-            mDialogAdapter.updateMemberImage(user_code, local_url);
+    public void updateMemberImage(String user_code,String local_url){
+        if(mDialogAdapter != null) {
+            mDialogAdapter.updateMemberImage(user_code,local_url);
         }
     }
 
