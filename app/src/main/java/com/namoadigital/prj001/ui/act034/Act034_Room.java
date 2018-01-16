@@ -65,8 +65,8 @@ public class Act034_Room extends BaseFragment {
     private boolean filter_private;
     private boolean filter_so;
     //
-    private String info_room_desc="";
-    private String info_room_image="";
+    private String info_room_desc = "";
+    private String info_room_image = "";
     private Chat_Member_Adapter mDialogAdapter;
 
     public void setSelected_customer(long selected_customer) {
@@ -213,7 +213,7 @@ public class Act034_Room extends BaseFragment {
                     info_room_image = image_path;
                     //
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                    mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(),room_code);
+                    mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
                     //
                     /*Intent mIntent = new Intent(context,WBR_Room_Info.class);
                     Bundle bundle = new Bundle();
@@ -338,11 +338,11 @@ public class Act034_Room extends BaseFragment {
 
         try {
             //
-            if(roomInfoList != null && roomInfoList.size() > 0){
-                for(Chat_Room_Info_Rec infoRec: roomInfoList){
+            if (roomInfoList != null && roomInfoList.size() > 0) {
+                for (Chat_Room_Info_Rec infoRec : roomInfoList) {
                     HMAux aux = new HMAux();
                     aux.put(Chat_Member_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
-                    aux.put(Chat_Member_Adapter.USER_NICK,infoRec.getUser_nick());
+                    aux.put(Chat_Member_Adapter.USER_NICK, infoRec.getUser_nick());
                     aux.put(Chat_Member_Adapter.IS_ONLINE, String.valueOf(infoRec.getOn_line()));
                     aux.put(Chat_Member_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
                     //
@@ -363,17 +363,17 @@ public class Act034_Room extends BaseFragment {
             //
             tv_room_desc.setText(info_room_desc);
             //
-            if(info_room_image.equals("")){
+            if (info_room_image.equals("")) {
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
-            }else{
+            } else {
                 iv_room.setImageBitmap(
-                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH+"/"+ info_room_image)
+                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + info_room_image)
                 );
             }
             //
             tv_members_lbl.setText("Membros - Trad");
             //
-            if(memberList.size() > 0) {
+            if (memberList.size() > 0) {
                 mDialogAdapter = new Chat_Member_Adapter(
                         context,
                         memberList,
@@ -383,7 +383,7 @@ public class Act034_Room extends BaseFragment {
                 lv_members.setAdapter(
                         mDialogAdapter
                 );
-            }else{
+            } else {
                 lv_members.setVisibility(View.GONE);
                 //
                 tv_members_lbl.setText("Nenhum membro encontrado - Trad");
@@ -412,8 +412,8 @@ public class Act034_Room extends BaseFragment {
                 }
             });
 
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             mMain.disablePD();
         }
 
@@ -458,16 +458,16 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void setFilterIconColor() {
-        if(filter_workgroup||filter_private||filter_so){
+        if (filter_workgroup || filter_private || filter_so) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        }else{
+        } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
 
-    public void updateMemberImage(String user_code,String local_url){
-        if(mDialogAdapter != null) {
-            mDialogAdapter.updateMemberImage(user_code,local_url);
+    public void updateMemberImage(String user_code, String local_url) {
+        if (mDialogAdapter != null) {
+            mDialogAdapter.updateMemberImage(user_code, local_url);
         }
     }
 

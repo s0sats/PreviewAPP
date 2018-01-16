@@ -3,6 +3,7 @@ package com.namoadigital.prj001.singleton;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -59,6 +60,9 @@ public class SingletonWebSocket {
     public static String getmSocket_ID() {
         return mSocket_ID;
     }
+
+    public PowerManager pm = null;
+    public PowerManager.WakeLock wl = null;
 
     private Context context;
     private File log_file = null;
@@ -358,7 +362,7 @@ public class SingletonWebSocket {
         public void call(Object... args) {
             if (mSocket != null) {
                 Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + mSocket.id()
-                        +" - Error:  "+ String.valueOf(args[0]));
+                        + " - Error:  " + String.valueOf(args[0]));
             } else {
                 Log.d("ChatEvent", "EVENT_RECONNECT_ERROR");
             }
@@ -779,7 +783,7 @@ public class SingletonWebSocket {
                     new TypeToken<ArrayList<Chat_C_Message>>() {
                     }.getType());
             //Se não houver msg, envia broadcast de Scrool_Up
-            if(messages.size() == 0 ){
+            if (messages.size() == 0) {
                 ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 return;
             }
@@ -787,9 +791,9 @@ public class SingletonWebSocket {
             * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
             * e direciona msgs para o serviço.
             */
-            if(messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)){
+            if (messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)) {
                 //
-                cMessageFilePath = createMsgsFile(param,null);
+                cMessageFilePath = createMsgsFile(param, null);
                 //
                 Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
                 Bundle bundle = new Bundle();
@@ -800,7 +804,7 @@ public class SingletonWebSocket {
                 cMessageIntent.putExtras(bundle);
                 context.sendBroadcast(cMessageIntent);
 
-            }else {
+            } else {
                 //Atualiza total de msg e contador de msg
                 total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
 
@@ -871,22 +875,22 @@ public class SingletonWebSocket {
                     //
                 }
                 //Atualiza contador
-               // count_msg += messages.size();
+                // count_msg += messages.size();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean areAllMsgProcessed(){
+    public boolean areAllMsgProcessed() {
         return count_msg == total_msg;
     }
 
-    public void resetProcessMsgCounter(){
-        total_msg  = count_msg = 0;
+    public void resetProcessMsgCounter() {
+        total_msg = count_msg = 0;
     }
 
-    public long updateCounterMsg(long increment){
+    public long updateCounterMsg(long increment) {
         count_msg += increment;
         return count_msg;
     }
@@ -908,14 +912,13 @@ public class SingletonWebSocket {
                     sSoleInstance = new SingletonWebSocket();
                     sSoleInstance.context = context;
                     //
+                    sSoleInstance.pm = (PowerManager) sSoleInstance.context.getSystemService(Context.POWER_SERVICE);
+                    sSoleInstance.wl = sSoleInstance.pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PM_SingletonWebSocket");
+                    //
                     sSoleInstance.initConnection();
                 }
             }
         }
-//
-//        if (!sSoleInstance.mSocketRunning) {
-//            sSoleInstance.initConnection();
-//        }
 
         return sSoleInstance;
     }

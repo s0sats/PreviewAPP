@@ -32,8 +32,8 @@
             android:id="@+id/act035_tv_room_name_val"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Customer"
             android:layout_marginLeft="20dp"
+            android:text="Customer"
             android:textSize="@dimen/font_size_title_md"
             android:textStyle="bold" />
 
@@ -106,15 +106,22 @@
         android:paddingRight="5dp"
         android:paddingTop="10dp">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act035_mket_serial"
+        <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+        <!--android:id="@+id/act035_mket_serial"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:inputType="text"-->
+        <!--app:mBARCODE="false"-->
+        <!--app:mNFC="false"-->
+        <!--app:mOCR="false" />-->
+
+        <EditText
+            android:id="@+id/act035_mket_chat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="text"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            app:mOCR="false" />
+            android:inputType="text" />
 
         <ImageView
             android:id="@+id/act035_iv_photo"

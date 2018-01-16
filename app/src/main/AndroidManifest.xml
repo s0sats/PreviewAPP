@@ -463,6 +463,9 @@
 
         <service android:name=".service_chat.WS_Room_Info" />
 
+        <!-- Chat Service Teste -->
+        <service android:name=".fcm.WKService" />
+
     </application>
 
 </manifest>
