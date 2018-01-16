@@ -572,6 +572,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 ToolBox_Con.cleanPreferences(Act005_Main.this);
+                                ToolBox_Inf.cancelChatNotification(Act005_Main.this);
                                 ToolBox_Inf.call_Act001_Main(Act005_Main.this);
                                 finish();
                             }
