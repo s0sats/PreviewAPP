@@ -16,7 +16,9 @@ import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.model.Chat_Login_Env;
+import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Message;
+import com.namoadigital.prj001.model.Chat_S_Pending_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Read;
@@ -27,6 +29,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
 import com.namoadigital.prj001.sql.CH_Message_Sql_014;
+import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -283,9 +286,40 @@ public class SingletonWebSocket {
         }
     }
 
-    public void attemptSendPendingMessages(String message) {
+    public void attemptSendPendingMessages(String room_code) {
         if (mSocket != null && sSoleInstance.mSocketRunning) {
-            mSocket.emit(Constant.CHAT_EVENT_S_PENDING_MESSAGES, message);
+            CH_MessageDao messageDao = new CH_MessageDao(context);
+            //
+            ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) messageDao.query_HM(
+                    new CH_Message_Sql_018(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_User_Code(context)
+                    ).toSqlQuery()
+            );
+            ArrayList<Chat_Ref_Json> ref_json = new ArrayList<>();
+            if(refJsonAux != null && refJsonAux.size() > 0){
+                for (HMAux hmAux:refJsonAux) {
+                    if(hmAux.get(CH_MessageDao.MSG_PREFIX) != null && hmAux.get(CH_MessageDao.MSG_CODE) != null) {
+                        Chat_Ref_Json refAux = new Chat_Ref_Json();
+                        refAux.setMsg_prefix(
+                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_PREFIX))
+                        );
+                        refAux.setMsg_code(
+                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_CODE))
+                        );
+                        //
+                        ref_json.add(refAux);
+                    }
+                }
+            }
+            //
+            Chat_S_Pending_Message sPendingMessage = new Chat_S_Pending_Message();
+            sPendingMessage.setRoom_code(room_code);
+            sPendingMessage.setRef_json(ref_json);
+            //
+            String message = ToolBox_Inf.setWebSocketJsonParam(sPendingMessage);
+            //
+            mSocket.emit(Constant.CHAT_EVENT_S_PENDING_MESSAGES,message );
             Log.d("ChatEvent", "sPendingMessages");
         }
     }

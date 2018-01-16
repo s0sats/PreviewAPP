@@ -100,7 +100,7 @@ public class WS_C_Add_Room extends IntentService {
         //
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
         //
-        singletonWebSocket.attemptSendPendingMessages("");
+        singletonWebSocket.attemptSendPendingMessages(chRooms.get(0).getRoom_code());
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
     }

@@ -62,6 +62,16 @@ public class Act034_Room_Adapter extends BaseAdapter {
         return 0L;
     }
 
+    public int getRoomPosition(String room_code){
+        for (int i = 0; i < source.size() ; i++) {
+            if(source.get(i).get(CH_RoomDao.ROOM_CODE).equals(room_code)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
