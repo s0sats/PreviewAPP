@@ -79,14 +79,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
+            if (fcmMessage.getTitle().trim().equalsIgnoreCase("<CHAT_TEST>")) {
+
+                if (!WKService.isWKService_Running) {
+
+                    Intent mIntent = new Intent(getApplicationContext(), WKService.class);
+                    startService(mIntent);
+                } else {
+                }
+
+                return;
+            }
+            //
             if (fcmMessage.getTitle().trim().equalsIgnoreCase("<SM_SO_UPDATE>") &&
                     fcmMessage.getModule().trim().equalsIgnoreCase("SM_")) {
 
                 checkNService_SO_Status(fcmMessage);
 
             } else {
-
-
                 //
                 fcmMessageDao.addUpdate(fcmMessage);
                 long fcmmessage_code = Long.parseLong(

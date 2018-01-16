@@ -15,11 +15,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -76,7 +76,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private int dadosSizePreRefresh = 0;
 
-    private MKEditTextNM mkEditTextNM;
+    //private MKEditTextNM mkEditTextNM;
+    private EditText mkEditTextNM;
 
     private int lastvisibleposition = -1;
     private int lastposition = -1;
@@ -152,7 +153,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iv_room_thumbnail = (ImageView) findViewById(R.id.act035_iv_room_thumbnail_val);
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);
         sw_messages = (SwipeRefreshLayout) findViewById(R.id.act035_sw_messages);
-        mkEditTextNM = (MKEditTextNM) findViewById(R.id.act035_mket_serial);
+        mkEditTextNM = (EditText) findViewById(R.id.act035_mket_chat);
 
         mkEditTextNM.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -449,7 +450,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
-
     }
 
     private class BR_Room extends BroadcastReceiver {
