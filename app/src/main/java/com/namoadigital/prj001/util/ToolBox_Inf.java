@@ -3063,6 +3063,7 @@ public class ToolBox_Inf {
                     break;
 
                 case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
+                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_user_msg_on);
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_1,
                             title
@@ -3078,7 +3079,7 @@ public class ToolBox_Inf {
             Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-            builder.setSmallIcon(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
+            //builder.setSmallIcon(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
             builder.setAutoCancel(true);
             builder.setContent(view);
 
@@ -3088,6 +3089,10 @@ public class ToolBox_Inf {
                         + context.getPackageName() + "/" + R.raw.morfador));
 
                 builder.setContentIntent(pi);
+
+                builder.setSmallIcon(R.mipmap.ic_namoa);
+            } else {
+                builder.setSmallIcon(R.drawable.sync_notification_animation);
             }
             Notification notification = builder.build();
             //

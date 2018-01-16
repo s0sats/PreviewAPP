@@ -84,7 +84,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (!ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase("")) {
                     ToolBox_Inf.showChatNotification(
                             getApplicationContext(),
-                            fcmMessage.getType().trim().toUpperCase(),
+                            fcmMessage.getModule().toUpperCase(),
                             "0",
                             fcmMessage.getTitle().trim(),
                             fcmMessage.getMsg_short().trim()
