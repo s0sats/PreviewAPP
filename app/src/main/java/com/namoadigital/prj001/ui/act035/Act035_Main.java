@@ -301,7 +301,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         tv_room_name_val.setText(mRoom.getRoom_desc());
         iv_room_thumbnail.setImageBitmap(
-                BitmapFactory.decodeFile(ConstantBase.CACHE_PATH + "/" + mRoom.getRoom_image_local())
+                BitmapFactory.decodeFile(
+                        Constant.THU_PATH + "/" +
+                                mRoom.getRoom_image_local().substring(0,mRoom.getRoom_image_local().length() -4) +
+                                Constant.THUMB_SUFFIX + ".jpg"
+                )
+
         );
         //
         sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

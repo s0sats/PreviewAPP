@@ -148,6 +148,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String CHAT_PREFIX;
     public static String CHAT_NAME_FULL;
 
+    public static final String THUMB_SUFFIX = "_thumb";
+
     /**
      * SM_SO_Service Login Parameter
      */
@@ -455,6 +457,8 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
     public static final String CHAT_NO_USER_IMAGE = "no_user";
+
+
 
 
 

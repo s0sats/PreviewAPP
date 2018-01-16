@@ -772,7 +772,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if(downloadMemberImgTask != null){
             downloadMemberImgTask.cancel(true);
         }
-        if(messageInfoTask != null{
+        if(messageInfoTask != null){
             messageInfoTask.cancel(true);
         }
         //
