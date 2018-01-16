@@ -92,8 +92,8 @@ public class SingletonWebSocket {
     }
 
     /*
-            Indica se é necessário refazer a conexao em caso de queda do servico
-             */
+    Indica se é necessário refazer a conexao em caso de queda do servico
+     */
     private boolean mSocketReconnect = true;
 
     /*
@@ -398,16 +398,24 @@ public class SingletonWebSocket {
     private Emitter.Listener onReconnectingReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + mSocket.id());
-            } else {
-                Log.d("ChatEvent", "EVENT_RECONNECTING");
+            if(!pm.isScreenOn()){
+                Log.d("ChatEvent", "EVENT_RECONNECTING - Tela Apagada, para serviço");
+                //mSocket.disconnect();
+                Intent chatService = new Intent(context, AppBackgroundService.class);
+                context.stopService(chatService);
+
+            }else {
+                if (mSocket != null) {
+                    Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + mSocket.id());
+                } else {
+                    Log.d("ChatEvent", "EVENT_RECONNECTING");
+                }
+                //
+                HMAux hmAux = new HMAux();
+                hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
+                ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
+                //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
             }
-            //
-            HMAux hmAux = new HMAux();
-            hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
-            ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
-            //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
         }
     };
 
@@ -990,6 +998,18 @@ public class SingletonWebSocket {
         }
 
         return sSoleInstance;
+    }
+
+    public static void destroySingletonWebSocket(){
+        //
+        sSoleInstance.disconnect();
+        sSoleInstance.mSocket = null;
+        //
+        sSoleInstance.context = null;
+        //
+        sSoleInstance.pm = null;
+        sSoleInstance.wl = null;
+        sSoleInstance = null;
     }
 }
 

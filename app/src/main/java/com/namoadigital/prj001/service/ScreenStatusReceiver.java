@@ -20,6 +20,11 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
             screenOn = false;
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             screenOn = true;
+            //
+            if(!AppBackgroundService.isRunning){
+                Intent chatService = new Intent(context, AppBackgroundService.class);
+                context.startService(chatService);
+            }
         }
 
         Log.d("STATUS_DISPLAY", screenOn ? "LIGADO" : "DESLIGADO");
