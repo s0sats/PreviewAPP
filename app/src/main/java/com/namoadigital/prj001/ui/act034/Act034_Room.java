@@ -136,11 +136,11 @@ public class Act034_Room extends BaseFragment {
         lv_msg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HMAux room = (HMAux) parent.getItemAtPosition(position);
                 //Chama msgs pendentes
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                singletonWebSocket.attemptSendPendingMessages("");
+                singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
                 //Resgata sala clicada, e chama proxima tela.
-                HMAux room = (HMAux) parent.getItemAtPosition(position);
                 room.put(ROOM_POSITION, String.valueOf(position));
                 //
                 mMain.callAct035(context, room);
@@ -179,6 +179,8 @@ public class Act034_Room extends BaseFragment {
             loadRoomList();
             //
             updateOtherMsgInfo();
+            //
+            setListViewOnRoomPosition();
         }
     }
 
@@ -253,6 +255,19 @@ public class Act034_Room extends BaseFragment {
             tv_no_result.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    public void setListViewOnRoomPosition(){
+        String room_code = mMain.getReturnedRoomCode();
+        mMain.setReturnedRoomCode(null);
+        //
+        if(room_code != null){
+            int position = mAdapter.getRoomPosition(room_code);
+            //
+            if(position != -1){
+                lv_msg.setSelection(position);
+            }
+        }
     }
 
     public void updateOtherMsgInfo() {

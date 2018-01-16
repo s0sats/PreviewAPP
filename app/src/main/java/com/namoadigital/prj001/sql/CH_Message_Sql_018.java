@@ -38,11 +38,7 @@ public class CH_Message_Sql_018 implements Specification {
                         "   r.customer_code = '"+customer_code+"'\n" +
                         "   and m.user_code = '"+user_code+"'\n" +
                         "   and (m.all_delivered = 0 OR m.all_read = 0)\n" +
-                        " GROUP BY\n" +
-                        "  m.msg_prefix,\n" +
-                        "  m.msg_code\n" +
-                        " HAVING \n" +
-                        "   instr(m.msg_obj, '"+translateMsgStr+"') = 0\n" +
+                        "   and instr(m.msg_obj, '"+translateMsgStr+"') = 0\n" +
                         " ORDER BY\n" +
                         "   m.msg_pk ")
                 .append(";")

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -37,6 +36,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
@@ -44,7 +44,6 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
-import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -72,6 +71,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private String currentFrag = "";
     private BR_Room brRoomReceiver;
     private AlertDialog infoDialog = null;
+    private Bundle bundle;
+    private String returnedRoomCode = null;
     //
     private LinearLayout ll_info;
     private ImageView iv_info_icon;
@@ -195,11 +196,30 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 mPresenter.getCustomerNameList()
         );*/
         //
+        recoverIntentsInfo();
+        //
         initFragments();
         //
         setFrag(act034_room, FRAG_TAG_ROOM);
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    private void recoverIntentsInfo() {
+        bundle = getIntent().getExtras();
+        //
+        if (bundle != null) {
+            returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
+        } else {
+        }
+    }
+
+    public String getReturnedRoomCode() {
+        return returnedRoomCode;
+    }
+
+    public void setReturnedRoomCode(String returnedRoomCode) {
+        this.returnedRoomCode = returnedRoomCode;
     }
 
     @Override
