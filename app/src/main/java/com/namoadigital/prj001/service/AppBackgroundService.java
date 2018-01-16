@@ -40,8 +40,6 @@ public class AppBackgroundService extends Service {
         singletonWebSocket.attemptDisconnect("App Socket.disconnect()");
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
-        //
-       // singletonWebSocket.disconnect();
     }
 
 

@@ -81,7 +81,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private RoomInfoTask roomInfoTask;
     private DownloadMemberImgTask downloadMemberImgTask;
     /*TESTE, MOVER PARA ACT035*/
-    private MessageInfoTask messageInfoTask;
+    //private MessageInfoTask messageInfoTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -516,10 +516,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         downloadMemberImgTask.execute(imgUrlList);
     }
 
-    public void startMessageInfoTask(String socket_id, String msg_prefix, String msg_code ){
-        messageInfoTask = new MessageInfoTask();
-        messageInfoTask.execute(socket_id,msg_prefix,msg_code);
-    }
+//    public void startMessageInfoTask(String socket_id, String msg_prefix, String msg_code ){
+//        messageInfoTask = new MessageInfoTask();
+//        messageInfoTask.execute(socket_id,msg_prefix,msg_code);
+//    }
 
 
     //region AsyncTask
@@ -668,90 +668,90 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }
     }
 
-    private class MessageInfoTask extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Log.d("ChatEvent","MessageAsyncTask PreExecute");
-            //
-            showPD(
-                    /*hmAux_Trans.get("ws_room_info_ttl"),
-                    hmAux_Trans.get("ws_room_info_msg")*/
-                    "Informações da Message - Trad",
-                    "Buscando informações da message - Trad"
-            );
-        }
-        @Override
-        protected String doInBackground(String... params) {
-            Log.d("ChatEvent","MessageAsyncTask DoInBackground");
-            String resultado = "";
-            try {
-                String socket_id = params[0];
-                int msg_prefix = Integer.parseInt(params[1]);
-                int msg_code = Integer.parseInt(params[2]);
-                //
-                Gson gson = new GsonBuilder().serializeNulls().create();
-                //
-                Chat_Message_Info_Env env = new Chat_Message_Info_Env();
-                env.setSocket_id(socket_id);
-                env.setMsg_prefix(msg_prefix);
-                env.setMsg_code(msg_code);
-                env.setShow_myself(1);
-                //
-                resultado = ToolBox_Con.connWebService(
-                        Constant.WS_CHAT_MESSAGE_INFO,
-                        gson.toJson(env)
-                );
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return resultado;
-        }
-
-        @Override
-        protected void onPostExecute(String resultado) {
-            Log.d("ChatEvent","MessageAsyncTask OnPost");
-            super.onPostExecute(resultado);
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            //
-            disablePD();
-            try {
-                ArrayList<Chat_Message_Info_Rec> messageInfoList = gson
-                        .fromJson(
-                                ToolBox_Inf.getWebSocketJsonParam(resultado),
-                                new TypeToken<ArrayList<Chat_Message_Info_Rec>>() {
-                                }.getType()
-                        );
-                //
-                ArrayList<String> auxList = new ArrayList<>();
-                for (Chat_Message_Info_Rec info_rec : messageInfoList) {
-                    if (info_rec.getSys_user_image() != null) {
-                        auxList.add(
-                                info_rec.getUser_code()
-                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
-                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
-                        );
-                    }
-                }
-                //
-                //act034_room.showRoomInfoDialog(messageInfoList);
-                //
-           /* String[] imgUrlList = new String[auxList.size()];
-            startDownloadMemberImgTask(auxList.toArray(imgUrlList));}*/
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected void onCancelled(String s) {
-            super.onCancelled(s);
-            Log.d("ChatEvent","MessageAsyncTask Cancelada");
-            disablePD();
-        }
-    }
+//    private class MessageInfoTask extends AsyncTask<String, String, String> {
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            Log.d("ChatEvent","MessageAsyncTask PreExecute");
+//            //
+//            showPD(
+//                    /*hmAux_Trans.get("ws_room_info_ttl"),
+//                    hmAux_Trans.get("ws_room_info_msg")*/
+//                    "Informações da Message - Trad",
+//                    "Buscando informações da message - Trad"
+//            );
+//        }
+//        @Override
+//        protected String doInBackground(String... params) {
+//            Log.d("ChatEvent","MessageAsyncTask DoInBackground");
+//            String resultado = "";
+//            try {
+//                String socket_id = params[0];
+//                int msg_prefix = Integer.parseInt(params[1]);
+//                int msg_code = Integer.parseInt(params[2]);
+//                //
+//                Gson gson = new GsonBuilder().serializeNulls().create();
+//                //
+//                Chat_Message_Info_Env env = new Chat_Message_Info_Env();
+//                env.setSocket_id(socket_id);
+//                env.setMsg_prefix(msg_prefix);
+//                env.setMsg_code(msg_code);
+//                env.setShow_myself(1);
+//                //
+//                resultado = ToolBox_Con.connWebService(
+//                        Constant.WS_CHAT_MESSAGE_INFO,
+//                        gson.toJson(env)
+//                );
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return resultado;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String resultado) {
+//            Log.d("ChatEvent","MessageAsyncTask OnPost");
+//            super.onPostExecute(resultado);
+//            Gson gson = new GsonBuilder().serializeNulls().create();
+//            //
+//            disablePD();
+//            try {
+//                ArrayList<Chat_Message_Info_Rec> messageInfoList = gson
+//                        .fromJson(
+//                                ToolBox_Inf.getWebSocketJsonParam(resultado),
+//                                new TypeToken<ArrayList<Chat_Message_Info_Rec>>() {
+//                                }.getType()
+//                        );
+//                //
+//                ArrayList<String> auxList = new ArrayList<>();
+//                for (Chat_Message_Info_Rec info_rec : messageInfoList) {
+//                    if (info_rec.getSys_user_image() != null) {
+//                        auxList.add(
+//                                info_rec.getUser_code()
+//                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
+//                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
+//                        );
+//                    }
+//                }
+//                //
+//                //act034_room.showRoomInfoDialog(messageInfoList);
+//                //
+//           /* String[] imgUrlList = new String[auxList.size()];
+//            startDownloadMemberImgTask(auxList.toArray(imgUrlList));}*/
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        protected void onCancelled(String s) {
+//            super.onCancelled(s);
+//            Log.d("ChatEvent","MessageAsyncTask Cancelada");
+//            disablePD();
+//        }
+//    }
 
     //endregion
 
@@ -772,9 +772,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if(downloadMemberImgTask != null){
             downloadMemberImgTask.cancel(true);
         }
-        if(messageInfoTask != null){
-            messageInfoTask.cancel(true);
-        }
+//        if(messageInfoTask != null){
+//            messageInfoTask.cancel(true);
+//        }
         //
         super.onDestroy();
     }

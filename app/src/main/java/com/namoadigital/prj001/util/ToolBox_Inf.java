@@ -96,6 +96,7 @@ import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act034.Act034_Main;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -744,9 +745,9 @@ public class ToolBox_Inf {
         from.renameTo(to);
     }
 
-    public static void renameDownloadFileInf(String sName, String ext,String path) {
-        File from = new File(path+ "/", sName + ".tmp");
-        File to = new File(path+ "/", sName + ext);
+    public static void renameDownloadFileInf(String sName, String ext, String path) {
+        File from = new File(path + "/", sName + ".tmp");
+        File to = new File(path + "/", sName + ext);
         //
         from.renameTo(to);
     }
@@ -1117,7 +1118,6 @@ public class ToolBox_Inf {
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
         Intent mIntent = new Intent(context, WS_Notification_Sync.class);
-        ;
 
         PendingIntent pi = PendingIntent.getService(
                 context,
@@ -2988,14 +2988,28 @@ public class ToolBox_Inf {
     }
 
     public static void showChatNotification(Context context, String type, String attempt) {
+        showChatNotification(context, type, attempt, "", "");
+    }
+
+    public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
         RemoteViews view =
                 new RemoteViews(context.getPackageName(), R.layout.notification_chat_msg);
         //
+        Intent mIntent = new Intent(context, Act034_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pi = PendingIntent.getActivity(
+                context,
+                0,
+                mIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
         try {
-            switch (type){
+            switch (type) {
                 case Constant.CHAT_NOTIFICATION_TYPE_MESSAGE:
                     CH_RoomDao roomDao = new CH_RoomDao(context);
                     //
@@ -3020,10 +3034,10 @@ public class ToolBox_Inf {
                             //
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_2,
-                                    msgAux.get("type").equals("TEXT") ? msgAux.get("data") :msgAux.get("type")
+                                    msgAux.get("type").equals("TEXT") ? msgAux.get("data") : msgAux.get("type")
                             );
 
-                        }else{
+                        } else {
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_1,
                                     msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " conversas"
@@ -3036,7 +3050,7 @@ public class ToolBox_Inf {
 
                     }
                     break;
-                case  Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING:
+                case Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING:
                     view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.sync_notification_animation);
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_1,
@@ -3044,29 +3058,43 @@ public class ToolBox_Inf {
                     );
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_2,
-                            "Tentativa " +attempt
+                            "Tentativa " + attempt
                     );
                     break;
 
+                case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
+                    view.setTextViewText(
+                            R.id.notification_chat_msg_tv_msg_1,
+                            title
+                    );
+                    view.setTextViewText(
+                            R.id.notification_chat_msg_tv_msg_2,
+                            message
+                    );
+
+                    break;
             }
+
             Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-            builder.setSmallIcon( type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
+            builder.setSmallIcon(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
             builder.setAutoCancel(true);
             builder.setContent(view);
 
-            if(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE)){
-               // builder.setSound(alarmSound);
-                builder.setSound( Uri.parse("android.resource://"
+            if (type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) || type.equals(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
+                // builder.setSound(alarmSound);
+                builder.setSound(Uri.parse("android.resource://"
                         + context.getPackageName() + "/" + R.raw.morfador));
+
+                builder.setContentIntent(pi);
             }
             Notification notification = builder.build();
             //
             nm.notify(Constant.NOTIFICATION_CHAT, notification);
 
         } catch (Exception e) {
-            registerException(CLASS_NAME,e);
+            registerException(CLASS_NAME, e);
         }
 
     }
@@ -3076,17 +3104,17 @@ public class ToolBox_Inf {
         manager.cancel(Constant.NOTIFICATION_CHAT);
     }
 
-    public static HMAux getChatMsgContent(String msg_obj){
+    public static HMAux getChatMsgContent(String msg_obj) {
         HMAux hmAux = new HMAux();
         //
-        try{
+        try {
             JSONObject jsonObj = new JSONObject(msg_obj);
             JSONObject jsonMsg = jsonObj.getJSONObject("message");
-            hmAux.put("type",String.valueOf(jsonMsg.getString("type")));
-            hmAux.put("data",String.valueOf(jsonMsg.getString("data")));
+            hmAux.put("type", String.valueOf(jsonMsg.getString("type")));
+            hmAux.put("data", String.valueOf(jsonMsg.getString("data")));
             return hmAux;
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             return null;
         }
     }

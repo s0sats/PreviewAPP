@@ -79,13 +79,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
-            if (fcmMessage.getTitle().trim().equalsIgnoreCase("<CHAT_TEST>")) {
+            if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
 
-                if (!WKService.isWKService_Running) {
-
-                    Intent mIntent = new Intent(getApplicationContext(), WKService.class);
-                    startService(mIntent);
-                } else {
+                if (!ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase("")) {
+                    ToolBox_Inf.showChatNotification(
+                            getApplicationContext(),
+                            fcmMessage.getType().trim().toUpperCase(),
+                            "0",
+                            fcmMessage.getTitle().trim(),
+                            fcmMessage.getMsg_short().trim()
+                    );
                 }
 
                 return;

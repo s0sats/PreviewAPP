@@ -1,16 +1,20 @@
 package com.namoadigital.prj001.ui.act035;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -20,15 +24,26 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
+import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Room;
+import com.namoadigital.prj001.model.Chat_C_Error;
+import com.namoadigital.prj001.model.Chat_Message_Info_Env;
+import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
+import com.namoadigital.prj001.model.Chat_Room_Info_Env;
+import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.sql.CH_Message_Sql_012;
@@ -97,6 +112,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private MyRunnable_01 m1;
     private MyRunnable_02 m2;
+
+    /*TESTE, MOVER PARA ACT035*/
+    private DownloadMemberImgTask downloadMemberImgTask;
+    private MessageInfoTask messageInfoTask;
+    private RoomInfoTask roomInfoTask;
+
+    private Chat_Member_Adapter mDialogAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -310,8 +332,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     )
 
             );
+
+//            iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+//                    startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+//                }
+//            });
+
         } catch (Exception e) {
             iv_room_thumbnail.setImageDrawable(getDrawable(R.mipmap.ic_namoa));
+        } finally {
+            iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                    startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+                }
+            });
         }
         //
         sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -331,6 +370,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         //
                         rearrange_list();
                     }
+                } else {
+                    sw_messages.setRefreshing(false);
                 }
             }
         });
@@ -444,6 +485,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onDestroy() {
         startReceivers(false);
+        //
+        if (messageInfoTask != null) {
+            messageInfoTask.cancel(true);
+        }
         //
         super.onDestroy();
     }
@@ -683,5 +728,356 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         if (sw_messages.isRefreshing()) {
             rearrange_list();
         }
+    }
+
+    // Mostrar Informacao Room / Mensagem
+
+    private class MessageInfoTask extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("ChatEvent", "MessageAsyncTask PreExecute");
+            //
+            showPD(
+                    /*hmAux_Trans.get("ws_room_info_ttl"),
+                    hmAux_Trans.get("ws_room_info_msg")*/
+                    "Informações da Message - Trad",
+                    "Buscando informações da message - Trad"
+            );
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("ChatEvent", "MessageAsyncTask DoInBackground");
+            String resultado = "";
+            try {
+                String socket_id = params[0];
+                int msg_prefix = Integer.parseInt(params[1]);
+                int msg_code = Integer.parseInt(params[2]);
+                //
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                Chat_Message_Info_Env env = new Chat_Message_Info_Env();
+                env.setSocket_id(socket_id);
+                env.setMsg_prefix(msg_prefix);
+                env.setMsg_code(msg_code);
+                env.setShow_myself(1);
+                //
+                resultado = ToolBox_Con.connWebService(
+                        Constant.WS_CHAT_MESSAGE_INFO,
+                        gson.toJson(env)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            Log.d("ChatEvent", "MessageAsyncTask OnPost");
+            super.onPostExecute(resultado);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //
+            // VERIFICAR disablePD();
+            try {
+                ArrayList<Chat_Message_Info_Rec> messageInfoList = gson
+                        .fromJson(
+                                ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                new TypeToken<ArrayList<Chat_Message_Info_Rec>>() {
+                                }.getType()
+                        );
+                //
+                ArrayList<String> auxList = new ArrayList<>();
+                for (Chat_Message_Info_Rec info_rec : messageInfoList) {
+                    if (info_rec.getSys_user_image() != null) {
+                        auxList.add(
+                                info_rec.getUser_code()
+                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
+                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image_name()
+                        );
+                    }
+                }
+                //
+                //act034_room.showRoomInfoDialog(messageInfoList);
+                //
+           /* String[] imgUrlList = new String[auxList.size()];
+            startDownloadMemberImgTask(auxList.toArray(imgUrlList));}*/
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onCancelled(String s) {
+            super.onCancelled(s);
+            Log.d("ChatEvent", "MessageAsyncTask Cancelada");
+            // VERIFICAR disablePD();
+        }
+    }
+
+    public void startMessageInfoTask(String socket_id, String msg_prefix, String msg_code) {
+        messageInfoTask = new MessageInfoTask();
+        messageInfoTask.execute(socket_id, msg_prefix, msg_code);
+    }
+
+    public void showPD(String ttl, String msg) {
+        //
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        progressDialog.setCancelable(true);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if (roomInfoTask != null) {
+                    roomInfoTask.cancel(true);
+                }
+            }
+        });
+    }
+
+    private class RoomInfoTask extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("ChatEvent", "RoomAsyncTask PreExecute");
+            //
+            showPD(
+                    /*hmAux_Trans.get("ws_room_info_ttl"),
+                    hmAux_Trans.get("ws_room_info_msg")*/
+                    "Informações da Sala - Trad",
+                    "Buscando informações da sala - Trad"
+            );
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("ChatEvent", "RoomAsyncTask DoInBackground");
+            String resultado = "";
+            try {
+                String socket_id = params[0];
+                String room_code = params[1];
+                //
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                Chat_Room_Info_Env env = new Chat_Room_Info_Env();
+                env.setSocket_id(socket_id);
+                env.setRoom_code(room_code);
+                env.setActive(1);
+                //
+                resultado = ToolBox_Con.connWebService(
+                        Constant.WS_CHAT_ROOM_INFO,
+                        gson.toJson(env)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            Log.d("ChatEvent", "RoomAsyncTask OnPost");
+            super.onPostExecute(resultado);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //
+            if (resultado.contains("error_msg")) {
+                //
+                Chat_C_Error cError =
+                        gson.fromJson(
+                                ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                Chat_C_Error.class
+                        );
+                //
+                ToolBox.sendBCStatus(
+                        context,
+                        "ERROR_1",
+                        cError != null ? cError.getError_msg() : "Error",
+                        "",
+                        "0"
+                );
+
+            } else {
+                //
+                disablePD();
+                ArrayList<Chat_Room_Info_Rec> roomInfoList = gson
+                        .fromJson(
+                                ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                new TypeToken<ArrayList<Chat_Room_Info_Rec>>() {
+                                }.getType()
+                        );
+                //
+                ArrayList<String> auxList = new ArrayList<>();
+                for (Chat_Room_Info_Rec info_rec : roomInfoList) {
+                    if (info_rec.getSys_user_image() != null) {
+                        auxList.add(
+                                info_rec.getUser_code()
+                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
+                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image_name()
+                        );
+                    }
+                }
+                //
+                showRoomInfoDialog(roomInfoList);
+                //
+                String[] imgUrlList = new String[auxList.size()];
+                startDownloadMemberImgTask(auxList.toArray(imgUrlList));
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
+            disablePD();
+        }
+    }
+
+    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
+            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
+            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
+            for (int i = 0; i < strings.length; i++) {
+                try {
+                    String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
+                    String user_code = downloadParam[0];
+                    String url = downloadParam[1];
+
+                    String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0, downloadParam[2].length() - 4) : Constant.CHAT_NO_USER_IMAGE);
+                    //
+                    if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                url,
+                                Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg", Constant.CACHE_CHAT_PATH);
+                    }
+                    publishProgress(user_code, image_name + ".jpg");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            //
+            updateMemberImage(values[0], values[1]);
+        }
+    }
+
+    public void disablePD() {
+        disableProgressDialog();
+    }
+
+    public void showRoomInfoDialog(ArrayList<Chat_Room_Info_Rec> roomInfoList) {
+        ArrayList<HMAux> memberList = new ArrayList<>();
+
+        try {
+            //
+            if (roomInfoList != null && roomInfoList.size() > 0) {
+                for (Chat_Room_Info_Rec infoRec : roomInfoList) {
+                    HMAux aux = new HMAux();
+                    aux.put(Chat_Member_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
+                    aux.put(Chat_Member_Adapter.USER_NICK, infoRec.getUser_nick());
+                    aux.put(Chat_Member_Adapter.IS_ONLINE, String.valueOf(infoRec.getOn_line()));
+                    aux.put(Chat_Member_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
+                    //
+                    memberList.add(aux);
+                }
+            }
+            //
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act034_room_info, null);
+            //
+            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act034_room_info_iv_dismiss);
+            TextView tv_room_desc = (TextView) view.findViewById(R.id.act034_room_info_tv_room_desc_lbl);
+            ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
+            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
+            ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            //
+            tv_room_desc.setText(tv_room_name_val.getText().toString());
+            //
+            iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
+            //
+            tv_members_lbl.setText("Membros - Trad");
+            //
+            if (memberList.size() > 0) {
+                mDialogAdapter = new Chat_Member_Adapter(
+                        context,
+                        memberList,
+                        R.layout.act034_room_info_cell
+                );
+                //
+                lv_members.setAdapter(
+                        mDialogAdapter
+                );
+            } else {
+                lv_members.setVisibility(View.GONE);
+                //
+                tv_members_lbl.setText("Nenhum membro encontrado - Trad");
+            }
+            //
+            builder
+                    .setView(view)
+                    .setCancelable(true);
+            //
+            disablePD();
+            //
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            //
+            iv_dismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            disablePD();
+        }
+
+    }
+
+    public void updateMemberImage(String user_code, String local_url) {
+        if (mDialogAdapter != null) {
+            mDialogAdapter.updateMemberImage(user_code, local_url);
+        }
+    }
+
+    public void startDownloadMemberImgTask(String[] imgUrlList) {
+        downloadMemberImgTask = new DownloadMemberImgTask();
+        downloadMemberImgTask.execute(imgUrlList);
+    }
+
+    public void startRoomInfoTask(String socket_id, String room_code) {
+        roomInfoTask = new RoomInfoTask();
+        roomInfoTask.execute(socket_id, room_code);
     }
 }
