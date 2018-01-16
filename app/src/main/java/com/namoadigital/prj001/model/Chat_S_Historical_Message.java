@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by d.luche on 12/12/2017.
  */
@@ -10,6 +12,7 @@ public class Chat_S_Historical_Message {
     private Integer msg_ref_prefix;
     private Integer msg_ref_code;
     private String action;
+    private ArrayList<Chat_Ref_Json> ref_json;
 
     public String getRoom_code() {
         return room_code;
@@ -41,5 +44,13 @@ public class Chat_S_Historical_Message {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public ArrayList<Chat_Ref_Json> getRef_json() {
+        return ref_json;
+    }
+
+    public void setRef_json(ArrayList<Chat_Ref_Json> ref_json) {
+        this.ref_json = ref_json;
     }
 }
