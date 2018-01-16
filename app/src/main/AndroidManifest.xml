@@ -466,6 +466,11 @@
         <!-- Chat Service Teste -->
         <service android:name=".fcm.WKService" />
 
+        <!-- Screen On/Off Status -->
+        <receiver android:name=".service.ScreenStatusReceiver" />
+        <service android:name=".service.ScreenStatusService" />
+
+
     </application>
 
 </manifest>

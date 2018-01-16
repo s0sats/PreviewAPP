@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -30,6 +31,11 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
+        }
+
+        if (!ScreenStatusService.isRunning) {
+            Intent mIntent = new Intent(context, ScreenStatusService.class);
+            context.startService(mIntent);
         }
     }
 

@@ -2900,7 +2900,7 @@ public class ToolBox_Inf {
 
             OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
 
-            imgFinal.compress(Bitmap.CompressFormat.JPEG, 25, os);
+            imgFinal.compress(Bitmap.CompressFormat.PNG, 25, os);
 
             os.flush();
             os.close();

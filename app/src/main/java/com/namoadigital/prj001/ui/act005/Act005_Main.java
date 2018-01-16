@@ -45,6 +45,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
@@ -172,6 +173,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         mIntentPIC.putExtras(bundle);
         context.sendBroadcast(mIntentPIC);
         //
+        if (!ScreenStatusService.isRunning) {
+            Intent mScreenStatusService = new Intent(context, ScreenStatusService.class);
+            context.startService(mScreenStatusService);
+        }
+        //
         fcmReceiver = new FCMReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.WS_FCM);
@@ -181,7 +187,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         chatReceiver = new BR_Chat();
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver,brRoomFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
     }
 
     @Override
@@ -1125,9 +1131,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-        } else if(wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
+        } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
             changeCustomer();
-        }else{
+        } else {
             progressDialog.dismiss();
         }
     }
@@ -1419,12 +1425,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
     }
 
-    private class BR_Chat extends BroadcastReceiver{
+    private class BR_Chat extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
 
-            switch (type){
+            switch (type) {
                 case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
                     mPresenter.getMenuItens(hmAux_Trans);
                     break;

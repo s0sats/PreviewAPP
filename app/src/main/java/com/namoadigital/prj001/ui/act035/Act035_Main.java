@@ -300,14 +300,19 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         );
 
         tv_room_name_val.setText(mRoom.getRoom_desc());
-        iv_room_thumbnail.setImageBitmap(
-                BitmapFactory.decodeFile(
-                        Constant.THU_PATH + "/" +
-                                mRoom.getRoom_image_local().substring(0,mRoom.getRoom_image_local().length() -4) +
-                                Constant.THUMB_SUFFIX + ".jpg"
-                )
 
-        );
+        try {
+            iv_room_thumbnail.setImageBitmap(
+                    BitmapFactory.decodeFile(
+                            Constant.THU_PATH + "/" +
+                                    mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) +
+                                    Constant.THUMB_SUFFIX + ".jpg"
+                    )
+
+            );
+        } catch (Exception e) {
+            iv_room_thumbnail.setImageDrawable(getDrawable(R.mipmap.ic_namoa));
+        }
         //
         sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
