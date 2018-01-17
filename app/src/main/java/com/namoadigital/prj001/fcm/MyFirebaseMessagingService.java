@@ -86,8 +86,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             getApplicationContext(),
                             fcmMessage.getModule().toUpperCase(),
                             "0",
-                            fcmMessage.getTitle().trim(),
-                            fcmMessage.getMsg_short().trim()
+                            "",//fcmMessage.getTitle().trim(),
+                            ""//fcmMessage.getMsg_short().trim()
                     );
                 }
 

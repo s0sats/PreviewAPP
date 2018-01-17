@@ -2992,6 +2992,27 @@ public class ToolBox_Inf {
     }
 
     public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
+        //
+        HMAux hmAux_trans = null;
+
+        List<String> translateList = new ArrayList<>();
+        //
+        hmAux_trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+        //
+        if(hmAux_trans == null || hmAux_trans.size() == 0){
+         //Necessidade de incluir arquivo de String ?!
+        }
+        //
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
@@ -3028,7 +3049,7 @@ public class ToolBox_Inf {
                                 ) {
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_1,
-                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " disse:"
+                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " +hmAux_trans.get("notification_user_says_lbl")
                             );
                             HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
                             //
@@ -3040,11 +3061,11 @@ public class ToolBox_Inf {
                         } else {
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_1,
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " conversas"
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " +hmAux_trans.get("notification_messages_lbl")
                             );
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_2,
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " salas"
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " +hmAux_trans.get("notification_rooms_lbl")
                             );
                         }
 
@@ -3054,11 +3075,11 @@ public class ToolBox_Inf {
                     view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.sync_notification_animation);
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_1,
-                            "Sem conexão ao N-Chat"
+                            hmAux_trans.get("chat_no_connecton_lbl")
                     );
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_2,
-                            "Tentativa " + attempt
+                            hmAux_trans.get("chat_reconnection_attempt")+"  " + attempt
                     );
                     break;
 
@@ -3066,11 +3087,13 @@ public class ToolBox_Inf {
                     view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_user_msg_on);
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_1,
-                            title
+                            //title
+                            hmAux_trans.get("chat_fcm_offline_ttl")
                     );
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_2,
-                            message
+                            //message,
+                            hmAux_trans.get("chat_fcm_offline_msg")
                     );
 
                     break;
