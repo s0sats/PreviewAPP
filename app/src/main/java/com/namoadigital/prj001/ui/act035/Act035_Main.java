@@ -260,6 +260,27 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 this.dados
         );
 
+        act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
+            @Override
+            public void showInfo(HMAux hmAux) {
+
+
+                if (ToolBox_Con.isOnline(context)) {
+
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                    if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
+                        startMessageInfoTask(
+                                singletonWebSocket.mSocket.id(),
+                                hmAux.get(CH_MessageDao.MSG_PREFIX),
+                                hmAux.get(CH_MessageDao.MSG_CODE)
+                        );
+                    }
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
+            }
+        });
+
         lv_messages.setAdapter(
                 act035_adapter_messages
         );
@@ -381,7 +402,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                mPresenter.onOnItemClicked(item);
+                if (item.get("msg_obj").toLowerCase().contains("IMAGE".toLowerCase())) {
+                    mPresenter.onOnItemClicked(item);
+                }
             }
         });
         //
@@ -430,6 +453,32 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 lv_messages.setSelection(dados.size() - 1);
                 //
                 iv_down.setVisibility(View.GONE);
+            }
+        });
+        //
+        lv_messages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (ToolBox_Con.isOnline(context)) {
+
+                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+
+                    if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
+                        startMessageInfoTask(
+                                singletonWebSocket.mSocket.id(),
+                                hmAux.get(CH_MessageDao.MSG_PREFIX),
+                                hmAux.get(CH_MessageDao.MSG_CODE)
+                        );
+                    }
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
+
+
+                return true;
             }
         });
 
@@ -768,6 +817,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         gson.toJson(env)
                 );
 
+                int i = 10;
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -781,7 +832,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             super.onPostExecute(resultado);
             Gson gson = new GsonBuilder().serializeNulls().create();
             //
-            // VERIFICAR disablePD();
+            disablePD();
+            //
             try {
                 ArrayList<Chat_Message_Info_Rec> messageInfoList = gson
                         .fromJson(
@@ -801,10 +853,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     }
                 }
                 //
-                //act034_room.showRoomInfoDialog(messageInfoList);
-                //
-           /* String[] imgUrlList = new String[auxList.size()];
-            startDownloadMemberImgTask(auxList.toArray(imgUrlList));}*/
+                showMessageInfoDialog(messageInfoList);
+
+                String[] imgUrlList = new String[auxList.size()];
+                startDownloadMemberImgTask(auxList.toArray(imgUrlList));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -815,7 +867,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         protected void onCancelled(String s) {
             super.onCancelled(s);
             Log.d("ChatEvent", "MessageAsyncTask Cancelada");
-            // VERIFICAR disablePD();
+            disablePD();
         }
     }
 
@@ -1064,6 +1116,82 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
 
     }
+
+    public void showMessageInfoDialog(ArrayList<Chat_Message_Info_Rec> messageInfoList) {
+        ArrayList<HMAux> memberList = new ArrayList<>();
+
+        try {
+            //
+            if (messageInfoList != null && messageInfoList.size() > 0) {
+                for (Chat_Message_Info_Rec infoRec : messageInfoList) {
+                    HMAux aux = new HMAux();
+                    aux.put(Chat_Member_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
+                    aux.put(Chat_Member_Adapter.USER_NICK, infoRec.getUser_nick());
+                    aux.put(Chat_Member_Adapter.IS_ONLINE, String.valueOf(infoRec.getOn_line()));
+                    aux.put(Chat_Member_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
+                    aux.put(Chat_Member_Adapter.DELIVERED_DT, infoRec.getDelivered_date());
+                    aux.put(Chat_Member_Adapter.READ_DT, infoRec.getRead_date());
+                    //
+                    memberList.add(aux);
+                }
+            }
+            //
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act034_room_info, null);
+            //
+            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act034_room_info_iv_dismiss);
+            TextView tv_room_desc = (TextView) view.findViewById(R.id.act034_room_info_tv_room_desc_lbl);
+            ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
+            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
+            ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            //
+            tv_room_desc.setText(tv_room_name_val.getText().toString());
+            //
+            iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
+            //
+            tv_members_lbl.setText("Membros - Trad");
+            //
+            if (memberList.size() > 0) {
+                mDialogAdapter = new Chat_Member_Adapter(
+                        context,
+                        memberList,
+                        R.layout.act035_message_info_cell
+                );
+                //
+                lv_members.setAdapter(
+                        mDialogAdapter
+                );
+            } else {
+                lv_members.setVisibility(View.GONE);
+                //
+                tv_members_lbl.setText("Nenhum membro encontrado - Trad");
+            }
+            //
+            builder
+                    .setView(view)
+                    .setCancelable(true);
+            //
+            disablePD();
+            //
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            //
+            iv_dismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            disablePD();
+        }
+
+    }
+
 
     public void updateMemberImage(String user_code, String local_url) {
         if (mDialogAdapter != null) {

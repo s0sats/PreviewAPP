@@ -16,7 +16,6 @@ public class ScreenStatusService extends Service {
 
     private ScreenStatusReceiver mScreenStateReceiver;
 
-
     @Override
     public void onCreate() {
         super.onCreate();

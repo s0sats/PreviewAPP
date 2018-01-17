@@ -233,9 +233,9 @@ public class SingletonWebSocket {
     }
 
     public void disconnect() {
-        mSocketRunning = false;
         Log.d("ChatEvent", "disconnect");
         if (mSocket != null && sSoleInstance.mSocketRunning) {
+            mSocketRunning = false;
             mSocket.off();
             mSocket.disconnect();
             mSocket = null;
@@ -250,7 +250,7 @@ public class SingletonWebSocket {
     public void attemptSendLogin() {
         Log.d("ChatEvent", "attemptSendLogin");
         try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + " - customer: "+ToolBox_Con.getPreference_Customer_Code(context)+"\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }

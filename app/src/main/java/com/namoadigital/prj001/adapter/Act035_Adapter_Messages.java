@@ -46,6 +46,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     public static boolean processingHMAux = false;
 
+
     public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
         this.context = context;
         this.resource_01 = resource_01;
@@ -58,17 +59,15 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
     }
 
-    // Interface só é chamada como para as mensagens que não forem as minhas.
-//    public interface IAct035_Adapter_Messages {
-//        //void updateReadStatus(HMAux hmAux, int position);
-//        void updateReadStatus(ArrayList<HMAux> hmAuxs);
-//    }
+    public interface IAct035_Adapter_Messages {
+        void showInfo(HMAux hmAux);
+    }
 
-//    private IAct035_Adapter_Messages delegate;
+    private IAct035_Adapter_Messages delegate;
 
-//    public void setOnUpdateReadStatus(IAct035_Adapter_Messages delegate) {
-//        this.delegate = delegate;
-//    }
+    public void setOnshowInfoListener(IAct035_Adapter_Messages delegate) {
+        this.delegate = delegate;
+    }
 
 
     public int getmSizeAddUpdate() {
@@ -249,7 +248,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        return getItemViewType(position) == 0 || getItemViewType(position) == 1 ? true : false;
+        // return getItemViewType(position) == 0 || getItemViewType(position) == 1 ? true : false;
+        return true;
     }
 
     @Override
@@ -276,7 +276,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
         //
         JSONObject message = null;
-        HMAux hmAux = data.get(position);
+        final HMAux hmAux = data.get(position);
 
         try {
             JSONObject msg_obj = new JSONObject(hmAux.get("msg_obj"));
@@ -490,7 +490,6 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 break;
         }
-        //
         // Badge Status for All
         if (hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
             iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_clock_chat));
