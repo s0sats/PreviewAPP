@@ -43,8 +43,6 @@ import java.util.ArrayList;
 
 public class Act034_Room extends BaseFragment {
 
-    public static final String ROOM_POSITION = "position";
-
     private boolean bStatus = false;
     private Context context;
     private LinearLayout ll_header;
@@ -140,8 +138,6 @@ public class Act034_Room extends BaseFragment {
                 //Chama msgs pendentes
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                 singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
-                //Resgata sala clicada, e chama proxima tela.
-                room.put(ROOM_POSITION, String.valueOf(position));
                 //
                 mMain.callAct035(context, room);
             }
@@ -211,36 +207,15 @@ public class Act034_Room extends BaseFragment {
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
                 public void onIvRoomClick(String room_code, String room_desc, String image_path) {
-                    info_room_desc = room_desc;
-                    info_room_image = image_path;
-                    //
-                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                    mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(),room_code);
-                    //region MoverAct035
-//                    HMAux msgAux = messageDao.getByStringHM(
-//                            " SELECT r.msg_prefix,r.msg_code \n" +
-//                                    " FROM \n" +
-//                                    messageDao.TABLE +" r\n " +
-//                                    " WHERE r.room_code =  '"+room_code+"'\n" +
-//                                    " and r.msg_prefix = '201801'\n" +
-//                                    " and r.user_code = '"+ToolBox_Con.getPreference_User_Code(context)+"'\n" +
-//                                    ";msg_prefix#msg_code"
-//
-//                    );
-//                    //
-//                    String msg_prefix = "201801";
-//                    String msg_code = "";
-//                    if(msgAux != null && msgAux.size() > 0){
-//                        msg_code = msgAux.get("msg_code");
-//                        //
-//                        mMain.startMessageInfoTask(
-//                                singletonWebSocket.mSocket.id(),
-//                                msg_prefix,
-//                                msg_code
-//                        );
-//
-//                    }
-                    //endregion
+                    if(ToolBox_Con.isOnline(context)) {
+                        info_room_desc = room_desc;
+                        info_room_image = image_path;
+                        //
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                        mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
+                    }else{
+                        ToolBox_Inf.showNoConnectionDialog(context);
+                    }
 
                 }
             });

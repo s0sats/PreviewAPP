@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_C_Message;
@@ -30,6 +31,7 @@ import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
 import com.namoadigital.prj001.sql.CH_Message_Sql_014;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -258,8 +260,24 @@ public class SingletonWebSocket {
         try {
             Gson gson = new GsonBuilder().serializeNulls().create();
             Chat_Login_Env env = new Chat_Login_Env();
+            EV_User_CustomerDao customerDao = new EV_User_CustomerDao(context);
+            String customerList = "";
+            //Seleciona todos customers con sessão ativa e que tem acesso ao chat.
+            ArrayList<HMAux> chatSessionCustomers = (ArrayList<HMAux>) customerDao.query_HM(
+                    new EV_User_Customer_Sql_007(
+                            ToolBox_Con.getPreference_User_Code(context)
+                    ).toSqlQuery()
+            );
+            //
+            if(chatSessionCustomers != null && chatSessionCustomers.size() > 0){
+                for (int i = 0; i < chatSessionCustomers.size() ; i++) {
+                    customerList += chatSessionCustomers.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE) +",";
+                }
+                customerList = customerList.substring(0,customerList.length() -1);
+            }
             //
             env.setUser_code(ToolBox_Con.getPreference_User_Code(context));
+            //env.setCustomer_code(customerList);
             env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
             env.setSession_id(ToolBox_Con.getPreference_Session_App(context));
             env.setSession_type("APP");
