@@ -190,7 +190,7 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("ChatEvent", "onDisconect   -  Socket_id: " + mSocket.id());
+                    Log.d("ChatEvent", "onDisconect   -  Socket_id: " + mSocket.id() + " - origin: "+String.valueOf(args[0]));
                     try {
                         mSocketRunning = false;
                         ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect\nSocket_id: " + mSocket.id() + "\n", log_file);
@@ -233,9 +233,9 @@ public class SingletonWebSocket {
     }
 
     public void disconnect() {
-        mSocketRunning = false;
         Log.d("ChatEvent", "disconnect");
         if (mSocket != null && sSoleInstance.mSocketRunning) {
+            mSocketRunning = false;
             mSocket.off();
             mSocket.disconnect();
             mSocket = null;
@@ -250,7 +250,7 @@ public class SingletonWebSocket {
     public void attemptSendLogin() {
         Log.d("ChatEvent", "attemptSendLogin");
         try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + " - customer: "+ToolBox_Con.getPreference_Customer_Code(context)+"\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -726,6 +726,8 @@ public class SingletonWebSocket {
                                 break;
                             case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                             default:
+                                String tst = cError.getError_msg();
+                                String tst2 =  tst+";";
                                 break;
                         }
 
@@ -772,6 +774,8 @@ public class SingletonWebSocket {
                                 break;
                             case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                             default:
+                                String tst = cError.getError_msg();
+                                String tst2 =  tst+";";
                                 break;
                         }
 
