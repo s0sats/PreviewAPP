@@ -464,7 +464,21 @@ public class SingletonWebSocket {
             //retorna rooms
             if (args != null && args.length > 0) {
                 if (args[0] instanceof String) {
+
+                    //region APAGAR APÓS TESTE - DETECÇÃO DE PQ NÃO RECEBEU ROOM
+                    String file_name = "json_cRoom" + ToolBox_Inf.getToken(context)+"_.txt";
+                    File log_file = new File(Constant.SUPPORT_PATH, file_name);
+                    try {
+                        ToolBox_Inf.writeIn(String.valueOf(args[0]), log_file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        //
+                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    }
+                    //endregion
+
                     String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+
                     //
                     Intent cRoomIntent = new Intent(context, WBR_C_Room.class);
                     Bundle bundle = new Bundle();
