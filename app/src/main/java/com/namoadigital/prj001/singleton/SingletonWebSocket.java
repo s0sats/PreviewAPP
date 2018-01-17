@@ -192,10 +192,12 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("ChatEvent", "onDisconect   -  Socket_id: " + mSocket.id() + " - origin: "+String.valueOf(args[0]));
+                    Log.d("ChatEvent", "onDisconect   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null ") + " - origin: "+String.valueOf(args[0]));
                     try {
                         mSocketRunning = false;
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect\nSocket_id: " + mSocket.id() + "\n", log_file);
+
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect\nSocket_id: " +(mSocket != null ? mSocket.id(): " null ") + "\n", log_file);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
