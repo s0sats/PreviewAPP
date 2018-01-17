@@ -96,9 +96,10 @@ public class Chat_Member_Adapter extends BaseAdapter {
         if (iv_online_icon != null) {
 
             if (item.get(IS_ONLINE).equalsIgnoreCase("1")) {
+                iv_online_icon.setImageDrawable(context.getDrawable(R.drawable.chat_online_sign));
                 iv_online_icon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
             } else {
-                iv_online_icon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+                iv_online_icon.setImageDrawable(null);
             }
         } else {
             iv_delivered.setColorFilter(context.getResources().getColor(R.color.namoa_color_black));

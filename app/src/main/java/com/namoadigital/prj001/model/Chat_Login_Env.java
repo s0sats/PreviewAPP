@@ -7,7 +7,7 @@ package com.namoadigital.prj001.model;
 public class Chat_Login_Env {
 
     private String user_code;
-    private long customer_code;
+    private String customer_code;
     private String session_id;
     private String session_type;
     private String translate_code;
@@ -21,11 +21,11 @@ public class Chat_Login_Env {
         this.user_code = user_code;
     }
 
-    public long getCustomer_code() {
+    public String getCustomer_code() {
         return customer_code;
     }
 
-    public void setCustomer_code(long customer_code) {
+    public void setCustomer_code(String customer_code) {
         this.customer_code = customer_code;
     }
 

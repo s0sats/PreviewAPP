@@ -40,11 +40,10 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
-import com.namoadigital.prj001.model.Chat_Message_Info_Env;
-import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -258,7 +257,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         act034_room.setBaInfra(this);
         act034_room.setHmAux_Trans(hmAux_Trans);
-        act034_room.setSelected_customer(customer_list.size() > 0 ? Long.parseLong(customer_list.get(0).get(EV_User_CustomerDao.CUSTOMER_CODE)) : 0);
+        act034_room.setSelected_customer(customer_list.size() > 0 ? ToolBox_Con.getPreference_Customer_Code(context) /*Long.parseLong(customer_list.get(0).get(EV_User_CustomerDao.CUSTOMER_CODE))*/ : 0);
         act034_room.loadDataToScreen();
 
     }
@@ -270,6 +269,26 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         act034_opc.setCustomerList(customer_list);
         //
+        boolean customerInList = false;
+        for (int i = 0; i < customer_list.size() ; i++) {
+            if(
+                customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
+            ){
+                customerInList = true;
+                break;
+            }
+        }
+        //
+        if(!customerInList){
+            HMAux aux = new HMAux();
+            aux.put(CH_RoomDao.CUSTOMER_CODE,String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+            aux.put(EV_User_CustomerDao.CUSTOMER_NAME,ToolBox_Con.getPreference_Customer_Code_NAME(context));
+            aux.put(Sql_Act034_001.MSG_QTY,"0");
+            //
+            customer_list.add(0,aux);
+        }
+
         setDrawerState(customer_list.size() > 1);
 
         //

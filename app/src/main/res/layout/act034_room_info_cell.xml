@@ -34,7 +34,6 @@
                 android:layout_weight="1"
                 android:layout_gravity="start|center_vertical"
                 android:text="Alô mamãe - traduzir"
-                android:textColor="@color/namoa_color_gray_chat"
                 android:textSize="@dimen/font_size_item" />
 
             <View

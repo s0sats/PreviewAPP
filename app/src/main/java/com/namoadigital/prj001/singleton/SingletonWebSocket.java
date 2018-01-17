@@ -264,6 +264,7 @@ public class SingletonWebSocket {
             Chat_Login_Env env = new Chat_Login_Env();
             EV_User_CustomerDao customerDao = new EV_User_CustomerDao(context);
             String customerList = "";
+            String sessionList = "";
             //Seleciona todos customers con sessão ativa e que tem acesso ao chat.
             ArrayList<HMAux> chatSessionCustomers = (ArrayList<HMAux>) customerDao.query_HM(
                     new EV_User_Customer_Sql_007(
@@ -273,17 +274,21 @@ public class SingletonWebSocket {
             //
             if(chatSessionCustomers != null && chatSessionCustomers.size() > 0){
                 for (int i = 0; i < chatSessionCustomers.size() ; i++) {
-                    customerList += chatSessionCustomers.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE) +",";
+                    customerList += chatSessionCustomers.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE) +"|";
+                    sessionList += chatSessionCustomers.get(i).get(EV_User_CustomerDao.SESSION_APP) +"|";
                 }
                 customerList = customerList.substring(0,customerList.length() -1);
+                sessionList = sessionList.substring(0,sessionList.length() -1);
             }
             //
             env.setUser_code(ToolBox_Con.getPreference_User_Code(context));
-            //env.setCustomer_code(customerList);
-            env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-            env.setSession_id(ToolBox_Con.getPreference_Session_App(context));
+            env.setCustomer_code(customerList);
+            //env.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+            env.setSession_id(sessionList);
+            //env.setSession_id(ToolBox_Con.getPreference_Session_App(context));
             env.setSession_type("APP");
             env.setTranslate_code(ToolBox_Con.getPreference_Translate_Code(context));
+            env.setForce(1);
             //
             if (mSocket != null) {
                 mSocket.emit(Constant.CHAT_EVENT_S_LOGIN, gson.toJson(env));

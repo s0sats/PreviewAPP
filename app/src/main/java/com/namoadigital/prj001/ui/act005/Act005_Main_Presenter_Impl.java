@@ -469,6 +469,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 }
 
                 if (logoutList.length() > 0) {
+                    //Cancela notificações do chat
+                    ToolBox_Inf.cancelChatNotification(context);
                     //
                     logoutList = logoutList.substring(0, logoutList.length() - 1);
                     //

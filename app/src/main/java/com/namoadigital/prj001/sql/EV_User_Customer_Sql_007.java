@@ -27,7 +27,8 @@ public class EV_User_Customer_Sql_007 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "     e.customer_code\n" +
+                        "     e.customer_code,\n" +
+                        "     e.session_app\n" +
                         " FROM    \n" +
                         "     "+ EV_User_CustomerDao.TABLE+" e,\n" +
                         "     "+ Ev_User_Customer_ParameterDao.TABLE+" p \n" +
@@ -39,7 +40,7 @@ public class EV_User_Customer_Sql_007 implements Specification {
                         " ORDER BY\n" +
                         "  e.customer_code   \n")
                 .append(";")
-                .append(EV_User_CustomerDao.CUSTOMER_CODE)
+                .append(EV_User_CustomerDao.CUSTOMER_CODE+"#"+EV_User_CustomerDao.SESSION_APP)
                 .toString();
     }
 }

@@ -564,6 +564,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
+                        /*
+                        *
+                        *
+                        * Esse case não funciona mais, o metodo chamado no "botão logout" é
+                        * a interface logoutClicked()
+                        *
+                        * */
                         //
                         alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
                         alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
@@ -572,7 +579,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 ToolBox_Con.cleanPreferences(Act005_Main.this);
-                                ToolBox_Inf.cancelChatNotification(Act005_Main.this);
                                 ToolBox_Inf.call_Act001_Main(Act005_Main.this);
                                 finish();
                             }
