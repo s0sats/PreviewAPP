@@ -10,11 +10,13 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_016;
+import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -122,11 +124,37 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     @Override
     public void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code) {
         if (!msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
+
+            ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) ch_messageDao.query_HM(
+                    new CH_Message_Sql_018(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_User_Code(context),
+                            mRoom_code
+                    ).toSqlQuery()
+            );
+            ArrayList<Chat_Ref_Json> ref_json = new ArrayList<>();
+            if(refJsonAux != null && refJsonAux.size() > 0){
+                for (HMAux hmAux:refJsonAux) {
+                    if(hmAux.get(CH_MessageDao.MSG_PREFIX) != null && hmAux.get(CH_MessageDao.MSG_CODE) != null) {
+                        Chat_Ref_Json refAux = new Chat_Ref_Json();
+                        refAux.setMsg_prefix(
+                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_PREFIX))
+                        );
+                        refAux.setMsg_code(
+                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_CODE))
+                        );
+                        //
+                        ref_json.add(refAux);
+                    }
+                }
+            }
+            //
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
             sHistoricalMessage.setRoom_code(mRoom_code);
             sHistoricalMessage.setMsg_ref_prefix(Integer.parseInt(msg_prefix));
             sHistoricalMessage.setMsg_ref_code(Integer.parseInt(msg_code));
             sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
+            sHistoricalMessage.setRef_json(ref_json);
             //
             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 

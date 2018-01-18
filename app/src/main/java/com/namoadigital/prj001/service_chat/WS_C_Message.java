@@ -150,7 +150,6 @@ public class WS_C_Message extends IntentService {
             JsonArray sDeliveredList = new JsonArray();
             JsonArray sReadList = new JsonArray();
             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-
             //
             boolean startDownloadService = false;
             //Transforma list de objs recebido(Chat_C_Message)

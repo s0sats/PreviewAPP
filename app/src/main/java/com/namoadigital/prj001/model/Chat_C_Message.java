@@ -20,8 +20,10 @@ public class Chat_C_Message {
     private JsonObject msg_obj;
     private String msg_origin;
     private int delivered;
+    private int all_delivered;
     private String delivered_date;
     private int read;
+    private int all_read;
     private String read_date;
     private String msg_pk;
     private int user_code;
@@ -191,6 +193,22 @@ public class Chat_C_Message {
         this.action = action;
     }
 
+    public int getAll_delivered() {
+        return all_delivered;
+    }
+
+    public void setAll_delivered(int all_delivered) {
+        this.all_delivered = all_delivered;
+    }
+
+    public int getAll_read() {
+        return all_read;
+    }
+
+    public void setAll_read(int all_read) {
+        this.all_read = all_read;
+    }
+
     public CH_Message toCH_MessageObj(){
         Chat_C_Message chat_c_message = this;
         CH_Message ch_message = new CH_Message();
@@ -210,6 +228,8 @@ public class Chat_C_Message {
         ch_message.setMsg_pk(chat_c_message.getMsg_pk());
         ch_message.setUser_code(chat_c_message.getUser_code());
         ch_message.setUser_nick(chat_c_message.getUser_nick());
+        ch_message.setAll_delivered(chat_c_message.getAll_delivered());
+        ch_message.setAll_read(chat_c_message.getAll_read());
 
         return ch_message;
     }
@@ -233,6 +253,8 @@ public class Chat_C_Message {
         ch_message.setMsg_pk(chat_c_message.getMsg_pk());
         ch_message.setUser_code(chat_c_message.getUser_code());
         ch_message.setUser_nick(chat_c_message.getUser_nick());
+        ch_message.setAll_delivered(chat_c_message.getAll_delivered());
+        ch_message.setAll_read(chat_c_message.getAll_read());
 
         return ch_message;
     }

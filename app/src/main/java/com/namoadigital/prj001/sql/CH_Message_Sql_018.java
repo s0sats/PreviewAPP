@@ -14,11 +14,13 @@ public class CH_Message_Sql_018 implements Specification {
 
     private long customer_code;
     private String user_code;
+    private String room_code = null;
     private String translateMsgStr = "\"type\":\"TRANSLATE\"";
 
-    public CH_Message_Sql_018(long customer_code, String user_code) {
+    public CH_Message_Sql_018(long customer_code, String user_code, String room_code) {
         this.customer_code = customer_code;
         this.user_code = user_code;
+        this.room_code = room_code;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class CH_Message_Sql_018 implements Specification {
                         " WHERE\n" +
                         "   r.customer_code = '"+customer_code+"'\n" +
                         "   and m.user_code = '"+user_code+"'\n" +
+                        "   and m.room_code = '"+room_code+"'\n" +
                         "   and (m.all_delivered = 0 OR m.all_read = 0)\n" +
                         "   and instr(m.msg_obj, '"+translateMsgStr+"') = 0\n" +
                         " ORDER BY\n" +
