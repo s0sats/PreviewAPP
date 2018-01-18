@@ -89,9 +89,11 @@ public class Act005_Adapter extends BaseAdapter {
             tvBadge.setVisibility(View.GONE);
             //
             if(badgeNum == 1) {
-                ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
             }else{
-                ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_desativado_24x24));
             }
         }
 

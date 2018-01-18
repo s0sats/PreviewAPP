@@ -17,7 +17,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="5dp"
             android:padding="5dp"
-            android:src="@drawable/ic_user_msg_on" />
+            android:src="@drawable/ic_chat_24x24" />
 
         <LinearLayout
             android:layout_width="match_parent"

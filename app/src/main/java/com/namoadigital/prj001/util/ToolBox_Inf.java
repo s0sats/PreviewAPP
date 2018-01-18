@@ -3042,7 +3042,7 @@ public class ToolBox_Inf {
                             );
                     //
                     if (msgInfo != null && msgInfo.size() > 0) {
-                        view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_user_msg_on);
+                        view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
                         if (
                                 msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
                                         msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
@@ -3084,7 +3084,7 @@ public class ToolBox_Inf {
                     break;
 
                 case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
-                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_user_msg_on);
+                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_1,
                             //title
