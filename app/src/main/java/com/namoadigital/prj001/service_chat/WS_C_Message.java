@@ -174,6 +174,12 @@ public class WS_C_Message extends IntentService {
                 if (!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)) {
                     startDownloadService = true;
                 }
+                //CORREÇÃO DA ATUALIZAÇÃO DE TMP PARA MSG JA EXISTENTE
+                //Se msg existe no banco, atualiza valor com o tmp do banco
+                if(dbMessage.getTmp() > 0){
+                    ch_message.setTmp(dbMessage.getTmp());
+                }
+                //
                 if (ch_message.getDelivered() == 0) {
                     //Atualiza valor de dado entregue
                     ch_message.setDelivered(1);

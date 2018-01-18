@@ -408,7 +408,7 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             //Cancela notificação de reconnectando
-            ToolBox_Inf.cancelChatNotification(context);
+            //ToolBox_Inf.cancelChatNotification(context);
             if (mSocket != null) {
                 Log.d("ChatEvent", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
                 //Chama metodo que verifica se precisa
@@ -424,23 +424,25 @@ public class SingletonWebSocket {
     private Emitter.Listener onReconnectingReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            if(!pm.isScreenOn()){
-                Log.d("ChatEvent", "EVENT_RECONNECTING - Tela Apagada, para serviço");
-                //mSocket.disconnect();
-                Intent chatService = new Intent(context, AppBackgroundService.class);
-                context.stopService(chatService);
+            if(pm != null) {
+                if (!pm.isScreenOn()) {
+                    Log.d("ChatEvent", "EVENT_RECONNECTING - Tela Apagada, para serviço");
+                    //mSocket.disconnect();
+                    Intent chatService = new Intent(context, AppBackgroundService.class);
+                    context.stopService(chatService);
 
-            }else {
-                if (mSocket != null) {
-                    Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + mSocket.id());
                 } else {
-                    Log.d("ChatEvent", "EVENT_RECONNECTING");
+                    if (mSocket != null) {
+                        Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + mSocket.id());
+                    } else {
+                        Log.d("ChatEvent", "EVENT_RECONNECTING");
+                    }
+                    //
+                    HMAux hmAux = new HMAux();
+                    hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
+                    ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
+                    //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
                 }
-                //
-                HMAux hmAux = new HMAux();
-                hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
-                ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
-                //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
             }
         }
     };
@@ -801,7 +803,15 @@ public class SingletonWebSocket {
                             case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                             default:
                                 String tst = cError.getError_msg();
-                                String tst2 =  tst+";";
+                                //Erro de complicação do oracle, desce o serviço e depois reinicia
+                                if(cError.getError_msg().contains("ORA-04068")){
+                                    //AppBackgroundService.restartSingleton(context);
+                                    //mSocket.emit(Socket.EVENT_DISCONNECT,"App Restart");
+                                    disconnect();
+                                    //
+                                    initConnection();
+                                    //
+                                }
                                 break;
                         }
 
