@@ -3113,7 +3113,7 @@ public class ToolBox_Inf {
 
                 builder.setContentIntent(pi);
 
-                builder.setSmallIcon(R.mipmap.ic_namoa);
+                builder.setSmallIcon(R.drawable.ic_chat_24x24);
             } else {
                 builder.setSmallIcon(R.drawable.sync_notification_animation);
             }
