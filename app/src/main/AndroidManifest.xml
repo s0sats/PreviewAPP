@@ -468,7 +468,7 @@
         <!-- Screen On/Off Status -->
         <receiver android:name=".service.ScreenStatusReceiver" />
         <service android:name=".service.ScreenStatusService" />
-
+        <receiver android:name=".receiver.NotificationReceiver" />
 
     </application>
 

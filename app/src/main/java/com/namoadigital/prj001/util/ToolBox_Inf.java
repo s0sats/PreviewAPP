@@ -68,6 +68,7 @@ import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SM_SO_Service;
+import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
 import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -96,7 +97,6 @@ import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act034.Act034_Main;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -3019,10 +3019,10 @@ public class ToolBox_Inf {
         RemoteViews view =
                 new RemoteViews(context.getPackageName(), R.layout.notification_chat_msg);
         //
-        Intent mIntent = new Intent(context, Act034_Main.class);
+        Intent mIntent = new Intent(context, NotificationReceiver.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        PendingIntent pi = PendingIntent.getActivity(
+        PendingIntent pi = PendingIntent.getBroadcast(
                 context,
                 0,
                 mIntent,
