@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -17,6 +18,11 @@ public class WBR_BootCompleted extends BroadcastReceiver {
 
         ToolBox_Inf.reprogramAlarms(context);
         ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
+
+        if(!AppBackgroundService.isRunning){
+            Intent chatService = new Intent(context, AppBackgroundService.class);
+            context.startService(chatService);
+        }
 
         if (!ScreenStatusService.isRunning) {
             Intent mIntent = new Intent(context, ScreenStatusService.class);

@@ -34,8 +34,8 @@
             android:layout_gravity="start|center_vertical"
             android:layout_weight="1"
             android:text="Alô mamãe - traduzir"
-            android:textStyle="bold"
-            android:textSize="@dimen/font_size_item" />
+            android:textSize="@dimen/font_size_item"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -49,11 +49,6 @@
         android:paddingStart="10dp"
         android:paddingTop="5dp">
 
-        <ImageView
-            android:id="@+id/act034_room_info_cell_iv_delivered"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:src="@drawable/ic_done_black_24dp"/>
 
         <TextView
             android:id="@+id/act034_room_info_cell_tv_delivered"
@@ -61,25 +56,32 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:textStyle="bold"
             android:text="Alô mamãe - traduzir"
-            android:textSize="@dimen/font_size_item" />
+            android:textSize="@dimen/font_size_item"
+            android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/act034_room_info_cell_iv_read"
+            android:id="@+id/act034_room_info_cell_iv_delivered"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:src="@drawable/ic_done_black_24dp"/>
+            android:src="@drawable/ic_done_black_24dp" />
 
         <TextView
             android:id="@+id/act034_room_info_cell_tv_read"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="bold"
             android:gravity="center"
             android:text="Alô mamãe - traduzir"
-            android:textSize="@dimen/font_size_item" />
+            android:textSize="@dimen/font_size_item"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/act034_room_info_cell_iv_read"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/ic_done_black_24dp" />
+
 
     </LinearLayout>
 
