@@ -285,36 +285,48 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             message = new JSONObject();
         }
         //
-        View v_space_left;
-        ImageView iv_other_img;
-        LinearLayout ll_item;
-        TextView tv_name;
-        ImageView iv_foto;
-        TextView tv_message;
-        TextView tv_hour;
-        ImageView iv_me_img;
-        View v_space_right;
+        View v_space_left = null;
+        ImageView iv_other_img = null;
+        LinearLayout ll_item = null;
+        TextView tv_name = null;
+        ImageView iv_foto = null;
+        TextView tv_message = null;
+        TextView tv_hour = null;
+        ImageView iv_me_img = null;
+        View v_space_right = null;
         ImageView iv_badge = null;
+
+        v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+        iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+        ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+        tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+        iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+        tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+        tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+        iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+        v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+        iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
+
 
         switch (getItemViewType(position)) {
             // Other IMG
             case 0:
 
-                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
-                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-                iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
-                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
-                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
-                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
+//                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+//                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+//                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+//                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+//                iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+//                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+//                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+//                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+//                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+//                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.GONE);
                 iv_other_img.setVisibility(View.VISIBLE);
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
-                tv_name.setText("Nome");
+                //tv_name.setText("Nome");
 
                 if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
                     iv_foto.setImageResource(R.drawable.sand_watch_transp);
@@ -335,7 +347,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                         )
                 );
 
-                tv_name.setText(hmAux.get("user_nick"));
+                //tv_name.setText(hmAux.get("user_nick"));
 
 //                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
 //                    if (delegate != null) {
@@ -352,18 +364,18 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             // Me IMG
             case 1:
 
-                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
-                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-
-                iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
-
-                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
-                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
-                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
+//                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+//                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+//                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+//                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+//
+//                iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+//
+//                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+//                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+//                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+//                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+//                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.VISIBLE);
                 iv_other_img.setVisibility(View.GONE);
@@ -388,7 +400,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                         )
                 );
 
-                tv_name.setText(hmAux.get("user_nick"));
+                //tv_name.setText(hmAux.get("user_nick"));
 
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
@@ -399,16 +411,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             // Me TXT
             case 2:
 
-                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
-                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-
-                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
-                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
-                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
+//                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+//                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+//                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+//                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+//
+//                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+//                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+//                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+//                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+//                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.VISIBLE);
                 iv_other_img.setVisibility(View.GONE);
@@ -432,7 +444,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 );
 
 
-                tv_name.setText(hmAux.get("user_nick"));
+                //tv_name.setText(hmAux.get("user_nick"));
 
                 iv_me_img.setVisibility(View.VISIBLE);
                 v_space_right.setVisibility(View.GONE);
@@ -443,16 +455,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             // Other TXT
             case 3:
 
-                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
-                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-
-                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
-                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
-                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
+//                v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
+//                iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
+//                ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+//                tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+//
+//                tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+//                tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+//                iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
+//                v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
+//                iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
                 v_space_left.setVisibility(View.GONE);
                 iv_other_img.setVisibility(View.VISIBLE);
@@ -476,7 +488,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                         )
                 );
 
-                tv_name.setText(hmAux.get("user_nick"));
+                //tv_name.setText(hmAux.get("user_nick"));
 
 //                if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
 //                    if (delegate != null) {
@@ -490,6 +502,9 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
                 break;
         }
+
+        tv_name.setText(hmAux.get("user_nick"));
+
         // Badge Status for All
         if (hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
             iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_clock_chat));

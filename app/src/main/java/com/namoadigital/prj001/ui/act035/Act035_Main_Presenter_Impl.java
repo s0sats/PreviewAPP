@@ -133,9 +133,9 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     ).toSqlQuery()
             );
             ArrayList<Chat_Ref_Json> ref_json = new ArrayList<>();
-            if(refJsonAux != null && refJsonAux.size() > 0){
-                for (HMAux hmAux:refJsonAux) {
-                    if(hmAux.get(CH_MessageDao.MSG_PREFIX) != null && hmAux.get(CH_MessageDao.MSG_CODE) != null) {
+            if (refJsonAux != null && refJsonAux.size() > 0) {
+                for (HMAux hmAux : refJsonAux) {
+                    if (hmAux.get(CH_MessageDao.MSG_PREFIX) != null && hmAux.get(CH_MessageDao.MSG_CODE) != null) {
                         Chat_Ref_Json refAux = new Chat_Ref_Json();
                         refAux.setMsg_prefix(
                                 Integer.valueOf(hmAux.get(CH_MessageDao.MSG_PREFIX))
@@ -206,7 +206,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         chMessage.setRead_date(null);
         chMessage.setMsg_pk(null);
         chMessage.setUser_code(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-        chMessage.setUser_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+        chMessage.setUser_nick(ToolBox_Con.getPreference_User_Code_Nick(context) + "(" + ToolBox_Con.getPreference_User_Code(context) + ")");
         //
         ch_messageDao.addUpdateTmp(chMessage);
         //
