@@ -137,7 +137,8 @@ public class Act034_Room extends BaseFragment {
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
                 //Chama msgs pendentes
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
+                //COMENTADO PARA TESTE, - AVLAIAR SE DEVE VOLTAR
+                //singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
                 //
                 mMain.callAct035(context, room);
             }

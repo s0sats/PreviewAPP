@@ -178,6 +178,8 @@ public class WS_C_Message extends IntentService {
                 //Se msg existe no banco, atualiza valor com o tmp do banco
                 if(dbMessage.getTmp() > 0){
                     ch_message.setTmp(dbMessage.getTmp());
+                }else{
+                    ch_message.setTmp(0);
                 }
                 //
                 if (ch_message.getDelivered() == 0) {

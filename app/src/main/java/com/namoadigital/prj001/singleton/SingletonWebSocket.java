@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -175,12 +176,12 @@ public class SingletonWebSocket {
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("ChatEvent", "onConnect   -  Socket_id: " + mSocket.id());
+                    Log.d("ChatEvent", "onConnect   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null "));
                     try {
                         //Chama metodo que verifica se precisa
                         checkForNewLogin();
                         //
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onConnect   -  Socket_id: " + mSocket.id() + "\n", log_file);
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onConnect   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null ")+ "\n", log_file);
                         //
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -219,7 +220,7 @@ public class SingletonWebSocket {
     public void reconnect() {
         Log.d("ChatEvent", "Reconect");
         try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect   -  Socket_id: " + mSocket.id() + "\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null ") + "\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -254,7 +255,7 @@ public class SingletonWebSocket {
     public void attemptSendLogin() {
         Log.d("ChatEvent", "attemptSendLogin");
         try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " + mSocket.id() + " - customer: "+ToolBox_Con.getPreference_Customer_Code(context)+"\n", log_file);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - attemptSendLogin ->  Socket_id: " +(mSocket != null ? mSocket.id(): " null ") + " - customer: "+ToolBox_Con.getPreference_Customer_Code(context)+"\n", log_file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -294,7 +295,7 @@ public class SingletonWebSocket {
                 mSocket.emit(Constant.CHAT_EVENT_S_LOGIN, gson.toJson(env));
                 Log.d("ChatEvent", "sLogin");
                 try {
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - emit sLogin ->  Socket_id: " + mSocket.id() + "\n", log_file);
+                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - emit sLogin ->  Socket_id: " + (mSocket != null ? mSocket.id(): " null ") + "\n", log_file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -410,7 +411,7 @@ public class SingletonWebSocket {
             //Cancela notificação de reconnectando
             //ToolBox_Inf.cancelChatNotification(context);
             if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECT   -  Socket_id: " + mSocket.id());
+                Log.d("ChatEvent", "EVENT_RECONNECT   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null "));
                 //Chama metodo que verifica se precisa
                 checkForNewLogin();
                 //
@@ -433,7 +434,7 @@ public class SingletonWebSocket {
 
                 } else {
                     if (mSocket != null) {
-                        Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + mSocket.id());
+                        Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null "));
                     } else {
                         Log.d("ChatEvent", "EVENT_RECONNECTING");
                     }
@@ -451,7 +452,7 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + mSocket.id()
+                Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + (mSocket != null ? mSocket.id(): " null ")
                         + " - Error:  " + String.valueOf(args[0]));
             } else {
                 Log.d("ChatEvent", "EVENT_RECONNECT_ERROR");
@@ -463,7 +464,7 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECT_FAILED   -  Socket_id: " + mSocket.id());
+                Log.d("ChatEvent", "EVENT_RECONNECT_FAILED   -  Socket_id: " +(mSocket != null ? mSocket.id(): " null "));
             } else {
                 Log.d("ChatEvent", "EVENT_RECONNECT_FAILED");
             }
@@ -476,7 +477,7 @@ public class SingletonWebSocket {
         @Override
         public void call(Object... args) {
             if(mSocket != null){
-                Log.d("ChatEvent", "onPing -  Socket_id: " + mSocket.id());
+                Log.d("ChatEvent", "onPing -  Socket_id: " +(mSocket != null ? mSocket.id(): " null "));
 
                 attemptSendPong();
             }
@@ -741,7 +742,7 @@ public class SingletonWebSocket {
                             );
                     //
                     try {
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cLoginError -> "+ (cError != null && cError.getError_msg() != null ? cError.getError_msg():" null  ")+" Socket_id: " + mSocket.id() + "\n", log_file);
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cLoginError -> "+ (cError != null && cError.getError_msg() != null ? cError.getError_msg():" null  ")+" Socket_id: " + (mSocket != null ? mSocket.id(): " null ") + "\n", log_file);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -789,7 +790,7 @@ public class SingletonWebSocket {
                             );
                     //
                     try {
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cError -> "+ (cError != null && cError.getError_msg() != null ? cError.getError_msg():" null  ")+" Socket_id: " + mSocket.id() + "\n", log_file);
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cError -> "+ (cError != null && cError.getError_msg() != null ? cError.getError_msg():" null  ")+" Socket_id: " + (mSocket != null ? mSocket.id(): " null ") + "\n", log_file);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -832,7 +833,7 @@ public class SingletonWebSocket {
 
     //region AUX METHODS
     private void checkForNewLogin() {
-        if (!mSocket_ID.equalsIgnoreCase(mSocket.id()) && mSocket.id() != null) {
+        if (mSocket != null && mSocket.id() != null && mSocket_ID != null && !mSocket_ID.equalsIgnoreCase(mSocket.id())) {
             mSocket_ID = mSocket.id();
             //Reseta variaveis do cHistoricalMessage
             resetProcessMsgCounter();
@@ -882,6 +883,7 @@ public class SingletonWebSocket {
         String fileName = Constant.CHAT_PREFIX +
                 (type != null ? type : "") +
                 ToolBox_Inf.getToken(context) +
+                "_" + UUID.randomUUID().toString()+
                 ".txt";
         //
         File msgListFile = new File(Constant.CHAT_PATH, fileName);
@@ -956,12 +958,15 @@ public class SingletonWebSocket {
                                         chatCMessage.getMsg_code() > 0 &&
                                         localMessage != null &&
                                         localMessage.getTmp() > -1 &&
-                                        localMessage.getMsg_code() == 0
+                                        localMessage.getMsg_code() == 0 &&
+                                        chatCMessage.getMsg_origin().equalsIgnoreCase("APP")
+
                                 ) {
                             cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
 
-                        } else if (
-                                chatCMessage.getMsg_tmp() > 0 &&
+                        //} else if (
+                        } else{
+                               /* chatCMessage.getMsg_tmp() > 0 &&
                                         chatCMessage.getMsg_code() > 0 &&
                                         localMessage != null &&
                                         localMessage.getTmp() == -1
@@ -969,7 +974,9 @@ public class SingletonWebSocket {
                             //Se msg é minha, ja teve de para processado em outro device,
                             //zera o tmp vindo do server e para gerar um novo.
                             chatCMessage.setMsg_tmp(0);
-                            messagesMineToInsert.add(chatCMessage);
+                            messagesMineToInsert.add(chatCMessage);*/
+                            //
+                            cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
                         }
                     } else {
                         cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));

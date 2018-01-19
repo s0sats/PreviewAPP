@@ -393,9 +393,9 @@ public class WS_DownLoad_Picture extends IntentService {
                     JSONObject jsonObject1 = jsonObject.getJSONObject("message");
 
                     String sFileD = jsonObject1.getString("data");
-                    String arr[] = sFileD.split("/");
-                    String sFile = arr[arr.length - 1].replace(".jpg", "").replace(".png", "");
-
+                   // String arr[] = sFileD.split("/");
+                    //String sFile = arr[arr.length - 1].replace(".jpg", "").replace(".png", "");
+                    String sFile = hmAux.get(CH_MessageDao.MSG_PREFIX)+"."+hmAux.get(CH_MessageDao.MSG_CODE);
 
                     if (!ToolBox_Inf.verifyDownloadFileInfV2(sFile + ".jpg")) {
 
