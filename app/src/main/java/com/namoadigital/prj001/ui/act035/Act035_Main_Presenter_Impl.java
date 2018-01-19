@@ -15,8 +15,8 @@ import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.CH_Message_Sql_016;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
+import com.namoadigital.prj001.sql.CH_Message_Sql_019;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -79,16 +79,16 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     if (hmAux.get(CH_MessageDao.READ).equalsIgnoreCase("0")) {
                         hmAux.put(CH_MessageDao.READ, sRead);
                         hmAux.put(CH_MessageDao.READ_DATE, sRead_Date);
+                        //
+                        chMessageDao.addUpdate(
+                                new CH_Message_Sql_019(
+                                        hmAux,
+                                        sRead,
+                                        sRead_Date
+                                ).toSqlQuery()
+                        );
                     }
                 }
-                //
-                chMessageDao.addUpdate(
-                        new CH_Message_Sql_016(
-                                hmAuxs,
-                                sRead,
-                                sRead_Date
-                        ).toSqlQuery()
-                );
                 //
                 sendRead(hmAuxs);
 
@@ -101,21 +101,19 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                         hmAux.put(CH_MessageDao.READ, sRead);
                         hmAux.put(CH_MessageDao.READ_DATE, sRead_Date);
                         //
+                        chMessageDao.addUpdate(
+                                new CH_Message_Sql_019(
+                                        hmAux,
+                                        sRead,
+                                        sRead_Date
+                                ).toSqlQuery()
+                        );
+                        //
                         hmAuxsForUpdate.add(hmAux);
                     }
                 }
                 //
-                if (hmAuxsForUpdate.size() != 0) {
-                    chMessageDao.addUpdate(
-                            new CH_Message_Sql_016(
-                                    hmAuxsForUpdate,
-                                    sRead,
-                                    sRead_Date
-                            ).toSqlQuery()
-                    );
-                    //
-                    sendRead(hmAuxsForUpdate);
-                }
+                sendRead(hmAuxsForUpdate);
 
                 break;
         }
