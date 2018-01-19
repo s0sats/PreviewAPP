@@ -14,8 +14,8 @@ public class CH_Message_Sql_019 implements Specification {
     private String msg_read;
     private String msg_read_date;
 
-    public CH_Message_Sql_019(HMAux hmAuxe, String msg_read, String msg_read_date) {
-        hmAuxe = hmAuxe;
+    public CH_Message_Sql_019(HMAux hmAux, String msg_read, String msg_read_date) {
+        this.hmAux = hmAux;
         this.msg_read = msg_read;
         this.msg_read_date = msg_read_date;
     }
