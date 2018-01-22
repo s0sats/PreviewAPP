@@ -296,6 +296,7 @@ public class SingletonWebSocket {
             env.setSession_type("APP");
             env.setTranslate_code(ToolBox_Con.getPreference_Translate_Code(context));
             env.setForce(1);
+            env.setDevice_code(ToolBox_Inf.uniqueID(context));
             //
             if (mSocket != null) {
                 mSocket.emit(Constant.CHAT_EVENT_S_LOGIN, gson.toJson(env));

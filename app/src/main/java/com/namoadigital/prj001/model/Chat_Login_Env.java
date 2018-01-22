@@ -12,6 +12,7 @@ public class Chat_Login_Env {
     private String session_type;
     private String translate_code;
     private int force;
+    private String device_code;
 
     public String getUser_code() {
         return user_code;
@@ -59,5 +60,13 @@ public class Chat_Login_Env {
 
     public void setForce(int force) {
         this.force = force;
+    }
+
+    public String getDevice_code() {
+        return device_code;
+    }
+
+    public void setDevice_code(String device_code) {
+        this.device_code = device_code;
     }
 }
