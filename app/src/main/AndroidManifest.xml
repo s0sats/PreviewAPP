@@ -469,7 +469,10 @@
         <!-- Screen On/Off Status -->
         <receiver android:name=".service.ScreenStatusReceiver" />
         <service android:name=".service.ScreenStatusService" />
+        <!-- Screen On/Off Status -->
+
         <receiver android:name=".receiver.NotificationReceiver" />
+        <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
 
     </application>
 
