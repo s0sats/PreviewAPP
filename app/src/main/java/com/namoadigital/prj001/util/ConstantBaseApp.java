@@ -14,8 +14,8 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "2.6.2.4";
-    public static final String PKG_CLEAN_APP = "55";
+    public static final String PRJ001_VERSION = "2.6.2.5";
+    public static final String PKG_CLEAN_APP = "56";
     //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -435,6 +435,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_PARAM = "CHAT_BR_PARAM";
     public static final String CHAT_BR_PARAM_RECONNECTING_QTD = "CHAT_BR_PARAM_RECONNECTING_QTD";
     public static final String CHAT_BR_TYPE_CHAT_STATUS_CHANGE = "CHAT_BR_TYPE_CHAT_STATUS_CHANGE";
+    public static final String CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE = "CHAT_LOGGED_STATUS_CHANGE";
     public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
     public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
     public static final String CHAT_BR_TYPE_ROOM_INFO = "CHAT_BR_TYPE_ROOM_INFO";
