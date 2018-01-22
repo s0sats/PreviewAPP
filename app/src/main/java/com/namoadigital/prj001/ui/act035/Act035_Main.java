@@ -15,6 +15,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -595,6 +597,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     case Constant.CHAT_BR_TYPE_MSG_SCROLL_UP:
                         processing_Scroll_Up();
                         break;
+                    case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
+                        changeConectionMenu();
+                        break;
                     default:
                         break;
                 }
@@ -603,6 +608,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
         }
     }
+
+
 
     private class BR_Download_Image extends BroadcastReceiver {
         @Override
@@ -1229,5 +1236,38 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void startRoomInfoTask(String socket_id, String room_code) {
         roomInfoTask = new RoomInfoTask();
         roomInfoTask.execute(socket_id, room_code);
+    }
+
+    private void changeConectionMenu() {
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.add(0, 2, Menu.NONE + 1, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+        if(singletonWebSocket.ismSocketLogged()){
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else{
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        return true;
     }
 }

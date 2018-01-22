@@ -37,6 +37,7 @@ import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -251,8 +252,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
+
                     case Act005_Main.MENU_ID_CHAT:
-                        qty = String.valueOf(AppBackgroundService.isRunning ? 1: 0);
+                        SingletonWebSocket webSocket = SingletonWebSocket.getInstance(context);
+                        //
+                        qty = String.valueOf(webSocket.ismSocketLogged() ? 1 : 0);
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 

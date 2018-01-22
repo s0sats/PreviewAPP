@@ -273,11 +273,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         act034_opc.setCustomerList(customer_list);
         //
         boolean customerInList = false;
-        for (int i = 0; i < customer_list.size(); i++) {
-            if (
-                    customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
-                    ) {
+        for (int i = 0; i < customer_list.size() ; i++) {
+            if(
+                customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
+            ){
                 customerInList = true;
                 break;
             }
@@ -423,11 +423,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTED:
                     //toogleInfoMsg(false, null);
-                    changeConectionMenu();
+                    //changeConectionMenu();
                     break;
                 case Constant.CHAT_BR_TYPE_RECONNECTING:
                     String qtd = String.valueOf(auxParam == null ? 0 : auxParam.get(Constant.CHAT_BR_PARAM_RECONNECTING_QTD));
                     //toogleInfoMsg(true, qtd);
+                    //changeConectionMenu();
+                    break;
+                case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
                     changeConectionMenu();
                     break;
                 default:
@@ -757,7 +760,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        if (singletonWebSocket.ismSocketRunning()) {
+        if(singletonWebSocket.ismSocketLogged()){
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         } else {

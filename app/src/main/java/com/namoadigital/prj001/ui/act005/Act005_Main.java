@@ -1441,6 +1441,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
                     mPresenter.getMenuItens(hmAux_Trans);
                     break;
+                case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
+                    mPresenter.getMenuItens(hmAux_Trans);
+                    break;
                 default:
             }
 
