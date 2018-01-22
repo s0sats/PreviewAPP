@@ -100,6 +100,7 @@ public class WS_C_Message extends IntentService {
                 ) {
             JsonArray sDeliveredList = new JsonArray();
             Chat_C_Message chatMessage  = messages.get(0);
+            boolean startDownloadService = false;
 
             CH_Message chMessage = messageDao.getByString(
                     new CH_Message_Sql_005(
@@ -108,8 +109,17 @@ public class WS_C_Message extends IntentService {
                     ).toSqlQuery()
             );
             //
-            if (chMessage != null && chMessage.getMsg_prefix() > -1) {
-                chMessage.setMsg_date(chatMessage.getMsg_date());
+            if (chMessage != null) {
+                if(chMessage.getMsg_prefix() > -1){
+                    chMessage.setMsg_date(chatMessage.getMsg_date());
+                }else{
+                    chMessage = chatMessage.toCH_MessageObj();
+                    chMessage.setTmp(0);
+                    //Verifica se precisa iniciar serviço de download
+                    if (!startDownloadService && chMessage.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)) {
+                        startDownloadService = true;
+                    }
+                }
                 //
                 if (chatMessage.getDelivered() == 0) {
                     //Atualiza valor de dado entregue
@@ -143,6 +153,10 @@ public class WS_C_Message extends IntentService {
                     singletonWebSocket.attemptToDeliveryMessage(
                             ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
                     );
+                }
+                //
+                if (startDownloadService) {
+                    startDownloadService();
                 }
             }
 
