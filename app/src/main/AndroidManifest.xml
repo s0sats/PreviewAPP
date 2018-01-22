@@ -261,6 +261,7 @@
             android:name=".ui.act034.Act034_Main"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -269,10 +270,10 @@
             android:name=".ui.act035.Act035_Main"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"
-            />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.act036.Act036_Main"

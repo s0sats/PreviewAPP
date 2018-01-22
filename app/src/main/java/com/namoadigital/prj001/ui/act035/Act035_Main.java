@@ -102,6 +102,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private BR_Room brRoomReceiver;
     private BR_Download_Image brDownloadImageReceiver;
+    private Chat_Finish_Act chatFinishActReceiver;
 
     private boolean statusCameraNew = false;
 
@@ -145,6 +146,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         );
 
         loadTranslation();
+
+        mActivity_ID = Constant.ACT035;
     }
 
     private void loadTranslation() {
@@ -255,8 +258,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats,
                 R.layout.act035_main_content_cell_whats,
-                R.layout.act035_main_content_cell_whats_text_bk_r,
                 R.layout.act035_main_content_cell_whats_text_bk,
+                R.layout.act035_main_content_cell_whats_text_bk_r,
                 this.dados
         );
 
@@ -308,21 +311,32 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             brDownloadImageReceiver = new BR_Download_Image();
         }
         //
+        if (chatFinishActReceiver == null) {
+            chatFinishActReceiver = new Chat_Finish_Act();
+        }
+        //
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
 
         IntentFilter brDownloadImageFilter = new IntentFilter(Constant.CHAT_BR_FILTER_DOWNLOAD);
         brDownloadImageFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        IntentFilter chatFinishActFilter = new IntentFilter(Constant.CHAT_FINISH_ACT_FILTER);
+        brDownloadImageFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
         //
         if (start_stop) {
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brDownloadImageReceiver, brDownloadImageFilter);
+            LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(chatFinishActReceiver, chatFinishActFilter);
         } else {
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brRoomReceiver);
+            LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brDownloadImageReceiver);
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brDownloadImageReceiver);
             //
             brRoomReceiver = null;
             brDownloadImageReceiver = null;
+            chatFinishActReceiver = null;
         }
     }
 
@@ -599,6 +613,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             if (hmAux.get(CH_MessageDao.ROOM_CODE).equalsIgnoreCase(mRoom_code)) {
                 act035_adapter_messages.refreshData(hmAux);
             }
+        }
+    }
+
+    private class Chat_Finish_Act extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            onPause();
+            onDestroy();
         }
     }
 

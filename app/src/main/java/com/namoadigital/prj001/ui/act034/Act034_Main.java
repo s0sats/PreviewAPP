@@ -113,6 +113,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         fm = getSupportFragmentManager();
         //
         loadTranslation();
+        //
+        mActivity_ID = Constant.ACT034;
+
     }
 
     private void loadTranslation() {
@@ -270,23 +273,23 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         act034_opc.setCustomerList(customer_list);
         //
         boolean customerInList = false;
-        for (int i = 0; i < customer_list.size() ; i++) {
-            if(
-                customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
-            ){
+        for (int i = 0; i < customer_list.size(); i++) {
+            if (
+                    customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
+                    ) {
                 customerInList = true;
                 break;
             }
         }
         //
-        if(!customerInList){
+        if (!customerInList) {
             HMAux aux = new HMAux();
-            aux.put(CH_RoomDao.CUSTOMER_CODE,String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
-            aux.put(EV_User_CustomerDao.CUSTOMER_NAME,ToolBox_Con.getPreference_Customer_Code_NAME(context));
-            aux.put(Sql_Act034_001.MSG_QTY,"0");
+            aux.put(CH_RoomDao.CUSTOMER_CODE, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+            aux.put(EV_User_CustomerDao.CUSTOMER_NAME, ToolBox_Con.getPreference_Customer_Code_NAME(context));
+            aux.put(Sql_Act034_001.MSG_QTY, "0");
             //
-            customer_list.add(0,aux);
+            customer_list.add(0, aux);
         }
 
         setDrawerState(customer_list.size() > 1);
@@ -451,7 +454,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                if(roomInfoTask != null){
+                if (roomInfoTask != null) {
                     roomInfoTask.cancel(true);
                 }
             }
@@ -539,13 +542,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     public void startRoomInfoTask(String socket_id, String room_code) {
         roomInfoTask = new RoomInfoTask();
-        roomInfoTask.execute(socket_id,room_code);
+        roomInfoTask.execute(socket_id, room_code);
     }
     //
 
     @Override
     public void startDownloadMemberImgTask(String[] imgUrlList) {
-        if(downloadMemberImgTask != null){
+        if (downloadMemberImgTask != null) {
             downloadMemberImgTask.cancel(true);
         }
         downloadMemberImgTask = new DownloadMemberImgTask();
@@ -559,7 +562,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("ChatEvent","RoomAsyncTask PreExecute");
+            Log.d("ChatEvent", "RoomAsyncTask PreExecute");
             //
             showPD(
                     hmAux_Trans.get("ws_room_info_ttl"),
@@ -569,7 +572,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected String doInBackground(String... params) {
-            Log.d("ChatEvent","RoomAsyncTask DoInBackground");
+            Log.d("ChatEvent", "RoomAsyncTask DoInBackground");
             String resultado = "";
             try {
                 String socket_id = params[0];
@@ -589,7 +592,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
             } catch (Exception e) {
                 e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 this.cancel(true);
             }
 
@@ -598,11 +601,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected void onPostExecute(String resultado) {
-            Log.d("ChatEvent","RoomAsyncTask OnPost");
+            Log.d("ChatEvent", "RoomAsyncTask OnPost");
             super.onPostExecute(resultado);
             Gson gson = new GsonBuilder().serializeNulls().create();
             //Se não retornou nada, finaliza execução.
-            if(resultado.equals("")){
+            if (resultado.equals("")) {
                 this.cancel(true);
                 return;
             }
@@ -650,9 +653,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     String[] imgUrlList = new String[auxList.size()];
                     startDownloadMemberImgTask(auxList.toArray(imgUrlList));
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 this.cancel(true);
             }
         }
@@ -660,7 +663,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent","RoomAsyncTask Cancelada");
+            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
             disablePD();
         }
     }
@@ -672,12 +675,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
             //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
             //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
-            for (int i = 0; i < strings.length ; i++) {
+            for (int i = 0; i < strings.length; i++) {
                 //Se foi cancelado ou se não tem conexão aborta.
-                if(isCancelled() || !ToolBox_Con.isOnline(context)){
+                if (isCancelled() || !ToolBox_Con.isOnline(context)) {
                     this.cancel(true);
                     break;
-                }else {
+                } else {
                     try {
                         String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
                         String user_code = downloadParam[0];
@@ -699,7 +702,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                         publishProgress(user_code, image_name + ".jpg");
 
                     } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                         this.cancel(true);
                     }
                 }
@@ -712,13 +715,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
             //
-            act034_room.updateMemberImage(values[0],values[1]);
+            act034_room.updateMemberImage(values[0], values[1]);
         }
 
         @Override
         protected void onCancelled(Void aVoid) {
             super.onCancelled(aVoid);
-            Log.d("ChatEvent","DownloadAsyncTask Cancelada");
+            Log.d("ChatEvent", "DownloadAsyncTask Cancelada");
         }
     }
     //endregion
@@ -734,10 +737,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void onDestroy() {
         startReceivers(false);
-        if(roomInfoTask != null) {
+        if (roomInfoTask != null) {
             roomInfoTask.cancel(true);
         }
-        if(downloadMemberImgTask != null){
+        if (downloadMemberImgTask != null) {
             downloadMemberImgTask.cancel(true);
         }
         //
@@ -754,10 +757,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        if(singletonWebSocket.ismSocketRunning()){
+        if (singletonWebSocket.ismSocketRunning()) {
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }else{
+        } else {
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
