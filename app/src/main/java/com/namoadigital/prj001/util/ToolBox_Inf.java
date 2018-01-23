@@ -3146,4 +3146,17 @@ public class ToolBox_Inf {
             return null;
         }
     }
+
+    /**
+     * Valida se usr tem as preferencias de user, customer e session preenchidas
+     * @param context
+     * @return
+     */
+    public static boolean isUsrAppLogged(Context context){
+        boolean logged =
+                !ToolBox_Con.getPreference_User_Code(context).equals("")
+                && ToolBox_Con.getPreference_Customer_Code(context) != -1
+                && !ToolBox_Con.getPreference_User_Code(context).equals("");
+        return logged;
+    }
 }

@@ -37,6 +37,7 @@ import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
@@ -751,22 +752,27 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void stopChatService() {
-        //No logoff, caso o serviço de chat esteja rodando,
-        //E o user não tiver outra sessão ativa no app, para o serviço
-        if(AppBackgroundService.isRunning) {
-            //
-            List<HMAux> sessionsOn = userCustomerDao
-                    .query_HM(
-                            new EV_User_Customer_Sql_004(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                    ToolBox_Con.getPreference_User_Code(context)
-                            ).toSqlQuery()
-                    );
+    public void stopChatServices() {
+        //No logoff, verifica se era a ultima sessão ativa.
+        //Caso fosse, parar serviços do chat e do screestatus
+        List<HMAux> sessionsOn = userCustomerDao
+                .query_HM(
+                        new EV_User_Customer_Sql_004(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
 
-            if (sessionsOn != null && sessionsOn.size() == 0) {
+        if (sessionsOn != null && sessionsOn.size() == 0) {
+            if(AppBackgroundService.isRunning) {
+                //
                 Intent socketService = new Intent(context, AppBackgroundService.class);
                 context.stopService(socketService);
+            }
+
+            if(ScreenStatusService.isRunning){
+                Intent screenService = new Intent(context, ScreenStatusService.class);
+                context.stopService(screenService);
             }
         }
     }

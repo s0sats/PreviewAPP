@@ -1,13 +1,11 @@
 package com.namoadigital.prj001.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.namoadigital.prj001.receiver_chat.WBR_Stop_Chat_service;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 1/16/18.
@@ -23,12 +21,7 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             screenOn = false;
             //
-           /*if(AppBackgroundService.isRunning){
-                Intent chatService = new Intent(context, AppBackgroundService.class);
-                context.stopService(chatService);
-            }*/
-            //
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+           /* AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent mIntent = new Intent(context, WBR_Stop_Chat_service.class);
             //
             PendingIntent checkPIntnet = PendingIntent.getBroadcast(
@@ -64,10 +57,10 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
                 alarmManager.cancel(cancelPIntent);
                 cancelPIntent.cancel();
                 Log.d("ChatEvent", "WBR_Stop_Chat_service - Cancelado (ScreenOff)");
-            }
+            }*/
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             screenOn = true;
-            Intent mIntent = new Intent(context, WBR_Stop_Chat_service.class);
+           /* Intent mIntent = new Intent(context, WBR_Stop_Chat_service.class);
             //
             PendingIntent pIntent = PendingIntent.getBroadcast(
                     context,
@@ -83,9 +76,10 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
                 pIntent.cancel();
                 //
                 Log.d("ChatEvent", "WBR_Stop_Chat_service - Cancelado (ScreenOn)");
-            }
+            }*/
+
             //
-            if (!AppBackgroundService.isRunning) {
+            if (ToolBox_Inf.isUsrAppLogged(context) && !AppBackgroundService.isRunning) {
                 //
                 Intent chatService = new Intent(context, AppBackgroundService.class);
                 context.startService(chatService);

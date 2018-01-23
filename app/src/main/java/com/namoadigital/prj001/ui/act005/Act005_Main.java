@@ -173,7 +173,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         mIntentPIC.putExtras(bundle);
         context.sendBroadcast(mIntentPIC);
         //
-        if (!ScreenStatusService.isRunning) {
+        if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mScreenStatusService = new Intent(context, ScreenStatusService.class);
             context.startService(mScreenStatusService);
         }
@@ -940,9 +940,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
                 progressDialog.dismiss();
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
-                    processLogin();
+                    mPresenter.stopChatServices();
                     //
-                    mPresenter.stopChatService();
+                    processLogin();
                 }
             } else {
 

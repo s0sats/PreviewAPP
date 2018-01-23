@@ -7,6 +7,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -57,19 +58,20 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     public void startChatService() {
         //Se Possui Acesso ao Chat, inicia serviço
         if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)) {
-            if (!AppBackgroundService.isRunning){
+            //
+            if (!ScreenStatusService.isRunning) {
+                Intent mIntent = new Intent(context, ScreenStatusService.class);
+                context.startService(mIntent);
+            }
+            //
+            if(!AppBackgroundService.isRunning){
+                //
                 //
                 HMAux msgAux = messageDao.getByStringHM(
                         new CH_Message_Sql_004().toSqlQuery()
                 );
                 //
                 if (msgAux.size() > 0) {
-                    //
-    //                ToolBox_Con.setPreference_Chat_Msg_Prefix(
-    //                        context,
-    //                        msgAux.get(CH_MessageDao.MSG_PREFIX)
-    //                );
-                    //
                     ToolBox_Con.setPreference_Chat_Msg_Code(
                             context,
                             Long.parseLong(msgAux.get(CH_MessageDao.TMP))
@@ -79,13 +81,21 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             context,
                             Long.parseLong(msgAux.get(CH_MessageDao.MSG_TOKEN))
                     );
-                    //
-                    Intent chatIntent = new Intent(context, AppBackgroundService.class);
-                    context.startService(chatIntent);
                 }
+                Intent chatIntent = new Intent(context, AppBackgroundService.class);
+                context.startService(chatIntent);
             }else{
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                singletonWebSocket.attemptSendLogin();
+                if(ToolBox_Inf.isUsrAppLogged(context)) {
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                    singletonWebSocket.attemptSendLogin();
+                }else{
+                    try {
+                        throw new Exception("USER_NOT_LOGGED_TRYIED_START_WEB_SOCKET");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    }
+                }
             }
         }
     }

@@ -19,16 +19,15 @@ public class WBR_BootCompleted extends BroadcastReceiver {
         ToolBox_Inf.reprogramAlarms(context);
         ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
 
-        if(!AppBackgroundService.isRunning){
+        if(ToolBox_Inf.isUsrAppLogged(context) && !AppBackgroundService.isRunning){
             Intent chatService = new Intent(context, AppBackgroundService.class);
             context.startService(chatService);
         }
 
-        if (!ScreenStatusService.isRunning) {
+        if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mIntent = new Intent(context, ScreenStatusService.class);
             context.startService(mIntent);
         }
-
 
     }
 }

@@ -33,7 +33,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
             }
         }
 
-        if (!ScreenStatusService.isRunning) {
+        if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mIntent = new Intent(context, ScreenStatusService.class);
             context.startService(mIntent);
         }
