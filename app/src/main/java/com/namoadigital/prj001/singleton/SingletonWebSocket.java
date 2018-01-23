@@ -151,6 +151,9 @@ public class SingletonWebSocket {
         options.timeout = 1000;
         options.query = "transport=websocket";
         options.reconnection = true;
+        options.reconnectionDelay = 5000;
+        options.reconnectionDelayMax = 5000;
+        options.randomizationFactor  = 0.1;
         //options.reconnectionAttempts = 2;
 
         try {
@@ -397,6 +400,12 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptNamoa(){
+        String message = ToolBox_Inf.uniqueID(context);
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
+            mSocket.emit("sNamoa", message);
+        }
+    }
 
     private Emitter.Listener onLoginReturn = new Emitter.Listener() {
         @Override
@@ -1086,7 +1095,7 @@ public class SingletonWebSocket {
         return sSoleInstance;
     }
 
-    public static void destroySingletonWebSocket() {
+    public void destroySingletonWebSocket() {
         //
         sSoleInstance.disconnect();
         sSoleInstance.mSocket = null;
