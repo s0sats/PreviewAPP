@@ -73,6 +73,7 @@ public class SingletonWebSocket {
     private long total_msg = 0;
     private long count_msg = 0;
     private boolean show_notification = false;
+    private boolean fcmCall = false;
 
     public long getTotal_msg() {
         return total_msg;
@@ -98,9 +99,13 @@ public class SingletonWebSocket {
         return mSocketLogged;
     }
 
+    public void turnOnFcmCall() {
+        this.fcmCall = true;
+    }
+
     /*
-        Indica se é necessário refazer a conexao em caso de queda do servico
-         */
+    Indica se é necessário refazer a conexao em caso de queda do servico
+     */
     private boolean mSocketReconnect = true;
 
     /*
@@ -153,7 +158,7 @@ public class SingletonWebSocket {
         options.reconnection = true;
         options.reconnectionDelay = 5000;
         options.reconnectionDelayMax = 5000;
-        options.randomizationFactor  = 0.1;
+        options.randomizationFactor = 0.1;
         //options.reconnectionAttempts = 2;
 
         try {
@@ -203,10 +208,10 @@ public class SingletonWebSocket {
                 public void call(Object... args) {
                     Log.d("ChatEvent", "onDisconect   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + " - origin: " + String.valueOf(args[0]));
                     try {
-                        mSocketRunning = false;
+                        //mSocketRunning = false;
                         changeLoggedStatus(false);
                         //
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect\nSocket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect - Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + " - origin: " + String.valueOf(args[0]) + "\n", log_file);
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -253,6 +258,7 @@ public class SingletonWebSocket {
             mSocket.off();
             mSocket.disconnect();
             mSocket = null;
+            String tst = "";
         }
     }
 
@@ -400,7 +406,7 @@ public class SingletonWebSocket {
         }
     }
 
-    public void attemptNamoa(){
+    public void attemptNamoa() {
         String message = ToolBox_Inf.uniqueID(context);
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit("sNamoa", message);
@@ -444,194 +450,121 @@ public class SingletonWebSocket {
     private Emitter.Listener onReconnectingReturn = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            if (pm != null) {
-                if (!pm.isScreenOn()) {
-                    Log.d("ChatEvent", "EVENT_RECONNECTING - Tela Apagada, para serviço");
-                    //mSocket.disconnect();
-                    Intent chatService = new Intent(context, AppBackgroundService.class);
-                    context.stopService(chatService);
-
-                } else {
-                    if (mSocket != null) {
-                        Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
-                    } else {
-                        Log.d("ChatEvent", "EVENT_RECONNECTING");
-                    }
-                    //
-                    HMAux hmAux = new HMAux();
-                    hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
-                    ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
-                    //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
-                    //
-                    changeLoggedStatus(false);
-                }
-            }
-        }
-    };
-
-    private Emitter.Listener onReconnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ")
-                        + " - Error:  " + String.valueOf(args[0]));
-            } else {
-                Log.d("ChatEvent", "EVENT_RECONNECT_ERROR");
-            }
-        }
-    };
-
-    private Emitter.Listener onReconnectFailed = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (mSocket != null) {
-                Log.d("ChatEvent", "EVENT_RECONNECT_FAILED   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
-            } else {
-                Log.d("ChatEvent", "EVENT_RECONNECT_FAILED");
-            }
-        }
-    };
-    //endregion
-
-    //region PING/PONG  onPing
-    private Emitter.Listener onPing = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (mSocket != null) {
-                Log.d("ChatEvent", "onPing -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
-
-                attemptSendPong();
-            }
-        }
-    };
-    //endregion
-
-    //region ROOM EVENTS
-    private Emitter.Listener onRoomReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cRoom Socket_Id: " + (mSocket != null ? mSocket.id() : ""));
-            //retorna rooms
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-
-                    //region APAGAR APÓS TESTE - DETECÇÃO DE PQ NÃO RECEBEU ROOM
-                    String file_name = "json_cRoom" + ToolBox_Inf.getToken(context) + "_.txt";
-                    File log_file = new File(Constant.SUPPORT_PATH, file_name);
-                    try {
-                        ToolBox_Inf.writeIn(String.valueOf(args[0]), log_file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        //
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-                    //endregion
-
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-
-                    //
-                    Intent cRoomIntent = new Intent(context, WBR_C_Room.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cRoomIntent.putExtras(bundle);
-                    context.sendBroadcast(cRoomIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-            //
-        }
-    };
-
-    private Emitter.Listener onAddRoom = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cAddRoom");
-            //retorna rooms
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cRoomIntent = new Intent(context, WBR_C_Add_Room.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cRoomIntent.putExtras(bundle);
-                    context.sendBroadcast(cRoomIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-
-    private Emitter.Listener onRemoveRoom = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cRemoveRoom");
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cRoomIntent = new Intent(context, WBR_C_Remove_Room.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cRoomIntent.putExtras(bundle);
-                    context.sendBroadcast(cRoomIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-    //endregion
-
-    //region MSGs EVENTS
-    private Emitter.Listener onPendingMessagesReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cPendingMessages");
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    processMessages(param);
-                    //
-                   /* Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);*/
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-
-    private Emitter.Listener onHistoricalMessagesReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
             try {
-                Log.d("ChatEvent", "cHistoricalMessages");
+                if (pm != null) {
+                    if (!pm.isScreenOn()) {
+                        if(!fcmCall) {
+                            Log.d("ChatEvent", "EVENT_RECONNECTING - Tela Apagada, para serviço");
+
+                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - RECONNECTING TELA APAGADA\n", log_file);
+                            //mSocket.disconnect();
+                            if (AppBackgroundService.isRunning) {
+                                Intent chatService = new Intent(context, AppBackgroundService.class);
+                                context.stopService(chatService);
+                                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - RECONNECTING TELA APAGADA - PAROU SERVIÇO\n", log_file);
+                            } else {
+                                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - RECONNECTING TELA APAGADA - SERVIÇO PARADOS, MAS SINGLETON RODANDO\n", log_file);
+                                //sSoleInstance.mSocketRunning = true;
+                                //sSoleInstance.disconnect();
+                            }
+                        }else{
+                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - RECONNECTING FLAG FCM LIGADO E RESETADO\n", log_file);
+                            fcmCall = false;
+                        }
+
+                    } else {
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - RECONNECTING TELA LIGADA\n", log_file);
+                        //
+                        if (fcmCall) {
+                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - RECONNECTING FLAG FCM LIGADO E RESETADO\n", log_file);
+                            fcmCall = false;
+                        }
+                        if (mSocket != null) {
+                            Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
+                        } else {
+                            Log.d("ChatEvent", "EVENT_RECONNECTING");
+                        }
+                        //
+                        HMAux hmAux = new HMAux();
+                        hmAux.put(Constant.CHAT_BR_PARAM_RECONNECTING_QTD, String.valueOf(args[0]));
+                        ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTING, hmAux);
+                        //ToolBox_Inf.showChatNotification(context, Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING, String.valueOf(args[0]));
+                        //
+                        changeLoggedStatus(false);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+        private Emitter.Listener onReconnectError = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (mSocket != null) {
+                    Log.d("ChatEvent", "EVENT_RECONNECT_ERROR   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ")
+                            + " - Error:  " + String.valueOf(args[0]));
+                } else {
+                    Log.d("ChatEvent", "EVENT_RECONNECT_ERROR");
+                }
+            }
+        };
+
+        private Emitter.Listener onReconnectFailed = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (mSocket != null) {
+                    Log.d("ChatEvent", "EVENT_RECONNECT_FAILED   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
+                } else {
+                    Log.d("ChatEvent", "EVENT_RECONNECT_FAILED");
+                }
+            }
+        };
+        //endregion
+
+        //region PING/PONG  onPing
+        private Emitter.Listener onPing = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (mSocket != null) {
+                    Log.d("ChatEvent", "onPing -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
+
+                    attemptSendPong();
+                }
+            }
+        };
+        //endregion
+
+        //region ROOM EVENTS
+        private Emitter.Listener onRoomReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cRoom Socket_Id: " + (mSocket != null ? mSocket.id() : ""));
+                //retorna rooms
                 if (args != null && args.length > 0) {
                     if (args[0] instanceof String) {
+
+                        //region APAGAR APÓS TESTE - DETECÇÃO DE PQ NÃO RECEBEU ROOM
+                        String file_name = "json_cRoom" + ToolBox_Inf.getToken(context) + "_.txt";
+                        File log_file = new File(Constant.SUPPORT_PATH, file_name);
+                        try {
+                            ToolBox_Inf.writeIn(String.valueOf(args[0]), log_file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            //
+                            ToolBox_Inf.registerException(getClass().getName(), e);
+                        }
+                        //endregion
+
                         String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                        processMessages(param);
+
+                        //
+                        Intent cRoomIntent = new Intent(context, WBR_C_Room.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cRoomIntent.putExtras(bundle);
+                        context.sendBroadcast(cRoomIntent);
                     } else {
                         String tst = "No Json";
                     /*
@@ -639,360 +572,457 @@ public class SingletonWebSocket {
                     *
                     * */
                     }
-
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(), e);
+                //
             }
-        }
-    };
+        };
 
-    private Emitter.Listener onMessagesReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-
-    private Emitter.Listener onMessagesTmpReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_Message_Tmp.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-    //endregion
-
-    //region DELIVERY AND READ EVENTS
-    private Emitter.Listener onAllDelivered = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cAllDelivery");
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_All_Delivered.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-
-    private Emitter.Listener onAllRead = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cAllRead");
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_All_Read.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
-        }
-    };
-    //endregion
-
-    //region ERROR EVENTS
-    private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cErrorLogin  -> " + String.valueOf(args[0]));
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    //
-                    try {
-                        Gson gson = new GsonBuilder().serializeNulls().create();
+        private Emitter.Listener onAddRoom = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cAddRoom");
+                //retorna rooms
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
                         String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
                         //
-                        Chat_C_Error cError =
-                                gson.fromJson(
-                                        param,
-                                        Chat_C_Error.class
-                                );
-
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cLoginError -> " + (cError != null && cError.getError_msg() != null ? cError.getError_msg() : " null  ") + " Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
-
-                        //
-                        if (cError != null && cError.getError_msg() != null) {
-                            switch (cError.getError_msg()) {
-                                case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
-                                    Intent chatService = new Intent(context, AppBackgroundService.class);
-                                    context.stopService(chatService);
-                                    break;
-                                case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
-                                default:
-                                    String tst = cError.getError_msg();
-                                    String tst2 = tst + ";";
-                                    break;
-                            }
-
-                        } else {
-                            //Como tratar
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-                } else {
-                    String tst = "No Json";
+                        Intent cRoomIntent = new Intent(context, WBR_C_Add_Room.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cRoomIntent.putExtras(bundle);
+                        context.sendBroadcast(cRoomIntent);
+                    } else {
+                        String tst = "No Json";
                     /*
                     * Verificar como proceder caso o retorno não seja uma string
                     *
                     * */
+                    }
                 }
             }
-        }
-    };
+        };
 
-    private Emitter.Listener onErrorReturn = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.d("ChatEvent", "cError  -> " + String.valueOf(args[0]));
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    //
-                    try {
-                        Gson gson = new GsonBuilder().serializeNulls().create();
+        private Emitter.Listener onRemoveRoom = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cRemoveRoom");
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
                         String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
                         //
-                        Chat_C_Error cError =
-                                gson.fromJson(
-                                        param,
-                                        Chat_C_Error.class
-                                );
-
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cError -> " + (cError != null && cError.getError_msg() != null ? cError.getError_msg() : " null  ") + " Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
-
-                        //
-                        if (cError != null && cError.getError_msg() != null) {
-                            switch (cError.getError_msg()) {
-                                case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
-                                    Intent chatService = new Intent(context, AppBackgroundService.class);
-                                    context.stopService(chatService);
-                                    break;
-                                case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
-                                default:
-                                    String tst = cError.getError_msg();
-                                    //Erro de complicação do oracle, desce o serviço e depois reinicia
-                                    if (cError.getError_msg().contains("ORA-04068")) {
-                                        //AppBackgroundService.restartSingleton(context);
-                                        //mSocket.emit(Socket.EVENT_DISCONNECT,"App Restart");
-                                        disconnect();
-                                        //
-                                        initConnection();
-                                        //
-                                    }
-                                    break;
-                            }
-
-                        } else {
-                            //Como tratar
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-                } else {
-                    String tst = "No Json";
+                        Intent cRoomIntent = new Intent(context, WBR_C_Remove_Room.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cRoomIntent.putExtras(bundle);
+                        context.sendBroadcast(cRoomIntent);
+                    } else {
+                        String tst = "No Json";
                     /*
                     * Verificar como proceder caso o retorno não seja uma string
                     *
                     * */
+                    }
                 }
             }
-        }
-    };
-    //endregion
+        };
+        //endregion
 
-    //region AUX METHODS
-    private void checkForNewLogin() {
-        if (mSocket != null && mSocket.id() != null && mSocket_ID != null && !mSocket_ID.equalsIgnoreCase(mSocket.id())) {
-            mSocket_ID = mSocket.id();
-            //Reseta variaveis do cHistoricalMessage
-            resetProcessMsgCounter();
-            //
-            attemptSendLogin();
-        }
-    }
+        //region MSGs EVENTS
+        private Emitter.Listener onPendingMessagesReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cPendingMessages");
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        processMessages(param);
+                        //
+                   /* Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);*/
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
+            }
+        };
 
-    public void attempSendOfflineMessages() {
-        CH_MessageDao messageDao = new CH_MessageDao(context);
-        //
-        ArrayList<CH_Message> offlineMsgs =
-                (ArrayList<CH_Message>) messageDao.query(
-                        new CH_Message_Sql_011().toSqlQuery()
-                );
-        //
-        if (offlineMsgs != null && offlineMsgs.size() > 0) {
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            for (CH_Message chMessage : offlineMsgs) {
-
-                JSONObject msg_obj = null;
+        private Emitter.Listener onHistoricalMessagesReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
                 try {
-                    msg_obj = new JSONObject(chMessage.getMsg_obj());
+                    Log.d("ChatEvent", "cHistoricalMessages");
+                    if (args != null && args.length > 0) {
+                        if (args[0] instanceof String) {
+                            String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                            processMessages(param);
+                        } else {
+                            String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                        }
 
-                    JSONObject msg_obj_content = (JSONObject) msg_obj.get("message");
-                    String msg_obj_type = (String) msg_obj_content.get("type");
-                    String msg_obj_data = (String) msg_obj_content.get("data");
-
-                    Chat_S_Message sMessage = new Chat_S_Message();
-                    //
-                    sMessage.setRoom_code(chMessage.getRoom_code());
-                    sMessage.setTmp(chMessage.getTmp());
-                    sMessage.setType(msg_obj_type);
-                    sMessage.setData(msg_obj_data);
-                    //
-                    attemptSendMessages(gson.toJson(sMessage));
-                } catch (JSONException e) {
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                     ToolBox_Inf.registerException(getClass().getName(), e);
                 }
             }
-        }
+        };
 
-    }
-
-    private String createMsgsFile(String param, String type) {
-        String fileName = Constant.CHAT_PREFIX +
-                (type != null ? type : "") +
-                ToolBox_Inf.getToken(context) +
-                "_" + UUID.randomUUID().toString() +
-                ".txt";
-        //
-        File msgListFile = new File(Constant.CHAT_PATH, fileName);
-        try {
-            ToolBox_Inf.writeIn(param, msgListFile);
-            return msgListFile.getAbsolutePath();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            return null;
-        }
-    }
-
-    private void processMessages(String param) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        CH_MessageDao messageDao = new CH_MessageDao(context);
-
-        JSONArray cMessagesTmp = new JSONArray();
-        JSONArray cMessagesNew = new JSONArray();
-        ArrayList<Chat_C_Message> messagesMineToInsert = new ArrayList<>();
-        //
-        String cMessageFilePath = "";
-        String cMessageTmpFilePath = "";
-        //
-        try {
-            ArrayList<Chat_C_Message> messages = gson.fromJson(
-                    param,
-                    new TypeToken<ArrayList<Chat_C_Message>>() {
-                    }.getType());
-            //Se não houver msg, envia broadcast de Scrool_Up
-            if (messages.size() == 0) {
-                ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
-                return;
+        private Emitter.Listener onMessagesReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE);
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
             }
+        };
+
+        private Emitter.Listener onMessagesTmpReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_Message_Tmp.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
+            }
+        };
+        //endregion
+
+        //region DELIVERY AND READ EVENTS
+        private Emitter.Listener onAllDelivered = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cAllDelivery");
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_All_Delivered.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
+            }
+        };
+
+        private Emitter.Listener onAllRead = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cAllRead");
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_All_Read.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
+            }
+        };
+        //endregion
+
+        //region ERROR EVENTS
+        private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cErrorLogin  -> " + String.valueOf(args[0]));
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        //
+                        try {
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                            //
+                            Chat_C_Error cError =
+                                    gson.fromJson(
+                                            param,
+                                            Chat_C_Error.class
+                                    );
+
+                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cLoginError -> " + (cError != null && cError.getError_msg() != null ? cError.getError_msg() : " null  ") + " Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
+
+                            //
+                            if (cError != null && cError.getError_msg() != null) {
+                                switch (cError.getError_msg()) {
+                                    case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
+                                        Intent chatService = new Intent(context, AppBackgroundService.class);
+                                        context.stopService(chatService);
+                                        break;
+                                    case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
+                                    default:
+                                        String tst = cError.getError_msg();
+                                        String tst2 = tst + ";";
+                                        break;
+                                }
+
+                            } else {
+                                //Como tratar
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            ToolBox_Inf.registerException(getClass().getName(), e);
+                        }
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
+            }
+        };
+
+        private Emitter.Listener onErrorReturn = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("ChatEvent", "cError  -> " + String.valueOf(args[0]));
+                if (args != null && args.length > 0) {
+                    if (args[0] instanceof String) {
+                        //
+                        try {
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                            //
+                            Chat_C_Error cError =
+                                    gson.fromJson(
+                                            param,
+                                            Chat_C_Error.class
+                                    );
+
+                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - cError -> " + (cError != null && cError.getError_msg() != null ? cError.getError_msg() : " null  ") + " Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
+
+                            //
+                            if (cError != null && cError.getError_msg() != null) {
+                                switch (cError.getError_msg()) {
+                                    case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
+                                        Intent chatService = new Intent(context, AppBackgroundService.class);
+                                        context.stopService(chatService);
+                                        break;
+                                    case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
+                                    default:
+                                        String tst = cError.getError_msg();
+                                        //Erro de complicação do oracle, desce o serviço e depois reinicia
+                                        if (cError.getError_msg().contains("ORA-04068")) {
+                                            //AppBackgroundService.restartSingleton(context);
+                                            //mSocket.emit(Socket.EVENT_DISCONNECT,"App Restart");
+                                            disconnect();
+                                            //
+                                            initConnection();
+                                            //
+                                        }
+                                        break;
+                                }
+
+                            } else {
+                                //Como tratar
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            ToolBox_Inf.registerException(getClass().getName(), e);
+                        }
+                    } else {
+                        String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                    }
+                }
+            }
+        };
+        //endregion
+
+        //region AUX METHODS
+        private void checkForNewLogin() {
+            if (mSocket != null && mSocket.id() != null && mSocket_ID != null && !mSocket_ID.equalsIgnoreCase(mSocket.id())) {
+                mSocket_ID = mSocket.id();
+                //Reseta variaveis do cHistoricalMessage
+                resetProcessMsgCounter();
+                //
+                attemptSendLogin();
+            }
+        }
+
+        public void attempSendOfflineMessages() {
+            CH_MessageDao messageDao = new CH_MessageDao(context);
+            //
+            ArrayList<CH_Message> offlineMsgs =
+                    (ArrayList<CH_Message>) messageDao.query(
+                            new CH_Message_Sql_011().toSqlQuery()
+                    );
+            //
+            if (offlineMsgs != null && offlineMsgs.size() > 0) {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                for (CH_Message chMessage : offlineMsgs) {
+
+                    JSONObject msg_obj = null;
+                    try {
+                        msg_obj = new JSONObject(chMessage.getMsg_obj());
+
+                        JSONObject msg_obj_content = (JSONObject) msg_obj.get("message");
+                        String msg_obj_type = (String) msg_obj_content.get("type");
+                        String msg_obj_data = (String) msg_obj_content.get("data");
+
+                        Chat_S_Message sMessage = new Chat_S_Message();
+                        //
+                        sMessage.setRoom_code(chMessage.getRoom_code());
+                        sMessage.setTmp(chMessage.getTmp());
+                        sMessage.setType(msg_obj_type);
+                        sMessage.setData(msg_obj_data);
+                        //
+                        attemptSendMessages(gson.toJson(sMessage));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                    }
+                }
+            }
+
+        }
+
+        private String createMsgsFile(String param, String type) {
+            String fileName = Constant.CHAT_PREFIX +
+                    (type != null ? type : "") +
+                    ToolBox_Inf.getToken(context) +
+                    "_" + UUID.randomUUID().toString() +
+                    ".txt";
+            //
+            File msgListFile = new File(Constant.CHAT_PATH, fileName);
+            try {
+                ToolBox_Inf.writeIn(param, msgListFile);
+                return msgListFile.getAbsolutePath();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                return null;
+            }
+        }
+
+        private void processMessages(String param) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            CH_MessageDao messageDao = new CH_MessageDao(context);
+
+            JSONArray cMessagesTmp = new JSONArray();
+            JSONArray cMessagesNew = new JSONArray();
+            ArrayList<Chat_C_Message> messagesMineToInsert = new ArrayList<>();
+            //
+            String cMessageFilePath = "";
+            String cMessageTmpFilePath = "";
+            //
+            try {
+                ArrayList<Chat_C_Message> messages = gson.fromJson(
+                        param,
+                        new TypeToken<ArrayList<Chat_C_Message>>() {
+                        }.getType());
+                //Se não houver msg, envia broadcast de Scrool_Up
+                if (messages.size() == 0) {
+                    ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
+                    return;
+                }
             /*
             * Se Ação do cHistoricalMessage é SCROLL_UP, pula processamento das listas
             * e direciona msgs para o serviço.
             */
-            if (messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)) {
-                //
-                cMessageFilePath = createMsgsFile(param, null);
-                //
-                Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
-                bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
-                bundle.putString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
-                //
-                cMessageIntent.putExtras(bundle);
-                context.sendBroadcast(cMessageIntent);
+                if (messages.get(0).getAction().equalsIgnoreCase(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP)) {
+                    //
+                    cMessageFilePath = createMsgsFile(param, null);
+                    //
+                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
+                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+                    bundle.putString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
+                    //
+                    cMessageIntent.putExtras(bundle);
+                    context.sendBroadcast(cMessageIntent);
 
-            } else {
-                //Atualiza total de msg e contador de msg
-                total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
+                } else {
+                    //Atualiza total de msg e contador de msg
+                    total_msg = total_msg == 0 ? messages.get(0).getMsg_count() : total_msg;
 
-                for (Chat_C_Message chatCMessage : messages) {
-                    //Analise da lista de de - para
-                    if (ToolBox_Con.getPreference_User_Code(context).equals(
-                            String.valueOf(chatCMessage.getUser_code()))
-                            && chatCMessage.getDelivered() == 0
-                            ) {
-                        CH_Message localMessage =
-                                messageDao.getByString(
-                                        new CH_Message_Sql_014(
-                                                chatCMessage.getMsg_tmp(),
-                                                ToolBox_Con.getPreference_User_Code(context)
-                                        ).toSqlQuery()
-                                );
-                        if (
-                                chatCMessage.getMsg_tmp() > 0 &&
-                                        chatCMessage.getMsg_code() > 0 &&
-                                        localMessage != null &&
-                                        localMessage.getTmp() > -1 &&
-                                        localMessage.getMsg_code() == 0 &&
-                                        chatCMessage.getMsg_origin().equalsIgnoreCase("APP")
-
+                    for (Chat_C_Message chatCMessage : messages) {
+                        //Analise da lista de de - para
+                        if (ToolBox_Con.getPreference_User_Code(context).equals(
+                                String.valueOf(chatCMessage.getUser_code()))
+                                && chatCMessage.getDelivered() == 0
                                 ) {
-                            cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
+                            CH_Message localMessage =
+                                    messageDao.getByString(
+                                            new CH_Message_Sql_014(
+                                                    chatCMessage.getMsg_tmp(),
+                                                    ToolBox_Con.getPreference_User_Code(context)
+                                            ).toSqlQuery()
+                                    );
+                            if (
+                                    chatCMessage.getMsg_tmp() > 0 &&
+                                            chatCMessage.getMsg_code() > 0 &&
+                                            localMessage != null &&
+                                            localMessage.getTmp() > -1 &&
+                                            localMessage.getMsg_code() == 0 &&
+                                            chatCMessage.getMsg_origin().equalsIgnoreCase("APP")
 
-                            //} else if (
-                        } else {
+                                    ) {
+                                cMessagesTmp.put(new JSONObject(gson.toJson(chatCMessage)));
+
+                                //} else if (
+                            } else {
                                /* chatCMessage.getMsg_tmp() > 0 &&
                                         chatCMessage.getMsg_code() > 0 &&
                                         localMessage != null &&
@@ -1002,109 +1032,115 @@ public class SingletonWebSocket {
                             //zera o tmp vindo do server e para gerar um novo.
                             chatCMessage.setMsg_tmp(0);
                             messagesMineToInsert.add(chatCMessage);*/
-                            //
+                                //
+                                cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
+                            }
+                        } else {
                             cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
                         }
-                    } else {
-                        cMessagesNew.put(new JSONObject(gson.toJson(chatCMessage)));
+                    }
+                    //Se existir, insere msg minhas que não estão locais.
+                    //Esse caso só acontece com msg que eu criei em outro device e
+                    //recebe ela no cMessage em outro device.
+                    if (messagesMineToInsert.size() > 0) {
+                        ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
+                        //
+                        messageDao.addUpdate(chMessages, false);
+                    }
+                    //Se existe alguma msg minha que recebeu msg_code, mas aind anão processei de-para
+                    //Gera arquivo texto com as msg
+                    if (cMessagesTmp.length() > 0) {
+                        cMessageTmpFilePath = createMsgsFile(cMessagesTmp.toString(), CHAT_TYPE_FILE_TMP);
+                    }
+
+                    if (cMessagesNew.length() > 0) {
+                        cMessageFilePath = createMsgsFile(cMessagesNew.toString(), null);
+                        //
+                        Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
+                        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
+                        bundle.putString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
+                        bundle.putString(Constant.CHAT_WS_MSG_TMP_PARAM, cMessageTmpFilePath);
+                        bundle.putLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, messages.size());
+
+                        cMessageIntent.putExtras(bundle);
+                        context.sendBroadcast(cMessageIntent);
+                        //
+                    }
+                    //Atualiza contador
+                    // count_msg += messages.size();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public boolean areAllMsgProcessed() {
+            return count_msg == total_msg;
+        }
+
+        public void resetProcessMsgCounter() {
+            total_msg = count_msg = 0;
+            show_notification = false;
+        }
+
+        public long updateCounterMsg(long increment) {
+            count_msg += increment;
+            return count_msg;
+        }
+
+        private void changeLoggedStatus(boolean logged) {
+            if (mSocketLogged != logged) {
+                mSocketLogged = logged;
+                ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE);
+            }
+        }
+
+        //endregion
+
+        /**
+         * OnConnection Changed precisa chamar esse método para reiniciar a conexao em caso de falha.
+         *
+         * @return
+         */
+        public static SingletonWebSocket getInstance(Context context) {
+            //Double check locking pattern
+            if (sSoleInstance == null) { //Check for the first time
+
+                synchronized (SingletonWebSocket.class) {   //Check for the second time.
+                    //if there is no instance available... create new one
+                    if (sSoleInstance == null) {
+                        sSoleInstance = new SingletonWebSocket();
+                        sSoleInstance.context = context;
+                        //
+                        sSoleInstance.pm = (PowerManager) sSoleInstance.context.getSystemService(Context.POWER_SERVICE);
+                        sSoleInstance.wl = sSoleInstance.pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PM_SingletonWebSocket");
+                        //
+                        sSoleInstance.initConnection();
                     }
                 }
-                //Se existir, insere msg minhas que não estão locais.
-                //Esse caso só acontece com msg que eu criei em outro device e
-                //recebe ela no cMessage em outro device.
-                if (messagesMineToInsert.size() > 0) {
-                    ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messagesMineToInsert);
-                    //
-                    messageDao.addUpdate(chMessages, false);
-                }
-                //Se existe alguma msg minha que recebeu msg_code, mas aind anão processei de-para
-                //Gera arquivo texto com as msg
-                if (cMessagesTmp.length() > 0) {
-                    cMessageTmpFilePath = createMsgsFile(cMessagesTmp.toString(), CHAT_TYPE_FILE_TMP);
-                }
-
-                if (cMessagesNew.length() > 0) {
-                    cMessageFilePath = createMsgsFile(cMessagesNew.toString(), null);
-                    //
-                    Intent cMessageIntent = new Intent(context, WBR_C_Message.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constant.CHAT_WS_JSON_PARAM, cMessageFilePath);
-                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES);
-                    bundle.putString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, Constant.CHAT_HISTORICAL_MSG_ACTION_LOGIN);
-                    bundle.putString(Constant.CHAT_WS_MSG_TMP_PARAM, cMessageTmpFilePath);
-                    bundle.putLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, messages.size());
-
-                    cMessageIntent.putExtras(bundle);
-                    context.sendBroadcast(cMessageIntent);
-                    //
-                }
-                //Atualiza contador
-                // count_msg += messages.size();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            return sSoleInstance;
         }
-    }
 
-    public boolean areAllMsgProcessed() {
-        return count_msg == total_msg;
-    }
-
-    public void resetProcessMsgCounter() {
-        total_msg = count_msg = 0;
-        show_notification = false;
-    }
-
-    public long updateCounterMsg(long increment) {
-        count_msg += increment;
-        return count_msg;
-    }
-
-    private void changeLoggedStatus(boolean logged) {
-        if (mSocketLogged != logged) {
-            mSocketLogged = logged;
-            ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE);
-        }
-    }
-
-    //endregion
-
-    /**
-     * OnConnection Changed precisa chamar esse método para reiniciar a conexao em caso de falha.
-     *
-     * @return
-     */
-    public static SingletonWebSocket getInstance(Context context) {
-        //Double check locking pattern
-        if (sSoleInstance == null) { //Check for the first time
-
-            synchronized (SingletonWebSocket.class) {   //Check for the second time.
-                //if there is no instance available... create new one
-                if (sSoleInstance == null) {
-                    sSoleInstance = new SingletonWebSocket();
-                    sSoleInstance.context = context;
-                    //
-                    sSoleInstance.pm = (PowerManager) sSoleInstance.context.getSystemService(Context.POWER_SERVICE);
-                    sSoleInstance.wl = sSoleInstance.pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PM_SingletonWebSocket");
-                    //
-                    sSoleInstance.initConnection();
-                }
+        public void destroySingletonWebSocket() {
+            //
+            sSoleInstance.disconnect();
+            sSoleInstance.mSocket = null;
+            //
+            sSoleInstance.context = null;
+            //
+            sSoleInstance.pm = null;
+            sSoleInstance.wl = null;
+            sSoleInstance = null;
+            //
+            try {
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Singleton destroySingletonWebSocket \n", log_file);
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
-
-        return sSoleInstance;
     }
-
-    public void destroySingletonWebSocket() {
-        //
-        sSoleInstance.disconnect();
-        sSoleInstance.mSocket = null;
-        //
-        sSoleInstance.context = null;
-        //
-        sSoleInstance.pm = null;
-        sSoleInstance.wl = null;
-        sSoleInstance = null;
-    }
-}
 
