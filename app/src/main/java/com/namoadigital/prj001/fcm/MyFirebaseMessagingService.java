@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.fcm;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,8 +19,6 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.service.ScreenStatusReceiver;
-import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
@@ -101,27 +100,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     );
                 }
                 //
-                File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
                 try {
+                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
                     ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM AppBackgroundService.isRunning: "+AppBackgroundService.isRunning+"\n", log_file);
-                    if(AppBackgroundService.isRunning && !ScreenStatusReceiver.screenOn){
-                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM Singleton.Socke_Id: "+  (singletonWebSocket.mSocket != null ? singletonWebSocket.mSocket.id() : " Nullo " )+"\n", log_file);
-                        singletonWebSocket.destroySingletonWebSocket();
+                    //
+                    if(ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
+                        ToolBox_Inf.defineChatServiceAction(getApplicationContext(),true);
                     }
+                    //region TesteApagar
+                    AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, 0, null);
+                    }
+                    //endregion
+//                    if(/*ToolBox_Inf.isUsrAppLogged(getApplicationContext()) &&*/
+//                            AppBackgroundService.isRunning){
+//                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+//                        singletonWebSocket.attemptSendLogin();
+//                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM Singleton.Socke_Id: "+  (singletonWebSocket.mSocket != null ? singletonWebSocket.mSocket.id() : " Nullo " )+"\n", log_file);
+//                        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM Singleton.Socke_Id: "+  (singletonWebSocket.mSocket != null ? singletonWebSocket.mSocket.id() : " Nullo " )+"\n");
+//                        //singletonWebSocket.destroySingletonWebSocket();
+//                    }else{
+//
+//                    }
                 }catch (Exception e){
                     e.printStackTrace();
-                }
-                if (ToolBox_Inf.isUsrAppLogged(getApplicationContext()) && !AppBackgroundService.isRunning) {
-                    try {
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM Iniciará o service: \n", log_file);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    //
-                    Intent chatService = new Intent(getApplicationContext(), AppBackgroundService.class);
-                    chatService.putExtra(Constant.WS_FCM,true);
-                    getApplicationContext().startService(chatService);
                 }
 
                 return;

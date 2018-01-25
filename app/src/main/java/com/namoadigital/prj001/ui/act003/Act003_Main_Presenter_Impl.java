@@ -2,8 +2,10 @@ package com.namoadigital.prj001.ui.act003;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.service.AppBackgroundService;
@@ -14,6 +16,8 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.io.File;
 
 /**
  * Created by neomatrix on 17/01/17.
@@ -83,9 +87,18 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                     );
                 }
                 Intent chatIntent = new Intent(context, AppBackgroundService.class);
+                chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER,getClass().getName());
                 context.startService(chatIntent);
             }else{
                 if(ToolBox_Inf.isUsrAppLogged(context)) {
+                    try{
+                        File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o singletonGetInstance()\n", log_file);
+                        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o singletonGetInstance()\n");
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                     singletonWebSocket.attemptSendLogin();
                 }else{

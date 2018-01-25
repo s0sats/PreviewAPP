@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -22,6 +23,7 @@ public class AppBackgroundService extends Service {
     private SingletonWebSocket singletonWebSocket;
     //APAGAR APOS TESTE
     private File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+    private String serviceLastCaller = "";
     //
 
     @Override
@@ -33,18 +35,21 @@ public class AppBackgroundService extends Service {
         this.isRunning = true;
         try {
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
-        }catch (Exception e){
+            //boolean isFcmCall = intent.getBooleanExtra(Constant.WS_FCM,false);
+            serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
+            Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n");
+            //
+            singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+//        if(isFcmCall){
+//            singletonWebSocket.turnOnFcmCall();
+//        }
+            //
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
+            //
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        boolean isFcmCall = intent.getBooleanExtra(Constant.WS_FCM,false);
-        //
-        singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-        if(isFcmCall){
-            singletonWebSocket.turnOnFcmCall();
-        }
-        //
-        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
-        //
         return START_STICKY;
     }
 
@@ -53,7 +58,7 @@ public class AppBackgroundService extends Service {
         this.isRunning = false;
         try {
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onDestroy \n", log_file);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //

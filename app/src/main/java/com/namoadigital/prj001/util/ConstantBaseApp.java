@@ -454,6 +454,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_NOTIFICATION_TYPE_MESSAGE = "MESSAGE";
     public static final String CHAT_NOTIFICATION_TYPE_RECONNECTING = "RECONNECTING";
     public static final String CHAT_NOTIFICATION_TYPE_CHAT = "CHAT";
+    public static final String CHAT_START_SERVICE_CALLER = "CHAT_START_SERVICE_CALLER";
+
     //Errors
     public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
     public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";

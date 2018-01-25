@@ -23,10 +23,23 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             screenOn = true;
             //
-            if (ToolBox_Inf.isUsrAppLogged(context) && !AppBackgroundService.isRunning) {
-                //
-                Intent chatService = new Intent(context, AppBackgroundService.class);
-                context.startService(chatService);
+            if (ToolBox_Inf.isUsrAppLogged(context) ) {
+                ToolBox_Inf.defineChatServiceAction(context,true);
+//                if(!AppBackgroundService.isRunning) {
+//                    Intent chatService = new Intent(context, AppBackgroundService.class);
+//                    chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+//                    context.startService(chatService);
+//                }else{
+//                    try{
+//                        File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+//                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - DisplayOn Startou o singletonGetInstance()\n", log_file);
+//                        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - DisplayOn Startou o singletonGetInstance()\n");
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+//                    singletonWebSocket.attemptSendLogin();
+//                }
             }
         }
 

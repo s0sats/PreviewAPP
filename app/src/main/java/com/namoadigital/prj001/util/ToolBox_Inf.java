@@ -78,7 +78,9 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
@@ -3158,5 +3160,53 @@ public class ToolBox_Inf {
                 && ToolBox_Con.getPreference_Customer_Code(context) != -1
                 && !ToolBox_Con.getPreference_User_Code(context).equals("");
         return logged;
+    }
+
+    public static boolean defineChatServiceAction(Context context,boolean debug){
+        try {
+            File log_file = null;
+            String callName = context.getClass().getSimpleName();
+            if(debug) {
+                log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+            }
+            //
+            if (!AppBackgroundService.isRunning) {
+                Intent chatService = new Intent(context, AppBackgroundService.class);
+                chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, callName);
+                context.startService(chatService);
+                if(debug ) {
+                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Startou o serviço\n", log_file);
+                }
+                Log.d("ChatEvent"," - "+callName+" Startou o serviço\n");
+            } else {
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                if(debug){
+                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Serviço Running, Ultima chamada de login: "+(singletonWebSocket.getLastLoginCall() != null?singletonWebSocket.getLastLoginCall().getTime():" Sem Registro") +"\n", log_file);
+                }
+                Log.d("ChatEvent",callName+" Serviço Running, Ultima chamada de login: "+(singletonWebSocket.getLastLoginCall() != null?singletonWebSocket.getLastLoginCall().getTime():" Sem Registro")+"\n");
+                if (singletonWebSocket.getLastLoginCall() != null) {
+                    Calendar dateNow = Calendar.getInstance();
+                    long dateDiff = dateNow.getTimeInMillis() - singletonWebSocket.getLastLoginCall().getTimeInMillis();
+                    float minutesPast = (float) dateDiff / (60 * 1000);
+                    if(debug){
+                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Diff ultima chamada de login e agora em minutos: "+String.valueOf(minutesPast) +" \n", log_file);
+                        Log.d("ChatEvent",callName+" Diff ultima chamada de login e agora em minutos: "+String.valueOf(minutesPast) +" \n");
+                    }
+                    //
+                    if (minutesPast >= 1.0f) {
+                        if(debug){
+                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Chamará login\n", log_file);
+                            Log.d("ChatEvent",callName+"Chamará login\n");
+                        }
+                        singletonWebSocket.attemptSendLogin();
+                    }
+                }
+            }
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            registerException(CLASS_NAME,e);
+            return false;
+        }
     }
 }
