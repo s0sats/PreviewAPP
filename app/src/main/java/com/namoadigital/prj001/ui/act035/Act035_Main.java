@@ -256,13 +256,30 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
         //
+        if (dados.size() > 0) {
+            HMAux fisrtAux = new HMAux();
+            fisrtAux.put("msg_date", dados.get(0).get("msg_date"));
+            //
+            dados.add(0, fisrtAux);
+            for (int i = 1; i < dados.size(); i++) {
+                if (!ToolBox_Inf.equalDate(dados.get(i - 1).get("msg_date"), dados.get(i).get("msg_date"))) {
+                    HMAux mAux = new HMAux();
+                    mAux.put("msg_date", dados.get(i).get("msg_date"));
+                    //
+                    dados.add(i, mAux);
+                }
+            }
+        }
+        //
         act035_adapter_messages = new Act035_Adapter_Messages(
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats,
                 R.layout.act035_main_content_cell_whats,
                 R.layout.act035_main_content_cell_whats_text_bk,
                 R.layout.act035_main_content_cell_whats_text_bk_r,
-                this.dados
+                R.layout.act035_main_content_cell_whats_text_data,
+                this.dados,
+                hmAux_Trans
         );
 
         act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
@@ -346,7 +363,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mAct_Title = Constant.ACT035 + "_" + "title";
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage("");
+        getSupportActionBar().setTitle("");
 
     }
 
@@ -401,7 +419,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     if (offSetV > dados.size()) {
                         offSetV = dadosSizePreRefresh + 100;
                         //
-                        mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(0).get(CH_MessageDao.MSG_PREFIX), dados.get(0).get(CH_MessageDao.MSG_CODE));
+                        mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(1).get(CH_MessageDao.MSG_PREFIX), dados.get(1).get(CH_MessageDao.MSG_CODE));
                     } else {
                         offSetV += 100;
                         //
@@ -608,7 +626,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
         }
     }
-
 
 
     private class BR_Download_Image extends BroadcastReceiver {
@@ -1245,19 +1262,19 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        menu.add(0, 2, Menu.NONE + 1, getResources().getString(R.string.app_name));
+        //menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.add(0, 1, Menu.NONE + 1, getResources().getString(R.string.app_name));
 
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+//        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        if(singletonWebSocket.ismSocketLogged()){
-            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
-            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }else{
-            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
-            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (singletonWebSocket.ismSocketLogged()) {
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        } else {
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
 
         return true;
@@ -1270,4 +1287,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         return true;
     }
+
+//    public static boolean equalDate(String dtStart, String dtEnd) {
+//        try {
+//            String sDtStart[] = dtStart.split(" ");
+//            String sDtEnd[] = dtEnd.split(" ");
+//
+//            if (sDtStart[0].equalsIgnoreCase(sDtEnd[0])) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//
+//        } catch (Exception e) {
+//            return true;
+//        }
+//    }
 }

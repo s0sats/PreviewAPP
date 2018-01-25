@@ -121,6 +121,8 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
     @Override
     public void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code) {
+
+
         if (!msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
 
             ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) ch_messageDao.query_HM(

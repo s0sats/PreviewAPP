@@ -35,6 +35,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_02;
     private int resource_03;
     private int resource_04;
+    private int resource_05;
     //
     private ArrayList<HMAux> data;
 
@@ -44,17 +45,22 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     public static boolean processingHMAux = false;
 
+    private HMAux hmAux_Trans;
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, ArrayList<HMAux> data) {
+
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, ArrayList<HMAux> data, HMAux hmAux_Trans) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
         this.resource_03 = resource_03;
         this.resource_04 = resource_04;
+        this.resource_05 = resource_05;
 
         this.data = data;
 
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
+
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     public interface IAct035_Adapter_Messages {
@@ -77,12 +83,15 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     public void refreshData(HMAux hmAux) {
         for (int i = data.size() - 1; i >= 0; i--) {
-            if (hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase(data.get(i).get(CH_MessageDao.MSG_CODE))) {
-                data.set(i, hmAux);
-                //
-                notifyDataSetChanged();
-                //
-                break;
+
+            if (data.get(i).get(CH_MessageDao.TMP) != null) {
+                if (hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase(data.get(i).get(CH_MessageDao.MSG_CODE))) {
+                    data.set(i, hmAux);
+                    //
+                    notifyDataSetChanged();
+                    //
+                    break;
+                }
             }
         }
     }
@@ -93,11 +102,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             //
             for (int j = data.size() - 1; j >= 0; j--) {
                 HMAux item = data.get(j);
-                if (msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
+                if (item.get(CH_MessageDao.TMP) != null) {
+                    if (msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
 
-                    data.set(j, msg);
+                        data.set(j, msg);
 
-                    break;
+                        break;
+                    }
                 }
             }
         }
@@ -118,14 +129,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             //
             for (int j = data.size() - 1; j >= 0; j--) {
                 HMAux item = data.get(j);
-                if (msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
-                    sFound = true;
-                    //
-                    data.set(j, msg);
-                    //
-                    countFound++;
-                    //
-                    break;
+                if (item.get(CH_MessageDao.TMP) != null) {
+                    if (msg.get(CH_MessageDao.TMP).equalsIgnoreCase(item.get(CH_MessageDao.TMP))) {
+                        sFound = true;
+                        //
+                        data.set(j, msg);
+                        //
+                        countFound++;
+                        //
+                        break;
+                    }
                 }
             }
             //
@@ -136,7 +149,24 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         //
         if (dadosRNew.size() > 0) {
             //
+            HMAux fisrtAux = new HMAux();
+            fisrtAux.put("msg_date", dadosRNew.get(0).get("msg_date"));
+            //
+            dadosRNew.add(0, fisrtAux);
+            for (int i = 1; i < dadosRNew.size(); i++) {
+                if (!ToolBox_Inf.equalDate(dadosRNew.get(i - 1).get("msg_date"), dadosRNew.get(i).get("msg_date"))) {
+                    HMAux mAux = new HMAux();
+                    mAux.put("msg_date", dadosRNew.get(i).get("msg_date"));
+                    //
+                    dadosRNew.add(i, mAux);
+                }
+            }
+            //
             reOrder = checkReOrder(data, (ArrayList<HMAux>) dadosRNew);
+            //
+            if (ToolBox_Inf.equalDate(data.get(data.size() - 1).get("msg_date"), dadosRNew.get(0).get("msg_date"))) {
+                dadosRNew.remove(0);
+            }
             //
             data.addAll(dadosRNew);
             //
@@ -164,22 +194,23 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         for (int i = dados.size() - 1; i >= 0; i--) {
             HMAux aux = dados.get(i);
             //
-            if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
+            if (aux.get(CH_MessageDao.TMP) != null) {
+                if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
+                    int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
 
-                int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
-
-                if (compare < 0) {
-                    //aux é menor do que sMessage
-                    return false;
-                } else if (compare > 0) {
-                    //aux é maior do que sMessage
-                    return true;
+                    if (compare < 0) {
+                        //aux é menor do que sMessage
+                        return false;
+                    } else if (compare > 0) {
+                        //aux é maior do que sMessage
+                        return true;
+                    } else {
+                        //aux é igual a sMessage
+                        return false;
+                    }
                 } else {
-                    //aux é igual a sMessage
-                    return false;
+                    return true;
                 }
-            } else {
-                return true;
             }
         }
         //
@@ -204,7 +235,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -212,6 +243,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
         try {
             HMAux item = data.get(position);
+
+            if (item.get("tmp") == null) {
+                return 4;
+            }
+
             JSONObject msg_obj = new JSONObject(item.get("msg_obj"));
             JSONObject message = msg_obj.getJSONObject("message");
 
@@ -240,8 +276,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        // return getItemViewType(position) == 0 || getItemViewType(position) == 1 ? true : false;
-        return true;
+        return getItemViewType(position) == 4 ? false : true;
     }
 
     @Override
@@ -263,18 +298,24 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 case 3:
                     convertView = mInflater.inflate(resource_04, parent, false);
                     break;
-
+                case 4:
+                    convertView = mInflater.inflate(resource_05, parent, false);
+                    break;
             }
         }
         //
         JSONObject message = null;
-        final HMAux hmAux = data.get(position);
+        HMAux hmAux = data.get(position);
 
-        try {
-            JSONObject msg_obj = new JSONObject(hmAux.get("msg_obj"));
-            message = msg_obj.getJSONObject("message");
-        } catch (JSONException e) {
-            message = new JSONObject();
+        if (hmAux.get("tmp") != null) {
+
+            try {
+                JSONObject msg_obj = new JSONObject(hmAux.get("msg_obj"));
+                message = msg_obj.getJSONObject("message");
+            } catch (JSONException e) {
+                message = new JSONObject();
+            }
+
         }
         //
         View v_space_left = null;
@@ -372,7 +413,25 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_name.setVisibility(View.VISIBLE);
 
                 try {
-                    tv_message.setText(message.getString("data").trim());
+                    String resultado = "";
+
+                    if (message.getString("type").equalsIgnoreCase("TRANSLATE")) {
+                        String msgParts[] = message.getString("data").replace("|", "#").split("#");
+                        //
+                        resultado = hmAux_Trans.get(msgParts[0]) + msgParts[1];
+                        //
+                        tv_name.setVisibility(View.GONE);
+
+                        v_space_left.setVisibility(View.VISIBLE);
+                        iv_other_img.setVisibility(View.GONE);
+
+                        ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_translate));
+
+                    } else {
+                        resultado = message.getString("data").trim();
+                    }
+
+                    tv_message.setText(resultado);
                 } catch (JSONException e) {
                     tv_message.setText("Error data");
                 }
@@ -424,21 +483,60 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 iv_badge.setVisibility(View.VISIBLE);
 
                 break;
+
+            case 4:
+
+                String resultado = "";
+
+                if (ToolBox_Inf.isToday_Yesterday(
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        true
+                )) {
+
+                    resultado = hmAux_Trans.get("TODAY");
+
+                }
+                //
+                if (ToolBox_Inf.isToday_Yesterday(
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        false
+                )) {
+
+                    resultado = hmAux_Trans.get("YESTERDAY");
+
+                }
+                //
+                if (resultado.equalsIgnoreCase("")) {
+                    tv_message.setText(
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                                    ToolBox_Inf.nlsDateFormat(context)
+                            )
+                    );
+
+                } else {
+                    tv_message.setText(resultado);
+                }
+                break;
         }
 
-        tv_name.setText(hmAux.get("user_nick"));
 
-        // Badge Status for All
-        if (hmAux.get(CH_MessageDao.ALL_READ).equalsIgnoreCase("1")) {
-            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_all_green_24dp));
-        } else if (hmAux.get(CH_MessageDao.ALL_DELIVERED).equalsIgnoreCase("1")) {
-            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp));
-        } else if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
-            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_black_24dp));
-        } else {
-            iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_clock_chat));
+        if (hmAux.get("tmp") != null) {
+            tv_name.setText(hmAux.get("user_nick"));
+
+            // Badge Status for All
+            if (hmAux.get(CH_MessageDao.ALL_READ).equalsIgnoreCase("1")) {
+                iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_all_green_24dp));
+            } else if (hmAux.get(CH_MessageDao.ALL_DELIVERED).equalsIgnoreCase("1")) {
+                iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp));
+            } else if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
+                iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_black_24dp));
+            } else {
+                iv_badge.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_clock_chat));
+            }
+            //
+
         }
-        //
         return convertView;
     }
 

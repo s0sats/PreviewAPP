@@ -3009,8 +3009,8 @@ public class ToolBox_Inf {
                 translateList
         );
         //
-        if(hmAux_trans == null || hmAux_trans.size() == 0){
-         //Necessidade de incluir arquivo de String ?!
+        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+            //Necessidade de incluir arquivo de String ?!
         }
         //
         NotificationManager nm = (NotificationManager)
@@ -3049,7 +3049,7 @@ public class ToolBox_Inf {
                                 ) {
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_1,
-                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " +hmAux_trans.get("notification_user_says_lbl")
+                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
                             );
                             HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
                             //
@@ -3061,11 +3061,11 @@ public class ToolBox_Inf {
                         } else {
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_1,
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " +hmAux_trans.get("notification_messages_lbl")
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
                             );
                             view.setTextViewText(
                                     R.id.notification_chat_msg_tv_msg_2,
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " +hmAux_trans.get("notification_rooms_lbl")
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
                             );
                         }
 
@@ -3079,7 +3079,7 @@ public class ToolBox_Inf {
                     );
                     view.setTextViewText(
                             R.id.notification_chat_msg_tv_msg_2,
-                            hmAux_trans.get("chat_reconnection_attempt")+"  " + attempt
+                            hmAux_trans.get("chat_reconnection_attempt") + "  " + attempt
                     );
                     break;
 
@@ -3149,14 +3149,47 @@ public class ToolBox_Inf {
 
     /**
      * Valida se usr tem as preferencias de user, customer e session preenchidas
+     *
      * @param context
      * @return
      */
-    public static boolean isUsrAppLogged(Context context){
+    public static boolean isUsrAppLogged(Context context) {
         boolean logged =
                 !ToolBox_Con.getPreference_User_Code(context).equals("")
-                && ToolBox_Con.getPreference_Customer_Code(context) != -1
-                && !ToolBox_Con.getPreference_User_Code(context).equals("");
+                        && ToolBox_Con.getPreference_Customer_Code(context) != -1
+                        && !ToolBox_Con.getPreference_User_Code(context).equals("");
         return logged;
+    }
+
+    public static boolean equalDate(String dtStart, String dtEnd) {
+        try {
+            String sDtStart[] = dtStart.split(" ");
+            String sDtEnd[] = dtEnd.split(" ");
+
+            if (sDtStart[0].equalsIgnoreCase(sDtEnd[0])) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public static boolean isToday_Yesterday(long date, boolean today) {
+        Calendar now = Calendar.getInstance();
+        Calendar cdate = Calendar.getInstance();
+        cdate.setTimeInMillis(date);
+
+        if (today) {
+            now.add(Calendar.DATE, 0);
+        } else {
+            now.add(Calendar.DATE, -1);
+        }
+
+        return now.get(Calendar.YEAR) == cdate.get(Calendar.YEAR)
+                && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
+                && now.get(Calendar.DATE) == cdate.get(Calendar.DATE);
     }
 }

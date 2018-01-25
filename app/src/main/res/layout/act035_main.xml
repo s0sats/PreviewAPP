@@ -17,7 +17,26 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimaryDark"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+
+            <ImageView
+                android:id="@+id/act035_iv_room_thumbnail_val"
+                android:src="@drawable/namoa_bg_1"
+                android:layout_width="50dp"
+                android:layout_gravity="left"
+                android:layout_height="50dp" />
+
+            <TextView
+                android:id="@+id/act035_tv_room_name_val"
+                android:layout_marginLeft="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="#FFFFFFFF"
+                android:text="N.Hugo"/>
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 

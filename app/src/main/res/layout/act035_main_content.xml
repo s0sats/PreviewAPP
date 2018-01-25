@@ -8,40 +8,40 @@
     android:background="@drawable/whatsapp_fundo2"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act035.Act035_Main"
     tools:showIn="@layout/act035_main">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="15dp">
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:gravity="center_vertical"-->
+    <!--android:orientation="horizontal"-->
+    <!--android:padding="15dp">-->
 
-        <ImageView
-            android:id="@+id/act035_iv_room_thumbnail_val"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:src="@drawable/ic_site" />
+    <!--<ImageView-->
+    <!--android:id="@+id/act035_iv_room_thumbnail_val"-->
+    <!--android:layout_width="60dp"-->
+    <!--android:layout_height="60dp"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:padding="5dp"-->
+    <!--android:src="@drawable/ic_site" />-->
 
-        <TextView
-            android:id="@+id/act035_tv_room_name_val"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Customer"
-            android:textSize="@dimen/font_size_title_md"
-            android:textStyle="bold" />
+    <!--<TextView-->
+    <!--android:id="@+id/act035_tv_room_name_val"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="20dp"-->
+    <!--android:text="Customer"-->
+    <!--android:textSize="@dimen/font_size_title_md"-->
+    <!--android:textStyle="bold" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="10dp"
         android:layout_weight="1">
 
         <!--<Button-->
@@ -98,10 +98,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/border_back_round"
+        android:background="@color/namoa_color_dark_blue"
         android:orientation="horizontal"
-        android:paddingBottom="5dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="10dp">
@@ -116,12 +115,21 @@
         <!--app:mNFC="false"-->
         <!--app:mOCR="false" />-->
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="#FFFFFFFF"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <EditText
             android:id="@+id/act035_mket_chat"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:inputType="text" />
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/act035_iv_photo"
@@ -133,7 +141,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="4dp"
-            android:src="@drawable/ic_camera_add_black" />
+            android:src="@drawable/ic_foto_marcada_ns_white" />
 
         <ImageView
             android:id="@+id/act035_iv_send"
@@ -145,7 +153,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="4dp"
-            android:src="@drawable/ic_send" />
+            android:src="@drawable/ic_send_white" />
 
     </LinearLayout>
 

@@ -17,6 +17,8 @@ public class Chat_C_Room {
     private JsonObject room_obj;
     private String room_image;
     private String room_image_name;
+    private int first_msg_prefix;
+    private int first_msg_code;
 
     public String getRoom_type() {
         return room_type;
@@ -70,11 +72,27 @@ public class Chat_C_Room {
         return room_image_name;
     }
 
+    public int getFirst_msg_prefix() {
+        return first_msg_prefix;
+    }
+
+    public void setFirst_msg_prefix(int first_msg_prefix) {
+        this.first_msg_prefix = first_msg_prefix;
+    }
+
+    public int getFirst_msg_code() {
+        return first_msg_code;
+    }
+
+    public void setFirst_msg_code(int first_msg_code) {
+        this.first_msg_code = first_msg_code;
+    }
+
     public void setRoom_image_name(String room_image_name) {
         this.room_image_name = room_image_name;
     }
 
-    public CH_Room toCH_RoomObj(){
+    public CH_Room toCH_RoomObj() {
         CH_Room ch_room = new CH_Room();
         //
         ch_room.setRoom_code(this.room_code);
@@ -85,11 +103,13 @@ public class Chat_C_Room {
         ch_room.setRoom_image(this.room_image);
         ch_room.setRoom_image_name(this.room_image_name);
         ch_room.setRoom_image_local(null);
+        ch_room.setFirst_msg_prefix(this.first_msg_prefix);
+        ch_room.setFirst_msg_code(this.first_msg_code);
 
         return ch_room;
     }
 
-    public static ArrayList<CH_Room> toCH_RoomList(ArrayList<Chat_C_Room> chat_c_rooms){
+    public static ArrayList<CH_Room> toCH_RoomList(ArrayList<Chat_C_Room> chat_c_rooms) {
         ArrayList<CH_Room> chRooms = new ArrayList<>();
 
         for (Chat_C_Room cRoom : chat_c_rooms) {
@@ -103,6 +123,8 @@ public class Chat_C_Room {
             ch_room.setRoom_image(cRoom.getRoom_image());
             ch_room.setRoom_image_name(cRoom.getRoom_image_name());
             ch_room.setRoom_image_local(null);
+            ch_room.setFirst_msg_prefix(cRoom.getFirst_msg_prefix());
+            ch_room.setFirst_msg_code(cRoom.getFirst_msg_code());
             //
             chRooms.add(ch_room);
         }
