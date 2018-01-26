@@ -101,6 +101,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private CH_RoomDao ch_roomDao;
     private String mRoom_code;
+    private CH_Room mRoom;
 
     private BR_Room brRoomReceiver;
     private BR_Download_Image brDownloadImageReceiver;
@@ -115,6 +116,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private MyRunnable_01 m1;
     private MyRunnable_02 m2;
+
+    private boolean endDetected = false;
 
     /*TESTE, MOVER PARA ACT035*/
     private DownloadMemberImgTask downloadMemberImgTask;
@@ -223,6 +226,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         ch_roomDao = new CH_RoomDao(context);
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
+        mRoom = ch_roomDao.getByString(
+                new CH_Room_Sql_001(
+                        mRoom_code
+                ).toSqlQuery()
+        );
+
         mPresenter.updateReadStatus(
                 (ArrayList<HMAux>) chMessageDao.query_HM(
                         new CH_Message_Sql_017(
@@ -257,18 +266,44 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
         //
         if (dados.size() > 0) {
+
+            if (String.valueOf(mRoom.getFirst_msg_prefix()).equalsIgnoreCase(dados.get(0).get(CH_MessageDao.MSG_PREFIX))
+                    &&
+                    String.valueOf(mRoom.getFirst_msg_code()).equalsIgnoreCase(dados.get(0).get(CH_MessageDao.MSG_CODE))
+
+                    ) {
+
+                endDetected = true;
+
+            } else {
+                endDetected = false;
+            }
+
             HMAux fisrtAux = new HMAux();
             fisrtAux.put("msg_date", dados.get(0).get("msg_date"));
+            fisrtAux.put("type", "DATE");
             //
             dados.add(0, fisrtAux);
             for (int i = 1; i < dados.size(); i++) {
                 if (!ToolBox_Inf.equalDate(dados.get(i - 1).get("msg_date"), dados.get(i).get("msg_date"))) {
                     HMAux mAux = new HMAux();
                     mAux.put("msg_date", dados.get(i).get("msg_date"));
+                    mAux.put("type", "DATE");
                     //
                     dados.add(i, mAux);
                 }
             }
+        }
+        //
+        if (endDetected) {
+            sw_messages.setEnabled(false);
+            //
+            HMAux fisrtAux = new HMAux();
+            fisrtAux.put("type", "END");
+
+            dados.add(0, fisrtAux);
+        } else {
+            sw_messages.setEnabled(true);
         }
         //
         act035_adapter_messages = new Act035_Adapter_Messages(
@@ -278,6 +313,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_whats_text_bk,
                 R.layout.act035_main_content_cell_whats_text_bk_r,
                 R.layout.act035_main_content_cell_whats_text_data,
+                R.layout.act035_main_content_cell_whats_text_end,
+                R.layout.act035_main_content_cell_whats_text_trans,
                 this.dados,
                 hmAux_Trans
         );
@@ -419,7 +456,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     if (offSetV > dados.size()) {
                         offSetV = dadosSizePreRefresh + 100;
                         //
-                        mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(1).get(CH_MessageDao.MSG_PREFIX), dados.get(1).get(CH_MessageDao.MSG_CODE));
+                        for (int i = 0; i < dados.size(); i++) {
+                            if (dados.get(i).get(CH_MessageDao.TMP) != null) {
+                                mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(i).get(CH_MessageDao.MSG_PREFIX), dados.get(i).get(CH_MessageDao.MSG_CODE));
+                            }
+                        }
                     } else {
                         offSetV += 100;
                         //
@@ -1256,7 +1297,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void changeConectionMenu() {
-        invalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
     }
 
     @Override

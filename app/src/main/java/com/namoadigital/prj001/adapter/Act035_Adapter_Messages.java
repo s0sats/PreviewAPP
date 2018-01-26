@@ -36,6 +36,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_03;
     private int resource_04;
     private int resource_05;
+    private int resource_06;
+    private int resource_07;
     //
     private ArrayList<HMAux> data;
 
@@ -48,13 +50,15 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private HMAux hmAux_Trans;
 
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, ArrayList<HMAux> data, HMAux hmAux_Trans) {
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, ArrayList<HMAux> data, HMAux hmAux_Trans) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
         this.resource_03 = resource_03;
         this.resource_04 = resource_04;
         this.resource_05 = resource_05;
+        this.resource_06 = resource_06;
+        this.resource_07 = resource_07;
 
         this.data = data;
 
@@ -235,17 +239,21 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 5;
+        return 7;
     }
 
     @Override
     public int getItemViewType(int position) {
-
         try {
             HMAux item = data.get(position);
 
             if (item.get("tmp") == null) {
-                return 4;
+                if (item.get("type").equalsIgnoreCase("DATE")) {
+                    return 4;
+                } else if (item.get("type").equalsIgnoreCase("END")) {
+                    return 5;
+                } else {
+                }
             }
 
             JSONObject msg_obj = new JSONObject(item.get("msg_obj"));
@@ -259,6 +267,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     return 1;
                 }
 
+            } else if (message.getString("type").equalsIgnoreCase("TRANSLATE")) {
+                return 6;
             } else {
                 if (!item.get("user_code").equalsIgnoreCase(mUser_Code)) {
                     return 2;
@@ -271,16 +281,34 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         } catch (Exception e) {
             return 0;
         }
-
     }
 
     @Override
     public boolean isEnabled(int position) {
-        return getItemViewType(position) == 4 ? false : true;
+        boolean results = false;
+
+        switch (getItemViewType(position)) {
+            case 4:
+                results = false;
+                break;
+            case 5:
+                results = false;
+                break;
+            case 6:
+                results = false;
+                break;
+            default:
+                results = true;
+                break;
+        }
+
+        return results;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        boolean bTranslate = false;
 
         if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
@@ -300,6 +328,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     break;
                 case 4:
                     convertView = mInflater.inflate(resource_05, parent, false);
+                    break;
+                case 5:
+                    convertView = mInflater.inflate(resource_06, parent, false);
+                    break;
+                case 6:
+                    convertView = mInflater.inflate(resource_07, parent, false);
                     break;
             }
         }
@@ -413,29 +447,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 tv_name.setVisibility(View.VISIBLE);
 
                 try {
-                    String resultado = "";
+                    tv_message.setText(message.getString("data").trim());
 
-                    if (message.getString("type").equalsIgnoreCase("TRANSLATE")) {
-                        String msgParts[] = message.getString("data").replace("|", "#").split("#");
-                        //
-                        resultado = hmAux_Trans.get(msgParts[0]) + msgParts[1];
-                        //
-                        tv_name.setVisibility(View.GONE);
-
-                        v_space_left.setVisibility(View.VISIBLE);
-                        iv_other_img.setVisibility(View.GONE);
-
-                        ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_translate));
-
-                    } else {
-                        resultado = message.getString("data").trim();
-                    }
-
-                    tv_message.setText(resultado);
                 } catch (JSONException e) {
                     tv_message.setText("Error data");
                 }
-
 
                 tv_hour.setText(
 
@@ -518,10 +534,34 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     tv_message.setText(resultado);
                 }
                 break;
+
+            case 5:
+
+                tv_message.setText(hmAux_Trans.get("NO_MORE_MESSAGES"));
+
+                break;
+            case 6:
+
+                bTranslate = true;
+
+                String resultTranslate = "";
+
+                try {
+
+                    String msgParts[] = message.getString("data").replace("|", "#").split("#");
+
+                    msgParts = message.getString("data").replace("|", "#").split("#");
+                    resultTranslate = hmAux_Trans.get(msgParts[0]) + msgParts[1];
+                    //
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                tv_message.setText(resultTranslate);
+
+                break;
         }
 
-
-        if (hmAux.get("tmp") != null) {
+        if (hmAux.get("tmp") != null && !bTranslate) {
             tv_name.setText(hmAux.get("user_nick"));
 
             // Badge Status for All
