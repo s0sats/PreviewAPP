@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class Chat_Member_Adapter extends BaseAdapter {
 
-    public static final String USER_CODE = "USER_CODE";
+    public static final String USER_CODE = "user_code";
     public static final String SYS_USER_IMAGE = "sys_user_image";
     public static final String USER_NICK = "user_nick";
     public static final String IS_ONLINE = "is_online";

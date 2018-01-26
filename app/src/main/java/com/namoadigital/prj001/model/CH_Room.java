@@ -15,6 +15,7 @@ public class CH_Room {
     private String room_image_local;
     private int first_msg_prefix;
     private int first_msg_code;
+    private Long user_code;
 
     public String getRoom_type() {
         return room_type;
@@ -94,5 +95,13 @@ public class CH_Room {
 
     public void setFirst_msg_code(int first_msg_code) {
         this.first_msg_code = first_msg_code;
+    }
+
+    public Long getUser_code() {
+        return user_code;
+    }
+
+    public void setUser_code(Long user_code) {
+        this.user_code = user_code;
     }
 }

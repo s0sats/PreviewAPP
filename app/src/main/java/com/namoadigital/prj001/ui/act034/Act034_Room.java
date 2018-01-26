@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Room_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act034_003;
 import com.namoadigital.prj001.sql.Sql_Act034_004;
 import com.namoadigital.prj001.util.Constant;
@@ -208,13 +209,13 @@ public class Act034_Room extends BaseFragment {
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
                 public void onIvRoomClick(String room_code, String room_desc, String image_path) {
-                    if(ToolBox_Con.isOnline(context)) {
+                    if (ToolBox_Con.isOnline(context)) {
                         info_room_desc = room_desc;
                         info_room_image = image_path;
                         //
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                         mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
-                    }else{
+                    } else {
                         ToolBox_Inf.showNoConnectionDialog(context);
                     }
 
@@ -233,14 +234,14 @@ public class Act034_Room extends BaseFragment {
 
     }
 
-    public void setListViewOnRoomPosition(){
+    public void setListViewOnRoomPosition() {
         String room_code = mMain.getReturnedRoomCode();
         mMain.setReturnedRoomCode(null);
         //
-        if(room_code != null){
+        if (room_code != null) {
             int position = mAdapter.getRoomPosition(room_code);
             //
-            if(position != -1){
+            if (position != -1) {
                 lv_msg.setSelection(position);
             }
         }
@@ -364,17 +365,17 @@ public class Act034_Room extends BaseFragment {
             //
             tv_room_desc.setText(info_room_desc);
             //
-            if(info_room_image.equals("")){
+            if (info_room_image.equals("")) {
                 iv_room.setImageDrawable(context.getDrawable(R.mipmap.ic_namoa));
-            }else{
+            } else {
                 iv_room.setImageBitmap(
-                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH+"/"+ info_room_image)
+                        BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + info_room_image)
                 );
             }
             //
             tv_members_lbl.setText("Membros - Trad");
             //
-            if(memberList.size() > 0) {
+            if (memberList.size() > 0) {
                 mDialogAdapter = new Chat_Member_Adapter(
                         context,
                         memberList,
@@ -384,7 +385,7 @@ public class Act034_Room extends BaseFragment {
                 lv_members.setAdapter(
                         mDialogAdapter
                 );
-            }else{
+            } else {
                 lv_members.setVisibility(View.GONE);
                 //
                 tv_members_lbl.setText("Nenhum membro encontrado - Trad");
@@ -398,8 +399,7 @@ public class Act034_Room extends BaseFragment {
                         public void onDismiss(DialogInterface dialog) {
                             info_room_desc = info_room_image = "";
                         }
-                    })
-            ;
+                    });
             //
             mMain.disablePD();
             //
@@ -412,9 +412,29 @@ public class Act034_Room extends BaseFragment {
                     dialog.dismiss();
                 }
             });
+            //
+            lv_members.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+                    //
+                    HMAux ccRoom = roomDao.getByStringHM(
+                            new CH_Room_Sql_005(
+                                    hmAux.get(CH_RoomDao.USER_CODE)
+                            ).toSqlQuery()
+                    );
+                    //
+                    if (ccRoom != null) {
+                        mMain.callAct035(context, ccRoom);
+                    } else {
+                    }
 
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             mMain.disablePD();
         }
 
@@ -459,16 +479,16 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void setFilterIconColor() {
-        if(filter_workgroup||filter_private||filter_so){
+        if (filter_workgroup || filter_private || filter_so) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        }else{
+        } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
         }
     }
 
-    public void updateMemberImage(String user_code,String local_url){
-        if(mDialogAdapter != null) {
-            mDialogAdapter.updateMemberImage(user_code,local_url);
+    public void updateMemberImage(String user_code, String local_url) {
+        if (mDialogAdapter != null) {
+            mDialogAdapter.updateMemberImage(user_code, local_url);
         }
     }
 

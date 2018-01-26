@@ -23,6 +23,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -3191,5 +3192,14 @@ public class ToolBox_Inf {
         return now.get(Calendar.YEAR) == cdate.get(Calendar.YEAR)
                 && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
                 && now.get(Calendar.DATE) == cdate.get(Calendar.DATE);
+    }
+
+    public static String getSafeSubstring(String s, int maxLength) {
+        if (!TextUtils.isEmpty(s)) {
+            if (s.length() >= maxLength) {
+                return s.substring(0, maxLength) + " ...";
+            }
+        }
+        return s;
     }
 }

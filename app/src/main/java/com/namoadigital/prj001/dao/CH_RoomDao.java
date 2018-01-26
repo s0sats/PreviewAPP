@@ -34,10 +34,11 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
     public static final String ROOM_IMAGE_LOCAL = "room_image_local";
     public static final String FIRST_MSG_PREFIX = "first_msg_prefix";
     public static final String FIRST_MSG_CODE = "first_msg_code";
+    public static final String USER_CODE = "user_code";
 
     public static String[] columns = {
             ROOM_CODE, ROOM_TYPE, ROOM_DESC, CUSTOMER_CODE, ROOM_OBJ, ROOM_IMAGE,
-            ROOM_IMAGE_NAME, ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE
+            ROOM_IMAGE_NAME, ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE, USER_CODE
 
     };
 
@@ -255,29 +256,35 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             ch_room.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             ch_room.setRoom_type(cursor.getString(cursor.getColumnIndex(ROOM_TYPE)));
             ch_room.setRoom_desc(cursor.getString(cursor.getColumnIndex(ROOM_DESC)));
-            if(!cursor.isNull(cursor.getColumnIndex(CUSTOMER_CODE))){
+            if (!cursor.isNull(cursor.getColumnIndex(CUSTOMER_CODE))) {
                 ch_room.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
-            }else{
+            } else {
                 ch_room.setCustomer_code(null);
             }
             ch_room.setRoom_obj(cursor.getString(cursor.getColumnIndex(ROOM_OBJ)));
-            if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE))){
+            if (!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE))) {
                 ch_room.setRoom_image(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE)));
-            }else{
+            } else {
                 ch_room.setRoom_image(null);
             }
-            if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_NAME))){
+            if (!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_NAME))) {
                 ch_room.setRoom_image_name(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE_NAME)));
-            }else{
+            } else {
                 ch_room.setRoom_image_name(null);
             }
-            if(!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_LOCAL))){
+            if (!cursor.isNull(cursor.getColumnIndex(ROOM_IMAGE_LOCAL))) {
                 ch_room.setRoom_image_local(cursor.getString(cursor.getColumnIndex(ROOM_IMAGE_LOCAL)));
-            }else{
+            } else {
                 ch_room.setRoom_image_local(null);
             }
             ch_room.setFirst_msg_prefix(cursor.getInt(cursor.getColumnIndex(FIRST_MSG_PREFIX)));
             ch_room.setFirst_msg_code(cursor.getInt(cursor.getColumnIndex(FIRST_MSG_CODE)));
+            if (!cursor.isNull(cursor.getColumnIndex(USER_CODE))) {
+                ch_room.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
+            } else {
+                ch_room.setUser_code(null);
+            }
+
             return ch_room;
         }
     }
@@ -310,9 +317,10 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             if (ch_room.getFirst_msg_code() > -1) {
                 contentValues.put(FIRST_MSG_CODE, ch_room.getFirst_msg_code());
             }
+            contentValues.put(USER_CODE, ch_room.getUser_code());
+
             return contentValues;
         }
     }
-
 
 }

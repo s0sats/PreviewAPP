@@ -141,7 +141,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
         String type = item.containsKey(CH_MessageDao.MSG_OBJ+"_type") ? item.get(CH_MessageDao.MSG_OBJ+"_type") : null;
 
         if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
-            tv_msg.setText(msg);
+            tv_msg.setText(ToolBox_Inf.getSafeSubstring(msg, 45));
         }else{
             tv_msg.setText(type);
         }

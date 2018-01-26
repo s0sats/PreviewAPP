@@ -51,6 +51,7 @@ import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.sql.CH_Message_Sql_012;
 import com.namoadigital.prj001.sql.CH_Message_Sql_017;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.sql.CH_Room_Sql_005;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1193,6 +1194,33 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             iv_dismiss.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            //
+            lv_members.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+                    //
+                    HMAux ccRoom = ch_roomDao.getByStringHM(
+                            new CH_Room_Sql_005(
+                                    hmAux.get(CH_RoomDao.USER_CODE)
+                            ).toSqlQuery()
+                    );
+                    //
+                    if (ccRoom != null) {
+                        if (!ccRoom.get(CH_RoomDao.USER_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
+                            bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
+                            bundle.putString("RELOAD", "1");
+                            //
+                            callAct034(context);
+
+                        } else {
+                        }
+                    } else {
+                    }
+
                     dialog.dismiss();
                 }
             });

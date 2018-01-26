@@ -551,7 +551,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     String msgParts[] = message.getString("data").replace("|", "#").split("#");
 
                     msgParts = message.getString("data").replace("|", "#").split("#");
-                    resultTranslate = hmAux_Trans.get(msgParts[0]) + msgParts[1];
+                    resultTranslate = hmAux_Trans.get(msgParts[0]) + (msgParts.length > 1 ? msgParts[1] : "");
                     //
                 } catch (JSONException e) {
                     e.printStackTrace();

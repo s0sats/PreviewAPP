@@ -214,6 +214,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         if (bundle != null) {
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
+            String mReload = bundle.getString("RELOAD", "0");
+            //
+            if (mReload.equalsIgnoreCase("1")){
+                HMAux item = new HMAux();
+                item.put(CH_RoomDao.ROOM_CODE, returnedRoomCode);
+                //
+                callAct035(context, item);
+            }
         } else {
         }
     }

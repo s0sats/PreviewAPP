@@ -19,6 +19,7 @@ public class Chat_C_Room {
     private String room_image_name;
     private int first_msg_prefix;
     private int first_msg_code;
+    private Long user_code;
 
     public String getRoom_type() {
         return room_type;
@@ -92,6 +93,14 @@ public class Chat_C_Room {
         this.room_image_name = room_image_name;
     }
 
+    public Long getUser_code() {
+        return user_code;
+    }
+
+    public void setUser_code(Long user_code) {
+        this.user_code = user_code;
+    }
+
     public CH_Room toCH_RoomObj() {
         CH_Room ch_room = new CH_Room();
         //
@@ -105,6 +114,7 @@ public class Chat_C_Room {
         ch_room.setRoom_image_local(null);
         ch_room.setFirst_msg_prefix(this.first_msg_prefix);
         ch_room.setFirst_msg_code(this.first_msg_code);
+        ch_room.setUser_code(this.user_code);
 
         return ch_room;
     }
@@ -125,6 +135,7 @@ public class Chat_C_Room {
             ch_room.setRoom_image_local(null);
             ch_room.setFirst_msg_prefix(cRoom.getFirst_msg_prefix());
             ch_room.setFirst_msg_code(cRoom.getFirst_msg_code());
+            ch_room.setUser_code(cRoom.getUser_code());
             //
             chRooms.add(ch_room);
         }
