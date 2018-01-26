@@ -73,7 +73,7 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
     @Override
     public void tryToRestartChatService() {
         if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context)){
-            ToolBox_Inf.defineChatServiceAction(context,true);
+            ToolBox_Inf.defineChatServiceAction(context,Constant.ACT034,true);
 //            if(!AppBackgroundService.isRunning) {
 //                Intent mIntent = new Intent(context, AppBackgroundService.class);
 //                mIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());

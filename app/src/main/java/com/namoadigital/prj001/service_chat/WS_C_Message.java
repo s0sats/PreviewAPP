@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
+import com.namoadigital.prj001.service.ChatPowerService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
@@ -26,6 +27,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by d.luche on 01/12/2017.
@@ -46,16 +48,16 @@ public class WS_C_Message extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
-
-
         try {
+            //Atualiza ultima chamada no serviço que locka bateria
+            ChatPowerService.lastCall = Calendar.getInstance();
+            //
             messageDao = new CH_MessageDao(getApplicationContext());
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
             String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM, "");
             String messageTmpFile = bundle.getString(Constant.CHAT_WS_MSG_TMP_PARAM, null);
             String historicalAction = bundle.getString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, null);
             long messageIncrement = bundle.getLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, 0);
-
             processC_Message(json_param, ws_event, messageTmpFile,historicalAction, messageIncrement);
 
         } catch (Exception e) {

@@ -40,7 +40,22 @@ public class AppBackgroundService extends Service {
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
             Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n");
             //
+            //boolean mSocketSetted = SingletonWebSocket.isSocketSetted();
+            boolean mSocketForced = false;
+            if(SingletonWebSocket.isSocketSetted()){
+                SingletonWebSocket.mSocket = null;
+                mSocketForced  = true;
+            }
+
+            Log.d("ChatEvent"," AppBackgroundService mSocket. SingletonWebSocket.mSocket value = "+SingletonWebSocket.mSocket+" \n");
+            //boolean mSocketSetted = SingletonWebSocket.isSocketSetted();
             singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+//            if(mSocketSetted){
+//                singletonWebSocket.initConnection();
+//            }
+            if(mSocketForced){
+                singletonWebSocket.initConnection();
+            }
 //        if(isFcmCall){
 //            singletonWebSocket.turnOnFcmCall();
 //        }
@@ -61,12 +76,14 @@ public class AppBackgroundService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.d("ChatEvent"," onDestroy AppBackgroundService \n");
         //
-        singletonWebSocket.attemptDisconnect("App Socket.disconnect()");
+        //singletonWebSocket.attemptDisconnect("App Socket.disconnect()");
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
         //
-        singletonWebSocket.destroySingletonWebSocket();
+        //singletonWebSocket.destroySingletonWebSocket();
+        //singletonWebSocket.destroySingletonWebSocketV2();
     }
 
 

@@ -20,7 +20,7 @@ public class WBR_BootCompleted extends BroadcastReceiver {
         ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
 
         if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context)){
-            ToolBox_Inf.defineChatServiceAction(context,true);
+            ToolBox_Inf.defineChatServiceAction(context,Constant.WBR_BOOTCOMPLETED,true);
 //            if(!AppBackgroundService.isRunning) {
 //                Intent chatService = new Intent(context, AppBackgroundService.class);
 //                chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());

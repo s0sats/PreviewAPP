@@ -474,7 +474,7 @@
         <receiver android:name=".receiver.NotificationReceiver" />
         <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
 
-        <service android:name=".service.S_StopChatService" />
+        <service android:name=".service.ChatPowerService" />
 
     </application>
 

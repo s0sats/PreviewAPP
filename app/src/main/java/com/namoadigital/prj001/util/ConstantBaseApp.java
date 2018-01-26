@@ -58,6 +58,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT035 = "act035";
     public static final String ACT036 = "act036";
 
+    //Contantes classes relativas ao chat
+    public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
+    public static final String WBR_BOOTCOMPLETED = "WBR_BootCompleted";
+    public static final String SCREEN_STATUS_RECEIVER = "ScreenStatusReceiver";
+    public static final String WBR_CONNECTIONS_CHANGE = "WBR_Connections_Change";
+
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
     public static final String ACT007_CURRENTINDEX = "currentIndex";
@@ -462,6 +468,9 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
     public static final String CHAT_NO_USER_IMAGE = "no_user";
+    //
+
+
 
 
 

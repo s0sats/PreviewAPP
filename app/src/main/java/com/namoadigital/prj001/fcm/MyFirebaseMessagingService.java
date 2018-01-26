@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.fcm;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -105,14 +104,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM AppBackgroundService.isRunning: "+AppBackgroundService.isRunning+"\n", log_file);
                     //
                     if(ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
-                        ToolBox_Inf.defineChatServiceAction(getApplicationContext(),true);
+                        ToolBox_Inf.defineChatServiceAction(getApplicationContext(),Constant.MY_FIRE_BASE_MESSAGING_SERVICE,true);
                     }
-                    //region TesteApagar
-                    AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, 0, null);
-                    }
-                    //endregion
 //                    if(/*ToolBox_Inf.isUsrAppLogged(getApplicationContext()) &&*/
 //                            AppBackgroundService.isRunning){
 //                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());

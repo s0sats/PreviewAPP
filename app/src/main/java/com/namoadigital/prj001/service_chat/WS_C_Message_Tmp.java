@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.Chat_C_Message_Tmp;
 import com.namoadigital.prj001.model.Chat_S_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
+import com.namoadigital.prj001.service.ChatPowerService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by d.luche on 01/12/2017.
@@ -47,6 +49,9 @@ public class WS_C_Message_Tmp extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+            //Atualiza ultima chamada no serviço que locka bateria
+            ChatPowerService.lastCall = Calendar.getInstance();
+            //
             messageDao = new CH_MessageDao(getApplicationContext());
 
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM, null);

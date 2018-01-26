@@ -37,7 +37,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 activateDownLoadPDF(context);
                 activateDownLoadPicture(context);
                 activateLogo(context);
-                activeChatService(context);
+                //activeChatService(context);
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
@@ -51,7 +51,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
 
     private void activeChatService(Context context) {
         if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context) ){
-            ToolBox_Inf.defineChatServiceAction(context,true);
+            ToolBox_Inf.defineChatServiceAction(context,Constant.WBR_CONNECTIONS_CHANGE,true);
 //            if(!AppBackgroundService.isRunning){
 //                File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
 //                try {

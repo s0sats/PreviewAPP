@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -20,11 +21,16 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             screenOn = false;
+            //
+            if(!ChatPowerService.isRunning) {
+                Intent powerService = new Intent(context, ChatPowerService.class);
+                context.startService(powerService);
+            }
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             screenOn = true;
             //
             if (ToolBox_Inf.isUsrAppLogged(context) ) {
-                ToolBox_Inf.defineChatServiceAction(context,true);
+                ToolBox_Inf.defineChatServiceAction(context, Constant.SCREEN_STATUS_RECEIVER,true);
 //                if(!AppBackgroundService.isRunning) {
 //                    Intent chatService = new Intent(context, AppBackgroundService.class);
 //                    chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
