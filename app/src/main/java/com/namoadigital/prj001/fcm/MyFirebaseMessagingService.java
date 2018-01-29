@@ -17,7 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.FCMMessage;
-import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
@@ -30,7 +30,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.Calendar;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -82,12 +81,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
             if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
-//                try{
-//                    Thread.sleep(2000);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                    ToolBox_Inf.registerException(getClass().getName(),e);
-//                }
                 //if (!ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase("")) {
                 if (ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
                     ToolBox_Inf.showChatNotification(
@@ -97,25 +90,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             "",//fcmMessage.getTitle().trim(),
                             ""//fcmMessage.getMsg_short().trim()
                     );
+                    //
+                    if(fcmMessage.getTitle().equals("< CHAT_MSG >")){
+                        String param = ToolBox_Inf.getWebSocketJsonParam(fcmMessage.getMsg_long().trim());
+                        //
+                        Intent cMessageIntent = new Intent(getApplicationContext(), WBR_C_Message.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE_FCM);
+                        cMessageIntent.putExtras(bundle);
+                        //getApplicationContext().sendBroadcast(cMessageIntent);
+
+                    }
+
                 }
                 //
                 try {
-                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM AppBackgroundService.isRunning: "+AppBackgroundService.isRunning+"\n", log_file);
+                    //File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+                    //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM AppBackgroundService.isRunning: "+AppBackgroundService.isRunning+"\n", log_file);
                     //
                     if(ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
-                        ToolBox_Inf.defineChatServiceAction(getApplicationContext(),Constant.MY_FIRE_BASE_MESSAGING_SERVICE,true);
+                        //ToolBox_Inf.defineChatServiceAction(getApplicationContext(),Constant.MY_FIRE_BASE_MESSAGING_SERVICE,true);
                     }
-//                    if(/*ToolBox_Inf.isUsrAppLogged(getApplicationContext()) &&*/
-//                            AppBackgroundService.isRunning){
-//                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-//                        singletonWebSocket.attemptSendLogin();
-//                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM Singleton.Socke_Id: "+  (singletonWebSocket.mSocket != null ? singletonWebSocket.mSocket.id() : " Nullo " )+"\n", log_file);
-//                        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM Singleton.Socke_Id: "+  (singletonWebSocket.mSocket != null ? singletonWebSocket.mSocket.id() : " Nullo " )+"\n");
-//                        //singletonWebSocket.destroySingletonWebSocket();
-//                    }else{
-//
-//                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }

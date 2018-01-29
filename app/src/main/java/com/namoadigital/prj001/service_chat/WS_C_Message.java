@@ -173,6 +173,24 @@ public class WS_C_Message extends IntentService {
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
             for (CH_Message ch_message : chMessages) {
+                /*
+                *
+                * CRIAR CAMPO NA TABELAPARA ARMAZENAR POR QUAL EVENTO FOI RECEBIDO A MERDA
+                * DA MSG (FCM , C_MESSAGE OU ChISTORIAL), ESSE CAMPO NÃO PODE SER ATUALIZADO
+                * NO UPDATE DA MSG, DEVE SER MANTIDO COM O PRIMIERO VALOR PREENCHIDO
+                *
+                * IMPLEMENTAR FCM.
+                *
+                * VERIFICAR SE WS_EVENT.EQUALS CHAT_EVENT_C_MESSAGE_FCM
+                *
+                * SE FOR, PREENCHER VARIAVEIS QUE NÃO SÃO ENVIADAS PELOS FCM PARA
+                * ECONOMIA DE CARACTERES.
+                *
+                * APÓS O LOOP, CASO TENHA SDELIVEREDPARA ENTREGA, ANALISA SE EVENTO É FCM
+                * SE NNÃO FOR, CHAMA WEBSOCKET SDELIVERY
+                * SE FOR, CHAMA POST
+                * */
+
                 //
                 CH_Message dbMessage =
                         messageDao.getByString(

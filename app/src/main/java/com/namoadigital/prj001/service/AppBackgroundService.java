@@ -65,7 +65,8 @@ public class AppBackgroundService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return START_STICKY;
+        //return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -90,6 +91,12 @@ public class AppBackgroundService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        try {
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onBind \n", log_file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("ChatEvent"," onBind AppBackgroundService \n");
         return null;
     }
 }

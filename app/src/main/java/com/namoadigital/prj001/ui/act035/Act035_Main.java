@@ -45,6 +45,7 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
@@ -1251,9 +1252,29 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+        /*SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
         if(singletonWebSocket.ismSocketLogged()){
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else{
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }*/
+
+        boolean logged = false;
+        if(SingletonWebSocket.isSingletonWebSocketSetted()) {
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+            logged = singletonWebSocket.ismSocketLogged();
+        }
+
+        if(logged && AppBackgroundService.isRunning){
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        } else if(logged && !AppBackgroundService.isRunning) {
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else if(!logged && AppBackgroundService.isRunning) {
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }else{
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);

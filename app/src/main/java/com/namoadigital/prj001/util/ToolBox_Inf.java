@@ -3160,7 +3160,7 @@ public class ToolBox_Inf {
         boolean logged =
                 !ToolBox_Con.getPreference_User_Code(context).equals("")
                         && ToolBox_Con.getPreference_Customer_Code(context) != -1
-                        && !ToolBox_Con.getPreference_User_Code(context).equals("");
+                        && !ToolBox_Con.getPreference_Session_App(context).equals("");
         return logged;
     }
 

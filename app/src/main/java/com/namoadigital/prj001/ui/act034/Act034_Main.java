@@ -42,6 +42,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -758,12 +759,22 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        boolean logged = false;
+        if(SingletonWebSocket.isSingletonWebSocketSetted()) {
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+            logged = singletonWebSocket.ismSocketLogged();
+        }
 
-        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        if(singletonWebSocket.ismSocketLogged()){
+        if(logged && AppBackgroundService.isRunning){
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else {
+        } else if(logged && !AppBackgroundService.isRunning) {
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else if(!logged && AppBackgroundService.isRunning) {
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else{
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }

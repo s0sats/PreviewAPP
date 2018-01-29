@@ -403,6 +403,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
     public static final String CHAT_EVENT_C_HISTORICAL_MESSAGES = "cHistoricalMessages";
     public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
+    public static final String CHAT_EVENT_C_MESSAGE_FCM = "cMessageFCM";
     public static final String CHAT_EVENT_C_MESSAGE_TMP = "cMessageTmp";
     public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
     public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
