@@ -23,4 +23,6 @@ public interface Act034_Main_View {
     void startRoomInfoTask(String socket_id,String room_code);
 
     void startDownloadMemberImgTask(String[] imgUrlList);
+
+    void startUserListInfoTask(String socket_id,String customer_code);
 }

@@ -39,38 +39,50 @@
             android:textSize="@dimen/font_size_item" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:padding="10dp">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act034_room_mket_search_room"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:mBARCODE="false"
-            app:mOCR="false"
-            app:mNFC="false"
-            android:inputType="text"
             android:layout_gravity="center_vertical"
-            />
+            android:layout_weight="1"
+            android:inputType="text"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false" />
+
         <View
             android:layout_width="2dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/act034_room_iv_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:src="@drawable/ic_filter_black_24px"
             android:layout_gravity="center_vertical"
-            android:tint="@color/namoa_color_gray_4"
-            />
+            android:background="@drawable/namoa_icon_bg_states"
+            android:padding="10dp"
+            android:src="@drawable/ic_filter_black_24px"
+            android:tint="@color/namoa_color_gray_4" />
+
+        <ImageView
+            android:id="@+id/act034_room_iv_add_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/namoa_icon_bg_states"
+            android:padding="10dp"
+            android:src="@drawable/ic_add_black_24px"
+            android:tint="@color/namoa_color_gray_4" />
+
+
     </LinearLayout>
 
     <FrameLayout

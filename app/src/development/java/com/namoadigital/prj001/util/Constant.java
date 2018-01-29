@@ -22,8 +22,8 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SESSION = "https://dev.namoadigital.com/ws/prj001/server_get_session.ws";
     public static final String WS_SAVE = "https://dev.namoadigital.com//ws/prj001/server_save_checklist.ws";
     public static final String WS_SERIAL = "https://dev.namoadigital.com/ws/prj001/server_serial.ws";
-    public static final String WS_SERIAL_SEARCH  = "https://dev.namoadigital.com/ws/prj001/server_product_serial.ws";
-    public static final String WS_SERIAL_TRACKING_SEARCH  = "https://dev.namoadigital.com/ws/prj001/server_serial_tracking.ws";
+    public static final String WS_SERIAL_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_product_serial.ws";
+    public static final String WS_SERIAL_TRACKING_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_serial_tracking.ws";
 
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
 
@@ -44,5 +44,6 @@ public class Constant extends ConstantBaseApp {
     public static final String WEB_SOCKET_CHAT = "https://chat.namoadigital.com";
     public static final String WS_CHAT_ROOM_INFO = "https://chat.namoadigital.com/roomMemberList";
     public static final String WS_CHAT_MESSAGE_INFO = "https://chat.namoadigital.com/messageDeliverList";
+    public static final String WS_CHAT_ROOM_USER_LIST = "https://chat.namoadigital.com/userList";
 
 }

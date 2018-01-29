@@ -1217,8 +1217,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             callAct034(context);
 
                         } else {
+                            // Confirmar criacao de Sala Private
                         }
                     } else {
+
                     }
 
                     dialog.dismiss();

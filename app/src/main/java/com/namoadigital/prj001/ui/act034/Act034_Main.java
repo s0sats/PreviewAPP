@@ -42,6 +42,8 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
+import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -80,6 +82,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private ArrayList<HMAux> customer_list = new ArrayList<>();
     private RoomInfoTask roomInfoTask;
     private DownloadMemberImgTask downloadMemberImgTask;
+    private UserListInfoTask userListInfoTask;
     /*TESTE, MOVER PARA ACT035*/
     //private MessageInfoTask messageInfoTask;
 
@@ -216,7 +219,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
             String mReload = bundle.getString("RELOAD", "0");
             //
-            if (mReload.equalsIgnoreCase("1")){
+            if (mReload.equalsIgnoreCase("1")) {
                 HMAux item = new HMAux();
                 item.put(CH_RoomDao.ROOM_CODE, returnedRoomCode);
                 //
@@ -281,11 +284,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         act034_opc.setCustomerList(customer_list);
         //
         boolean customerInList = false;
-        for (int i = 0; i < customer_list.size() ; i++) {
-            if(
-                customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
-            ){
+        for (int i = 0; i < customer_list.size(); i++) {
+            if (
+                    customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))
+                    ) {
                 customerInList = true;
                 break;
             }
@@ -566,6 +569,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         downloadMemberImgTask.execute(imgUrlList);
     }
 
+    @Override
+    public void startUserListInfoTask(String socket_id, String customer_code) {
+        userListInfoTask = new UserListInfoTask();
+        userListInfoTask.execute(socket_id, customer_code);
+    }
+
     //region AsyncTask
 
     private class RoomInfoTask extends AsyncTask<String, Integer, String> {
@@ -735,6 +744,106 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             Log.d("ChatEvent", "DownloadAsyncTask Cancelada");
         }
     }
+
+    private class UserListInfoTask extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("ChatEvent", "UserListInfoTask PreExecute");
+            //
+            showPD(
+                    hmAux_Trans.get("ws_room_info_ttl"),
+                    hmAux_Trans.get("ws_room_info_msg")
+            );
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.d("ChatEvent", "UserListInfoTask DoInBackground");
+            String resultado = "";
+            try {
+                String socket_id = params[0];
+                String customer_code = params[1];
+                //
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                //
+                Chat_UserList_Info_Env env = new Chat_UserList_Info_Env();
+                env.setSocket_id(socket_id);
+                env.setCustomer_code(customer_code);
+                //
+                resultado = ToolBox_Con.connWebService(
+                        Constant.WS_CHAT_ROOM_USER_LIST,
+                        gson.toJson(env)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                this.cancel(true);
+            }
+
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            Log.d("ChatEvent", "UserListInfoTask OnPost");
+            super.onPostExecute(resultado);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //Se não retornou nada, finaliza execução.
+            if (resultado.equals("")) {
+                this.cancel(true);
+                return;
+            }
+            try {
+                //
+                if (resultado.contains("error_msg")) {
+                    //
+                    Chat_C_Error cError =
+                            gson.fromJson(
+                                    ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                    Chat_C_Error.class
+                            );
+                    //
+                    ToolBox.sendBCStatus(
+                            context,
+                            "ERROR_1",
+                            cError != null ? cError.getError_msg() : "Error",
+                            "",
+                            "0"
+                    );
+
+                } else {
+                    //
+                    String tt = ToolBox_Inf.getWebSocketJsonParam(resultado);
+                    //
+                    disablePD();
+                    ArrayList<Chat_UserList_Info_Rec> userListInfoList = gson
+                            .fromJson(
+                                    ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                    new TypeToken<ArrayList<Chat_UserList_Info_Rec>>() {
+                                    }.getType()
+                            );
+
+                    //act034_room.showRoomInfoDialog(roomInfoList);
+                    act034_room.showUserListInfoDialog(userListInfoList);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                this.cancel(true);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
+            disablePD();
+        }
+    }
+
     //endregion
 
 
@@ -755,6 +864,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             downloadMemberImgTask.cancel(true);
         }
         //
+        if (userListInfoTask != null) {
+            userListInfoTask.cancel(true);
+        }
+        //
         super.onDestroy();
     }
 
@@ -768,7 +881,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        if(singletonWebSocket.ismSocketLogged()){
+        if (singletonWebSocket.ismSocketLogged()) {
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         } else {

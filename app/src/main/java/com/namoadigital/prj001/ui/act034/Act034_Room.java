@@ -24,9 +24,11 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
+import com.namoadigital.prj001.adapter.Chat_UserList_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act034_003;
@@ -59,6 +61,7 @@ public class Act034_Room extends BaseFragment {
     private MKEditTextNM mket_search_room;
     private TextView tv_no_result;
     private ImageView iv_filter;
+    private ImageView iv_add_room;
     //
     private boolean filter_workgroup;
     private boolean filter_private;
@@ -67,6 +70,7 @@ public class Act034_Room extends BaseFragment {
     private String info_room_desc = "";
     private String info_room_image = "";
     private Chat_Member_Adapter mDialogAdapter;
+    private Chat_UserList_Adapter mUserListAdapter;
 
     public void setSelected_customer(long selected_customer) {
         this.selected_customer = selected_customer;
@@ -109,6 +113,8 @@ public class Act034_Room extends BaseFragment {
         mket_search_room = (MKEditTextNM) view.findViewById(R.id.act034_room_mket_search_room);
         //
         iv_filter = (ImageView) view.findViewById(R.id.act034_room_iv_filter);
+        //
+        iv_add_room = (ImageView) view.findViewById(R.id.act034_room_iv_add_room);
         //
         lv_msg = (ListView) view.findViewById(R.id.act034_room_lv_msg);
         //
@@ -161,6 +167,14 @@ public class Act034_Room extends BaseFragment {
             @Override
             public void onClick(View v) {
                 showRoomFilterDialog();
+            }
+        });
+
+        iv_add_room.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(selected_customer));
             }
         });
     }
@@ -427,6 +441,7 @@ public class Act034_Room extends BaseFragment {
                     if (ccRoom != null) {
                         mMain.callAct035(context, ccRoom);
                     } else {
+                        // Confirmar criacao de Sala Private
                     }
 
                     dialog.dismiss();
@@ -477,6 +492,107 @@ public class Act034_Room extends BaseFragment {
                 (int) ToolBox_Inf.convertDpToPixel(context, 240)
         );
     }
+
+
+    public void showUserListInfoDialog(ArrayList<Chat_UserList_Info_Rec> userListInfoList) {
+        ArrayList<HMAux> memberList = new ArrayList<>();
+
+        try {
+            //
+            if (userListInfoList != null && userListInfoList.size() > 0) {
+                for (Chat_UserList_Info_Rec infoRec : userListInfoList) {
+                    HMAux aux = new HMAux();
+                    aux.put(Chat_UserList_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
+                    aux.put(Chat_UserList_Adapter.USER_NICK, infoRec.getUser_nick());
+                    aux.put(Chat_UserList_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
+                    //
+                    memberList.add(aux);
+                }
+            }
+            //
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act034_room_info, null);
+            //
+            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act034_room_info_iv_dismiss);
+            TextView tv_customer_desc = (TextView) view.findViewById(R.id.act034_room_info_tv_room_desc_lbl);
+            ImageView iv_customer = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
+            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
+            ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            //
+            tv_customer_desc.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+            iv_customer.setImageBitmap(
+                    BitmapFactory.decodeFile(Constant.IMG_PATH + "/" + "logo_c_" + String.valueOf(selected_customer) + ".png"));
+            //
+            tv_members_lbl.setText("Usuários");
+            //
+            if (memberList.size() > 0) {
+                mUserListAdapter = new Chat_UserList_Adapter(
+                        context,
+                        memberList,
+                        R.layout.act034_userlist_info_cell
+                );
+                //
+                lv_members.setAdapter(
+                        mUserListAdapter
+                );
+            } else {
+                lv_members.setVisibility(View.GONE);
+                //
+                tv_members_lbl.setText("Sem Usuários");
+            }
+            //
+            builder
+                    .setView(view)
+                    .setCancelable(true)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            info_room_desc = info_room_image = "";
+                        }
+                    });
+            //
+            mMain.disablePD();
+            //
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            //
+            iv_dismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            //
+            lv_members.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+                    //
+//                    HMAux ccRoom = roomDao.getByStringHM(
+//                            new CH_Room_Sql_005(
+//                                    hmAux.get(CH_RoomDao.USER_CODE)
+//                            ).toSqlQuery()
+//                    );
+//                    //
+//                    if (ccRoom != null) {
+//                        mMain.callAct035(context, ccRoom);
+//                    } else {
+//                        // Confirmar criacao de Sala Private
+//                    }
+
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            mMain.disablePD();
+        }
+
+    }
+
 
     private void setFilterIconColor() {
         if (filter_workgroup || filter_private || filter_so) {
