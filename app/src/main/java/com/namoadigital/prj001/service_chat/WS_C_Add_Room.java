@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,6 +58,9 @@ public class WS_C_Add_Room extends IntentService {
     }
 
     private void processC_Room(String json_param) {
+        boolean firstRoom = true;
+        String room_codes = "";
+
         Gson gson = new GsonBuilder().serializeNulls().create();
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
@@ -69,6 +73,14 @@ public class WS_C_Add_Room extends IntentService {
         ArrayList<CH_Room> chRooms = Chat_C_Room.toCH_RoomList(rooms);
         //
         for (CH_Room chRoom : chRooms) {
+
+            if (!firstRoom){
+                room_codes += "#" + chRoom.getRoom_code();
+            } else {
+                firstRoom = false;
+                room_codes += chRoom.getRoom_code();
+            }
+
             CH_Room dbRoom = roomDao.getByString(
                     new CH_Room_Sql_001(
                             chRoom.getRoom_code()
@@ -76,6 +88,7 @@ public class WS_C_Add_Room extends IntentService {
             );
             //Valida retornou registro do banco.
             if(dbRoom != null && dbRoom.getRoom_code().length() > 0 ){
+
                 //Se existe o registro, valida se a url da imagem enviada é a mesma
                 //que do registro no banco.
                 //Se não for, zera url local e apaga imagem do app para que a nova
@@ -103,6 +116,17 @@ public class WS_C_Add_Room extends IntentService {
         singletonWebSocket.attemptSendPendingMessages(chRooms.get(0).getRoom_code());
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+
+        // Private Rooms
+        //
+        Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
+        cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
+
+        Bundle bundleAux = new Bundle();
+        bundleAux.putString(Constant.CHAT_WS_JSON_PARAM, room_codes);
+        cRoomPrivateIntent.putExtras(bundleAux);
+        //
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(cRoomPrivateIntent);
     }
 
     private void startDownloadService() {

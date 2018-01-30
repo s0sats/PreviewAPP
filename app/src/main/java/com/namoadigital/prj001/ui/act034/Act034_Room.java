@@ -28,6 +28,7 @@ import com.namoadigital.prj001.adapter.Chat_UserList_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_S_RoomPrivate;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_005;
@@ -505,6 +506,7 @@ public class Act034_Room extends BaseFragment {
                     aux.put(Chat_UserList_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
                     aux.put(Chat_UserList_Adapter.USER_NICK, infoRec.getUser_nick());
                     aux.put(Chat_UserList_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
+                    aux.put(Chat_UserList_Adapter.ROOM_CODE, infoRec.getRoom_code());
                     //
                     memberList.add(aux);
                 }
@@ -570,17 +572,17 @@ public class Act034_Room extends BaseFragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
-//                    HMAux ccRoom = roomDao.getByStringHM(
-//                            new CH_Room_Sql_005(
-//                                    hmAux.get(CH_RoomDao.USER_CODE)
-//                            ).toSqlQuery()
-//                    );
-//                    //
-//                    if (ccRoom != null) {
-//                        mMain.callAct035(context, ccRoom);
-//                    } else {
-//                        // Confirmar criacao de Sala Private
-//                    }
+                    if (hmAux.get("room_code") == null) {
+                        alertForRoomPrivate(hmAux);
+                    } else {
+                        HMAux ccRoom = roomDao.getByStringHM(
+                                new CH_Room_Sql_005(
+                                        hmAux.get(CH_RoomDao.USER_CODE)
+                                ).toSqlQuery()
+                        );
+                        //
+                        mMain.callAct035(context, ccRoom);
+                    }
 
                     dialog.dismiss();
                 }
@@ -593,6 +595,31 @@ public class Act034_Room extends BaseFragment {
 
     }
 
+    private void alertForRoomPrivate(final HMAux hmAux) {
+        AlertDialog.Builder alertFRP = new AlertDialog.Builder(getActivity());
+
+        alertFRP.setTitle("Criacao Sala Privada");
+        alertFRP.setMessage("Deseja realmente criar a sala privada?");
+        alertFRP.setCancelable(true);
+        //
+        alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
+                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+                sRoomPrivate.setCustomer_code(selected_customer);
+                sRoomPrivate.setActive(1);
+                //
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                //
+                singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+            }
+        });
+
+        alertFRP.setNegativeButton("Não", null);
+        //
+        alertFRP.show();
+    }
 
     private void setFilterIconColor() {
         if (filter_workgroup || filter_private || filter_so) {
@@ -607,7 +634,6 @@ public class Act034_Room extends BaseFragment {
             mDialogAdapter.updateMemberImage(user_code, local_url);
         }
     }
-
 
     @Override
     public void onAttach(Context context) {

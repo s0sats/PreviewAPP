@@ -402,6 +402,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
     public static final String CHAT_EVENT_C_ALL_DELIVERED = "cAllDelivered";
     public static final String CHAT_EVENT_C_ALL_READ = "cAllRead";
+    public static final String CHAT_EVENT_C_ROOM_PRIVATE = "cRoomPrivateCustomer";
 
     //Eventos Server
     public static final String CHAT_EVENT_S_LOGIN = "sLogin";
@@ -412,6 +413,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_S_MESSAGE_TMP = "sMessageTmp";
     public static final String CHAT_EVENT_S_DELIVERED = "sDelivered";
     public static final String CHAT_EVENT_S_READ = "sRead";
+    public static final String CHAT_EVENT_S_ROOM_PRIVATE = "sRoomPrivateCustomer";
 
     //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";

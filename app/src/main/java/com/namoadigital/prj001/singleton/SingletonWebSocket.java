@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -55,6 +56,8 @@ import io.socket.emitter.Emitter;
  */
 
 public class SingletonWebSocket {
+    public static String mRoom_private = "";
+
     public static final String CHAT_TYPE_FILE_TMP = "tmp_";
 
     private static volatile SingletonWebSocket sSoleInstance;
@@ -153,7 +156,7 @@ public class SingletonWebSocket {
         options.reconnection = true;
         options.reconnectionDelay = 5000;
         options.reconnectionDelayMax = 5000;
-        options.randomizationFactor  = 0.1;
+        options.randomizationFactor = 0.1;
         //options.reconnectionAttempts = 2;
 
         try {
@@ -171,6 +174,8 @@ public class SingletonWebSocket {
             mSocket.on(Constant.CHAT_EVENT_C_REMOVE_ROOM, onRemoveRoom);
             mSocket.on(Constant.CHAT_EVENT_C_ALL_DELIVERED, onAllDelivered);
             mSocket.on(Constant.CHAT_EVENT_C_ALL_READ, onAllRead);
+
+            mSocket.on(Constant.CHAT_EVENT_C_ROOM_PRIVATE, onRoomPrivate);
 
             mSocket.on(Socket.EVENT_RECONNECT, onReconnectReturn);
             mSocket.on(Socket.EVENT_RECONNECTING, onReconnectingReturn);
@@ -322,6 +327,13 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptonRoomPrivate(String deliveryObj) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
+            mSocket.emit(Constant.CHAT_EVENT_S_ROOM_PRIVATE, deliveryObj);
+            Log.d("ChatEvent", "sRoomPrivate");
+        }
+    }
+
     public void attemptSendPendingMessages(String room_code) {
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             CH_MessageDao messageDao = new CH_MessageDao(context);
@@ -400,7 +412,7 @@ public class SingletonWebSocket {
         }
     }
 
-    public void attemptNamoa(){
+    public void attemptNamoa() {
         String message = ToolBox_Inf.uniqueID(context);
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit("sNamoa", message);
@@ -561,6 +573,7 @@ public class SingletonWebSocket {
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
                     cRoomIntent.putExtras(bundle);
                     context.sendBroadcast(cRoomIntent);
+                    // Hugo Verificar
                 } else {
                     String tst = "No Json";
                     /*
@@ -745,6 +758,45 @@ public class SingletonWebSocket {
         }
     };
     //endregion
+
+    private Emitter.Listener onRoomPrivate = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Log.d("ChatEvent", "cRoomPrivateCustomer");
+
+            mRoom_private = "";
+
+            if (args != null && args.length > 0) {
+                if (args[0] instanceof String) {
+                    try {
+                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+                        //
+                        Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
+                        cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
+
+                        JSONObject jsonObject = new JSONObject(param);
+
+                        mRoom_private = jsonObject.getString("room_code");
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, mRoom_private);
+                        cRoomPrivateIntent.putExtras(bundle);
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(cRoomPrivateIntent);
+
+                    } catch (Exception e) {
+                    }
+
+                } else {
+                    String tst = "No Json";
+                    /*
+                    * Verificar como proceder caso o retorno não seja uma string
+                    *
+                    * */
+                }
+            }
+        }
+    };
+
 
     //region ERROR EVENTS
     private Emitter.Listener onErrorLoginReturn = new Emitter.Listener() {

@@ -45,6 +45,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -63,6 +64,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     public static final String FRAG_TAG_ROOM = "ROOM";
 
+    private String room_code_private = "";
+
     private Act034_Main_Presenter mPresenter;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -71,6 +74,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private Act034_Room act034_room;
     private String currentFrag = "";
     private BR_Room brRoomReceiver;
+    private RoomPrivate roomPrivate;
     private AlertDialog infoDialog = null;
     private Bundle bundle;
     private String returnedRoomCode = null;
@@ -241,16 +245,23 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void startReceivers(boolean start_stop) {
         if (brRoomReceiver == null) {
             brRoomReceiver = new BR_Room();
+            roomPrivate = new RoomPrivate();
         }
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        IntentFilter roomPrivateFilter = new IntentFilter(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
+        roomPrivateFilter.addCategory(Intent.CATEGORY_DEFAULT);
         //
         if (start_stop) {
             LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
+            LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(roomPrivate, roomPrivateFilter);
         } else {
             LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(brRoomReceiver);
+            LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(roomPrivate);
             //
             brRoomReceiver = null;
+            roomPrivate = null;
         }
     }
 
@@ -446,6 +457,40 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    private class RoomPrivate extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //
+            CH_RoomDao roomDao = new CH_RoomDao(context);
+            Bundle mBundleAux = intent.getExtras();
+            String[] room_codes = mBundleAux.getString(Constant.CHAT_WS_JSON_PARAM).split("#");
+
+            boolean sFound = false;
+
+            for (String mRoom : room_codes) {
+                if (mRoom.equalsIgnoreCase(SingletonWebSocket.mRoom_private)) {
+                    sFound = true;
+                    //
+                    break;
+                }
+            }
+
+            if (sFound) {
+                sFound = false;
+
+                HMAux ccRoom = roomDao.getByStringHM(
+                        new CH_Room_Sql_006(
+                                SingletonWebSocket.mRoom_private
+                        ).toSqlQuery()
+                );
+
+                if (ccRoom != null) {
+                    callAct035(context, ccRoom);
+                }
             }
         }
     }
@@ -904,4 +949,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         return true;
     }
 
+    @Override
+    public void changeRoom_Private_Code(String room_private) {
+        room_code_private = room_private;
+    }
 }
