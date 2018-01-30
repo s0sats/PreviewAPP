@@ -20,6 +20,8 @@ public class Chat_C_Room {
     private int first_msg_prefix;
     private int first_msg_code;
     private Long user_code;
+    private int msg_prefix;
+    private int msg_code;
 
     public String getRoom_type() {
         return room_type;
@@ -101,6 +103,22 @@ public class Chat_C_Room {
         this.user_code = user_code;
     }
 
+    public int getMsg_prefix() {
+        return msg_prefix;
+    }
+
+    public void setMsg_prefix(int msg_prefix) {
+        this.msg_prefix = msg_prefix;
+    }
+
+    public int getMsg_code() {
+        return msg_code;
+    }
+
+    public void setMsg_code(int msg_code) {
+        this.msg_code = msg_code;
+    }
+
     public CH_Room toCH_RoomObj() {
         CH_Room ch_room = new CH_Room();
         //
@@ -115,6 +133,8 @@ public class Chat_C_Room {
         ch_room.setFirst_msg_prefix(this.first_msg_prefix);
         ch_room.setFirst_msg_code(this.first_msg_code);
         ch_room.setUser_code(this.user_code);
+        ch_room.setMsg_prefix(this.msg_prefix);
+        ch_room.setMsg_code(this.msg_code);
 
         return ch_room;
     }
@@ -136,6 +156,8 @@ public class Chat_C_Room {
             ch_room.setFirst_msg_prefix(cRoom.getFirst_msg_prefix());
             ch_room.setFirst_msg_code(cRoom.getFirst_msg_code());
             ch_room.setUser_code(cRoom.getUser_code());
+            ch_room.setMsg_prefix(cRoom.getMsg_prefix());
+            ch_room.setMsg_code(cRoom.getMsg_code());
             //
             chRooms.add(ch_room);
         }

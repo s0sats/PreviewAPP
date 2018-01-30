@@ -776,13 +776,14 @@ public class SingletonWebSocket {
 
                         JSONObject jsonObject = new JSONObject(param);
 
-                        mRoom_private = jsonObject.getString("room_code");
-
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, mRoom_private);
-                        cRoomPrivateIntent.putExtras(bundle);
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(cRoomPrivateIntent);
-
+                        if (jsonObject.getInt("active") == 1) {
+                            mRoom_private = jsonObject.getString("room_code");
+                            //
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constant.CHAT_WS_JSON_PARAM, mRoom_private);
+                            cRoomPrivateIntent.putExtras(bundle);
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(cRoomPrivateIntent);
+                        }
                     } catch (Exception e) {
                     }
 

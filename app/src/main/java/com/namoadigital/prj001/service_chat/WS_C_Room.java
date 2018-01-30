@@ -73,6 +73,7 @@ public class WS_C_Room extends IntentService {
         ArrayList<CH_Room> chRooms = Chat_C_Room.toCH_RoomList(rooms);
         //
         for (CH_Room chRoom : chRooms) {
+            chRoom.setStatus_update(1);
             CH_Room dbRoom = roomDao.getByString(
                     new CH_Room_Sql_001(
                             chRoom.getRoom_code()
@@ -100,11 +101,22 @@ public class WS_C_Room extends IntentService {
         //
         roomDao.addUpdate(chRooms, false);
         //
+        cleanUPRooms(chRooms);
+        //
         startDownloadService();
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
         //
         callCHistoricalMsg();
+    }
+
+    private void cleanUPRooms(ArrayList<CH_Room> chRooms) {
+        CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
+        //
+
+
+        //roomDao.addUpdate(chRooms, false);
+
     }
 
     private void callCHistoricalMsg() {

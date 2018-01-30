@@ -35,10 +35,11 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
     public static final String FIRST_MSG_PREFIX = "first_msg_prefix";
     public static final String FIRST_MSG_CODE = "first_msg_code";
     public static final String USER_CODE = "user_code";
+    public static final String STATUS_UPDATE = "status_update";
 
     public static String[] columns = {
             ROOM_CODE, ROOM_TYPE, ROOM_DESC, CUSTOMER_CODE, ROOM_OBJ, ROOM_IMAGE,
-            ROOM_IMAGE_NAME, ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE, USER_CODE
+            ROOM_IMAGE_NAME, ROOM_IMAGE_LOCAL, FIRST_MSG_PREFIX, FIRST_MSG_CODE, USER_CODE, STATUS_UPDATE
 
     };
 
@@ -284,6 +285,8 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
             } else {
                 ch_room.setUser_code(null);
             }
+            //
+            ch_room.setStatus_update(cursor.getInt(cursor.getColumnIndex(STATUS_UPDATE)));
 
             return ch_room;
         }
@@ -318,6 +321,7 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
                 contentValues.put(FIRST_MSG_CODE, ch_room.getFirst_msg_code());
             }
             contentValues.put(USER_CODE, ch_room.getUser_code());
+            contentValues.put(STATUS_UPDATE, ch_room.getStatus_update());
 
             return contentValues;
         }

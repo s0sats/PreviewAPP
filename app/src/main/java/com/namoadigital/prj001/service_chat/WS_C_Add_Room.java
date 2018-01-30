@@ -17,6 +17,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public class WS_C_Add_Room extends IntentService {
         //
         for (CH_Room chRoom : chRooms) {
 
-            if (!firstRoom){
+            if (!firstRoom) {
                 room_codes += "#" + chRoom.getRoom_code();
             } else {
                 firstRoom = false;
@@ -87,21 +88,21 @@ public class WS_C_Add_Room extends IntentService {
                     ).toSqlQuery()
             );
             //Valida retornou registro do banco.
-            if(dbRoom != null && dbRoom.getRoom_code().length() > 0 ){
+            if (dbRoom != null && dbRoom.getRoom_code().length() > 0) {
 
                 //Se existe o registro, valida se a url da imagem enviada é a mesma
                 //que do registro no banco.
                 //Se não for, zera url local e apaga imagem do app para que a nova
                 //imagem seja baixada.
-                if( chRoom.getRoom_image() == null ||
-                    !chRoom.getRoom_image().equalsIgnoreCase(dbRoom.getRoom_image())
-                ){
-                    File file = new File(Constant.CACHE_PATH + "/"+dbRoom.getRoom_image_local());
+                if (chRoom.getRoom_image() == null ||
+                        !chRoom.getRoom_image().equalsIgnoreCase(dbRoom.getRoom_image())
+                        ) {
+                    File file = new File(Constant.CACHE_PATH + "/" + dbRoom.getRoom_image_local());
                     //
-                    if(file.exists()&& file.isFile()) {
+                    if (file.exists() && file.isFile()) {
                         file.delete();
                     }
-                }else{
+                } else {
                     chRoom.setRoom_image_local(dbRoom.getRoom_image_local());
                 }
             }
@@ -116,6 +117,17 @@ public class WS_C_Add_Room extends IntentService {
         singletonWebSocket.attemptSendPendingMessages(chRooms.get(0).getRoom_code());
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+        //
+        // Processamento de get para distribuição.
+        try {
+            ToolBox_Con.connHttpGet(
+                    Constant.WS_CHAT_MESSAGE_DIST + "msg_prefix=" + chRooms.get(0).getMsg_prefix() + "&msg_code=" + chRooms.get(0).getMsg_code(),
+                    ""
+            );
+
+        } catch (Exception e) {
+            String nn = e.toString();
+        }
 
         // Private Rooms
         //

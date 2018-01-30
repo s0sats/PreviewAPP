@@ -23,6 +23,7 @@ public class Chat_UserList_Adapter extends BaseAdapter {
     public static final String USER_NICK = "user_nick";
     public static final String USER_CODE = "user_code";
     public static final String ROOM_CODE = "room_code";
+    public static final String USER_NAME = "user_name";
     public static final String ON_LINE = "on_line";
     public static final String SYS_USER_IMAGE = "sys_user_image";
     public static final String SYS_USER_IMAGE_NAME = "sys_user_image_name";
@@ -77,6 +78,7 @@ public class Chat_UserList_Adapter extends BaseAdapter {
         //
         ImageView iv_member_img = (ImageView) convertView.findViewById(R.id.act034_room_info_cell_iv_member);
         TextView tv_member = (TextView) convertView.findViewById(R.id.act034_room_info_cell_tv_member);
+        TextView tv_member_name = (TextView) convertView.findViewById(R.id.act034_room_info_cell_tv_member_name);
         ImageView iv_online_icon = (ImageView) convertView.findViewById(R.id.act034_room_info_cell_iv_online);
         ImageView iv_delivered = (ImageView) convertView.findViewById(R.id.act034_room_info_cell_iv_delivered);
         TextView tv_delivered = (TextView) convertView.findViewById(R.id.act034_room_info_cell_tv_delivered);
@@ -88,6 +90,7 @@ public class Chat_UserList_Adapter extends BaseAdapter {
                 .into(iv_member_img);
         //
         tv_member.setText(item.get(USER_NICK));
+        tv_member_name.setText(item.get(USER_NAME));
 
         return convertView;
     }

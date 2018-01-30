@@ -27,14 +27,29 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp" />
 
-        <TextView
-            android:id="@+id/act034_room_info_cell_tv_member"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
             android:layout_weight="1"
-            android:text="Alô mamãe - traduzir"
-            android:textSize="@dimen/font_size_item" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/act034_room_info_cell_tv_member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="Alô mamãe - traduzir"
+                android:textSize="@dimen/font_size_item" />
+
+            <TextView
+                android:id="@+id/act034_room_info_cell_tv_member_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="Alô mamãe - traduzir"
+                android:textSize="@dimen/font_size_sub_item" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="1dp"

@@ -507,6 +507,7 @@ public class Act034_Room extends BaseFragment {
                     aux.put(Chat_UserList_Adapter.USER_NICK, infoRec.getUser_nick());
                     aux.put(Chat_UserList_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
                     aux.put(Chat_UserList_Adapter.ROOM_CODE, infoRec.getRoom_code());
+                    aux.put(Chat_UserList_Adapter.USER_NAME, infoRec.getUser_name());
                     //
                     memberList.add(aux);
                 }
@@ -619,6 +620,7 @@ public class Act034_Room extends BaseFragment {
         alertFRP.setNegativeButton("Não", null);
         //
         alertFRP.show();
+
     }
 
     private void setFilterIconColor() {

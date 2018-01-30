@@ -45,7 +45,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.CH_Room_Sql_006;
+import com.namoadigital.prj001.sql.CH_Room_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -483,7 +483,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 sFound = false;
 
                 HMAux ccRoom = roomDao.getByStringHM(
-                        new CH_Room_Sql_006(
+                        new CH_Room_Sql_005(
                                 SingletonWebSocket.mRoom_private
                         ).toSqlQuery()
                 );

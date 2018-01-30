@@ -16,6 +16,9 @@ public class CH_Room {
     private int first_msg_prefix;
     private int first_msg_code;
     private Long user_code;
+    private int msg_prefix;
+    private int msg_code;
+    private int status_update;
 
     public String getRoom_type() {
         return room_type;
@@ -103,5 +106,29 @@ public class CH_Room {
 
     public void setUser_code(Long user_code) {
         this.user_code = user_code;
+    }
+
+    public int getMsg_prefix() {
+        return msg_prefix;
+    }
+
+    public void setMsg_prefix(int msg_prefix) {
+        this.msg_prefix = msg_prefix;
+    }
+
+    public int getMsg_code() {
+        return msg_code;
+    }
+
+    public void setMsg_code(int msg_code) {
+        this.msg_code = msg_code;
+    }
+
+    public int getStatus_update() {
+        return status_update;
+    }
+
+    public void setStatus_update(int status_update) {
+        this.status_update = status_update;
     }
 }

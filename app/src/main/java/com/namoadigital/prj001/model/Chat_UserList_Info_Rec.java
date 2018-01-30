@@ -8,10 +8,10 @@ public class Chat_UserList_Info_Rec {
     private String room_code;
     private int user_code;
     private String user_nick;
+    private String user_name;
     private int on_line;
     private String sys_user_image;
     private String sys_user_image_name;
-
 
     public String getRoom_code() {
         return room_code;
@@ -35,6 +35,14 @@ public class Chat_UserList_Info_Rec {
 
     public void setUser_nick(String user_nick) {
         this.user_nick = user_nick;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
     public int getOn_line() {
