@@ -3157,10 +3157,15 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isUsrAppLogged(Context context) {
+        boolean user = !ToolBox_Con.getPreference_User_Code(context).equals("");
+        boolean customer = ToolBox_Con.getPreference_Customer_Code(context) != -1;
+        boolean session = !ToolBox_Con.getPreference_Session_App(context).equals("");
+
         boolean logged =
                 !ToolBox_Con.getPreference_User_Code(context).equals("")
                         && ToolBox_Con.getPreference_Customer_Code(context) != -1
                         && !ToolBox_Con.getPreference_Session_App(context).equals("");
+        Log.d("ChatEvent", "isUsrAppLogged  =  " +logged + "\n");
         return logged;
     }
 

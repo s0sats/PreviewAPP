@@ -791,6 +791,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             return true;
         }
 
+       /* if(id == 2){
+            if(AppBackgroundService.isRunning){
+                Log.d("ChatEvent", " Act034 tenta parar serviço do chat. \n");
+                Intent chatService = new Intent(context, AppBackgroundService.class);
+                context.stopService(chatService);
+            }
+        }*/
+
         return true;
     }
 

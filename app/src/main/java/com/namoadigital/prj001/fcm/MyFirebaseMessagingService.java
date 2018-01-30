@@ -99,23 +99,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
                         bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE_FCM);
                         cMessageIntent.putExtras(bundle);
-                        //getApplicationContext().sendBroadcast(cMessageIntent);
-
+                        getApplicationContext().sendBroadcast(cMessageIntent);
                     }
 
                 }
-                //
-                try {
-                    //File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-                    //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - FCM AppBackgroundService.isRunning: "+AppBackgroundService.isRunning+"\n", log_file);
-                    //
-                    if(ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
-                        //ToolBox_Inf.defineChatServiceAction(getApplicationContext(),Constant.MY_FIRE_BASE_MESSAGING_SERVICE,true);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
                 return;
             }
             //

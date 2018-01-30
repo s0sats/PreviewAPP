@@ -29,9 +29,14 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
 
             if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 screenOn = false;
+                //
                 Log.d("ChatEvent", "Status da Tela :DESLIGADO");
                 //
                 ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "  ===================================>DISPLAY_OFF<===================================\n.", log_file);
+                //
+                Intent chatService = new Intent(context, AppBackgroundService.class);
+                context.stopService(chatService);
+
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 screenOn = true;
                 Log.d("ChatEvent", "Status da Tela : LIGADO");

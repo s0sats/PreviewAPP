@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
+import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
 import com.namoadigital.prj001.service.ChatPowerService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
@@ -173,6 +174,15 @@ public class WS_C_Message extends IntentService {
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
             for (CH_Message ch_message : chMessages) {
+                if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
+                    ch_message.setMsg_pk(String.valueOf(ch_message.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, ch_message.getMsg_code())));
+                    ch_message.setDelivered(0);
+                    ch_message.setDelivered_date("");
+                    ch_message.setAll_delivered(0);
+                    ch_message.setRead(0);
+                    ch_message.setRead_date("");
+                    ch_message.setAll_read(0);
+                }
                 /*
                 *
                 * CRIAR CAMPO NA TABELAPARA ARMAZENAR POR QUAL EVENTO FOI RECEBIDO A MERDA
@@ -190,7 +200,6 @@ public class WS_C_Message extends IntentService {
                 * SE NNÃO FOR, CHAMA WEBSOCKET SDELIVERY
                 * SE FOR, CHAMA POST
                 * */
-
                 //
                 CH_Message dbMessage =
                         messageDao.getByString(
@@ -260,9 +269,19 @@ public class WS_C_Message extends IntentService {
             }
             //
             if (sDeliveredList.size() > 0) {
-                singletonWebSocket.attemptToDeliveryMessage(
-                        ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
-                );
+                if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
+                    Intent postDeliveredIntent = new Intent(getApplicationContext(), WBR_Delivered.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.CHAT_WS_JSON_PARAM,sDeliveredList.toString());
+                    postDeliveredIntent.putExtras(bundle);
+                    getApplicationContext().sendBroadcast(postDeliveredIntent);
+                    return;
+
+                }else{
+                    singletonWebSocket.attemptToDeliveryMessage(
+                            ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
+                    );
+                }
             }
             //
             if (sReadList.size() > 0) {

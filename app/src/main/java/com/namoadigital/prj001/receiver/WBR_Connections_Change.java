@@ -30,7 +30,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 //
                 activateDownLoadPDF(context);
                 activateDownLoadPicture(context);
-                activateLogo(context);
+                //activateLogo(context);
                 activeChatService(context);
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);

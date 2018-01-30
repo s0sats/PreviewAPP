@@ -85,6 +85,7 @@ public class AppBackgroundService extends Service {
         //
         //singletonWebSocket.destroySingletonWebSocket();
         //singletonWebSocket.destroySingletonWebSocketV2();
+        singletonWebSocket.destroySingletonWebSocketV3();
     }
 
 

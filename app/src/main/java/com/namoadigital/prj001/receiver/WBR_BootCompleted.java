@@ -46,15 +46,7 @@ public class WBR_BootCompleted extends BroadcastReceiver {
                     e.printStackTrace();
                 }
                 Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Serviço rodando, não faz nada ");
-                /*try{
-                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Startou o singletonGetInstance()\n", log_file);
-                    Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Startou o singletonGetInstance()\n");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                singletonWebSocket.attemptSendLogin();*/
+
             }
         }
 
