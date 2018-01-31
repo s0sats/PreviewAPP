@@ -45,6 +45,7 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_S_RoomPrivate;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
@@ -52,6 +53,7 @@ import com.namoadigital.prj001.sql.CH_Message_Sql_012;
 import com.namoadigital.prj001.sql.CH_Message_Sql_017;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.CH_Room_Sql_005;
+import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -107,6 +109,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private BR_Room brRoomReceiver;
     private BR_Download_Image brDownloadImageReceiver;
     private Chat_Finish_Act chatFinishActReceiver;
+    private RoomPrivate roomPrivate;
 
     private boolean statusCameraNew = false;
 
@@ -362,6 +365,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void startReceivers(boolean start_stop) {
         if (brRoomReceiver == null) {
             brRoomReceiver = new BR_Room();
+            roomPrivate = new RoomPrivate();
         }
         //
         if (brDownloadImageReceiver == null) {
@@ -370,6 +374,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         if (chatFinishActReceiver == null) {
             chatFinishActReceiver = new Chat_Finish_Act();
+        }
+        //
+        if (roomPrivate == null){
+            roomPrivate = new RoomPrivate();
         }
         //
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
@@ -381,19 +389,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         IntentFilter chatFinishActFilter = new IntentFilter(Constant.CHAT_FINISH_ACT_FILTER);
         brDownloadImageFilter.addCategory(Intent.CATEGORY_DEFAULT);
 
+        IntentFilter roomPrivateFilter = new IntentFilter(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
+        roomPrivateFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
         //
         if (start_stop) {
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(brDownloadImageReceiver, brDownloadImageFilter);
             LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(chatFinishActReceiver, chatFinishActFilter);
+            LocalBroadcastManager.getInstance(Act035_Main.this).registerReceiver(roomPrivate, roomPrivateFilter);
         } else {
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brRoomReceiver);
             LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brDownloadImageReceiver);
-            LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(brDownloadImageReceiver);
+            LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(chatFinishActReceiver);
+            LocalBroadcastManager.getInstance(Act035_Main.this).unregisterReceiver(roomPrivate);
             //
             brRoomReceiver = null;
             brDownloadImageReceiver = null;
             chatFinishActReceiver = null;
+            roomPrivate = null;
         }
     }
 
@@ -417,13 +431,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         tv_room_name_val.setText(mRoom.getRoom_desc());
 
         try {
+
+            ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH,
+                    mRoom.getRoom_image_local());
+
+
             iv_room_thumbnail.setImageBitmap(
                     BitmapFactory.decodeFile(
                             Constant.THU_PATH + "/" +
                                     mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) +
                                     Constant.THUMB_SUFFIX + ".jpg"
                     )
-
             );
 
 //            iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
@@ -645,6 +663,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             try {
                 switch (type) {
+                    case Constant.CHAT_BR_TYPE_ROOM:
+                        processing_cRoom(context);
+                        break;
                     case Constant.CHAT_BR_TYPE_MSG:
                         processing_cMessage(context);
                         break;
@@ -669,7 +690,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-
     private class BR_Download_Image extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -689,6 +709,19 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             onDestroy();
         }
     }
+
+    private void processing_cRoom(Context context) {
+        HMAux ccRoom = ch_roomDao.getByStringHM(
+                new CH_Room_Sql_006(
+                        mRoom_code
+                ).toSqlQuery()
+        );
+        //
+        if (ccRoom == null) {
+            callAct034(context);
+        }
+    }
+
 
     private void processing_cMessage(final Context context) {
 
@@ -1203,26 +1236,29 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
-                    HMAux ccRoom = ch_roomDao.getByStringHM(
-                            new CH_Room_Sql_005(
-                                    hmAux.get(CH_RoomDao.USER_CODE)
-                            ).toSqlQuery()
-                    );
-                    //
-                    if (ccRoom != null) {
-                        if (!ccRoom.get(CH_RoomDao.USER_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
-                            bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
-                            bundle.putString("RELOAD", "1");
-                            //
-                            callAct034(context);
+                    if (!hmAux.get(CH_RoomDao.USER_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
+                        HMAux ccRoom = ch_roomDao.getByStringHM(
+                                new CH_Room_Sql_005(
+                                        hmAux.get(CH_RoomDao.USER_CODE)
+                                ).toSqlQuery()
+                        );
 
+                        if (ccRoom != null) {
+                            if (!ccRoom.get(CH_RoomDao.ROOM_CODE).equalsIgnoreCase(mRoom_code)) {
+                                bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
+                                bundle.putString("RELOAD", "1");
+                                //
+                                callAct034(context);
+                            } else {
+                            }
                         } else {
-                            // CallDial
+                            alertForRoomPrivate(hmAux);
                         }
+                        //
+                        dialog.dismiss();
+
                     } else {
                     }
-
-                    dialog.dismiss();
                 }
             });
 
@@ -1230,8 +1266,73 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ToolBox_Inf.registerException(getClass().getName(), e);
             disablePD();
         }
-
     }
+
+    private void alertForRoomPrivate(final HMAux hmAux) {
+        AlertDialog.Builder alertFRP = new AlertDialog.Builder(Act035_Main.this);
+
+        alertFRP.setTitle("Criacao Sala Privada");
+        alertFRP.setMessage("Deseja realmente criar a sala privada?");
+        alertFRP.setCancelable(true);
+        //
+        alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
+                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+                sRoomPrivate.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+                sRoomPrivate.setActive(1);
+                //
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                //
+                singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+            }
+        });
+
+        alertFRP.setNegativeButton("Não", null);
+        //
+        alertFRP.show();
+    }
+
+    private class RoomPrivate extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //
+            CH_RoomDao roomDao = new CH_RoomDao(context);
+            Bundle mBundleAux = intent.getExtras();
+            String[] room_codes = mBundleAux.getString(Constant.CHAT_WS_JSON_PARAM).split("#");
+
+            boolean sFound = false;
+
+            for (String mRoom : room_codes) {
+                if (mRoom.equalsIgnoreCase(SingletonWebSocket.mRoom_private)) {
+                    sFound = true;
+                    //
+                    break;
+                }
+            }
+
+            if (sFound) {
+                sFound = false;
+
+                HMAux ccRoom = roomDao.getByStringHM(
+                        new CH_Room_Sql_006(
+                                SingletonWebSocket.mRoom_private
+                        ).toSqlQuery()
+                );
+
+                if (ccRoom != null) {
+                    bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
+                    bundle.putString("RELOAD", "1");
+                    //
+                    callAct034(context);
+                }
+
+                //SingletonWebSocket.mRoom_private = "";
+            }
+        }
+    }
+
 
     public void showMessageInfoDialog(ArrayList<Chat_Message_Info_Rec> messageInfoList) {
         ArrayList<HMAux> memberList = new ArrayList<>();

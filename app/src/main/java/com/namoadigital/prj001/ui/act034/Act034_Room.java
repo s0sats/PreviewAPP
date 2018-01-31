@@ -433,19 +433,23 @@ public class Act034_Room extends BaseFragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
-                    HMAux ccRoom = roomDao.getByStringHM(
-                            new CH_Room_Sql_005(
-                                    hmAux.get(CH_RoomDao.USER_CODE)
-                            ).toSqlQuery()
-                    );
-                    //
-                    if (ccRoom != null) {
-                        mMain.callAct035(context, ccRoom);
-                    } else {
-                        // Confirmar criacao de Sala Private
-                    }
+                    if (!hmAux.get(CH_RoomDao.USER_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
+                        HMAux ccRoom = roomDao.getByStringHM(
+                                new CH_Room_Sql_005(
+                                        hmAux.get(CH_RoomDao.USER_CODE)
+                                ).toSqlQuery()
+                        );
+                        //
+                        if (ccRoom != null) {
+                            mMain.callAct035(context, ccRoom);
+                        } else {
+                            alertForRoomPrivate(hmAux);
+                        }
 
-                    dialog.dismiss();
+                        dialog.dismiss();
+
+                    } else {
+                    }
                 }
             });
 
