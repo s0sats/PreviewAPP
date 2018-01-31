@@ -18,6 +18,7 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -79,9 +80,8 @@ import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.ChatPowerService;
-import com.namoadigital.prj001.service.ScreenStatusReceiver;
+import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
@@ -3183,7 +3183,7 @@ public class ToolBox_Inf {
             Log.d("ChatEvent", "Nome da classe pela Constant: " + callName + "\n");
 
             if (callName.equals(Constant.SCREEN_STATUS_RECEIVER)
-                && !ScreenStatusReceiver.screenOn) {
+                && !ToolBox_Inf.isScreenOn(context)) {
                 ChatPowerService.lastCall = Calendar.getInstance();
             } else if (!callName.equals(Constant.SCREEN_STATUS_RECEIVER)) {
                 ChatPowerService.lastCall = Calendar.getInstance();
@@ -3210,7 +3210,7 @@ public class ToolBox_Inf {
             } else if (
                     !callName.equals(Constant.MY_FIRE_BASE_MESSAGING_SERVICE) &&
                             !callName.equals(Constant.WBR_CONNECTIONS_CHANGE) &&
-                            !ScreenStatusReceiver.screenOn
+                            !ToolBox_Inf.isScreenOn(context)
                     ) {
                 if (debug) {
                     ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - " + callName + " Serviço off, conectividade on, não é FCM, nem troca conectividade e tela off\n", log_file);
@@ -3272,4 +3272,12 @@ public class ToolBox_Inf {
             return false;
         }
     }
+
+    public static boolean isScreenOn(Context context){
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isOn = pm.isScreenOn();
+
+        return isOn;
+    }
+
 }

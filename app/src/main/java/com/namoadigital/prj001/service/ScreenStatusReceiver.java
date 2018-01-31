@@ -18,15 +18,14 @@ import java.io.File;
 
 public class ScreenStatusReceiver extends BroadcastReceiver {
 
-    public static boolean screenOn;
     private File log_file = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-
         try {
 
+            boolean screenOn;
             if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 screenOn = false;
                 //
@@ -53,9 +52,12 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
                         singletonWebSocket.attemptSendLogin();
                     }
                 }
+                Log.d("STATUS_DISPLAY", screenOn ? "LIGADO" : "Ligada");
+            }else{
+                String whatElse = intent.getAction().toString();
+                Log.d("ChatEvent", "Status da Tela : OUTRA COISA o.O: " + whatElse );
             }
 
-            Log.d("STATUS_DISPLAY", screenOn ? "LIGADO" : "DESLIGADO");
         }catch (Exception e){
             e.printStackTrace();
         }

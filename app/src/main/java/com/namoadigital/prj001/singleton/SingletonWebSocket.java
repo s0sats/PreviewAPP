@@ -29,7 +29,6 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ChatPowerService;
-import com.namoadigital.prj001.service.ScreenStatusReceiver;
 import com.namoadigital.prj001.sql.CH_Message_Sql_011;
 import com.namoadigital.prj001.sql.CH_Message_Sql_014;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
@@ -468,7 +467,7 @@ public class SingletonWebSocket {
                 //
                 ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect - Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + " - origin: " + String.valueOf(args[0]) + "\n", log_file);
                 //
-                if(ScreenStatusReceiver.screenOn) {
+                if(ToolBox_Inf.isScreenOn(context)) {
                     //
                     if (ToolBox_Inf.isUsrAppLogged(context)) {
                         String param = String.valueOf(args[0]);
@@ -479,7 +478,7 @@ public class SingletonWebSocket {
                                 initConnection();
                             } else {
                                 startChatService();
-                                initConnection();
+                                //initConnection();
                             }
                         }
                     } else {
@@ -520,16 +519,18 @@ public class SingletonWebSocket {
                     } else if (!AppBackgroundService.isRunning) {
                         Log.d("ChatEvent", "EVENT_RECONNECT  -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "  Serviço estava para vai ser iniciado");
                         //
-                        Intent chatService = new Intent(context, AppBackgroundService.class);
+                        startChatService();
+                        /*Intent chatService = new Intent(context, AppBackgroundService.class);
                         chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
-                        context.startService(chatService);
+                        context.startService(chatService);*/
                     }
                     //
                     ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTED);
                 } else {
-                    Intent chatService = new Intent(context, AppBackgroundService.class);
+                    startChatService();
+                    /*Intent chatService = new Intent(context, AppBackgroundService.class);
                     chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
-                    context.startService(chatService);
+                    context.startService(chatService);*/
                     ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTED);
                     Log.d("ChatEvent", "EVENT_RECONNECT");
                 }
@@ -599,7 +600,7 @@ public class SingletonWebSocket {
                 Log.d("ChatEvent", "EVENT_RECONNECT_FAILED");
                 if(ToolBox_Inf.isUsrAppLogged(context)) {
                     if (mSocket != null) {
-                        if (ScreenStatusReceiver.screenOn) {
+                        if (ToolBox_Inf.isScreenOn(context)) {
                             if (AppBackgroundService.isRunning) {
                                 ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - EVENT_RECONNECT_FAILED - Screen ON Força iniConnect  \n", log_file);
                                 initConnection();
@@ -910,8 +911,9 @@ public class SingletonWebSocket {
                         if (cError != null && cError.getError_msg() != null) {
                             switch (cError.getError_msg()) {
                                 case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
-                                    Intent chatService = new Intent(context, AppBackgroundService.class);
-                                    context.stopService(chatService);
+//                                    Intent chatService = new Intent(context, AppBackgroundService.class);
+//                                    context.stopService(chatService);
+                                    stopChatService();
                                     break;
                                 case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                                 default:
@@ -1018,7 +1020,7 @@ public class SingletonWebSocket {
     }
 
     private void stopChatService() {
-        destroySingletonWebSocket();
+        destroySingletonWebSocketV3();
         Intent chatService = new Intent(context, AppBackgroundService.class);
         context.stopService(chatService);
     }
@@ -1252,10 +1254,15 @@ public class SingletonWebSocket {
 
         return sSoleInstance;
     }
-
-    public void destroySingletonWebSocket() {
-        //
-        sSoleInstance.disconnect();
+    //region TESTE APAGAR
+    public static void zeraSingleton(File log_file){
+        try {
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Singleton zeraSingleton Chamado. \n",log_file );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("ChatEvent"," - Singleton zeraSingleton Chamado.\n");
+        sSoleInstance.mSocketRunning = false;
         sSoleInstance.mSocket = null;
         //
         sSoleInstance.context = null;
@@ -1263,30 +1270,8 @@ public class SingletonWebSocket {
         sSoleInstance.pm = null;
         sSoleInstance.wl = null;
         sSoleInstance = null;
-        //
-        try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Singleton destroySingletonWebSocket \n", log_file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
-
-    public void destroySingletonWebSocketV2() {
-        if (mSocket != null) {
-            //mSocket.off();
-        }
-        //
-        sSoleInstance.mSocketRunning = false;
-        //sSoleInstance.mSocket = null;
-        //
-        sSoleInstance.context = null;
-        //
-        sSoleInstance.pm = null;
-        sSoleInstance.wl = null;
-        sSoleInstance = null;
-        Log.d("ChatEvent", " destroySingletonWebSocketV2 \n");
-    }
-
+    //endregion
     public void destroySingletonWebSocketV3() {
         if(mSocket != null){
             //Pega manager do socket e seta reconnectin para false;
@@ -1308,5 +1293,41 @@ public class SingletonWebSocket {
         sSoleInstance = null;
         Log.d("ChatEvent", " destroySingletonWebSocketV3 \n");
     }
+
+//    public void destroySingletonWebSocket() {
+//        //
+//        sSoleInstance.disconnect();
+//        sSoleInstance.mSocket = null;
+//        //
+//        sSoleInstance.context = null;
+//        //
+//        sSoleInstance.pm = null;
+//        sSoleInstance.wl = null;
+//        sSoleInstance = null;
+//        //
+//        try {
+//            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Singleton destroySingletonWebSocket \n", log_file);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void destroySingletonWebSocketV2() {
+//        if (mSocket != null) {
+//            //mSocket.off();
+//        }
+//        //
+//        sSoleInstance.mSocketRunning = false;
+//        //sSoleInstance.mSocket = null;
+//        //
+//        sSoleInstance.context = null;
+//        //
+//        sSoleInstance.pm = null;
+//        sSoleInstance.wl = null;
+//        sSoleInstance = null;
+//        Log.d("ChatEvent", " destroySingletonWebSocketV2 \n");
+//    }
+
+
 }
 

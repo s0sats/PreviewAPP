@@ -91,7 +91,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             ""//fcmMessage.getMsg_short().trim()
                     );
                     //
-                    if(fcmMessage.getTitle().equals("< CHAT_MSG >")){
+                    if(fcmMessage.getTitle().equals("<CHAT_MSG>")){
                         String param = ToolBox_Inf.getWebSocketJsonParam(fcmMessage.getMsg_long().trim());
                         //
                         Intent cMessageIntent = new Intent(getApplicationContext(), WBR_C_Message.class);

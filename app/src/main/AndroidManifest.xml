@@ -428,7 +428,8 @@
 
         <service android:name=".service.WS_UserAuthor" />
 
-        <service android:name=".service.AppBackgroundService" android:stopWithTask="false" />
+       <service android:name=".service.AppBackgroundService" android:stopWithTask="false" />
+        <!--<service android:name=".service.AppBackgroundService" />-->
 
         <receiver android:name=".receiver_chat.WBR_C_Room" />
 
@@ -475,6 +476,9 @@
         <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
 
         <service android:name=".service.ChatPowerService" />
+
+        <receiver android:name=".receiver_chat.WBR_Delivered"/>
+        <service android:name=".service_chat.WS_Delivered"/>
 
     </application>
 

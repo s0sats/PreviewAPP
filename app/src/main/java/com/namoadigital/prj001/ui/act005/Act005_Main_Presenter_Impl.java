@@ -256,7 +256,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_CHAT:
-                        if(SingletonWebSocket.isSingletonWebSocketSetted()) {
+                        if(SingletonWebSocket.isSingletonWebSocketSetted() && 1 == 0) {
                             SingletonWebSocket webSocket = SingletonWebSocket.getInstance(context);
                             qty = String.valueOf(webSocket.ismSocketLogged() ? 1 : 0);
                         }else{
