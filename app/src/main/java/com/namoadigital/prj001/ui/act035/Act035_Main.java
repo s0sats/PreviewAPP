@@ -1463,17 +1463,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
 
         if(logged && AppBackgroundService.isRunning){
-            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
-            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         } else if(logged && !AppBackgroundService.isRunning) {
-            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
-            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }else if(!logged && AppBackgroundService.isRunning) {
-            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
-            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }else{
-            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
-            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
 
         return true;
