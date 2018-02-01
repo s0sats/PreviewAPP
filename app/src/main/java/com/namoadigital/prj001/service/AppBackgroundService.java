@@ -42,29 +42,7 @@ public class AppBackgroundService extends Service {
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
             Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n");
             //
-            //boolean mSocketSetted = SingletonWebSocket.isSocketSetted();
-//            boolean mSocketForced = false;
-//            if(SingletonWebSocket.isSocketSetted()){
-//                SingletonWebSocket.mSocket = null;
-//                mSocketForced  = true;
-//            }
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService chama zeraSingleton. \n", log_file);
-            Log.d("ChatEvent"," AppBackgroundService chama zeraSingleton.\n");
-            //SingletonWebSocket.zeraSingleton(log_file);
-            //
-            Log.d("ChatEvent"," AppBackgroundService mSocket. SingletonWebSocket.mSocket value = "+SingletonWebSocket.mSocket+" \n");
-            //boolean mSocketSetted = SingletonWebSocket.isSocketSetted();
             singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
-            //singletonWebSocket.initConnection();
-//            if(mSocketSetted){
-//                singletonWebSocket.initConnection();
-//            }
-//            if(mSocketForced){
-//                singletonWebSocket.initConnection();
-//            }
-//        if(isFcmCall){
-//            singletonWebSocket.turnOnFcmCall();
-//        }
             //
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
             //
