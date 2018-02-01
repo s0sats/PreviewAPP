@@ -487,6 +487,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         for (int i = 0; i < dados.size(); i++) {
                             if (dados.get(i).get(CH_MessageDao.TMP) != null) {
                                 mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(i).get(CH_MessageDao.MSG_PREFIX), dados.get(i).get(CH_MessageDao.MSG_CODE));
+                                break;
                             }
                         }
                     } else {
