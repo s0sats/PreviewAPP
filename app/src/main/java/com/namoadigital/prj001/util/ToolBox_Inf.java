@@ -79,8 +79,6 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
-import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.service.ChatPowerService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
@@ -3157,120 +3155,11 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isUsrAppLogged(Context context) {
-        boolean user = !ToolBox_Con.getPreference_User_Code(context).equals("");
-        boolean customer = ToolBox_Con.getPreference_Customer_Code(context) != -1;
-        boolean session = !ToolBox_Con.getPreference_Session_App(context).equals("");
-
         boolean logged =
                 !ToolBox_Con.getPreference_User_Code(context).equals("")
                         && ToolBox_Con.getPreference_Customer_Code(context) != -1
                         && !ToolBox_Con.getPreference_Session_App(context).equals("");
-        Log.d("ChatEvent", "isUsrAppLogged  =  " +logged + "\n");
         return logged;
-    }
-
-    public static boolean defineChatServiceAction(Context context, String caller, boolean debug) {
-        try {
-            File log_file = null;
-            String callNameClass = context.getClass().getSimpleName();
-            String callName = caller;
-            if (debug) {
-                log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - " + callName + " Acessou metodo defineChatServiceAction()\n", log_file);
-            }
-            Log.d("ChatEvent", " - " + callName + " Acessou metodo defineChatServiceAction() \n");
-            Log.d("ChatEvent", "Nome da classe pelo getClass: " + callNameClass + "\n");
-            Log.d("ChatEvent", "Nome da classe pela Constant: " + callName + "\n");
-
-            if (callName.equals(Constant.SCREEN_STATUS_RECEIVER)
-                && !ToolBox_Inf.isScreenOn(context)) {
-                ChatPowerService.lastCall = Calendar.getInstance();
-            } else if (!callName.equals(Constant.SCREEN_STATUS_RECEIVER)) {
-                ChatPowerService.lastCall = Calendar.getInstance();
-            }
-
-            if (!ChatPowerService.isRunning) {
-                Intent powerService = new Intent(context, ChatPowerService.class);
-                context.startService(powerService);
-                return true;
-            }
-
-            if (AppBackgroundService.isRunning) {
-                if (debug) {
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - " + callName + " Serviço rodando\n", log_file);
-                }
-                Log.d("ChatEvent", " - " + callName + " Serviço rodando\n");
-                return true;
-            } else if (!ToolBox_Con.isOnline(context)) {
-                if (debug) {
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - " + callName + " Serviço off e conectividade off\n", log_file);
-                }
-                Log.d("ChatEvent", " - " + callName + " Serviço off e conectividade off\n");
-                return true;
-            } else if (
-                    !callName.equals(Constant.MY_FIRE_BASE_MESSAGING_SERVICE) &&
-                            !callName.equals(Constant.WBR_CONNECTIONS_CHANGE) &&
-                            !ToolBox_Inf.isScreenOn(context)
-                    ) {
-                if (debug) {
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - " + callName + " Serviço off, conectividade on, não é FCM, nem troca conectividade e tela off\n", log_file);
-                }
-                Log.d("ChatEvent", " - " + callName + " Serviço off, conectividade on, não é FCM, nem troca conectividade e tela off\n");
-                return true;
-            } else {
-                if (debug) {
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - " + callName + " Startou o serviço\n", log_file);
-                }
-                Log.d("ChatEvent", " - " + callName + " Startou o serviço\n");
-                //
-                Intent chatService = new Intent(context, AppBackgroundService.class);
-                chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, callName);
-                context.startService(chatService);
-                return true;
-            }
-
-            //
-           /* if (!AppBackgroundService.isRunning) {
-                if(debug ) {
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Startou o serviço\n", log_file);
-                }
-                Log.d("ChatEvent"," - "+callName+" Startou o serviço\n");
-                //
-                Intent chatService = new Intent(context, AppBackgroundService.class);
-                chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, callName);
-                context.startService(chatService);
-
-
-            } else {
-//                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-//                if(debug){
-//                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Serviço Running, Ultima chamada de login: "+(singletonWebSocket.getLastLoginCall() != null?singletonWebSocket.getLastLoginCall().getTime():" Sem Registro") +"\n", log_file);
-//                }
-//                Log.d("ChatEvent",callName+" Serviço Running, Ultima chamada de login: "+(singletonWebSocket.getLastLoginCall() != null?singletonWebSocket.getLastLoginCall().getTime():" Sem Registro")+"\n");
-//                if (singletonWebSocket.getLastLoginCall() != null) {
-//                    Calendar dateNow = Calendar.getInstance();
-//                    long dateDiff = dateNow.getTimeInMillis() - singletonWebSocket.getLastLoginCall().getTimeInMillis();
-//                    float minutesPast = (float) dateDiff / (60 * 1000);
-//                    if(debug){
-//                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Diff ultima chamada de login e agora em minutos: "+String.valueOf(minutesPast) +" \n", log_file);
-//                        Log.d("ChatEvent",callName+" Diff ultima chamada de login e agora em minutos: "+String.valueOf(minutesPast) +" \n");
-//                    }
-//                    //
-//                    if (minutesPast >= 1.0f) {
-//                        if(debug){
-//                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - "+callName+" Chamará login\n", log_file);
-//                            Log.d("ChatEvent",callName+"Chamará login\n");
-//                        }
-//                        singletonWebSocket.attemptSendLogin();
-//                    }
-//                }
-            }
-            return true;*/
-        } catch (Exception e) {
-            e.printStackTrace();
-            registerException(CLASS_NAME, e);
-            return false;
-        }
     }
 
     public static boolean isScreenOn(Context context){

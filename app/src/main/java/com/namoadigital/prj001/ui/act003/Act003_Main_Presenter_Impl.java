@@ -116,52 +116,6 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                 e.printStackTrace();
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
-
-
-//Esquema funcional até 29/01
-//            if(!AppBackgroundService.isRunning){
-//                //
-//                //
-//                HMAux msgAux = messageDao.getByStringHM(
-//                        new CH_Message_Sql_004().toSqlQuery()
-//                );
-//                //
-//                if (msgAux.size() > 0) {
-//                    ToolBox_Con.setPreference_Chat_Msg_Code(
-//                            context,
-//                            Long.parseLong(msgAux.get(CH_MessageDao.TMP))
-//                    );
-//                    //
-//                    ToolBox_Con.setPreference_Chat_Msg_Token(
-//                            context,
-//                            Long.parseLong(msgAux.get(CH_MessageDao.MSG_TOKEN))
-//                    );
-//                }
-//                Intent chatIntent = new Intent(context, AppBackgroundService.class);
-//                chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER,getClass().getName());
-//                context.startService(chatIntent);
-//            }else{
-//                if(ToolBox_Inf.isUsrAppLogged(context)) {
-//                    try{
-////                        File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-////                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o singletonGetInstance()\n", log_file);
-//                        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o singletonGetInstance()\n");
-//
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-//                    singletonWebSocket.attemptSendLogin();
-//                }else{
-//                    try {
-//                        throw new Exception("USER_NOT_LOGGED_TRYIED_START_WEB_SOCKET");
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        ToolBox_Inf.registerException(getClass().getName(),e);
-//                    }
-//                }
-//            }
-            //end do se tem preferencias
         }
     }
 

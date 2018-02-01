@@ -35,7 +35,6 @@ public class AppBackgroundService extends Service {
         this.isRunning = true;
         try {
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
-            //boolean isFcmCall = intent.getBooleanExtra(Constant.WS_FCM,false);
             if(intent != null) {
                 serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
             }
@@ -51,7 +50,6 @@ public class AppBackgroundService extends Service {
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
         return START_STICKY;
-       // return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -64,13 +62,9 @@ public class AppBackgroundService extends Service {
         }
         Log.d("ChatEvent"," onDestroy AppBackgroundService \n");
         //
-        //singletonWebSocket.attemptDisconnect("App Socket.disconnect()");
-        //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
         //
-        //singletonWebSocket.destroySingletonWebSocket();
-        //singletonWebSocket.destroySingletonWebSocketV2();
-        singletonWebSocket.destroySingletonWebSocketV3();
+        singletonWebSocket.destroySingletonWebSocket();
     }
 
 

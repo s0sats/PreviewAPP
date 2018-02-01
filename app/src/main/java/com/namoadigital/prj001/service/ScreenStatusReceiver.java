@@ -42,7 +42,6 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
                 ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n___________________________________>DISPLAY_ON<____________________________________\n.", log_file);
                 //
                 if (ToolBox_Inf.isUsrAppLogged(context)) {
-                    //ToolBox_Inf.defineChatServiceAction(context, Constant.SCREEN_STATUS_RECEIVER, true);
                     if(!AppBackgroundService.isRunning) {
                         Intent chatService = new Intent(context, AppBackgroundService.class);
                         chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());

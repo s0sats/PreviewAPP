@@ -19,7 +19,6 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
-import com.namoadigital.prj001.service.ChatPowerService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
@@ -28,7 +27,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by d.luche on 01/12/2017.
@@ -36,6 +34,7 @@ import java.util.Calendar;
 
 public class WS_C_Message extends IntentService {
 
+    //ANALISAR NECESSIDADE DE MUDANÇA PARA  CRIARA OBJ JSONE  AVALISA SE TYPE = IMAGE
     private final String CONTAINS_IMAGE_MSG = "\"type\":\"IMAGE\"";
 
     private CH_MessageDao messageDao;
@@ -50,8 +49,6 @@ public class WS_C_Message extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-            //Atualiza ultima chamada no serviço que locka bateria
-            ChatPowerService.lastCall = Calendar.getInstance();
             //
             messageDao = new CH_MessageDao(getApplicationContext());
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);

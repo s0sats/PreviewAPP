@@ -38,7 +38,6 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
-import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -256,14 +255,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_CHAT:
-                        if(SingletonWebSocket.isSingletonWebSocketSetted() && 1 == 0) {
-                            SingletonWebSocket webSocket = SingletonWebSocket.getInstance(context);
-                            qty = String.valueOf(webSocket.ismSocketLogged() ? 1 : 0);
-                        }else{
-                            qty = "0";
-                        }
-                        //
-                        //qty = String.valueOf(webSocket.ismSocketLogged() ? 1 : 0);
+                        qty = "1";
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 

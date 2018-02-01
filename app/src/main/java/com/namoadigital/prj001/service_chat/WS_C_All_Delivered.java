@@ -12,13 +12,11 @@ import com.google.gson.reflect.TypeToken;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.Chat_C_All_Delivered_Read;
 import com.namoadigital.prj001.receiver_chat.WBR_C_All_Delivered;
-import com.namoadigital.prj001.service.ChatPowerService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_010;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by d.luche on 30/11/2017.
@@ -36,8 +34,6 @@ public class WS_C_All_Delivered extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-            //Atualiza ultima chamada no serviço que locka bateria
-            ChatPowerService.lastCall = Calendar.getInstance();
             //
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
 

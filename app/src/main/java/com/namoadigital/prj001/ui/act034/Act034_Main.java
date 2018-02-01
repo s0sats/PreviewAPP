@@ -81,8 +81,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private ArrayList<HMAux> customer_list = new ArrayList<>();
     private RoomInfoTask roomInfoTask;
     private DownloadMemberImgTask downloadMemberImgTask;
-    /*TESTE, MOVER PARA ACT035*/
-    //private MessageInfoTask messageInfoTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -560,7 +558,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     //region AsyncTask
-
     private class RoomInfoTask extends AsyncTask<String, Integer, String> {
 
         @Override

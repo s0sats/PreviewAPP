@@ -81,7 +81,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
             if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
-                //if (!ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase("")) {
                 if (ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
                     ToolBox_Inf.showChatNotification(
                             getApplicationContext(),

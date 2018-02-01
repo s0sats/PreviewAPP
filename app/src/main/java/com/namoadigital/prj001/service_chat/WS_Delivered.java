@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -98,7 +97,7 @@ public class WS_Delivered extends IntentService {
         }
         //
         if(sDeliveredList.size() == 0){
-            Log.d("ChatEvent", "sDeliveredList do post é 0, sai sem processar nada");
+            //Log.d("ChatEvent", "sDeliveredList do post é 0, sai sem processar nada");
             return;
         }
         //
@@ -106,14 +105,14 @@ public class WS_Delivered extends IntentService {
         //
         env.setJson(ToolBox_Inf.setWebSocketJsonParam(sDeliveredList));
         env.setSession_app(sessionList);
-        Log.d("ChatEvent", "Envio do post sDelivered(FCM): " + gson.toJson(env));
+        //Log.d("ChatEvent", "Envio do post sDelivered(FCM): " + gson.toJson(env));
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_CHAT_POST_DELIVERED,
                 gson.toJson(env)
         );
         //
-        Log.d("ChatEvent", "Retorno do post sDelivered(FCM): " + resultado);
+        //Log.d("ChatEvent", "Retorno do post sDelivered(FCM): " + resultado);
         //
         DeliveredRetObj rec = gson.fromJson(
                 resultado,
@@ -121,7 +120,7 @@ public class WS_Delivered extends IntentService {
         );
         //
         if (rec.getObj().equals("OK")) {
-            Log.d("ChatEvent", "Retornou OK, atualiza msgs no banco, setando delivered pra 1");
+            //Log.d("ChatEvent", "Retornou OK, atualiza msgs no banco, setando delivered pra 1");
             for(CH_Message chMessage : dbDeliveryList){
                 //Atualiza valor de dado entregue
                 chMessage.setDelivered(1);

@@ -25,7 +25,6 @@ public class WBR_BootCompleted extends BroadcastReceiver {
         ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
 
         if(ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && ToolBox_Inf.isUsrAppLogged(context)){
-            //ToolBox_Inf.defineChatServiceAction(context,Constant.WBR_BOOTCOMPLETED,true);
             if(!AppBackgroundService.isRunning) {
                 try {
                     File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
