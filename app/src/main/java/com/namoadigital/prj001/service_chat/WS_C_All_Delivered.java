@@ -34,6 +34,7 @@ public class WS_C_All_Delivered extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+            //
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
 
             processC_All_Delivered(json_param);

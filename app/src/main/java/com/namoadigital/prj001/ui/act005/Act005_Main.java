@@ -184,16 +184,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
         //
-        chatReceiver = new BR_Chat();
-        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
-        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
+//        chatReceiver = new BR_Chat();
+//        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
+//        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+//        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
     }
 
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
         super.onDestroy();
     }
 
@@ -675,22 +675,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         setTitleLanguage();
         setFooter();
 
-        //Aplica informações do rodapé
-       /* HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;*/
     }
 
     @Override
@@ -767,11 +751,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void callAct006(Context context) {
         //
-        //Intent socketService = new Intent(context, AppBackgroundService.class);
-        //stopService(socketService);
-        //SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        //singletonWebSocket.attemptDisconnect("");
-
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
@@ -1143,40 +1122,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else {
             progressDialog.dismiss();
         }
-    }
-
-    private void showSendStatusScore() {
-
-        //Atualiza menu e os badges
-        mPresenter.getMenuItens(hmAux_Trans);
-
-        String msg = "";
-        for (int i = 0; i < wsProcessList.size(); i++) {
-            msg += wsProcessList.get(i).get(WS_LIST_ITEM_LABEL) + " : " + wsProcessList.get(i).get(WS_LIST_ITEM_RETURN) + "\n";
-        }
-        //
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_send_return_ttl"),
-                msg,
-                null,
-                0
-        );
-
-    }
-
-    private int getWsIdx(String ws) {
-        try {
-            for (int i = 0; i < wsProcessList.size(); i++) {
-                if (wsProcessList.get(i).get(WS_LIST_ITEM).equals(ws)) {
-                    return i;
-                }
-            }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            return -1;
-        }
-        return -1;
     }
 
     private void showSuccessDialog() {

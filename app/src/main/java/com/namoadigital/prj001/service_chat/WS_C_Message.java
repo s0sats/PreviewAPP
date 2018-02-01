@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
+import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.util.Constant;
@@ -33,7 +34,8 @@ import java.util.ArrayList;
 
 public class WS_C_Message extends IntentService {
 
-    private final String START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
+    //ANALISAR NECESSIDADE DE MUDANÇA PARA  CRIARA OBJ JSONE  AVALISA SE TYPE = IMAGE
+    private final String CONTAINS_IMAGE_MSG = "\"type\":\"IMAGE\"";
 
     private CH_MessageDao messageDao;
 
@@ -46,16 +48,14 @@ public class WS_C_Message extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
-
-
         try {
+            //
             messageDao = new CH_MessageDao(getApplicationContext());
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
             String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM, "");
             String messageTmpFile = bundle.getString(Constant.CHAT_WS_MSG_TMP_PARAM, null);
             String historicalAction = bundle.getString(Constant.CHAT_WS_HISTORICAL_ACTION_PARAM, null);
             long messageIncrement = bundle.getLong(Constant.CHAT_WS_MSG_COUNTER_PARAM, 0);
-
             processC_Message(json_param, ws_event, messageTmpFile,historicalAction, messageIncrement);
 
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class WS_C_Message extends IntentService {
                     chMessage = chatMessage.toCH_MessageObj();
                     chMessage.setTmp(0);
                     //Verifica se precisa iniciar serviço de download
-                    if (!startDownloadService && chMessage.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)) {
+                    if (!startDownloadService && chMessage.getMsg_obj().contains(CONTAINS_IMAGE_MSG)) {
                         startDownloadService = true;
                     }
                 }
@@ -163,7 +163,7 @@ public class WS_C_Message extends IntentService {
         } else {
             JsonArray sDeliveredList = new JsonArray();
             JsonArray sReadList = new JsonArray();
-            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+            SingletonWebSocket singletonWebSocket = null;
             //
             boolean startDownloadService = false;
             //Transforma list de objs recebido(Chat_C_Message)
@@ -171,6 +171,19 @@ public class WS_C_Message extends IntentService {
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
             for (CH_Message ch_message : chMessages) {
+                if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
+                    ch_message.setMsg_pk(String.valueOf(ch_message.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, ch_message.getMsg_code())));
+                    ch_message.setDelivered(0);
+                    //ch_message.setDelivered_date("");
+                    ch_message.setAll_delivered(0);
+                    ch_message.setRead(0);
+                    //ch_message.setRead_date("");
+                    ch_message.setAll_read(0);
+                }else{
+                    if(singletonWebSocket == null) {
+                        singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                    }
+                }
                 //
                 CH_Message dbMessage =
                         messageDao.getByString(
@@ -180,12 +193,11 @@ public class WS_C_Message extends IntentService {
                                 ).toSqlQuery()
                         );
                 //Verifica se a necessidade de notificação
-                if(!singletonWebSocket.isShow_notification() && dbMessage.getTmp() < 0){
+                if(singletonWebSocket != null &&!singletonWebSocket.isShow_notification() && dbMessage.getTmp() < 0){
                     singletonWebSocket.setShow_notification(true);
                 }
-
                 //Verifica se precisa iniciar serviço de download
-                if (!startDownloadService && ch_message.getMsg_obj().startsWith(START_WITH_IMAGE_MSG)) {
+                if (!startDownloadService && ch_message.getMsg_obj().contains(CONTAINS_IMAGE_MSG)) {
                     startDownloadService = true;
                 }
                 //CORREÇÃO DA ATUALIZAÇÃO DE TMP PARA MSG JA EXISTENTE
@@ -196,7 +208,7 @@ public class WS_C_Message extends IntentService {
                     ch_message.setTmp(0);
                 }
                 //
-                if (ch_message.getDelivered() == 0) {
+                if (ch_message.getDelivered() == 0 && !ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
                     //Atualiza valor de dado entregue
                     ch_message.setDelivered(1);
                     ch_message.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -239,7 +251,16 @@ public class WS_C_Message extends IntentService {
                 startDownloadService();
             }
             //
-            if (sDeliveredList.size() > 0) {
+            if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
+                Intent postDeliveredIntent = new Intent(getApplicationContext(), WBR_Delivered.class);
+                Bundle bundle = new Bundle();
+                // bundle.putString(Constant.CHAT_WS_JSON_PARAM,ToolBox_Inf.setWebSocketJsonParam(sDeliveredList));
+                postDeliveredIntent.putExtras(bundle);
+                getApplicationContext().sendBroadcast(postDeliveredIntent);
+                return;
+            }
+            //
+            if (sDeliveredList.size() > 0 && ! ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
                 singletonWebSocket.attemptToDeliveryMessage(
                         ToolBox_Inf.setWebSocketJsonParam(sDeliveredList)
                 );

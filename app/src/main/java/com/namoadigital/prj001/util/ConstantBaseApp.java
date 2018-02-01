@@ -58,6 +58,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT035 = "act035";
     public static final String ACT036 = "act036";
 
+    //Contantes classes relativas ao chat
+    public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
+    public static final String WBR_BOOTCOMPLETED = "WBR_BootCompleted";
+    public static final String SCREEN_STATUS_RECEIVER = "ScreenStatusReceiver";
+    public static final String WBR_CONNECTIONS_CHANGE = "WBR_Connections_Change";
+
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
     public static final String ACT007_CURRENTINDEX = "currentIndex";
@@ -397,6 +403,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
     public static final String CHAT_EVENT_C_HISTORICAL_MESSAGES = "cHistoricalMessages";
     public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
+    public static final String CHAT_EVENT_C_MESSAGE_FCM = "cMessageFCM";
     public static final String CHAT_EVENT_C_MESSAGE_TMP = "cMessageTmp";
     public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
     public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
@@ -456,12 +463,17 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_NOTIFICATION_TYPE_MESSAGE = "MESSAGE";
     public static final String CHAT_NOTIFICATION_TYPE_RECONNECTING = "RECONNECTING";
     public static final String CHAT_NOTIFICATION_TYPE_CHAT = "CHAT";
+    public static final String CHAT_START_SERVICE_CALLER = "CHAT_START_SERVICE_CALLER";
+
     //Errors
     public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
     public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";
     //
     public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
     public static final String CHAT_NO_USER_IMAGE = "no_user";
+    //
+
+
 
 
 

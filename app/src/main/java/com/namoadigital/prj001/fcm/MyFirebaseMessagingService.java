@@ -17,6 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
@@ -80,8 +81,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             //
             if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
-
-                if (!ToolBox_Con.getPreference_User_Code(getApplicationContext()).equalsIgnoreCase("")) {
+                if (ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
                     ToolBox_Inf.showChatNotification(
                             getApplicationContext(),
                             fcmMessage.getModule().toUpperCase(),
@@ -89,8 +89,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             "",//fcmMessage.getTitle().trim(),
                             ""//fcmMessage.getMsg_short().trim()
                     );
-                }
+                    //
+                    if(fcmMessage.getTitle().equals("<CHAT_MSG>")){
+                        String param = ToolBox_Inf.getWebSocketJsonParam(fcmMessage.getMsg_long().trim());
+                        //
+                        Intent cMessageIntent = new Intent(getApplicationContext(), WBR_C_Message.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                        bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE_FCM);
+                        cMessageIntent.putExtras(bundle);
+                        getApplicationContext().sendBroadcast(cMessageIntent);
+                    }
 
+                }
                 return;
             }
             //

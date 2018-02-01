@@ -18,6 +18,7 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -3166,7 +3167,7 @@ public class ToolBox_Inf {
         boolean logged =
                 !ToolBox_Con.getPreference_User_Code(context).equals("")
                         && ToolBox_Con.getPreference_Customer_Code(context) != -1
-                        && !ToolBox_Con.getPreference_User_Code(context).equals("");
+                        && !ToolBox_Con.getPreference_Session_App(context).equals("");
         return logged;
     }
 
@@ -3299,4 +3300,12 @@ public class ToolBox_Inf {
                 ).toSqlQuery()
         );
     }
+
+    public static boolean isScreenOn(Context context){
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isOn = pm.isScreenOn();
+
+        return isOn;
+    }
+
 }

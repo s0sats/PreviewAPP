@@ -5,110 +5,60 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.io.File;
+
 /**
  * Created by neomatrix on 1/16/18.
  */
 
 public class ScreenStatusReceiver extends BroadcastReceiver {
 
-    private boolean screenOn;
+    private File log_file = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+        try {
 
-        if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-            screenOn = false;
-            //
-            /*AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Intent mIntent = new Intent(context, WBR_Stop_Chat_service.class);
-            //
-            PendingIntent checkPIntnet = PendingIntent.getBroadcast(
-                    context,
-                    999,
-                    mIntent,
-                    PendingIntent.FLAG_NO_CREATE
-            );
-            if (checkPIntnet == null) {
+            boolean screenOn;
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                screenOn = false;
                 //
-                PendingIntent pIntnet = PendingIntent.getBroadcast(
-                        context,
-                        999,
-                        mIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                Log.d("ChatEvent", "Status da Tela :DESLIGADO");
                 //
-                alarmManager.set(
-                        AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + (1 * 60 * 1000),
-                        pIntnet
-                );
-                Log.d("ChatEvent", "WBR_Stop_Chat_service - Setado");
-                try {
-                    File log_file = new File(Constant.SUPPORT_PATH, "screen_off_alarm_log.txt");
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - WBR_Stop_Chat_service - Setado\n", log_file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }else{
-                //
-                PendingIntent cancelPIntent = PendingIntent.getBroadcast(
-                        context,
-                        999,
-                        mIntent,
-                        PendingIntent.FLAG_CANCEL_CURRENT
-                );
-                //
-                alarmManager.cancel(cancelPIntent);
-                cancelPIntent.cancel();
-                Log.d("ChatEvent", "WBR_Stop_Chat_service - Cancelado (ScreenOff)");
-                try {
-                    File log_file = new File(Constant.SUPPORT_PATH, "screen_off_alarm_log.txt");
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - WBR_Stop_Chat_service - Setado\n", log_file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }*/
-            //
-            //Intent intent1 = new Intent(context,WBR_Stop_Chat_service.class);
-            // context.sendBroadcast(intent1);
-            Intent serviceStopChat = new Intent(context,S_StopChatService.class);
-            context.startService(serviceStopChat);
-
-        } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-            screenOn = true;
-            /*Intent mIntent = new Intent(context, WBR_Stop_Chat_service.class);
-            //
-            PendingIntent pIntent = PendingIntent.getBroadcast(
-                    context,
-                    999,
-                    mIntent,
-                    PendingIntent.FLAG_NO_CREATE
-            );
-            //
-            if (pIntent != null) {
-                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                //alarmManager.cancel(pIntent);
-                //
-                //pIntent.cancel();
-                //
-                Log.d("ChatEvent", "WBR_Stop_Chat_service - Cancelado (ScreenOn)");
-                try {
-                    File log_file = new File(Constant.SUPPORT_PATH, "screen_off_alarm_log.txt");
-                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - WBR_Stop_Chat_service - Cancelado (ScreenOn)\n", log_file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            //
-            if (ToolBox_Inf.isUsrAppLogged(context) && !AppBackgroundService.isRunning) {
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "  ===================================>DISPLAY_OFF<===================================\n.", log_file);
                 //
                 Intent chatService = new Intent(context, AppBackgroundService.class);
-                context.startService(chatService);
-            }*/
-            S_StopChatService.keepOnRunning = false;
-        }
+                context.stopService(chatService);
 
-        Log.d("STATUS_DISPLAY", screenOn ? "LIGADO" : "DESLIGADO");
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                screenOn = true;
+                Log.d("ChatEvent", "Status da Tela : LIGADO");
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n___________________________________>DISPLAY_ON<____________________________________\n.", log_file);
+                //
+                if (ToolBox_Inf.isUsrAppLogged(context)) {
+                    if(!AppBackgroundService.isRunning) {
+                        Intent chatService = new Intent(context, AppBackgroundService.class);
+                        chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+                        context.startService(chatService);
+                    }else{
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                        singletonWebSocket.attemptSendLogin();
+                    }
+                }
+                Log.d("STATUS_DISPLAY", screenOn ? "LIGADO" : "Ligada");
+            }else{
+                String whatElse = intent.getAction().toString();
+                Log.d("ChatEvent", "Status da Tela : OUTRA COISA o.O: " + whatElse );
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

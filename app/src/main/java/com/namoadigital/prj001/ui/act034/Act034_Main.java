@@ -44,6 +44,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
@@ -625,7 +626,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     //region AsyncTask
-
     private class RoomInfoTask extends AsyncTask<String, Integer, String> {
 
         @Override
@@ -928,12 +928,22 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        boolean logged = false;
+        if(SingletonWebSocket.isSingletonWebSocketSetted()) {
+            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+            logged = singletonWebSocket.ismSocketLogged();
+        }
 
-        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-        if (singletonWebSocket.ismSocketLogged()) {
+        if(logged && AppBackgroundService.isRunning){
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else {
+        } else if(logged && !AppBackgroundService.isRunning) {
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else if(!logged && AppBackgroundService.isRunning) {
+            menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
+            menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }else{
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
@@ -949,6 +959,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
+       /* if(id == 2){
+            if(AppBackgroundService.isRunning){
+                Log.d("ChatEvent", " Act034 tenta parar serviço do chat. \n");
+                Intent chatService = new Intent(context, AppBackgroundService.class);
+                context.stopService(chatService);
+            }
+        }*/
 
         return true;
     }
