@@ -376,7 +376,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             chatFinishActReceiver = new Chat_Finish_Act();
         }
         //
-        if (roomPrivate == null){
+        if (roomPrivate == null) {
             roomPrivate = new RoomPrivate();
         }
         //
@@ -427,6 +427,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         mRoom_code
                 ).toSqlQuery()
         );
+
+
+        // Teste - Inicio
+        //
+        // ToolBox_Inf.cleanRoom_RoomMessages(context, mRoom);
+
+        // Teste - Fim
+
 
         tv_room_name_val.setText(mRoom.getRoom_desc());
 
@@ -1408,7 +1416,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
 
     }
-
 
     public void updateMemberImage(String user_code, String local_url) {
         if (mDialogAdapter != null) {

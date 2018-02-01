@@ -9,11 +9,11 @@ import com.namoadigital.prj001.database.Specification;
  * Remove uma unica room baseada no Room code
  */
 
-public class CH_Room_Sql_004 implements Specification {
+public class CH_Room_Sql_009 implements Specification {
 
     private String room_code;
 
-    public CH_Room_Sql_004(String room_code) {
+    public CH_Room_Sql_009(String room_code) {
         this.room_code = room_code;
     }
 
@@ -24,7 +24,7 @@ public class CH_Room_Sql_004 implements Specification {
         return sb
                 .append(" DELETE FROM " + CH_RoomDao.TABLE + " \n" +
                         " WHERE\n" +
-                        "  room_code  = '" + room_code + "' \n ")
+                        "   status_update  = '0' \n ")
                 .toString();
     }
 }

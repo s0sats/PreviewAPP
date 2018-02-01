@@ -119,12 +119,13 @@
         <EditText
             android:id="@+id/act035_mket_chat"
             android:layout_width="0dp"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
+            android:minHeight="45dp"
+            android:maxHeight="100dp"
             android:layout_weight="1"
             android:background="@drawable/bg_msg_from"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:inputType="text" />
+            android:paddingRight="10dp" />
 
 
         <ImageView

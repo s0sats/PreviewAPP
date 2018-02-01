@@ -44,6 +44,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -59,6 +60,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
+import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
@@ -80,6 +82,12 @@ import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.sql.CH_Message_Sql_020;
+import com.namoadigital.prj001.sql.CH_Message_Sql_022;
+import com.namoadigital.prj001.sql.CH_Message_Sql_023;
+import com.namoadigital.prj001.sql.CH_Room_Sql_004;
+import com.namoadigital.prj001.sql.CH_Room_Sql_007;
+import com.namoadigital.prj001.sql.CH_Room_Sql_008;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
@@ -3201,5 +3209,94 @@ public class ToolBox_Inf {
             }
         }
         return s;
+    }
+
+    public static void cleanRoom_RoomMessages(Context context) {
+        CH_RoomDao mRoomDao = new CH_RoomDao(context);
+
+        ArrayList<File> imagesList = new ArrayList<>();
+        //
+        ArrayList<HMAux> mRooms = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Room_Sql_008().toSqlQuery()
+        );
+
+        for (HMAux aux : mRooms) {
+            imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+            imagesList.add(new File(Constant.THU_PATH + "/" +
+                    aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).substring(0, aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).length() - 4) +
+                    Constant.THUMB_SUFFIX + ".jpg"));
+        }
+
+        ArrayList<HMAux> mRoomsMessagesImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Message_Sql_023().toSqlQuery()
+        );
+
+        for (HMAux aux : mRoomsMessagesImages) {
+            imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+            imagesList.add(new File(Constant.THU_PATH + "/" +
+                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                    Constant.THUMB_SUFFIX + ".jpg"));
+        }
+
+        // Delete Images from Room and Messages of this Room
+        deleteFileListExceptionSafe(imagesList);
+
+        for (HMAux aux : mRooms) {
+            // Remove Messages of this Room
+            mRoomDao.remove(
+                    new CH_Message_Sql_022(
+                            aux.get(CH_RoomDao.ROOM_CODE)
+                    ).toSqlQuery()
+            );
+            // Remove Room
+            mRoomDao.remove(new CH_Room_Sql_004(
+                            aux.get(CH_RoomDao.ROOM_CODE)
+                    ).toSqlQuery()
+            );
+        }
+
+        mRoomDao.addUpdate(new CH_Room_Sql_007(
+                ).toSqlQuery()
+        );
+    }
+
+    public static void cleanRoom_RoomMessages(Context context, CH_Room ch_room) {
+        CH_RoomDao mRoomDao = new CH_RoomDao(context);
+
+        ArrayList<File> imagesList = new ArrayList<>();
+        //
+        imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + ch_room.getRoom_image_local()));
+        imagesList.add(new File(Constant.THU_PATH + "/" +
+                ch_room.getRoom_image_local().substring(0, ch_room.getRoom_image_local().length() - 4) +
+                Constant.THUMB_SUFFIX + ".jpg"));
+        //
+        ArrayList<HMAux> msgImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Message_Sql_020(
+                        ch_room.getRoom_code()
+                ).toSqlQuery()
+        );
+        //
+        for (HMAux aux : msgImages) {
+            imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+            imagesList.add(new File(Constant.THU_PATH + "/" +
+                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                    Constant.THUMB_SUFFIX + ".jpg"));
+        }
+
+        // Delete Images from Room and Messages of this Room
+        deleteFileListExceptionSafe(imagesList);
+        //
+
+        // Remove Messages of this Room
+        mRoomDao.remove(
+                new CH_Message_Sql_022(
+                        ch_room.getRoom_code()
+                ).toSqlQuery()
+        );
+        // Remove Room
+        mRoomDao.remove(new CH_Room_Sql_004(
+                        ch_room.getRoom_code()
+                ).toSqlQuery()
+        );
     }
 }
