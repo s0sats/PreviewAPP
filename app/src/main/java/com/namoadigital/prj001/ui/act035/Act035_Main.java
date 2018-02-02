@@ -676,6 +676,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     case Constant.CHAT_BR_TYPE_ROOM:
                         processing_cRoom(context);
                         break;
+                    case Constant.CHAT_EVENT_C_MESSAGE_FCM:
                     case Constant.CHAT_BR_TYPE_MSG:
                         processing_cMessage(context);
                         break;

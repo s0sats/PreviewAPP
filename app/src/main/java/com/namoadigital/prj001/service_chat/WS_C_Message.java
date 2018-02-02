@@ -179,6 +179,8 @@ public class WS_C_Message extends IntentService {
                     ch_message.setRead(0);
                     //ch_message.setRead_date("");
                     ch_message.setAll_read(0);
+                    ch_message.setStatus_update(1);
+                    ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                 }else{
                     if(singletonWebSocket == null) {
                         singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
@@ -257,6 +259,7 @@ public class WS_C_Message extends IntentService {
                 // bundle.putString(Constant.CHAT_WS_JSON_PARAM,ToolBox_Inf.setWebSocketJsonParam(sDeliveredList));
                 postDeliveredIntent.putExtras(bundle);
                 getApplicationContext().sendBroadcast(postDeliveredIntent);
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_MESSAGE_FCM);
                 return;
             }
             //

@@ -130,6 +130,8 @@ public class WS_Delivered extends IntentService {
                 //
                 messageDao.addUpdate(chMessage);
             }
+            //
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_MESSAGE_FCM);
         }
     }
 

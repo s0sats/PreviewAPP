@@ -193,13 +193,21 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     public boolean checkReOrder(ArrayList<HMAux> dados, ArrayList<HMAux> messages) {
-        String sMessages = messages.get(0).get("msg_pk");
+        String sMessages = "";
+
+        for (int i = 0; i < messages.size(); i++) {
+            if (messages.get(i).get("msg_pk") != null){
+                sMessages = messages.get(i).get("msg_pk");
+                //
+                break;
+            }
+        }
         //
         for (int i = dados.size() - 1; i >= 0; i--) {
             HMAux aux = dados.get(i);
             //
             if (aux.get(CH_MessageDao.TMP) != null) {
-                if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty()) {
+                if (aux.get("msg_pk") != null && !aux.get("msg_pk").isEmpty() && !sMessages.isEmpty()) {
                     int compare = aux.get("msg_pk").compareToIgnoreCase(sMessages);
 
                     if (compare < 0) {
@@ -220,7 +228,6 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         //
         return false;
     }
-
 
     @Override
     public int getCount() {

@@ -255,7 +255,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             sReadList.add(gson.toJsonTree(sRead));
         }
 
-        if (sReadList.size() > 0) {
+        if (sReadList.size() > 0 && ToolBox_Inf.isScreenOn(context)) {
             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
             singletonWebSocket.attemptToReadMessage(
                     ToolBox_Inf.setWebSocketJsonParam(sReadList)
