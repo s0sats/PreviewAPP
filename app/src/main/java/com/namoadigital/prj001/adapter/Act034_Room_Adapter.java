@@ -3,8 +3,6 @@ package com.namoadigital.prj001.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,10 +93,12 @@ public class Act034_Room_Adapter extends BaseAdapter {
         }else{
             imgBitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_namoa);
         }
+        /*
         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(context.getResources(), imgBitmap);
         drawable.setCircular(true);
-        //iv_room_image.setImageBitmap(imgBitmap);
         iv_room_image.setImageDrawable(drawable);
+        */
+        iv_room_image.setImageBitmap(imgBitmap);
         //
         iv_room_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,16 +116,14 @@ public class Act034_Room_Adapter extends BaseAdapter {
         switch (item.get(CH_RoomDao.ROOM_TYPE)) {
 
             case Constant.CHAT_ROOM_TYPE_WORKGROUP:
-                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_group_black_24dp));
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_group));
                 break;
             case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
-                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_person_black_24dp));
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_private));
                 break;
             case Constant.CHAT_ROOM_TYPE_SO:
-                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_date_range_black_24dp));
-                break;
             default:
-                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_block_helper_black_18dp));
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
         }
         //
         tv_room_desc.setText(item.get(CH_RoomDao.ROOM_DESC));
