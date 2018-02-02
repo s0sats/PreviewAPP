@@ -934,6 +934,9 @@ public class SingletonWebSocket {
                                 case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
                                     stopChatService();
                                     break;
+                                case Constant.CHAT_ERROR_CHAT_SESSION_NOT_FOUND:
+                                    initConnection();
+                                    break;
                                 case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                                 default:
                                     String tst = cError.getError_msg();
@@ -981,10 +984,10 @@ public class SingletonWebSocket {
                         if (cError != null && cError.getError_msg() != null) {
                             switch (cError.getError_msg()) {
                                 case Constant.CHAT_ERROR_SESSION_NOT_FOUND:
-                                    //Intent chatService = new Intent(context, AppBackgroundService.class);
-                                    //context.stopService(chatService);
-                                    //COMENTADO O STOP DO SERVIÇO DIA 30/01
-                                    //APÓS ANALISE DE PORRA NENHUMA
+                                    stopChatService();
+                                    break;
+                                case Constant.CHAT_ERROR_CHAT_SESSION_NOT_FOUND:
+                                    initConnection();
                                     break;
                                 case Constant.CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT:
                                 default:
@@ -1280,14 +1283,16 @@ public class SingletonWebSocket {
             mSocket = null;
         }
         //
-        sSoleInstance.mSocketRunning = false;
-        //sSoleInstance.mSocket = null;
-        //
-        sSoleInstance.context = null;
-        //
-        sSoleInstance.pm = null;
-        sSoleInstance.wl = null;
-        sSoleInstance = null;
+        if(sSoleInstance != null) {
+            sSoleInstance.mSocketRunning = false;
+            //sSoleInstance.mSocket = null;
+            //
+            //sSoleInstance.context = null;
+            //
+            sSoleInstance.pm = null;
+            sSoleInstance.wl = null;
+            sSoleInstance = null;
+        }
         Log.d("ChatEvent", " destroySingletonWebSocketV\n");
     }
 

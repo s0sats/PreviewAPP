@@ -4,8 +4,8 @@
 
     <!-- view background color -->
     <!--<solid android:color="@color/bg_msg_from" >-->
-    <solid android:color="#FFDCF8C6" >
-    </solid>
+    <!--<solid android:color="#FFDCF8C6"/>-->
+    <solid android:color="@color/namoa_color_blue_balloon_chat"/>
 
     <corners android:radius="8dp" >
     </corners>

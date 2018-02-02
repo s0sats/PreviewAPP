@@ -467,7 +467,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_START_SERVICE_CALLER = "CHAT_START_SERVICE_CALLER";
 
     //Errors
-    public static final String CHAT_ERROR_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
+    public static final String CHAT_ERROR_CHAT_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
+    public static final String CHAT_ERROR_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
     public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";
     //
     public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
