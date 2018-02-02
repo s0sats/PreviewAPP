@@ -8,8 +8,9 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
-import com.namoadigital.prj001.sql.CH_Room_Sql_004;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -55,21 +56,32 @@ public class WS_C_Remove_Room extends IntentService {
                 gson.fromJson(
                         json_param,
                         Chat_C_Remove_Room.class
-                        );
+                );
         //
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
-        roomDao.remove(
-                new CH_Room_Sql_004(
+//        roomDao.remove(
+//                new CH_Room_Sql_004(
+//                        room.getRoom_code()
+//                ).toSqlQuery()
+//        );
+
+        CH_Room ccRoom = roomDao.getByString(
+                new CH_Room_Sql_001(
                         room.getRoom_code()
                 ).toSqlQuery()
+        );
+
+        ToolBox_Inf.cleanRoom_RoomMessages(
+                getApplicationContext(),
+                ccRoom
         );
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
 
     }
 
-    private class Chat_C_Remove_Room{
+    private class Chat_C_Remove_Room {
         String room_code;
 
         public String getRoom_code() {

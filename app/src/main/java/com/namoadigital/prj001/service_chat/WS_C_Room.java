@@ -111,12 +111,7 @@ public class WS_C_Room extends IntentService {
     }
 
     private void cleanUPRooms(ArrayList<CH_Room> chRooms) {
-        CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
-        //
-
-
-        //roomDao.addUpdate(chRooms, false);
-
+        ToolBox_Inf.cleanRoom_RoomMessages(getApplicationContext());
     }
 
     private void callCHistoricalMsg() {

@@ -317,6 +317,13 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptonLeaveRoom(String deliveryObj) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
+            mSocket.emit(Constant.CHAT_EVENT_S_LEAVEROOM, deliveryObj);
+            Log.d("ChatEvent", "sLeaveRoom");
+        }
+    }
+
     public void attemptSendPendingMessages(String room_code) {
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             CH_MessageDao messageDao = new CH_MessageDao(context);

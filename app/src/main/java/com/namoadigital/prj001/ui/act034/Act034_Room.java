@@ -28,10 +28,12 @@ import com.namoadigital.prj001.adapter.Chat_UserList_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_S_LeaveRoom;
 import com.namoadigital.prj001.model.Chat_S_RoomPrivate;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_005;
+import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.Sql_Act034_003;
 import com.namoadigital.prj001.sql.Sql_Act034_004;
 import com.namoadigital.prj001.util.Constant;
@@ -72,6 +74,9 @@ public class Act034_Room extends BaseFragment {
     private String info_room_image = "";
     private Chat_Member_Adapter mDialogAdapter;
     private Chat_UserList_Adapter mUserListAdapter;
+
+    private String mRoom_Code = "";
+    private String mRoom_Type = "";
 
     public void setSelected_customer(long selected_customer) {
         this.selected_customer = selected_customer;
@@ -223,8 +228,10 @@ public class Act034_Room extends BaseFragment {
             //
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
-                public void onIvRoomClick(String room_code, String room_desc, String image_path) {
+                public void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path) {
                     if (ToolBox_Con.isOnline(context)) {
+                        mRoom_Code = room_code;
+                        mRoom_Type = room_type;
                         info_room_desc = room_desc;
                         info_room_image = image_path;
                         //
@@ -377,6 +384,28 @@ public class Act034_Room extends BaseFragment {
             ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
+            //
+//            if (mRoom_Type.equalsIgnoreCase("WORKGROUP")) {
+//                iv_trash.setVisibility(View.GONE);
+//            } else {
+//                iv_trash.setVisibility(View.VISIBLE);
+//
+//                //
+//                iv_trash.setVisibility(View.VISIBLE);
+//                iv_trash.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        HMAux ccRoom = roomDao.getByStringHM(
+//                                new CH_Room_Sql_006(
+//                                        mRoom_Code
+//                                ).toSqlQuery()
+//                        );
+//
+//                        alertForRoomRemove(ccRoom);
+//                    }
+//                });
+//            }
             //
             tv_room_desc.setText(info_room_desc);
             //
@@ -420,6 +449,29 @@ public class Act034_Room extends BaseFragment {
             //
             final AlertDialog dialog = builder.create();
             dialog.show();
+            //
+            if (mRoom_Type.equalsIgnoreCase("WORKGROUP")) {
+                iv_trash.setVisibility(View.GONE);
+            } else {
+                iv_trash.setVisibility(View.VISIBLE);
+
+                //
+                iv_trash.setVisibility(View.VISIBLE);
+                iv_trash.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HMAux ccRoom = roomDao.getByStringHM(
+                                new CH_Room_Sql_006(
+                                        mRoom_Code
+                                ).toSqlQuery()
+                        );
+
+                        dialog.dismiss();
+
+                        alertForRoomRemove(ccRoom);
+                    }
+                });
+            }
             //
             iv_dismiss.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -625,6 +677,41 @@ public class Act034_Room extends BaseFragment {
         //
         alertFRP.show();
 
+    }
+
+    private void alertForRoomRemove(final HMAux hmAux) {
+        AlertDialog.Builder alertFRR = new AlertDialog.Builder(getActivity());
+
+        alertFRR.setTitle("Remoção de Sala");
+        alertFRR.setMessage("Deseja realmente remover a sala?");
+        alertFRR.setCancelable(true);
+        //
+        alertFRR.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
+                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+                sRoomPrivate.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+                sRoomPrivate.setActive(0);
+                //
+                Chat_S_LeaveRoom sLeaveRoom = new Chat_S_LeaveRoom();
+                sLeaveRoom.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+                sLeaveRoom.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+                sLeaveRoom.setRoom_code(mRoom_Code);
+                //
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                //
+                if (mRoom_Type.equalsIgnoreCase("PRIVATE_CUSTOMER")) {
+                    singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+                } else {
+                    singletonWebSocket.attemptonLeaveRoom(ToolBox_Inf.setWebSocketJsonParam(sLeaveRoom));
+                }
+            }
+        });
+
+        alertFRR.setNegativeButton("Não", null);
+        //
+        alertFRR.show();
     }
 
     private void setFilterIconColor() {

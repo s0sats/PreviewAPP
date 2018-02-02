@@ -45,6 +45,7 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_S_LeaveRoom;
 import com.namoadigital.prj001.model.Chat_S_RoomPrivate;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -1093,30 +1094,34 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 );
 
             } else {
-                //
-                disablePD();
-                ArrayList<Chat_Room_Info_Rec> roomInfoList = gson
-                        .fromJson(
-                                ToolBox_Inf.getWebSocketJsonParam(resultado),
-                                new TypeToken<ArrayList<Chat_Room_Info_Rec>>() {
-                                }.getType()
-                        );
-                //
-                ArrayList<String> auxList = new ArrayList<>();
-                for (Chat_Room_Info_Rec info_rec : roomInfoList) {
-                    if (info_rec.getSys_user_image() != null) {
-                        auxList.add(
-                                info_rec.getUser_code()
-                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
-                                        + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image_name()
-                        );
+                try {
+                    //
+                    disablePD(); // error verificar
+                    ArrayList<Chat_Room_Info_Rec> roomInfoList = gson
+                            .fromJson(
+                                    ToolBox_Inf.getWebSocketJsonParam(resultado),
+                                    new TypeToken<ArrayList<Chat_Room_Info_Rec>>() {
+                                    }.getType()
+                            );
+                    //
+                    ArrayList<String> auxList = new ArrayList<>();
+                    for (Chat_Room_Info_Rec info_rec : roomInfoList) {
+                        if (info_rec.getSys_user_image() != null) {
+                            auxList.add(
+                                    info_rec.getUser_code()
+                                            + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image()
+                                            + Constant.MAIN_CONCAT_STRING + info_rec.getSys_user_image_name()
+                            );
+                        }
                     }
+                    //
+                    showRoomInfoDialog(roomInfoList);
+                    //
+                    String[] imgUrlList = new String[auxList.size()];
+                    startDownloadMemberImgTask(auxList.toArray(imgUrlList));
+                } catch (Exception e) {
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                 }
-                //
-                showRoomInfoDialog(roomInfoList);
-                //
-                String[] imgUrlList = new String[auxList.size()];
-                startDownloadMemberImgTask(auxList.toArray(imgUrlList));
             }
         }
 
@@ -1203,6 +1208,27 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
+            //
+//            if (mRoom.getRoom_type().equalsIgnoreCase("WORKGROUP")) {
+//                iv_trash.setVisibility(View.GONE);
+//                iv_trash.setOnClickListener(null);
+//            } else {
+//                iv_trash.setVisibility(View.VISIBLE);
+//                iv_trash.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        HMAux ccRoom = ch_roomDao.getByStringHM(
+//                                new CH_Room_Sql_006(
+//                                        mRoom_code
+//                                ).toSqlQuery()
+//                        );
+//
+//
+//                        alertForRoomRemove(ccRoom);
+//                    }
+//                });
+//            }
             //
             tv_room_desc.setText(tv_room_name_val.getText().toString());
             //
@@ -1234,6 +1260,28 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             final AlertDialog dialog = builder.create();
             dialog.show();
+            //
+            if (mRoom.getRoom_type().equalsIgnoreCase("WORKGROUP")) {
+                iv_trash.setVisibility(View.GONE);
+                iv_trash.setOnClickListener(null);
+            } else {
+                iv_trash.setVisibility(View.VISIBLE);
+                iv_trash.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HMAux ccRoom = ch_roomDao.getByStringHM(
+                                new CH_Room_Sql_006(
+                                        mRoom_code
+                                ).toSqlQuery()
+                        );
+
+
+                        dialog.dismiss();
+
+                        alertForRoomRemove(ccRoom);
+                    }
+                });
+            }
             //
             iv_dismiss.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1303,6 +1351,41 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         alertFRP.setNegativeButton("Não", null);
         //
         alertFRP.show();
+    }
+
+    private void alertForRoomRemove(final HMAux hmAux) {
+        AlertDialog.Builder alertFRR = new AlertDialog.Builder(Act035_Main.this);
+
+        alertFRR.setTitle("Remoção de Sala");
+        alertFRR.setMessage("Deseja realmente remover a sala?");
+        alertFRR.setCancelable(true);
+        //
+        alertFRR.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
+                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+                sRoomPrivate.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+                sRoomPrivate.setActive(0);
+                //
+                Chat_S_LeaveRoom sLeaveRoom = new Chat_S_LeaveRoom();
+                sLeaveRoom.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+                sLeaveRoom.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+                sLeaveRoom.setRoom_code(mRoom_code);
+                //
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                //
+                if (mRoom.getRoom_type().equalsIgnoreCase("PRIVATE_CUSTOMER")) {
+                    singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+                } else {
+                    singletonWebSocket.attemptonLeaveRoom(ToolBox_Inf.setWebSocketJsonParam(sLeaveRoom));
+                }
+            }
+        });
+
+        alertFRR.setNegativeButton("Não", null);
+        //
+        alertFRR.show();
     }
 
     private class RoomPrivate extends BroadcastReceiver {
@@ -1459,21 +1542,21 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }*/
 
         boolean logged = false;
-        if(SingletonWebSocket.isSingletonWebSocketSetted()) {
+        if (SingletonWebSocket.isSingletonWebSocketSetted()) {
             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
             logged = singletonWebSocket.ismSocketLogged();
         }
 
-        if(logged && AppBackgroundService.isRunning){
+        if (logged && AppBackgroundService.isRunning) {
             menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else if(logged && !AppBackgroundService.isRunning) {
+        } else if (logged && !AppBackgroundService.isRunning) {
             menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
             menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }else if(!logged && AppBackgroundService.isRunning) {
+        } else if (!logged && AppBackgroundService.isRunning) {
             menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
             menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }else{
+        } else {
             menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
             menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
