@@ -571,14 +571,16 @@ public class Act034_Room extends BaseFragment {
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.act034_room_info, null);
+            View view = inflater.inflate(R.layout.act034_user_info, null);
             //
-            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act034_room_info_iv_dismiss);
-            TextView tv_customer_desc = (TextView) view.findViewById(R.id.act034_room_info_tv_room_desc_lbl);
-            ImageView iv_customer = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
-            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
-            ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
-            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
+            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act034_user_info_iv_dismiss);
+            TextView tv_customer_desc = (TextView) view.findViewById(R.id.act034_user_info_tv_room_desc_lbl);
+            ImageView iv_customer = (ImageView) view.findViewById(R.id.act034_user_info_iv_image);
+            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_user_info_tv_members_lbl);
+            ListView lv_members = (ListView) view.findViewById(R.id.act034_user_info_lv_members);
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_user_info_iv_trash);
+            final MKEditTextNM mket_filter_user = (MKEditTextNM) view.findViewById(R.id.act034_user_info_mket_search_user);
+            ImageView iv_filter_user = (ImageView) view.findViewById(R.id.act034_user_info_iv_filter_user);
             //
             iv_trash.setVisibility(View.GONE);
             //
@@ -596,7 +598,17 @@ public class Act034_Room extends BaseFragment {
                 );
                 //
                 // Hugo
-                mUserListAdapter.getFilter().filter("Hulk");
+                mket_filter_user.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+                    @Override
+                    public void reportTextChange(String s) {
+                        loadRoomList();
+                    }
+
+                    @Override
+                    public void reportTextChange(String s, boolean b) {
+                        mUserListAdapter.getFilter().filter(mket_filter_user.getText().toString().trim());
+                    }
+                });
                 //
                 lv_members.setAdapter(
                         mUserListAdapter

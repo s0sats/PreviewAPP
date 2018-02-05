@@ -28,6 +28,11 @@ public class Chat_Member_Adapter extends BaseAdapter {
     public static final String IS_ONLINE = "is_online";
     public static final String DELIVERED_DT = "delivered_dt";
     public static final String READ_DT = "read_dt";
+    public static final String DELIVERED = "delivered";
+    public static final String READ = "read";
+    public static final String MSG_PREFIX = "msg_prefix";
+    public static final String MSG_CODE = "msg_code";
+
 
     private Context context;
     private ArrayList<HMAux> source;
@@ -102,6 +107,7 @@ public class Chat_Member_Adapter extends BaseAdapter {
                 iv_online_icon.setImageDrawable(null);
             }
         } else {
+
             iv_delivered.setColorFilter(context.getResources().getColor(R.color.namoa_color_black));
             tv_delivered.setText(
                     ToolBox_Inf.millisecondsToString(
@@ -113,24 +119,22 @@ public class Chat_Member_Adapter extends BaseAdapter {
             iv_read.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
             tv_read.setText(
                     ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(item.get(READ_DT) != null ? item.get(DELIVERED_DT) : "", ""),
+                            ToolBox_Inf.dateToMilliseconds(item.get(READ_DT) != null ? item.get(READ_DT) : "", ""),
                             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                     )
             );
 
-            if (tv_delivered.getText().toString().trim().isEmpty()){
+            if (item.get(DELIVERED).equalsIgnoreCase("0")) {
                 iv_delivered.setVisibility(View.GONE);
             } else {
                 iv_delivered.setVisibility(View.VISIBLE);
             }
 
-            if (tv_read.getText().toString().trim().isEmpty()){
+            if (item.get(READ).equalsIgnoreCase("0")) {
                 iv_read.setVisibility(View.GONE);
             } else {
                 iv_read.setVisibility(View.VISIBLE);
             }
-
-
 
         }
 

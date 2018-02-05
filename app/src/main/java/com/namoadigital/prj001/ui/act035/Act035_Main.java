@@ -39,6 +39,7 @@ import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_Message_Info_Env;
@@ -48,6 +49,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_S_LeaveRoom;
 import com.namoadigital.prj001.model.Chat_S_RoomPrivate;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
 import com.namoadigital.prj001.sql.CH_Message_Sql_009;
 import com.namoadigital.prj001.sql.CH_Message_Sql_012;
@@ -59,6 +61,8 @@ import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -1441,6 +1445,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     aux.put(Chat_Member_Adapter.SYS_USER_IMAGE, infoRec.getSys_user_image());
                     aux.put(Chat_Member_Adapter.DELIVERED_DT, infoRec.getDelivered_date());
                     aux.put(Chat_Member_Adapter.READ_DT, infoRec.getRead_date());
+                    aux.put(Chat_Member_Adapter.DELIVERED, String.valueOf(infoRec.getDelivered()));
+                    aux.put(Chat_Member_Adapter.READ, String.valueOf(infoRec.getRead()));
+                    aux.put(Chat_Member_Adapter.MSG_PREFIX, String.valueOf(infoRec.getMsg_prefix()));
+                    aux.put(Chat_Member_Adapter.MSG_CODE, String.valueOf(infoRec.getMsg_code()));
                     //
                     memberList.add(aux);
                 }
@@ -1458,15 +1466,49 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
             ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
             //
+            TextView tv_prefix_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
+            //
             iv_trash.setVisibility(View.GONE);
             //
-            tv_room_desc.setText(tv_room_name_val.getText().toString());
+//            tv_room_desc.setText(tv_room_name_val.getText().toString());
+//            //
+//            iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
             //
-            iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
-            //
-            tv_members_lbl.setText("Membros - Trad");
+            //tv_members_lbl.setText("Membros - Trad");
+            tv_members_lbl.setText("");
             //
             if (memberList.size() > 0) {
+                CH_MessageDao chMessageDao = new CH_MessageDao(context);
+                CH_Message ch_Message = chMessageDao.getByString(
+                        new CH_Message_Sql_005(
+                                Integer.parseInt(memberList.get(0).get(CH_MessageDao.MSG_PREFIX)),
+                                Integer.parseInt(memberList.get(0).get(CH_MessageDao.MSG_CODE))
+                        ).toSqlQuery()
+                );
+
+                JSONObject jsonObject = new JSONObject(ch_Message.getMsg_obj());
+                JSONObject msg = jsonObject.getJSONObject("message");
+
+                if (msg.getString("type").equalsIgnoreCase("TEXT")) {
+                    tv_room_desc.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg.getString("data")), 20));
+                    iv_room.setImageBitmap(null);
+                    iv_room.setVisibility(View.GONE);
+                } else if (msg.getString("type").equalsIgnoreCase("IMAGE")) {
+                    tv_room_desc.setText("");
+                    iv_room.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + ch_Message.getMessage_image_local()));
+                    tv_room_desc.setVisibility(View.GONE);
+                    iv_room.setVisibility(View.VISIBLE);
+                } else {
+                    tv_room_desc.setVisibility(View.GONE);
+                    iv_room.setVisibility(View.GONE);
+                }
+
+//                tv_room_desc.setText(tv_room_name_val.getText().toString());
+//                //
+//                iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
+
+                tv_prefix_code.setText(String.valueOf(ch_Message.getMsg_prefix()) + "." + String.valueOf(ch_Message.getMsg_code()));
+
                 mDialogAdapter = new Chat_Member_Adapter(
                         context,
                         memberList,
