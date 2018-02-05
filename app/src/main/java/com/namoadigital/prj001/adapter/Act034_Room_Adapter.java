@@ -31,7 +31,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
     private int resource;
     private OnIvRoomClickListner OnIvRoomClickListner;
 
-    public interface OnIvRoomClickListner{
+    public interface OnIvRoomClickListner {
         void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path);
     }
 
@@ -60,9 +60,9 @@ public class Act034_Room_Adapter extends BaseAdapter {
         return 0L;
     }
 
-    public int getRoomPosition(String room_code){
-        for (int i = 0; i < source.size() ; i++) {
-            if(source.get(i).get(CH_RoomDao.ROOM_CODE).equals(room_code)) {
+    public int getRoomPosition(String room_code) {
+        for (int i = 0; i < source.size(); i++) {
+            if (source.get(i).get(CH_RoomDao.ROOM_CODE).equals(room_code)) {
                 return i;
             }
         }
@@ -88,9 +88,9 @@ public class Act034_Room_Adapter extends BaseAdapter {
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_badge);
         //
         Bitmap imgBitmap = null;
-        if(!item.get(CH_RoomDao.ROOM_IMAGE_LOCAL).equalsIgnoreCase("")) {
+        if (!item.get(CH_RoomDao.ROOM_IMAGE_LOCAL).equalsIgnoreCase("")) {
             imgBitmap = BitmapFactory.decodeFile(getImageThumbnail(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
-        }else{
+        } else {
             imgBitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_namoa);
         }
         /*
@@ -103,7 +103,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
         iv_room_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(OnIvRoomClickListner != null){
+                if (OnIvRoomClickListner != null) {
                     OnIvRoomClickListner.onIvRoomClick(
                             item.get(CH_RoomDao.ROOM_CODE),
                             item.get(CH_RoomDao.ROOM_TYPE),
@@ -136,12 +136,12 @@ public class Act034_Room_Adapter extends BaseAdapter {
                 )
         );
         //
-        String msg = item.containsKey(CH_MessageDao.MSG_OBJ+"_data")?item.get(CH_MessageDao.MSG_OBJ+"_data"):null ;
-        String type = item.containsKey(CH_MessageDao.MSG_OBJ+"_type") ? item.get(CH_MessageDao.MSG_OBJ+"_type") : null;
+        String msg = item.containsKey(CH_MessageDao.MSG_OBJ + "_data") ? item.get(CH_MessageDao.MSG_OBJ + "_data") : null;
+        String type = item.containsKey(CH_MessageDao.MSG_OBJ + "_type") ? item.get(CH_MessageDao.MSG_OBJ + "_type") : null;
 
-        if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
-            tv_msg.setText(ToolBox_Inf.getSafeSubstring(msg, 45));
-        }else{
+        if (type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)) {
+            tv_msg.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg), 45));
+        } else {
             tv_msg.setText(type);
         }
         //
@@ -150,10 +150,10 @@ public class Act034_Room_Adapter extends BaseAdapter {
         if (i == 0) {
             tv_badge.setText("");
             tv_badge.setVisibility(View.INVISIBLE);
-        } else if(i > 9){
+        } else if (i > 9) {
             tv_badge.setVisibility(View.VISIBLE);
             tv_badge.setText(String.valueOf(i));
-        }else {
+        } else {
             tv_badge.setVisibility(View.VISIBLE);
             tv_badge.setText(" " + String.valueOf(i) + " ");
         }
@@ -161,7 +161,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
         return convertView;
     }
 
-    private String getImageThumbnail(String image_path){
-        return Constant.THU_PATH +"/"+ image_path.replace(".jpg","_thumb.jpg");
+    private String getImageThumbnail(String image_path) {
+        return Constant.THU_PATH + "/" + image_path.replace(".jpg", "_thumb.jpg");
     }
 }

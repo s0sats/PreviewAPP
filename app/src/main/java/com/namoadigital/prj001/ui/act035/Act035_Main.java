@@ -1456,6 +1456,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
+            //
+            iv_trash.setVisibility(View.GONE);
             //
             tv_room_desc.setText(tv_room_name_val.getText().toString());
             //

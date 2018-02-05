@@ -3212,6 +3212,16 @@ public class ToolBox_Inf {
         return s;
     }
 
+    public static String getBreakNewLine(String s) {
+        String[] lines = s.split("\\r?\\n");
+        //
+        if (lines != null && lines.length > 0) {
+            return lines[0];
+        } else {
+            return "";
+        }
+    }
+
     public static void cleanRoom_RoomMessages(Context context) {
         CH_RoomDao mRoomDao = new CH_RoomDao(context);
 
@@ -3301,7 +3311,7 @@ public class ToolBox_Inf {
         );
     }
 
-    public static boolean isScreenOn(Context context){
+    public static boolean isScreenOn(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         boolean isOn = pm.isScreenOn();
 

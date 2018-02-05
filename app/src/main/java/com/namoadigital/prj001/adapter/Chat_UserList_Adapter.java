@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +20,7 @@ import java.util.ArrayList;
  * Created by d.luche on 10/01/2018.
  */
 
-public class Chat_UserList_Adapter extends BaseAdapter {
+public class Chat_UserList_Adapter extends BaseAdapter implements Filterable {
 
     public static final String USER_NICK = "user_nick";
     public static final String USER_CODE = "user_code";
@@ -29,13 +31,18 @@ public class Chat_UserList_Adapter extends BaseAdapter {
     public static final String SYS_USER_IMAGE_NAME = "sys_user_image_name";
 
     private Context context;
+    private ValueFilter valueFilter;
     private ArrayList<HMAux> source;
+    private ArrayList<HMAux> source_filtered;
     private int resource;
 
     public Chat_UserList_Adapter(Context context, ArrayList<HMAux> source, int resource) {
         this.context = context;
         this.source = source;
+        this.source_filtered = source;
         this.resource = resource;
+        //
+        getFilter();
     }
 
     @Override
@@ -93,5 +100,56 @@ public class Chat_UserList_Adapter extends BaseAdapter {
         tv_member_name.setText(item.get(USER_NAME));
 
         return convertView;
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+
+            valueFilter = new ValueFilter();
+        }
+
+        return valueFilter;
+    }
+
+    private class ValueFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                for (int i = 0; i < source_filtered.size(); i++) {
+                    if ((source_filtered.get(i).get(USER_NICK).toUpperCase())
+                            .contains(constraint.toString().toUpperCase()) ||
+
+                            (source_filtered.get(i).get(USER_NAME).toUpperCase())
+                                    .contains(constraint.toString().toUpperCase())
+
+                            ) {
+
+                        HMAux hmAux = new HMAux();
+                        hmAux.putAll(source_filtered.get(i));
+
+                        filterList.add(hmAux);
+
+                    }
+                }
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = source_filtered.size();
+                results.values = source_filtered;
+            }
+            return results;
+        }
+
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            source = (ArrayList<HMAux>) results.values;
+
+            notifyDataSetChanged();
+        }
     }
 }

@@ -117,6 +117,21 @@ public class Chat_Member_Adapter extends BaseAdapter {
                             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                     )
             );
+
+            if (tv_delivered.getText().toString().trim().isEmpty()){
+                iv_delivered.setVisibility(View.GONE);
+            } else {
+                iv_delivered.setVisibility(View.VISIBLE);
+            }
+
+            if (tv_read.getText().toString().trim().isEmpty()){
+                iv_read.setVisibility(View.GONE);
+            } else {
+                iv_read.setVisibility(View.VISIBLE);
+            }
+
+
+
         }
 
         return convertView;

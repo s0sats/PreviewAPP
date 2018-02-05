@@ -578,6 +578,9 @@ public class Act034_Room extends BaseFragment {
             ImageView iv_customer = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
+            //
+            iv_trash.setVisibility(View.GONE);
             //
             tv_customer_desc.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
             iv_customer.setImageBitmap(
@@ -591,6 +594,9 @@ public class Act034_Room extends BaseFragment {
                         memberList,
                         R.layout.act034_userlist_info_cell
                 );
+                //
+                // Hugo
+                mUserListAdapter.getFilter().filter("Hulk");
                 //
                 lv_members.setAdapter(
                         mUserListAdapter
