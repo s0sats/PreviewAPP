@@ -222,7 +222,8 @@ public class Act034_Room extends BaseFragment {
             mAdapter = new Act034_Room_Adapter(
                     context,
                     roomList,
-                    R.layout.act034_room_cell
+                    R.layout.act034_room_cell,
+                    hmAux_Trans
             );
             //
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {

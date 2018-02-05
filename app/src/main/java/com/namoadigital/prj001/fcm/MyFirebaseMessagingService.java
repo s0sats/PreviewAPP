@@ -82,14 +82,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //
             if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
                 if (ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
-                    ToolBox_Inf.showChatNotification(
-                            getApplicationContext(),
-                            fcmMessage.getModule().toUpperCase(),
-                            "0",
-                            "",//fcmMessage.getTitle().trim(),
-                            ""//fcmMessage.getMsg_short().trim()
-                    );
-                    //
                     if(fcmMessage.getTitle().equals("<CHAT_MSG>")){
                         String param = ToolBox_Inf.getWebSocketJsonParam(fcmMessage.getMsg_long().trim());
                         //
@@ -99,6 +91,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE_FCM);
                         cMessageIntent.putExtras(bundle);
                         getApplicationContext().sendBroadcast(cMessageIntent);
+                    }else{
+                        ToolBox_Inf.showChatNotification(
+                                getApplicationContext(),
+                                fcmMessage.getModule().toUpperCase(),
+                                "0",
+                                "",//fcmMessage.getTitle().trim(),
+                                ""//fcmMessage.getMsg_short().trim()
+                        );
+                        //
                     }
 
                 }

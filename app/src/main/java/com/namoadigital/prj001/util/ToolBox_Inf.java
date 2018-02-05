@@ -34,7 +34,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -50,6 +49,7 @@ import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.EV_ProfileDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
@@ -66,6 +66,7 @@ import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -82,7 +83,9 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_020;
 import com.namoadigital.prj001.sql.CH_Message_Sql_022;
 import com.namoadigital.prj001.sql.CH_Message_Sql_023;
@@ -93,6 +96,7 @@ import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
+import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
@@ -3000,6 +3004,143 @@ public class ToolBox_Inf {
     public static void showChatNotification(Context context, String type, String attempt) {
         showChatNotification(context, type, attempt, "", "");
     }
+//
+//    public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
+//        //
+//        HMAux hmAux_trans = null;
+//
+//        List<String> translateList = new ArrayList<>();
+//        //
+//        hmAux_trans = ToolBox_Inf.setLanguage(
+//                context,
+//                Constant.APP_MODULE,
+//                ToolBox_Inf.getResourceCode(
+//                        context,
+//                        Constant.APP_MODULE,
+//                        "sys"
+//                ),
+//                ToolBox_Con.getPreference_Translate_Code(context),
+//                translateList
+//        );
+//        //
+//        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+//            //Necessidade de incluir arquivo de String ?!
+//        }
+//        //
+//        NotificationManager nm = (NotificationManager)
+//                context.getSystemService(NOTIFICATION_SERVICE);
+//        //
+//        RemoteViews view =
+//                new RemoteViews(context.getPackageName(), R.layout.notification_chat_msg);
+//        //
+//        Intent mIntent = new Intent(context, NotificationReceiver.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//        PendingIntent pi = PendingIntent.getBroadcast(
+//                context,
+//                0,
+//                mIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT
+//        );
+//
+//        try {
+//            switch (type) {
+//                case Constant.CHAT_NOTIFICATION_TYPE_MESSAGE:
+//                    CH_RoomDao roomDao = new CH_RoomDao(context);
+//                    //
+//                    HMAux msgInfo =
+//                            roomDao.getByStringHM(
+//                                    new Sql_Chat_Notification_001(
+//                                            ToolBox_Con.getPreference_User_Code(context)
+//                                    ).toSqlQuery()
+//                            );
+//                    //
+//                    if (msgInfo != null && msgInfo.size() > 0) {
+//                        view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
+//                        if (
+//                                msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
+//                                        msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
+//                                ) {
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_1,
+//                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
+//                            );
+//                            HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
+//                            //
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_2,
+//                                    msgAux.get("type").equals("TEXT") ? msgAux.get("data") : msgAux.get("type")
+//                            );
+//
+//                        } else {
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_1,
+//                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
+//                            );
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_2,
+//                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
+//                            );
+//                        }
+//
+//                    }
+//                    break;
+//                case Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING:
+//                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.sync_notification_animation);
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_1,
+//                            hmAux_trans.get("chat_no_connecton_lbl")
+//                    );
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_2,
+//                            hmAux_trans.get("chat_reconnection_attempt") + "  " + attempt
+//                    );
+//                    break;
+//
+//                case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
+//                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_1,
+//                            //title
+//                            hmAux_trans.get("chat_fcm_offline_ttl")
+//                    );
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_2,
+//                            //message,
+//                            hmAux_trans.get("chat_fcm_offline_msg")
+//                    );
+//
+//                    break;
+//            }
+//
+//            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+//            //builder.setSmallIcon(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
+//            builder.setAutoCancel(true);
+//            builder.setContent(view);
+//            //builder.setCustomBigContentView(view);
+//
+//            if (type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) || type.equals(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
+//                // builder.setSound(alarmSound);
+//                builder.setSound(Uri.parse("android.resource://"
+//                        + context.getPackageName() + "/" + R.raw.morfador));
+//
+//                builder.setContentIntent(pi);
+//
+//                builder.setSmallIcon(R.drawable.ic_chat_24x24);
+//            } else {
+//                builder.setSmallIcon(R.drawable.sync_notification_animation);
+//            }
+//            Notification notification = builder.build();
+//            //
+//            nm.notify(Constant.NOTIFICATION_CHAT, notification);
+//
+//        } catch (Exception e) {
+//            registerException(CLASS_NAME, e);
+//        }
+//
+//    }
 
     public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
         //
@@ -3026,9 +3167,7 @@ public class ToolBox_Inf {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        RemoteViews view =
-                new RemoteViews(context.getPackageName(), R.layout.notification_chat_msg);
-        //
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Intent mIntent = new Intent(context, NotificationReceiver.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -3038,7 +3177,14 @@ public class ToolBox_Inf {
                 mIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
-
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_chat_24x24);
+        builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
+        // builder.setSound(alarmSound);
+        builder.setSound(Uri.parse("android.resource://"
+                + context.getPackageName() + "/" + R.raw.morfador));
+        builder.setContentIntent(pi);
         try {
             switch (type) {
                 case Constant.CHAT_NOTIFICATION_TYPE_MESSAGE:
@@ -3052,81 +3198,42 @@ public class ToolBox_Inf {
                             );
                     //
                     if (msgInfo != null && msgInfo.size() > 0) {
-                        view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
                         if (
                                 msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
                                         msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
                                 ) {
-                            view.setTextViewText(
-                                    R.id.notification_chat_msg_tv_msg_1,
+                            builder.setContentTitle(
                                     msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
                             );
                             HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
                             //
-                            view.setTextViewText(
-                                    R.id.notification_chat_msg_tv_msg_2,
+                            builder.setContentText(
                                     msgAux.get("type").equals("TEXT") ? msgAux.get("data") : msgAux.get("type")
                             );
 
                         } else {
-                            view.setTextViewText(
-                                    R.id.notification_chat_msg_tv_msg_1,
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
-                            );
-                            view.setTextViewText(
-                                    R.id.notification_chat_msg_tv_msg_2,
+                            builder.setContentTitle(
                                     msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
                             );
-                        }
 
+                            builder.setContentText(
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
+                            );
+                        }
                     }
                     break;
-                case Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING:
-                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.sync_notification_animation);
-                    view.setTextViewText(
-                            R.id.notification_chat_msg_tv_msg_1,
-                            hmAux_trans.get("chat_no_connecton_lbl")
-                    );
-                    view.setTextViewText(
-                            R.id.notification_chat_msg_tv_msg_2,
-                            hmAux_trans.get("chat_reconnection_attempt") + "  " + attempt
-                    );
-                    break;
-
                 case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
-                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
-                    view.setTextViewText(
-                            R.id.notification_chat_msg_tv_msg_1,
-                            //title
+                    //view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
+                    builder.setContentTitle(
                             hmAux_trans.get("chat_fcm_offline_ttl")
                     );
-                    view.setTextViewText(
-                            R.id.notification_chat_msg_tv_msg_2,
-                            //message,
+                    builder.setContentText(
                             hmAux_trans.get("chat_fcm_offline_msg")
                     );
 
                     break;
             }
 
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-            //builder.setSmallIcon(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
-            builder.setAutoCancel(true);
-            builder.setContent(view);
-
-            if (type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) || type.equals(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
-                // builder.setSound(alarmSound);
-                builder.setSound(Uri.parse("android.resource://"
-                        + context.getPackageName() + "/" + R.raw.morfador));
-
-                builder.setContentIntent(pi);
-
-                builder.setSmallIcon(R.drawable.ic_chat_24x24);
-            } else {
-                builder.setSmallIcon(R.drawable.sync_notification_animation);
-            }
             Notification notification = builder.build();
             //
             nm.notify(Constant.NOTIFICATION_CHAT, notification);
@@ -3136,7 +3243,6 @@ public class ToolBox_Inf {
         }
 
     }
-
     public static void cancelChatNotification(Context context) {
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(Constant.NOTIFICATION_CHAT);
@@ -3306,6 +3412,45 @@ public class ToolBox_Inf {
         boolean isOn = pm.isScreenOn();
 
         return isOn;
+    }
+
+    public static boolean isUsrAdmin(Context context){
+        EV_UserDao userDao = new EV_UserDao(context);
+        //
+        EV_User ev_user = userDao.getByString(
+                new EV_User_Sql_001 (
+                        ToolBox_Con.getPreference_User_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return ev_user != null && ev_user.getAdmin() == 1;
+    }
+
+    public static void showChatAdminInfo(Context context,HMAux hmAuxTrans){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.chat_admin_dialog,null);
+        //
+        TextView tv_service_status = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_service_status);
+        TextView tv_socket_status = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_status);
+        TextView tv_socket_logged = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_logged);
+        TextView tv_socket_id = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_id);
+        //
+        tv_service_status.setText(AppBackgroundService.isRunning ? "Rodando" : "Parado");
+        tv_socket_status.setText(SingletonWebSocket.isSocketSetted() ? "Setado" : "Nullo");
+        tv_socket_logged.setText(SingletonWebSocket.ismSocketLogged() ? "Logado" : "Deslogado");
+        tv_socket_id.setText(SingletonWebSocket.isSocketSetted() ? SingletonWebSocket.mSocket.id() : "Socket não setado");
+        //
+        builder
+                .setTitle("Debug Info Chat")
+                .setView(view)
+                .setCancelable(true)
+                .setPositiveButton("OK",null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
 }

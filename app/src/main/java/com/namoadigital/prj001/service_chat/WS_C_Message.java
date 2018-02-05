@@ -166,6 +166,7 @@ public class WS_C_Message extends IntentService {
             SingletonWebSocket singletonWebSocket = null;
             //
             boolean startDownloadService = false;
+            boolean hasNewMsg = false;
             //Transforma list de objs recebido(Chat_C_Message)
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
@@ -208,6 +209,7 @@ public class WS_C_Message extends IntentService {
                     ch_message.setTmp(dbMessage.getTmp());
                 }else{
                     ch_message.setTmp(0);
+                    hasNewMsg = true;
                 }
                 //
                 if (ch_message.getDelivered() == 0 && !ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
@@ -260,6 +262,10 @@ public class WS_C_Message extends IntentService {
                 postDeliveredIntent.putExtras(bundle);
                 getApplicationContext().sendBroadcast(postDeliveredIntent);
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_MESSAGE_FCM);
+                //
+                if(hasNewMsg){
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                }
                 return;
             }
             //

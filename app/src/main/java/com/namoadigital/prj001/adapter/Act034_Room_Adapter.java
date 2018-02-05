@@ -29,6 +29,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
     private Context context;
     private ArrayList<HMAux> source;
     private int resource;
+    private HMAux hmAux_Trans;
     private OnIvRoomClickListner OnIvRoomClickListner;
 
     public interface OnIvRoomClickListner{
@@ -39,10 +40,11 @@ public class Act034_Room_Adapter extends BaseAdapter {
         OnIvRoomClickListner = onIvRoomClickListner;
     }
 
-    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource) {
+    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource, HMAux hmAux_Trans) {
         this.context = context;
         this.source = source;
         this.resource = resource;
+        this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
@@ -126,6 +128,8 @@ public class Act034_Room_Adapter extends BaseAdapter {
             default:
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
         }
+        //POR HORA ESCONDE OS ICONE ATE ENCONTRAR ALGO MELHOR 05/02/2018
+        iv_room_icon.setVisibility(View.GONE);
         //
         tv_room_desc.setText(item.get(CH_RoomDao.ROOM_DESC));
         //
@@ -141,6 +145,8 @@ public class Act034_Room_Adapter extends BaseAdapter {
 
         if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
             tv_msg.setText(ToolBox_Inf.getSafeSubstring(msg, 45));
+        }else if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
+            tv_msg.setText(ToolBox_Inf.getSafeSubstring(getTranslateMsg(msg), 45));
         }else{
             tv_msg.setText(type);
         }
@@ -159,6 +165,19 @@ public class Act034_Room_Adapter extends BaseAdapter {
         }
         //
         return convertView;
+    }
+
+    private String getTranslateMsg(String msg) {
+        String resultTranslate = "";
+        try {
+            String msgParts[] = msg.replace("|", "#").split("#");
+            resultTranslate = hmAux_Trans.get(msgParts[0]) + (msgParts.length > 1 ? msgParts[1] : "");
+            //
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Constant.CHAT_MESSAGE_TYPE_TRANSLATE;
+        }
+        return resultTranslate;
     }
 
     private String getImageThumbnail(String image_path){
