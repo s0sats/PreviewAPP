@@ -650,7 +650,8 @@ public class Act034_Room extends BaseFragment {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
                     if (hmAux.get("room_code") == null) {
-                        alertForRoomPrivate(hmAux);
+                        //alertForRoomPrivate(hmAux);
+                        mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(selected_customer));
                     } else {
                         HMAux ccRoom = roomDao.getByStringHM(
                                 new CH_Room_Sql_005(

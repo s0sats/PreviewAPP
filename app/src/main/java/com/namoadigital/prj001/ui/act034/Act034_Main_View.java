@@ -26,5 +26,7 @@ public interface Act034_Main_View {
 
     void startUserListInfoTask(String socket_id,String customer_code);
 
+    void startRoomPrivateWS(String user_code, String customer_code);
+
     void changeRoom_Private_Code(String room_private);
 }

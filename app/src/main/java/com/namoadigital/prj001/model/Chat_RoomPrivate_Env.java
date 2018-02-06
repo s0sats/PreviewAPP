@@ -4,7 +4,7 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 13/12/2017.
  */
 
-public class Chat_S_RoomPrivate {
+public class Chat_RoomPrivate_Env {
 
     private String session_app;
     private Long customer_code;

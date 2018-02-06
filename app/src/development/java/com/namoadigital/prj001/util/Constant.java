@@ -47,5 +47,6 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_ROOM_USER_LIST = "https://chat.namoadigital.com/userList";
     public static final String WS_CHAT_MESSAGE_DIST = "https://chat.namoadigital.com/messageDist?";
     public static final String WS_CHAT_POST_DELIVERED = "https://chat.namoadigital.com/delivered";
+    public static final String WS_CHAT_ROOM_PRIVATE = "https://chat.namoadigital.com/roomPrivateCustomer";
 
 }

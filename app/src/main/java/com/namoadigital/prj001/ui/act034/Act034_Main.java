@@ -40,11 +40,12 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
+import com.namoadigital.prj001.model.Chat_RoomPrivate_Env;
+import com.namoadigital.prj001.model.Chat_RoomPrivate_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
-import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
@@ -625,6 +626,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         userListInfoTask.execute(socket_id, customer_code);
     }
 
+    @Override
+    public void startRoomPrivateWS(String user_code, String customer_code ) {
+        roomPrivateTask = new RoomPrivateTask();
+        roomPrivateTask.execute(user_code,customer_code);
+    }
+
     //region AsyncTask
     private class RoomInfoTask extends AsyncTask<String, Integer, String> {
 
@@ -803,8 +810,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             Log.d("ChatEvent", "UserListInfoTask PreExecute");
             //
             showPD(
-                    hmAux_Trans.get("ws_room_info_ttl"),
-                    hmAux_Trans.get("ws_room_info_msg")
+//                    hmAux_Trans.get("ws_user_info_list_ttl"),
+//                    hmAux_Trans.get("ws_user_info_list_msg")
+                    "Lista de contatos  - Trad",
+                    "Buscando contatos - Trad"
+
             );
         }
 
@@ -890,7 +900,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
+            Log.d("ChatEvent", "UserListInfoTask Cancelada");
             disablePD();
         }
     }
@@ -918,6 +928,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if (userListInfoTask != null) {
             userListInfoTask.cancel(true);
         }
+
         //
         super.onDestroy();
     }

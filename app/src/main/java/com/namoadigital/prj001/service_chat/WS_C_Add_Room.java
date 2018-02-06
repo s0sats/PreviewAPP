@@ -40,8 +40,9 @@ public class WS_C_Add_Room extends IntentService {
 
         try {
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
+            String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM);
 
-            processC_Room(json_param);
+            processC_Room(json_param,ws_event);
 
         } catch (Exception e) {
 
@@ -58,7 +59,7 @@ public class WS_C_Add_Room extends IntentService {
 
     }
 
-    private void processC_Room(String json_param) {
+    private void processC_Room(String json_param, String ws_event) {
         boolean firstRoom = true;
         String room_codes = "";
 
@@ -118,27 +119,31 @@ public class WS_C_Add_Room extends IntentService {
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
         //
-        // Processamento de get para distribuição.
-        try {
-            ToolBox_Con.connHttpGet(
-                    Constant.WS_CHAT_MESSAGE_DIST + "msg_prefix=" + chRooms.get(0).getMsg_prefix() + "&msg_code=" + chRooms.get(0).getMsg_code(),
-                    ""
-            );
+        if(chRooms.get(0).getMsg_prefix() == null || chRooms.get(0).getMsg_code() == null) {
+            // Processamento de get para distribuição.
+            try {
+                ToolBox_Con.connHttpGet(
+                        Constant.WS_CHAT_MESSAGE_DIST + "msg_prefix=" + chRooms.get(0).getMsg_prefix() + "&msg_code=" + chRooms.get(0).getMsg_code(),
+                        ""
+                );
 
-        } catch (Exception e) {
-            String nn = e.toString();
+            } catch (Exception e) {
+                String nn = e.toString();
+            }
         }
-
-        // Private Rooms
         //
-        Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
-        cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        if(ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_PRIVATE)){
+            // Private Rooms
+            //
+            Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
+            cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
 
-        Bundle bundleAux = new Bundle();
-        bundleAux.putString(Constant.CHAT_WS_JSON_PARAM, room_codes);
-        cRoomPrivateIntent.putExtras(bundleAux);
-        //
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(cRoomPrivateIntent);
+            Bundle bundleAux = new Bundle();
+            bundleAux.putString(Constant.CHAT_WS_JSON_PARAM, room_codes);
+            cRoomPrivateIntent.putExtras(bundleAux);
+            //
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(cRoomPrivateIntent);
+        }
     }
 
     private void startDownloadService() {

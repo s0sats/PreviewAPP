@@ -234,6 +234,9 @@ public class SingletonWebSocket {
         Log.d("ChatEvent", "disconnect");
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocketRunning = false;
+            //Pega manager do socket e seta reconnectin para false;
+            Manager socketManager = mSocket.io();
+            socketManager.reconnection(false);
             mSocket.off();
             mSocket.disconnect();
             mSocket = null;
@@ -1000,6 +1003,14 @@ public class SingletonWebSocket {
                                         //
                                         initConnection();
                                         //
+                                    }else{
+                                        Exception e = new Exception(cError.getError_msg());
+                                        //
+                                        ToolBox_Inf.registerException(getClass().getName(),e);
+                                        //
+                                        disconnect();
+                                        //
+                                        initConnection();
                                     }
                                     break;
                             }
