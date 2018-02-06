@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TUpload_Support_Env;
 import com.namoadigital.prj001.model.TUpload_Support_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -222,6 +223,19 @@ public class WS_Upload_Support extends IntentService {
             ToolBox_Inf.copyFile(file,dest);
         }
 
+        //Se customer com acesso ao Chat gera arquivo com status do chat
+        if(ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+            File chat_status = new File(Constant.SUPPORT_PATH, "chat_status.txt");
+            String chatStatusParam = "";
+            //
+            chatStatusParam += "Serviço:  " + (AppBackgroundService.isRunning ? "Rodando" : "Parado") + "\n";
+            chatStatusParam += "Socket Setado:  " + (SingletonWebSocket.isSocketSetted() ? "Setado" : "Nullo") + "\n";
+            chatStatusParam += "Socket Logged:  " + (SingletonWebSocket.ismSocketLogged() ? "Logado" : "Deslogado") + "\n";
+            chatStatusParam += "Socket id: " + (SingletonWebSocket.isSocketSetted() ? SingletonWebSocket.mSocket.id() : "Socket não setado") + "\n";
+            //
+            ToolBox_Inf.writeIn(chatStatusParam, chat_status);
+        }
+        //Envia broadcast e monta zip
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_zipping_data"), "", "0");
 
         ToolBox_Inf.zipFolder(Constant.SUPPORT_PATH, Constant.ZIP_PATH + "/" + Constant.SUPPORT_NAME);

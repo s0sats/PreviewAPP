@@ -1571,30 +1571,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        //menu.add(0, 1, Menu.NONE + 1, getResources().getString(R.string.app_name));
+        menu.add(0, 1, Menu.NONE + 1, getResources().getString(R.string.app_name));
 
 //        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
 //        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-//        boolean logged = false;
-//        if(SingletonWebSocket.isSingletonWebSocketSetted()) {
-//            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-//            logged = singletonWebSocket.ismSocketLogged();
-//        }
-
-//        if(logged && AppBackgroundService.isRunning){
-//            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
-//            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        } else if(logged && !AppBackgroundService.isRunning) {
-//            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_black_24dp);
-//            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        }else if(!logged && AppBackgroundService.isRunning) {
-//            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_yellow_24dp);
-//            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        }else{
-//            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_red_24dp);
-//            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        }
+        if(ToolBox_Inf.isUsrAdmin(context)) {
+            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
 
         return true;
     }
@@ -1603,6 +1588,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+
+        if(id == 1){
+            if(ToolBox_Inf.isUsrAdmin(context)) {
+                ToolBox_Inf.showChatAdminInfo(context,hmAux_Trans);
+            }
+        }
 
         return true;
     }
