@@ -943,7 +943,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 Chat_Message_Info_Env env = new Chat_Message_Info_Env();
-                env.setSocket_id(socket_id);
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setMsg_prefix(msg_prefix);
                 env.setMsg_code(msg_code);
                 env.setShow_myself(1);
@@ -953,7 +954,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         gson.toJson(env)
                 );
 
-                int i = 10;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1058,7 +1058,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 Chat_Room_Info_Env env = new Chat_Room_Info_Env();
-                env.setSocket_id(socket_id);
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setRoom_code(room_code);
                 env.setActive(1);
                 //

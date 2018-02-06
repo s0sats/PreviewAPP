@@ -6,16 +6,16 @@ package com.namoadigital.prj001.model;
 
 public class Chat_Room_Info_Env {
 
-    private String socket_id;
+    private String session_app;
     private String room_code;
     private int active;
 
-    public String getSocket_id() {
-        return socket_id;
+    public String getSession_app() {
+        return session_app;
     }
 
-    public void setSocket_id(String socket_id) {
-        this.socket_id = socket_id;
+    public void setSession_app(String session_app) {
+        this.session_app = session_app;
     }
 
     public String getRoom_code() {

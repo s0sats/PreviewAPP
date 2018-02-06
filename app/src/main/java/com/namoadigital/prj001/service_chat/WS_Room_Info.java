@@ -55,7 +55,8 @@ public class WS_Room_Info extends IntentService {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
         Chat_Room_Info_Env env = new Chat_Room_Info_Env();
-        env.setSocket_id(socket_id);
+        //
+        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setRoom_code(room_code);
         env.setActive(1);
         //

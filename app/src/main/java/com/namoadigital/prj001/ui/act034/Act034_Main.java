@@ -650,7 +650,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 Chat_Room_Info_Env env = new Chat_Room_Info_Env();
-                env.setSocket_id(socket_id);
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setRoom_code(room_code);
                 env.setActive(1);
                 //
@@ -818,7 +819,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 Chat_UserList_Info_Env env = new Chat_UserList_Info_Env();
-                env.setSocket_id(socket_id);
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setCustomer_code(customer_code);
                 //
                 resultado = ToolBox_Con.connWebService(
