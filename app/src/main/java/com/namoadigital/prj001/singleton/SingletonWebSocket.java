@@ -104,7 +104,7 @@ public class SingletonWebSocket {
     Indica se o conexao socket está funcionando.
      */
     private boolean mSocketRunning = false;
-    private static boolean WS_Upload_Support = false;
+    private static boolean mSocketLogged = false;
 
     public static Socket mSocket = null;
 

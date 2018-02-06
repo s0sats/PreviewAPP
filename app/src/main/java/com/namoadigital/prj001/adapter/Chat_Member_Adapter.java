@@ -93,7 +93,7 @@ public class Chat_Member_Adapter extends BaseAdapter {
         if (item.get(SYS_USER_IMAGE) != null) {
             iv_member_img.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + item.get(SYS_USER_IMAGE)));
         } else {
-            iv_member_img.setImageDrawable(context.getDrawable(R.drawable.ic_person_black_24dp));
+            iv_member_img.setImageDrawable(context.getDrawable(R.drawable.ic_room_private));
         }
         //
         tv_member.setText(item.get(USER_NICK));
