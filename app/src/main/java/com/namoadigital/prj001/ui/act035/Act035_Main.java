@@ -188,6 +188,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         new CH_MessageDao(context)
                 );
         //
+        Act035_Adapter_Messages.hmAuxColors.clear();
+        ToolBox_Inf.colorIndex = 0;
+        //
         tv_room_name_val = (TextView) findViewById(R.id.act035_tv_room_name_val);
         iv_room_thumbnail = (ImageView) findViewById(R.id.act035_iv_room_thumbnail_val);
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);

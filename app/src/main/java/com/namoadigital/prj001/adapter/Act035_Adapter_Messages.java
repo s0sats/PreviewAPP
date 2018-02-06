@@ -29,6 +29,8 @@ import java.util.List;
 
 public class Act035_Adapter_Messages extends BaseAdapter {
 
+    public static HMAux hmAuxColors = new HMAux();
+
     private Context context;
     //
     private int resource_01;
@@ -196,7 +198,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         String sMessages = "";
 
         for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).get("msg_pk") != null){
+            if (messages.get(i).get("msg_pk") != null) {
                 sMessages = messages.get(i).get("msg_pk");
                 //
                 break;
@@ -407,6 +409,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                         )
                 );
 
+                if (hmAuxColors.get(hmAux.get("user_code")) == null) {
+                    hmAuxColors.put(hmAux.get("user_code"), String.valueOf(ToolBox_Inf.userColor()));
+                }
+
+                tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
+
                 iv_me_img.setVisibility(View.GONE);
                 v_space_right.setVisibility(View.VISIBLE);
                 iv_badge.setVisibility(View.GONE);
@@ -452,8 +460,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 iv_other_img.setVisibility(View.VISIBLE);
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
                 tv_name.setVisibility(View.VISIBLE);
-
+                //
                 try {
+
+                    if (hmAuxColors.get(hmAux.get("user_code")) == null) {
+                        hmAuxColors.put(hmAux.get("user_code"), String.valueOf(ToolBox_Inf.userColor()));
+                    }
+
+                    tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
+
+
                     tv_message.setText(message.getString("data").trim());
 
                 } catch (JSONException e) {

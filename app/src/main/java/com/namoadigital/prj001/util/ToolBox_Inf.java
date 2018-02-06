@@ -3243,6 +3243,7 @@ public class ToolBox_Inf {
         }
 
     }
+
     public static void cancelChatNotification(Context context) {
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(Constant.NOTIFICATION_CHAT);
@@ -3424,11 +3425,11 @@ public class ToolBox_Inf {
         return isOn;
     }
 
-    public static boolean isUsrAdmin(Context context){
+    public static boolean isUsrAdmin(Context context) {
         EV_UserDao userDao = new EV_UserDao(context);
         //
         EV_User ev_user = userDao.getByString(
-                new EV_User_Sql_001 (
+                new EV_User_Sql_001(
                         ToolBox_Con.getPreference_User_Code(context)
                 ).toSqlQuery()
         );
@@ -3436,11 +3437,11 @@ public class ToolBox_Inf {
         return ev_user != null && ev_user.getAdmin() == 1;
     }
 
-    public static void showChatAdminInfo(Context context,HMAux hmAuxTrans){
+    public static void showChatAdminInfo(Context context, HMAux hmAuxTrans) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         //
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.chat_admin_dialog,null);
+        View view = inflater.inflate(R.layout.chat_admin_dialog, null);
         //
         TextView tv_service_status = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_service_status);
         TextView tv_socket_status = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_status);
@@ -3456,11 +3457,30 @@ public class ToolBox_Inf {
                 .setTitle("Debug Info Chat")
                 .setView(view)
                 .setCancelable(true)
-                .setPositiveButton("OK",null);
+                .setPositiveButton("OK", null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
 
+    }
+
+    public static int colorIndex = 0;
+
+    private static int userColors[] = {
+            0xFFFF0000,
+            0xFFFF00FF,
+            0xFFFFFF00,
+            0xFF00FF00,
+            0xFF0000FF,
+            0xFF000000
+    };
+
+    public static int userColor() {
+        if (colorIndex >= userColors.length) {
+            colorIndex = 0;
+        }
+        //
+        return userColors[colorIndex++];
     }
 
 }
