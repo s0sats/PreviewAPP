@@ -20,7 +20,7 @@
             android:id="@+id/act035_main_content_cell_whats_iv_other_img"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginRight="-4dp"
+            android:layout_marginRight="-6dp"
             android:background="@drawable/ic_play" />
 
         <LinearLayout
@@ -92,7 +92,7 @@
             android:id="@+id/act035_main_content_cell_whats_iv_me_img"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginLeft="-4dp"
+            android:layout_marginLeft="-6dp"
             android:background="@drawable/ic_play_2" />
 
         <View

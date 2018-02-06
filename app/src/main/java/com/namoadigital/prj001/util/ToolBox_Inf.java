@@ -3468,11 +3468,15 @@ public class ToolBox_Inf {
 
     private static int userColors[] = {
             0xFFFF0000,
-            0xFFFF00FF,
-            0xFFFFFF00,
-            0xFF00FF00,
-            0xFF0000FF,
-            0xFF000000
+            0xFF868A08,
+            0xFF40FF00,
+            0xFF01DFA5,
+            0xFF01A9DB,
+            0xFF0101DF,
+            0xFFA901DB,
+            0xFFDF01A5,
+            0xFFFF0040,
+            0xFFFF8000
     };
 
     public static int userColor() {
