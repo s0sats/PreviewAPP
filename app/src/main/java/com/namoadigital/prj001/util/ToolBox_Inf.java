@@ -3357,6 +3357,20 @@ public class ToolBox_Inf {
         }
 
         // Delete Images from Room and Messages of this Room
+        boolean detect = true;
+        int i = 0;
+        try {
+            while (detect) {
+                if (imagesList.get(i).getName().contains("ch_user.jpg") ||
+                        imagesList.get(i).getName().contains("ch_user_thumb.jpg")) {
+                    imagesList.remove(i);
+                } else {
+                    i++;
+                }
+            }
+        } catch (Exception e) {
+        }
+
         deleteFileListExceptionSafe(imagesList);
 
         for (HMAux aux : mRooms) {
@@ -3402,8 +3416,21 @@ public class ToolBox_Inf {
         }
 
         // Delete Images from Room and Messages of this Room
+        boolean detect = true;
+        int i = 0;
+        try {
+            while (detect) {
+                if (imagesList.get(i).getName().contains("ch_user.jpg") ||
+                        imagesList.get(i).getName().contains("ch_user_thumb.jpg")) {
+                    imagesList.remove(i);
+                } else {
+                    i++;
+                }
+            }
+        } catch (Exception e) {
+        }
+
         deleteFileListExceptionSafe(imagesList);
-        //
 
         // Remove Messages of this Room
         mRoomDao.remove(

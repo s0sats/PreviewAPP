@@ -650,8 +650,7 @@ public class Act034_Room extends BaseFragment {
                     HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
                     //
                     if (hmAux.get("room_code") == null) {
-                        //alertForRoomPrivate(hmAux);
-                        mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(selected_customer));
+                        alertForRoomPrivate(hmAux);
                     } else {
                         HMAux ccRoom = roomDao.getByStringHM(
                                 new CH_Room_Sql_005(
@@ -683,14 +682,15 @@ public class Act034_Room extends BaseFragment {
         alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
-                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
-                sRoomPrivate.setCustomer_code(selected_customer);
-                sRoomPrivate.setActive(1);
-                //
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                //
-                singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+//                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
+//                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+//                sRoomPrivate.setCustomer_code(selected_customer);
+//                sRoomPrivate.setActive(1);
+//                //
+//                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+//                //
+//                singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+                mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(selected_customer));
             }
         });
 
