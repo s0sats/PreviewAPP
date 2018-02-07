@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act034;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 
@@ -26,7 +27,9 @@ public interface Act034_Main_View {
 
     void startUserListInfoTask(String socket_id,String customer_code);
 
-    void startRoomPrivateWS(String user_code, String customer_code);
+    void startRoomPrivateWS(String user_code, String customer_code,Integer active,@Nullable String room_code);
+
+    void startLeaveRoomWS(String user_code, String room_code);
 
     void changeRoom_Private_Code(String room_private);
 }

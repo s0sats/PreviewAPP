@@ -410,6 +410,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_C_ALL_DELIVERED = "cAllDelivered";
     public static final String CHAT_EVENT_C_ALL_READ = "cAllRead";
     public static final String CHAT_EVENT_C_ROOM_PRIVATE = "cRoomPrivateCustomer";
+    public static final String CHAT_EVENT_C_ROOM_PRIVATE_REMOVE = "cRoomPrivateRemove";
 
     //Eventos Server
     public static final String CHAT_EVENT_S_LOGIN = "sLogin";
@@ -423,6 +424,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_S_ROOM_PRIVATE = "sRoomPrivateCustomer";
     public static final String CHAT_EVENT_POST_ROOM_PRIVATE = "POST_ROOM_PRIVATE";
     public static final String CHAT_EVENT_S_LEAVEROOM = "sLeaveRoom";
+    public static final String CHAT_EVENT_POST_LEAVEROOM = "EVENT_POST_LEAVEROOM";
 
     //
     public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
@@ -438,6 +440,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_ROOM_TYPE_PRIVATE_CUSTOMER = "PRIVATE_CUSTOMER";
     public static final String CHAT_WS_SOCKET_ID_PARAM = "WS_SOCKET_ID_PARAM";
     public static final String CHAT_WS_ROOM_CODE_PARAM = "WS_ROOM_CODE_PARAM";
+    public static final String CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM = "WS_ROOM_PRIVATE_ACTIVE_PARAM";
     //filters
     public static final String CHAT_BR_FILTER_ROOM = "CHAT_BR_FILTER_ROOM";
     public static final String CHAT_BR_FILTER = "CHAT_BR_FILTER";
@@ -458,6 +461,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_BR_TYPE_MSG_ALL_READ = "CHAT_BR_TYPE_MSG_ALL_READ";
     public static final String CHAT_BR_TYPE_RECONNECTED = "CHAT_BR_TYPE_RECONNECTED";
     public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
+    public static final String CHAT_BR_TYPE_ROOM_PRIVATE_ADD = "CHAT_BR_TYPE_ROOM_PRIVATE_ADD";
+    public static final String CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE = "CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE";
+    public static final String CHAT_BR_TYPE_LEAVE_ROOM = "CHAT_BR_TYPE_LEAVE_ROOM";
     public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
     public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
     public static final String CHAT_PREFERENCE_MSG_TOKEN = "CHAT_PREFERENCE_MSG_TOKEN";
