@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
@@ -21,10 +22,10 @@ public class NotificationReceiver extends BroadcastReceiver {
             !ToolBox_Con.getPreference_Site_Code(context).equals("-1") &&
             ToolBox_Con.getPreference_Operation_Code(context) != -1
         ) {
-//            Intent mIntent = new Intent(context, Act034_Main.class);
-//            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            //
-//            context.startActivity(mIntent);
+            Intent mIntent = new Intent(context, Act034_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //
+            context.startActivity(mIntent);
         }
     }
 }
