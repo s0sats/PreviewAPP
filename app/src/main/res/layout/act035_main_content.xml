@@ -80,7 +80,7 @@
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="70dp"
             android:layout_marginRight="20dp"
-            android:src="@drawable/ic_double_down_gray_24px"
+            android:src="@drawable/ic_arrow_down_thick"
             android:visibility="visible" />
 
         <ImageView
@@ -90,7 +90,7 @@
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="20dp"
             android:layout_marginRight="20dp"
-            android:src="@drawable/ic_double_down_24px"
+            android:src="@drawable/ic_refresh_one_two_arrow"
             android:visibility="visible" />
 
     </FrameLayout>
