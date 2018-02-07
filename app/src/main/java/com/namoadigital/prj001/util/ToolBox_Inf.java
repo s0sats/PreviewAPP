@@ -3362,7 +3362,10 @@ public class ToolBox_Inf {
         try {
             while (detect) {
                 if (imagesList.get(i).getName().contains("ch_user.jpg") ||
-                        imagesList.get(i).getName().contains("ch_user_thumb.jpg")) {
+                        imagesList.get(i).getName().contains("ch_user_thumb.jpg") ||
+                        imagesList.get(i).getName().contains("ch_image-so.jpg") ||
+                        imagesList.get(i).getName().contains("ch_image-so_thumb.jpg")
+                        ) {
                     imagesList.remove(i);
                 } else {
                     i++;
@@ -3421,7 +3424,10 @@ public class ToolBox_Inf {
         try {
             while (detect) {
                 if (imagesList.get(i).getName().contains("ch_user.jpg") ||
-                        imagesList.get(i).getName().contains("ch_user_thumb.jpg")) {
+                        imagesList.get(i).getName().contains("ch_user_thumb.jpg") ||
+                        imagesList.get(i).getName().contains("ch_image-so.jpg") ||
+                        imagesList.get(i).getName().contains("ch_image-so_thumb.jpg")
+                        ) {
                     imagesList.remove(i);
                 } else {
                     i++;

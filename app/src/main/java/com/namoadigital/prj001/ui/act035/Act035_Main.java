@@ -46,8 +46,7 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
-import com.namoadigital.prj001.model.Chat_S_LeaveRoom;
-import com.namoadigital.prj001.model.Chat_S_RoomPrivate;
+import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
@@ -651,8 +650,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 switch (type) {
                     case Constant.CHAT_BR_TYPE_ROOM:
                         processing_cRoom(context);
-                    case Constant.CHAT_EVENT_C_ROOM_PRIVATE:
+                    case Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD:
                         processRoomPrivateReturn(auxParam);
+                        break;
+                    case Constant.CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE:
+                        processing_cRoom(context);
+                        break;
+                    case Constant.CHAT_BR_TYPE_LEAVE_ROOM:
+                        processing_cRoom(context);
                         break;
                     case Constant.CHAT_EVENT_C_MESSAGE_FCM:
                     case Constant.CHAT_BR_TYPE_MSG:
@@ -1218,26 +1223,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
             ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
             //
-//            if (mRoom.getRoom_type().equalsIgnoreCase("WORKGROUP")) {
-//                iv_trash.setVisibility(View.GONE);
-//                iv_trash.setOnClickListener(null);
-//            } else {
-//                iv_trash.setVisibility(View.VISIBLE);
-//                iv_trash.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        HMAux ccRoom = ch_roomDao.getByStringHM(
-//                                new CH_Room_Sql_006(
-//                                        mRoom_code
-//                                ).toSqlQuery()
-//                        );
-//
-//
-//                        alertForRoomRemove(ccRoom);
-//                    }
-//                });
-//            }
-            //
             tv_room_desc.setText(tv_room_name_val.getText().toString());
             //
             iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
@@ -1389,22 +1374,24 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         alertFRR.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
-                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
-                sRoomPrivate.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-                sRoomPrivate.setActive(0);
-                //
-                Chat_S_LeaveRoom sLeaveRoom = new Chat_S_LeaveRoom();
-                sLeaveRoom.setUser_code(Integer.parseInt(hmAux.get("user_code")));
-                sLeaveRoom.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-                sLeaveRoom.setRoom_code(mRoom_code);
-                //
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                //
+//                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
+//                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+//                sRoomPrivate.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+//                sRoomPrivate.setActive(0);
+//                //
+//                Chat_S_LeaveRoom sLeaveRoom = new Chat_S_LeaveRoom();
+//                sLeaveRoom.setUser_code(Integer.parseInt(hmAux.get("user_code")));
+//                sLeaveRoom.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+//                sLeaveRoom.setRoom_code(mRoom_code);
+//                //
+//                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+//                //
                 if (mRoom.getRoom_type().equalsIgnoreCase("PRIVATE_CUSTOMER")) {
-                    singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
+                    startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), hmAux.get(CH_RoomDao.CUSTOMER_CODE), 0, hmAux.get(CH_RoomDao.ROOM_CODE));
+                    //singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
                 } else {
-                    singletonWebSocket.attemptonLeaveRoom(ToolBox_Inf.setWebSocketJsonParam(sLeaveRoom));
+                    startLeaveRoomWS(ToolBox_Con.getPreference_User_Code(context), mRoom_code);
+                    //singletonWebSocket.attemptonLeaveRoom(ToolBox_Inf.setWebSocketJsonParam(sLeaveRoom));
                 }
             }
         });
@@ -1575,6 +1562,46 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             mDialogAdapter.updateMemberImage(user_code, local_url);
         }
     }
+
+    public void startRoomPrivateWS(String user_code, String customer_code, Integer active, @Nullable String room_code) {
+        if (active == 1) {
+            showPD(
+                    "Criação de Sala - trad",
+                    "Iniciando a criação da sala - trad",
+                    false);
+        } else {
+            showPD(
+                    "Remoção de sala de Sala - trad",
+                    "Iniciando a criação da sala- trad",
+                    false);
+        }
+        //
+        Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
+        Bundle roomPrivateBundle = new Bundle();
+        roomPrivateBundle.putInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM, active);
+        roomPrivateBundle.putString(CH_RoomDao.USER_CODE, user_code);
+        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE, customer_code);
+        roomPrivateBundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        roomPrivateIntent.putExtras(roomPrivateBundle);
+        //
+        context.sendBroadcast(roomPrivateIntent);
+    }
+
+    public void startLeaveRoomWS(String user_code, String room_code) {
+        showPD(
+                "Sair do grupo - trad",
+                "Iniciando processo de saida do grupo- trad",
+                false);
+        //
+        Intent leaveRoomIntent = new Intent(context, WBR_Leave_Room.class);
+        Bundle leaveRoomBundle = new Bundle();
+        leaveRoomBundle.putString(CH_RoomDao.USER_CODE, user_code);
+        leaveRoomBundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        leaveRoomIntent.putExtras(leaveRoomBundle);
+        //
+        context.sendBroadcast(leaveRoomIntent);
+    }
+
 
     public void startDownloadMemberImgTask(String[] imgUrlList) {
         downloadMemberImgTask = new DownloadMemberImgTask();
