@@ -4,11 +4,11 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
@@ -40,8 +40,9 @@ public class WS_C_Add_Room extends IntentService {
 
         try {
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
+            String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM);
 
-            processC_Room(json_param);
+            processC_Room(json_param, ws_event);
 
         } catch (Exception e) {
 
@@ -58,10 +59,7 @@ public class WS_C_Add_Room extends IntentService {
 
     }
 
-    private void processC_Room(String json_param) {
-        boolean firstRoom = true;
-        String room_codes = "";
-
+    private void processC_Room(String json_param, String ws_event) throws Exception {
         Gson gson = new GsonBuilder().serializeNulls().create();
         CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
         //
@@ -74,14 +72,6 @@ public class WS_C_Add_Room extends IntentService {
         ArrayList<CH_Room> chRooms = Chat_C_Room.toCH_RoomList(rooms);
         //
         for (CH_Room chRoom : chRooms) {
-
-            if (!firstRoom) {
-                room_codes += "#" + chRoom.getRoom_code();
-            } else {
-                firstRoom = false;
-                room_codes += chRoom.getRoom_code();
-            }
-
             CH_Room dbRoom = roomDao.getByString(
                     new CH_Room_Sql_001(
                             chRoom.getRoom_code()
@@ -116,29 +106,22 @@ public class WS_C_Add_Room extends IntentService {
         //
         singletonWebSocket.attemptSendPendingMessages(chRooms.get(0).getRoom_code());
         //
-        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
-        //
-        // Processamento de get para distribuição.
-        try {
+        if (chRooms.get(0).getMsg_prefix() == null || chRooms.get(0).getMsg_code() == null) {
             ToolBox_Con.connHttpGet(
                     Constant.WS_CHAT_MESSAGE_DIST + "msg_prefix=" + chRooms.get(0).getMsg_prefix() + "&msg_code=" + chRooms.get(0).getMsg_code(),
                     ""
             );
-
-        } catch (Exception e) {
-            String nn = e.toString();
         }
-
-        // Private Rooms
         //
-        Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
-        cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
-
-        Bundle bundleAux = new Bundle();
-        bundleAux.putString(Constant.CHAT_WS_JSON_PARAM, room_codes);
-        cRoomPrivateIntent.putExtras(bundleAux);
-        //
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(cRoomPrivateIntent);
+        if (ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_PRIVATE)) {
+            // Private Rooms
+            HMAux hmAux = new HMAux();
+            hmAux.put(CH_RoomDao.ROOM_CODE,chRooms.get(0).getRoom_code());
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_ROOM_PRIVATE, hmAux);
+        } else {
+            //
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+        }
     }
 
     private void startDownloadService() {

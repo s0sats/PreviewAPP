@@ -16,7 +16,7 @@ public interface Act034_Main_View {
 
     void callAct035(Context context, HMAux item);
 
-    void showPD(String ttl,String msg);
+    void showPD(String ttl, String msg, boolean cancelable);
 
     void disablePD();
 
@@ -25,6 +25,8 @@ public interface Act034_Main_View {
     void startDownloadMemberImgTask(String[] imgUrlList);
 
     void startUserListInfoTask(String socket_id,String customer_code);
+
+    void startRoomPrivateWS(String user_code, String customer_code);
 
     void changeRoom_Private_Code(String room_private);
 }

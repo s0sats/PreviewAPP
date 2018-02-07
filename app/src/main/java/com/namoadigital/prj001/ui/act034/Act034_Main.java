@@ -44,7 +44,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
-import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
@@ -75,7 +75,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private Act034_Room act034_room;
     private String currentFrag = "";
     private BR_Room brRoomReceiver;
-    private RoomPrivate roomPrivate;
     private AlertDialog infoDialog = null;
     private Bundle bundle;
     private String returnedRoomCode = null;
@@ -248,7 +247,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void startReceivers(boolean start_stop) {
         if (brRoomReceiver == null) {
             brRoomReceiver = new BR_Room();
-            roomPrivate = new RoomPrivate();
         }
         IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
         brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -258,13 +256,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         if (start_stop) {
             LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(brRoomReceiver, brRoomFilter);
-            LocalBroadcastManager.getInstance(Act034_Main.this).registerReceiver(roomPrivate, roomPrivateFilter);
         } else {
             LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(brRoomReceiver);
-            LocalBroadcastManager.getInstance(Act034_Main.this).unregisterReceiver(roomPrivate);
             //
             brRoomReceiver = null;
-            roomPrivate = null;
         }
     }
 
@@ -446,6 +441,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     //Atualiza drawer
                     toogleDrawerVisibility();
                     break;
+                case Constant.CHAT_EVENT_C_ROOM_PRIVATE:
+                    processRoomPrivateReturn(auxParam);
+                    break;
                 case Constant.CHAT_BR_TYPE_RECONNECTED:
                     //toogleInfoMsg(false, null);
                     //changeConectionMenu();
@@ -464,39 +462,15 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }
     }
 
-    private class RoomPrivate extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //
-            CH_RoomDao roomDao = new CH_RoomDao(context);
-            Bundle mBundleAux = intent.getExtras();
-            String[] room_codes = mBundleAux.getString(Constant.CHAT_WS_JSON_PARAM).split("#");
-
-            boolean sFound = false;
-
-            for (String mRoom : room_codes) {
-                if (mRoom.equalsIgnoreCase(SingletonWebSocket.mRoom_private)) {
-                    sFound = true;
-                    //
-                    break;
-                }
-            }
-
-            if (sFound) {
-                sFound = false;
-
-                HMAux ccRoom = roomDao.getByStringHM(
-                        new CH_Room_Sql_006(
-                                SingletonWebSocket.mRoom_private
-                        ).toSqlQuery()
-                );
-
-                if (ccRoom != null) {
-                    callAct035(context, ccRoom);
-                }
-
-                //SingletonWebSocket.mRoom_private = "";
-            }
+    private void processRoomPrivateReturn(HMAux auxParam) {
+        String room_code = auxParam.get(CH_RoomDao.ROOM_CODE);
+        //
+        disablePD();
+        //
+        if(room_code != null){
+            callAct035(context,auxParam);
+        }else{
+            act034_room.loadDataToScreen();
         }
     }
 
@@ -505,7 +479,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     @Override
-    public void showPD(String ttl, String msg) {
+    public void showPD(String ttl, String msg, boolean cancelable) {
         //
         enableProgressDialog(
                 ttl,
@@ -514,7 +488,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
         //
-        progressDialog.setCancelable(true);
+        progressDialog.setCancelable(cancelable);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -625,6 +599,22 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         userListInfoTask.execute(socket_id, customer_code);
     }
 
+    @Override
+    public void startRoomPrivateWS(String user_code, String customer_code ) {
+        showPD(
+                "Criação de Sala",
+                "Iniciando a criação da sala",
+                false);
+        //
+        Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
+        Bundle roomPrivateBundle = new Bundle();
+        roomPrivateBundle.putString(CH_RoomDao.USER_CODE,user_code);
+        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE,customer_code);
+        roomPrivateIntent.putExtras(roomPrivateBundle);
+        //
+        context.sendBroadcast(roomPrivateIntent);
+    }
+
     //region AsyncTask
     private class RoomInfoTask extends AsyncTask<String, Integer, String> {
 
@@ -635,8 +625,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             //
             showPD(
                     hmAux_Trans.get("ws_room_info_ttl"),
-                    hmAux_Trans.get("ws_room_info_msg")
-            );
+                    hmAux_Trans.get("ws_room_info_msg"),
+                    true);
         }
 
         @Override
@@ -650,7 +640,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 Chat_Room_Info_Env env = new Chat_Room_Info_Env();
-                env.setSocket_id(socket_id);
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setRoom_code(room_code);
                 env.setActive(1);
                 //
@@ -802,9 +793,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             Log.d("ChatEvent", "UserListInfoTask PreExecute");
             //
             showPD(
-                    hmAux_Trans.get("ws_room_info_ttl"),
-                    hmAux_Trans.get("ws_room_info_msg")
-            );
+//                    hmAux_Trans.get("ws_user_info_list_ttl"),
+//                    hmAux_Trans.get("ws_user_info_list_msg")
+                    "Lista de contatos  - Trad",
+                    "Buscando contatos - Trad",
+
+                    true);
         }
 
         @Override
@@ -818,7 +812,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 //
                 Chat_UserList_Info_Env env = new Chat_UserList_Info_Env();
-                env.setSocket_id(socket_id);
+                //
+                env.setSession_app(ToolBox_Con.getPreference_Session_App(context));
                 env.setCustomer_code(customer_code);
                 //
                 resultado = ToolBox_Con.connWebService(
@@ -888,7 +883,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
+            Log.d("ChatEvent", "UserListInfoTask Cancelada");
             disablePD();
         }
     }
@@ -916,6 +911,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if (userListInfoTask != null) {
             userListInfoTask.cancel(true);
         }
+
         //
         super.onDestroy();
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -234,6 +233,9 @@ public class SingletonWebSocket {
         Log.d("ChatEvent", "disconnect");
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocketRunning = false;
+            //Pega manager do socket e seta reconnectin para false;
+            Manager socketManager = mSocket.io();
+            socketManager.reconnection(false);
             mSocket.off();
             mSocket.disconnect();
             mSocket = null;
@@ -675,6 +677,7 @@ public class SingletonWebSocket {
                     Intent cRoomIntent = new Intent(context, WBR_C_Add_Room.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_ADD_ROOM);
                     cRoomIntent.putExtras(bundle);
                     context.sendBroadcast(cRoomIntent);
                     // Hugo Verificar
@@ -871,39 +874,39 @@ public class SingletonWebSocket {
     private Emitter.Listener onRoomPrivate = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.d("ChatEvent", "cRoomPrivateCustomer");
-
-            mRoom_private = "";
-
-            if (args != null && args.length > 0) {
-                if (args[0] instanceof String) {
-                    try {
-                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
-                        //
-                        Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
-                        cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
-
-                        JSONObject jsonObject = new JSONObject(param);
-
-                        if (jsonObject.getInt("active") == 1) {
-                            mRoom_private = jsonObject.getString("room_code");
-                            //
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constant.CHAT_WS_JSON_PARAM, mRoom_private);
-                            cRoomPrivateIntent.putExtras(bundle);
-                            LocalBroadcastManager.getInstance(context).sendBroadcast(cRoomPrivateIntent);
-                        }
-                    } catch (Exception e) {
-                    }
-
-                } else {
-                    String tst = "No Json";
-                    /*
-                    * Verificar como proceder caso o retorno não seja uma string
-                    *
-                    * */
-                }
-            }
+//            Log.d("ChatEvent", "cRoomPrivateCustomer");
+//
+//            mRoom_private = "";
+//
+//            if (args != null && args.length > 0) {
+//                if (args[0] instanceof String) {
+//                    try {
+//                        String param = ToolBox_Inf.getWebSocketJsonParam(String.valueOf(args[0]));
+//                        //
+//                        Intent cRoomPrivateIntent = new Intent(Constant.CHAT_EVENT_C_ROOM_PRIVATE);
+//                        cRoomPrivateIntent.addCategory(Intent.CATEGORY_DEFAULT);
+//
+//                        JSONObject jsonObject = new JSONObject(param);
+//
+//                        if (jsonObject.getInt("active") == 1) {
+//                            mRoom_private = jsonObject.getString("room_code");
+//                            //
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString(Constant.CHAT_WS_JSON_PARAM, mRoom_private);
+//                            cRoomPrivateIntent.putExtras(bundle);
+//                            LocalBroadcastManager.getInstance(context).sendBroadcast(cRoomPrivateIntent);
+//                        }
+//                    } catch (Exception e) {
+//                    }
+//
+//                } else {
+//                    String tst = "No Json";
+//                    /*
+//                    * Verificar como proceder caso o retorno não seja uma string
+//                    *
+//                    * */
+//                }
+//            }
         }
     };
 
@@ -1000,6 +1003,14 @@ public class SingletonWebSocket {
                                         //
                                         initConnection();
                                         //
+                                    }else{
+                                        Exception e = new Exception(cError.getError_msg());
+                                        //
+                                        ToolBox_Inf.registerException(getClass().getName(),e);
+                                        //
+                                        disconnect();
+                                        //
+                                        initConnection();
                                     }
                                     break;
                             }

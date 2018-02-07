@@ -1,22 +1,13 @@
 package com.namoadigital.prj001.model;
 
 /**
- * Created by d.luche on 10/01/2018.
+ * Created by d.luche on 13/12/2017.
  */
 
-public class Chat_Room_Info_Env {
+public class Chat_RoomPrivate_Rec {
 
-    private String session_app;
     private String room_code;
     private int active;
-
-    public String getSession_app() {
-        return session_app;
-    }
-
-    public void setSession_app(String session_app) {
-        this.session_app = session_app;
-    }
 
     public String getRoom_code() {
         return room_code;
