@@ -16,7 +16,7 @@ public interface Act034_Main_View {
 
     void callAct035(Context context, HMAux item);
 
-    void showPD(String ttl,String msg);
+    void showPD(String ttl, String msg, boolean cancelable);
 
     void disablePD();
 

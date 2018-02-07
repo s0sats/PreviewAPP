@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_RoomPrivate_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
@@ -32,8 +33,8 @@ public class WS_Room_Private extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-            String user_code = bundle.getString(Constant.CHAT_WS_SOCKET_ID_PARAM,"");
-            String customer_code = bundle.getString(Constant.CHAT_WS_ROOM_CODE_PARAM,"");
+            String user_code = bundle.getString(CH_RoomDao.USER_CODE,"");
+            String customer_code = bundle.getString(CH_RoomDao.CUSTOMER_CODE,"");
 
             processRoomPrivate(user_code,customer_code);
 

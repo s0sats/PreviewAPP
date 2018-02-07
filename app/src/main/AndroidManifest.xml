@@ -475,6 +475,9 @@
         <receiver android:name=".receiver_chat.WBR_Delivered"/>
         <service android:name=".service_chat.WS_Delivered"/>
 
+        <receiver android:name=".receiver_chat.WBR_Room_Private"/>
+        <service android:name=".service_chat.WS_Room_Private"/>
+
     </application>
 
 </manifest>
