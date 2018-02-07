@@ -44,6 +44,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
+import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_006;
@@ -441,9 +442,23 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     //Atualiza drawer
                     toogleDrawerVisibility();
                     break;
-                case Constant.CHAT_EVENT_C_ROOM_PRIVATE:
-                    processRoomPrivateReturn(auxParam);
+                case Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD:
+                    if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
+                        processRoomPrivateReturn(auxParam);
+                    }
                     break;
+                case Constant.CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE:
+                    if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
+                        act034_room.loadDataToScreen();
+                        disablePD();
+                    }
+                    break;//
+                case Constant.CHAT_BR_TYPE_LEAVE_ROOM:
+                    if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
+                        act034_room.loadDataToScreen();
+                        disablePD();
+                    }
+                    break;//CHAT_BR_TYPE_LEAVE_ROOM
                 case Constant.CHAT_BR_TYPE_RECONNECTED:
                     //toogleInfoMsg(false, null);
                     //changeConectionMenu();
@@ -600,19 +615,44 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     @Override
-    public void startRoomPrivateWS(String user_code, String customer_code ) {
-        showPD(
-                "Criação de Sala",
-                "Iniciando a criação da sala",
-                false);
+    public void startRoomPrivateWS(String user_code, String customer_code,Integer active,@Nullable String room_code) {
+        if(active == 1) {
+            showPD(
+                    "Criação de Sala - trad",
+                    "Iniciando a criação da sala - trad",
+                    false);
+        }else{
+            showPD(
+                    "Remoção de sala de Sala - trad",
+                    "Iniciando a criação da sala- trad",
+                    false);
+        }
         //
         Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
         Bundle roomPrivateBundle = new Bundle();
+        roomPrivateBundle.putInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM,active);
         roomPrivateBundle.putString(CH_RoomDao.USER_CODE,user_code);
         roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE,customer_code);
+        roomPrivateBundle.putString(CH_RoomDao.ROOM_CODE,room_code);
         roomPrivateIntent.putExtras(roomPrivateBundle);
         //
         context.sendBroadcast(roomPrivateIntent);
+    }
+
+    @Override
+    public void startLeaveRoomWS(String user_code, String room_code) {
+        showPD(
+                "Sair do grupo - trad",
+                "Iniciando processo de saida do grupo- trad",
+                false);
+        //
+        Intent leaveRoomIntent = new Intent(context, WBR_Leave_Room.class);
+        Bundle leaveRoomBundle = new Bundle();
+        leaveRoomBundle.putString(CH_RoomDao.USER_CODE,user_code);
+        leaveRoomBundle.putString(CH_RoomDao.ROOM_CODE,room_code);
+        leaveRoomIntent.putExtras(leaveRoomBundle);
+        //
+        context.sendBroadcast(leaveRoomIntent);
     }
 
     //region AsyncTask

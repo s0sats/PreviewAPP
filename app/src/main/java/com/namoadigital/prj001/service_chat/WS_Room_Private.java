@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_RoomPrivate_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -33,10 +34,12 @@ public class WS_Room_Private extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+            Integer activeRoom = bundle.getInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM);
             String user_code = bundle.getString(CH_RoomDao.USER_CODE,"");
             String customer_code = bundle.getString(CH_RoomDao.CUSTOMER_CODE,"");
+            String room_code = bundle.getString(CH_RoomDao.ROOM_CODE,"");
 
-            processRoomPrivate(user_code,customer_code);
+            processRoomPrivate(user_code, customer_code, activeRoom, room_code);
 
         } catch (Exception e) {
 
@@ -53,7 +56,7 @@ public class WS_Room_Private extends IntentService {
 
     }
 
-    private void processRoomPrivate(String user_code, String customer_code) throws Exception {
+    private void processRoomPrivate(String user_code, String customer_code, int activeRoom, String room_code) throws Exception {
 
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
@@ -62,8 +65,7 @@ public class WS_Room_Private extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setUser_code(Integer.parseInt(user_code));
         env.setCustomer_code(Long.valueOf(customer_code));
-        env.setActive(1);
-        //
+        env.setActive(activeRoom);
         //
         ToolBox.sendBCStatus(
                 getApplicationContext(),
@@ -100,24 +102,46 @@ public class WS_Room_Private extends IntentService {
             );
             return;
         }else{
-            //Sem erro, chama AddRoom
-            String param = ToolBox_Inf.getWebSocketJsonParam(resultado);
-            //
-            Intent cRoomIntent = new Intent(getApplicationContext(), WBR_C_Add_Room.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
-            bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_POST_ROOM_PRIVATE);
-            cRoomIntent.putExtras(bundle);
-            //
-            ToolBox.sendBCStatus(
-                    getApplicationContext(),
-                    "STATUS",
+            if(activeRoom == 1) {
+                //Sem erro, chama AddRoom
+                String param = ToolBox_Inf.getWebSocketJsonParam(resultado);
+                //
+                Intent cRoomIntent = new Intent(getApplicationContext(), WBR_C_Add_Room.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_POST_ROOM_PRIVATE);
+                cRoomIntent.putExtras(bundle);
+                //
+                ToolBox.sendBCStatus(
+                        getApplicationContext(),
+                        "STATUS",
                     /*hmAux_Trans.get("msg_no_info_return")*/"Gravando nova sala - Trad",
-                    "",
-                    "0"
-            );
-            //
-            getApplicationContext().sendBroadcast(cRoomIntent);
+                        "",
+                        "0"
+                );
+                //
+                getApplicationContext().sendBroadcast(cRoomIntent);
+            }else if(activeRoom == 0){
+                //
+                /*Chat_C_Remove_Room param = new Chat_C_Remove_Room();
+                param.setRoom_code(room_code);*/
+
+                Intent cRoomIntent = new Intent(getApplicationContext(), WBR_C_Remove_Room.class);
+                Bundle bundle = new Bundle();
+                //
+                bundle.putString(Constant.CHAT_WS_JSON_PARAM, ToolBox_Inf.getWebSocketJsonParam(resultado));
+                bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_POST_ROOM_PRIVATE);
+                cRoomIntent.putExtras(bundle);
+                //
+                ToolBox.sendBCStatus(
+                        getApplicationContext(),
+                        "STATUS",
+                    /*hmAux_Trans.get("msg_no_info_return")*/"Removendo sala do banco local - Trad",
+                        "",
+                        "0"
+                );
+                getApplicationContext().sendBroadcast(cRoomIntent);
+            }
         }
     }
 }

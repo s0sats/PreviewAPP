@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Room;
+import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -31,8 +33,9 @@ public class WS_C_Remove_Room extends IntentService {
 
         try {
             String json_param = bundle.getString(Constant.CHAT_WS_JSON_PARAM);
+            String ws_event = bundle.getString(Constant.CHAT_WS_EVENT_PARAM);
 
-            processC_Room(json_param);
+            processC_Room(json_param,ws_event);
 
         } catch (Exception e) {
 
@@ -49,7 +52,7 @@ public class WS_C_Remove_Room extends IntentService {
 
     }
 
-    private void processC_Room(String json_param) {
+    private void processC_Room(String json_param, String ws_event) throws Exception {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
         Chat_C_Remove_Room room =
@@ -71,25 +74,24 @@ public class WS_C_Remove_Room extends IntentService {
                         room.getRoom_code()
                 ).toSqlQuery()
         );
-
+        //
         ToolBox_Inf.cleanRoom_RoomMessages(
                 getApplicationContext(),
                 ccRoom
         );
         //
-        ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
-
-    }
-
-    private class Chat_C_Remove_Room {
-        String room_code;
-
-        public String getRoom_code() {
-            return room_code;
-        }
-
-        public void setRoom_code(String room_code) {
-            this.room_code = room_code;
+        if(ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_PRIVATE)){
+            HMAux hmAux = new HMAux();
+            hmAux.put(CH_RoomDao.ROOM_CODE, room.getRoom_code());
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE, hmAux);
+        }else if(ws_event.equals(Constant.CHAT_EVENT_POST_LEAVEROOM)){
+            HMAux hmAux = new HMAux();
+            hmAux.put(CH_RoomDao.ROOM_CODE, room.getRoom_code());
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_LEAVE_ROOM, hmAux);
+        } else {
+            //
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
         }
     }
+
 }

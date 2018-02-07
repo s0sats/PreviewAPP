@@ -117,7 +117,7 @@ public class WS_C_Add_Room extends IntentService {
             // Private Rooms
             HMAux hmAux = new HMAux();
             hmAux.put(CH_RoomDao.ROOM_CODE,chRooms.get(0).getRoom_code());
-            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_ROOM_PRIVATE, hmAux);
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD, hmAux);
         } else {
             //
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);

@@ -703,6 +703,7 @@ public class SingletonWebSocket {
                     Intent cRoomIntent = new Intent(context, WBR_C_Remove_Room.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                    bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_REMOVE_ROOM);
                     cRoomIntent.putExtras(bundle);
                     context.sendBroadcast(cRoomIntent);
                 } else {
