@@ -136,6 +136,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("room_type_workgroup_lbl");
         transList.add("room_type_private_lbl");
         transList.add("room_type_so_lbl");
+        transList.add("room_type_pa_lbl");
         transList.add("room_dialog_filter_ttl");
         transList.add("ws_room_info_ttl");
         transList.add("ws_room_info_msg");

@@ -1268,10 +1268,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 ).toSqlQuery()
                         );
 
+                        alertForRoomRemove(ccRoom);
 
                         dialog.dismiss();
 
-                        alertForRoomRemove(ccRoom);
                     }
                 });
             }
@@ -1387,7 +1387,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 //                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 //                //
                 if (mRoom.getRoom_type().equalsIgnoreCase("PRIVATE_CUSTOMER")) {
-                    startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), hmAux.get(CH_RoomDao.CUSTOMER_CODE), 0, hmAux.get(CH_RoomDao.ROOM_CODE));
+                    startRoomPrivateWS(
+                            hmAux.get(CH_MessageDao.USER_CODE),
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            0,
+                            hmAux.get(CH_MessageDao.ROOM_CODE));
                     //singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
                 } else {
                     startLeaveRoomWS(ToolBox_Con.getPreference_User_Code(context), mRoom_code);

@@ -23,16 +23,17 @@ public class Sql_Act034_004 implements Specification {
     private String sqlite_db_format = "%Y-%m-%d %H:%M:%S";//formatação para comparação não exibição
     private String room_type_filter = "";
 
-    public Sql_Act034_004(Long customer_code, String user_code, String room_desc, boolean filter_workgroup, boolean filter_private, boolean filter_so) {
+    public Sql_Act034_004(Long customer_code, String user_code, String room_desc, boolean filter_workgroup, boolean filter_private, boolean filter_so, boolean filter_pa) {
         this.customer_code = customer_code;
         this.user_code = user_code;
         this.room_desc = room_desc.trim().length() == 0 ? null : room_desc.trim();
         //
-        if (filter_workgroup || filter_private || filter_so) {
+        if (filter_workgroup || filter_private || filter_so || filter_pa) {
             String inFilter = "";
             inFilter += filter_workgroup ? "'" + Constant.CHAT_ROOM_TYPE_WORKGROUP + "'," : "";
             inFilter += filter_private ? "'" + Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER + "'," : "";
             inFilter += filter_so ? "'" + Constant.CHAT_ROOM_TYPE_SO + "'," : "";
+            inFilter += filter_pa ? "'" + Constant.CHAT_ROOM_TYPE_PA + "'," : "";
             //
             room_type_filter = "and r.room_type in ("
                     + inFilter.substring(0, inFilter.length() - 1) +
