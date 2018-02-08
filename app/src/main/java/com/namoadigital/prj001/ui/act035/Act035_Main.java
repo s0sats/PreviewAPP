@@ -78,6 +78,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     public static boolean isProcessing_C_Message = false;
 
+    private boolean bTT = false;
+
     private Thread mThread;
 
     private TextView tv_room_name_val;
@@ -362,6 +364,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
+        bTT = getIntent().getBooleanExtra("gg", false);
         //
         if (bundle != null) {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
@@ -632,6 +635,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     public void callAct034(Context context) {
         Intent mIntent = new Intent(context, Act034_Main.class);
+        mIntent.putExtra("gg", bTT);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);

@@ -231,6 +231,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(mIntent);
         finish();
     }

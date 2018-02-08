@@ -22,10 +22,17 @@ public class NotificationReceiver extends BroadcastReceiver {
             !ToolBox_Con.getPreference_Site_Code(context).equals("-1") &&
             ToolBox_Con.getPreference_Operation_Code(context) != -1
         ) {
-            Intent mIntent = new Intent(context, Act034_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //
-            context.startActivity(mIntent);
+//            Intent mIntent = new Intent(context, Act034_Main.class);
+//            //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            //
+//            context.startActivity(mIntent);
         }
+
+        Intent mIntent = new Intent(context, Act034_Main.class);
+        mIntent.putExtra("gg", true);
+        //mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        context.startActivity(mIntent);
+
     }
 }

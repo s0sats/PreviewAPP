@@ -66,6 +66,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     public static final String FRAG_TAG_ROOM = "ROOM";
 
+    private boolean bTT = false;
+
     private String room_code_private = "";
 
     private Act034_Main_Presenter mPresenter;
@@ -220,6 +222,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
+        bTT = getIntent().getBooleanExtra("gg", false);
         //
         if (bundle != null) {
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
@@ -411,6 +414,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void callAct035(Context context, HMAux item) {
         Intent mIntent = new Intent(context, Act035_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtra("gg", bTT);
         //
         Bundle bundle = new Bundle();
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
@@ -483,9 +487,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         disablePD();
         //
-        if(room_code != null){
-            callAct035(context,auxParam);
-        }else{
+        if (room_code != null) {
+            callAct035(context, auxParam);
+        } else {
             act034_room.loadDataToScreen();
         }
     }
@@ -616,13 +620,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     @Override
-    public void startRoomPrivateWS(String user_code, String customer_code,Integer active,@Nullable String room_code) {
-        if(active == 1) {
+    public void startRoomPrivateWS(String user_code, String customer_code, Integer active, @Nullable String room_code) {
+        if (active == 1) {
             showPD(
                     "Criação de Sala - trad",
                     "Iniciando a criação da sala - trad",
                     false);
-        }else{
+        } else {
             showPD(
                     "Remoção de sala de Sala - trad",
                     "Iniciando a criação da sala- trad",
@@ -631,10 +635,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
         Bundle roomPrivateBundle = new Bundle();
-        roomPrivateBundle.putInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM,active);
-        roomPrivateBundle.putString(CH_RoomDao.USER_CODE,user_code);
-        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE,customer_code);
-        roomPrivateBundle.putString(CH_RoomDao.ROOM_CODE,room_code);
+        roomPrivateBundle.putInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM, active);
+        roomPrivateBundle.putString(CH_RoomDao.USER_CODE, user_code);
+        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE, customer_code);
+        roomPrivateBundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         roomPrivateIntent.putExtras(roomPrivateBundle);
         //
         context.sendBroadcast(roomPrivateIntent);
@@ -649,8 +653,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         Intent leaveRoomIntent = new Intent(context, WBR_Leave_Room.class);
         Bundle leaveRoomBundle = new Bundle();
-        leaveRoomBundle.putString(CH_RoomDao.USER_CODE,user_code);
-        leaveRoomBundle.putString(CH_RoomDao.ROOM_CODE,room_code);
+        leaveRoomBundle.putString(CH_RoomDao.USER_CODE, user_code);
+        leaveRoomBundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         leaveRoomIntent.putExtras(leaveRoomBundle);
         //
         context.sendBroadcast(leaveRoomIntent);
@@ -935,7 +939,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+
+        if (bTT) {
+            bTT = false;
+            finish();
+        } else {
+            mPresenter.onBackPressedClicked();
+        }
 
     }
 
@@ -965,7 +975,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        if(ToolBox_Inf.isUsrAdmin(context)) {
+        if (ToolBox_Inf.isUsrAdmin(context)) {
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
@@ -982,9 +992,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             return true;
         }
 
-        if(id == 2){
-            if(ToolBox_Inf.isUsrAdmin(context)) {
-                ToolBox_Inf.showChatAdminInfo(context,hmAux_Trans);
+        if (id == 2) {
+            if (ToolBox_Inf.isUsrAdmin(context)) {
+                ToolBox_Inf.showChatAdminInfo(context, hmAux_Trans);
             }
         }
 
