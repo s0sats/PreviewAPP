@@ -45,4 +45,18 @@
 
             />
 
+        <CheckBox
+            android:id="@+id/act034_room_filter_dialog_chk_pa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="Plano de Ação -"
+            android:textSize="@dimen/font_size_font_16"
+
+            />
+
+
 </LinearLayout>

@@ -437,6 +437,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_MESSAGE_TYPE_TRANSLATE = "TRANSLATE";
     public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
     public static final String CHAT_ROOM_TYPE_SO = "SO";
+    public static final String CHAT_ROOM_TYPE_PA = "FORM_AP";
     public static final String CHAT_ROOM_TYPE_PRIVATE_CUSTOMER = "PRIVATE_CUSTOMER";
     public static final String CHAT_WS_SOCKET_ID_PARAM = "WS_SOCKET_ID_PARAM";
     public static final String CHAT_WS_ROOM_CODE_PARAM = "WS_ROOM_CODE_PARAM";

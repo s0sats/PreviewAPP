@@ -67,6 +67,7 @@ public class Act034_Room extends BaseFragment {
     private boolean filter_workgroup;
     private boolean filter_private;
     private boolean filter_so;
+    private boolean filter_pa;
     //
     private String info_room_desc = "";
     private String info_room_image = "";
@@ -211,7 +212,8 @@ public class Act034_Room extends BaseFragment {
                                 mket_search_room.getText().toString(),
                                 filter_workgroup,
                                 filter_private,
-                                filter_so
+                                filter_so,
+                                filter_pa
                         ).toSqlQuery()
                 );
         //
@@ -301,6 +303,7 @@ public class Act034_Room extends BaseFragment {
         CheckBox chk_workgroup = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_workgroup);
         CheckBox chk_private = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_private);
         CheckBox chk_so = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_so);
+        CheckBox chk_pa = (CheckBox) view.findViewById(R.id.act034_room_filter_dialog_chk_pa);
         //
         chk_workgroup.setText(hmAux_Trans.get("room_type_workgroup_lbl"));
         chk_workgroup.setChecked(filter_workgroup);
@@ -311,6 +314,10 @@ public class Act034_Room extends BaseFragment {
         chk_so.setText(hmAux_Trans.get("room_type_so_lbl"));
         chk_so.setChecked(filter_so);
         //
+        chk_pa.setText(hmAux_Trans.get("room_type_pa_lbl"));
+        chk_pa.setChecked(filter_pa);
+        //
+
         builder
                 .setTitle(hmAux_Trans.get("room_dialog_filter_ttl"))
                 .setView(view)
@@ -350,6 +357,15 @@ public class Act034_Room extends BaseFragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         filter_so = isChecked;
+                    }
+                }
+        );
+        //
+        chk_pa.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        filter_pa = isChecked;
                     }
                 }
         );
