@@ -129,7 +129,7 @@ public class Act034_Room extends BaseFragment {
         //
         messageDao = new CH_MessageDao(context);
         //
-        filter_workgroup = filter_private = filter_so = false;
+        filter_workgroup = filter_private = filter_so = filter_pa = false;
         //
         setFilterIconColor();
     }
