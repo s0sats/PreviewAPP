@@ -3144,8 +3144,8 @@ public class ToolBox_Inf {
 
     public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
         //
+        boolean show_notification = false;
         HMAux hmAux_trans = null;
-
         List<String> translateList = new ArrayList<>();
         //
         hmAux_trans = ToolBox_Inf.setLanguage(
@@ -3198,31 +3198,63 @@ public class ToolBox_Inf {
                             );
                     //
                     if (msgInfo != null && msgInfo.size() > 0) {
-                        if (
-                                msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
-                                        msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
-                                ) {
-                            builder.setContentTitle(
-                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
-                            );
-                            HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
-                            //
-                            builder.setContentText(
-                                    msgAux.get("type").equals("TEXT") ? msgAux.get("data") : msgAux.get("type")
-                            );
+                        if( msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("0") ||
+                            msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("0")) {
+                            show_notification = false;
+                        }else{
+                            show_notification = true;
+                            if (
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
+                                            msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
+                                    ) {
+                                builder.setContentTitle(
+                                        msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
+                                );
+                                HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
+                                //
+                                switch (msgAux.get("type")){
+                                    case Constant.CHAT_MESSAGE_TYPE_TEXT:
+                                        builder.setContentText(
+                                                msgAux.get("data")
+                                        );
+                                        break;
+                                    case Constant.CHAT_MESSAGE_TYPE_TRANSLATE:
+                                        String transMsg = "";
+                                        if(msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE) != null){
+                                            transMsg =
+                                                    msgAux.get("data").replace(
+                                                            msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)+"|",
+                                                            hmAux_trans.get(msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE))
+                                                    );
+                                        }else{
+                                            transMsg =  Constant.CHAT_MESSAGE_TYPE_TRANSLATE;
+                                        }
+                                        //
+                                        builder.setContentText(transMsg);
+                                        //
+                                        break;
+                                    default:
+                                        builder.setContentText(
+                                                hmAux_trans.get(
+                                                    msgAux.get("type")
+                                                )
+                                        );
+                                }
 
-                        } else {
-                            builder.setContentTitle(
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
-                            );
+                            } else {
+                                builder.setContentTitle(
+                                        msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
+                                );
 
-                            builder.setContentText(
-                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
-                            );
+                                builder.setContentText(
+                                        msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
+                                );
+                            }
                         }
                     }
                     break;
                 case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
+                    show_notification = true;
                     //view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
                     builder.setContentTitle(
                             hmAux_trans.get("chat_fcm_offline_ttl")
@@ -3232,11 +3264,14 @@ public class ToolBox_Inf {
                     );
 
                     break;
+                default:
+                    show_notification = false;
             }
-
-            Notification notification = builder.build();
-            //
-            nm.notify(Constant.NOTIFICATION_CHAT, notification);
+            if(show_notification) {
+                Notification notification = builder.build();
+                //
+                nm.notify(Constant.NOTIFICATION_CHAT, notification);
+            }
 
         } catch (Exception e) {
             registerException(CLASS_NAME, e);
@@ -3257,10 +3292,21 @@ public class ToolBox_Inf {
             JSONObject jsonMsg = jsonObj.getJSONObject("message");
             hmAux.put("type", String.valueOf(jsonMsg.getString("type")));
             hmAux.put("data", String.valueOf(jsonMsg.getString("data")));
+            if(String.valueOf(jsonMsg.getString("type")).equals(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
+                try {
+                    String[] translation =
+                            String.valueOf(jsonMsg.getString("data"))
+                                    .replace("|", Constant.MAIN_CONCAT_STRING)
+                                    .split(Constant.MAIN_CONCAT_STRING);
+                    hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE, translation[0]);
+                }catch (Exception e){
+                    hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE,Constant.CHAT_MESSAGE_TYPE_TRANSLATE );
+                }
+            }
             return hmAux;
         } catch (Exception e) {
             registerException(CLASS_NAME, e);
-            return null;
+            return hmAux;
         }
     }
 
