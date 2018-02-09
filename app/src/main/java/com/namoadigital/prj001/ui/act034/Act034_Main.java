@@ -66,7 +66,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     public static final String FRAG_TAG_ROOM = "ROOM";
 
-    private boolean bTT = false;
+    public static boolean bTT = false;
 
     private String room_code_private = "";
 
