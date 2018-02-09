@@ -78,7 +78,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     public static boolean isProcessing_C_Message = false;
 
-    private boolean bTT = false;
+    public static boolean bTT = false;
 
     private Thread mThread;
 
@@ -110,7 +110,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private int lastposition = -1;
 
     private CH_RoomDao ch_roomDao;
-    private String mRoom_code;
+    public static String mRoom_code;
     private CH_Room mRoom;
 
     private BR_Room brRoomReceiver;
@@ -163,6 +163,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         loadTranslation();
 
         mActivity_ID = Constant.ACT035;
+
+        ToolBox.setPreference_Activity_ID(context, mActivity_ID);
+        //
+        if (!mActivity_ID.isEmpty()) {
+            hmActivityStatus.put(mActivity_ID, String.valueOf(true));
+        }
     }
 
     private void loadTranslation() {
