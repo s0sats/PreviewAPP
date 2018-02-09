@@ -80,7 +80,23 @@ public class WS_C_Remove_Room extends IntentService {
                 ccRoom
         );
         //
-        if(ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_PRIVATE)){
+        HMAux hmAux = new HMAux();
+        //
+        switch (ws_event){
+            case Constant.CHAT_EVENT_POST_ROOM_PRIVATE:
+                hmAux.put(CH_RoomDao.ROOM_CODE, room.getRoom_code());
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE, hmAux);
+                break;
+            case Constant.CHAT_EVENT_POST_LEAVEROOM:
+                hmAux.put(CH_RoomDao.ROOM_CODE, room.getRoom_code());
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_LEAVE_ROOM, hmAux);
+                break;
+            case Constant.CHAT_EVENT_C_REMOVE_ROOM:
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+                break;
+            default:
+        }
+       /* if(ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_PRIVATE)){
             HMAux hmAux = new HMAux();
             hmAux.put(CH_RoomDao.ROOM_CODE, room.getRoom_code());
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE, hmAux);
@@ -91,7 +107,7 @@ public class WS_C_Remove_Room extends IntentService {
         } else {
             //
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
-        }
+        }*/
     }
 
 }

@@ -3134,13 +3134,54 @@ public class ToolBox_Inf {
 //            }
 //            Notification notification = builder.build();
 //            //
-//            nm.notify(Constant.NOTIFICATION_CHAT, notification);
+//            nm.notify(Constant.NOTIFICATION_CHAT_MSG, notification);
 //
 //        } catch (Exception e) {
 //            registerException(CLASS_NAME, e);
 //        }
 //
 //    }
+    public static void showChatRoomNotification(Context context){
+        HMAux hmAux_trans = null;
+        List<String> translateList = new ArrayList<>();
+        //
+        hmAux_trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+            //Necessidade de incluir arquivo de String ?!
+        }
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_chat_24x24);
+        builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
+        // builder.setSound(alarmSound);
+        builder.setSound(Uri.parse("android.resource://"
+                + context.getPackageName() + "/" + R.raw.morfador));
+        builder.setContentTitle(hmAux_trans.get("notification_add_room_ttl"));
+        builder.setContentText(hmAux_trans.get("notification_add_room_msg"));
+
+        Notification notification = builder.build();
+        //
+        nm.notify(Constant.NOTIFICATION_CHAT_ROOM, notification);
+    }
+
+    public static void cancelChatRoomNotification(Context context){
+            cancelNotification(context,Constant.NOTIFICATION_CHAT_ROOM);
+    }
 
     public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
         //
@@ -3270,7 +3311,7 @@ public class ToolBox_Inf {
             if(show_notification) {
                 Notification notification = builder.build();
                 //
-                nm.notify(Constant.NOTIFICATION_CHAT, notification);
+                nm.notify(Constant.NOTIFICATION_CHAT_MSG, notification);
             }
 
         } catch (Exception e) {
@@ -3281,7 +3322,7 @@ public class ToolBox_Inf {
 
     public static void cancelChatNotification(Context context) {
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        manager.cancel(Constant.NOTIFICATION_CHAT);
+        manager.cancel(Constant.NOTIFICATION_CHAT_MSG);
     }
 
     public static HMAux getChatMsgContent(String msg_obj) {

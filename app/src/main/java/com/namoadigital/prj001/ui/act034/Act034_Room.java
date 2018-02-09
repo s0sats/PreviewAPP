@@ -199,6 +199,8 @@ public class Act034_Room extends BaseFragment {
             setListViewOnRoomPosition();
             //
             ToolBox_Inf.cancelChatNotification(context);
+            //
+            ToolBox_Inf.cancelChatRoomNotification(context);
         }
     }
 
