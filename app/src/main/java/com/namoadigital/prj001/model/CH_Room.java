@@ -18,6 +18,7 @@ public class CH_Room {
     private Long user_code;
     private Integer msg_prefix;
     private Integer msg_code;
+    private String room_status;
     private int status_update;
 
     public String getRoom_type() {
@@ -126,6 +127,14 @@ public class CH_Room {
 
     public void setMsg_code(int msg_code) {
         this.msg_code = msg_code;
+    }
+
+    public String getRoom_status() {
+        return room_status;
+    }
+
+    public void setRoom_status(String room_status) {
+        this.room_status = room_status;
     }
 
     public int getStatus_update() {

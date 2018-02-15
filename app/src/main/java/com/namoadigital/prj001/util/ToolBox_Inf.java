@@ -2816,6 +2816,23 @@ public class ToolBox_Inf {
         }
         return null;
     }
+    public static String getRoomObjJsonParam(String socket_arg) {
+        try {
+            JSONObject jsonObject = new JSONObject(socket_arg);
+           /* Iterator<String> key = jsonObject.keys();
+            String key_name = key.next();
+            JSONObject obj = jsonObject.getJSONObject(key_name);*/
+            JSONObject obj = jsonObject.getJSONObject(jsonObject.keys().next());
+            //
+            if (obj != null) {
+                return obj.toString();
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return null;
+        }
+        return null;
+    }
 
     public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key) {
         boolean ret = true;

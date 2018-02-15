@@ -158,7 +158,8 @@ public class Act034_Room extends BaseFragment {
         mket_search_room.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
-                loadRoomList();
+                //loadRoomList();
+                applySearchFilter();
             }
 
             @Override
@@ -181,6 +182,12 @@ public class Act034_Room extends BaseFragment {
                 mMain.startUserListInfoTask(singletonWebSocket.mSocket.id(), String.valueOf(selected_customer));
             }
         });
+    }
+
+    private void applySearchFilter() {
+        if(mAdapter != null){
+            mAdapter.getFilter().filter(mket_search_room.getText().toString().trim());
+        }
     }
 
     @Override
@@ -211,7 +218,7 @@ public class Act034_Room extends BaseFragment {
                         new Sql_Act034_004(
                                 selected_customer,
                                 ToolBox_Con.getPreference_User_Code(context),
-                                mket_search_room.getText().toString(),
+                               // mket_search_room.getText().toString(),
                                 filter_workgroup,
                                 filter_private,
                                 filter_so,
@@ -222,6 +229,8 @@ public class Act034_Room extends BaseFragment {
         if (roomList != null && roomList.size() > 0) {
             //
             ToolBox_Inf.addJsonObjAsHmAuxKey(roomList, CH_MessageDao.MSG_OBJ);
+            //
+            setRoomStatusTrans(roomList);
             //
             mAdapter = new Act034_Room_Adapter(
                     context,
@@ -258,6 +267,14 @@ public class Act034_Room extends BaseFragment {
             tv_no_result.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private void setRoomStatusTrans(ArrayList<HMAux> roomList) {
+        for (HMAux hmAux:roomList) {
+            if(!hmAux.get(CH_RoomDao.ROOM_STATUS).isEmpty()){
+                hmAux.put(CH_RoomDao.ROOM_STATUS,hmAux_Trans.get(hmAux.get(CH_RoomDao.ROOM_STATUS)));
+            }
+        }
     }
 
     public void setListViewOnRoomPosition() {
@@ -329,6 +346,9 @@ public class Act034_Room extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         setFilterIconColor();
                         loadRoomList();
+                        //Apagar texto buscado ou aplicá-lo?
+                        //applySearchFilter();//Aplicado - Efeito colateral, temo como resolver?
+                        mket_search_room.setText("");//apagar
                     }
                 });
         //

@@ -92,6 +92,26 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/act034_opc_cell_ll_room_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/act034_room_cell_tv_room_status"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|center_vertical"
+                            android:layout_weight="1"
+                            android:text="Status - traduzir"
+                            android:textSize="@dimen/font_size_item"
+                            android:textColor="@color/namoa_color_black"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/act034_opc_cell_ll_msg"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
