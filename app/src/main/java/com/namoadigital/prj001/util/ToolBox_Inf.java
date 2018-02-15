@@ -111,6 +111,7 @@ import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -3004,7 +3005,8 @@ public class ToolBox_Inf {
     public static void showChatNotification(Context context, String type, String attempt) {
         showChatNotification(context, type, attempt, "", "");
     }
-//
+
+    //
 //    public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
 //        //
 //        HMAux hmAux_trans = null;
@@ -3141,7 +3143,7 @@ public class ToolBox_Inf {
 //        }
 //
 //    }
-    public static void showChatRoomNotification(Context context){
+    public static void showChatRoomNotification(Context context) {
         HMAux hmAux_trans = null;
         List<String> translateList = new ArrayList<>();
         //
@@ -3179,8 +3181,8 @@ public class ToolBox_Inf {
         nm.notify(Constant.NOTIFICATION_CHAT_ROOM, notification);
     }
 
-    public static void cancelChatRoomNotification(Context context){
-            cancelNotification(context,Constant.NOTIFICATION_CHAT_ROOM);
+    public static void cancelChatRoomNotification(Context context) {
+        cancelNotification(context, Constant.NOTIFICATION_CHAT_ROOM);
     }
 
     public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
@@ -3239,11 +3241,32 @@ public class ToolBox_Inf {
                             );
                     //
                     if (msgInfo != null && msgInfo.size() > 0) {
-                        if( msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("0") ||
-                            msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("0")) {
+                        if (msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("0") ||
+                                msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("0")) {
                             show_notification = false;
-                        }else{
+                        } else {
                             show_notification = true;
+
+                            if (Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))){
+                                return;
+                            }
+
+                            if (msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1")) {
+                                mIntent = new Intent(context, NotificationReceiver.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mIntent.putExtra("room_code", msgInfo.get("room_code"));
+
+                                pi = PendingIntent.getBroadcast(
+                                        context,
+                                        0,
+                                        mIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+
+                                builder.setContentIntent(pi);
+                            } else {
+                            }
+
                             if (
                                     msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
                                             msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
@@ -3253,7 +3276,7 @@ public class ToolBox_Inf {
                                 );
                                 HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
                                 //
-                                switch (msgAux.get("type")){
+                                switch (msgAux.get("type")) {
                                     case Constant.CHAT_MESSAGE_TYPE_TEXT:
                                         builder.setContentText(
                                                 msgAux.get("data")
@@ -3261,14 +3284,14 @@ public class ToolBox_Inf {
                                         break;
                                     case Constant.CHAT_MESSAGE_TYPE_TRANSLATE:
                                         String transMsg = "";
-                                        if(msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE) != null){
+                                        if (msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE) != null) {
                                             transMsg =
                                                     msgAux.get("data").replace(
-                                                            msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)+"|",
+                                                            msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE) + "|",
                                                             hmAux_trans.get(msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE))
                                                     );
-                                        }else{
-                                            transMsg =  Constant.CHAT_MESSAGE_TYPE_TRANSLATE;
+                                        } else {
+                                            transMsg = Constant.CHAT_MESSAGE_TYPE_TRANSLATE;
                                         }
                                         //
                                         builder.setContentText(transMsg);
@@ -3277,7 +3300,7 @@ public class ToolBox_Inf {
                                     default:
                                         builder.setContentText(
                                                 hmAux_trans.get(
-                                                    msgAux.get("type")
+                                                        msgAux.get("type")
                                                 )
                                         );
                                 }
@@ -3308,7 +3331,7 @@ public class ToolBox_Inf {
                 default:
                     show_notification = false;
             }
-            if(show_notification) {
+            if (show_notification) {
                 Notification notification = builder.build();
                 //
                 nm.notify(Constant.NOTIFICATION_CHAT_MSG, notification);
@@ -3333,15 +3356,15 @@ public class ToolBox_Inf {
             JSONObject jsonMsg = jsonObj.getJSONObject("message");
             hmAux.put("type", String.valueOf(jsonMsg.getString("type")));
             hmAux.put("data", String.valueOf(jsonMsg.getString("data")));
-            if(String.valueOf(jsonMsg.getString("type")).equals(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
+            if (String.valueOf(jsonMsg.getString("type")).equals(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
                 try {
                     String[] translation =
                             String.valueOf(jsonMsg.getString("data"))
                                     .replace("|", Constant.MAIN_CONCAT_STRING)
                                     .split(Constant.MAIN_CONCAT_STRING);
                     hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE, translation[0]);
-                }catch (Exception e){
-                    hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE,Constant.CHAT_MESSAGE_TYPE_TRANSLATE );
+                } catch (Exception e) {
+                    hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE, Constant.CHAT_MESSAGE_TYPE_TRANSLATE);
                 }
             }
             return hmAux;

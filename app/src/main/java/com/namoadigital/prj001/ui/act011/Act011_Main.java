@@ -2125,4 +2125,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         finish();
     }
 
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
+
 }

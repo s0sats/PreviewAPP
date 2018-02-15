@@ -63,6 +63,7 @@ import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -326,6 +327,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     private void initVars() {
+        Act035_Main.mRoom_code = "";
+
         wsProcess = "";
         wsSoProcess = "";
 
@@ -1393,5 +1396,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             }
 
         }
+    }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
     }
 }

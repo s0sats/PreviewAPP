@@ -275,4 +275,9 @@ public class Act018_Main extends Base_Activity implements Act018_Main_View {
 
         return true;
     }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
 }

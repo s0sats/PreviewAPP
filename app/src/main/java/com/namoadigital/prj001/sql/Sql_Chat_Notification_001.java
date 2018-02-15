@@ -15,6 +15,8 @@ public class Sql_Chat_Notification_001 implements Specification {
     public static final String QTY_MSG = "qty_msg";
     public static final String LAST_ROOM = "last_room";
     public static final String LAST_MSG = "last_msg";
+    public static final String ROOM_CODE = "room_code";
+
 
     private String user_code;
 
@@ -56,34 +58,35 @@ public class Sql_Chat_Notification_001 implements Specification {
                 .append(";"+QTY_ROOM+"#"+QTY_MSG+"#"+LAST_ROOM+"#"+LAST_MSG)*/
                 .append("   SELECT\n" +
                         "      t.*,\n" +
-                        "      r.room_desc "+LAST_ROOM+",\n" +
-                        "      m.msg_obj "+LAST_MSG+"\n" +
+                        "      r.room_desc " + LAST_ROOM + ",\n" +
+                        "      m.msg_obj " + LAST_MSG + "\n," +
+                        "      m.room_code " + ROOM_CODE + "\n" +
                         "   FROM\n" +
-                        "        "+ CH_MessageDao.TABLE+" m \n," +
-                        "        "+ CH_RoomDao.TABLE+" r,\n" +
+                        "        " + CH_MessageDao.TABLE + " m \n," +
+                        "        " + CH_RoomDao.TABLE + " r,\n" +
                         "          ( SELECT\n" +
                         "             count( distinct(r.room_code)) qty_room,\n" +
                         "             count(m.msg_code) qty_msg,\n" +
                         "             (SELECT m.msg_pk\n" +
-                        "              FROM "+ CH_MessageDao.TABLE+" m\n," +
-                        "                   "+ CH_RoomDao.TABLE+" r\n" +
+                        "              FROM " + CH_MessageDao.TABLE + " m\n," +
+                        "                   " + CH_RoomDao.TABLE + " r\n" +
                         "             WHERE\n" +
                         "                   m.room_code = r.room_code" +
                         "                   AND m.read = 0\n" +
-                        "                   AND m.user_code <> '"+user_code+"'\n" +
+                        "                   AND m.user_code <> '" + user_code + "'\n" +
                         "              LIMIT 1 ) last_msg_pk\n" +
                         "           FROM    \n" +
-                        "               "+ CH_RoomDao.TABLE+" r\n" +
+                        "               " + CH_RoomDao.TABLE + " r\n" +
                         "           LEFT JOIN\n" +
-                        "              "+ CH_MessageDao.TABLE+" m ON r.room_code = m.room_code\n" +
+                        "              " + CH_MessageDao.TABLE + " m ON r.room_code = m.room_code\n" +
                         "           WHERE\n" +
                         "              m.read = 0\n" +
-                        "              and m.user_code <> '"+user_code+"'\n" +
+                        "              and m.user_code <> '" + user_code + "'\n" +
                         "           )t\n" +
                         "   WHERE\n" +
                         "    m.room_code = r.room_code" +
                         "    and m.msg_pk = t.last_msg_pk\n")
-                .append(";"+QTY_ROOM+"#"+QTY_MSG+"#"+LAST_ROOM+"#"+LAST_MSG)
+                .append(";" + QTY_ROOM + "#" + QTY_MSG + "#" + LAST_ROOM + "#" + LAST_MSG + "#" + ROOM_CODE)
                 .toString();
     }
 }

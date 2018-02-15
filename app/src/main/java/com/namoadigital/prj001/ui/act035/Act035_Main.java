@@ -69,6 +69,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.namoadigital.prj001.receiver.NotificationReceiver.NOTIFICATION;
+
 /**
  * Created by d.luche on 31/08/2017.
  */
@@ -370,7 +372,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
-        bTT = getIntent().getBooleanExtra("gg", false);
+        bTT = getIntent().getBooleanExtra(NOTIFICATION, false);
         //
         if (bundle != null) {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
@@ -640,8 +642,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     @Override
     public void callAct034(Context context) {
+
+        mRoom_code = "";
+
         Intent mIntent = new Intent(context, Act034_Main.class);
-        mIntent.putExtra("gg", bTT);
+        mIntent.putExtra(NOTIFICATION, bTT);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
@@ -750,7 +755,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         if (ccRoom != null && !mRoom_code.equalsIgnoreCase(room_code)) {
             bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
-            bundle.putString("RELOAD", "1");
+            bundle.putString(Constant.CHAT_RELOAD, "1");
             //
             callAct034(context);
         }
@@ -1308,7 +1313,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         if (ccRoom != null) {
                             if (!ccRoom.get(CH_RoomDao.ROOM_CODE).equalsIgnoreCase(mRoom_code)) {
                                 bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
-                                bundle.putString("RELOAD", "1");
+                                bundle.putString(Constant.CHAT_RELOAD, "1");
                                 //
                                 callAct034(context);
                             } else {
@@ -1414,46 +1419,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         alertFRR.show();
     }
-
-//    private class RoomPrivate extends BroadcastReceiver {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            //
-//            CH_RoomDao roomDao = new CH_RoomDao(context);
-//            Bundle mBundleAux = intent.getExtras();
-//            String[] room_codes = mBundleAux.getString(Constant.CHAT_WS_JSON_PARAM).split("#");
-//
-//            boolean sFound = false;
-//
-//            for (String mRoom : room_codes) {
-//                if (mRoom.equalsIgnoreCase(SingletonWebSocket.mRoom_private)) {
-//                    sFound = true;
-//                    //
-//                    break;
-//                }
-//            }
-//
-//            if (sFound) {
-//                sFound = false;
-//
-//                HMAux ccRoom = roomDao.getByStringHM(
-//                        new CH_Room_Sql_006(
-//                                SingletonWebSocket.mRoom_private
-//                        ).toSqlQuery()
-//                );
-//
-//                if (ccRoom != null) {
-//                    bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
-//                    bundle.putString("RELOAD", "1");
-//                    //
-//                    callAct034(context);
-//                }
-//
-//                //SingletonWebSocket.mRoom_private = "";
-//            }
-//        }
-//    }
-
 
     public void showMessageInfoDialog(ArrayList<Chat_Message_Info_Rec> messageInfoList) {
         ArrayList<HMAux> memberList = new ArrayList<>();
@@ -1661,4 +1626,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         return true;
     }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        super.processNotification_close(mValue, mActivity);
+    }
+
 }

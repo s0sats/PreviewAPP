@@ -570,4 +570,9 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
         return true;
     }
 
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
+
 }

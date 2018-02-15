@@ -349,4 +349,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
+
 }

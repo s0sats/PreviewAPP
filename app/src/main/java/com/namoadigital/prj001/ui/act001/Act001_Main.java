@@ -305,4 +305,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
     }
 
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
+
 }

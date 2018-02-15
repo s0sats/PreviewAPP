@@ -246,4 +246,9 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         mPresenter.onBackPressedClicked();
 
     }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
 }

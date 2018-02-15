@@ -20,6 +20,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
+
+    public static final String NOTIFICATION = "notification";
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -34,15 +37,17 @@ public class NotificationReceiver extends BroadcastReceiver {
             HMAux mCamera = Camera_Activity.hmActivityStatus;
             HMAux mActivity = Base_Activity.hmActivityStatus;
 
-            boolean mCam = mCamera.get("camera") != null ? true : false;
-            boolean mAct = mActivity.get(ConstantBaseApp.ACT035) != null ? true : false;
+            boolean mCam = mCamera != null && mCamera.get("camera") != null ? true : false;
+            boolean mAct = mActivity != null && mActivity.get(ConstantBaseApp.ACT035) != null ? true : false;
 
             Intent mIntent = new Intent(context, Act034_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             if (!mCam && !mAct) {
-                mIntent.putExtra("gg", true);
+                mIntent.putExtra(NOTIFICATION, true);
                 context.startActivity(mIntent);
             } else {
+                mIntent.putExtra(NOTIFICATION, Act034_Main.bTT);
                 context.startActivity(mIntent);
                 //
                 ToolBox.sendBCSpecialStatus(
@@ -52,30 +57,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         "camera" + "#" + Constant.ACT035
                 );
             }
-
-
         }
 
-//        HMAux mCamera = Camera_Activity.hmActivityStatus;
-//        HMAux mActivity = Base_Activity.hmActivityStatus;
-//
-//        boolean mCam = mCamera.get("camera") != null ? true : false;
-//        boolean mAct = mActivity.get(ConstantBaseApp.ACT035) != null ? true : false;
-//
-//        Intent mIntent = new Intent(context, Act034_Main.class);
-//
-//        if (!mCam && !mAct) {
-//            mIntent.putExtra("gg", true);
-//            context.startActivity(mIntent);
-//        } else {
-//            context.startActivity(mIntent);
-//            //
-//            ToolBox.sendBCSpecialStatus(
-//                    context,
-//                    ConstantBase.MSG_SPECIAL_NOTIFICATION_CLOSE,
-//                    "",
-//                    "camera" + "#" + Constant.ACT035
-//            );
-//        }
     }
 }

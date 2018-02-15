@@ -1888,5 +1888,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         finish();
     }
 
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
+
 
 }

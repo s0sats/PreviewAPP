@@ -44,6 +44,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Env;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
+import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -222,11 +223,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
-        bTT = getIntent().getBooleanExtra("gg", false);
+        bTT = getIntent().getBooleanExtra(NotificationReceiver.NOTIFICATION, false);
         //
         if (bundle != null) {
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
-            String mReload = bundle.getString("RELOAD", "0");
+            String mReload = bundle.getString(Constant.CHAT_RELOAD, "0");
             //
             if (mReload.equalsIgnoreCase("1")) {
                 HMAux item = new HMAux();
@@ -414,7 +415,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void callAct035(Context context, HMAux item) {
         Intent mIntent = new Intent(context, Act035_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtra("gg", bTT);
+        mIntent.putExtra(NotificationReceiver.NOTIFICATION, bTT);
         //
         Bundle bundle = new Bundle();
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
@@ -1004,5 +1005,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     public void changeRoom_Private_Code(String room_private) {
         room_code_private = room_private;
+    }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        super.processNotification_close(mValue, mActivity);
     }
 }

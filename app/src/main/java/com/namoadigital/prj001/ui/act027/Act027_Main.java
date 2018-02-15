@@ -2231,4 +2231,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         startActivity(mIntent);
         finish();
     }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
 }

@@ -486,12 +486,8 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
     public static final String CHAT_NO_USER_IMAGE = "no_user";
-    //
 
-
-
-
-
-
+    //Chat Reload
+    public static final String CHAT_RELOAD = "chat_reload";
 
 }
