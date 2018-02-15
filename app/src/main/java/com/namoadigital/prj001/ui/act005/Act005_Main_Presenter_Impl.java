@@ -91,6 +91,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] menuId = {
             Act005_Main.MENU_ID_CHECKLIST,
+            Act005_Main.MENU_ID_FORM_AP,
             Act005_Main.MENU_ID_SERVICE,
             Act005_Main.MENU_ID_SCHEDULE_DATA,
             Act005_Main.MENU_ID_SERIAL,
@@ -105,6 +106,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] menuDesc = {
             "lbl_checklist",
+            "lbl_form_ap",
             "lbl_so",
             "lbl_schedule_data",
             "lbl_serial_data",
@@ -119,6 +121,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] icon = {
             String.valueOf(R.drawable.ic_n_form),
+            String.valueOf(R.drawable.ic_n_form),
             String.valueOf(R.drawable.ic_n_service2_24x24),
             String.valueOf(R.drawable.ic_calendario),
             String.valueOf(R.drawable.ic_serial_24x24),
@@ -132,6 +135,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     };
 
     String[][] parameter = {
+            {""},
             {""},
             {Constant.PARAM_SO, Constant.PARAM_SO_MOV},
             {Constant.PARAM_SCHEDULE_CHECKLIST},

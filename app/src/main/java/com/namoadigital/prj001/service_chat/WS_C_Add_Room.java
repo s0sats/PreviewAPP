@@ -12,6 +12,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
+import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
+import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -96,6 +98,32 @@ public class WS_C_Add_Room extends IntentService {
                     chRoom.setRoom_image_local(dbRoom.getRoom_image_local());
                 }
             }
+            //Preenche campo com status da room
+            switch (chRoom.getRoom_type()) {
+                case Constant.CHAT_ROOM_TYPE_SO:
+                    Chat_Room_Obj_SO roomObjSo = gson.fromJson(
+                            ToolBox_Inf.getRoomObjJsonParam(
+                                    chRoom.getRoom_obj()
+                            ),
+                            Chat_Room_Obj_SO.class
+                    );
+                    if(roomObjSo != null){
+                        chRoom.setRoom_status(roomObjSo.getSo_status());
+                    }
+                    break;
+                case Constant.CHAT_ROOM_TYPE_PA:
+                    Chat_Room_Obj_Form_AP objFormAp = gson.fromJson(
+                            ToolBox_Inf.getRoomObjJsonParam(
+                                    chRoom.getRoom_obj()
+                            ),
+                            Chat_Room_Obj_Form_AP.class
+                    );
+                    if(objFormAp != null){
+                        chRoom.setRoom_status(objFormAp.getAp_status());
+                    }
+                    break;
+                default:
+            }
         }
         //
         roomDao.addUpdate(chRooms, false);
@@ -116,7 +144,7 @@ public class WS_C_Add_Room extends IntentService {
         if (ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_PRIVATE)) {
             // Private Rooms
             HMAux hmAux = new HMAux();
-            hmAux.put(CH_RoomDao.ROOM_CODE,chRooms.get(0).getRoom_code());
+            hmAux.put(CH_RoomDao.ROOM_CODE, chRooms.get(0).getRoom_code());
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD, hmAux);
         } else {
             //

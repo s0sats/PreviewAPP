@@ -88,6 +88,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_BADGE2 = "menu_badgeso";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_FORM_AP = "menu_form_ap";
     public static final String MENU_ID_SERVICE = "menu_service";
     public static final String MENU_ID_SERIAL = "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";

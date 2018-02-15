@@ -7,7 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -24,13 +27,16 @@ import java.util.ArrayList;
  * Created by d.luche on 27/11/2017.
  */
 
-public class Act034_Room_Adapter extends BaseAdapter {
+public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
 
     private Context context;
     private ArrayList<HMAux> source;
     private int resource;
     private HMAux hmAux_Trans;
     private OnIvRoomClickListner OnIvRoomClickListner;
+    //Filter implementation
+    private ValueFilter valueFilter;
+    private ArrayList<HMAux> source_filtered;
 
     public interface OnIvRoomClickListner {
         void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path);
@@ -40,11 +46,14 @@ public class Act034_Room_Adapter extends BaseAdapter {
         OnIvRoomClickListner = onIvRoomClickListner;
     }
 
-    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource, HMAux hmAux_Trans) {
+    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource,String mket_filter, HMAux hmAux_Trans) {
         this.context = context;
         this.source = source;
         this.resource = resource;
         this.hmAux_Trans = hmAux_Trans;
+        //
+        this.source_filtered = source;
+        getFilter().filter(mket_filter);
     }
 
     @Override
@@ -82,9 +91,12 @@ public class Act034_Room_Adapter extends BaseAdapter {
         //
         final HMAux item = source.get(position);
         //
+        View v_type_color = convertView.findViewById(R.id.act034_room_cell_v_color);
         ImageView iv_room_image = (ImageView) convertView.findViewById(R.id.act034_room_cell_iv_image);
         ImageView iv_room_icon = (ImageView) convertView.findViewById(R.id.act034_room_cell_iv_icon);
         TextView tv_room_desc = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_room_desc);
+        LinearLayout ll_room_status = (LinearLayout) convertView.findViewById(R.id.act034_opc_cell_ll_room_status);
+        TextView tv_room_status = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_room_status);
         TextView tv_msg_date = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_msg_date);
         TextView tv_msg = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_msg);
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_badge);
@@ -119,14 +131,34 @@ public class Act034_Room_Adapter extends BaseAdapter {
         switch (item.get(CH_RoomDao.ROOM_TYPE)) {
 
             case Constant.CHAT_ROOM_TYPE_WORKGROUP:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_blue));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_group));
+                ll_room_status.setVisibility(View.GONE);
+                tv_room_status.setText("");
                 break;
             case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_blue));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_private));
+                ll_room_status.setVisibility(View.GONE);
+                tv_room_status.setText("");
                 break;
             case Constant.CHAT_ROOM_TYPE_SO:
-            default:
+            case Constant.CHAT_ROOM_TYPE_PA:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green3));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
+                ll_room_status.setVisibility(View.VISIBLE);
+                tv_room_status.setText(item.get(CH_RoomDao.ROOM_STATUS));
+                break;
+            case Constant.CHAT_ROOM_TYPE_SYS:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_black));
+                ll_room_status.setVisibility(View.GONE);
+                tv_room_status.setText("");
+                break;
+            default:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_danger_red));
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
+                ll_room_status.setVisibility(View.GONE);
+                tv_room_status.setText("");
         }
         //POR HORA ESCONDE OS ICONE ATE ENCONTRAR ALGO MELHOR 05/02/2018
         iv_room_icon.setVisibility(View.GONE);
@@ -165,6 +197,51 @@ public class Act034_Room_Adapter extends BaseAdapter {
         }
         //
         return convertView;
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new ValueFilter();
+        }
+        return valueFilter;
+    }
+
+    private class ValueFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            constraint = ToolBox_Inf.AccentMapper(constraint.toString().toLowerCase());
+
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                for (HMAux hmAux:source_filtered) {
+                    String room_desc = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_DESC).toLowerCase());
+                    String room_status = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_STATUS).toLowerCase());
+                    if (
+                        room_desc.contains(constraint.toString().toLowerCase()) ||
+                        (room_status != null && room_status.contains(constraint.toString().toLowerCase()))
+                    ) {
+                        filterList.add(hmAux);
+                    }
+                }
+
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = source_filtered.size();
+                results.values = source_filtered;
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            source = (ArrayList<HMAux>) results.values;
+            //
+            notifyDataSetChanged();
+        }
     }
 
     private String getTranslateMsg(String msg) {
