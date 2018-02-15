@@ -143,8 +143,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -161,7 +163,47 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 public class ToolBox_Inf {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf";
+    
+    private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
 
+    private static Map<Character,Character> initAccentMap() {
+        Map<Character,Character> map = new HashMap<Character, Character>();
+        //
+        map.put('à','a');
+        map.put('á','a');
+        map.put('â','a');
+        map.put('ã','a');
+        map.put('ä','a');
+        map.put('å','a');
+        map.put('ç','c');
+        map.put('č','c');
+        map.put('ć','c');
+        map.put('è','e');
+        map.put('é','e');
+        map.put('ê','e');
+        map.put('ë','e');
+        map.put('ì','i');
+        map.put('í','i');
+        map.put('î','i');
+        map.put('ï','i');
+        map.put('ñ','n');
+        map.put('ò','o');
+        map.put('ó','o');
+        map.put('ô','o');
+        map.put('õ','o');
+        map.put('ö','o');
+        map.put('ø','o');
+        map.put('ß','s');
+        map.put('§','s');
+        map.put('ù','u');
+        map.put('ú','u');
+        map.put('û','u');
+        map.put('ü','u');
+        map.put('ÿ','y');
+        //
+        return map;
+    } 
+    
     public static void mkDirectory() {
         File dirDB = new File(Constant.DB_PATH);
         if (!dirDB.exists()) {
@@ -3622,6 +3664,24 @@ public class ToolBox_Inf {
         }
         //
         return userColors[colorIndex++];
+    }
+
+    public static String AccentMapper(String string){
+        //
+        if (string == null) {
+            return "";
+        }
+        //
+        StringBuilder sb = new StringBuilder(string);
+        //
+        for(int i = 0; i < string.length(); i++) {
+            Character c = ACCENT_MAP.get(sb.charAt(i));
+            if(c != null) {
+                sb.setCharAt(i, c.charValue());
+            }
+        }
+
+        return sb.toString();
     }
 
 }

@@ -236,6 +236,7 @@ public class Act034_Room extends BaseFragment {
                     context,
                     roomList,
                     R.layout.act034_room_cell,
+                    mket_search_room.getText().toString().trim(),
                     hmAux_Trans
             );
             //
@@ -336,7 +337,6 @@ public class Act034_Room extends BaseFragment {
         chk_pa.setText(hmAux_Trans.get("room_type_pa_lbl"));
         chk_pa.setChecked(filter_pa);
         //
-
         builder
                 .setTitle(hmAux_Trans.get("room_dialog_filter_ttl"))
                 .setView(view)
@@ -348,7 +348,7 @@ public class Act034_Room extends BaseFragment {
                         loadRoomList();
                         //Apagar texto buscado ou aplicá-lo?
                         //applySearchFilter();//Aplicado - Efeito colateral, temo como resolver?
-                        mket_search_room.setText("");//apagar
+                        //mket_search_room.setText("");//apagar
                     }
                 });
         //

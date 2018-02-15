@@ -46,14 +46,14 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         OnIvRoomClickListner = onIvRoomClickListner;
     }
 
-    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource, HMAux hmAux_Trans) {
+    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource,String mket_filter, HMAux hmAux_Trans) {
         this.context = context;
         this.source = source;
         this.resource = resource;
         this.hmAux_Trans = hmAux_Trans;
         //
         this.source_filtered = source;
-        getFilter();
+        getFilter().filter(mket_filter);
     }
 
     @Override
@@ -212,16 +212,16 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
+            constraint = ToolBox_Inf.AccentMapper(constraint.toString().toLowerCase());
 
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 for (HMAux hmAux:source_filtered) {
-                    if ((hmAux.get(CH_RoomDao.ROOM_DESC).toUpperCase())
-                            .contains(constraint.toString().toUpperCase()) ||
-
-                            (hmAux.get(CH_RoomDao.ROOM_STATUS) != null && hmAux.get(CH_RoomDao.ROOM_STATUS).toUpperCase()
-                                    .contains(constraint.toString().toUpperCase())
-                            )
+                    String room_desc = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_DESC).toLowerCase());
+                    String room_status = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_STATUS).toLowerCase());
+                    if (
+                        room_desc.contains(constraint.toString().toLowerCase()) ||
+                        (room_status != null && room_status.contains(constraint.toString().toLowerCase()))
                     ) {
                         filterList.add(hmAux);
                     }
