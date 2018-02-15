@@ -314,7 +314,8 @@ public class ConstantBaseApp extends ConstantBase {
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
     public static final int NOTIFICATION_DOWNLOAD = 667;
-    public static final int NOTIFICATION_CHAT = 668;
+    public static final int NOTIFICATION_CHAT_MSG = 668;
+    public static final int NOTIFICATION_CHAT_ROOM = 669;
 
     //Helper
     public static final String BACK_ACTION = "back_action";
@@ -474,6 +475,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_NOTIFICATION_TYPE_RECONNECTING = "RECONNECTING";
     public static final String CHAT_NOTIFICATION_TYPE_CHAT = "CHAT";
     public static final String CHAT_START_SERVICE_CALLER = "CHAT_START_SERVICE_CALLER";
+    public static final String CHAT_NOTIFICATION_FCM_MSG = "<CHAT_MSG>";
+    public static final String CHAT_NOTIFICATION_FCM_ADD_ROOM = "<CHAT_ADD_ROOM>";
+    public static final String CHAT_NOTIFICATION_FCM_REMOVE_ROOM = "<CHAT_REMOVE_ROOM>";
 
     //Errors
     public static final String CHAT_ERROR_CHAT_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
