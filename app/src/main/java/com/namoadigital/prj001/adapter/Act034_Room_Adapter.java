@@ -82,6 +82,7 @@ public class Act034_Room_Adapter extends BaseAdapter {
         //
         final HMAux item = source.get(position);
         //
+        View v_type_color = (View) convertView.findViewById(R.id.act034_room_cell_v_color);
         ImageView iv_room_image = (ImageView) convertView.findViewById(R.id.act034_room_cell_iv_image);
         ImageView iv_room_icon = (ImageView) convertView.findViewById(R.id.act034_room_cell_iv_icon);
         TextView tv_room_desc = (TextView) convertView.findViewById(R.id.act034_room_cell_tv_room_desc);
@@ -119,13 +120,23 @@ public class Act034_Room_Adapter extends BaseAdapter {
         switch (item.get(CH_RoomDao.ROOM_TYPE)) {
 
             case Constant.CHAT_ROOM_TYPE_WORKGROUP:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_blue));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_group));
                 break;
             case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_blue));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_private));
                 break;
             case Constant.CHAT_ROOM_TYPE_SO:
+            case Constant.CHAT_ROOM_TYPE_PA:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green3));
+                iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
+                break;
+            case Constant.CHAT_ROOM_TYPE_SYS:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_black));
+                break;
             default:
+                v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_danger_red));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
         }
         //POR HORA ESCONDE OS ICONE ATE ENCONTRAR ALGO MELHOR 05/02/2018
