@@ -386,6 +386,12 @@ public class SingletonWebSocket {
         }
     }
 
+    public void attemptSendMessagesV2(String message) {
+        if (mSocket != null && sSoleInstance.mSocketRunning) {
+            mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE2, message);
+        }
+    }
+
     public void attemptSendMessageTmp(String message) {
         if (mSocket != null && sSoleInstance.mSocketRunning) {
             mSocket.emit(Constant.CHAT_EVENT_S_MESSAGE_TMP, message);
@@ -467,7 +473,7 @@ public class SingletonWebSocket {
                 //
                 ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - onDisconect - Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + " - origin: " + String.valueOf(args[0]) + "\n", log_file);
                 //
-                if(ToolBox_Inf.isScreenOn(context)) {
+                if (ToolBox_Inf.isScreenOn(context)) {
                     //
                     if (ToolBox_Inf.isUsrAppLogged(context)) {
                         String param = String.valueOf(args[0]);
@@ -485,7 +491,7 @@ public class SingletonWebSocket {
                         Log.d("ChatEvent", "onDisconect   - Not Logged , destroySingleton");
                         stopChatService();
                     }
-                }else{
+                } else {
                     Log.d("ChatEvent", "onDisconect   - Tela apagada, destroySingleton");
                     stopChatService();
                 }
@@ -510,7 +516,7 @@ public class SingletonWebSocket {
                 e.printStackTrace();
             }
             //
-            if(ToolBox_Inf.isUsrAppLogged(context)) {
+            if (ToolBox_Inf.isUsrAppLogged(context)) {
                 if (mSocket != null || AppBackgroundService.isRunning) {
                     if (mSocket != null && AppBackgroundService.isRunning) {
                         Log.d("ChatEvent", "EVENT_RECONNECT   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null "));
@@ -528,7 +534,7 @@ public class SingletonWebSocket {
                     ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_RECONNECTED);
                     Log.d("ChatEvent", "EVENT_RECONNECT");
                 }
-            }else{
+            } else {
                 Log.d("ChatEvent", "EVENT_RECONNECTING - NOT LOGGED");
             }
         }
@@ -539,7 +545,7 @@ public class SingletonWebSocket {
         public void call(Object... args) {
             Log.d("ChatEvent", "EVENT_RECONNECTING - teste");
             try {
-                if(ToolBox_Inf.isUsrAppLogged(context)) {
+                if (ToolBox_Inf.isUsrAppLogged(context)) {
 
                     if (mSocket != null) {
                         Log.d("ChatEvent", "EVENT_RECONNECTING   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "Tentativa :  " + String.valueOf(args[0]));
@@ -551,7 +557,7 @@ public class SingletonWebSocket {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     try {
                         ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - EVENT_RECONNECTING - NOT LOGGED. Tentativa :  " + String.valueOf(args[0]) + "  \n", log_file);
                     } catch (Exception e) {
@@ -592,7 +598,7 @@ public class SingletonWebSocket {
             try {
                 ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - EVENT_RECONNECT_FAILED  \n", log_file);
                 Log.d("ChatEvent", "EVENT_RECONNECT_FAILED");
-                if(ToolBox_Inf.isUsrAppLogged(context)) {
+                if (ToolBox_Inf.isUsrAppLogged(context)) {
                     if (mSocket != null) {
                         if (ToolBox_Inf.isScreenOn(context)) {
                             if (AppBackgroundService.isRunning) {
@@ -614,7 +620,7 @@ public class SingletonWebSocket {
                     } else {
                         Log.d("ChatEvent", "EVENT_RECONNECT_FAILED - Socket Null");
                     }
-                }else{
+                } else {
                     stopChatService();
                     Log.d("ChatEvent", "EVENT_RECONNECT_FAILED - NOT LOGGED");
                 }
@@ -1004,10 +1010,10 @@ public class SingletonWebSocket {
                                         //
                                         initConnection();
                                         //
-                                    }else{
+                                    } else {
                                         Exception e = new Exception(cError.getError_msg());
                                         //
-                                        ToolBox_Inf.registerException(getClass().getName(),e);
+                                        ToolBox_Inf.registerException(getClass().getName(), e);
                                         //
                                         disconnect();
                                         //
@@ -1090,6 +1096,52 @@ public class SingletonWebSocket {
                     e.printStackTrace();
                     ToolBox_Inf.registerException(getClass().getName(), e);
                 }
+            }
+        }
+
+    }
+
+    public void attempSendOfflineMessagesV2() {
+        CH_MessageDao messageDao = new CH_MessageDao(context);
+        //
+        ArrayList<CH_Message> offlineMsgs =
+                (ArrayList<CH_Message>) messageDao.query(
+                        new CH_Message_Sql_011().toSqlQuery()
+                );
+        //
+        if (offlineMsgs != null && offlineMsgs.size() > 0) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            JSONArray offlineMsgToSend = new JSONArray();
+            try {
+                for (CH_Message chMessage : offlineMsgs) {
+
+                    JSONObject msg_obj = null;
+
+                    msg_obj = new JSONObject(chMessage.getMsg_obj());
+
+                    JSONObject msg_obj_content = (JSONObject) msg_obj.get("message");
+                    String msg_obj_type = (String) msg_obj_content.get("type");
+                    String msg_obj_data = (String) msg_obj_content.get("data");
+
+                    Chat_S_Message sMessage = new Chat_S_Message();
+                    //
+                    sMessage.setRoom_code(chMessage.getRoom_code());
+                    sMessage.setTmp(chMessage.getTmp());
+                    sMessage.setType(msg_obj_type);
+                    sMessage.setData(msg_obj_data);
+                    //
+                    offlineMsgToSend.put(new JSONObject(gson.toJson(sMessage)));
+
+
+                }
+                //Prepara pacote para envio
+                JSONObject pkgOfflineMsg = new JSONObject();
+                pkgOfflineMsg.put("obj", offlineMsgToSend);
+                //
+                attemptSendMessagesV2(pkgOfflineMsg.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
         }
 
@@ -1262,8 +1314,8 @@ public class SingletonWebSocket {
      * @return
      */
     public static SingletonWebSocket getInstance(Context context) {
-        Log.d("ChatEvent", " SingletonWebSocket.getInstance , chamado por: " + context.getClass().getSimpleName() );
-        Log.d("ChatEvent", " SingletonWebSocket.getInstance = " + (sSoleInstance == null ?" Null" :" Ja iniciado"));
+        Log.d("ChatEvent", " SingletonWebSocket.getInstance , chamado por: " + context.getClass().getSimpleName());
+        Log.d("ChatEvent", " SingletonWebSocket.getInstance = " + (sSoleInstance == null ? " Null" : " Ja iniciado"));
         //Double check locking pattern
         if (sSoleInstance == null) { //Check for the first time
 
@@ -1285,7 +1337,7 @@ public class SingletonWebSocket {
     }
 
     public void destroySingletonWebSocket() {
-        if(mSocket != null){
+        if (mSocket != null) {
             //Pega manager do socket e seta reconnectin para false;
             Manager socketManager = mSocket.io();
             socketManager.reconnection(false);
@@ -1295,7 +1347,7 @@ public class SingletonWebSocket {
             mSocket = null;
         }
         //
-        if(sSoleInstance != null) {
+        if (sSoleInstance != null) {
             sSoleInstance.mSocketRunning = false;
             //sSoleInstance.mSocket = null;
             //

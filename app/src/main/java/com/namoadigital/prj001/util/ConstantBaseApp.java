@@ -419,6 +419,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_S_PENDING_MESSAGES = "sPendingMessages";
     public static final String CHAT_EVENT_S_HISTORICAL_MESSAGES = "sHistoricalMessages";
     public static final String CHAT_EVENT_S_MESSAGE = "sMessage";
+    public static final String CHAT_EVENT_S_MESSAGE2 = "sMessage2";
     public static final String CHAT_EVENT_S_MESSAGE_TMP = "sMessageTmp";
     public static final String CHAT_EVENT_S_DELIVERED = "sDelivered";
     public static final String CHAT_EVENT_S_READ = "sRead";

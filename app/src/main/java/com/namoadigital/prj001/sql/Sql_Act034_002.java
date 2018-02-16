@@ -6,7 +6,7 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * Created by d.luche on 13/12/2017.
  * Query do drawer de customers.
- * Retorna lista de customer com ccustomer code e customer name
+ * Retorna lista de customer com sessão ativa no app
  */
 
 public class Sql_Act034_002 implements Specification {
@@ -28,6 +28,7 @@ public class Sql_Act034_002 implements Specification {
                         "     "+ EV_User_CustomerDao.TABLE+" e\n" +
                         " WHERE\n" +
                         "   e.user_code = '"+user_code+"' \n" +
+                        "   and e.session_app <> '' \n" +
                         " ORDER BY\n" +
                         "  e.customer_code   \n")
                 .append(";")

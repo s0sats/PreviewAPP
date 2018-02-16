@@ -48,7 +48,6 @@ import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -249,6 +248,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         this.returnedRoomCode = returnedRoomCode;
     }
 
+    public ArrayList<HMAux> getCustomer_list() {
+        return customer_list;
+    }
+
     @Override
     public void startReceivers(boolean start_stop) {
         if (brRoomReceiver == null) {
@@ -275,7 +278,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         act034_opc.setHmAux_Trans(hmAux_Trans);
         //
-        toogleDrawerVisibility();
+        toogleDrawerVisibility(true);
         //
         act034_opc.loadDataToScreen();
         //
@@ -291,7 +294,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     }
 
-    private void toogleDrawerVisibility() {
+    private void toogleDrawerVisibility(boolean change_drawer_status) {
         customer_list = mPresenter.getCustomerMessageList(
                 mPresenter.getCustomerNameList()
         );
@@ -318,7 +321,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             customer_list.add(0, aux);
         }
 
-        setDrawerState(customer_list.size() > 1);
+        if(change_drawer_status){
+            setDrawerState(customer_list.size() > 1);
+        }
 
         //
         /*if(customer_list.size() > 1){
@@ -441,12 +446,16 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             switch (type) {
                 case Constant.CHAT_BR_TYPE_ROOM:
                 case Constant.CHAT_BR_TYPE_MSG:
+                    //Atualiza drawer
+                    toogleDrawerVisibility(false);
+                    //
                     if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
                         //act034_room.loadRoomList();
                         act034_room.loadDataToScreen();
                     }
-                    //Atualiza drawer
-                    toogleDrawerVisibility();
+                    if (act034_opc != null) {
+                        act034_opc.loadDataToScreen();
+                    }
                     break;
                 case Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD:
                     if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {

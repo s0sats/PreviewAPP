@@ -75,22 +75,22 @@
 
         <ImageView
             android:id="@+id/act035_iv_down"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="70dp"
             android:layout_marginRight="20dp"
-            android:src="@drawable/ic_arrow_down_thick"
+            android:src="@drawable/chat_move_2_bottom_arrow"
             android:visibility="visible" />
 
         <ImageView
             android:id="@+id/act035_iv_reorder"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="20dp"
             android:layout_marginRight="20dp"
-            android:src="@drawable/ic_refresh_one_two_arrow"
+            android:src="@drawable/chat_reorder_arrow"
             android:visibility="visible" />
 
     </FrameLayout>

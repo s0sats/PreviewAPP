@@ -211,8 +211,11 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         ch_messageDao.addUpdateTmp(chMessage);
         //
         setData(mRoom_code, offSet);
-        //
-        enviarMensagemServer(mRoom_code, message, chMessage);
+        //Se sem conectividade ou socket não setado, não tenta enviar msg
+        if(ToolBox_Con.isOnline(context) && SingletonWebSocket.isSocketSetted()) {
+            enviarMensagemServer(mRoom_code, message, chMessage);
+        }
+
     }
 
     private void enviarMensagemServer(String mRoom_code, String message, CH_Message chMessage) {

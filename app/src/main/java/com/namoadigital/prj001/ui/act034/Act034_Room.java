@@ -27,6 +27,7 @@ import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.adapter.Chat_UserList_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -292,25 +293,44 @@ public class Act034_Room extends BaseFragment {
     }
 
     public void updateOtherMsgInfo() {
-        HMAux otherMsgQty =
-                messageDao.getByStringHM(
-                        new Sql_Act034_003(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                ToolBox_Con.getPreference_User_Code(context)
-                        ).toSqlQuery()
-                );
+        ArrayList<HMAux> customer_list = mMain.getCustomer_list();
+        String customer_list_filter = "";
         //
-        if (otherMsgQty != null) {
-            if (!otherMsgQty.containsKey(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG) ||
-                    otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG).equalsIgnoreCase("0")
-                    ) {
-                ll_header.setVisibility(View.GONE);
-                tv_others_customer_msg_qty.setText("");
-
-            } else {
-                tv_others_customer_msg_qty.setText(otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG));
-                ll_header.setVisibility(View.VISIBLE);
+        if(customer_list != null && customer_list.size() > 1) {
+            for (HMAux hmAux : customer_list) {
+                if (!hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE).equals(String.valueOf(selected_customer))) {
+                    customer_list_filter += hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE) + ",";
+                }
             }
+            //Remove ultima virgula
+            customer_list_filter = customer_list_filter.substring(0,customer_list_filter.length() -1);
+            //
+            HMAux otherMsgQty =
+                    messageDao.getByStringHM(
+                            new Sql_Act034_003(
+                                    //ToolBox_Con.getPreference_Customer_Code(context),
+                                    selected_customer,
+                                    ToolBox_Con.getPreference_User_Code(context),
+                                    customer_list_filter
+                            ).toSqlQuery()
+                    );
+            //
+            if (otherMsgQty != null) {
+                if (!otherMsgQty.containsKey(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG) ||
+                        otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG).equalsIgnoreCase("0")
+                        ) {
+                    ll_header.setVisibility(View.GONE);
+                    tv_others_customer_msg_qty.setText("");
+
+                } else {
+                    int qty = ToolBox_Inf.convertStringToInt(otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG));
+                    tv_others_customer_msg_qty.setText(String.valueOf(qty > 9 ? qty :" "+qty+" "));
+                    ll_header.setVisibility(View.VISIBLE);
+                }
+            }
+        }else{
+            ll_header.setVisibility(View.GONE);
+            tv_others_customer_msg_qty.setText("");
         }
     }
 
