@@ -2947,7 +2947,7 @@ public class ToolBox_Inf {
     }
 
 
-    public static void createThumbNail_Images(String path, String original) {
+    public static boolean createThumbNail_Images(String path, String original) {
 
         try {
             File image = new File(path + "/" + original);
@@ -2956,7 +2956,7 @@ public class ToolBox_Inf {
             bounds.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(image.getPath(), bounds);
             if ((bounds.outWidth == -1) || (bounds.outHeight == -1))
-                return;
+                return false;
 
             int originalSize = (bounds.outHeight > bounds.outWidth) ? bounds.outHeight
                     : bounds.outWidth;
@@ -2979,9 +2979,11 @@ public class ToolBox_Inf {
             os.flush();
             os.close();
 
+            return true;
+
         } catch (Exception e) {
             registerException(CLASS_NAME, e);
-            return;
+            return false;
         }
 
     }

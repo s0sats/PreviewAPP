@@ -132,7 +132,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private boolean endDetected = false;
 
     /*TESTE, MOVER PARA ACT035*/
-    private DownloadMemberImgTask downloadMemberImgTask;
+    //private DownloadMemberImgTask downloadMemberImgTask;
     private MessageInfoTask messageInfoTask;
     private RoomInfoTask roomInfoTask;
 
@@ -438,15 +438,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         try {
 
-            ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH,
-                    mRoom.getRoom_image_local());
+//            ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH,
+//                    mRoom.getRoom_image_local());
 
+
+//            iv_room_thumbnail.setImageBitmap(
+//                    BitmapFactory.decodeFile(
+//                            Constant.THU_PATH + "/" +
+//                                    mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) +
+//                                    Constant.THUMB_SUFFIX + ".jpg"
+//                    )
+//            );
 
             iv_room_thumbnail.setImageBitmap(
                     BitmapFactory.decodeFile(
-                            Constant.THU_PATH + "/" +
-                                    mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) +
-                                    Constant.THUMB_SUFFIX + ".jpg"
+                            Constant.CACHE_CHAT_PATH + "/" +
+                                    mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) + ".jpg"
                     )
             );
 
@@ -456,8 +463,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                    startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+                    if (ToolBox_Con.isOnline(context)) {
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                        startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+                    } else {
+                        ToolBox_Inf.showNoConnectionDialog(context);
+                    }
                 }
             });
         }
@@ -1015,8 +1026,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 //
                 showMessageInfoDialog(messageInfoList);
 
-                String[] imgUrlList = new String[auxList.size()];
-                startDownloadMemberImgTask(auxList.toArray(imgUrlList));
+                //String[] imgUrlList = new String[auxList.size()];
+                //startDownloadMemberImgTask(auxList.toArray(imgUrlList));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1145,8 +1156,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //
                     showRoomInfoDialog(roomInfoList);
                     //
-                    String[] imgUrlList = new String[auxList.size()];
-                    startDownloadMemberImgTask(auxList.toArray(imgUrlList));
+                    //String[] imgUrlList = new String[auxList.size()];
+                    //startDownloadMemberImgTask(auxList.toArray(imgUrlList));
                 } catch (Exception e) {
                     ToolBox_Inf.registerException(getClass().getName(), e);
                 }
@@ -1161,49 +1172,49 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
-            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
-            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
-            for (int i = 0; i < strings.length; i++) {
-                try {
-                    String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
-                    String user_code = downloadParam[0];
-                    String url = downloadParam[1];
-
-                    String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0, downloadParam[2].length() - 4) : Constant.CHAT_NO_USER_IMAGE);
-                    //
-                    if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
-
-                        ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                                url,
-                                Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
-                        );
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg", Constant.CACHE_CHAT_PATH);
-                    }
-                    publishProgress(user_code, image_name + ".jpg");
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            //
-            updateMemberImage(values[0], values[1]);
-        }
-    }
+//    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
+//
+//        @Override
+//        protected Void doInBackground(String... strings) {
+//            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
+//            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
+//            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
+//            for (int i = 0; i < strings.length; i++) {
+//                try {
+//                    String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
+//                    String user_code = downloadParam[0];
+//                    String url = downloadParam[1];
+//
+//                    String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0, downloadParam[2].length() - 4) : Constant.CHAT_NO_USER_IMAGE);
+//                    //
+//                    if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
+//
+//                        ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
+//                        //
+//                        ToolBox_Inf.downloadImagePDF(
+//                                url,
+//                                Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
+//                        );
+//                        //
+//                        ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg", Constant.CACHE_CHAT_PATH);
+//                    }
+//                    publishProgress(user_code, image_name + ".jpg");
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+//            //
+//            updateMemberImage(values[0], values[1]);
+//        }
+//    }
 
     public void disablePD() {
         disableProgressDialog();
@@ -1582,10 +1593,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
 
-    public void startDownloadMemberImgTask(String[] imgUrlList) {
-        downloadMemberImgTask = new DownloadMemberImgTask();
-        downloadMemberImgTask.execute(imgUrlList);
-    }
+//    public void startDownloadMemberImgTask(String[] imgUrlList) {
+//        downloadMemberImgTask = new DownloadMemberImgTask();
+//        downloadMemberImgTask.execute(imgUrlList);
+//    }
 
     public void startRoomInfoTask(String socket_id, String room_code) {
         roomInfoTask = new RoomInfoTask();

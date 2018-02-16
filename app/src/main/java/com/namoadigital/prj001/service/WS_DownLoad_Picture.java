@@ -364,17 +364,27 @@ public class WS_DownLoad_Picture extends IntentService {
                                 Constant.CACHE_CHAT_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg",Constant.CACHE_CHAT_PATH );
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg", Constant.CACHE_CHAT_PATH);
                         //
-                        ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH, (hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg"));
+                        //Atualiza campo com url local
+                        roomDao.addUpdate(
+                                new CH_Room_Sql_003(
+                                        hmAux.get(CH_RoomDao.ROOM_CODE),
+                                        hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
+                                ).toSqlQuery().toLowerCase()
+                        );
+
+//                        if (ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH, (hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg"))) {
+//                            //Atualiza campo com url local
+//                            roomDao.addUpdate(
+//                                    new CH_Room_Sql_003(
+//                                            hmAux.get(CH_RoomDao.ROOM_CODE),
+//                                            hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
+//                                    ).toSqlQuery().toLowerCase()
+//                            );
+//                            //
+//                        }
                     }
-                    //Atualiza campo com url local
-                    roomDao.addUpdate(
-                            new CH_Room_Sql_003(
-                                    hmAux.get(CH_RoomDao.ROOM_CODE),
-                                    hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
-                            ).toSqlQuery().toLowerCase()
-                    );
                     //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
                 }
@@ -393,9 +403,9 @@ public class WS_DownLoad_Picture extends IntentService {
                     JSONObject jsonObject1 = jsonObject.getJSONObject("message");
 
                     String sFileD = jsonObject1.getString("data");
-                   // String arr[] = sFileD.split("/");
+                    // String arr[] = sFileD.split("/");
                     //String sFile = arr[arr.length - 1].replace(".jpg", "").replace(".png", "");
-                    String sFile = hmAux.get(CH_MessageDao.MSG_PREFIX)+"."+hmAux.get(CH_MessageDao.MSG_CODE);
+                    String sFile = hmAux.get(CH_MessageDao.MSG_PREFIX) + "." + hmAux.get(CH_MessageDao.MSG_CODE);
 
                     if (!ToolBox_Inf.verifyDownloadFileInfV2(sFile + ".jpg")) {
 

@@ -46,7 +46,7 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         OnIvRoomClickListner = onIvRoomClickListner;
     }
 
-    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource,String mket_filter, HMAux hmAux_Trans) {
+    public Act034_Room_Adapter(Context context, ArrayList<HMAux> source, int resource, String mket_filter, HMAux hmAux_Trans) {
         this.context = context;
         this.source = source;
         this.resource = resource;
@@ -103,7 +103,8 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         //
         Bitmap imgBitmap = null;
         if (!item.get(CH_RoomDao.ROOM_IMAGE_LOCAL).equalsIgnoreCase("")) {
-            imgBitmap = BitmapFactory.decodeFile(getImageThumbnail(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+            //imgBitmap = BitmapFactory.decodeFile(getImageThumbnail(item.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+            imgBitmap = BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + item.get(CH_RoomDao.ROOM_IMAGE_LOCAL));
         } else {
             imgBitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_namoa);
         }
@@ -175,11 +176,11 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         String msg = item.containsKey(CH_MessageDao.MSG_OBJ + "_data") ? item.get(CH_MessageDao.MSG_OBJ + "_data") : null;
         String type = item.containsKey(CH_MessageDao.MSG_OBJ + "_type") ? item.get(CH_MessageDao.MSG_OBJ + "_type") : null;
 
-        if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)){
+        if (type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT)) {
             tv_msg.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg), 45));
-        }else if(type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
+        } else if (type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
             tv_msg.setText(ToolBox_Inf.getSafeSubstring(getTranslateMsg(msg), 45));
-        }else{
+        } else {
             tv_msg.setText(type);
         }
         //
@@ -216,13 +217,13 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
 
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
-                for (HMAux hmAux:source_filtered) {
+                for (HMAux hmAux : source_filtered) {
                     String room_desc = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_DESC).toLowerCase());
                     String room_status = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_STATUS).toLowerCase());
                     if (
-                        room_desc.contains(constraint.toString().toLowerCase()) ||
-                        (room_status != null && room_status.contains(constraint.toString().toLowerCase()))
-                    ) {
+                            room_desc.contains(constraint.toString().toLowerCase()) ||
+                                    (room_status != null && room_status.contains(constraint.toString().toLowerCase()))
+                            ) {
                         filterList.add(hmAux);
                     }
                 }
@@ -257,7 +258,7 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         return resultTranslate;
     }
 
-    private String getImageThumbnail(String image_path){
-        return Constant.THU_PATH +"/"+ image_path.replace(".jpg","_thumb.jpg");
+    private String getImageThumbnail(String image_path) {
+        return Constant.THU_PATH + "/" + image_path.replace(".jpg", "_thumb.jpg");
     }
 }

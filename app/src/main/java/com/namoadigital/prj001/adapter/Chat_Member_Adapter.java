@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -90,11 +89,17 @@ public class Chat_Member_Adapter extends BaseAdapter {
         ImageView iv_read = (ImageView) convertView.findViewById(R.id.act034_room_info_cell_iv_read);
         TextView tv_read = (TextView) convertView.findViewById(R.id.act034_room_info_cell_tv_read);
         //
-        if (item.get(SYS_USER_IMAGE) != null) {
-            iv_member_img.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + item.get(SYS_USER_IMAGE)));
-        } else {
-            iv_member_img.setImageDrawable(context.getDrawable(R.drawable.ic_room_private));
-        }
+        Glide.with(context)
+                .load(item.get(SYS_USER_IMAGE))
+                .into(iv_member_img);
+
+//        //
+//        if (item.get(SYS_USER_IMAGE) != null) {
+//            iv_member_img.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_CHAT_PATH + "/" + item.get(SYS_USER_IMAGE)));
+//        } else {
+//            iv_member_img.setImageDrawable(context.getDrawable(R.drawable.ic_room_private));
+//        }
+
         //
         tv_member.setText(item.get(USER_NICK));
         //

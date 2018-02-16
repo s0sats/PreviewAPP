@@ -89,7 +89,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private TextView tv_info_msg_2;
     private ArrayList<HMAux> customer_list = new ArrayList<>();
     private RoomInfoTask roomInfoTask;
-    private DownloadMemberImgTask downloadMemberImgTask;
+    //private DownloadMemberImgTask downloadMemberImgTask;
     private UserListInfoTask userListInfoTask;
     /*TESTE, MOVER PARA ACT035*/
     //private MessageInfoTask messageInfoTask;
@@ -607,11 +607,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     @Override
     public void startDownloadMemberImgTask(String[] imgUrlList) {
-        if (downloadMemberImgTask != null) {
-            downloadMemberImgTask.cancel(true);
-        }
-        downloadMemberImgTask = new DownloadMemberImgTask();
-        downloadMemberImgTask.execute(imgUrlList);
+//        if (downloadMemberImgTask != null) {
+//            downloadMemberImgTask.cancel(true);
+//        }
+//        downloadMemberImgTask = new DownloadMemberImgTask();
+//        downloadMemberImgTask.execute(imgUrlList);
     }
 
     @Override
@@ -774,62 +774,62 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         }
     }
 
-    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
-            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
-            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
-            for (int i = 0; i < strings.length; i++) {
-                //Se foi cancelado ou se não tem conexão aborta.
-                if (isCancelled() || !ToolBox_Con.isOnline(context)) {
-                    this.cancel(true);
-                    break;
-                } else {
-                    try {
-                        String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
-                        String user_code = downloadParam[0];
-                        String url = downloadParam[1];
-
-                        String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0, downloadParam[2].length() - 4) : Constant.CHAT_NO_USER_IMAGE);
-                        //
-                        if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
-
-                            ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
-                            //
-                            ToolBox_Inf.downloadImagePDF(
-                                    url,
-                                    Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
-                            );
-                            //
-                            ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg", Constant.CACHE_CHAT_PATH);
-                        }
-                        publishProgress(user_code, image_name + ".jpg");
-
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                        this.cancel(true);
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            //
-            act034_room.updateMemberImage(values[0], values[1]);
-        }
-
-        @Override
-        protected void onCancelled(Void aVoid) {
-            super.onCancelled(aVoid);
-            Log.d("ChatEvent", "DownloadAsyncTask Cancelada");
-        }
-    }
+//    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
+//
+//        @Override
+//        protected Void doInBackground(String... strings) {
+//            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
+//            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
+//            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
+//            for (int i = 0; i < strings.length; i++) {
+//                //Se foi cancelado ou se não tem conexão aborta.
+//                if (isCancelled() || !ToolBox_Con.isOnline(context)) {
+//                    this.cancel(true);
+//                    break;
+//                } else {
+//                    try {
+//                        String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
+//                        String user_code = downloadParam[0];
+//                        String url = downloadParam[1];
+//
+//                        String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0, downloadParam[2].length() - 4) : Constant.CHAT_NO_USER_IMAGE);
+//                        //
+//                        if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
+//
+//                            ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
+//                            //
+//                            ToolBox_Inf.downloadImagePDF(
+//                                    url,
+//                                    Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
+//                            );
+//                            //
+//                            ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg", Constant.CACHE_CHAT_PATH);
+//                        }
+//                        publishProgress(user_code, image_name + ".jpg");
+//
+//                    } catch (Exception e) {
+//                        ToolBox_Inf.registerException(getClass().getName(), e);
+//                        this.cancel(true);
+//                    }
+//                }
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+//            //
+//            act034_room.updateMemberImage(values[0], values[1]);
+//        }
+//
+//        @Override
+//        protected void onCancelled(Void aVoid) {
+//            super.onCancelled(aVoid);
+//            Log.d("ChatEvent", "DownloadAsyncTask Cancelada");
+//        }
+//    }
 
     private class UserListInfoTask extends AsyncTask<String, Integer, String> {
 
@@ -956,9 +956,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if (roomInfoTask != null) {
             roomInfoTask.cancel(true);
         }
-        if (downloadMemberImgTask != null) {
-            downloadMemberImgTask.cancel(true);
-        }
+//        if (downloadMemberImgTask != null) {
+//            downloadMemberImgTask.cancel(true);
+//        }
         //
         if (userListInfoTask != null) {
             userListInfoTask.cancel(true);
