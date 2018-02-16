@@ -32,6 +32,7 @@ import java.util.Map;
 public class WS_Upload_Support extends IntentService {
 
 
+
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
