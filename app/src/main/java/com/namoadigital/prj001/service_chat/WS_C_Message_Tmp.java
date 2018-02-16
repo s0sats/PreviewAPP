@@ -180,7 +180,8 @@ public class WS_C_Message_Tmp extends IntentService {
                     }
                     singletonWebSocket.resetProcessMsgCounter();
                     //
-                    singletonWebSocket.attempSendOfflineMessages();
+                    //singletonWebSocket.attempSendOfflineMessages();
+                    singletonWebSocket.attempSendOfflineMessagesV2();
                 }
             }else{
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_TMP);

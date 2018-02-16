@@ -300,7 +300,8 @@ public class WS_C_Message extends IntentService {
                         //
                         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                         //
-                        singletonWebSocket.attempSendOfflineMessages();
+                        //singletonWebSocket.attempSendOfflineMessages();
+                        singletonWebSocket.attempSendOfflineMessagesV2();
                     }
                 }
             }else{
