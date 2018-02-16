@@ -11,7 +11,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.CH_Message;
+import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Message;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Read;
@@ -21,6 +23,8 @@ import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -167,11 +171,17 @@ public class WS_C_Message extends IntentService {
             //
             boolean startDownloadService = false;
             boolean hasNewMsg = false;
+            boolean showNotification = true;
             //Transforma list de objs recebido(Chat_C_Message)
             //em objs do banco(CH_Message)
             ArrayList<CH_Message> chMessages = Chat_C_Message.toCH_MessageList(messages);
             //Se ao menos uma msg é uma imagem, dispara serviço de download.
             for (CH_Message ch_message : chMessages) {
+                //Verifica se existe a room da msg, se não houver, ignora
+                if(!msgRoomExists(ch_message.getRoom_code())){
+                    continue;
+                }
+                //
                 if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
                     ch_message.setMsg_pk(String.valueOf(ch_message.getMsg_prefix() + "_" + ToolBox_Inf.lPad(20, ch_message.getMsg_code())));
                     ch_message.setDelivered(0);
@@ -185,6 +195,12 @@ public class WS_C_Message extends IntentService {
                 }else{
                     if(singletonWebSocket == null) {
                         singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
+                    }
+                    ///
+                    if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE)
+                       && ch_message.getRoom_code().equals(Act035_Main.mRoom_code)
+                    ){
+                      showNotification = false;
                     }
                 }
                 //
@@ -308,7 +324,7 @@ public class WS_C_Message extends IntentService {
                 if(ws_event.equalsIgnoreCase(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)) {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 }else{
-                    if(singletonWebSocket.isShow_notification()){
+                    if(singletonWebSocket.isShow_notification() && showNotification){
                         ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
                         //
                         singletonWebSocket.setShow_notification(false);
@@ -318,6 +334,20 @@ public class WS_C_Message extends IntentService {
                 }
             }
         }
+    }
+
+    private boolean msgRoomExists(String room_code) {
+        CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
+        CH_Room ch_room = roomDao.getByString(
+                new CH_Room_Sql_001(
+                        room_code
+                ).toSqlQuery()
+        );
+        //
+        if(ch_room != null && ch_room.getRoom_code() != null){
+            return true;
+        }
+        return false;
     }
 
     private void startCMessageTmpService(String messageTmpFile, long messageIncrement) {
