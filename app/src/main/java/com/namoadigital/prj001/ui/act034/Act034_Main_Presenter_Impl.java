@@ -45,11 +45,18 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
 
     @Override
     public ArrayList<HMAux> getCustomerMessageList(ArrayList<HMAux> customerNameList) {
+        String customer_list_filter = "";
+        for (HMAux customer  :customerNameList) {
+                customer_list_filter += customer.get(EV_User_CustomerDao.CUSTOMER_CODE) +",";
+        }
+        customer_list_filter = customer_list_filter.substring(0,customer_list_filter.length() -1);
+        //
         ArrayList<HMAux> customerList = (ArrayList<HMAux>)
                 roomDao.query_HM(
                         new Sql_Act034_001(
                                 ToolBox_Con.getPreference_User_Code(context),
-                                ToolBox_Con.getPreference_Customer_Code(context)
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                customer_list_filter
                         ).toSqlQuery()
                 );
         for (HMAux auxCustomer :customerList) {

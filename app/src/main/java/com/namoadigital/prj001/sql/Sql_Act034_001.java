@@ -8,7 +8,7 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * Created by d.luche on 13/12/2017.
  * Query do drawer de customers.
- * Retorna lista de customer com qtd de msg não lidas
+ * Retorna lista com qtd de msg não lidas para os customer com sessão
  */
 
 public class Sql_Act034_001 implements Specification {
@@ -17,10 +17,12 @@ public class Sql_Act034_001 implements Specification {
 
     private String user_code;
     private long customer_code;
+    private String customer_list_filter;
 
-    public Sql_Act034_001(String user_code, long customer_code) {
+    public Sql_Act034_001(String user_code, long customer_code, String customer_list_filter) {
         this.user_code = user_code;
         this.customer_code = customer_code;
+        this.customer_list_filter = customer_list_filter;
     }
 
     @Override
@@ -48,6 +50,8 @@ public class Sql_Act034_001 implements Specification {
                         "             r.room_code = m.room_code\n" +
                         "             and m.read = 0\n" +
                         "             and m.user_code <> '"+user_code+"'\n" +
+                        "      WHERE \n" +
+                        "        r.customer_code in ("+customer_list_filter+")\n" +
                         "    ) t\n" +
                         " GROUP BY\n" +
                         "   t.customer_code\n" +

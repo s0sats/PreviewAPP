@@ -16,10 +16,12 @@ public class Sql_Act034_003 implements Specification {
 
     private long customer_code;
     private String user_code;
+    private String customer_list_filter = "";
 
-    public Sql_Act034_003(long customer_code, String user_code) {
+    public Sql_Act034_003(long customer_code, String user_code, String customer_list_filter) {
         this.customer_code = customer_code;
         this.user_code = user_code;
+        this.customer_list_filter = customer_list_filter.trim().length() > 0 ? "   and r.customer_code in ("+ customer_list_filter+") \n" : "";
     }
 
     @Override
@@ -35,6 +37,7 @@ public class Sql_Act034_003 implements Specification {
                         "   "+ CH_MessageDao.TABLE+" m ON m.room_code = r.room_code\n" +
                         " WHERE\n" +
                         "   r.customer_code <> '"+customer_code+"'\n" +
+                        customer_list_filter +
                         "   and m.user_code <> '"+user_code+"'\n" +
                         "   and m.read = 0 \n")
                 .append(";")
