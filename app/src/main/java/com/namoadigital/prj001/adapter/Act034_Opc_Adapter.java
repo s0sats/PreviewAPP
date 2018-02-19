@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,10 +75,12 @@ public class Act034_Opc_Adapter extends BaseAdapter {
         //
         if(item.get(CH_RoomDao.CUSTOMER_CODE).equalsIgnoreCase(selected_customer)){
             ll_background.setBackground(context.getDrawable(R.drawable.chat_customer_drawer_selected));
-            iv_selected.setVisibility(View.VISIBLE);
+            tv_customer_desc.setTextColor(context.getResources().getColor(R.color.namoa_color_light_green3));
+            tv_customer_desc.setTypeface(tv_customer_desc.getTypeface(), Typeface.BOLD);
         }else{
             ll_background.setBackground(context.getDrawable(R.drawable.lib_custom_cell_bg));
-            iv_selected.setVisibility(View.GONE);
+            tv_customer_desc.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue));
+            tv_customer_desc.setTypeface(tv_customer_desc.getTypeface(), Typeface.NORMAL);
         }
         //
         if(item.get(Sql_Act034_001.MSG_QTY).equalsIgnoreCase("0")){
