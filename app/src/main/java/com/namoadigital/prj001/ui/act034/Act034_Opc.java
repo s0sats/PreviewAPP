@@ -31,6 +31,7 @@ public class Act034_Opc extends BaseFragment {
     private CH_RoomDao roomDao;
     private ArrayList<HMAux> customerList = new ArrayList<>();
 
+
     public void setCustomerList(ArrayList<HMAux> customerList) {
         this.customerList = customerList;
     }
@@ -72,6 +73,7 @@ public class Act034_Opc extends BaseFragment {
         mAdapter = new Act034_Opc_Adapter(
                 getActivity(),
                 customerList,
+                mMain.getSelected_Customer(),
                 R.layout.act034_opc_cell
         );
         //
@@ -83,6 +85,8 @@ public class Act034_Opc extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+                //
+                mAdapter.setSelected(hmAux.get(CH_RoomDao.CUSTOMER_CODE));
                 //
                 mMain.setSelectedCustomer(
                         Long.parseLong(hmAux.get(CH_RoomDao.CUSTOMER_CODE))

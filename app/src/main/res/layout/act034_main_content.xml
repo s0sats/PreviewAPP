@@ -72,12 +72,11 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clickable="true"
         android:orientation="vertical">
-
         <fragment
             android:id="@+id/act034_opc"
             android:name="com.namoadigital.prj001.ui.act034.Act034_Opc"

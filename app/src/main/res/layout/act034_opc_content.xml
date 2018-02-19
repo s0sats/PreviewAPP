@@ -17,7 +17,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:padding="10dp"
-        android:textSize="@dimen/font_size_title"
+        android:textSize="@dimen/font_size_title_md"
         android:textStyle="bold"
         android:text="Customer List - Traduzir"
         />
@@ -26,6 +26,7 @@
         android:id="@+id/act034_opc_content_lv_customer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="5dp"
         android:dividerHeight="4dp"
         android:divider="@color/padrao_TRANSPARENT"/>
 
