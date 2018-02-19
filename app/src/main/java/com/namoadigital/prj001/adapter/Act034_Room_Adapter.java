@@ -166,12 +166,16 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         //
         tv_room_desc.setText(item.get(CH_RoomDao.ROOM_DESC));
         //
-        tv_msg_date.setText(
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(item.get(CH_MessageDao.MSG_DATE)),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                )
-        );
+        if (item.get(CH_MessageDao.MSG_DATE) != null && !item.get(CH_MessageDao.MSG_DATE).isEmpty()) {
+            tv_msg_date.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(item.get(CH_MessageDao.MSG_DATE)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
+        } else {
+            tv_msg_date.setText("");
+        }
         //
         String msg = item.containsKey(CH_MessageDao.MSG_OBJ + "_data") ? item.get(CH_MessageDao.MSG_OBJ + "_data") : null;
         String type = item.containsKey(CH_MessageDao.MSG_OBJ + "_type") ? item.get(CH_MessageDao.MSG_OBJ + "_type") : null;

@@ -5,7 +5,7 @@ package com.namoadigital.prj001.model;
  */
 
 public class Chat_Room_Obj_Form_AP {
-    
+
     private String pk;
     private Integer custom_form_type;
     private Integer custom_form_code;
@@ -20,7 +20,7 @@ public class Chat_Room_Obj_Form_AP {
     private Integer ap_who;
     private Integer ap_how;
     private Float ap_how_much;
-    private Integer ap_when;
+    private String ap_when;
 
     public String getPk() {
         return pk;
@@ -134,11 +134,11 @@ public class Chat_Room_Obj_Form_AP {
         this.ap_how_much = ap_how_much;
     }
 
-    public Integer getAp_when() {
+    public String getAp_when() {
         return ap_when;
     }
 
-    public void setAp_when(Integer ap_when) {
+    public void setAp_when(String ap_when) {
         this.ap_when = ap_when;
     }
 }

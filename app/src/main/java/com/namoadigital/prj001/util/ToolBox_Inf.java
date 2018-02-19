@@ -164,47 +164,47 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 public class ToolBox_Inf {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf";
-    
+
     private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
 
-    private static Map<Character,Character> initAccentMap() {
-        Map<Character,Character> map = new HashMap<Character, Character>();
+    private static Map<Character, Character> initAccentMap() {
+        Map<Character, Character> map = new HashMap<Character, Character>();
         //
-        map.put('à','a');
-        map.put('á','a');
-        map.put('â','a');
-        map.put('ã','a');
-        map.put('ä','a');
-        map.put('å','a');
-        map.put('ç','c');
-        map.put('č','c');
-        map.put('ć','c');
-        map.put('è','e');
-        map.put('é','e');
-        map.put('ê','e');
-        map.put('ë','e');
-        map.put('ì','i');
-        map.put('í','i');
-        map.put('î','i');
-        map.put('ï','i');
-        map.put('ñ','n');
-        map.put('ò','o');
-        map.put('ó','o');
-        map.put('ô','o');
-        map.put('õ','o');
-        map.put('ö','o');
-        map.put('ø','o');
-        map.put('ß','s');
-        map.put('§','s');
-        map.put('ù','u');
-        map.put('ú','u');
-        map.put('û','u');
-        map.put('ü','u');
-        map.put('ÿ','y');
+        map.put('à', 'a');
+        map.put('á', 'a');
+        map.put('â', 'a');
+        map.put('ã', 'a');
+        map.put('ä', 'a');
+        map.put('å', 'a');
+        map.put('ç', 'c');
+        map.put('č', 'c');
+        map.put('ć', 'c');
+        map.put('è', 'e');
+        map.put('é', 'e');
+        map.put('ê', 'e');
+        map.put('ë', 'e');
+        map.put('ì', 'i');
+        map.put('í', 'i');
+        map.put('î', 'i');
+        map.put('ï', 'i');
+        map.put('ñ', 'n');
+        map.put('ò', 'o');
+        map.put('ó', 'o');
+        map.put('ô', 'o');
+        map.put('õ', 'o');
+        map.put('ö', 'o');
+        map.put('ø', 'o');
+        map.put('ß', 's');
+        map.put('§', 's');
+        map.put('ù', 'u');
+        map.put('ú', 'u');
+        map.put('û', 'u');
+        map.put('ü', 'u');
+        map.put('ÿ', 'y');
         //
         return map;
-    } 
-    
+    }
+
     public static void mkDirectory() {
         File dirDB = new File(Constant.DB_PATH);
         if (!dirDB.exists()) {
@@ -2859,6 +2859,7 @@ public class ToolBox_Inf {
         }
         return null;
     }
+
     public static String getRoomObjJsonParam(String socket_arg) {
         try {
             JSONObject jsonObject = new JSONObject(socket_arg);
@@ -2974,7 +2975,7 @@ public class ToolBox_Inf {
 
             OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
 
-            imgFinal.compress(Bitmap.CompressFormat.PNG, 25, os);
+            imgFinal.compress(Bitmap.CompressFormat.JPEG, 25, os);
 
             os.flush();
             os.close();
@@ -3308,7 +3309,7 @@ public class ToolBox_Inf {
                         } else {
                             show_notification = true;
 
-                            if (Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))){
+                            if (Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))) {
                                 return;
                             }
 
@@ -3584,9 +3585,9 @@ public class ToolBox_Inf {
         //
         for (HMAux aux : msgImages) {
             imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-//            imagesList.add(new File(Constant.THU_PATH + "/" +
-//                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
-//                    Constant.THUMB_SUFFIX + ".jpg"));
+            imagesList.add(new File(Constant.THU_PATH + "/" +
+                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                    Constant.THUMB_SUFFIX + ".jpg"));
         }
 
         // Delete Images from Room and Messages of this Room
@@ -3691,7 +3692,7 @@ public class ToolBox_Inf {
         return userColors[colorIndex++];
     }
 
-    public static String AccentMapper(String string){
+    public static String AccentMapper(String string) {
         //
         if (string == null) {
             return "";
@@ -3699,9 +3700,9 @@ public class ToolBox_Inf {
         //
         StringBuilder sb = new StringBuilder(string);
         //
-        for(int i = 0; i < string.length(); i++) {
+        for (int i = 0; i < string.length(); i++) {
             Character c = ACCENT_MAP.get(sb.charAt(i));
-            if(c != null) {
+            if (c != null) {
                 sb.setCharAt(i, c.charValue());
             }
         }

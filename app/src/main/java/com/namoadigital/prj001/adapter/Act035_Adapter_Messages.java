@@ -395,7 +395,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL) == null || hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
                     iv_foto.setImageResource(R.drawable.sand_watch_transp);
                 } else {
-                    iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
+                    iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant. THU_PATH + "/" +
                             hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg", "") + "_thumb.jpg"
                     ));
                 }
