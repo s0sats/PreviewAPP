@@ -5,10 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.sql.Sql_Act034_001;
 
@@ -22,12 +25,14 @@ public class Act034_Opc_Adapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<HMAux> source;
+    private String selected_customer;
     private int resource;
 
 
-    public Act034_Opc_Adapter(Context context, ArrayList<HMAux> source, int resource) {
+    public Act034_Opc_Adapter(Context context, ArrayList<HMAux> source, long selected_customer, int resource) {
         this.context = context;
         this.source = source;
+        this.selected_customer = String.valueOf(selected_customer);
         this.resource = resource;
     }
 
@@ -46,6 +51,11 @@ public class Act034_Opc_Adapter extends BaseAdapter {
         return 0L;
     }
 
+    public void setSelected(String selected_customer){
+        this.selected_customer = selected_customer;
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -55,11 +65,20 @@ public class Act034_Opc_Adapter extends BaseAdapter {
         }
         //
         HMAux item = source.get(position);
-
+        LinearLayout ll_background = (LinearLayout) convertView.findViewById(R.id.act034_opc_cell_ll_background);
         TextView tv_customer_desc = (TextView) convertView.findViewById(R.id.act034_opc_cell_tv_customer_desc);
         TextView tv_badge = (TextView) convertView.findViewById(R.id.act034_opc_cell_tv_badge);
+        ImageView iv_selected = (ImageView) convertView.findViewById(R.id.act034_opc_cell_iv_selected);
         //
         tv_customer_desc.setText(item.get(EV_User_CustomerDao.CUSTOMER_NAME));
+        //
+        if(item.get(CH_RoomDao.CUSTOMER_CODE).equalsIgnoreCase(selected_customer)){
+            ll_background.setBackground(context.getDrawable(R.drawable.chat_customer_drawer_selected));
+            iv_selected.setVisibility(View.VISIBLE);
+        }else{
+            ll_background.setBackground(context.getDrawable(R.drawable.lib_custom_cell_bg));
+            iv_selected.setVisibility(View.GONE);
+        }
         //
         if(item.get(Sql_Act034_001.MSG_QTY).equalsIgnoreCase("0")){
             tv_badge.setVisibility(View.INVISIBLE);

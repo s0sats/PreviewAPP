@@ -32,4 +32,6 @@ public interface Act034_Main_View {
     void startLeaveRoomWS(String user_code, String room_code);
 
     void changeRoom_Private_Code(String room_private);
+
+    long getSelected_Customer();
 }

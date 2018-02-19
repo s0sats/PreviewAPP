@@ -9,7 +9,7 @@
         android:id="@+id/act034_opc_cell_ll_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/act034_cell_bg_states"
+        android:background="@drawable/chat_customer_drawer_states"
         android:orientation="horizontal"
         android:padding="15dp"
         android:gravity="center_vertical"
@@ -23,6 +23,16 @@
             android:text="Nome"
             android:textColor="@color/namoa_color_light_blue"
             android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/act034_opc_cell_iv_selected"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_visibility_black_24dp"
+            android:tint="@color/namoa_color_light_blue"
+            android:visibility="gone"
+            />
 
         <TextView
             android:id="@+id/act034_opc_cell_tv_badge"

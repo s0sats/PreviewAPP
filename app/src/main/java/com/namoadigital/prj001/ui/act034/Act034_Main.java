@@ -48,7 +48,6 @@ import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.Sql_Act034_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -90,8 +89,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private RoomInfoTask roomInfoTask;
     //private DownloadMemberImgTask downloadMemberImgTask;
     private UserListInfoTask userListInfoTask;
-    /*TESTE, MOVER PARA ACT035*/
-    //private MessageInfoTask messageInfoTask;
+    private long selected_customer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -177,6 +175,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 //
+                act034_opc.loadDataToScreen();
+                //
                 invalidateOptionsMenu();
             }
         };
@@ -223,10 +223,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         bTT = getIntent().getBooleanExtra(NotificationReceiver.NOTIFICATION, false);
-        //
+        //Por padrão, seta o customer atual como o selecionado
+        selected_customer =  ToolBox_Con.getPreference_Customer_Code(context);
         if (bundle != null) {
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
             String mReload = bundle.getString(Constant.CHAT_RELOAD, "0");
+            selected_customer = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
             //
             if (mReload.equalsIgnoreCase("1")) {
                 HMAux item = new HMAux();
@@ -250,6 +252,11 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     public ArrayList<HMAux> getCustomer_list() {
         return customer_list;
+    }
+
+    @Override
+    public long getSelected_Customer() {
+        return selected_customer;
     }
 
     @Override
@@ -278,7 +285,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         act034_opc.setHmAux_Trans(hmAux_Trans);
         //
-        toogleDrawerVisibility(true);
+        updateDrawerCustomerList();
         //
         act034_opc.loadDataToScreen();
         //
@@ -289,19 +296,18 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         act034_room.setBaInfra(this);
         act034_room.setHmAux_Trans(hmAux_Trans);
-        act034_room.setSelected_customer(customer_list.size() > 0 ? ToolBox_Con.getPreference_Customer_Code(context) /*Long.parseLong(customer_list.get(0).get(EV_User_CustomerDao.CUSTOMER_CODE))*/ : 0);
         act034_room.loadDataToScreen();
 
     }
 
-    private void toogleDrawerVisibility(boolean change_drawer_status) {
+    private void updateDrawerCustomerList() {
         customer_list = mPresenter.getCustomerMessageList(
                 mPresenter.getCustomerNameList()
         );
         //
         act034_opc.setCustomerList(customer_list);
         //
-        boolean customerInList = false;
+        /*boolean customerInList = false;
         for (int i = 0; i < customer_list.size(); i++) {
             if (
                     customer_list.get(i).get(CH_RoomDao.CUSTOMER_CODE).equals(
@@ -319,38 +325,33 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             aux.put(Sql_Act034_001.MSG_QTY, "0");
             //
             customer_list.add(0, aux);
-        }
-
-        if(change_drawer_status){
-            setDrawerState(customer_list.size() > 1);
-        }
-
-        //
-        /*if(customer_list.size() > 1){
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        }else{
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }*/
+
+        setDrawerState(customer_list.size() > 1);
+
     }
 
     public void setSelectedCustomer(long customer_code) {
-        act034_room.setSelected_customer(customer_code);
+        selected_customer = customer_code;
+        //updateDrawerCustomerList();
         act034_room.loadDataToScreen();
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    /**
+     * Habilita ou desabilita o drawer
+     * @param isEnabled
+     */
     public void setDrawerState(boolean isEnabled) {
         if (isEnabled) {
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             mDrawerToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
             mDrawerToggle.setDrawerIndicatorEnabled(true);
-            mDrawerLayout.openDrawer(GravityCompat.START);
+            //mDrawerLayout.openDrawer(GravityCompat.START);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-
-            //mDrawerStatus = true;
 
             mDrawerToggle.syncState();
 
@@ -362,8 +363,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setHomeButtonEnabled(false);
-
-            //mDrawerStatus = false;
 
             mDrawerToggle.setDrawerIndicatorEnabled(false);
 
@@ -424,6 +423,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         Bundle bundle = new Bundle();
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
+        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer );
         //
         mIntent.putExtras(bundle);
         //
@@ -447,7 +447,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 case Constant.CHAT_BR_TYPE_ROOM:
                 case Constant.CHAT_BR_TYPE_MSG:
                     //Atualiza drawer
-                    toogleDrawerVisibility(false);
+                    updateDrawerCustomerList();
                     //
                     if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
                         //act034_room.loadRoomList();
