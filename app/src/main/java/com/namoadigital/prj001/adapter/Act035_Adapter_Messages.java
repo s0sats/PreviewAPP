@@ -392,7 +392,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
                 //tv_name.setText("Nome");
 
-                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
+                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL) == null || hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
                     iv_foto.setImageResource(R.drawable.sand_watch_transp);
                 } else {
                     iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
@@ -430,7 +430,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
                 tv_name.setVisibility(View.INVISIBLE);
 
-                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
+                if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL) == null || hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
                     iv_foto.setImageResource(R.drawable.sand_watch_transp);
                 } else {
                     iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +

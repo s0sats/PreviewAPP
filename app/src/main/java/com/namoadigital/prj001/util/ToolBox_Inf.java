@@ -3572,9 +3572,9 @@ public class ToolBox_Inf {
         ArrayList<File> imagesList = new ArrayList<>();
         //
         imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + ch_room.getRoom_image_local()));
-        imagesList.add(new File(Constant.THU_PATH + "/" +
-                ch_room.getRoom_image_local().substring(0, ch_room.getRoom_image_local().length() - 4) +
-                Constant.THUMB_SUFFIX + ".jpg"));
+//        imagesList.add(new File(Constant.THU_PATH + "/" +
+//                ch_room.getRoom_image_local().substring(0, ch_room.getRoom_image_local().length() - 4) +
+//                Constant.THUMB_SUFFIX + ".jpg"));
         //
         ArrayList<HMAux> msgImages = (ArrayList<HMAux>) mRoomDao.query_HM(
                 new CH_Message_Sql_020(
@@ -3584,9 +3584,9 @@ public class ToolBox_Inf {
         //
         for (HMAux aux : msgImages) {
             imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-            imagesList.add(new File(Constant.THU_PATH + "/" +
-                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
-                    Constant.THUMB_SUFFIX + ".jpg"));
+//            imagesList.add(new File(Constant.THU_PATH + "/" +
+//                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+//                    Constant.THUMB_SUFFIX + ".jpg"));
         }
 
         // Delete Images from Room and Messages of this Room

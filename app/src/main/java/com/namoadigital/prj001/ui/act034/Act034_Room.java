@@ -279,16 +279,23 @@ public class Act034_Room extends BaseFragment {
         }
     }
 
+    /**
+     * Disparava exception quando da remo
+     */
     public void setListViewOnRoomPosition() {
-        String room_code = mMain.getReturnedRoomCode();
-        mMain.setReturnedRoomCode(null);
-        //
-        if (room_code != null) {
-            int position = mAdapter.getRoomPosition(room_code);
+        try {
+            String room_code = mMain.getReturnedRoomCode();
+            mMain.setReturnedRoomCode(null);
             //
-            if (position != -1) {
-                lv_msg.setSelection(position);
+            if (room_code != null) {
+                int position = mAdapter.getRoomPosition(room_code);
+                //
+                if (position != -1) {
+                    lv_msg.setSelection(position);
+                }
             }
+        } catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
