@@ -374,16 +374,14 @@ public class WS_DownLoad_Picture extends IntentService {
                                 ).toSqlQuery().toLowerCase()
                         );
 
-//                        if (ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH, (hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg"))) {
-//                            //Atualiza campo com url local
-//                            roomDao.addUpdate(
-//                                    new CH_Room_Sql_003(
-//                                            hmAux.get(CH_RoomDao.ROOM_CODE),
-//                                            hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
-//                                    ).toSqlQuery().toLowerCase()
-//                            );
-//                            //
-//                        }
+                    } else {
+                        //Atualiza campo com url local
+                        roomDao.addUpdate(
+                                new CH_Room_Sql_003(
+                                        hmAux.get(CH_RoomDao.ROOM_CODE),
+                                        hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
+                                ).toSqlQuery().toLowerCase()
+                        );
                     }
                     //
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
