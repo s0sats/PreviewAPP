@@ -49,13 +49,14 @@
             android:layout_gravity="center"
             android:padding="5dp"
             android:text="Room Desc - Trad"
-            android:textSize="@dimen/font_size_title_dialog"
+            android:minHeight="80dp"
+            android:minWidth="200dp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/act034_room_info_iv_image"
-            android:layout_width="300px"
-            android:layout_height="300px"
+            android:layout_width="500px"
+            android:layout_height="400px"
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"

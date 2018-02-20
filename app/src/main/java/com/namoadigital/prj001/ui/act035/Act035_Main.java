@@ -1507,7 +1507,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 JSONObject msg = jsonObject.getJSONObject("message");
 
                 if (msg.getString("type").equalsIgnoreCase("TEXT")) {
-                    tv_room_desc.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg.getString("data")), 20));
+                    tv_room_desc.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg.getString("data")), 80));
                     iv_room.setImageBitmap(null);
                     iv_room.setVisibility(View.GONE);
                 } else if (msg.getString("type").equalsIgnoreCase("IMAGE")) {
