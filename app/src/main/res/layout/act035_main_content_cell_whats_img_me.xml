@@ -20,14 +20,15 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_marginRight="-6dp"
-            android:background="@drawable/ic_play" />
+            android:background="@drawable/ic_play"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/act035_main_content_cell_whats_ll_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/bg_msg_from"
+            android:background="@drawable/bg_msg_me"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -44,7 +45,8 @@
                     android:textColor="#f1194f"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:typeface="normal" />
+                    android:typeface="normal"
+                    android:visibility="gone"/>
             </LinearLayout>
 
 
@@ -109,7 +111,8 @@
         <View
             android:id="@+id/act035_main_content_cell_whats_v_space_right"
             android:layout_width="100dp"
-            android:layout_height="1dp" />
+            android:layout_height="1dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

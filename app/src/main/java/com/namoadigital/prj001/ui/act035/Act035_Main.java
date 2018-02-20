@@ -36,6 +36,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
+import com.namoadigital.prj001.adapter.Act035_Adapter_Messages_bk;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
@@ -97,7 +98,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private ImageView iv_reorder;
     private ImageView iv_down;
 
-    private Act035_Adapter_Messages act035_adapter_messages;
+    private Act035_Adapter_Messages_bk act035_adapter_messages;
     private ArrayList<HMAux> dados;
     private ArrayList<HMAux> messages;
 
@@ -329,12 +330,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             sw_messages.setEnabled(true);
         }
         //
-        act035_adapter_messages = new Act035_Adapter_Messages(
+//        act035_adapter_messages = new Act035_Adapter_Messages(
+//                getBaseContext(),
+//                R.layout.act035_main_content_cell_whats,
+//                R.layout.act035_main_content_cell_whats,
+//                R.layout.act035_main_content_cell_whats_text_bk,
+//                R.layout.act035_main_content_cell_whats_text_bk_r,
+//                R.layout.act035_main_content_cell_whats_text_data,
+//                R.layout.act035_main_content_cell_whats_text_end,
+//                R.layout.act035_main_content_cell_whats_text_trans,
+//                this.dados,
+//                hmAux_Trans
+//        );
+
+        act035_adapter_messages = new Act035_Adapter_Messages_bk(
                 getBaseContext(),
-                R.layout.act035_main_content_cell_whats,
-                R.layout.act035_main_content_cell_whats,
-                R.layout.act035_main_content_cell_whats_text_bk,
-                R.layout.act035_main_content_cell_whats_text_bk_r,
+                R.layout.act035_main_content_cell_whats_img_other,
+                R.layout.act035_main_content_cell_whats_img_me,
+                R.layout.act035_main_content_cell_whats_text_other,
+                R.layout.act035_main_content_cell_whats_text_me,
                 R.layout.act035_main_content_cell_whats_text_data,
                 R.layout.act035_main_content_cell_whats_text_end,
                 R.layout.act035_main_content_cell_whats_text_trans,
@@ -342,10 +356,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 hmAux_Trans
         );
 
-        act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
+        act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages_bk.IAct035_Adapter_Messages() {
             @Override
             public void showInfo(HMAux hmAux) {
-
 
                 if (ToolBox_Con.isOnline(context)) {
 

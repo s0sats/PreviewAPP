@@ -157,6 +157,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             //
             HMAux fisrtAux = new HMAux();
             fisrtAux.put("msg_date", dadosRNew.get(0).get("msg_date"));
+            fisrtAux.put("type", "DATE");
             //
             dadosRNew.add(0, fisrtAux);
             for (int i = 1; i < dadosRNew.size(); i++) {

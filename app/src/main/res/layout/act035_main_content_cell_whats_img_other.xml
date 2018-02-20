@@ -13,7 +13,8 @@
         <View
             android:id="@+id/act035_main_content_cell_whats_v_space_left"
             android:layout_width="100dp"
-            android:layout_height="1dp" />
+            android:layout_height="1dp"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/act035_main_content_cell_whats_iv_other_img"
@@ -93,7 +94,7 @@
                     android:maxHeight="24dp"
                     android:maxWidth="24dp"
                     android:src="@drawable/ic_clock_chat"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -104,7 +105,8 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_marginLeft="-6dp"
-            android:background="@drawable/ic_play_2" />
+            android:background="@drawable/ic_play_2"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/act035_main_content_cell_whats_v_space_right"

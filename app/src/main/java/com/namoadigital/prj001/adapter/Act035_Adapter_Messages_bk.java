@@ -158,6 +158,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
             //
             HMAux fisrtAux = new HMAux();
             fisrtAux.put("msg_date", dadosRNew.get(0).get("msg_date"));
+            fisrtAux.put("type", "DATE");
             //
             dadosRNew.add(0, fisrtAux);
             for (int i = 1; i < dadosRNew.size(); i++) {
@@ -178,17 +179,11 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
             data.addAll(dadosRNew);
             //
             mSizeAddUpdate = dadosRNew.size();
-            //
-//            notifyDataSetChanged();
         } else {
             mSizeAddUpdate = 0;
             //
             reOrder = false;
         }
-        //
-//        if (countFound > 0){
-//            notifyDataSetChanged();
-//        }
         //
         notifyDataSetChanged();
         //
@@ -298,15 +293,23 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         boolean results = false;
 
         switch (getItemViewType(position)) {
+
+            // Date
             case 4:
                 results = false;
                 break;
+
+            // No More
             case 5:
                 results = false;
                 break;
+
+            // Translate
             case 6:
                 results = false;
                 break;
+
+            // 0 - Other IMG / 1 - Me IMG / 2 - Other TXT / 3 - Me TXT
             default:
                 results = true;
                 break;
@@ -318,36 +321,48 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        boolean bTranslate = false;
-
         if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
             switch (getItemViewType(position)) {
+
+                // Other IMG
                 case 0:
                     convertView = mInflater.inflate(resource_01, parent, false);
                     break;
+
+                // Me IMG
                 case 1:
                     convertView = mInflater.inflate(resource_02, parent, false);
                     break;
+
+                // Other TXT
                 case 2:
                     convertView = mInflater.inflate(resource_03, parent, false);
                     break;
+
+                // Me TXT
                 case 3:
                     convertView = mInflater.inflate(resource_04, parent, false);
                     break;
+
+                // Date
                 case 4:
                     convertView = mInflater.inflate(resource_05, parent, false);
                     break;
+
+                // No More
                 case 5:
                     convertView = mInflater.inflate(resource_06, parent, false);
                     break;
+
+                // Translate
                 case 6:
                     convertView = mInflater.inflate(resource_07, parent, false);
                     break;
             }
         }
-        //
+
         JSONObject message = null;
         HMAux hmAux = data.get(position);
 
@@ -402,20 +417,9 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
     }
 
     private void processImageOther(JSONObject message, HMAux hmAux, View convertView) {
-        View v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-        ImageView iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
         TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-        ImageView iv_foto = iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
-        TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+        ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
         TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-        ImageView iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-        View v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
-        ImageView iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
-
-        v_space_left.setVisibility(View.GONE);
-        iv_other_img.setVisibility(View.VISIBLE);
-        ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
 
         tv_name.setText(hmAux.get("user_nick"));
 
@@ -428,7 +432,6 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         }
 
         tv_hour.setText(
-
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
                         " HH:mm"
@@ -440,31 +443,12 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         }
 
         tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
-
-        iv_me_img.setVisibility(View.GONE);
-        v_space_right.setVisibility(View.VISIBLE);
-        iv_badge.setVisibility(View.GONE);
-
     }
 
     private void processImageMe(JSONObject message, HMAux hmAux, View convertView) {
-        View v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-        ImageView iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
-        TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-        ImageView iv_foto = iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
-        TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+        ImageView iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
         TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-        ImageView iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-        View v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
         ImageView iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
-
-        iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
-
-        v_space_left.setVisibility(View.VISIBLE);
-        iv_other_img.setVisibility(View.GONE);
-        ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
-        tv_name.setVisibility(View.INVISIBLE);
 
         if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL) == null || hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
             iv_foto.setImageResource(R.drawable.sand_watch_transp);
@@ -484,28 +468,12 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         );
 
         iv_badge.setImageDrawable(processBadge(hmAux));
-
-        iv_me_img.setVisibility(View.VISIBLE);
-        v_space_right.setVisibility(View.GONE);
-        iv_badge.setVisibility(View.VISIBLE);
     }
 
     private void processTxTOther(JSONObject message, HMAux hmAux, View convertView) {
-        View v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-        ImageView iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
         TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-        ImageView iv_foto = iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
         TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
         TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-        ImageView iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-        View v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
-        ImageView iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
-
-        v_space_left.setVisibility(View.GONE);
-        iv_other_img.setVisibility(View.VISIBLE);
-        ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_from));
-        tv_name.setVisibility(View.VISIBLE);
         //
         try {
 
@@ -532,30 +500,12 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
 
                 )
         );
-
-        iv_me_img.setVisibility(View.GONE);
-        v_space_right.setVisibility(View.VISIBLE);
-        iv_badge.setVisibility(View.GONE);
-
-
     }
 
     private void processTxTMe(JSONObject message, HMAux hmAux, View convertView) {
-        View v_space_left = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_left);
-        ImageView iv_other_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_other_img);
-        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
-        TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
-        ImageView iv_foto = iv_foto = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
         TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
         TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
-        ImageView iv_me_img = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_whats_iv_me_img);
-        View v_space_right = convertView.findViewById(R.id.act035_main_content_cell_whats_v_space_right);
         ImageView iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
-
-        v_space_left.setVisibility(View.VISIBLE);
-        iv_other_img.setVisibility(View.GONE);
-        ll_item.setBackground(context.getResources().getDrawable(R.drawable.bg_msg_me));
-        tv_name.setVisibility(View.GONE);
 
         try {
             tv_message.setText(message.getString("data").trim());
@@ -573,13 +523,10 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         );
 
         iv_badge.setImageDrawable(processBadge(hmAux));
-
-        iv_me_img.setVisibility(View.VISIBLE);
-        v_space_right.setVisibility(View.GONE);
-        iv_badge.setVisibility(View.VISIBLE);
     }
 
     private void processDate(JSONObject message, HMAux hmAux, View convertView) {
+        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
         TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
 
         String resultado = "";
@@ -616,12 +563,14 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
     }
 
     private void processNoMore(View convertView) {
+        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
         TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
         tv_message.setText(hmAux_Trans.get("NO_MORE_MESSAGES"));
 
     }
 
     private void processTranslate(JSONObject message, HMAux hmAux, View convertView) {
+        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
         TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
         String resultTranslate = "";
 
