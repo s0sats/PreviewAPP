@@ -446,6 +446,10 @@ public class Act034_Room extends BaseFragment {
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
             ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
             //
+            TextView tv_Room_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
+
+            tv_Room_code.setText(mRoom_Code);
+
 //            if (mRoom_Type.equalsIgnoreCase("WORKGROUP")) {
 //                iv_trash.setVisibility(View.GONE);
 //            } else {
