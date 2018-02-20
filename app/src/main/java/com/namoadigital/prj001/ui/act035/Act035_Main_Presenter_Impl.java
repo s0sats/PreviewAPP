@@ -121,9 +121,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
 
     @Override
     public void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code) {
-
-
-        if (!msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
+        if (msg_prefix != null && !msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
 
             ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) ch_messageDao.query_HM(
                     new CH_Message_Sql_018(
@@ -157,10 +155,22 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             sHistoricalMessage.setRef_json(ref_json);
             //
             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-
             Gson gson = new GsonBuilder().serializeNulls().create();
-
             singletonWebSocket.attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
+        } else {
+            if (msg_prefix == null ) {
+                Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
+                sHistoricalMessage.setRoom_code(mRoom_code);
+                sHistoricalMessage.setMsg_ref_prefix(null);
+                sHistoricalMessage.setMsg_ref_code(null);
+                sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
+                sHistoricalMessage.setRef_json(null);
+                //
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                singletonWebSocket.attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
+            } else {
+            }
         }
     }
 
@@ -212,7 +222,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         //
         setData(mRoom_code, offSet);
         //Se sem conectividade ou socket não setado, não tenta enviar msg
-        if(ToolBox_Con.isOnline(context) && SingletonWebSocket.isSocketSetted()) {
+        if (ToolBox_Con.isOnline(context) && SingletonWebSocket.isSocketSetted()) {
             enviarMensagemServer(mRoom_code, message, chMessage);
         }
 

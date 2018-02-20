@@ -47,6 +47,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -925,7 +926,27 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     mPresenter.stopChatServices();
                     //
-                    processLogin();
+                    EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(
+                            context,
+                            Constant.DB_FULL_BASE,
+                            Constant.DB_VERSION_BASE
+                    );
+                    //
+                    List<HMAux> sessionsOn = userCustomerDao
+                            .query_HM(
+                                    new EV_User_Customer_Sql_004(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                            ToolBox_Con.getPreference_User_Code(context)
+                                    ).toSqlQuery()
+                            );
+
+                    if (sessionsOn != null && sessionsOn.size() != 0) {
+                        changeCustomer();
+                    } else {
+                        processLogin();
+                    }
+                } else {
+                    // fechar drawer Hugo
                 }
             } else {
 
@@ -1179,6 +1200,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void callLoginProcess() {
         processLogin();
+    }
+
+    @Override
+    public void callChangeCustomerProcess() {
+        changeCustomer();
     }
 
     //TRATA SESSION_NOT_FOUND

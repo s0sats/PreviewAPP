@@ -141,6 +141,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private Chat_Member_Adapter mDialogAdapter;
 
+    private int countSize = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -255,6 +257,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         mRoom_code
                 ).toSqlQuery()
         );
+
+//        // Remover Hugo
+//        ch_roomDao.remove(
+//                new CH_Message_Sql_022(
+//                        "2018.H"
+//                ).toSqlQuery()
+//        );
 
         mPresenter.updateReadStatus(
                 (ArrayList<HMAux>) chMessageDao.query_HM(
@@ -512,7 +521,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         rearrange_list();
                     }
                 } else {
-                    sw_messages.setRefreshing(false);
+                    //sw_messages.setRefreshing(false);
+                    mPresenter.sendHistoricalScrollUp(mRoom_code, null, null);
                 }
             }
         });
@@ -880,6 +890,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 try {
                     Log.d("PROCESSO_ASYN", "entrei m1");
 
+                    countSize = act035_adapter_messages.getCount();
+
                     mPresenter.updateReadStatus(messages);
                     //
                     boolean reOrder = act035_adapter_messages.addMessages(messages);
@@ -936,6 +948,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             }
                         } else {
                             iv_down.setVisibility(View.VISIBLE);
+                        }
+
+                        if (countSize == 0) {
+                            iv_down.setVisibility(View.GONE);
                         }
                     }
 

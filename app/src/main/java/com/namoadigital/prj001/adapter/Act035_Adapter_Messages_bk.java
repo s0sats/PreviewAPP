@@ -172,8 +172,10 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
             //
             reOrder = checkReOrder(data, (ArrayList<HMAux>) dadosRNew);
             //
-            if (ToolBox_Inf.equalDate(data.get(data.size() - 1).get("msg_date"), dadosRNew.get(0).get("msg_date"))) {
-                dadosRNew.remove(0);
+            if (data.size() > 0){
+                if (ToolBox_Inf.equalDate(data.get(data.size() - 1).get("msg_date"), dadosRNew.get(0).get("msg_date"))) {
+                    dadosRNew.remove(0);
+                }
             }
             //
             data.addAll(dadosRNew);

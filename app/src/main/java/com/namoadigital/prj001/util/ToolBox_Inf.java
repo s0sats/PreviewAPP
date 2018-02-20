@@ -3510,22 +3510,30 @@ public class ToolBox_Inf {
                 new CH_Room_Sql_008().toSqlQuery()
         );
 
-        for (HMAux aux : mRooms) {
-            imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
-            imagesList.add(new File(Constant.THU_PATH + "/" +
-                    aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).substring(0, aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).length() - 4) +
-                    Constant.THUMB_SUFFIX + ".jpg"));
+        try {
+            for (HMAux aux : mRooms) {
+                imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+//                imagesList.add(new File(Constant.THU_PATH + "/" +
+//                        aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).substring(0, aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).length() - 4) +
+//                        Constant.THUMB_SUFFIX + ".jpg"));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
         }
 
         ArrayList<HMAux> mRoomsMessagesImages = (ArrayList<HMAux>) mRoomDao.query_HM(
                 new CH_Message_Sql_023().toSqlQuery()
         );
 
-        for (HMAux aux : mRoomsMessagesImages) {
-            imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-            imagesList.add(new File(Constant.THU_PATH + "/" +
-                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
-                    Constant.THUMB_SUFFIX + ".jpg"));
+        try {
+            for (HMAux aux : mRoomsMessagesImages) {
+                imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                imagesList.add(new File(Constant.THU_PATH + "/" +
+                        aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                        Constant.THUMB_SUFFIX + ".jpg"));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
         }
 
         // Delete Images from Room and Messages of this Room
@@ -3584,12 +3592,16 @@ public class ToolBox_Inf {
                         ch_room.getRoom_code()
                 ).toSqlQuery()
         );
-        //
-        for (HMAux aux : msgImages) {
-            imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
-            imagesList.add(new File(Constant.THU_PATH + "/" +
-                    aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
-                    Constant.THUMB_SUFFIX + ".jpg"));
+        try {
+            //
+            for (HMAux aux : msgImages) {
+                imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                imagesList.add(new File(Constant.THU_PATH + "/" +
+                        aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                        Constant.THUMB_SUFFIX + ".jpg"));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
         }
 
         // Delete Images from Room and Messages of this Room

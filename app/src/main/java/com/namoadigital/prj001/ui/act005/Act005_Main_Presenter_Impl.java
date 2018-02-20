@@ -206,7 +206,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                 ).toSqlQuery()
                         ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
                         //Soma Qtd de n-form e n_service
-                        qty = String.valueOf(Integer.parseInt(qty) +  Integer.parseInt(qtySO));
+                        qty = String.valueOf(Integer.parseInt(qty) + Integer.parseInt(qtySO));
                         //
                         qtyBadge2 = soDao.getByStringHM(
                                 new Sql_Act005_004(
@@ -235,7 +235,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
                         //qtySO = String.valueOf(iqtySO);
                         //Soma Qtd de n-form e n_service
-                        qty = String.valueOf(Integer.parseInt(qty) +  Integer.parseInt(qtySO) + isSoWithinTokenFile());
+                        qty = String.valueOf(Integer.parseInt(qty) + Integer.parseInt(qtySO) + isSoWithinTokenFile());
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
@@ -485,7 +485,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         executeLogout(logoutList);
                     } else {
                         if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
-                            mView.callLoginProcess();
+
+                            List<HMAux> sessionsOn = userCustomerDao
+                                    .query_HM(
+                                            new EV_User_Customer_Sql_004(
+                                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                                    ToolBox_Con.getPreference_User_Code(context)
+                                            ).toSqlQuery()
+                                    );
+
+                            if (sessionsOn != null && sessionsOn.size() != 0) {
+                                mView.callChangeCustomerProcess();
+                            } else {
+                                mView.callLoginProcess();
+                            }
+                        } else {
+                            // fechar drawer Hugo
                         }
                     }
                 }
@@ -712,7 +727,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeSupport(String support_msg) {
 
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
             mView.showPD();
@@ -724,7 +739,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -765,13 +780,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 );
 
         if (sessionsOn != null && sessionsOn.size() == 0) {
-            if(AppBackgroundService.isRunning) {
+            if (AppBackgroundService.isRunning) {
                 //
                 Intent socketService = new Intent(context, AppBackgroundService.class);
                 context.stopService(socketService);
             }
 
-            if(ScreenStatusService.isRunning){
+            if (ScreenStatusService.isRunning) {
                 Intent screenService = new Intent(context, ScreenStatusService.class);
                 context.stopService(screenService);
             }
