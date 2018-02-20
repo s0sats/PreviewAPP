@@ -181,7 +181,7 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void applySearchFilter() {
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.getFilter().filter(mket_search_room.getText().toString().trim());
         }
     }
@@ -214,7 +214,7 @@ public class Act034_Room extends BaseFragment {
                         new Sql_Act034_004(
                                 mMain.getSelected_Customer(),
                                 ToolBox_Con.getPreference_User_Code(context),
-                               // mket_search_room.getText().toString(),
+                                // mket_search_room.getText().toString(),
                                 filter_workgroup,
                                 filter_private,
                                 filter_so,
@@ -267,9 +267,9 @@ public class Act034_Room extends BaseFragment {
     }
 
     private void setRoomStatusTrans(ArrayList<HMAux> roomList) {
-        for (HMAux hmAux:roomList) {
-            if(!hmAux.get(CH_RoomDao.ROOM_STATUS).isEmpty()){
-                hmAux.put(CH_RoomDao.ROOM_STATUS,hmAux_Trans.get(hmAux.get(CH_RoomDao.ROOM_STATUS)));
+        for (HMAux hmAux : roomList) {
+            if (!hmAux.get(CH_RoomDao.ROOM_STATUS).isEmpty()) {
+                hmAux.put(CH_RoomDao.ROOM_STATUS, hmAux_Trans.get(hmAux.get(CH_RoomDao.ROOM_STATUS)));
             }
         }
     }
@@ -289,7 +289,7 @@ public class Act034_Room extends BaseFragment {
                     lv_msg.setSelection(position);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
@@ -298,14 +298,14 @@ public class Act034_Room extends BaseFragment {
         ArrayList<HMAux> customer_list = mMain.getCustomer_list();
         String customer_list_filter = "";
         //
-        if(customer_list != null && customer_list.size() > 1) {
+        if (customer_list != null && customer_list.size() > 1) {
             for (HMAux hmAux : customer_list) {
                 if (!hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE).equals(String.valueOf(mMain.getSelected_Customer()))) {
                     customer_list_filter += hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE) + ",";
                 }
             }
             //Remove ultima virgula
-            customer_list_filter = customer_list_filter.substring(0,customer_list_filter.length() -1);
+            customer_list_filter = customer_list_filter.substring(0, customer_list_filter.length() - 1);
             //
             HMAux otherMsgQty =
                     messageDao.getByStringHM(
@@ -326,11 +326,11 @@ public class Act034_Room extends BaseFragment {
 
                 } else {
                     int qty = ToolBox_Inf.convertStringToInt(otherMsgQty.get(Sql_Act034_003.OTHER_CUSTOMER_QTY_MSG));
-                    tv_others_customer_msg_qty.setText(String.valueOf(qty > 9 ? qty :" "+qty+" "));
+                    tv_others_customer_msg_qty.setText(String.valueOf(qty > 9 ? qty : " " + qty + " "));
                     ll_header.setVisibility(View.VISIBLE);
                 }
             }
-        }else{
+        } else {
             ll_header.setVisibility(View.GONE);
             tv_others_customer_msg_qty.setText("");
         }
@@ -447,29 +447,8 @@ public class Act034_Room extends BaseFragment {
             ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
             //
             TextView tv_Room_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
-
+            //
             tv_Room_code.setText(mRoom_Code);
-
-//            if (mRoom_Type.equalsIgnoreCase("WORKGROUP")) {
-//                iv_trash.setVisibility(View.GONE);
-//            } else {
-//                iv_trash.setVisibility(View.VISIBLE);
-//
-//                //
-//                iv_trash.setVisibility(View.VISIBLE);
-//                iv_trash.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        HMAux ccRoom = roomDao.getByStringHM(
-//                                new CH_Room_Sql_006(
-//                                        mRoom_Code
-//                                ).toSqlQuery()
-//                        );
-//
-//                        alertForRoomRemove(ccRoom);
-//                    }
-//                });
-//            }
             //
             tv_room_desc.setText(info_room_desc);
             //
@@ -751,7 +730,7 @@ public class Act034_Room extends BaseFragment {
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                 //
                 singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));*/
-                mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(mMain.getSelected_Customer()),1,null);
+                mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(mMain.getSelected_Customer()), 1, null);
             }
         });
 
@@ -772,7 +751,7 @@ public class Act034_Room extends BaseFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (mRoom_Type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER)) {
-                    mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(mMain.getSelected_Customer()),0,hmAux.get(CH_RoomDao.ROOM_CODE));
+                    mMain.startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(mMain.getSelected_Customer()), 0, hmAux.get(CH_RoomDao.ROOM_CODE));
                 } else {
 //                    Chat_S_LeaveRoom sLeaveRoom = new Chat_S_LeaveRoom();
 //                    sLeaveRoom.setUser_code(Integer.parseInt(hmAux.get("user_code")));
@@ -782,7 +761,7 @@ public class Act034_Room extends BaseFragment {
 //                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 //                    singletonWebSocket.attemptonLeaveRoom(ToolBox_Inf.setWebSocketJsonParam(sLeaveRoom));
 
-                    mMain.startLeaveRoomWS(ToolBox_Con.getPreference_User_Code(context),hmAux.get(CH_RoomDao.ROOM_CODE));
+                    mMain.startLeaveRoomWS(ToolBox_Con.getPreference_User_Code(context), hmAux.get(CH_RoomDao.ROOM_CODE));
 
                 }
                 //
