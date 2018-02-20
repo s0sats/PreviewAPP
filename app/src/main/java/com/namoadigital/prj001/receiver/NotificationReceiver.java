@@ -3,12 +3,14 @@ package com.namoadigital.prj001.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -42,6 +44,18 @@ public class NotificationReceiver extends BroadcastReceiver {
 
             Intent mIntent = new Intent(context, Act034_Main.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if(intent.hasExtra(CH_RoomDao.CUSTOMER_CODE)){
+                Bundle bundle = new Bundle();
+                bundle.putLong(
+                        CH_RoomDao.CUSTOMER_CODE,
+                        intent.getLongExtra(
+                                CH_RoomDao.CUSTOMER_CODE,
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                );
+                //
+                mIntent.putExtras(bundle);
+            }
 
             if (!mCam && !mAct) {
                 mIntent.putExtra(NOTIFICATION, true);
