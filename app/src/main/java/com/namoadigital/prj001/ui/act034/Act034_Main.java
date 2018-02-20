@@ -80,6 +80,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private AlertDialog infoDialog = null;
     private Bundle bundle;
     private String returnedRoomCode = null;
+    private String lastFirstAdapterPosition = "0";
     //
     private LinearLayout ll_info;
     private ImageView iv_info_icon;
@@ -229,10 +230,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
             String mReload = bundle.getString(Constant.CHAT_RELOAD, "0");
             selected_customer = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+            lastFirstAdapterPosition = bundle.getString(Constant.CHAT_ROOM_POSITION, "0");
             //
             if (mReload.equalsIgnoreCase("1")) {
                 HMAux item = new HMAux();
                 item.put(CH_RoomDao.ROOM_CODE, returnedRoomCode);
+                item.put(Constant.CHAT_ROOM_POSITION, String.valueOf(act034_room != null ? act034_room.getFirstVisiblePosition() :0));
                 //
                 callAct035(context, item);
             } else {
@@ -246,8 +249,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         return returnedRoomCode;
     }
 
-    public void setReturnedRoomCode(String returnedRoomCode) {
-        this.returnedRoomCode = returnedRoomCode;
+    public String getLastFirstAdapterPosition() {
+        return lastFirstAdapterPosition;
+    }
+
+    public void setLastFirstAdapterPosition(String lastFirstAdapterPosition) {
+        this.lastFirstAdapterPosition = lastFirstAdapterPosition;
     }
 
     public ArrayList<HMAux> getCustomer_list() {
@@ -424,6 +431,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         Bundle bundle = new Bundle();
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
         bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer );
+        bundle.putString(Constant.CHAT_ROOM_POSITION, lastFirstAdapterPosition);
         //
         mIntent.putExtras(bundle);
         //

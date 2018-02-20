@@ -491,5 +491,6 @@ public class ConstantBaseApp extends ConstantBase {
 
     //Chat Reload
     public static final String CHAT_RELOAD = "chat_reload";
+    public static final String CHAT_ROOM_POSITION = "chat_room_position";
 
 }

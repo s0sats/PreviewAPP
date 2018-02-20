@@ -142,7 +142,11 @@ public class Act034_Room extends BaseFragment {
         lv_msg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Atualiza valor da primeira posição visivel
+                mMain.setLastFirstAdapterPosition(String.valueOf(lv_msg.getFirstVisiblePosition()));
+                //
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
+                //room.put(Constant.CHAT_ROOM_POSITION, String.valueOf(lv_msg.getFirstVisiblePosition()));
                 //Chama msgs pendentes
                 SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                 singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
@@ -184,6 +188,10 @@ public class Act034_Room extends BaseFragment {
         if(mAdapter != null){
             mAdapter.getFilter().filter(mket_search_room.getText().toString().trim());
         }
+    }
+    //Retorna primeira posição visivel da lista de rooms
+    public int getFirstVisiblePosition(){
+        return lv_msg != null ? lv_msg.getFirstVisiblePosition() : 0 ;
     }
 
     @Override
@@ -278,6 +286,7 @@ public class Act034_Room extends BaseFragment {
      * Disparava exception quando da remo
      */
     public void setListViewOnRoomPosition() {
+        /*NO VOLTAR, BUSCAVA A ROOM E SETAVA ELE COMO PRIMEIRA
         try {
             String room_code = mMain.getReturnedRoomCode();
             mMain.setReturnedRoomCode(null);
@@ -290,6 +299,14 @@ public class Act034_Room extends BaseFragment {
                 }
             }
         } catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }*/
+        //VOLTA DO PRIMEIRO PADRÃO, AO VOLTAR, SETA ADAPTER NA POSIÇÃO QUE ESTAVA
+        try {
+            int positionToSet = ToolBox_Inf.convertStringToInt(mMain.getLastFirstAdapterPosition());
+            //
+            lv_msg.setSelection(positionToSet <= mAdapter.getCount() - 1 ? positionToSet : mAdapter.getCount() - 1);
+        }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
