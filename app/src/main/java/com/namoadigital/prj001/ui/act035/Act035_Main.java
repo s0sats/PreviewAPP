@@ -115,6 +115,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public static String mRoom_code;
     private CH_Room mRoom;
 
+    private Long mCustomer_code;
+
     private BR_Room brRoomReceiver;
     private BR_Download_Image brDownloadImageReceiver;
     private Chat_Finish_Act chatFinishActReceiver;
@@ -376,6 +378,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         if (bundle != null) {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
+            mCustomer_code = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
         } else {
         }
     }
@@ -1365,7 +1368,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 //                //
 //                singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
 //                //
-                startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+                startRoomPrivateWS(hmAux.get(CH_RoomDao.USER_CODE), String.valueOf(mCustomer_code), 1, "");
             }
         });
 
@@ -1374,21 +1377,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         alertFRP.show();
     }
 
-    @Override
-    public void startRoomPrivateWS(String user_code, String customer_code) {
-        showPD(
-                "Criação de Sala",
-                "Iniciando a criação da sala",
-                false);
-        //
-        Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
-        Bundle roomPrivateBundle = new Bundle();
-        roomPrivateBundle.putString(CH_RoomDao.USER_CODE, user_code);
-        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE, customer_code);
-        roomPrivateIntent.putExtras(roomPrivateBundle);
-        //
-        context.sendBroadcast(roomPrivateIntent);
-    }
+//    @Override
+//    public void startRoomPrivateWS(String user_code, String customer_code) {
+//        showPD(
+//                "Criação de Sala",
+//                "Iniciando a criação da sala",
+//                false);
+//        //
+//        Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
+//        Bundle roomPrivateBundle = new Bundle();
+//        roomPrivateBundle.putString(CH_RoomDao.USER_CODE, user_code);
+//        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE, customer_code);
+//        roomPrivateBundle.putInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM, 1); // Hugo Room Private
+//        roomPrivateIntent.putExtras(roomPrivateBundle);
+//        //
+//        context.sendBroadcast(roomPrivateIntent);
+//    }
 
     private void alertForRoomRemove(final HMAux hmAux) {
         AlertDialog.Builder alertFRR = new AlertDialog.Builder(Act035_Main.this);
@@ -1415,7 +1419,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 if (mRoom.getRoom_type().equalsIgnoreCase("PRIVATE_CUSTOMER")) {
                     startRoomPrivateWS(
                             hmAux.get(CH_MessageDao.USER_CODE),
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            String.valueOf(mCustomer_code),
                             0,
                             hmAux.get(CH_MessageDao.ROOM_CODE));
                     //singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
@@ -1553,6 +1557,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
+    @Override
     public void startRoomPrivateWS(String user_code, String customer_code, Integer active, @Nullable String room_code) {
         if (active == 1) {
             showPD(
