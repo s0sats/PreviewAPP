@@ -13,6 +13,7 @@ public class Sql_Chat_Notification_001 implements Specification {
 
     public static final String QTY_ROOM = "qty_room";
     public static final String QTY_MSG = "qty_msg";
+    public static final String QTY_CUSTOMER = "qty_customer";
     public static final String LAST_ROOM = "last_room";
     public static final String LAST_MSG = "last_msg";
     public static final String ROOM_CODE = "room_code";
@@ -59,14 +60,16 @@ public class Sql_Chat_Notification_001 implements Specification {
                 .append("   SELECT\n" +
                         "      t.*,\n" +
                         "      r.room_desc " + LAST_ROOM + ",\n" +
+                        "      r.customer_code " + CH_RoomDao.CUSTOMER_CODE + ",\n" +
                         "      m.msg_obj " + LAST_MSG + "\n," +
                         "      m.room_code " + ROOM_CODE + "\n" +
                         "   FROM\n" +
                         "        " + CH_MessageDao.TABLE + " m \n," +
                         "        " + CH_RoomDao.TABLE + " r,\n" +
                         "          ( SELECT\n" +
-                        "             count( distinct(r.room_code)) qty_room,\n" +
-                        "             count(m.msg_code) qty_msg,\n" +
+                        "             count( distinct(r.room_code)) "+QTY_ROOM+",\n" +
+                        "             count(m.msg_code) "+QTY_MSG+",\n" +
+                        "             count( distinct(r.customer_code)) "+QTY_CUSTOMER+",\n" +
                         "             (SELECT m.msg_pk\n" +
                         "              FROM " + CH_MessageDao.TABLE + " m\n," +
                         "                   " + CH_RoomDao.TABLE + " r\n" +
@@ -86,7 +89,9 @@ public class Sql_Chat_Notification_001 implements Specification {
                         "   WHERE\n" +
                         "    m.room_code = r.room_code" +
                         "    and m.msg_pk = t.last_msg_pk\n")
-                .append(";" + QTY_ROOM + "#" + QTY_MSG + "#" + LAST_ROOM + "#" + LAST_MSG + "#" + ROOM_CODE)
-                .toString();
+                .append(";" + QTY_ROOM + "#" + QTY_MSG + "#" + LAST_ROOM + "#" +
+                              LAST_MSG + "#" + ROOM_CODE +"#"+QTY_CUSTOMER + "#" +
+                              CH_RoomDao.CUSTOMER_CODE
+                ).toString();
     }
 }

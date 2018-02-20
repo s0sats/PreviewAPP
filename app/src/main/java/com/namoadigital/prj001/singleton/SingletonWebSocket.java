@@ -1049,6 +1049,18 @@ public class SingletonWebSocket {
             resetProcessMsgCounter();
             //
             attemptSendLogin();
+        }else{
+            try{
+                String validation = "";
+                validation += "mSocket -> " + (mSocket != null ? mSocket:" mSocket null ") +"\n";
+                validation += "mSocket.id() -> " + (mSocket != null ? mSocket.id():" mSocket null,então sem mSocket.id()") +"\n";
+                validation += "mSocket_ID -> " + (mSocket_ID != null ? mSocket_ID:" mSocket_ID null ") +"\n";
+                validation += "mSocket_ID == mSocket.id() -> " + (mSocket_ID != null && mSocket != null ? mSocket_ID.equalsIgnoreCase(mSocket.id()) :" False, ao menos umas das var estão null ") +"\n";
+
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - checkForNewLogin CHAMADO, MAS NÃO REFEZ LOGIN -> \n" + validation, log_file);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

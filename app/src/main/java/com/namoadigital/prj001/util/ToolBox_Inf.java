@@ -3309,11 +3309,11 @@ public class ToolBox_Inf {
                         } else {
                             show_notification = true;
 
-                            if (Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))) {
+                            if (Act035_Main.mRoom_code != null && Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))) {
                                 return;
                             }
 
-                            if (msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1")) {
+                            /*if (msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1")) {
                                 mIntent = new Intent(context, NotificationReceiver.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtra("room_code", msgInfo.get("room_code"));
@@ -3327,6 +3327,21 @@ public class ToolBox_Inf {
 
                                 builder.setContentIntent(pi);
                             } else {
+                            }*/
+                            //Se msg são de apenas um customer, passa como parametro
+                            if(msgInfo.get(Sql_Chat_Notification_001.QTY_CUSTOMER).equals("1")){
+                                mIntent = new Intent(context, NotificationReceiver.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mIntent.putExtra(CH_RoomDao.CUSTOMER_CODE, Long.parseLong(msgInfo.get(CH_RoomDao.CUSTOMER_CODE)));
+                                //
+                                pi = PendingIntent.getBroadcast(
+                                        context,
+                                        0,
+                                        mIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+
+                                builder.setContentIntent(pi);
                             }
 
                             if (
