@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <View
+            android:id="@+id/act035_main_content_cell_whats_v_space_left"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/act035_main_content_cell_whats_iv_other_img"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginRight="-4dp"
+            android:background="@drawable/ic_play" />
+
+        <LinearLayout
+            android:id="@+id/act035_main_content_cell_whats_ll_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_msg_from"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_whats_tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N.Hugo"
+                android:textColor="#f1194f"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_whats_tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clima na região central de São Bernando do Campo "
+                android:textColor="#FF000000"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                android:typeface="normal" />
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_whats_tv_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="11:30"
+                android:textColor="#9c9b9b"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:typeface="normal" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/act035_main_content_cell_whats_iv_me_img"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="-4dp"
+            android:background="@drawable/ic_play_2" />
+
+        <View
+            android:id="@+id/act035_main_content_cell_whats_v_space_right"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>
