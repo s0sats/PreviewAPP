@@ -134,7 +134,7 @@ public class WS_C_Add_Room extends IntentService {
         //
         singletonWebSocket.attemptSendPendingMessages(chRooms.get(0).getRoom_code());
         //
-        if (chRooms.get(0).getMsg_prefix() == null || chRooms.get(0).getMsg_code() == null) {
+        if (chRooms.get(0).getMsg_prefix() != null && chRooms.get(0).getMsg_code() != null) {
             ToolBox_Con.connHttpGet(
                     Constant.WS_CHAT_MESSAGE_DIST + "msg_prefix=" + chRooms.get(0).getMsg_prefix() + "&msg_code=" + chRooms.get(0).getMsg_code(),
                     ""
