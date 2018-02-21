@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
@@ -146,12 +147,27 @@ public class WS_C_Room extends IntentService {
     }
 
     private void callCHistoricalMsg() {
+        String customer_filter = "";
         CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
-        HMAux msgAux = messageDao.getByStringHM(new CH_Message_Sql_013().toSqlQuery());
+        //
+        ArrayList<HMAux> rawlist = ToolBox_Inf.getSessionCustomerChatList(getApplicationContext());
+        //
+        customer_filter = ToolBox_Inf.returnHmAuxListInString(rawlist,EV_User_CustomerDao.CUSTOMER_CODE,",");
+        //
+        HMAux msgAux = messageDao.getByStringHM(
+                new CH_Message_Sql_013(
+                        customer_filter.length() > 0 ? customer_filter : String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
+                ).toSqlQuery()
+        );
         //
         ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) messageDao.query_HM(
                             new CH_Message_Sql_018(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                    getApplicationContext(),
+                                    ToolBox_Inf.returnHmAuxListInString(
+                                            ToolBox_Inf.getSessionCustomerChatList(getApplicationContext()),
+                                            EV_User_CustomerDao.CUSTOMER_CODE,
+                                            ","
+                                    ),
                                     ToolBox_Con.getPreference_User_Code(getApplicationContext())
                             ).toSqlQuery()
         );

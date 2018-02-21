@@ -153,5 +153,15 @@
             android:src="@drawable/ic_send_white" />
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/act035_tv_logged_customer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/namoa_color_dark_blue_lib"
+        android:textColor="@color/padrao_WHITE"
+        android:textSize="@dimen/font_size_item_md"
+        android:gravity="center"
+        android:padding="5dp"
+        />
 
 </LinearLayout>

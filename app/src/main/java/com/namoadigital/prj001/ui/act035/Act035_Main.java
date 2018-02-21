@@ -143,6 +143,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private int countSize = 0;
 
+    private TextView tv_logged_customer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,6 +212,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         lv_messages = (ListView) findViewById(R.id.act0035_lv_messages);
         sw_messages = (SwipeRefreshLayout) findViewById(R.id.act035_sw_messages);
         mkEditTextNM = (EditText) findViewById(R.id.act035_mket_chat);
+        tv_logged_customer = (TextView) findViewById(R.id.act035_tv_logged_customer);
 
         mkEditTextNM.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {

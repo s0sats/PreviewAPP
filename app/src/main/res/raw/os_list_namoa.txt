@@ -1,6 +1,6 @@
 {
 	"so": [{
-		"customer_code": 1,
+		"customer_filter_list": 1,
 		"so_prefix": 2017,
 		"so_code": 9,
 		"so_id": "2017.9",

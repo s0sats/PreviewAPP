@@ -332,7 +332,12 @@ public class SingletonWebSocket {
             //
             ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) messageDao.query_HM(
                     new CH_Message_Sql_018(
-                            ToolBox_Con.getPreference_Customer_Code(context),
+                            context,
+                            ToolBox_Inf.returnHmAuxListInString(
+                                    ToolBox_Inf.getSessionCustomerChatList(context),
+                                    EV_User_CustomerDao.CUSTOMER_CODE,
+                                    ","
+                            ),
                             ToolBox_Con.getPreference_User_Code(context),
                             room_code
                     ).toSqlQuery()

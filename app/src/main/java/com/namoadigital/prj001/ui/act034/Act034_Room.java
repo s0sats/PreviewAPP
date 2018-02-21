@@ -61,6 +61,7 @@ public class Act034_Room extends BaseFragment {
     private LinearLayout ll_room_content;
     private MKEditTextNM mket_search_room;
     private TextView tv_no_result;
+    private TextView tv_logged_customer;
     private ImageView iv_filter;
     private ImageView iv_add_room;
     //
@@ -120,6 +121,8 @@ public class Act034_Room extends BaseFragment {
         lv_msg = (ListView) view.findViewById(R.id.act034_room_lv_msg);
         //
         tv_no_result = (TextView) view.findViewById(R.id.act034_room_tv_no_result);
+        //
+        tv_logged_customer = (TextView) view.findViewById(R.id.act034_room_tv_logged_customer);
         //
         roomDao = new CH_RoomDao(context);
         //
@@ -202,6 +205,10 @@ public class Act034_Room extends BaseFragment {
             mket_search_room.setHint(hmAux_Trans.get("search_room_hint"));
             //
             tv_no_result.setText(hmAux_Trans.get("no_room_found_lbl"));
+            //
+            tv_logged_customer.setText(
+                    mMain.getSeletedCustomerName()
+            );
             //
             loadRoomList();
             //
