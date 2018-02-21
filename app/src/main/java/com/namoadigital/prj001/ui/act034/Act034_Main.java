@@ -537,7 +537,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
         //
-        progressDialog.setCancelable(cancelable);
+        //progressDialog.setCancelable(cancelable);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
