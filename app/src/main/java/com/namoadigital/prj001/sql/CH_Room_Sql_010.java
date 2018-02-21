@@ -22,7 +22,7 @@ public class CH_Room_Sql_010 implements Specification {
         return sb
                 .append(" SELECT distinct room_image_local \n" +
                         " FROM " + CH_RoomDao.TABLE +
-                        " WHERE status_update = '0' and room_image_local != '' and room_image_local notnull and room_image_local  not in \n" +
+                        " WHERE status_update = '0' and room_image_local != '' and room_image_local notnull and room_image_local not in \n" +
                         "  (\n" +
                         "   SELECT distinct room_image_local " +
                         "   FROM " + CH_RoomDao.TABLE +
