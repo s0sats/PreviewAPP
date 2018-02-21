@@ -92,6 +92,9 @@ import com.namoadigital.prj001.sql.CH_Message_Sql_023;
 import com.namoadigital.prj001.sql.CH_Room_Sql_004;
 import com.namoadigital.prj001.sql.CH_Room_Sql_007;
 import com.namoadigital.prj001.sql.CH_Room_Sql_008;
+import com.namoadigital.prj001.sql.CH_Room_Sql_010;
+import com.namoadigital.prj001.sql.CH_Room_Sql_011;
+import com.namoadigital.prj001.sql.CH_Room_Sql_012;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
@@ -3329,7 +3332,7 @@ public class ToolBox_Inf {
                             } else {
                             }*/
                             //Se msg são de apenas um customer, passa como parametro
-                            if(msgInfo.get(Sql_Chat_Notification_001.QTY_CUSTOMER).equals("1")){
+                            if (msgInfo.get(Sql_Chat_Notification_001.QTY_CUSTOMER).equals("1")) {
                                 mIntent = new Intent(context, NotificationReceiver.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtra(CH_RoomDao.CUSTOMER_CODE, Long.parseLong(msgInfo.get(CH_RoomDao.CUSTOMER_CODE)));
@@ -3519,18 +3522,26 @@ public class ToolBox_Inf {
     public static void cleanRoom_RoomMessages(Context context) {
         CH_RoomDao mRoomDao = new CH_RoomDao(context);
 
+        /**
+         * Marcar os customer que estao locais mas que nao vieram da lista para serem ignorados no processo de limpeza
+         */
+        mRoomDao.addUpdate(new CH_Room_Sql_012(
+                ).toSqlQuery()
+        );
+
         ArrayList<File> imagesList = new ArrayList<>();
         //
         ArrayList<HMAux> mRooms = (ArrayList<HMAux>) mRoomDao.query_HM(
                 new CH_Room_Sql_008().toSqlQuery()
         );
 
+        ArrayList<HMAux> mRoomsImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Room_Sql_010().toSqlQuery()
+        );
+
         try {
-            for (HMAux aux : mRooms) {
+            for (HMAux aux : mRoomsImages) {
                 imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
-//                imagesList.add(new File(Constant.THU_PATH + "/" +
-//                        aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).substring(0, aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL).length() - 4) +
-//                        Constant.THUMB_SUFFIX + ".jpg"));
             }
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
@@ -3549,26 +3560,6 @@ public class ToolBox_Inf {
             }
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
-        }
-
-        // Delete Images from Room and Messages of this Room
-        boolean detect = true;
-        int i = 0;
-        try {
-            while (detect) {
-                if (imagesList.get(i).getName().contains("ch_user.jpg") ||
-                        imagesList.get(i).getName().contains("ch_user_thumb.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-so.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-so_thumb.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-nform.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-nform_thumb.jpg")
-                        ) {
-                    imagesList.remove(i);
-                } else {
-                    i++;
-                }
-            }
-        } catch (Exception e) {
         }
 
         deleteFileListExceptionSafe(imagesList);
@@ -3597,10 +3588,17 @@ public class ToolBox_Inf {
 
         ArrayList<File> imagesList = new ArrayList<>();
         //
-        imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + ch_room.getRoom_image_local()));
-//        imagesList.add(new File(Constant.THU_PATH + "/" +
-//                ch_room.getRoom_image_local().substring(0, ch_room.getRoom_image_local().length() - 4) +
-//                Constant.THUMB_SUFFIX + ".jpg"));
+        ArrayList<HMAux> mRoomsImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Room_Sql_011(ch_room.getRoom_code()).toSqlQuery()
+        );
+        //
+        try {
+            for (HMAux aux : mRoomsImages) {
+                imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
         //
         ArrayList<HMAux> msgImages = (ArrayList<HMAux>) mRoomDao.query_HM(
                 new CH_Message_Sql_020(
@@ -3617,26 +3615,6 @@ public class ToolBox_Inf {
             }
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
-        }
-
-        // Delete Images from Room and Messages of this Room
-        boolean detect = true;
-        int i = 0;
-        try {
-            while (detect) {
-                if (imagesList.get(i).getName().contains("ch_user.jpg") ||
-                        imagesList.get(i).getName().contains("ch_user_thumb.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-so.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-so_thumb.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-nform.jpg") ||
-                        imagesList.get(i).getName().contains("ch_image-nform_thumb.jpg")
-                        ) {
-                    imagesList.remove(i);
-                } else {
-                    i++;
-                }
-            }
-        } catch (Exception e) {
         }
 
         deleteFileListExceptionSafe(imagesList);
