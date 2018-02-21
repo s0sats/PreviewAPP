@@ -62,7 +62,12 @@ public class WS_Room_Private extends IntentService {
         //
         Chat_RoomPrivate_Env env = new Chat_RoomPrivate_Env();
         //
-        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        String session_app = ToolBox_Inf.getCustomerSession(
+                getApplicationContext(),
+                ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                Long.valueOf(customer_code)
+        );
+        env.setSession_app(session_app != null ? session_app : ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setUser_code(Integer.parseInt(user_code));
         env.setCustomer_code(Long.valueOf(customer_code));
         env.setActive(activeRoom);

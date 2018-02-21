@@ -9,6 +9,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
@@ -122,10 +123,14 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     @Override
     public void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code) {
         if (msg_prefix != null && !msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
-
             ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) ch_messageDao.query_HM(
                     new CH_Message_Sql_018(
-                            ToolBox_Con.getPreference_Customer_Code(context),
+                            context,
+                            ToolBox_Inf.returnHmAuxListInString(
+                                    ToolBox_Inf.getSessionCustomerChatList(context),
+                                    EV_User_CustomerDao.CUSTOMER_CODE,
+                                    ","
+                            ),
                             ToolBox_Con.getPreference_User_Code(context),
                             mRoom_code
                     ).toSqlQuery()

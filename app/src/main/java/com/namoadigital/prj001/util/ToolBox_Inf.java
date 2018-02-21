@@ -96,6 +96,8 @@ import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
@@ -3739,6 +3741,52 @@ public class ToolBox_Inf {
         }
 
         return sb.toString();
+    }
+
+    public static String getCustomerSession(Context context, String user_code, long customer_code){
+        String session_app = null;
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        HMAux session_info = userCustomerDao.getByStringHM(
+                new EV_User_Customer_Sql_008(
+                        user_code,
+                        customer_code
+                ).toSqlQuery()
+        );
+        //
+        if(session_info != null && session_info.size() > 0){
+              session_app = session_info.get(EV_User_CustomerDao.SESSION_APP);
+        }
+        //
+        return session_app;
+    }
+
+    public static ArrayList<HMAux> getSessionCustomerChatList(Context context){
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
+                query_HM(
+                        new EV_User_Customer_Sql_007(
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        return customer_list;
+    }
+
+    public static String returnHmAuxListInString(ArrayList<HMAux> auxList, String key, String separator){
+        String hmAuxInLine = "";
+        separator = separator == null ? "," :separator;
+        //
+        for (HMAux hmAux:auxList) {
+            if(hmAux.containsKey(key)){
+                hmAuxInLine += hmAux.get(key) + separator;
+            }
+        }
+        //
+        hmAuxInLine = hmAuxInLine.length() > 0 ? hmAuxInLine.substring(0,hmAuxInLine.length() -1) : "";
+        //
+        return hmAuxInLine;
     }
 
 }

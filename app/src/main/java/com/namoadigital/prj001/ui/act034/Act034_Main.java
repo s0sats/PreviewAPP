@@ -345,6 +345,17 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    public String getSeletedCustomerName(){
+        String customer_name = "";
+        for (HMAux hmAux : customer_list) {
+            if(hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE).equalsIgnoreCase(String.valueOf(selected_customer))){
+                customer_name = hmAux.get(EV_User_CustomerDao.CUSTOMER_NAME);
+                break;
+            }
+        }
+        return customer_name;
+    }
+
     /**
      * Habilita ou desabilita o drawer
      * @param isEnabled

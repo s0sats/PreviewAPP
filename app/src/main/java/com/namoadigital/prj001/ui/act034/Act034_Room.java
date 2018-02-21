@@ -207,7 +207,7 @@ public class Act034_Room extends BaseFragment {
             tv_no_result.setText(hmAux_Trans.get("no_room_found_lbl"));
             //
             tv_logged_customer.setText(
-                    ToolBox_Con.getPreference_Customer_Code_NAME(context)
+                    mMain.getSeletedCustomerName()
             );
             //
             loadRoomList();
