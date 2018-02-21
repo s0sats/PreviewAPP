@@ -40,6 +40,7 @@ import com.namoadigital.prj001.adapter.Act035_Adapter_Messages_bk;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Error;
@@ -117,6 +118,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private CH_Room mRoom;
 
     private Long mCustomer_code;
+    private String mCustomer_name;
+    private int mCustomer_Count = 0;
 
     private BR_Room brRoomReceiver;
     private BR_Download_Image brDownloadImageReceiver;
@@ -404,6 +407,18 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         if (bundle != null) {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
             mCustomer_code = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+            //
+            ArrayList<HMAux> mCustomers = ToolBox_Inf.getSessionCustomerChatList(getBaseContext());
+            //
+            mCustomer_Count = mCustomers.size();
+            //
+            for (HMAux cAux : mCustomers) {
+                if (cAux.get(CH_RoomDao.CUSTOMER_CODE).equalsIgnoreCase(String.valueOf(mCustomer_code))) {
+                    mCustomer_name = cAux.get(EV_User_CustomerDao.CUSTOMER_NAME);
+                    //
+                    break;
+                }
+            }
         } else {
         }
     }
@@ -463,6 +478,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         );
 
         tv_room_name_val.setText(mRoom.getRoom_desc());
+
+        tv_logged_customer.setText(mCustomer_name);
 
         try {
 
