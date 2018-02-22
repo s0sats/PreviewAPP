@@ -153,6 +153,7 @@
             android:src="@drawable/ic_send_white" />
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/act035_tv_logged_customer"
         android:layout_width="match_parent"
@@ -162,6 +163,6 @@
         android:textSize="@dimen/font_size_item_md"
         android:gravity="center"
         android:padding="5dp"
-        />
+        android:visibility="gone"/>
 
 </LinearLayout>

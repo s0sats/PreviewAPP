@@ -386,7 +386,7 @@ public class Act034_Room extends BaseFragment {
         builder
                 .setTitle(hmAux_Trans.get("room_dialog_filter_ttl"))
                 .setView(view)
-                .setCancelable(true)
+                .setCancelable(false)
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -741,7 +741,7 @@ public class Act034_Room extends BaseFragment {
 
         alertFRP.setTitle("Criacao Sala Privada - trad");
         alertFRP.setMessage("Deseja realmente criar a sala privada? - trad");
-        alertFRP.setCancelable(true);
+        alertFRP.setCancelable(false);
         //
         alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
@@ -769,7 +769,7 @@ public class Act034_Room extends BaseFragment {
 
         alertFRR.setTitle("Remoção de Sala - trad");
         alertFRR.setMessage("Deseja realmente remover a sala?  - trad");
-        alertFRR.setCancelable(true);
+        alertFRR.setCancelable(false);
         //
         alertFRR.setPositiveButton("Sim  - trad", new DialogInterface.OnClickListener() {
             @Override

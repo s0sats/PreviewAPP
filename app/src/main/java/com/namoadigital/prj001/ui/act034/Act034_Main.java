@@ -225,7 +225,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         bundle = getIntent().getExtras();
         bTT = getIntent().getBooleanExtra(NotificationReceiver.NOTIFICATION, false);
         //Por padrão, seta o customer atual como o selecionado
-        selected_customer =  ToolBox_Con.getPreference_Customer_Code(context);
+        selected_customer = ToolBox_Con.getPreference_Customer_Code(context);
         if (bundle != null) {
             returnedRoomCode = bundle.getString(CH_MessageDao.ROOM_CODE);
             String mReload = bundle.getString(Constant.CHAT_RELOAD, "0");
@@ -235,7 +235,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             if (mReload.equalsIgnoreCase("1")) {
                 HMAux item = new HMAux();
                 item.put(CH_RoomDao.ROOM_CODE, returnedRoomCode);
-                item.put(Constant.CHAT_ROOM_POSITION, String.valueOf(act034_room != null ? act034_room.getFirstVisiblePosition() :0));
+                item.put(Constant.CHAT_ROOM_POSITION, String.valueOf(act034_room != null ? act034_room.getFirstVisiblePosition() : 0));
                 //
                 callAct035(context, item);
             } else {
@@ -345,10 +345,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    public String getSeletedCustomerName(){
+    public String getSeletedCustomerName() {
         String customer_name = "";
         for (HMAux hmAux : customer_list) {
-            if(hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE).equalsIgnoreCase(String.valueOf(selected_customer))){
+            if (hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE).equalsIgnoreCase(String.valueOf(selected_customer))) {
                 customer_name = hmAux.get(EV_User_CustomerDao.CUSTOMER_NAME);
                 break;
             }
@@ -358,6 +358,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     /**
      * Habilita ou desabilita o drawer
+     *
      * @param isEnabled
      */
     public void setDrawerState(boolean isEnabled) {
@@ -441,7 +442,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         Bundle bundle = new Bundle();
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
-        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer );
+        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer);
         bundle.putString(Constant.CHAT_ROOM_POSITION, lastFirstAdapterPosition);
         //
         mIntent.putExtras(bundle);
@@ -537,7 +538,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
         //
-        progressDialog.setCancelable(cancelable);
+        //progressDialog.setCancelable(cancelable);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -1004,9 +1005,12 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         if (ToolBox_Inf.isUsrAdmin(context)) {
             menu.getItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        } else {
+            menu.getItem(1).setVisible(false);
         }
 
         return true;

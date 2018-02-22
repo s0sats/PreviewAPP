@@ -481,6 +481,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         tv_logged_customer.setText(mCustomer_name);
 
+        if (mCustomer_Count > 1){
+            tv_logged_customer.setVisibility(View.VISIBLE);
+        } else {
+            tv_logged_customer.setVisibility(View.GONE);
+        }
+
         try {
 
 //            ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH,
@@ -1108,7 +1114,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
         //
-        progressDialog.setCancelable(cancelable);
+        //progressDialog.setCancelable(cancelable);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -1407,7 +1413,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         alertFRP.setTitle("Criacao Sala Privada");
         alertFRP.setMessage("Deseja realmente criar a sala privada?");
-        alertFRP.setCancelable(true);
+        //alertFRP.setCancelable(true);
+        alertFRP.setCancelable(false);
         //
         alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
@@ -1677,6 +1684,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         if (ToolBox_Inf.isUsrAdmin(context)) {
             menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
             menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        } else {
+            menu.setGroupVisible(0, false);
         }
 
         return true;
