@@ -652,6 +652,7 @@ public class Act034_Room extends BaseFragment {
             iv_trash.setVisibility(View.GONE);
             //
             tv_customer_desc.setText(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+            iv_customer.setVisibility(View.GONE);
             iv_customer.setImageBitmap(
                     BitmapFactory.decodeFile(Constant.IMG_PATH + "/" + "logo_c_" + String.valueOf(mMain.getSelected_Customer()) + ".png"));
             //

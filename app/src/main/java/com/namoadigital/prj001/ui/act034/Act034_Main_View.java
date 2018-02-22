@@ -34,4 +34,6 @@ public interface Act034_Main_View {
     void changeRoom_Private_Code(String room_private);
 
     long getSelected_Customer();
+
+    String getSeletedCustomerName();
 }

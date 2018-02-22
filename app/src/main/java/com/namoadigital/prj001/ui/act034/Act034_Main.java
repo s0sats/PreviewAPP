@@ -345,6 +345,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    @Override
     public String getSeletedCustomerName() {
         String customer_name = "";
         for (HMAux hmAux : customer_list) {
