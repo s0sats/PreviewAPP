@@ -210,6 +210,12 @@ public class Act034_Room extends BaseFragment {
                     mMain.getSeletedCustomerName()
             );
             //
+            if(mMain.getCustomer_list() != null && mMain.getCustomer_list().size() > 1){
+                tv_logged_customer.setVisibility(View.VISIBLE);
+            }else{
+                tv_logged_customer.setVisibility(View.GONE);
+            }
+            //
             loadRoomList();
             //
             updateOtherMsgInfo();

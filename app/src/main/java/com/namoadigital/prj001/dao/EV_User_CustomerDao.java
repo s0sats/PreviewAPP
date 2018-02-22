@@ -36,7 +36,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String PENDING = "pending";
     public static final String LOGO_URL = "logo_url";
 
-    private String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP, PENDING, LOGO_URL};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER,BLOCKED, SESSION_APP, PENDING, LOGO_URL};
 
     public EV_User_CustomerDao(Context context) {
         super(context,Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);

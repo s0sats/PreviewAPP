@@ -101,6 +101,7 @@ import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_010;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
@@ -1910,6 +1911,7 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("mdots_user_title", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_user_title") || Constant.HMAUX_TRANS_LIB.get("mdots_user_title").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_user_title) : Constant.HMAUX_TRANS_LIB.get("mdots_user_title")));
         Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_non_compliance") || Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_non_compliance) : Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance")));
         Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", (!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_ok") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.sys_alert_btn_ok) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok")));
+        Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_cancel", (!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_cancel") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_cancel").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.sys_alert_btn_cancel) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_cancel")));
         Constant.HMAUX_TRANS_LIB.put("footer_label", (!Constant.HMAUX_TRANS_LIB.containsKey("footer_label") || Constant.HMAUX_TRANS_LIB.get("footer_label").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.footer_label) : Constant.HMAUX_TRANS_LIB.get("footer_label")));
     }
 
@@ -3745,6 +3747,19 @@ public class ToolBox_Inf {
         ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
                 query_HM(
                         new EV_User_Customer_Sql_007(
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        return customer_list;
+    }
+
+    public static ArrayList<HMAux> getActiveCustomerSession(Context context){
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
+                query_HM(
+                        new EV_User_Customer_Sql_010(
                                 ToolBox_Con.getPreference_User_Code(context)
                         ).toSqlQuery()
                 );
