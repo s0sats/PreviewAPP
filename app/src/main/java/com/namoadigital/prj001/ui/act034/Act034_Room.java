@@ -493,7 +493,7 @@ public class Act034_Room extends BaseFragment {
                 );
             }
             //
-            tv_members_lbl.setText("Membros - Trad");
+            tv_members_lbl.setText(hmAux_Trans.get("alert_room_info_members_ttl"));
             //
             if (memberList.size() > 0) {
                 mDialogAdapter = new Chat_Member_Adapter(
@@ -508,7 +508,7 @@ public class Act034_Room extends BaseFragment {
             } else {
                 lv_members.setVisibility(View.GONE);
                 //
-                tv_members_lbl.setText("Nenhum membro encontrado - Trad");
+                tv_members_lbl.setText(hmAux_Trans.get("alert_room_info_no_members_ttl"));
             }
             //
             builder
@@ -669,7 +669,7 @@ public class Act034_Room extends BaseFragment {
             iv_customer.setImageBitmap(
                     BitmapFactory.decodeFile(Constant.IMG_PATH + "/" + "logo_c_" + String.valueOf(mMain.getSelected_Customer()) + ".png"));
             //
-            tv_members_lbl.setText("Usuários");
+            tv_members_lbl.setText(hmAux_Trans.get("alert_user_list_user_lbl"));
             //
             if (memberList.size() > 0) {
                 mUserListAdapter = new Chat_UserList_Adapter(
@@ -697,7 +697,7 @@ public class Act034_Room extends BaseFragment {
             } else {
                 lv_members.setVisibility(View.GONE);
                 //
-                tv_members_lbl.setText("Sem Usuários");
+                tv_members_lbl.setText(hmAux_Trans.get("alert_user_list_no_user_lbl"));
             }
             //
             builder
@@ -753,11 +753,11 @@ public class Act034_Room extends BaseFragment {
     private void alertForRoomPrivate(final HMAux hmAux) {
         AlertDialog.Builder alertFRP = new AlertDialog.Builder(getActivity());
 
-        alertFRP.setTitle("Criacao Sala Privada - trad");
-        alertFRP.setMessage("Deseja realmente criar a sala privada? - trad");
+        alertFRP.setTitle(hmAux_Trans.get("alert_create_room_ttl"));
+        alertFRP.setMessage(hmAux_Trans.get("alert_create_room_confirm_msg"));
         alertFRP.setCancelable(false);
         //
-        alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        alertFRP.setPositiveButton(hmAux_Trans.get("sys_alert_btn_yes"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 /*Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
@@ -772,7 +772,7 @@ public class Act034_Room extends BaseFragment {
             }
         });
 
-        alertFRP.setNegativeButton("Não", null);
+        alertFRP.setNegativeButton(hmAux_Trans.get("sys_alert_btn_no"), null);
         //
         alertFRP.show();
 
@@ -781,11 +781,11 @@ public class Act034_Room extends BaseFragment {
     private void alertForRoomRemove(final HMAux hmAux) {
         AlertDialog.Builder alertFRR = new AlertDialog.Builder(getActivity());
 
-        alertFRR.setTitle("Remoção de Sala - trad");
-        alertFRR.setMessage("Deseja realmente remover a sala?  - trad");
+        alertFRR.setTitle(hmAux_Trans.get("alert_remove_room_ttl"));
+        alertFRR.setMessage(hmAux_Trans.get("alert_remove_room_confirm_msg"));
         alertFRR.setCancelable(false);
         //
-        alertFRR.setPositiveButton("Sim  - trad", new DialogInterface.OnClickListener() {
+        alertFRR.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (mRoom_Type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER)) {
@@ -807,7 +807,7 @@ public class Act034_Room extends BaseFragment {
             }
         });
 
-        alertFRR.setNegativeButton("Não", null);
+        alertFRR.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
         //
         alertFRR.show();
     }

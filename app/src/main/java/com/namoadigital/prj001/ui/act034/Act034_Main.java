@@ -141,7 +141,25 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("room_dialog_filter_ttl");
         transList.add("ws_room_info_ttl");
         transList.add("ws_room_info_msg");
-        //
+        transList.add("ws_room_info_msg");
+        transList.add("progress_create_room_ttl");
+        transList.add("progress_create_room_msg ");
+        transList.add("progress_remove_room_ttl");
+        transList.add("progress_remove_room_msg");
+        transList.add("progress_leave_room_ttl");
+        transList.add("progress_leave_room_msg");
+        transList.add("progress_user_list_ttl");
+        transList.add("progress_user_list_msg");
+        //FragRoom
+        transList.add("alert_room_info_members_ttl");
+        transList.add("alert_room_info_no_members_ttl");
+        transList.add("alert_create_room_ttl");
+        transList.add("alert_create_room_confirm_msg");
+        transList.add("alert_remove_room_ttl");
+        transList.add("alert_remove_room_confirm_msg");
+        transList.add("alert_user_list_user_lbl");
+        transList.add("alert_user_list_no_user_lbl");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -654,13 +672,13 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void startRoomPrivateWS(String user_code, String customer_code, Integer active, @Nullable String room_code) {
         if (active == 1) {
             showPD(
-                    "Criação de Sala - trad",
-                    "Iniciando a criação da sala - trad",
+                    hmAux_Trans.get("progress_create_room_ttl"),
+                    hmAux_Trans.get("progress_create_room_msg"),
                     false);
         } else {
             showPD(
-                    "Remoção de sala de Sala - trad",
-                    "Iniciando a criação da sala- trad",
+                    hmAux_Trans.get("progress_remove_room_ttl"),
+                    hmAux_Trans.get("progress_remove_room_msg"),
                     false);
         }
         //
@@ -678,8 +696,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     public void startLeaveRoomWS(String user_code, String room_code) {
         showPD(
-                "Sair do grupo - trad",
-                "Iniciando processo de saida do grupo- trad",
+                hmAux_Trans.get("progress_leave_room_ttl"),
+                hmAux_Trans.get("progress_leave_room_msg"),
                 false);
         //
         Intent leaveRoomIntent = new Intent(context, WBR_Leave_Room.class);
@@ -869,10 +887,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             Log.d("ChatEvent", "UserListInfoTask PreExecute");
             //
             showPD(
-//                    hmAux_Trans.get("ws_user_info_list_ttl"),
-//                    hmAux_Trans.get("ws_user_info_list_msg")
-                    "Lista de contatos  - Trad",
-                    "Buscando contatos - Trad",
+                    hmAux_Trans.get("progress_user_list_ttl"),
+                    hmAux_Trans.get("progress_user_list_msg"),
 
                     true);
         }
