@@ -145,13 +145,15 @@ public class SingletonWebSocket {
     }
 
     public void initConnection() {
+        //
+        disconnect();
+        //
         Log.d("ChatEvent", "initConnection");
         //
         if (log_file == null) {
             log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
 
         }
-
         try {
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - initConnection\n", log_file);
         } catch (IOException e) {
@@ -208,26 +210,26 @@ public class SingletonWebSocket {
             e.printStackTrace();
         }
     }
-
-    public void reconnect() {
-        Log.d("ChatEvent", "Reconect");
-        try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        disconnect();
-        //
-        if (mSocketReconnect) {
-            Log.d("ChatEvent", "Reconect -> initConnection");
-            try {
-                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect -> initConnection \n", log_file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            initConnection();
-        }
-    }
+//
+//    public void reconnect() {
+//        Log.d("ChatEvent", "Reconect");
+//        try {
+//            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect   -  Socket_id: " + (mSocket != null ? mSocket.id() : " null ") + "\n", log_file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        disconnect();
+//        //
+//        if (mSocketReconnect) {
+//            Log.d("ChatEvent", "Reconect -> initConnection");
+//            try {
+//                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Reconect -> initConnection \n", log_file);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            initConnection();
+//        }
+//    }
 
     public void disconnect() {
         Log.d("ChatEvent", "disconnect");
@@ -444,6 +446,13 @@ public class SingletonWebSocket {
             mSocket_ID = mSocket.id();
             //
             changeLoggedStatus(true);
+            //
+            try {
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "---- cLogin -> mSocket_ID: " + mSocket_ID, log_file);
+                //
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             //
             Log.d("ChatEvent", "---- cLogin -> mSocket_ID: " + mSocket_ID);
             //
@@ -1011,16 +1020,12 @@ public class SingletonWebSocket {
                                     if (cError.getError_msg().contains("ORA-04068")) {
                                         //AppBackgroundService.restartSingleton(context);
                                         //mSocket.emit(Socket.EVENT_DISCONNECT,"App Restart");
-                                        disconnect();
-                                        //
                                         initConnection();
                                         //
                                     } else {
                                         Exception e = new Exception(cError.getError_msg());
                                         //
                                         ToolBox_Inf.registerException(getClass().getName(), e);
-                                        //
-                                        disconnect();
                                         //
                                         initConnection();
                                     }
