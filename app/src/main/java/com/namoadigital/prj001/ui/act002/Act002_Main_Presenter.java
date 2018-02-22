@@ -21,6 +21,10 @@ public interface Act002_Main_Presenter {
      */
     boolean checkPreferenceIsSet();
 
+    void killAllSessions();
+
+    void executeLogoutProcess();
+
     void onBackPressedClicked();
 
 }
