@@ -151,8 +151,10 @@ public class Act034_Room extends BaseFragment {
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
                 //room.put(Constant.CHAT_ROOM_POSITION, String.valueOf(lv_msg.getFirstVisiblePosition()));
                 //Chama msgs pendentes
-                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
+                if(SingletonWebSocket.isSocketSetted()) {
+                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                    singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
+                }
                 //
                 mMain.callAct035(context, room);
             }
