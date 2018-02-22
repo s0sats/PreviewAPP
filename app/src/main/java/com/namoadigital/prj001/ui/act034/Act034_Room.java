@@ -151,7 +151,7 @@ public class Act034_Room extends BaseFragment {
                 HMAux room = (HMAux) parent.getItemAtPosition(position);
                 //room.put(Constant.CHAT_ROOM_POSITION, String.valueOf(lv_msg.getFirstVisiblePosition()));
                 //Chama msgs pendentes
-                if(SingletonWebSocket.isSocketSetted()) {
+                if (SingletonWebSocket.isSocketSetted()) {
                     SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                     singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
                 }
@@ -194,9 +194,10 @@ public class Act034_Room extends BaseFragment {
             mAdapter.getFilter().filter(mket_search_room.getText().toString().trim());
         }
     }
+
     //Retorna primeira posição visivel da lista de rooms
-    public int getFirstVisiblePosition(){
-        return lv_msg != null ? lv_msg.getFirstVisiblePosition() : 0 ;
+    public int getFirstVisiblePosition() {
+        return lv_msg != null ? lv_msg.getFirstVisiblePosition() : 0;
     }
 
     @Override
@@ -212,9 +213,9 @@ public class Act034_Room extends BaseFragment {
                     mMain.getSeletedCustomerName()
             );
             //
-            if(mMain.getCustomer_list() != null && mMain.getCustomer_list().size() > 1){
+            if (mMain.getCustomer_list() != null && mMain.getCustomer_list().size() > 1) {
                 tv_logged_customer.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 tv_logged_customer.setVisibility(View.GONE);
             }
             //
@@ -321,7 +322,7 @@ public class Act034_Room extends BaseFragment {
             int positionToSet = ToolBox_Inf.convertStringToInt(mMain.getLastFirstAdapterPosition());
             //
             lv_msg.setSelection(positionToSet <= mAdapter.getCount() - 1 ? positionToSet : mAdapter.getCount() - 1);
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
@@ -632,6 +633,10 @@ public class Act034_Room extends BaseFragment {
             //
             if (userListInfoList != null && userListInfoList.size() > 0) {
                 for (Chat_UserList_Info_Rec infoRec : userListInfoList) {
+                    if (infoRec.getUser_code() == Integer.parseInt(ToolBox_Con.getPreference_User_Code(context))) {
+                        continue;
+                    }
+                    //
                     HMAux aux = new HMAux();
                     aux.put(Chat_UserList_Adapter.USER_CODE, String.valueOf(infoRec.getUser_code()));
                     aux.put(Chat_UserList_Adapter.USER_NICK, infoRec.getUser_nick());

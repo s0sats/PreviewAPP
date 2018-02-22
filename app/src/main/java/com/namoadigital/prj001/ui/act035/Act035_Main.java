@@ -1457,9 +1457,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void alertForRoomRemove(final HMAux hmAux) {
         AlertDialog.Builder alertFRR = new AlertDialog.Builder(Act035_Main.this);
 
-        alertFRR.setTitle("Remoção de Sala");
-        alertFRR.setMessage("Deseja realmente remover a sala?");
-        alertFRR.setCancelable(true);
+        alertFRR.setTitle("Remoção de Sala - Trad");
+        alertFRR.setMessage("Deseja realmente remover a sala?  - Trad");
+        alertFRR.setCancelable(false);
         //
         alertFRR.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
