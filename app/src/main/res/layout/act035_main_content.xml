@@ -95,6 +95,16 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/act035_tv_logged_customer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/namoa_color_dark_blue_lib"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textColor="@color/padrao_WHITE"
+        android:textSize="@dimen/font_size_item_md" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -120,10 +130,10 @@
             android:id="@+id/act035_mket_chat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="45dp"
-            android:maxHeight="100dp"
             android:layout_weight="1"
             android:background="@drawable/bg_msg_from"
+            android:maxHeight="100dp"
+            android:minHeight="45dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" />
 
@@ -153,16 +163,5 @@
             android:src="@drawable/ic_send_white" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/act035_tv_logged_customer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/namoa_color_dark_blue_lib"
-        android:textColor="@color/padrao_WHITE"
-        android:textSize="@dimen/font_size_item_md"
-        android:gravity="center"
-        android:padding="5dp"
-        android:visibility="gone"/>
 
 </LinearLayout>
