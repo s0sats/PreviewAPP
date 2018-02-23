@@ -106,6 +106,7 @@
         android:textSize="@dimen/font_size_item_md" />
 
     <LinearLayout
+        android:id="@+id/act035_ll_msg_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/namoa_color_dark_blue"

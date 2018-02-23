@@ -23,6 +23,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -147,6 +148,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private int countSize = 0;
 
     private TextView tv_logged_customer;
+    private LinearLayout ll_msg_edit;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -186,6 +188,24 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act035_title");
+        transList.add("alert_remove_room_ttl");
+        transList.add("alert_remove_room_confirm_msg");
+        transList.add("alert_room_info_members_ttl");
+        transList.add("alert_room_info_no_members_ttl");
+        transList.add("alert_create_room_ttl");
+        transList.add("alert_create_room_confirm_msg");
+        transList.add("progress_create_room_ttl");
+        transList.add("progress_create_room_msg");
+        transList.add("alert_remove_room_ttl");
+        transList.add("alert_remove_room_confirm_msg");
+        transList.add("progress_remove_room_ttl");
+        transList.add("progress_remove_room_msg");
+        transList.add("alert_leave_room_ttl");
+        transList.add("alert_leave_room_confirm_msg");
+        transList.add("progress_leave_room_ttl");
+        transList.add("progress_leave_room_msg");
+        transList.add("ws_message_info_ttl");
+        transList.add("ws_message_info_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -216,6 +236,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         sw_messages = (SwipeRefreshLayout) findViewById(R.id.act035_sw_messages);
         mkEditTextNM = (EditText) findViewById(R.id.act035_mket_chat);
         tv_logged_customer = (TextView) findViewById(R.id.act035_tv_logged_customer);
+        ll_msg_edit = (LinearLayout) findViewById(R.id.act035_ll_msg_edit);
 
         mkEditTextNM.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -263,13 +284,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         mRoom_code
                 ).toSqlQuery()
         );
-
-//        // Remover Hugo
-//        ch_roomDao.remove(
-//                new CH_Message_Sql_022(
-//                        "2018.H"
-//                ).toSqlQuery()
-//        );
 
         mPresenter.updateReadStatus(
                 (ArrayList<HMAux>) chMessageDao.query_HM(
@@ -477,30 +491,24 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 ).toSqlQuery()
         );
 
+
+        if (mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
+            ll_msg_edit.setVisibility(View.GONE);
+        } else {
+            ll_msg_edit.setVisibility(View.VISIBLE);
+        }
+
         tv_room_name_val.setText(mRoom.getRoom_desc());
 
         tv_logged_customer.setText(mCustomer_name);
 
-        if (mCustomer_Count > 1){
+        if (mCustomer_Count > 1) {
             tv_logged_customer.setVisibility(View.VISIBLE);
         } else {
             tv_logged_customer.setVisibility(View.GONE);
         }
 
         try {
-
-//            ToolBox_Inf.createThumbNail_Images(Constant.CACHE_CHAT_PATH,
-//                    mRoom.getRoom_image_local());
-
-
-//            iv_room_thumbnail.setImageBitmap(
-//                    BitmapFactory.decodeFile(
-//                            Constant.THU_PATH + "/" +
-//                                    mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) +
-//                                    Constant.THUMB_SUFFIX + ".jpg"
-//                    )
-//            );
-
             iv_room_thumbnail.setImageBitmap(
                     BitmapFactory.decodeFile(
                             Constant.CACHE_CHAT_PATH + "/" +
@@ -1017,11 +1025,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             Log.d("ChatEvent", "MessageAsyncTask PreExecute");
             //
             showPD(
-                    /*hmAux_Trans.get("ws_room_info_ttl"),
-                    hmAux_Trans.get("ws_room_info_msg")*/
-                    "Informações da Message - Trad",
-                    "Buscando informações da message - Trad",
-                    true);
+                    hmAux_Trans.get("ws_message_info_ttl"),
+                    hmAux_Trans.get("ws_message_info_msg"),
+                    false);
         }
 
         @Override
@@ -1110,8 +1116,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         enableProgressDialog(
                 ttl,
                 msg,
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
+                hmAux_Trans.get("sys_alert_btn_no"),
+                hmAux_Trans.get("sys_alert_btn_yes")
         );
         //
         //progressDialog.setCancelable(cancelable);
@@ -1133,11 +1139,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             Log.d("ChatEvent", "RoomAsyncTask PreExecute");
             //
             showPD(
-                    /*hmAux_Trans.get("ws_room_info_ttl"),
-                    hmAux_Trans.get("ws_room_info_msg")*/
-                    "Informações da Sala - Trad",
-                    "Buscando informações da sala - Trad",
-                    true);
+                    hmAux_Trans.get("ws_room_info_ttl"),
+                    hmAux_Trans.get("ws_room_info_msg"),
+                    false);
         }
 
         @Override
@@ -1313,7 +1317,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
             //
-            tv_members_lbl.setText("Membros - Trad");
+            tv_members_lbl.setText(hmAux_Trans.get("alert_room_info_members_ttl"));
             //
             tv_Room_code.setText(mRoom_code);
             //
@@ -1330,7 +1334,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             } else {
                 lv_members.setVisibility(View.GONE);
                 //
-                tv_members_lbl.setText("Nenhum membro encontrado - Trad");
+                tv_members_lbl.setText(hmAux_Trans.get("alert_room_info_no_members_ttl"));
             }
             //
             builder
@@ -1411,12 +1415,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void alertForRoomPrivate(final HMAux hmAux) {
         AlertDialog.Builder alertFRP = new AlertDialog.Builder(Act035_Main.this);
 
-        alertFRP.setTitle("Criacao Sala Privada");
-        alertFRP.setMessage("Deseja realmente criar a sala privada?");
+        alertFRP.setTitle(hmAux_Trans.get("alert_create_room_ttl"));
+        alertFRP.setMessage(hmAux_Trans.get("alert_create_room_confirm_msg"));
         //alertFRP.setCancelable(true);
         alertFRP.setCancelable(false);
         //
-        alertFRP.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        alertFRP.setPositiveButton(hmAux_Trans.get("sys_alert_btn_yes"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 //                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
@@ -1432,65 +1436,34 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
         });
 
-        alertFRP.setNegativeButton("Não", null);
+        alertFRP.setNegativeButton(hmAux_Trans.get("sys_alert_btn_no"), null);
         //
         alertFRP.show();
     }
 
-//    @Override
-//    public void startRoomPrivateWS(String user_code, String customer_code) {
-//        showPD(
-//                "Criação de Sala",
-//                "Iniciando a criação da sala",
-//                false);
-//        //
-//        Intent roomPrivateIntent = new Intent(context, WBR_Room_Private.class);
-//        Bundle roomPrivateBundle = new Bundle();
-//        roomPrivateBundle.putString(CH_RoomDao.USER_CODE, user_code);
-//        roomPrivateBundle.putString(CH_RoomDao.CUSTOMER_CODE, customer_code);
-//        roomPrivateBundle.putInt(Constant.CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM, 1); // Hugo Room Private
-//        roomPrivateIntent.putExtras(roomPrivateBundle);
-//        //
-//        context.sendBroadcast(roomPrivateIntent);
-//    }
-
     private void alertForRoomRemove(final HMAux hmAux) {
         AlertDialog.Builder alertFRR = new AlertDialog.Builder(Act035_Main.this);
 
-        alertFRR.setTitle("Remoção de Sala - Trad");
-        alertFRR.setMessage("Deseja realmente remover a sala?  - Trad");
+        alertFRR.setTitle(hmAux_Trans.get("alert_remove_room_ttl"));
+        alertFRR.setMessage(hmAux_Trans.get("alert_remove_room_confirm_msg"));
         alertFRR.setCancelable(false);
         //
-        alertFRR.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        alertFRR.setPositiveButton(hmAux_Trans.get("sys_alert_btn_yes"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                Chat_S_RoomPrivate sRoomPrivate = new Chat_S_RoomPrivate();
-//                sRoomPrivate.setUser_code(Integer.parseInt(hmAux.get("user_code")));
-//                sRoomPrivate.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-//                sRoomPrivate.setActive(0);
-//                //
-//                Chat_S_LeaveRoom sLeaveRoom = new Chat_S_LeaveRoom();
-//                sLeaveRoom.setUser_code(Integer.parseInt(hmAux.get("user_code")));
-//                sLeaveRoom.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
-//                sLeaveRoom.setRoom_code(mRoom_code);
-//                //
-//                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-//                //
                 if (mRoom.getRoom_type().equalsIgnoreCase("PRIVATE_CUSTOMER")) {
                     startRoomPrivateWS(
                             hmAux.get(CH_MessageDao.USER_CODE),
                             String.valueOf(mCustomer_code),
                             0,
                             hmAux.get(CH_MessageDao.ROOM_CODE));
-                    //singletonWebSocket.attemptonRoomPrivate(ToolBox_Inf.setWebSocketJsonParam(sRoomPrivate));
                 } else {
                     startLeaveRoomWS(ToolBox_Con.getPreference_User_Code(context), mRoom_code);
-                    //singletonWebSocket.attemptonLeaveRoom(ToolBox_Inf.setWebSocketJsonParam(sLeaveRoom));
                 }
             }
         });
 
-        alertFRR.setNegativeButton("Não", null);
+        alertFRR.setNegativeButton(hmAux_Trans.get("sys_alert_btn_no"), null);
         //
         alertFRR.show();
     }
@@ -1534,11 +1507,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             iv_trash.setVisibility(View.GONE);
             //
-//            tv_room_desc.setText(tv_room_name_val.getText().toString());
-//            //
-//            iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
-            //
-            //tv_members_lbl.setText("Membros - Trad");
             tv_members_lbl.setText("");
             //
             if (memberList.size() > 0) {
@@ -1567,10 +1535,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     iv_room.setVisibility(View.GONE);
                 }
 
-//                tv_room_desc.setText(tv_room_name_val.getText().toString());
-//                //
-//                iv_room.setImageDrawable(iv_room_thumbnail.getDrawable());
-
                 tv_prefix_code.setText(String.valueOf(ch_Message.getMsg_prefix()) + "." + String.valueOf(ch_Message.getMsg_code()));
 
                 mDialogAdapter = new Chat_Member_Adapter(
@@ -1585,7 +1549,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             } else {
                 lv_members.setVisibility(View.GONE);
                 //
-                tv_members_lbl.setText("Nenhum membro encontrado - Trad");
+                tv_members_lbl.setText(hmAux_Trans.get("alert_room_info_no_members_ttl"));
             }
             //
             builder
@@ -1621,13 +1585,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void startRoomPrivateWS(String user_code, String customer_code, Integer active, @Nullable String room_code) {
         if (active == 1) {
             showPD(
-                    "Criação de Sala - trad",
-                    "Iniciando a criação da sala - trad",
+                    hmAux_Trans.get("progress_create_room_ttl"),
+                    hmAux_Trans.get("progress_create_room_msg"),
                     false);
         } else {
             showPD(
-                    "Remoção de sala de Sala - trad",
-                    "Iniciando a criação da sala- trad",
+                    hmAux_Trans.get("progress_remove_room_ttl"),
+                    hmAux_Trans.get("progress_remove_room_msg"),
                     false);
         }
         //
@@ -1644,8 +1608,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     public void startLeaveRoomWS(String user_code, String room_code) {
         showPD(
-                "Sair do grupo - trad",
-                "Iniciando processo de saida do grupo- trad",
+                hmAux_Trans.get("progress_leave_room_ttl"),
+                hmAux_Trans.get("progress_leave_room_msg"),
                 false);
         //
         Intent leaveRoomIntent = new Intent(context, WBR_Leave_Room.class);
@@ -1656,12 +1620,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         context.sendBroadcast(leaveRoomIntent);
     }
-
-
-//    public void startDownloadMemberImgTask(String[] imgUrlList) {
-//        downloadMemberImgTask = new DownloadMemberImgTask();
-//        downloadMemberImgTask.execute(imgUrlList);
-//    }
 
     public void startRoomInfoTask(String socket_id, String room_code) {
         roomInfoTask = new RoomInfoTask();
