@@ -785,7 +785,7 @@ public class Act034_Room extends BaseFragment {
         alertFRR.setMessage(hmAux_Trans.get("alert_remove_room_confirm_msg"));
         alertFRR.setCancelable(false);
         //
-        alertFRR.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+        alertFRR.setPositiveButton(hmAux_Trans.get("sys_alert_btn_yes"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (mRoom_Type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER)) {
@@ -807,7 +807,7 @@ public class Act034_Room extends BaseFragment {
             }
         });
 
-        alertFRR.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
+        alertFRR.setNegativeButton(hmAux_Trans.get("sys_alert_btn_no"), null);
         //
         alertFRR.show();
     }

@@ -7,7 +7,9 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.Chat_RoomPrivate_Env;
@@ -18,11 +20,19 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by d.luche on 30/11/2017.
  */
 
 public class WS_Room_Private extends IntentService {
+
+    private HMAux hmAux_Trans = new HMAux();
+    private String mModule_Code = Constant.APP_MODULE;
+    private String mResource_Code = "0";
+    private String mResource_Name = "ws_room_private";
 
     public WS_Room_Private() {
         super("WS_Room_Private");
@@ -57,7 +67,9 @@ public class WS_Room_Private extends IntentService {
     }
 
     private void processRoomPrivate(String user_code, String customer_code, int activeRoom, String room_code) throws Exception {
-
+        //Seleciona traduções
+        loadTranslation();
+        //
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
         Chat_RoomPrivate_Env env = new Chat_RoomPrivate_Env();
@@ -75,7 +87,7 @@ public class WS_Room_Private extends IntentService {
         ToolBox.sendBCStatus(
                 getApplicationContext(),
                 "STATUS",
-                    /*hmAux_Trans.get("msg_no_info_return")*/"Recebendo dados - Trad",
+                 hmAux_Trans.get("msg_receiving_data"),
                 "",
                 "0"
         );
@@ -86,7 +98,7 @@ public class WS_Room_Private extends IntentService {
         );
         //
         if (resultado.equals("")) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1",/* hmAux_Trans.get("msg_no_info_return")*/"Erro - Nenhum dado retornado -Trad", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_info_return"), "", "0");
             return;
         }
         //
@@ -101,7 +113,7 @@ public class WS_Room_Private extends IntentService {
             ToolBox.sendBCStatus(
                     getApplicationContext(),
                     "ERROR_1",
-                    cError != null ? cError.getError_msg() : "Error-Trad",
+                    cError != null ? cError.getError_msg() : getString(R.string.generic_error_lbl),
                     "",
                     "0"
             );
@@ -120,7 +132,7 @@ public class WS_Room_Private extends IntentService {
                 ToolBox.sendBCStatus(
                         getApplicationContext(),
                         "STATUS",
-                    /*hmAux_Trans.get("msg_no_info_return")*/"Gravando nova sala - Trad",
+                        hmAux_Trans.get("msg_saving_new_room"),
                         "",
                         "0"
                 );
@@ -141,12 +153,34 @@ public class WS_Room_Private extends IntentService {
                 ToolBox.sendBCStatus(
                         getApplicationContext(),
                         "STATUS",
-                    /*hmAux_Trans.get("msg_no_info_return")*/"Removendo sala do banco local - Trad",
+                        hmAux_Trans.get("msg_removing_room"),
                         "",
                         "0"
                 );
                 getApplicationContext().sendBroadcast(cRoomIntent);
             }
         }
+    }
+
+    private void loadTranslation() {
+        List<String> translist = new ArrayList<>();
+
+        translist.add("msg_no_info_return");
+        translist.add("msg_receiving_data");
+        translist.add("msg_saving_new_room");
+        translist.add("msg_removing_room");
+
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Name
+        );
+
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                getApplicationContext(),
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
+                translist);
     }
 }
