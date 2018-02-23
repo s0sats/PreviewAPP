@@ -20,4 +20,18 @@ public class Act036_Main_Presenter_Impl implements Act036_Main_Presenter {
         this.hmAux_Trans = hmAux_Trans;
     }
 
+    @Override
+    public void getPendencies() {
+        mView.setPendencies(4, String.valueOf(4));
+    }
+
+    @Override
+    public void getSync() {
+        mView.setSync(5);
+    }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct005(context);
+    }
 }

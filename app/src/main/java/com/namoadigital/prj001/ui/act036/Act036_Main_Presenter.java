@@ -5,4 +5,12 @@ package com.namoadigital.prj001.ui.act036;
  */
 
 public interface Act036_Main_Presenter {
+
+    void getPendencies();
+
+    void getSync();
+
+    void onBackPressedClicked();
+
+
 }

@@ -316,6 +316,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     mView.callAct006(context);
                     break;
 
+                case Act005_Main.MENU_ID_FORM_AP:
+                    mView.callAct036(context);
+                    break;
+
                 case Act005_Main.MENU_ID_SERVICE:
                     mView.callAct021(context);
                     break;
