@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -61,7 +62,11 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
 
 
     public GE_Custom_Form_ApDao(Context context) {
-        super(context, Constant.DB_FULL_CUSTOM, Constant.DB_VERSION_CUSTOM, Constant.DB_MODE_MULTI);
+        super(  context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
         //
         this.toContentValuesMapper = new GE_Custom_Form_ApToContentValuesMapper();
         this.toGE_Custom_Form_ApMapper = new CursorToGE_Custom_Form_ApMapper();

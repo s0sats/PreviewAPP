@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -32,7 +33,11 @@ public class MD_DepartmentDao extends BaseDao implements Dao<MD_Department> {
     public static String[] columns = {CUSTOMER_CODE, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC};
 
     public MD_DepartmentDao(Context context) {
-        super(context, Constant.DB_FULL_CUSTOM, Constant.DB_VERSION_CUSTOM, Constant.DB_MODE_MULTI);
+        super(  context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
         //
         this.toContentValuesMapper = new MD_DepartmentToContentValuesMapper();
         this.toMD_DepartmentMapper = new CursorToMD_DepartmentMapper();

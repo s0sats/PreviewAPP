@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -35,7 +36,11 @@ public class MD_UserDao extends BaseDao implements Dao<MD_User> {
     };
 
     public MD_UserDao(Context context) {
-        super(context, Constant.DB_FULL_CUSTOM, Constant.DB_VERSION_CUSTOM, Constant.DB_MODE_MULTI);
+        super(  context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
         //
         this.toContentValuesMapper = new MD_UserToContentValuesMapper();
         this.toMD_UserMapper = new CursorToMD_UserMapper();
