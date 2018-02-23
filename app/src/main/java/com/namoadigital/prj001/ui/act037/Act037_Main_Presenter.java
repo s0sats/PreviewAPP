@@ -5,4 +5,7 @@ package com.namoadigital.prj001.ui.act037;
  */
 
 public interface Act037_Main_Presenter {
+
+    void getloadAPs();
+
 }

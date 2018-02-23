@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -85,8 +86,13 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
                 new Act037_Main_Presenter_Impl(
                         context,
                         this,
-                        hmAux_Trans
+                        hmAux_Trans,
+                        new GE_Custom_Form_ApDao(
+                                context
+                        )
                 );
+
+        mPresenter.getloadAPs();
     }
 
     private void recoverIntentsInfo() {
@@ -95,6 +101,11 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         if (bundle != null) {
         } else {
         }
+    }
+
+    @Override
+    public void loadAPs(ArrayList<HMAux> aps) {
+        int i = 10;
     }
 
     private void iniUIFooter() {

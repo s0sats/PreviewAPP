@@ -33,8 +33,6 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
     private ArrayList<HMAux> dados;
 
     private Bundle bundle;
-//    private int backAction;
-//    private String requestingAct;
 
     private Button btn_pendencies;
     private Button btn_sync;
@@ -141,13 +139,11 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
             @Override
             public void onClick(View v) {
 
-//                if (pendencies_qty > 0) {
-//                    callAct037(context);
-//                } else {
-//                    //showMsg();
-//                }
-
-                callAct037(context);
+                if (pendencies_qty > 0) {
+                    callAct037(context);
+                } else {
+                    showMsg();
+                }
             }
         });
 
@@ -157,7 +153,7 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
 
                 if (ToolBox_Con.isOnline(context)) {
 
-                    //executeSoSave();
+                    //Call AP Sync
 
                 } else {
                     ToolBox_Inf.showNoConnectionDialog(Act036_Main.this);
@@ -165,6 +161,10 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
 
             }
         });
+    }
+
+    private void showMsg() {
+
     }
 
 
