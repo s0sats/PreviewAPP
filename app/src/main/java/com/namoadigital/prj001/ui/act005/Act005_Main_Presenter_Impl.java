@@ -23,6 +23,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.DataPackage;
@@ -40,6 +41,8 @@ import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
@@ -72,6 +75,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private EV_User_CustomerDao userCustomerDao;
     private FCMMessageDao fcmMessageDao;
     private SM_SODao soDao;
+    private GE_Custom_Form_ApDao customFormApDao;
 
     private String logoutList = "";
     private transient Dialog logoutDialog;
@@ -79,7 +83,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private ListView lv_customer;
     private List<HMAux> customer_list;
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao) {
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -87,6 +91,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.userCustomerDao = userCustomerDao;
         this.fcmMessageDao = fcmMessageDao;
         this.soDao = soDao;
+        this.customFormApDao = customFormApDao;
     }
 
     String[] menuId = {
@@ -262,7 +267,23 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         qty = "1";
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
+                    case Act005_Main.MENU_ID_FORM_AP:
+                        qty = customFormApDao.getByStringHM(
+                                new GE_Custom_Form_Ap_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                        //
+                        qtyBadge2 = customFormApDao.getByStringHM(
+                                new GE_Custom_Form_Ap_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
+                        //
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
 
+                        break;
                     default:
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGE2, qtySO);
