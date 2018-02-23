@@ -106,6 +106,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     @Override
     public void loadAPs(ArrayList<HMAux> aps) {
         int i = 10;
+
     }
 
     private void iniUIFooter() {
