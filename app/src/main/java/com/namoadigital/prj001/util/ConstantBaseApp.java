@@ -14,8 +14,8 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "2.6.2.9";
-    public static final String PKG_CLEAN_APP = "60";
+    public static final String PRJ001_VERSION = "2.6.2.10";
+    public static final String PKG_CLEAN_APP = "61";
     //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
