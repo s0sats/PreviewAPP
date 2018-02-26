@@ -33,6 +33,7 @@ public class GE_Custom_Form_Ap {
     private int serial_code;
     private String serial_id;
     private int sync_required;
+    private int upload_required;
 
     public long getCustomer_code() {
         return customer_code;
@@ -248,5 +249,13 @@ public class GE_Custom_Form_Ap {
 
     public void setSync_required(int sync_required) {
         this.sync_required = sync_required;
+    }
+
+    public int getUpload_required() {
+        return upload_required;
+    }
+
+    public void setUpload_required(int upload_required) {
+        this.upload_required = upload_required;
     }
 }

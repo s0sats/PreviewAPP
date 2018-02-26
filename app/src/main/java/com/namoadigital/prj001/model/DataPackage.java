@@ -19,7 +19,7 @@ public class DataPackage {
     private ArrayList<Long> CHECKLIST;
     private ArrayList<String> SO;
     private ArrayList<String> SCHEDULE;
-    private ArrayList<String> AP;
+    private String AP;
 
     public DataPackage() {
     }
@@ -56,11 +56,11 @@ public class DataPackage {
         this.SCHEDULE = SCHEDULE;
     }
 
-    public ArrayList<String> getAP() {
+    public String getAP() {
         return AP;
     }
 
-    public void setAP(ArrayList<String> AP) {
+    public void setAP(String AP) {
         this.AP = AP;
     }
 }

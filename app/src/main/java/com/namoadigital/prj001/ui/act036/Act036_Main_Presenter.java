@@ -12,5 +12,7 @@ public interface Act036_Main_Presenter {
 
     void onBackPressedClicked();
 
+    void executeApSyncWs();
+
 
 }

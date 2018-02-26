@@ -52,12 +52,13 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String SERIAL_CODE = "serial_code";
     public static final String SERIAL_ID = "serial_id";
     public static final String SYNC_REQUIRED = "sync_required";
+    public static final String UPLOAD_REQUIRED = "upload_required";
 
     public static String[] columns = {
             CUSTOM_FORM_TYPE, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
             AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, ROOM_CODE, AP_SCN, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
-            SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED
+            SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED,UPLOAD_REQUIRED
     };
 
 
@@ -312,6 +313,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             custom_form_ap.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
             custom_form_ap.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
             custom_form_ap.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
+            custom_form_ap.setUpload_required(cursor.getInt(cursor.getColumnIndex(UPLOAD_REQUIRED)));
             //
             return custom_form_ap;
         }
@@ -382,6 +384,9 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             }
             if (custom_form_ap.getSync_required() > -1) {
                 contentValues.put(SYNC_REQUIRED, custom_form_ap.getSync_required());
+            }
+            if (custom_form_ap.getUpload_required() > -1) {
+                contentValues.put(UPLOAD_REQUIRED, custom_form_ap.getUpload_required());
             }
             //
             return contentValues;
