@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -38,10 +41,16 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private GE_Custom_Form_Ap mGe_custom_form_ap;
     private GE_Custom_Form_ApDao mGe_custom_form_apDao;
 
+    private ImageView iv_header_show_hide;
+    private LinearLayout ll_header;
+
+    private ImageView iv_opc_show_hide;
+    private LinearLayout ll_opc;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act037_main);
+        setContentView(R.layout.act038_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,6 +102,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                                 context
                         )
                 );
+
+        iv_header_show_hide = (ImageView) findViewById(R.id.act038_header_iv_show_hide);
+        ll_header = (LinearLayout) findViewById(R.id.act038_header_ll_show_hide);
+
+        iv_opc_show_hide = (ImageView) findViewById(R.id.act038_opc_iv_show_hide);
+        ll_opc = (LinearLayout) findViewById(R.id.act038_opc_ll_show_hide);
+
+
         mPresenter.getloadAP();
     }
 
@@ -153,6 +170,27 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     }
 
     private void initActions() {
+        iv_header_show_hide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ll_header.getVisibility() != View.VISIBLE){
+                    ll_header.setVisibility(View.VISIBLE);
+                } else {
+                    ll_header.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        iv_opc_show_hide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ll_opc.getVisibility() != View.VISIBLE){
+                    ll_opc.setVisibility(View.VISIBLE);
+                } else {
+                    ll_opc.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override

@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act038.Act038_Main"
+    tools:showIn="@layout/act038_main">
+
+    <ScrollView
+        android:id="@+id/act038_sv_ap"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/act038_ll_ap_full_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:id="@+id/act038_header_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@color/namoa_color_gray"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act038_header_tv_ttl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AP"
+                        android:textSize="@dimen/font_size_item_md" />
+
+                    <ImageView
+                        android:id="@+id/act038_header_iv_show_hide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:paddingTop="4dp"
+                        android:src="@drawable/ic_adicionar_tracking_number_states" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act038_header_ll_show_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/act038_header_tv_p1_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 1" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_header_et_p1_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                    <TextView
+                        android:id="@+id/act038_header_tv_p2_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 2" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_header_et_p2_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                    <TextView
+                        android:id="@+id/act038_header_tv_p3_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 3" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_header_et_p3_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                </LinearLayout>
+
+                <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+                <!--android:id="@+id/act031_ss_site"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="2dp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:text="Site" />-->
+
+                <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+                <!--android:id="@+id/act031_ss_site_zone"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:text="Zone" />-->
+
+                <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+                <!--android:id="@+id/act031_ss_site_zone_local"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:text="Local" />-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act038_content_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@color/namoa_color_gray"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act038_content_tv_ttl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AP"
+                        android:textSize="@dimen/font_size_item_md" />
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/act038_content_iv_show_hide"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginEnd="12dp"-->
+                        <!--android:paddingBottom="4dp"-->
+                        <!--android:paddingLeft="15dp"-->
+                        <!--android:paddingRight="15dp"-->
+                        <!--android:paddingTop="4dp"-->
+                        <!--android:src="@drawable/ic_adicionar_tracking_number_states" />-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act038_content_ll_show_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act038_content_tv_p1_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 1" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_content_et_p1_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                    <TextView
+                        android:id="@+id/act038_content_tv_p2_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 2" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_content_et_p2_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                    <TextView
+                        android:id="@+id/act038_content_tv_p3_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 3" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_content_et_p3_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                </LinearLayout>
+
+
+                <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+                <!--android:id="@+id/act031_ss_site"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="2dp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:text="Site" />-->
+
+                <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+                <!--android:id="@+id/act031_ss_site_zone"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:text="Zone" />-->
+
+                <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+                <!--android:id="@+id/act031_ss_site_zone_local"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:text="Local" />-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act038_opc_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@color/namoa_color_gray"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act038_opc_tv_ttl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AP"
+                        android:textSize="@dimen/font_size_item_md" />
+
+                    <ImageView
+                        android:id="@+id/act038_opc_iv_show_hide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:paddingTop="4dp"
+                        android:src="@drawable/ic_adicionar_tracking_number_states" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act038_opc_ll_show_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/act038_opc_tv_p1_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 1" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_opc_et_p1_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                    <TextView
+                        android:id="@+id/act038_opc_tv_p2_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 2" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_opc_et_p2_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                    <TextView
+                        android:id="@+id/act038_opc_tv_p3_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Info 3" />
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act038_opc_et_p3_ttl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint=""
+                        android:inputType="text"
+                        android:minHeight="30dp"
+                        android:padding="10dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!--<LinearLayout-->
+            <!--android:id="@+id/act031_ll_serial_tracking"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:background="@color/namoa_color_gray"-->
+            <!--android:orientation="vertical"-->
+            <!--android:padding="5dp">-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/act031_tv_serial_tracking_ttl"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:padding="5dp"-->
+            <!--android:text="Tracking"-->
+            <!--android:textSize="@dimen/font_size_item_md" />-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/act031_iv_add_tracking"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="12dp"-->
+            <!--android:paddingBottom="4dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp"-->
+            <!--android:paddingTop="4dp"-->
+            <!--android:src="@drawable/ic_adicionar_tracking_number_states" />-->
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:id="@+id/act031_ll_tracking_container"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical">-->
+
+            <!--</LinearLayout>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:id="@+id/act031_ll_serial_add_info"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:background="@color/namoa_color_gray"-->
+            <!--android:orientation="vertical"-->
+            <!--android:padding="5dp">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/act031_tv_serial_add_info_ttl"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="5dp"-->
+            <!--android:text="Additional Info"-->
+            <!--android:textSize="@dimen/font_size_item_md" />-->
+
+
+            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+            <!--android:id="@+id/act031_et_info1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint=""-->
+            <!--android:inputType="text"-->
+            <!--android:minHeight="30dp"-->
+            <!--android:padding="10dp"-->
+            <!--app:mBARCODE="false"-->
+            <!--app:mNFC="false"-->
+            <!--app:mOCR="false" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+            <!--android:id="@+id/act031_et_info2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:clickable="true"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint=""-->
+            <!--android:inputType="text"-->
+            <!--android:minHeight="30dp"-->
+            <!--android:padding="10dp"-->
+            <!--app:mBARCODE="false"-->
+            <!--app:mNFC="false"-->
+            <!--app:mOCR="false" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+            <!--android:id="@+id/act031_et_info3"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint=""-->
+            <!--android:inputType="text"-->
+            <!--android:minHeight="30dp"-->
+            <!--android:padding="10dp"-->
+            <!--app:mBARCODE="false"-->
+            <!--app:mNFC="false"-->
+            <!--app:mOCR="false" />-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:id="@+id/act031_ll_serial_properties"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:background="@color/namoa_color_gray"-->
+            <!--android:orientation="vertical"-->
+            <!--android:padding="5dp">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/act031_tv_serial_properties_ttl"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="5dp"-->
+            <!--android:text="Properties"-->
+            <!--android:textSize="@dimen/font_size_item_md" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+            <!--android:id="@+id/act031_ss_brand"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint="Brand" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+            <!--android:id="@+id/act031_ss_brand_model"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint="Model" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+            <!--android:id="@+id/act031_ss_brand_color"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:hint="Color" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+            <!--android:id="@+id/act031_ss_segment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint="Segment" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+            <!--android:id="@+id/act031_ss_category_price"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:hint="Category Price" />-->
+
+            <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+            <!--android:id="@+id/act031_ss_site_owner"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:hint="Site Owner" />-->
+
+            <!--</LinearLayout>-->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/act038_btn_action"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_namoa_main_states"
+            android:text="NEW"
+            android:textColor="@color/padrao_WHITE" />
+
+    </LinearLayout>
+
+    <include layout="@layout/footer_base" />
+
+</LinearLayout>
