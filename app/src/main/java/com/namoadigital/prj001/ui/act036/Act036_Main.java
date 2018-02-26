@@ -13,6 +13,7 @@ import android.widget.Button;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -90,7 +91,8 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
                 new Act036_Main_Presenter_Impl(
                         context,
                         this,
-                        hmAux_Trans
+                        hmAux_Trans,
+                        new GE_Custom_Form_ApDao(context)
                 );
         //
         btn_pendencies = (Button) findViewById(R.id.act036_btn_pendencies);

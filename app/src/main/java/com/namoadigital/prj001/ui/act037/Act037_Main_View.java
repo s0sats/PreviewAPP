@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act037;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 
 import java.util.ArrayList;
@@ -11,6 +13,11 @@ import java.util.ArrayList;
 public interface Act037_Main_View {
 
 
-    public void loadAPs(ArrayList<HMAux> aps);
+    void loadAPs(ArrayList<HMAux> aps);
+
+    void callAct005(Context context);
+
+    void callAct038(Context context, HMAux hmAux);
+
 
 }

@@ -20,7 +20,7 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
 
         return sb
                 .append(" SELECT\n " +
-                        "   m.*\n  "  +
+                        "   m.*\n  " +
                         " FROM\n   " +
                         GE_Custom_Form_ApDao.TABLE + " m\n")
                 .append(";")

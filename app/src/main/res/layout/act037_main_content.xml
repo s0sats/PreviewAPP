@@ -22,7 +22,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/act037_tv_filter"
@@ -32,19 +33,19 @@
                 android:paddingLeft="10dp"
                 android:text="Filtros"
                 android:textSize="@dimen/font_size_title" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_gravity="top|right">
+                android:layout_gravity="top|right"
+                android:orientation="horizontal">
 
                 <CheckBox
                     android:id="@+id/act037_chk_in_process"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/namoa_color_orange_light2"
-                    android:checked="true"
-                    />
+                    android:checked="true" />
 
                 <CheckBox
                     android:id="@+id/act037_chk_scheduled"
@@ -64,16 +65,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_help_outline_black_24dp"
-                    android:tint="@color/namoa_color_dark_blue"/>
+                    android:tint="@color/namoa_color_dark_blue" />
 
             </LinearLayout>
 
 
         </LinearLayout>
 
-
         <ListView
-            android:id="@+id/act037_lv_pendencies"
+            android:id="@+id/act037_lv_aps"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
