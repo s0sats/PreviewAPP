@@ -394,8 +394,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String WS_FCM = "WS_FCM";
     /*
-         Constante Status AP
-         */
+     Constante Status AP
+     */
     public static final String SYS_STATUS_WAITING_ACTION = "WAITING_ACTION";
     /*
     * Constantes CHAT

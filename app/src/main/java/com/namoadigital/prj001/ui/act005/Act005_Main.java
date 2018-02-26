@@ -34,6 +34,7 @@ import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -361,7 +362,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                new GE_Custom_Form_ApDao(context)
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);

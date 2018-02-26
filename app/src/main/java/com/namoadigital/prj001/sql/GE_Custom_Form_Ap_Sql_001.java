@@ -23,13 +23,13 @@ public class GE_Custom_Form_Ap_Sql_001 implements Specification {
 
         return sb
                 .append("SELECT\n" +
-                        "    count(1) " + BADGE_IN_PROCESSING_QTY + " \n" +
+                        "    count(1) "+BADGE_IN_PROCESSING_QTY+" \n" +
                         "FROM\n" +
-                        "    " + GE_Custom_Form_ApDao.TABLE + " a\n" +
+                        "    "+GE_Custom_Form_ApDao.TABLE+" a\n" +
                         "WHERE\n" +
-                        "   a.customer_code = '" + customer_code + "'\n" +
-                        "   and a.ap_status in ('" + Constant.SO_STATUS_PROCESS + "','" + Constant.SYS_STATUS_WAITING_ACTION + "')\n")
-                .append(";" + BADGE_IN_PROCESSING_QTY)
+                        "   a.customer_code = '"+customer_code+"'\n" +
+                        "   and a.ap_status not in ('"+ Constant.SO_STATUS_DONE+"','"+Constant.SO_STATUS_CANCELLED+"')\n")
+                .append(";" + BADGE_IN_PROCESSING_QTY )
 
                 .toString();
     }
