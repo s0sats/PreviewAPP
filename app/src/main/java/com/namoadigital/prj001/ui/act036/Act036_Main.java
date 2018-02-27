@@ -11,9 +11,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -74,6 +76,10 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act036_title");
+        transList.add("progress_sync_ap_ttl");
+        transList.add("progress_sync_ap_msg");
+        transList.add("alert_sync_success_ttl");
+        transList.add("alert_sync_success_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -144,7 +150,7 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
                 if (pendencies_qty > 0) {
                     callAct037(context);
                 } else {
-                    showMsg();
+                    //showMsg();
                 }
             }
         });
@@ -152,11 +158,9 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
         btn_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (ToolBox_Con.isOnline(context)) {
-
-                    //Call AP Sync
-
+                    mPresenter.executeApSyncWs();
+                    //testWsApSave();
                 } else {
                     ToolBox_Inf.showNoConnectionDialog(Act036_Main.this);
                 }
@@ -165,10 +169,43 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
         });
     }
 
-    private void showMsg() {
+    /**
+     *
+     * APAGAR
+     *
+     * APOS
+     *
+     * TESTAR
+     *
+     */
+    private void testWsApSave() {
+        Intent mIntent = new Intent(context, WBR_AP_Save.class);
+        Bundle bundle = new Bundle();
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void showMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
 
     }
 
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
 
     @Override
     public void setPendencies(int qty, String qtyMyPendencies) {
@@ -222,6 +259,46 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+        //
+        showMsg(
+                hmAux_Trans.get("alert_sync_success_ttl"),
+                hmAux_Trans.get("alert_sync_success_msg")
+        );
+    }
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
     }
 
 

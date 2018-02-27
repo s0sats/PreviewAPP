@@ -16,5 +16,7 @@ public interface Act036_Main_View {
 
     void callAct037(Context context);
 
+    void showPD(String ttl, String msg);
+
 
 }

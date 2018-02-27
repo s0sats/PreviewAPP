@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -3780,6 +3781,16 @@ public class ToolBox_Inf {
         hmAuxInLine = hmAuxInLine.length() > 0 ? hmAuxInLine.substring(0,hmAuxInLine.length() -1) : "";
         //
         return hmAuxInLine;
+    }
+
+    public static JsonArray arrayListToJsonArray(ArrayList<?> arrayList){
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        JsonArray jsonArray = new JsonArray();
+        //
+        for (int i = 0; i < arrayList.size() ; i++) {
+            jsonArray.add(gson.toJsonTree(arrayList.get(i)));
+        }
+        return jsonArray;
     }
 
 }
