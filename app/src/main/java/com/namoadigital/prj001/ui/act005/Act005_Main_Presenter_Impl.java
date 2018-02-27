@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -418,19 +419,43 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         TextView tv_msg = (TextView) view.findViewById(R.id.act005_dialog_support_tv_msg);
         tv_msg.setText(hmAux_Trans.get("alert_support_msg"));
         final MKEditTextNM et_support_msg = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_msg);
+        et_support_msg.setHint(hmAux_Trans.get("alert_support_hint"));
 
         builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
         builder.setView(view);
         builder.setCancelable(false);
-        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                executeSupport(et_support_msg.getText().toString().trim());
-            }
-        });
+        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
         builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
 
-        builder.show();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                //
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(et_support_msg.getText().toString().trim().length() > 0) {
+                            executeSupport(et_support_msg.getText().toString().trim());
+                            //
+                            dialog.dismiss();
+                        }else{
+                            et_support_msg.setText("");
+                            et_support_msg.findFocus();
+                            //
+                            Toast.makeText(
+                                    context,
+                                    hmAux_Trans.get("alert_support_empty_msg"),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    }
+                });
+            }
+        });
+        dialog.show();
+        //builder.show();
     }
 
     @Override

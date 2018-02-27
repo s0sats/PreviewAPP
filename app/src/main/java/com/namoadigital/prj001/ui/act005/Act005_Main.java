@@ -304,6 +304,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_support_finish_msg");
         //alert support
         transList.add("support_dialog_ttl");
+        transList.add("alert_support_hint");
+        transList.add("alert_support_empty_msg");
         //
         transList.add("lbl_change_zone");
         transList.add("drawer_change_zone_one_zone_alert_ttl");
