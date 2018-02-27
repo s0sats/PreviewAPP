@@ -40,10 +40,13 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String AP_WHERE = "ap_where";
     public static final String AP_WHY = "ap_why";
     public static final String AP_WHO = "ap_who";
+    public static final String AP_WHO_NICK = "ap_who_nick";
     public static final String AP_HOW = "ap_how";
     public static final String AP_HOW_MUCH = "ap_how_much";
     public static final String AP_WHEN = "ap_when";
     public static final String DEPARTMENT_CODE = "department_code";
+    public static final String DEPARTMENT_ID = "department_id";
+    public static final String DEPARTMENT_DESC = "department_desc";
     public static final String ROOM_CODE = "room_code";
     public static final String AP_SCN = "ap_scn";
     public static final String PRODUCT_CODE = "product_code";
@@ -57,8 +60,8 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static String[] columns = {
             CUSTOMER_CODE,CUSTOM_FORM_TYPE, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
-            AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, ROOM_CODE, AP_SCN, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
-            SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED,UPLOAD_REQUIRED
+            AP_WHO_NICK, AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC, ROOM_CODE, AP_SCN,
+            PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED,UPLOAD_REQUIRED
     };
 
 
@@ -309,6 +312,16 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             } else {
                 custom_form_ap.setDepartment_code(cursor.getInt(cursor.getColumnIndex(DEPARTMENT_CODE)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(DEPARTMENT_ID))) {
+                custom_form_ap.setDepartment_id(null);
+            } else {
+                custom_form_ap.setDepartment_id(cursor.getString(cursor.getColumnIndex(DEPARTMENT_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(DEPARTMENT_DESC))) {
+                custom_form_ap.setDepartment_desc(null);
+            } else {
+                custom_form_ap.setDepartment_desc(cursor.getString(cursor.getColumnIndex(DEPARTMENT_DESC)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(ROOM_CODE))) {
                 custom_form_ap.setRoom_code(null);
             } else {
@@ -367,10 +380,13 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             contentValues.put(AP_WHERE, custom_form_ap.getAp_where());
             contentValues.put(AP_WHY, custom_form_ap.getAp_why());
             contentValues.put(AP_WHO, custom_form_ap.getAp_who());
+            contentValues.put(AP_WHO_NICK, custom_form_ap.getAp_who_nick());
             contentValues.put(AP_HOW, custom_form_ap.getAp_how());
             contentValues.put(AP_HOW_MUCH, custom_form_ap.getAp_how_much());
             contentValues.put(AP_WHEN, custom_form_ap.getAp_when());
             contentValues.put(DEPARTMENT_CODE, custom_form_ap.getDepartment_code());
+            contentValues.put(DEPARTMENT_ID, custom_form_ap.getDepartment_id());
+            contentValues.put(DEPARTMENT_DESC, custom_form_ap.getDepartment_desc());
             contentValues.put(ROOM_CODE, custom_form_ap.getRoom_code());
             if (custom_form_ap.getAp_scn() > -1) {
                 contentValues.put(AP_SCN, custom_form_ap.getAp_scn());
