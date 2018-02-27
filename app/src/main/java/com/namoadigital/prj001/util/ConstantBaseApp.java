@@ -397,6 +397,10 @@ public class ConstantBaseApp extends ConstantBase {
     /*
      Constante Status AP
      */
+    public static final String SYS_STATUS_EDIT = "EDIT";
+    public static final String SYS_STATUS_PROCESS = "PROCESS";
+    public static final String SYS_STATUS_CANCELLED = "CANCELLED";
+    public static final String SYS_STATUS_DONE = "DONE";
     public static final String SYS_STATUS_WAITING_ACTION = "WAITING_ACTION";
     /*
     * Constantes CHAT

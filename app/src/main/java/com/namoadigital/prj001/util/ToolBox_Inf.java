@@ -2516,6 +2516,32 @@ public class ToolBox_Inf {
         );
     }
 
+    public static ArrayList<HMAux> statusList(HMAux hmAux_trans, String... status) {
+        ArrayList<HMAux> statusList = new ArrayList<>();
+        //
+        String[] mStatus = {
+                Constant.SYS_STATUS_EDIT,
+                Constant.SYS_STATUS_PROCESS,
+                Constant.SYS_STATUS_CANCELLED,
+                Constant.SYS_STATUS_DONE,
+                Constant.SYS_STATUS_WAITING_ACTION
+        };
+
+        for (int i = 0; i < mStatus.length; i++) {
+            if (mStatus != null && mStatus.length > 0 && Arrays.asList(status).contains(mStatus[i])) {
+                continue;
+            } else {
+                HMAux hmAux = new HMAux();
+                hmAux.put(SearchableSpinner.ID, mStatus[i]);
+                hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_trans.get(mStatus[i]));
+                //
+                statusList.add(hmAux);
+            }
+
+        }
+        //
+        return statusList;
+    }
 
     public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
         HMAux hmAux = new HMAux();
@@ -3724,7 +3750,7 @@ public class ToolBox_Inf {
         return sb.toString();
     }
 
-    public static String getCustomerSession(Context context, String user_code, long customer_code){
+    public static String getCustomerSession(Context context, String user_code, long customer_code) {
         String session_app = null;
         EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
         //
@@ -3735,14 +3761,14 @@ public class ToolBox_Inf {
                 ).toSqlQuery()
         );
         //
-        if(session_info != null && session_info.size() > 0){
-              session_app = session_info.get(EV_User_CustomerDao.SESSION_APP);
+        if (session_info != null && session_info.size() > 0) {
+            session_app = session_info.get(EV_User_CustomerDao.SESSION_APP);
         }
         //
         return session_app;
     }
 
-    public static ArrayList<HMAux> getSessionCustomerChatList(Context context){
+    public static ArrayList<HMAux> getSessionCustomerChatList(Context context) {
         EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
         //
         ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
@@ -3755,7 +3781,7 @@ public class ToolBox_Inf {
         return customer_list;
     }
 
-    public static ArrayList<HMAux> getActiveCustomerSession(Context context){
+    public static ArrayList<HMAux> getActiveCustomerSession(Context context) {
         EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
         //
         ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
@@ -3768,26 +3794,26 @@ public class ToolBox_Inf {
         return customer_list;
     }
 
-    public static String returnHmAuxListInString(ArrayList<HMAux> auxList, String key, String separator){
+    public static String returnHmAuxListInString(ArrayList<HMAux> auxList, String key, String separator) {
         String hmAuxInLine = "";
-        separator = separator == null ? "," :separator;
+        separator = separator == null ? "," : separator;
         //
-        for (HMAux hmAux:auxList) {
-            if(hmAux.containsKey(key)){
+        for (HMAux hmAux : auxList) {
+            if (hmAux.containsKey(key)) {
                 hmAuxInLine += hmAux.get(key) + separator;
             }
         }
         //
-        hmAuxInLine = hmAuxInLine.length() > 0 ? hmAuxInLine.substring(0,hmAuxInLine.length() -1) : "";
+        hmAuxInLine = hmAuxInLine.length() > 0 ? hmAuxInLine.substring(0, hmAuxInLine.length() - 1) : "";
         //
         return hmAuxInLine;
     }
 
-    public static JsonArray arrayListToJsonArray(ArrayList<?> arrayList){
+    public static JsonArray arrayListToJsonArray(ArrayList<?> arrayList) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         JsonArray jsonArray = new JsonArray();
         //
-        for (int i = 0; i < arrayList.size() ; i++) {
+        for (int i = 0; i < arrayList.size(); i++) {
             jsonArray.add(gson.toJsonTree(arrayList.get(i)));
         }
         return jsonArray;

@@ -4,6 +4,20 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.MD_DepartmentDao;
+import com.namoadigital.prj001.dao.MD_UserDao;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
+import com.namoadigital.prj001.model.MD_Department;
+import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
+import com.namoadigital.prj001.sql.MD_Department_Sql_001;
+import com.namoadigital.prj001.sql.MD_Department_Sql_002;
+import com.namoadigital.prj001.sql.MD_User_Sql_001;
+import com.namoadigital.prj001.sql.MD_User_Sql_002;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -15,18 +29,89 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     private Act038_Main_View mView;
     private HMAux hmAux_Trans;
 
-    private GE_Custom_Form_ApDao ge_custom_form_apDao;
+    private GE_Custom_Form_Ap mGe_custom_form_ap;
+    private GE_Custom_Form_ApDao mGe_custom_form_apDao;
 
-    public Act038_Main_Presenter_Impl(Context context, Act038_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_ApDao ge_custom_form_apDao) {
+
+    public Act038_Main_Presenter_Impl(Context context, Act038_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_ApDao mGe_custom_form_apDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
-        this.ge_custom_form_apDao = ge_custom_form_apDao;
+        this.mGe_custom_form_apDao = mGe_custom_form_apDao;
     }
 
     @Override
-    public void getloadAP() {
+    public void getloadAP(String mCustomer_Code, String mCustom_Form_Type, String mCustom_Form_Code, String mCustom_Form_Version, String mCustom_Form_Data, String mAp_Code) {
+        //
+        mGe_custom_form_ap = mGe_custom_form_apDao.getByString(
+                new GE_Custom_Form_Ap_Sql_005(
+                        mCustomer_Code,
+                        mCustom_Form_Type,
+                        mCustom_Form_Code,
+                        mCustom_Form_Version,
+                        mCustom_Form_Data,
+                        mAp_Code,
+                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+                ).toSqlQuery()
+        );
+        //
+        mView.loadAP(mGe_custom_form_ap);
+    }
 
-        mView.loadAP(null);
+    @Override
+    public void loadSSStatus() {
+        mView.loadSSStatus(
+                ToolBox_Inf.statusList(
+                        hmAux_Trans
+                )
+        );
+    }
+
+    @Override
+    public void loadSSUsers() {
+        MD_UserDao md_userDao = new MD_UserDao(context);
+        //
+        ArrayList<HMAux> userList = (ArrayList<HMAux>) md_userDao.query_HM(
+                new MD_User_Sql_001(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+        //
+        mView.loadSSUsers(userList);
+    }
+
+    @Override
+    public void loadSSDepartments() {
+        MD_DepartmentDao departmentDao = new MD_DepartmentDao(context);
+        //
+        ArrayList<HMAux> departmentList = (ArrayList<HMAux>) departmentDao.query_HM(
+                new MD_Department_Sql_001(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+        //
+        mView.loadSSDepartment(departmentList);
+    }
+
+    @Override
+    public MD_User loadUser(String customer_code, String user_code) {
+        MD_UserDao md_userDao = new MD_UserDao(context);
+        return md_userDao.getByString(
+                new MD_User_Sql_002(
+                        customer_code,
+                        user_code
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public MD_Department loadDepartment(String customer_code, String department_code) {
+        MD_DepartmentDao md_departmentDao = new MD_DepartmentDao(context);
+        return md_departmentDao.getByString(
+                new MD_Department_Sql_002(
+                        customer_code,
+                        department_code
+                ).toSqlQuery()
+        );
     }
 }

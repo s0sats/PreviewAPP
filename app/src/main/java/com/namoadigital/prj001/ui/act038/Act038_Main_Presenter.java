@@ -1,11 +1,31 @@
 package com.namoadigital.prj001.ui.act038;
 
+import com.namoadigital.prj001.model.MD_Department;
+import com.namoadigital.prj001.model.MD_User;
+
 /**
  * Created by d.luche on 31/08/2017.
  */
 
 public interface Act038_Main_Presenter {
 
-    void getloadAP();
+    void getloadAP(
+            String mCustomer_Code,
+            String mCustom_Form_Type,
+            String mCustom_Form_Code,
+            String mCustom_Form_Version,
+            String mCustom_Form_Data,
+            String mAp_Code
+    );
+
+    void loadSSStatus();
+
+    void loadSSUsers();
+
+    void loadSSDepartments();
+
+    MD_User loadUser(String customer_code, String user_code);
+
+    MD_Department loadDepartment(String customer_code, String department_code);
 
 }
