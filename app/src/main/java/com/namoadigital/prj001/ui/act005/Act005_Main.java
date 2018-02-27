@@ -189,10 +189,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
         //
-//        chatReceiver = new BR_Chat();
-//        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
-//        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
-//        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
+        chatReceiver = new BR_Chat();
+        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
+        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
     }
 
     @Override
@@ -1428,9 +1428,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             switch (type) {
                 case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
-                    mPresenter.getMenuItens(hmAux_Trans);
+                    //mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
+                    //mPresenter.getMenuItens(hmAux_Trans);
+                    break;
+                case Constant.CHAT_BR_TYPE_ROOM:
                     mPresenter.getMenuItens(hmAux_Trans);
                     break;
                 default:

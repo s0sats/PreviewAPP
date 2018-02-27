@@ -73,6 +73,14 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
         this.toGE_Custom_Form_ApMapper = new CursorToGE_Custom_Form_ApMapper();
     }
 
+    public GE_Custom_Form_ApDao(Context context,String mDB_NAME, int mDB_VERSION) {
+        super(context,mDB_NAME,mDB_VERSION,Constant.DB_MODE_MULTI);
+        //
+        this.toContentValuesMapper = new GE_Custom_Form_ApToContentValuesMapper();
+        this.toGE_Custom_Form_ApMapper = new CursorToGE_Custom_Form_ApMapper();
+    }
+
+
     @Override
     public void addUpdate(GE_Custom_Form_Ap custom_form_ap) {
         openDB();
