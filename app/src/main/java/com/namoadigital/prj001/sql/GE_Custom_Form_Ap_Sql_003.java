@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -12,7 +13,12 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class GE_Custom_Form_Ap_Sql_003 implements Specification {
 
+    private long customer_code;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
+
+    public GE_Custom_Form_Ap_Sql_003(long customer_code) {
+        this.customer_code = customer_code;
+    }
 
     @Override
     public String toSqlQuery() {
@@ -20,11 +26,25 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
 
         return sb
                 .append(" SELECT\n " +
-                        "   m.*\n  " +
+                        "   a.*,\n" +
+                        "   u.user_nick \n" +
                         " FROM\n   " +
-                        GE_Custom_Form_ApDao.TABLE + " m\n")
+                        GE_Custom_Form_ApDao.TABLE + " a\n," +
+                        MD_UserDao.TABLE + " u \n" +
+                        " WHERE" +
+                        "   a.ap_who = u.user_code " +
+                        "   and a.customer_code = '"+customer_code+"'" +
+                        " ORDER BY " +
+                        "   a.customer_code,\n" +
+                        "   a.custom_form_type,\n" +
+                        "   a.custom_form_code,\n" +
+                        "   a.custom_form_version,\n" +
+                        "   a.custom_form_data,\n" +
+                        "   a.ap_code,\n"+
+                        "   a.ap_when \n"
+                )
                 .append(";")
-                .append(HmAuxFields)
+                .append(HmAuxFields+"#"+MD_UserDao.USER_NICK)
                 .toString();
     }
 }

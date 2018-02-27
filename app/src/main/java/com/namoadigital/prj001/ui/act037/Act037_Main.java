@@ -14,7 +14,7 @@ import android.widget.ListView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act037_Adapter_ap;
+import com.namoadigital.prj001.adapter.Act037_Adapter_AP;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
@@ -34,7 +34,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     private Act037_Main_Presenter_Impl mPresenter;
 
     private ListView lv_aps;
-    private Act037_Adapter_ap act037_adapter_ap;
+    private Act037_Adapter_AP act037_adapter_ap;
     private ArrayList<HMAux> dados;
 
     private Bundle bundle;
@@ -113,11 +113,11 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
 
     @Override
     public void loadAPs(ArrayList<HMAux> aps) {
-        act037_adapter_ap = new Act037_Adapter_ap(
+        act037_adapter_ap = new Act037_Adapter_AP(
                 context,
-                R.layout.act037_main_content_cell_ap_normal,
-                aps,
-                hmAux_Trans
+                //R.layout.act037_main_content_cell_ap_normal,
+                R.layout.namoa_ap_cell,
+                aps
         );
 
         lv_aps.setAdapter(act037_adapter_ap);
