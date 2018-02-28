@@ -5,6 +5,7 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_003;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,9 @@ public class Act037_Main_Presenter_Impl implements Act037_Main_Presenter {
 
         mView.loadAPs(
                 (ArrayList<HMAux>) ge_custom_form_apDao.query_HM(
-                        new GE_Custom_Form_Ap_Sql_003().toSqlQuery()
+                        new GE_Custom_Form_Ap_Sql_003(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        ).toSqlQuery()
                 )
         );
     }

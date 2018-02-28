@@ -21,10 +21,13 @@ public class GE_Custom_Form_Ap {
     private String ap_where;
     private String ap_why;
     private Integer ap_who;
+    private String ap_who_nick;
     private String ap_how;
     private Double ap_how_much;
     private String ap_when;
     private Integer department_code;
+    private String department_id;
+    private String department_desc;
     private String room_code;
     private int ap_scn;
     private int product_code;
@@ -34,6 +37,7 @@ public class GE_Custom_Form_Ap {
     private String serial_id;
     private int sync_required;
     private int upload_required;
+
 
     public long getCustomer_code() {
         return customer_code;
@@ -155,6 +159,14 @@ public class GE_Custom_Form_Ap {
         this.ap_who = ap_who;
     }
 
+    public String getAp_who_nick() {
+        return ap_who_nick;
+    }
+
+    public void setAp_who_nick(String ap_who_nick) {
+        this.ap_who_nick = ap_who_nick;
+    }
+
     public String getAp_how() {
         return ap_how;
     }
@@ -185,6 +197,22 @@ public class GE_Custom_Form_Ap {
 
     public void setDepartment_code(Integer department_code) {
         this.department_code = department_code;
+    }
+
+    public String getDepartment_id() {
+        return department_id;
+    }
+
+    public void setDepartment_id(String department_id) {
+        this.department_id = department_id;
+    }
+
+    public String getDepartment_desc() {
+        return department_desc;
+    }
+
+    public void setDepartment_desc(String department_desc) {
+        this.department_desc = department_desc;
     }
 
     public String getRoom_code() {

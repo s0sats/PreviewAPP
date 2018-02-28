@@ -53,9 +53,8 @@ public class CH_RoomDao extends BaseDao implements Dao<CH_Room> {
 
     }
 
-    public CH_RoomDao(Context context, String mDB_NAME, int mDB_VERSION, String mMode) {
-        super(context, mDB_NAME, mDB_VERSION, mMode);
-        //
+    public CH_RoomDao(Context context, String mDB_NAME, int mDB_VERSION) {
+        super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new CH_RoomtoContentValuesMapper();
         this.toCH_RoomMapper = new CursortoCH_RoomMapper();

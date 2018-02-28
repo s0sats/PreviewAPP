@@ -7,17 +7,20 @@ package com.namoadigital.prj001.model;
 public class Chat_Room_Obj_Form_AP {
 
     private String pk;
+    private long customer_code;
     private Integer custom_form_type;
     private Integer custom_form_code;
     private Integer custom_form_version;
     private Integer custom_form_data;
     private Integer ap_code;
+    private Integer ap_scn;
     private String ap_description;
     private String ap_status;
     private String ap_what;
     private String ap_where;
     private String ap_why;
     private Integer ap_who;
+    private String ap_who_name;
     private Integer ap_how;
     private Float ap_how_much;
     private String ap_when;
@@ -28,6 +31,14 @@ public class Chat_Room_Obj_Form_AP {
 
     public void setPk(String pk) {
         this.pk = pk;
+    }
+
+    public long getCustomer_code() {
+        return customer_code;
+    }
+
+    public void setCustomer_code(long customer_code) {
+        this.customer_code = customer_code;
     }
 
     public Integer getCustom_form_type() {
@@ -68,6 +79,14 @@ public class Chat_Room_Obj_Form_AP {
 
     public void setAp_code(Integer ap_code) {
         this.ap_code = ap_code;
+    }
+
+    public int getAp_scn() {
+        return ap_scn;
+    }
+
+    public void setAp_scn(int ap_scn) {
+        this.ap_scn = ap_scn;
     }
 
     public String getAp_description() {
@@ -116,6 +135,14 @@ public class Chat_Room_Obj_Form_AP {
 
     public void setAp_who(Integer ap_who) {
         this.ap_who = ap_who;
+    }
+
+    public String getAp_who_name() {
+        return ap_who_name;
+    }
+
+    public void setAp_who_name(String ap_who_name) {
+        this.ap_who_name = ap_who_name;
     }
 
     public Integer getAp_how() {

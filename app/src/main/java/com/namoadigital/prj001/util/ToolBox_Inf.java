@@ -3819,4 +3819,26 @@ public class ToolBox_Inf {
         return jsonArray;
     }
 
+    public static void setAPStatusColor(Context context, TextView tv_status, String status) {
+        switch (status) {
+            case Constant.SO_STATUS_EDIT:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
+                break;
+            case Constant.SYS_STATUS_PROCESS:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+                break;
+            case Constant.SYS_STATUS_WAITING_ACTION:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_brown));
+                break;
+            case Constant.SYS_STATUS_DONE:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+                break;
+            case Constant.SYS_STATUS_CANCELLED:
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+                break;
+            default:
+                break;
+        }
+    }
+
 }
