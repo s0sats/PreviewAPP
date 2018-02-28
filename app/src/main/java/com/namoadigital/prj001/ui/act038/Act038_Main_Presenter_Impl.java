@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act038;
 import android.content.Context;
 import android.view.View;
 
+import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
@@ -131,9 +132,11 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                     if (view instanceof SearchableSpinner) {
                         if (view.getId() == R.id.act038_content_ss_status) {
                             ((SearchableSpinner) view).setmEnabled(true);
-                        }else{
+                        } else {
                             ((SearchableSpinner) view).setmEnabled(false);
                         }
+                    } else if (view instanceof MkDateTime) {
+                        ((MkDateTime) view).setmEnabled(false);
                     } else {
                         view.setEnabled(false);
                     }
@@ -142,6 +145,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                 case 3:
                     if (view instanceof SearchableSpinner) {
                         ((SearchableSpinner) view).setmEnabled(true);
+                    } else if (view instanceof MkDateTime) {
+                        ((MkDateTime) view).setmEnabled(true);
                     } else {
                         view.setEnabled(true);
                     }
@@ -149,6 +154,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                 default:
                     if (view instanceof SearchableSpinner) {
                         ((SearchableSpinner) view).setmEnabled(false);
+                    } else if (view instanceof MkDateTime) {
+                        ((MkDateTime) view).setmEnabled(false);
                     } else {
                         view.setEnabled(false);
                     }
@@ -156,9 +163,9 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
             }
         }
         //
-        if(profile_level == 1 ||profile_level == 2 ||profile_level == 3){
+        if (profile_level == 1 || profile_level == 2 || profile_level == 3) {
             mView.showBtnSave(true);
-        }else{
+        } else {
             mView.showBtnSave(false);
         }
     }
