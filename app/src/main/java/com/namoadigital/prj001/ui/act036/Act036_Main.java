@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -58,9 +59,6 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
         iniUIFooter();
         //
         initActions();
-        //
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void iniSetup() {
@@ -302,14 +300,15 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
     }
 
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 
     @Override

@@ -2023,13 +2023,22 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         ss_product.setmTitle(hmAux_Trans.get("dialog_form_prod_ss_product_search_ttl"));
         ss_product.setmOption(nFormProductList);
         //
-        ToolBox_Inf.setSSmValue(
+        HMAux auxProd = new HMAux();
+        auxProd.put(SearchableSpinner.ID,String.valueOf(mSm_so.getProduct_code()));
+        auxProd.put(SearchableSpinner.DESCRIPTION,mSm_so.getProduct_desc());
+        auxProd.put(SM_SODao.PRODUCT_CODE,String.valueOf(mSm_so.getProduct_code()));
+        auxProd.put(SM_SODao.PRODUCT_ID,mSm_so.getProduct_id());
+        auxProd.put(SM_SODao.PRODUCT_DESC,mSm_so.getProduct_desc());
+        //
+        ss_product.setmValue(auxProd);
+        //
+        /*ToolBox_Inf.setSSmValue(
                 ss_product,
                 String.valueOf(mSm_so.getProduct_code()),
                 mSm_so.getProduct_desc(),
                 true,
                 false
-                );
+                );*/
         //
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_form_prod_serial_lbl"));
         tv_serial_val.setText(mSm_so.getSerial_id());
