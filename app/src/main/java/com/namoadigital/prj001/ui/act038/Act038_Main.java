@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -71,8 +72,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private TextView tv_form_seq_ttl;
     private EditText et_form_seq_ttl;
     private SearchableSpinner ss_status;
-    private TextView tv_form_when_ttl;
-    private EditText et_form_when_ttl;
+    private MkDateTime et_form_when_ttl;
     private SearchableSpinner ss_users;
     private SearchableSpinner ss_departments;
     private TextView tv_form_what_ttl;
@@ -170,8 +170,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         ss_status.setmLabel("Status");
         ss_status.setmTitle("Procura");
         //
-        tv_form_when_ttl = (TextView) findViewById(R.id.act038_header_tv_form_when_ttl);
-        et_form_when_ttl = (EditText) findViewById(R.id.act038_header_et_form_when_ttl);
+        et_form_when_ttl = (MkDateTime) findViewById(R.id.act038_header_et_form_when_ttl);
         //
         ss_users = (SearchableSpinner) findViewById(R.id.act038_content_ss_users);
         ss_users.setmLabel("Quem");
@@ -256,9 +255,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_seq_ttl.setEnabled(false);
         et_form_seq_ttl.setText(String.valueOf(ap.getCustom_form_data()));
         //
-        tv_form_when_ttl.setText("Quando");
+        et_form_when_ttl.setmLabel("Quando");
         et_form_when_ttl.setEnabled(true);
-        et_form_when_ttl.setText(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
+        et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
         //
         tv_form_what_ttl.setText("O que");
         et_form_what_ttl.setEnabled(true);

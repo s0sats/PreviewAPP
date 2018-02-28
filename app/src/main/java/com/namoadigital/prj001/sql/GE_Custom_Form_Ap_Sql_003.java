@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -26,14 +25,11 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
 
         return sb
                 .append(" SELECT\n " +
-                        "   a.*,\n" +
-                        "   u.user_nick \n" +
+                        "   a.*\n" +
                         " FROM\n   " +
-                        GE_Custom_Form_ApDao.TABLE + " a\n," +
-                        MD_UserDao.TABLE + " u \n" +
-                        " WHERE" +
-                        "   a.ap_who = u.user_code " +
-                        "   and a.customer_code = '"+customer_code+"'" +
+                        GE_Custom_Form_ApDao.TABLE + " a\n" +
+                        " WHERE \n" +
+                        "   a.customer_code = '"+customer_code+"'\n" +
                         " ORDER BY " +
                         "   a.customer_code,\n" +
                         "   a.custom_form_type,\n" +
@@ -44,7 +40,7 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                         "   a.ap_when \n"
                 )
                 .append(";")
-                .append(HmAuxFields+"#"+MD_UserDao.USER_NICK)
+                .append(HmAuxFields)
                 .toString();
     }
 }

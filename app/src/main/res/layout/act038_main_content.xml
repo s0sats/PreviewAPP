@@ -186,14 +186,7 @@
                         android:gravity="center_vertical"
                         android:text="Status" />
 
-
-                    <TextView
-                        android:id="@+id/act038_header_tv_form_when_ttl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Quando" />
-
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    <com.namoa_digital.namoa_library.ctls.MkDateTime
                         android:id="@+id/act038_header_et_form_when_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -201,12 +194,11 @@
                         android:hint=""
                         android:inputType="text"
                         android:minHeight="30dp"
-                        android:padding="10dp"
+                        android:padding="5dp"
                         app:mBARCODE="false"
+                        app:mInputType="DATE"
                         app:mNFC="false"
-                        app:mOCR="false"
-                        app:mInputType="DATE"/>
-
+                        app:mOCR="false" />
 
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
