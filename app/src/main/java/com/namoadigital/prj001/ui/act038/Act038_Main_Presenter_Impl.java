@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.ui.act038;
 
 import android.content.Context;
+import android.view.View;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_DepartmentDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
@@ -14,6 +17,7 @@ import com.namoadigital.prj001.sql.MD_Department_Sql_001;
 import com.namoadigital.prj001.sql.MD_Department_Sql_002;
 import com.namoadigital.prj001.sql.MD_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_User_Sql_002;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -113,5 +117,49 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                         department_code
                 ).toSqlQuery()
         );
+    }
+
+    @Override
+    public void applyUserProfile(ArrayList<View> editable_views_list) {
+        int status_change = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_CHANGE_STATUS) ? 1 : 0;
+        int edit = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_EDIT) ? 2 : 0;
+        int profile_level = status_change + edit;
+        //
+        for (View view : editable_views_list) {
+            switch (profile_level) {
+                case 1:
+                    if (view instanceof SearchableSpinner) {
+                        if (view.getId() == R.id.act038_content_ss_status) {
+                            ((SearchableSpinner) view).setmEnabled(true);
+                        }else{
+                            ((SearchableSpinner) view).setmEnabled(false);
+                        }
+                    } else {
+                        view.setEnabled(false);
+                    }
+                    break;
+                case 2:
+                case 3:
+                    if (view instanceof SearchableSpinner) {
+                        ((SearchableSpinner) view).setmEnabled(true);
+                    } else {
+                        view.setEnabled(true);
+                    }
+                    break;
+                default:
+                    if (view instanceof SearchableSpinner) {
+                        ((SearchableSpinner) view).setmEnabled(false);
+                    } else {
+                        view.setEnabled(false);
+                    }
+                    break;
+            }
+        }
+        //
+        if(profile_level == 1 ||profile_level == 2 ||profile_level == 3){
+            mView.showBtnSave(true);
+        }else{
+            mView.showBtnSave(false);
+        }
     }
 }

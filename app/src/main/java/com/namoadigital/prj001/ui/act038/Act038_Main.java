@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -87,6 +88,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private EditText et_form_how_mcuch_ttl;
     private TextView tv_form_comments_ttl;
     private EditText et_form_comments_ttl;
+    private ArrayList<View> editable_views_list = new ArrayList<>();
+    private Button btn_save;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -167,38 +170,51 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
         //
         ss_status = (SearchableSpinner) findViewById(R.id.act038_content_ss_status);
-        ss_status.setmLabel("Status");
-        ss_status.setmTitle("Procura");
+        ss_status.setmLabel("Status -trad");
+        ss_status.setmTitle("Procura -trad");
+        //
+        editable_views_list.add(ss_status);
         //
         tv_form_when_ttl = (TextView) findViewById(R.id.act038_header_tv_form_when_ttl);
         et_form_when_ttl = (EditText) findViewById(R.id.act038_header_et_form_when_ttl);
+        editable_views_list.add(et_form_when_ttl);
         //
         ss_users = (SearchableSpinner) findViewById(R.id.act038_content_ss_users);
-        ss_users.setmLabel("Quem");
-        ss_users.setmTitle("Procura");
+        ss_users.setmLabel("Quem -trad");
+        ss_users.setmTitle("Procura -trad");
+        editable_views_list.add(ss_users);
         //
         ss_departments = (SearchableSpinner) findViewById(R.id.act038_content_ss_departments);
-        ss_departments.setmLabel("Departamento");
-        ss_departments.setmTitle("Procura");
+        ss_departments.setmLabel("Departamento -trad");
+        ss_departments.setmTitle("Procura -trad");
+        editable_views_list.add(ss_departments);
         //
         tv_form_what_ttl = (TextView) findViewById(R.id.act038_opc_tv_what_ttl);
         et_form_what_ttl = (EditText) findViewById(R.id.act038_opc_et_what_ttl);
+        editable_views_list.add(et_form_what_ttl);
 
         tv_form_where_ttl = (TextView) findViewById(R.id.act038_opc_tv_where_ttl);
         et_form_where_ttl = (EditText) findViewById(R.id.act038_opc_et_where_ttl);
+        editable_views_list.add(et_form_where_ttl);
 
         tv_form_why_ttl = (TextView) findViewById(R.id.act038_opc_tv_why_ttl);
         et_form_why_ttl = (EditText) findViewById(R.id.act038_opc_et_why_ttl);
+        editable_views_list.add(et_form_why_ttl);
 
         tv_form_how_ttl = (TextView) findViewById(R.id.act038_opc_tv_how_ttl);
         et_form_how_ttl = (EditText) findViewById(R.id.act038_opc_et_how_ttl);
+        editable_views_list.add(et_form_how_ttl);
 
         tv_form_how_much_ttl = (TextView) findViewById(R.id.act038_opc_tv_how_much_ttl);
         et_form_how_mcuch_ttl = (EditText) findViewById(R.id.act038_opc_et_how_much_ttl);
+        editable_views_list.add(et_form_how_mcuch_ttl);
 
         tv_form_comments_ttl = (TextView) findViewById(R.id.act038_opc_tv_comments_ttl);
         et_form_comments_ttl = (EditText) findViewById(R.id.act038_opc_et_comments_ttl);
-
+        editable_views_list.add(et_form_comments_ttl);
+        //
+        btn_save = (Button) findViewById(R.id.act038_btn_save);
+        //
         mPresenter.getloadAP(
                 mCustomer_Code,
                 mCustom_Form_Type,
@@ -207,10 +223,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mCustom_Form_Data,
                 mAp_Code
         );
-
+        //
         mPresenter.loadSSStatus();
         mPresenter.loadSSUsers();
         mPresenter.loadSSDepartments();
+        //
+        mPresenter.applyUserProfile(editable_views_list);
     }
 
     private void recoverIntentsInfo() {
@@ -229,6 +247,11 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         } else {
         }
+    }
+
+    @Override
+    public void showBtnSave(boolean visible) {
+        btn_save.setVisibility(visible ? View.VISIBLE : View.GONE );
     }
 
     @Override

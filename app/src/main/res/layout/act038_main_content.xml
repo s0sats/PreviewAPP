@@ -399,7 +399,7 @@
         android:padding="5dp">
 
         <Button
-            android:id="@+id/act038_btn_action"
+            android:id="@+id/act038_btn_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

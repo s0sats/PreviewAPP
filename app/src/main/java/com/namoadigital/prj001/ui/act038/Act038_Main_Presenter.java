@@ -1,7 +1,11 @@
 package com.namoadigital.prj001.ui.act038;
 
+import android.view.View;
+
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
+
+import java.util.ArrayList;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -27,5 +31,7 @@ public interface Act038_Main_Presenter {
     MD_User loadUser(String customer_code, String user_code);
 
     MD_Department loadDepartment(String customer_code, String department_code);
+
+    void applyUserProfile(ArrayList<View> editable_views_list);
 
 }

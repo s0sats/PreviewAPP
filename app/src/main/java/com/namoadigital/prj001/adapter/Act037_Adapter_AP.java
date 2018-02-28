@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -217,7 +216,7 @@ public class Act037_Adapter_AP extends BaseAdapter {
         );
         tv_ap_who.setText(hmAux_Trans.get("ap_who_lbl"));
         tv_ap_who_val.setText(
-                        item.get(MD_UserDao.USER_NICK)
+                        item.get(GE_Custom_Form_ApDao.AP_WHO_NICK)
         );
         tv_ap_when.setText( hmAux_Trans.get("ap_when_lbl"));
         tv_ap_when_val.setText(

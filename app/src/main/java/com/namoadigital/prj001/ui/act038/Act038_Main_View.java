@@ -19,6 +19,8 @@ public interface Act038_Main_View {
 
     void loadSSDepartment(ArrayList<HMAux> statusList);
 
+    void showBtnSave(boolean visible);
+
 
 
 
