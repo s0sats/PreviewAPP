@@ -167,18 +167,18 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
         //
         ss_status = (SearchableSpinner) findViewById(R.id.act038_content_ss_status);
-        ss_status.setmLabel("Status");
-        ss_status.setmTitle("Procura");
+        ss_status.setmLabel("Status - Trad");
+        ss_status.setmTitle("Procura - Trad");
         //
         et_form_when_ttl = (MkDateTime) findViewById(R.id.act038_header_et_form_when_ttl);
         //
         ss_users = (SearchableSpinner) findViewById(R.id.act038_content_ss_users);
-        ss_users.setmLabel("Quem");
-        ss_users.setmTitle("Procura");
+        ss_users.setmLabel("Quem - Trad");
+        ss_users.setmTitle("Procura - Trad");
         //
         ss_departments = (SearchableSpinner) findViewById(R.id.act038_content_ss_departments);
-        ss_departments.setmLabel("Departamento");
-        ss_departments.setmTitle("Procura");
+        ss_departments.setmLabel("Departamento - Trad");
+        ss_departments.setmTitle("Procura - Trad");
         //
         tv_form_what_ttl = (TextView) findViewById(R.id.act038_opc_tv_what_ttl);
         et_form_what_ttl = (EditText) findViewById(R.id.act038_opc_et_what_ttl);
@@ -235,51 +235,51 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         mGe_custom_form_ap = ap;
         //
         tv_ap_desc_ttl.setText(String.valueOf(ap.getAp_code()) + " - " + ap.getAp_description());
-        tv_customer_code_ttl.setText("Cód.do Cliente");
+        tv_customer_code_ttl.setText("Cód.do Cliente - Trad");
         et_customer_code_ttl.setEnabled(false);
         et_customer_code_ttl.setText(String.valueOf(ap.getCustom_form_code() + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context)));
         //
-        tv_form_type_ttl.setText("Tipo de Formulário");
+        tv_form_type_ttl.setText("Tipo de Formulário - Trad");
         et_form_type_ttl.setEnabled(false);
         et_form_type_ttl.setText(String.valueOf(ap.getCustom_form_type() + " - " + ap.getCustom_form_type_desc()));
         //
-        tv_form_code_ttl.setText("Cód. do Formulário");
+        tv_form_code_ttl.setText("Cód. do Formulário - Trad");
         et_form_code_ttl.setEnabled(false);
         et_form_code_ttl.setText(String.valueOf(ap.getCustom_form_code() + " - " + ap.getCustom_form_desc()));
         //
-        tv_form_version_ttl.setText("Versão do Formulário");
+        tv_form_version_ttl.setText("Versão do Formulário - Trad");
         et_form_version_ttl.setEnabled(false);
         et_form_version_ttl.setText(String.valueOf(ap.getCustom_form_version()));
         //
-        tv_form_seq_ttl.setText("Seq. Execucao");
+        tv_form_seq_ttl.setText("Seq. Execucao - Trad");
         et_form_seq_ttl.setEnabled(false);
         et_form_seq_ttl.setText(String.valueOf(ap.getCustom_form_data()));
         //
-        et_form_when_ttl.setmLabel("Quando");
+        et_form_when_ttl.setmLabel("Quando - Trad");
         et_form_when_ttl.setEnabled(true);
         et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
         //
-        tv_form_what_ttl.setText("O que");
+        tv_form_what_ttl.setText("O que - Trad");
         et_form_what_ttl.setEnabled(true);
         et_form_what_ttl.setText(ap.getAp_what() == null ? "" : String.valueOf(ap.getAp_what()));
 
-        tv_form_where_ttl.setText("Onde");
+        tv_form_where_ttl.setText("Onde - Trad");
         et_form_where_ttl.setEnabled(true);
         et_form_where_ttl.setText(ap.getAp_where() == null ? "" : String.valueOf(ap.getAp_where()));
 
-        tv_form_why_ttl.setText("Por que");
+        tv_form_why_ttl.setText("Por que - Trad");
         et_form_why_ttl.setEnabled(true);
         et_form_why_ttl.setText(ap.getAp_why() == null ? "" : String.valueOf(ap.getAp_why()));
 
-        tv_form_how_ttl.setText("Como");
+        tv_form_how_ttl.setText("Como - Trad");
         et_form_how_ttl.setEnabled(true);
         et_form_how_ttl.setText(ap.getAp_how() == null ? "" : String.valueOf(ap.getAp_how()));
 
-        tv_form_how_much_ttl.setText("Quanto");
+        tv_form_how_much_ttl.setText("Quanto - Trad");
         et_form_how_mcuch_ttl.setEnabled(true);
         et_form_how_mcuch_ttl.setText(ap.getAp_how_much() == null ? "" : String.valueOf(ap.getAp_how_much()));
 
-        tv_form_comments_ttl.setText("Comentário");
+        tv_form_comments_ttl.setText("Comentário - Trad");
         et_form_comments_ttl.setEnabled(true);
         et_form_comments_ttl.setText(ap.getAp_comments() == null ? "" : String.valueOf(ap.getAp_comments()));
     }
