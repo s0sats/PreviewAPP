@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -13,10 +14,26 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class GE_Custom_Form_Ap_Sql_003 implements Specification {
 
     private long customer_code;
+    private String status_filter;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
 
-    public GE_Custom_Form_Ap_Sql_003(long customer_code) {
+    public GE_Custom_Form_Ap_Sql_003(long customer_code, boolean filter_pending, boolean filter_done) {
         this.customer_code = customer_code;
+        //
+        if(filter_pending || filter_done){
+            String inFilter = "";
+            if(filter_pending){
+                inFilter +=
+                        "'" + Constant.SYS_STATUS_EDIT + "'," +
+                        "'" + Constant.SYS_STATUS_PROCESS + "'," +
+                        "'" + Constant.SYS_STATUS_WAITING_ACTION + "',";
+            }
+            inFilter += filter_done ? "'" + Constant.SYS_STATUS_DONE + "'," : "";
+            //
+            status_filter = "     and a.ap_status in ("
+                    + inFilter.substring(0, inFilter.length() - 1) +
+                    ")\n";
+        }
     }
 
     @Override
@@ -30,6 +47,7 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                         GE_Custom_Form_ApDao.TABLE + " a\n" +
                         " WHERE \n" +
                         "   a.customer_code = '"+customer_code+"'\n" +
+                            status_filter +
                         " ORDER BY " +
                         "   a.customer_code,\n" +
                         "   a.custom_form_type,\n" +

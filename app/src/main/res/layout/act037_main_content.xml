@@ -43,7 +43,7 @@
                     android:id="@+id/act037_chk_pending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/namoa_color_orange_light2"
+                    android:buttonTint="@color/namoa_dark_blue"
                     android:checked="true" />
 
                 <CheckBox
@@ -51,13 +51,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:buttonTint="@color/namoa_color_light_blue3"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <CheckBox
-                    android:id="@+id/act037_chk_finalized"
+                    android:id="@+id/act037_chk_done"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:buttonTint="@color/namoa_color_light_green4" />
+                    android:buttonTint="@color/namoa_color_green_2" />
 
                 <ImageView
                     android:id="@+id/act037_iv_help"
