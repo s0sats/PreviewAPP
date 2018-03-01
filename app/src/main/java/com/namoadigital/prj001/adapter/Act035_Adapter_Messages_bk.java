@@ -157,14 +157,14 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         if (dadosRNew.size() > 0) {
             //
             HMAux fisrtAux = new HMAux();
-            fisrtAux.put("msg_date", dadosRNew.get(0).get("msg_date"));
+            fisrtAux.put("msg_date_zone", dadosRNew.get(0).get("msg_date_zone"));
             fisrtAux.put("type", "DATE");
             //
             dadosRNew.add(0, fisrtAux);
             for (int i = 1; i < dadosRNew.size(); i++) {
-                if (!ToolBox_Inf.equalDate(dadosRNew.get(i - 1).get("msg_date"), dadosRNew.get(i).get("msg_date"))) {
+                if (!ToolBox_Inf.equalDate(dadosRNew.get(i - 1).get("msg_date_zone"), dadosRNew.get(i).get("msg_date_zone"))) {
                     HMAux mAux = new HMAux();
-                    mAux.put("msg_date", dadosRNew.get(i).get("msg_date"));
+                    mAux.put("msg_date_zone", dadosRNew.get(i).get("msg_date_zone"));
                     //
                     dadosRNew.add(i, mAux);
                 }
@@ -173,7 +173,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
             reOrder = checkReOrder(data, (ArrayList<HMAux>) dadosRNew);
             //
             if (data.size() > 0){
-                if (ToolBox_Inf.equalDate(data.get(data.size() - 1).get("msg_date"), dadosRNew.get(0).get("msg_date"))) {
+                if (ToolBox_Inf.equalDate(data.get(data.size() - 1).get("msg_date_zone"), dadosRNew.get(0).get("msg_date_zone"))) {
                     dadosRNew.remove(0);
                 }
             }
@@ -435,7 +435,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
 
         tv_hour.setText(
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
                         " HH:mm"
                 )
         );
@@ -463,7 +463,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         tv_hour.setText(
 
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
                         " HH:mm"
 
                 )
@@ -497,7 +497,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         tv_hour.setText(
 
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
                         " HH:mm"
 
                 )
@@ -518,7 +518,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         tv_hour.setText(
 
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
                         " HH:mm"
 
                 )
@@ -534,7 +534,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         String resultado = "";
 
         if (ToolBox_Inf.isToday_Yesterday(
-                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
                 true
         )) {
 
@@ -543,7 +543,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         }
         //
         if (ToolBox_Inf.isToday_Yesterday(
-                ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
                 false
         )) {
 
@@ -554,8 +554,9 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         if (resultado.equalsIgnoreCase("")) {
             tv_message.setText(
                     ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
-                            ToolBox_Inf.nlsDateFormat(context)
+                            ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
+                            ""
+//                            ToolBox_Inf.nlsDateFormat(context)
                     )
             );
 

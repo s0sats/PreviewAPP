@@ -333,14 +333,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
 
             HMAux fisrtAux = new HMAux();
-            fisrtAux.put("msg_date", dados.get(0).get("msg_date"));
+            fisrtAux.put("msg_date_zone", dados.get(0).get("msg_date_zone"));
             fisrtAux.put("type", "DATE");
             //
             dados.add(0, fisrtAux);
             for (int i = 1; i < dados.size(); i++) {
-                if (!ToolBox_Inf.equalDate(dados.get(i - 1).get("msg_date"), dados.get(i).get("msg_date"))) {
+                if (!ToolBox_Inf.equalDate(dados.get(i - 1).get("msg_date_zone"), dados.get(i).get("msg_date_zone"))) {
                     HMAux mAux = new HMAux();
-                    mAux.put("msg_date", dados.get(i).get("msg_date"));
+                    mAux.put("msg_date_zone", dados.get(i).get("msg_date_zone"));
                     mAux.put("type", "DATE");
                     //
                     dados.add(i, mAux);
@@ -359,19 +359,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             sw_messages.setEnabled(true);
         }
         //
-//        act035_adapter_messages = new Act035_Adapter_Messages(
-//                getBaseContext(),
-//                R.layout.act035_main_content_cell_whats,
-//                R.layout.act035_main_content_cell_whats,
-//                R.layout.act035_main_content_cell_whats_text_bk,
-//                R.layout.act035_main_content_cell_whats_text_bk_r,
-//                R.layout.act035_main_content_cell_whats_text_data,
-//                R.layout.act035_main_content_cell_whats_text_end,
-//                R.layout.act035_main_content_cell_whats_text_trans,
-//                this.dados,
-//                hmAux_Trans
-//        );
-
         act035_adapter_messages = new Act035_Adapter_Messages_bk(
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats_img_other,

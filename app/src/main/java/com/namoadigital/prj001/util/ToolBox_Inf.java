@@ -2279,6 +2279,33 @@ public class ToolBox_Inf {
         }
     }
 
+    public static long dateToMillisecondsChat(String date_tmz, String type) {
+        String sFormat = "";
+
+        if (date_tmz != null && date_tmz.isEmpty()) {
+            return 0L;
+        }
+
+        if (type.equalsIgnoreCase("SECOND")) {
+            sFormat = "yyyy-MM-dd HH:mm";
+        } else {
+            sFormat = "yyyy-MM-dd HH:mm:ss";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sFormat);
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(date_tmz));
+            return calendar.getTimeInMillis();
+        } catch (ParseException e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return 0L;
+        }
+    }
+
+
+
     public static String millisecondsToString(long mils, String format) {
 
         String sResults = "";
@@ -3528,7 +3555,7 @@ public class ToolBox_Inf {
 
         return now.get(Calendar.YEAR) == cdate.get(Calendar.YEAR)
                 && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
-                && now.get(Calendar.DATE) == cdate.get(Calendar.DATE);
+                && now.get(Calendar.DAY_OF_MONTH) == cdate.get(Calendar.DAY_OF_MONTH);
     }
 
     public static String getSafeSubstring(String s, int maxLength) {

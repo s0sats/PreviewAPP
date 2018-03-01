@@ -39,14 +39,15 @@ order by case when msg_pk is null then 1 else 0 end, msg_pk, msg_prefix , tmp li
 
         return sb
                 .append(" SELECT\n" +
-                        "      *\n" +
+                        "      *\n," +
+                        "strftime('%Y-%m-%d %H:%M:%S',msg_date,'localtime') as msg_date_zone " +
                         " FROM\n" +
                         CH_MessageDao.TABLE + " \n" +
                         " WHERE\n" +
                         "    room_code =  '" + room_code + "'\n" +
                         "    order by case when msg_pk is null then 1 else 0 end, msg_pk, tmp limit " + offSet + " offset (select count(*) from ch_messages where (room_code = '" + room_code + "' ))-" + offSet)
                 .append(";")
-                .append(HmAuxFields)
+                .append(HmAuxFields+"#msg_date_zone")
                 .toString();
     }
 }

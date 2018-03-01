@@ -25,7 +25,8 @@ public class CH_Message_Sql_008 implements Specification {
 
         return sb
                 .append(" SELECT \n" +
-                        "    m.* \n" +
+                        "    m.*, \n" +
+                        "strftime('%Y-%m-%d %H:%M:%S',msg_date,'localtime') as msg_date_zone " +
                         " FROM \n" +
                         CH_MessageDao.TABLE + " m \n" +
                         " WHERE \n" +
@@ -34,7 +35,7 @@ public class CH_Message_Sql_008 implements Specification {
                         " ORDER BY\n" +
                         "   m.msg_pk asc\n")
                 .append(";")
-                .append(HmAuxFields)
+                .append(HmAuxFields+"#msg_date_zone")
                 .toString();
     }
 }
