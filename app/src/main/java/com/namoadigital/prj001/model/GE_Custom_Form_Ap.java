@@ -33,12 +33,13 @@ public class GE_Custom_Form_Ap {
     private int product_code;
     private String product_id;
     private String product_desc;
-    private int serial_code;
+    private Integer serial_code;
     private String serial_id;
     private int sync_required;
     private int upload_required;
     private String custom_form_url;
     private String custom_form_url_local;
+    private String last_update;
 
     public long getCustomer_code() {
         return customer_code;
@@ -256,11 +257,11 @@ public class GE_Custom_Form_Ap {
         this.product_desc = product_desc;
     }
 
-    public int getSerial_code() {
+    public Integer getSerial_code() {
         return serial_code;
     }
 
-    public void setSerial_code(int serial_code) {
+    public void setSerial_code(Integer serial_code) {
         this.serial_code = serial_code;
     }
 
@@ -302,5 +303,13 @@ public class GE_Custom_Form_Ap {
 
     public void setCustom_form_url_local(String custom_form_url_local) {
         this.custom_form_url_local = custom_form_url_local;
+    }
+
+    public String getLast_update() {
+        return last_update;
+    }
+
+    public void setLast_update(String last_update) {
+        this.last_update = last_update;
     }
 }

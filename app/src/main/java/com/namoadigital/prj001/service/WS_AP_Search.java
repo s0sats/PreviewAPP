@@ -110,11 +110,10 @@ public class WS_AP_Search extends IntentService {
                     objAp.setCustom_form_version(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
                     objAp.setCustom_form_data(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
                     objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+                    objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                     //
                     apJsonArray.add(gson.toJsonTree(objAp));
                 }
-                //
-                obj = apJsonArray.toString();
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
                 return;
@@ -142,10 +141,9 @@ public class WS_AP_Search extends IntentService {
                 objAp.setCustom_form_version(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
                 objAp.setCustom_form_data(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
                 objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+                objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                 //
                 apJsonArray.add(gson.toJsonTree(objAp));
-                //
-                obj = apJsonArray.toString();
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
                 return;
@@ -199,6 +197,9 @@ public class WS_AP_Search extends IntentService {
     }
 
     private void processAPSearchReturn(ArrayList<GE_Custom_Form_Ap> obj) {
+        for (GE_Custom_Form_Ap formAp:obj) {
+            formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+        }
         formApDao.addUpdate(obj,false);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_sync"),"", "0");

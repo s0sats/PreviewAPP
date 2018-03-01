@@ -29,14 +29,17 @@ public class Act037_Main_Presenter_Impl implements Act037_Main_Presenter {
     }
 
     @Override
-    public void getloadAPs(boolean filter_pending, boolean filter_done) {
+    public void getloadAPs(boolean filter_edit, boolean filter_process, boolean filter_waiting_action, boolean filter_done, boolean filter_cancelled) {
 
         mView.loadAPs(
                 (ArrayList<HMAux>) ge_custom_form_apDao.query_HM(
                         new GE_Custom_Form_Ap_Sql_003(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                filter_pending,
-                                filter_done
+                                filter_edit,
+                                true,
+                                true,
+                                true,
+                                filter_process
                         ).toSqlQuery()
                 )
         );

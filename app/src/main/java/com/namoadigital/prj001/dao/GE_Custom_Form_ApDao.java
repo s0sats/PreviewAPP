@@ -58,13 +58,14 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String UPLOAD_REQUIRED = "upload_required";
     public static final String CUSTOM_FORM_URL = "custom_form_url";
     public static final String CUSTOM_FORM_URL_LOCAL = "custom_form_url_local";
+    public static final String LAST_UPDATE = "last_update";
 
     public static String[] columns = {
             CUSTOMER_CODE,CUSTOM_FORM_TYPE, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
             AP_WHO_NICK, AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC, ROOM_CODE, AP_SCN,
             PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED,UPLOAD_REQUIRED, CUSTOM_FORM_URL,
-            CUSTOM_FORM_URL_LOCAL
+            CUSTOM_FORM_URL_LOCAL, LAST_UPDATE
     };
 
 
@@ -334,8 +335,16 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             custom_form_ap.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
             custom_form_ap.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
             custom_form_ap.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
-            custom_form_ap.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
-            custom_form_ap.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_CODE))) {
+                custom_form_ap.setSerial_code(null);
+            } else {
+                custom_form_ap.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_ID))) {
+                custom_form_ap.setSerial_id(null);
+            } else {
+                custom_form_ap.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
+            }
             custom_form_ap.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             custom_form_ap.setUpload_required(cursor.getInt(cursor.getColumnIndex(UPLOAD_REQUIRED)));
             if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_URL))) {
@@ -348,6 +357,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             } else {
                 custom_form_ap.setCustom_form_url_local(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_URL_LOCAL)));
             }
+            custom_form_ap.setLast_update(cursor.getString(cursor.getColumnIndex(LAST_UPDATE)));
             //
             return custom_form_ap;
         }
@@ -413,12 +423,10 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             if (custom_form_ap.getProduct_desc() != null) {
                 contentValues.put(PRODUCT_DESC, custom_form_ap.getProduct_desc());
             }
-            if (custom_form_ap.getSerial_code() > -1) {
-                contentValues.put(SERIAL_CODE, custom_form_ap.getSerial_code());
-            }
-            if (custom_form_ap.getSerial_id() != null) {
-                contentValues.put(SERIAL_ID, custom_form_ap.getSerial_id());
-            }
+
+            contentValues.put(SERIAL_CODE, custom_form_ap.getSerial_code());
+            contentValues.put(SERIAL_ID, custom_form_ap.getSerial_id());
+
             if (custom_form_ap.getSync_required() > -1) {
                 contentValues.put(SYNC_REQUIRED, custom_form_ap.getSync_required());
             }
@@ -427,6 +435,9 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             }
             contentValues.put(CUSTOM_FORM_URL, custom_form_ap.getCustom_form_url());
             contentValues.put(CUSTOM_FORM_URL_LOCAL, custom_form_ap.getCustom_form_url_local());
+            if (custom_form_ap.getLast_update() != null) {
+                contentValues.put(LAST_UPDATE, custom_form_ap.getLast_update());
+            }
             //
             return contentValues;
         }

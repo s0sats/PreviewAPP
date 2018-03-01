@@ -121,7 +121,12 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         //
         lv_aps = (ListView) findViewById(R.id.act037_lv_aps);
         //
-        mPresenter.getloadAPs(chk_pending.isChecked(), chk_done.isChecked() );
+        mPresenter.getloadAPs(
+                chk_pending.isChecked(),
+                chk_done.isChecked(),
+                true ,
+                false,
+                false);
     }
 
     private void recoverIntentsInfo() {
@@ -198,8 +203,10 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     private void applyFilter() {
         mPresenter.getloadAPs(
                 chk_pending.isChecked(),
-                chk_done.isChecked()
-        );
+                chk_done.isChecked(),
+                true,
+                false,
+                false);
     }
 
     private void showHelperDialog() {

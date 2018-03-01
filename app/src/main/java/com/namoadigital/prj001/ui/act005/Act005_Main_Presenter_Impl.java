@@ -311,7 +311,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
-
+        data_package.add(DataPackage.DATA_PACKAGE_AP);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
