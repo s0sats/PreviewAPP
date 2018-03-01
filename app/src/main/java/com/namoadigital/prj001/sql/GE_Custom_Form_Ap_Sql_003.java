@@ -25,9 +25,9 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                 inFilter += filter_waiting_action ? "'" + Constant.SYS_STATUS_WAITING_ACTION + "'," : "";
                 inFilter += filter_done ? "'" + Constant.SYS_STATUS_DONE + "'," : "";
                 inFilter += filter_cancelled ? "'" + Constant.SYS_STATUS_CANCELLED + "'," : "";
-                inFilter = inFilter.substring(0,inFilter.length()-1);
+                inFilter =  inFilter.length() > 0 ? inFilter.substring(0,inFilter.length()-1) : "";
                 //
-                status_filter = "  and a.ap_status in ("+inFilter+") \n";
+                status_filter = inFilter.length() > 0 ? "  and a.ap_status in ("+inFilter+") \n" : "";
     }
 
     @Override

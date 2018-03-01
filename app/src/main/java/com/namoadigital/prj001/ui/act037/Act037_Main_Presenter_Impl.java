@@ -36,10 +36,10 @@ public class Act037_Main_Presenter_Impl implements Act037_Main_Presenter {
                         new GE_Custom_Form_Ap_Sql_003(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 filter_edit,
-                                true,
-                                true,
-                                true,
-                                filter_process
+                                filter_process,
+                                filter_waiting_action,
+                                filter_done,
+                                filter_cancelled
                         ).toSqlQuery()
                 )
         );

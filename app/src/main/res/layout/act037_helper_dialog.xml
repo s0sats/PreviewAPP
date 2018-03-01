@@ -16,32 +16,53 @@
         />
 
     <CheckBox
-        android:id="@+id/act037_helper_dialog_chk_pendings"
+        android:id="@+id/act037_helper_dialog_chk_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
+        android:buttonTint="@color/namoa_color_pink_1"
         android:layout_marginBottom="20dp"
+        android:text="Edit - trad"
         android:checked="true"
-        android:clickable="false"
         />
 
     <CheckBox
-        android:id="@+id/act037_helper_dialog_chk_scheduled"
+        android:id="@+id/act037_helper_dialog_chk_process"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_color_green_2"
-        android:visibility="gone"
+        android:buttonTint="@color/namoa_color_gray_4"
         android:layout_marginBottom="20dp"
         android:checked="true"
-        android:clickable="false"/>
+        android:text="Process - trad"
+        />
+
+    <CheckBox
+        android:id="@+id/act037_helper_dialog_chk_waiting_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/namoa_color_brown"
+        android:layout_marginBottom="20dp"
+        android:checked="true"
+        android:text="Waiting Action - trad"
+        />
 
     <CheckBox
         android:id="@+id/act037_helper_dialog_chk_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_color_light_green4"
+        android:buttonTint="@color/namoa_color_green_2"
         android:layout_marginBottom="20dp"
         android:checked="true"
-        android:clickable="false"/>
+        android:text="Done - trad"
+        />
+
+    <CheckBox
+        android:id="@+id/act037_helper_dialog_chk_cancelled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/namoa_color_red"
+        android:layout_marginBottom="20dp"
+        android:checked="true"
+        android:text="Cancelled - trad"
+        />
 
 </LinearLayout>
