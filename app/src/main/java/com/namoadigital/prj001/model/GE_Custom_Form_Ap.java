@@ -37,7 +37,8 @@ public class GE_Custom_Form_Ap {
     private String serial_id;
     private int sync_required;
     private int upload_required;
-
+    private String custom_form_url;
+    private String custom_form_url_local;
 
     public long getCustomer_code() {
         return customer_code;
@@ -285,5 +286,21 @@ public class GE_Custom_Form_Ap {
 
     public void setUpload_required(int upload_required) {
         this.upload_required = upload_required;
+    }
+
+    public String getCustom_form_url() {
+        return custom_form_url;
+    }
+
+    public void setCustom_form_url(String custom_form_url) {
+        this.custom_form_url = custom_form_url;
+    }
+
+    public String getCustom_form_url_local() {
+        return custom_form_url_local;
+    }
+
+    public void setCustom_form_url_local(String custom_form_url_local) {
+        this.custom_form_url_local = custom_form_url_local;
     }
 }
