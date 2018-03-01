@@ -435,7 +435,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
 
         tv_hour.setText(
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
                         " HH:mm"
                 )
         );
@@ -463,7 +463,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         tv_hour.setText(
 
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
                         " HH:mm"
 
                 )
@@ -497,7 +497,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         tv_hour.setText(
 
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
                         " HH:mm"
 
                 )
@@ -518,7 +518,7 @@ public class Act035_Adapter_Messages_bk extends BaseAdapter {
         tv_hour.setText(
 
                 ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
                         " HH:mm"
 
                 )

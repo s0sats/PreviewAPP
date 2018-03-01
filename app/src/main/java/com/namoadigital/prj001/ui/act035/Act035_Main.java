@@ -1221,50 +1221,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-//    private class DownloadMemberImgTask extends AsyncTask<String, String, Void> {
-//
-//        @Override
-//        protected Void doInBackground(String... strings) {
-//            //doInBackground NÃO TEM ACESSO A ATUALIZAR TELA
-//            //QUANDO HOUVER NECESSIDADE DE ATUALIZAR,
-//            //CHAMAR O METODO publishProgress() QUE TEM ACESSO.
-//            for (int i = 0; i < strings.length; i++) {
-//                try {
-//                    String[] downloadParam = strings[i].split(Constant.MAIN_CONCAT_STRING);
-//                    String user_code = downloadParam[0];
-//                    String url = downloadParam[1];
-//
-//                    String image_name = "ch_" + (!downloadParam[2].equals("null") ? downloadParam[2].substring(0, downloadParam[2].length() - 4) : Constant.CHAT_NO_USER_IMAGE);
-//                    //
-//                    if (!ToolBox_Inf.verifyDownloadFileInf(image_name + ".jpg", Constant.CACHE_CHAT_PATH)) {
-//
-//                        ToolBox_Inf.deleteDownloadFileInf(image_name + ".tmp", Constant.CACHE_CHAT_PATH);
-//                        //
-//                        ToolBox_Inf.downloadImagePDF(
-//                                url,
-//                                Constant.CACHE_CHAT_PATH + "/" + image_name + ".tmp"
-//                        );
-//                        //
-//                        ToolBox_Inf.renameDownloadFileInf(image_name, ".jpg", Constant.CACHE_CHAT_PATH);
-//                    }
-//                    publishProgress(user_code, image_name + ".jpg");
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(String... values) {
-//            super.onProgressUpdate(values);
-//            //
-//            updateMemberImage(values[0], values[1]);
-//        }
-//    }
-
     public void disablePD() {
         disableProgressDialog();
     }
