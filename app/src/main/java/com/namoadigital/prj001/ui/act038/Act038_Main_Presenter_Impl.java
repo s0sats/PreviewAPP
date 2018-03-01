@@ -64,12 +64,35 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     }
 
     @Override
-    public void loadSSStatus() {
-        mView.loadSSStatus(
-                ToolBox_Inf.statusList(
+    public void loadSSStatus(String ap_status) {
+        ArrayList<HMAux> statusList = new ArrayList<>();
+        if(ap_status.equals(Constant.SYS_STATUS_EDIT)) {
+            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_AP,Constant.PROFILE_MENU_AP_PARAM_EDIT)){
+                statusList = ToolBox_Inf.statusList(
                         hmAux_Trans
-                )
-        );
+                );
+            }else{
+                statusList = ToolBox_Inf.statusList(
+                        hmAux_Trans,
+                        Constant.SYS_STATUS_CANCELLED
+                );
+            }
+        }else{
+            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_AP,Constant.PROFILE_MENU_AP_PARAM_EDIT)){
+                statusList = ToolBox_Inf.statusList(
+                        hmAux_Trans,
+                        Constant.SYS_STATUS_EDIT
+                );
+            }else{
+                statusList = ToolBox_Inf.statusList(
+                        hmAux_Trans,
+                        Constant.SYS_STATUS_EDIT,
+                        Constant.SYS_STATUS_CANCELLED
+                );
+            }
+        }
+        //
+        mView.loadSSStatus(statusList);
     }
 
     @Override

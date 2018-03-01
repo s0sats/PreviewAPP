@@ -22,7 +22,7 @@ public interface Act038_Main_Presenter {
             String mAp_Code
     );
 
-    void loadSSStatus();
+    void loadSSStatus(String ap_status);
 
     void loadSSUsers();
 
