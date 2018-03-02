@@ -27,6 +27,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act037_Adapter_AP;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -46,7 +47,6 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
 
     private ListView lv_aps;
     private Act037_Adapter_AP mAdapter;
-    private ArrayList<HMAux> dados;
     private MKEditTextNM mket_filter;
     private ImageView iv_filter;
     //
@@ -92,12 +92,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         List<String> transList = new ArrayList<String>();
         transList.add("act037_title");
         transList.add("lbl_filter");
-        transList.add("alert_helper_dialog_msg");
-        transList.add("lbl_chk_edit");
-        transList.add("lbl_chk_process");
-        transList.add("lbl_chk_waiting_action");
-        transList.add("lbl_chk_done");
-        transList.add("lbl_chk_cancelled");
+        transList.add("alert_filter_dialog_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -121,7 +116,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
                         )
                 );
         mket_filter = (MKEditTextNM) findViewById(R.id.act037_mket_filter_desc);
-        mket_filter.setHint("lbl_filter");
+        mket_filter.setHint(hmAux_Trans.get("lbl_filter"));
         //
         iv_filter = (ImageView) findViewById(R.id.act037_iv_filter);
         //
@@ -200,6 +195,19 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
                 callAct038(context, item);
             }
         });
+        //TESTE APAGAR
+        lv_aps.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent mIntent = new Intent(context, WBR_AP_Save.class);
+                Bundle bundle = new Bundle();
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+
+                return false;
+            }
+        });
         //
         iv_filter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,30 +245,30 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         View view = inflater.inflate(R.layout.act037_helper_dialog,null);
         //
         TextView tv_title = (TextView) view.findViewById(R.id.act037_helper_dialog_tv_title);
-        tv_title.setText(hmAux_Trans.get("alert_helper_dialog_msg"));
+        tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
         //
         CheckBox chk_edit = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_edit);
-        chk_edit.setText(hmAux_Trans.get("lbl_chk_edit"));
+        chk_edit.setText(hmAux_Trans.get(Constant.SYS_STATUS_EDIT));
         chk_edit.setChecked(filter_edit);
         chk_edit.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_EDIT))));
         //
         CheckBox chk_process = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_process);
-        chk_process.setText(hmAux_Trans.get("lbl_chk_process"));
+        chk_process.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
         chk_process.setChecked(filter_process);
         chk_process.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         //
         CheckBox chk_waiting_action = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_waiting_action);
-        chk_waiting_action.setText(hmAux_Trans.get("lbl_chk_waiting_action"));
+        chk_waiting_action.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_ACTION));
         chk_waiting_action.setChecked(filter_waiting_action);
         chk_waiting_action.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_ACTION))));
         //
         CheckBox chk_done = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_done);
-        chk_done.setText(hmAux_Trans.get("lbl_chk_done"));
+        chk_done.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
         chk_done.setChecked(filter_done);
         chk_done.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_DONE))));
         //
         CheckBox chk_cancelled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_cancelled);
-        chk_cancelled.setText(hmAux_Trans.get("lbl_chk_cancelled"));
+        chk_cancelled.setText(hmAux_Trans.get(Constant.SYS_STATUS_CANCELLED));
         chk_cancelled.setChecked(filter_cancelled);
         chk_cancelled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_CANCELLED))));
         //

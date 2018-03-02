@@ -32,12 +32,12 @@ public class WS_AP_Save extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_ap_search";
+    private String mResource_Name = "WS_AP_Save";
     //
     private GE_Custom_Form_ApDao formApDao;
 
     public WS_AP_Save() {
-        super("WS_AP_Search");
+        super("WS_AP_Save");
     }
 
     @Override
