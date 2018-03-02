@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act037;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
@@ -43,11 +46,15 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     private ListView lv_aps;
     private Act037_Adapter_AP act037_adapter_ap;
     private ArrayList<HMAux> dados;
-    private TextView tv_filter;
-    private CheckBox chk_pending;
-    private CheckBox chk_done;
-    private ImageView iv_help;
-
+    private MKEditTextNM mket_filter;
+    private ImageView iv_filter;
+    //
+    private boolean filter_edit;
+    private boolean filter_process;
+    private boolean filter_waiting_action;
+    private boolean filter_done;
+    private boolean filter_cancelled;
+    //
     private Bundle bundle;
     private int backAction;
     private String requestingAct;
@@ -85,8 +92,11 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         transList.add("act037_title");
         transList.add("lbl_filter");
         transList.add("alert_helper_dialog_msg");
-        transList.add("lbl_chk_pendings");
+        transList.add("lbl_chk_edit");
+        transList.add("lbl_chk_process");
+        transList.add("lbl_chk_waiting_action");
         transList.add("lbl_chk_done");
+        transList.add("lbl_chk_cancelled");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -109,19 +119,23 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
                                 context
                         )
                 );
-        tv_filter = (TextView) findViewById(R.id.act037_tv_filter);
-        tv_filter.setTag("lbl_filter");
-        views.add(tv_filter);
+        mket_filter = (MKEditTextNM) findViewById(R.id.act037_mket_filter_desc);
+        mket_filter.setHint("lbl_filter");
         //
-        chk_pending = (CheckBox) findViewById(R.id.act037_chk_pending);
+        iv_filter = (ImageView) findViewById(R.id.act037_iv_filter);
         //
-        chk_done = (CheckBox) findViewById(R.id.act037_chk_done);
-        //
-        iv_help = (ImageView) findViewById(R.id.act037_iv_help);
+        initFilters();
         //
         lv_aps = (ListView) findViewById(R.id.act037_lv_aps);
         //
-        mPresenter.getloadAPs(chk_pending.isChecked(), chk_done.isChecked() );
+        applyFilter();
+        //
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    private void initFilters() {
+        filter_edit = filter_process = filter_waiting_action = true;
+        filter_done = filter_cancelled = false;
     }
 
     private void recoverIntentsInfo() {
@@ -173,36 +187,30 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
             }
         });
         //
-        chk_pending.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               applyFilter();
-            }
-        });
-        //
-        chk_done.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                applyFilter();
-            }
-        });
-        //
-        iv_help.setOnClickListener(new View.OnClickListener() {
+        iv_filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showHelperDialog();
+                showFilterDialog();
             }
         });
     }
 
     private void applyFilter() {
         mPresenter.getloadAPs(
-                chk_pending.isChecked(),
-                chk_done.isChecked()
-        );
+                filter_edit,
+                filter_process,
+                filter_waiting_action,
+                filter_done,
+                filter_cancelled);
+        //
+        if(filter_edit||filter_process||filter_waiting_action||filter_done||filter_cancelled){
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        }else{
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+        }
     }
 
-    private void showHelperDialog() {
+    private void showFilterDialog() {
         AlertDialog.Builder alert =  new AlertDialog.Builder(context);
 
         LayoutInflater inflater =  this.getLayoutInflater();
@@ -210,22 +218,65 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         //
         TextView tv_title = (TextView) view.findViewById(R.id.act037_helper_dialog_tv_title);
         tv_title.setText(hmAux_Trans.get("alert_helper_dialog_msg"));
-
-        CheckBox chk_processing = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_pendings);
-        chk_processing.setText(hmAux_Trans.get("lbl_chk_pendings"));
         //
-        /*CheckBox chk_scheduled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_scheduled);
-        chk_scheduled.setText(hmAux_Trans.get("lbl_chk_scheduled"));
-        chk_scheduled.setVisibility(View.GONE);*/
+        CheckBox chk_edit = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_edit);
+        chk_edit.setText(hmAux_Trans.get("lbl_chk_edit"));
+        chk_edit.setChecked(filter_edit);
         //
-        CheckBox chk_finalized = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_done);
-        chk_finalized.setText(hmAux_Trans.get("lbl_chk_done"));
-
+        CheckBox chk_process = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_process);
+        chk_process.setText(hmAux_Trans.get("lbl_chk_process"));
+        chk_process.setChecked(filter_process);
+        //
+        CheckBox chk_waiting_action = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_waiting_action);
+        chk_waiting_action.setText(hmAux_Trans.get("lbl_chk_waiting_action"));
+        chk_waiting_action.setChecked(filter_waiting_action);
+        //
+        CheckBox chk_done = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_done);
+        chk_done.setText(hmAux_Trans.get("lbl_chk_done"));
+        chk_done.setChecked(filter_done);
+        //
+        CheckBox chk_cancelled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_cancelled);
+        chk_cancelled.setText(hmAux_Trans.get("lbl_chk_cancelled"));
+        chk_cancelled.setChecked(filter_cancelled);
+        //
         alert
-                .setView(view)
-                .setCancelable(true)
-        ;
-
+            .setView(view)
+            .setCancelable(true)
+            .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    applyFilter();
+                }
+            });
+        CompoundButton.OnCheckedChangeListener chkListner = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                switch (buttonView.getId()){
+                    case R.id.act037_helper_dialog_chk_edit:
+                        filter_edit = isChecked;
+                        break;
+                    case R.id.act037_helper_dialog_chk_process:
+                        filter_process = isChecked;
+                        break;
+                    case R.id.act037_helper_dialog_chk_waiting_action:
+                        filter_waiting_action = isChecked;
+                        break;
+                    case R.id.act037_helper_dialog_chk_done:
+                        filter_done = isChecked;
+                        break;
+                    case R.id.act037_helper_dialog_chk_cancelled:
+                        filter_cancelled = isChecked;
+                        break;
+                }
+            }
+        };
+        //
+        chk_edit.setOnCheckedChangeListener(chkListner);
+        chk_process.setOnCheckedChangeListener(chkListner);
+        chk_waiting_action.setOnCheckedChangeListener(chkListner);
+        chk_done.setOnCheckedChangeListener(chkListner);
+        chk_cancelled.setOnCheckedChangeListener(chkListner);
+        //
         alert.show();
     }
 

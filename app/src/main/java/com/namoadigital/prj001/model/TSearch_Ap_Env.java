@@ -50,6 +50,7 @@ public class TSearch_Ap_Env {
         private String custom_form_version;
         private String custom_form_data;
         private String ap_code;
+        private String ap_scn;
 
         public String getCustomer_code() {
             return customer_code;
@@ -97,6 +98,14 @@ public class TSearch_Ap_Env {
 
         public void setAp_code(String ap_code) {
             this.ap_code = ap_code;
+        }
+
+        public String getAp_scn() {
+            return ap_scn;
+        }
+
+        public void setAp_scn(String ap_scn) {
+            this.ap_scn = ap_scn;
         }
     }
 }

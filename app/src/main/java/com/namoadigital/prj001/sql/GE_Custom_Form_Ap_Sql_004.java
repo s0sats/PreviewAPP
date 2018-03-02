@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by d.luche on 26/02/2018.
@@ -39,12 +40,13 @@ public class GE_Custom_Form_Ap_Sql_004 implements Specification {
                         "   a.ap_who,\n" +
                         "   a.ap_how,\n" +
                         "   a.ap_how_much,\n" +
-                        "   a.department_code\n" +
+                        "   a.department_code,\n" +
+                        "   a.ap_scn\n" +
                         " FROM\n   " +
                         GE_Custom_Form_ApDao.TABLE + " a\n" +
                         " WHERE \n" +
                         "   a.customer_code = '"+customer_code+"'\n" +
-                        "   and a.sync_required == 1\n")
+                        "   and a.ap_status not in('"+ Constant.SYS_STATUS_DONE+"','"+ Constant.SYS_STATUS_CANCELLED+"') \n")
                 .append(";")
                 .append(GE_Custom_Form_ApDao.CUSTOMER_CODE+"#"+
                         GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE+"#"+
@@ -62,7 +64,9 @@ public class GE_Custom_Form_Ap_Sql_004 implements Specification {
                         GE_Custom_Form_ApDao.AP_WHO+"#"+
                         GE_Custom_Form_ApDao.AP_HOW+"#"+
                         GE_Custom_Form_ApDao.AP_HOW_MUCH+"#"+
-                        GE_Custom_Form_ApDao.DEPARTMENT_CODE)
+                        GE_Custom_Form_ApDao.DEPARTMENT_CODE+"#"+
+                        GE_Custom_Form_ApDao.AP_SCN
+                )
                 .toString();
     }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -82,11 +83,12 @@ import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
@@ -193,6 +195,7 @@ public class WS_Sync extends IntentService {
         EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_ProfileDao evProfileDao =  new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         DataPackage dataPackage = new DataPackage();
@@ -247,6 +250,35 @@ public class WS_Sync extends IntentService {
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SO = new ArrayList<>();
             dataPackage.setSO(SO);
+        }
+        //Adiciona form_aps no data_package
+        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_AP)){
+            JsonArray apJsonArray = new JsonArray();
+            ArrayList<HMAux> apAuxList = (ArrayList<HMAux>) formApDao.query_HM(
+                    new GE_Custom_Form_Ap_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //
+            if (apAuxList != null && apAuxList.size() > 0) {
+                //
+                for (HMAux hmAux : apAuxList) {
+                    TSearch_Ap_Env.ObjAp objAp = new TSearch_Ap_Env.ObjAp();
+                    //
+                    objAp.setCustomer_code(hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE));
+                    objAp.setCustom_form_type(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE));
+                    objAp.setCustom_form_code(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE));
+                    objAp.setCustom_form_version(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
+                    objAp.setCustom_form_data(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
+                    objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+                    objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
+                    //
+                    apJsonArray.add(gson.toJsonTree(objAp));
+                }
+                //
+                dataPackage.setAP(ToolBox_Inf.setWebSocketJsonParam(apJsonArray));
+            }
+
         }
 
         TSync_Env env =  new TSync_Env();
@@ -434,7 +466,7 @@ public class WS_Sync extends IntentService {
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
             departmentDao.remove(new MD_Department_Sql_Truncate().toSqlQuery());
             mdUserDao.remove(new MD_User_Sql_Truncate().toSqlQuery());
-            geCustomFormApDao.remove(new GE_Custom_Form_Ap_Sql_Truncate().toSqlQuery());
+            //geCustomFormApDao.remove(new GE_Custom_Form_Ap_Sql_Truncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -631,7 +663,11 @@ public class WS_Sync extends IntentService {
                         new TypeToken<ArrayList<GE_Custom_Form_Ap>>() {
                         }.getType()
                 );
-
+                //
+                for (GE_Custom_Form_Ap formAp:action_plans) {
+                    formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+                }
+                //
                 geCustomFormApDao.addUpdate(action_plans, false);
             }
         }

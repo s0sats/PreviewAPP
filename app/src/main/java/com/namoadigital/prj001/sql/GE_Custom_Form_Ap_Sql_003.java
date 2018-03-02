@@ -17,23 +17,17 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
     private String status_filter;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(GE_Custom_Form_ApDao.columns);
 
-    public GE_Custom_Form_Ap_Sql_003(long customer_code, boolean filter_pending, boolean filter_done) {
+    public GE_Custom_Form_Ap_Sql_003(long customer_code, boolean filter_edit, boolean filter_process,boolean filter_waiting_action,boolean filter_done,boolean filter_cancelled) {
         this.customer_code = customer_code;
-        //
-        if(filter_pending || filter_done){
             String inFilter = "";
-            if(filter_pending){
-                inFilter +=
-                        "'" + Constant.SYS_STATUS_EDIT + "'," +
-                        "'" + Constant.SYS_STATUS_PROCESS + "'," +
-                        "'" + Constant.SYS_STATUS_WAITING_ACTION + "',";
-            }
-            inFilter += filter_done ? "'" + Constant.SYS_STATUS_DONE + "'," : "";
-            //
-            status_filter = "     and a.ap_status in ("
-                    + inFilter.substring(0, inFilter.length() - 1) +
-                    ")\n";
-        }
+                inFilter += filter_edit ? "'" + Constant.SYS_STATUS_EDIT + "'," : "";
+                inFilter += filter_process ? "'" + Constant.SYS_STATUS_PROCESS + "',"  : "";
+                inFilter += filter_waiting_action ? "'" + Constant.SYS_STATUS_WAITING_ACTION + "'," : "";
+                inFilter += filter_done ? "'" + Constant.SYS_STATUS_DONE + "'," : "";
+                inFilter += filter_cancelled ? "'" + Constant.SYS_STATUS_CANCELLED + "'," : "";
+                inFilter =  inFilter.length() > 0 ? inFilter.substring(0,inFilter.length()-1) : "";
+                //
+                status_filter = inFilter.length() > 0 ? "  and a.ap_status in ("+inFilter+") \n" : "";
     }
 
     @Override
