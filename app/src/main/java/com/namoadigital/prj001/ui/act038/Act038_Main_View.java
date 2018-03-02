@@ -21,7 +21,7 @@ public interface Act038_Main_View {
 
     void showBtnSave(boolean visible);
 
-
+    void showPD(String ttl, String msg);
 
 
 }

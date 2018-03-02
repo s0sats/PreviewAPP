@@ -34,4 +34,6 @@ public interface Act038_Main_Presenter {
 
     void applyUserProfile(ArrayList<View> editable_views_list);
 
+    void executeApSyncWs();
+
 }

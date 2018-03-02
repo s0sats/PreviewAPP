@@ -41,7 +41,7 @@ public class GE_Custom_Form_Ap_Sql_007 implements Specification {
                         " WHERE\n" +
                         "     a.customer_code = '"+customer_code+"'\n" +
                         "     and a.custom_form_url is not null\n" +
-                        "     and a.custom_form_url_local is null\n" +
+                        "     and a.custom_form_url_local = '' \n" +
                         " GROUP BY\n" +
                         "       a.customer_code,\n" +
                         "       a.custom_form_type ,\n" +

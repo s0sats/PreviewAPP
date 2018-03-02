@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act038;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -13,6 +15,7 @@ import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.receiver.WBR_AP_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.sql.MD_Department_Sql_001;
 import com.namoadigital.prj001.sql.MD_Department_Sql_002;
@@ -191,5 +194,20 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         } else {
             mView.showBtnSave(false);
         }
+    }
+
+    @Override
+    public void executeApSyncWs() {
+        mView.showPD(
+                hmAux_Trans.get("progress_sync_ap_ttl"),
+                hmAux_Trans.get("progress_sync_ap_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_AP_Search.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED,1);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }

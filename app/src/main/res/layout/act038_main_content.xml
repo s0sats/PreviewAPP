@@ -183,22 +183,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:gravity="center_vertical"
                         android:text="Status" />
 
                     <com.namoa_digital.namoa_library.ctls.MkDateTime
                         android:id="@+id/act038_header_et_form_when_ttl"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
-                        android:padding="5dp"
-                        app:mBARCODE="false"
-                        app:mInputType="DATE"
-                        app:mNFC="false"
-                        app:mOCR="false" />
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginRight="7dp"
+                        android:layout_height="wrap_content" />
 
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -206,8 +198,72 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:gravity="center_vertical"
                         android:text="Users" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/act038_content_iv_pdf"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:paddingBottom="4dp"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
+                            android:paddingTop="4dp"
+                            android:src="@drawable/ic_cancelar_ns_states" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/act038_content_iv_chat_nav"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:paddingBottom="4dp"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
+                            android:paddingTop="4dp"
+                            android:src="@drawable/ic_ok_ns_states" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/act038_content_iv_up"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:paddingBottom="4dp"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
+                            android:paddingTop="4dp"
+                            android:src="@drawable/ic_cancelar_ns_states" />
+
+
+                        <ImageView
+                            android:id="@+id/act038_content_iv_down"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:paddingBottom="4dp"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
+                            android:paddingTop="4dp"
+                            android:src="@drawable/ic_ok_ns_states" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
             </LinearLayout>

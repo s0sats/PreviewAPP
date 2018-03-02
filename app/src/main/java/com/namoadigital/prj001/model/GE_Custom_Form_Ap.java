@@ -40,6 +40,10 @@ public class GE_Custom_Form_Ap {
     private String custom_form_url;
     private String custom_form_url_local;
 
+    public GE_Custom_Form_Ap() {
+        this.custom_form_url_local = "";
+    }
+
     public long getCustomer_code() {
         return customer_code;
     }

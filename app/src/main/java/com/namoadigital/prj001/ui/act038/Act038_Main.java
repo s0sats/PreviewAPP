@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act038;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -13,21 +14,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +94,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private TextView tv_form_comments_ttl;
     private EditText et_form_comments_ttl;
     private ArrayList<View> editable_views_list = new ArrayList<>();
+
+    private ImageView iv_pdf;
+    private ImageView iv_chat_nav;
+    private ImageView iv_up;
+    private ImageView iv_down;
+
     private Button btn_save;
 
     @Override
@@ -143,6 +154,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("ap_who_search_lbl");
         transList.add("department_lbl");
         transList.add("department_search_lbl");
+        transList.add("btn_save_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -231,7 +243,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_comments_ttl = (EditText) findViewById(R.id.act038_opc_et_comments_ttl);
         editable_views_list.add(et_form_comments_ttl);
         //
+        iv_pdf = (ImageView) findViewById(R.id.act038_content_iv_pdf);
+        iv_chat_nav = (ImageView) findViewById(R.id.act038_content_iv_chat_nav);
+        iv_up = (ImageView) findViewById(R.id.act038_content_iv_up);
+        iv_down = (ImageView) findViewById(R.id.act038_content_iv_down);
+        //
         btn_save = (Button) findViewById(R.id.act038_btn_save);
+        btn_save.setText(hmAux_Trans.get("btn_save_lbl"));
         //
         mPresenter.getloadAP(
                 mCustomer_Code,
@@ -269,7 +287,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
     @Override
     public void showBtnSave(boolean visible) {
-        btn_save.setVisibility(visible ? View.VISIBLE : View.GONE );
+        btn_save.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -324,6 +342,23 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         tv_form_comments_ttl.setText(hmAux_Trans.get("ap_comments_lbl"));
         et_form_comments_ttl.setEnabled(true);
         et_form_comments_ttl.setText(ap.getAp_comments() == null ? "" : String.valueOf(ap.getAp_comments()));
+
+        if (mGe_custom_form_ap.getSync_required() == 1) {
+            iv_down.setVisibility(View.VISIBLE);
+        } else {
+            iv_down.setVisibility(View.GONE);
+        }
+        //
+        if (mGe_custom_form_ap.getUpload_required() == 1) {
+            iv_up.setVisibility(View.VISIBLE);
+        } else {
+            iv_up.setVisibility(View.GONE);
+        }
+        //
+        if ((mGe_custom_form_ap.getSync_required() == 1) && (mGe_custom_form_ap.getUpload_required() == 1)) {
+            iv_down.setVisibility(View.VISIBLE);
+            iv_up.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -413,6 +448,57 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             }
         });
 
+        iv_pdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (mGe_custom_form_ap.getCustom_form_url_local().trim().length() != 0) {
+
+                    File file = new File(Constant.CACHE_PATH + "/" + mGe_custom_form_ap.getCustom_form_url_local().trim());
+
+                    try {
+
+                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                        ToolBox_Inf.copyFile(
+                                file,
+                                new File(Constant.CACHE_PDF)
+                        );
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                    }
+
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + mGe_custom_form_ap.getCustom_form_url_local().trim())), "application/pdf");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                    startActivity(intent);
+                }
+            }
+        });
+
+        iv_chat_nav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "chat_nav", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        iv_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(context, "up", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        iv_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "down", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         iv_opc_show_hide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -421,6 +507,15 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 } else {
                     ll_opc.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.executeApSyncWs();
+
+                Toast.makeText(context, "save", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -457,5 +552,46 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+        //
+        showMsg(
+                hmAux_Trans.get("alert_sync_success_ttl"),
+                hmAux_Trans.get("alert_sync_success_msg")
+        );
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    private void showMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
+
+    }
+
+    private void testWsApSave() {
+        Intent mIntent = new Intent(context, WBR_AP_Save.class);
+        Bundle bundle = new Bundle();
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }
