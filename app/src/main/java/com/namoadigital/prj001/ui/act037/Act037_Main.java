@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +45,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     private Act037_Main_Presenter_Impl mPresenter;
 
     private ListView lv_aps;
-    private Act037_Adapter_AP act037_adapter_ap;
+    private Act037_Adapter_AP mAdapter;
     private ArrayList<HMAux> dados;
     private MKEditTextNM mket_filter;
     private ImageView iv_filter;
@@ -128,7 +129,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         //
         lv_aps = (ListView) findViewById(R.id.act037_lv_aps);
         //
-        applyFilter();
+        applyStatusFilter();
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
@@ -148,14 +149,15 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
 
     @Override
     public void loadAPs(ArrayList<HMAux> aps) {
-        act037_adapter_ap = new Act037_Adapter_AP(
+        mAdapter = new Act037_Adapter_AP(
                 context,
                 //R.layout.act037_main_content_cell_ap_normal,
                 R.layout.namoa_ap_cell,
-                aps
+                aps,
+                mket_filter.getText().toString().trim()
         );
-
-        lv_aps.setAdapter(act037_adapter_ap);
+        //
+        lv_aps.setAdapter(mAdapter);
     }
 
     private void iniUIFooter() {
@@ -178,6 +180,18 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     }
 
     private void initActions() {
+        mket_filter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+            }
+        });
+
         lv_aps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -195,7 +209,13 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         });
     }
 
-    private void applyFilter() {
+    private void applySearchFilter() {
+        if (mAdapter != null) {
+            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+        }
+    }
+
+    private void applyStatusFilter() {
         mPresenter.getloadAPs(
                 filter_edit,
                 filter_process,
@@ -222,22 +242,27 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         CheckBox chk_edit = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_edit);
         chk_edit.setText(hmAux_Trans.get("lbl_chk_edit"));
         chk_edit.setChecked(filter_edit);
+        chk_edit.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_EDIT))));
         //
         CheckBox chk_process = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_process);
         chk_process.setText(hmAux_Trans.get("lbl_chk_process"));
         chk_process.setChecked(filter_process);
+        chk_process.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         //
         CheckBox chk_waiting_action = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_waiting_action);
         chk_waiting_action.setText(hmAux_Trans.get("lbl_chk_waiting_action"));
         chk_waiting_action.setChecked(filter_waiting_action);
+        chk_waiting_action.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_ACTION))));
         //
         CheckBox chk_done = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_done);
         chk_done.setText(hmAux_Trans.get("lbl_chk_done"));
         chk_done.setChecked(filter_done);
+        chk_done.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_DONE))));
         //
         CheckBox chk_cancelled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_cancelled);
         chk_cancelled.setText(hmAux_Trans.get("lbl_chk_cancelled"));
         chk_cancelled.setChecked(filter_cancelled);
+        chk_cancelled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_CANCELLED))));
         //
         alert
             .setView(view)
@@ -245,7 +270,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
             .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    applyFilter();
+                    applyStatusFilter();
                 }
             });
         CompoundButton.OnCheckedChangeListener chkListner = new CompoundButton.OnCheckedChangeListener() {

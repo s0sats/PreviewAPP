@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,17 +24,19 @@ import java.util.List;
  * Created by neomatrix on 2/26/18.
  */
 
-public class Act037_Adapter_AP extends BaseAdapter {
+public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
 
     private Context context;
     private int resource_01;
     //
     private ArrayList<HMAux> data;
+    private ArrayList<HMAux> data_filtered;
     private String mResource_Code;
     private String mResource_Name = "act037_adapter_ap";
     private HMAux hmAux_Trans;
+    private ValueFilter valueFilter;
 
-    public Act037_Adapter_AP(Context context, int resource_01, ArrayList<HMAux> data) {
+    public Act037_Adapter_AP(Context context, int resource_01, ArrayList<HMAux> data, String mket_filter ) {
         this.context = context;
         this.resource_01 = resource_01;
         this.data = data;
@@ -44,13 +48,9 @@ public class Act037_Adapter_AP extends BaseAdapter {
         );
         //
         loadTranslation();
-    }
-
-    public Act037_Adapter_AP(Context context, int resource_01, ArrayList<HMAux> data, HMAux hmAux_Trans) {
-        this.context = context;
-        this.resource_01 = resource_01;
-        this.data = data;
-        this.hmAux_Trans = hmAux_Trans;
+        //
+        this.data_filtered = data;
+        getFilter().filter(mket_filter);
     }
 
     @Override
@@ -251,4 +251,43 @@ public class Act037_Adapter_AP extends BaseAdapter {
         );
     }
 
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new ValueFilter();
+        }
+        return valueFilter;
+    }
+
+    private class ValueFilter extends Filter{
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            constraint = ToolBox_Inf.AccentMapper(constraint.toString().toLowerCase());
+
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                for (HMAux hmAux : data_filtered) {
+                    String ap_desc = ToolBox_Inf.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.AP_DESCRIPTION).toLowerCase());
+                    if (ap_desc.contains(constraint.toString().toLowerCase())) {
+                        filterList.add(hmAux);
+                    }
+                }
+                //
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = data_filtered.size();
+                results.values = data_filtered;
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            data = (ArrayList<HMAux>) results.values;
+            //
+            notifyDataSetChanged();
+        }
+    }
 }
