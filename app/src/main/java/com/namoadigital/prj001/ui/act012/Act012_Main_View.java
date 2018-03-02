@@ -20,6 +20,8 @@ public interface Act012_Main_View {
 
     void callAct026(Context context);
 
+    void callAct037(Context context);
+
     void showMsg();
 
 }

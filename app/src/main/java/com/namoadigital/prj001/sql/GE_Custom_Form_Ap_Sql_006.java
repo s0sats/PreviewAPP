@@ -39,7 +39,7 @@ public class GE_Custom_Form_Ap_Sql_006 implements Specification {
                         "    a.customer_code = '"+customer_code+"'\n" +
                         //Alinha deaixo de ser  = 1, só esta <> 1
                         //para testes - VOLTAR AO CORRETO APOS TESTES
-                        "    and a.upload_required <> 1 \n")
+                        "    and a.upload_required = 1 \n")
                 .append(";")
                 .append(HmAuxFields)
                 .toString();

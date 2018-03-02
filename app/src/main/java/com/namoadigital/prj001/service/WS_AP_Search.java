@@ -191,7 +191,7 @@ public class WS_AP_Search extends IntentService {
             return;
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_result"), "", "0");
         //
         processAPSearchReturn(rec.getObj());
     }
@@ -209,8 +209,9 @@ public class WS_AP_Search extends IntentService {
         List<String> translist = new ArrayList<>();
 
         translist.add("msg_receiving_ap_info");
-        translist.add("msg_processing_list");
+        translist.add("msg_processing_result");
         translist.add("msg_end_ap_sync");
+        translist.add("msg_no_ap_to_sync");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

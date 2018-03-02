@@ -8,7 +8,6 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +28,7 @@ import com.namoadigital.prj001.adapter.Act037_Adapter_AP;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -49,16 +49,13 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     private Act037_Adapter_AP mAdapter;
     private MKEditTextNM mket_filter;
     private ImageView iv_filter;
-    //
     private boolean filter_edit;
     private boolean filter_process;
     private boolean filter_waiting_action;
     private boolean filter_done;
     private boolean filter_cancelled;
-    //
     private Bundle bundle;
-    private int backAction;
-    private String requestingAct;
+    private String requesting_act;
 
 
     @Override
@@ -84,7 +81,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
                 mModule_Code,
                 Constant.ACT037
         );
-
+        //
         loadTranslation();
     }
 
@@ -138,6 +135,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
+            requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT036);
         } else {
         }
     }
@@ -183,7 +181,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
 
             @Override
             public void reportTextChange(String s, boolean b) {
-                mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+                applySearchFilter();
             }
         });
 
@@ -335,16 +333,19 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-
-        //mPresenter.onBackPressedClicked();
-
-        Log.d("DDDD", "Passei por aqui!!!");
-
-        callAct005(context);
+        mPresenter.onBackPressedClicked(requesting_act);
     }
 
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct012(Context context) {
+        Intent mIntent = new Intent(context, Act012_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

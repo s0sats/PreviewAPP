@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
@@ -33,14 +32,9 @@ import java.util.List;
 public class Act036_Main extends Base_Activity implements Act036_Main_View {
 
     private Act036_Main_Presenter_Impl mPresenter;
-
-    private ArrayList<HMAux> dados;
-
     private Bundle bundle;
-
     private Button btn_pendencies;
     private Button btn_sync;
-
     private int pendencies_qty;
     private int syncs_qty;
 
@@ -78,6 +72,8 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
         transList.add("progress_sync_ap_msg");
         transList.add("alert_sync_success_ttl");
         transList.add("alert_sync_success_msg");
+        transList.add("btn_pendencies_ap");
+        transList.add("btn_sync_ap");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -100,10 +96,10 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
                 );
         //
         btn_pendencies = (Button) findViewById(R.id.act036_btn_pendencies);
-        btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
+        btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_ap"));
         //
         btn_sync = (Button) findViewById(R.id.act036_btn_sync);
-        btn_sync.setText(hmAux_Trans.get("btn_sync_so"));
+        btn_sync.setText(hmAux_Trans.get("btn_sync_ap"));
 
         mPresenter.getPendencies();
         mPresenter.getSync();
@@ -255,6 +251,10 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
     public void callAct037(Context context) {
         Intent mIntent = new Intent(context, Act037_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT036);
+        mIntent.putExtras(bundle);
+        //
         startActivity(mIntent);
         finish();
     }
@@ -269,6 +269,8 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
                 hmAux_Trans.get("alert_sync_success_ttl"),
                 hmAux_Trans.get("alert_sync_success_msg")
         );
+        //
+        mPresenter.getSync();
     }
 
     //Tratativa SESSION NOT FOUND
@@ -298,7 +300,6 @@ public class Act036_Main extends Base_Activity implements Act036_Main_View {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
