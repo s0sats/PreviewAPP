@@ -519,9 +519,11 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
                 mGe_custom_form_ap.setAp_status(ss_status.getmValue().get(SearchableSpinner.ID));
                 mGe_custom_form_ap.setAp_when(et_form_when_ttl.getmValue());
-                mGe_custom_form_ap.setDepartment_code(Integer.parseInt(ss_departments.getmValue().get(SearchableSpinner.ID)));
-                mGe_custom_form_ap.setDepartment_desc(ss_departments.getmValue().get(SearchableSpinner.DESCRIPTION));
-                //mGe_custom_form_ap.setDepartment_id(ss_departments.getmValue().get("department_id")); // ainda nao tenho
+                if (ss_departments.getmValue().get(SearchableSpinner.ID) != null && !ss_departments.getmValue().get(SearchableSpinner.ID).isEmpty()) {
+                    mGe_custom_form_ap.setDepartment_code(Integer.parseInt(ss_departments.getmValue().get(SearchableSpinner.ID)));
+                    mGe_custom_form_ap.setDepartment_desc(ss_departments.getmValue().get(SearchableSpinner.DESCRIPTION));
+                    mGe_custom_form_ap.setDepartment_id(ss_departments.getmValue().get("department_id"));
+                }
                 mGe_custom_form_ap.setAp_what(et_form_what_ttl.getText().toString().trim());
                 mGe_custom_form_ap.setAp_where(et_form_where_ttl.getText().toString().trim());
                 mGe_custom_form_ap.setAp_why(et_form_why_ttl.getText().toString().trim());
