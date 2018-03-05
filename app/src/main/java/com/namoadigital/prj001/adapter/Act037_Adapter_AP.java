@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -140,6 +141,7 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
     */
     private void processNormalAP(HMAux item, View convertView) {
         TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.namoa_ap_tv_form_ttl);
+        ImageView iv_sync_upload = (ImageView) convertView.findViewById(R.id.namoa_ap_iv_sync_upload);
         TextView tv_type = (TextView) convertView.findViewById(R.id.namoa_ap_tv_type_label);
         TextView tv_form_label = (TextView) convertView.findViewById(R.id.namoa_ap_tv_form_label);
         TextView tv_data_serv = (TextView) convertView.findViewById(R.id.namoa_ap_tv_data_serv_lbl);
@@ -167,6 +169,15 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
         ll_action_btn.setVisibility(View.GONE);
         //
         tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
+        if(item.get(GE_Custom_Form_ApDao.SYNC_REQUIRED).equals("1")){
+            iv_sync_upload.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_down_thick_black_24dp));
+            iv_sync_upload.setVisibility(View.VISIBLE);
+        }else if(item.get(GE_Custom_Form_ApDao.UPLOAD_REQUIRED).equals("1")){
+            iv_sync_upload.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_up_thick_black_24dp));
+            iv_sync_upload.setVisibility(View.VISIBLE);
+        }else{
+            iv_sync_upload.setVisibility(View.GONE);
+        }
         tv_type.setText(hmAux_Trans.get("form_type_lbl"));
         tv_type_val.setText(
                 item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + " - " +
