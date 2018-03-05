@@ -219,12 +219,16 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
                         item.get(GE_Custom_Form_ApDao.AP_WHO_NICK)
         );
         tv_ap_when.setText( hmAux_Trans.get("ap_when_lbl"));
-        tv_ap_when_val.setText(
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_ApDao.AP_WHEN)),
-                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                        )
-        );
+        if(!item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()){
+            tv_ap_when_val.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_ApDao.AP_WHEN)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
+        }else{
+            tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHEN));
+        }
     }
 
     private void loadTranslation() {

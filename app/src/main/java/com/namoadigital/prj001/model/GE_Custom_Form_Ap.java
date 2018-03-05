@@ -40,7 +40,7 @@ public class GE_Custom_Form_Ap {
     @Expose
     private String ap_how;
     @Expose
-    private Double ap_how_much;
+    private String ap_how_much;
     @Expose
     private String ap_when;
     @Expose
@@ -203,11 +203,11 @@ public class GE_Custom_Form_Ap {
         this.ap_how = ap_how;
     }
 
-    public Double getAp_how_much() {
+    public String getAp_how_much() {
         return ap_how_much;
     }
 
-    public void setAp_how_much(Double ap_how_much) {
+    public void setAp_how_much(String ap_how_much) {
         this.ap_how_much = ap_how_much;
     }
 
