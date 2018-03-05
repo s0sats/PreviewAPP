@@ -539,7 +539,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mGe_custom_form_ap.setAp_where(ToolBox_Inf.prepareForNull(et_form_where_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_why(ToolBox_Inf.prepareForNull(et_form_why_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_how(ToolBox_Inf.prepareForNull(et_form_how_ttl.getText().toString()));
-                mGe_custom_form_ap.setAp_how_much(ToolBox_Inf.convertStringToDouble(et_form_how_mcuch_ttl.getText().toString()));
+                //mGe_custom_form_ap.setAp_how_much(ToolBox_Inf.convertStringToDouble(et_form_how_mcuch_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_what(ToolBox_Inf.prepareForNull(et_form_what_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_comments(ToolBox_Inf.prepareForNull(et_form_comments_ttl.getText().toString()));
                 mGe_custom_form_ap.setUpload_required(1);
