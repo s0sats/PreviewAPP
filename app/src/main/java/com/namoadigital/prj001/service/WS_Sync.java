@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -253,7 +252,7 @@ public class WS_Sync extends IntentService {
         }
         //Adiciona form_aps no data_package
         if(dataPackageType.contains(DataPackage.DATA_PACKAGE_AP)){
-            JsonArray apJsonArray = new JsonArray();
+            ArrayList<TSearch_Ap_Env.ObjAp> apList = new ArrayList<>();
             ArrayList<HMAux> apAuxList = (ArrayList<HMAux>) formApDao.query_HM(
                     new GE_Custom_Form_Ap_Sql_004(
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
@@ -273,10 +272,10 @@ public class WS_Sync extends IntentService {
                     objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
                     objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                     //
-                    apJsonArray.add(gson.toJsonTree(objAp));
+                    apList.add(objAp);
                 }
                 //
-                dataPackage.setAP(ToolBox_Inf.setWebSocketJsonParam(apJsonArray));
+                dataPackage.setAP(apList);
             }
 
         }

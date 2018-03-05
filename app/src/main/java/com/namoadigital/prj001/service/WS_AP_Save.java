@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -90,10 +89,7 @@ public class WS_AP_Save extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
-        env.setObj(ToolBox_Inf.setWebSocketJsonParam(
-                ToolBox_Inf.arrayListToJsonArray(apAuxList)
-                )
-        );
+        env.setAP(apAuxList);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_ap_info"), "", "0");
         //
@@ -131,9 +127,7 @@ public class WS_AP_Save extends IntentService {
 
     private void processApSaveReturn(TSave_Ap_Rec rec) {
 
-        Log.d("teste", "hugo teste");
-
-        switch (rec.getSave()) {
+        switch (rec.getSave()){
             case "OK":
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), "", "0");
                 break;

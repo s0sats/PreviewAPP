@@ -19,7 +19,7 @@ public class DataPackage {
     private ArrayList<Long> CHECKLIST;
     private ArrayList<String> SO;
     private ArrayList<String> SCHEDULE;
-    private String AP;
+    private ArrayList<TSearch_Ap_Env.ObjAp> AP;
 
     public DataPackage() {
     }
@@ -56,11 +56,11 @@ public class DataPackage {
         this.SCHEDULE = SCHEDULE;
     }
 
-    public String getAP() {
+    public ArrayList<TSearch_Ap_Env.ObjAp> getAP() {
         return AP;
     }
 
-    public void setAP(String AP) {
+    public void setAP(ArrayList<TSearch_Ap_Env.ObjAp> AP) {
         this.AP = AP;
     }
 }

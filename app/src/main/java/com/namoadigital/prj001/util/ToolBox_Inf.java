@@ -3853,24 +3853,23 @@ public class ToolBox_Inf {
     }
 
     public static void setAPStatusColor(Context context, TextView tv_status, String status) {
-        switch (status) {
+        tv_status.setTextColor(context.getResources().getColor(getApStatusColor(status)));
+    }
+
+    public static int getApStatusColor(String status){
+        switch (status){
             case Constant.SO_STATUS_EDIT:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
-                break;
+                return R.color.namoa_color_pink_1;
             case Constant.SYS_STATUS_PROCESS:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
+                return R.color.namoa_color_yellow_2;
             case Constant.SYS_STATUS_WAITING_ACTION:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_brown));
-                break;
+                return R.color.namoa_color_brown;
             case Constant.SYS_STATUS_DONE:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
+                return R.color.namoa_color_green_2;
             case Constant.SYS_STATUS_CANCELLED:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
-                break;
+                return R.color.namoa_color_gray_4;
             default:
-                break;
+                return R.color.namoa_color_gray_4;
         }
     }
 

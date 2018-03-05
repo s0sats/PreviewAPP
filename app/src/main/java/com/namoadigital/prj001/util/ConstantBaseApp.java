@@ -351,6 +351,7 @@ public class ConstantBaseApp extends ConstantBase {
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
+    public static final String MODULE_FORM_AP = "MODULE_FORM_AP";
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
     public static final String MODULE_SO_SEARCH_SERIAL_EXPRESS = "MODULE_SO_SEARCH_SERIAL_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";

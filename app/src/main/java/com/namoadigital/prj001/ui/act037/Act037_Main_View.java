@@ -12,10 +12,11 @@ import java.util.ArrayList;
 
 public interface Act037_Main_View {
 
-
     void loadAPs(ArrayList<HMAux> aps);
 
     void callAct005(Context context);
+
+    void callAct012(Context context);
 
     void callAct038(Context context, HMAux hmAux);
 

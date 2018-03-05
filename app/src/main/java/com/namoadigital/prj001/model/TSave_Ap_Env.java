@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by d.luche on 23/02/2018.
  */
@@ -10,7 +12,7 @@ public class TSave_Ap_Env {
     private String app_version;
     private String session_app;
     private String token;
-    private String obj;
+    private ArrayList<GE_Custom_Form_Ap> AP;
 
     public String getApp_code() {
         return app_code;
@@ -44,12 +46,12 @@ public class TSave_Ap_Env {
         this.token = token;
     }
 
-    public String getObj() {
-        return obj;
+    public ArrayList<GE_Custom_Form_Ap> getAP() {
+        return AP;
     }
 
-    public void setObj(String obj) {
-        this.obj = obj;
+    public void setAP(ArrayList<GE_Custom_Form_Ap> AP) {
+        this.AP = AP;
     }
 
 }

@@ -8,4 +8,6 @@ public interface Act037_Main_Presenter {
 
     void getloadAPs(boolean filter_edit, boolean filter_process, boolean filter_waiting_action, boolean filter_done, boolean filter_cancelled);
 
+    void onBackPressedClicked(String requesting_act);
+
 }

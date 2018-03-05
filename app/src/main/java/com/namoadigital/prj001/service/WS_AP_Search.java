@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -89,7 +88,8 @@ public class WS_AP_Search extends IntentService {
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
         formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
-        JsonArray apJsonArray = new JsonArray();
+        ArrayList<TSearch_Ap_Env.ObjAp> apList = new ArrayList<>();
+
         String obj = "";
         //
         if (sync_required == 1) {
@@ -112,7 +112,7 @@ public class WS_AP_Search extends IntentService {
                     objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
                     objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                     //
-                    apJsonArray.add(gson.toJsonTree(objAp));
+                    apList.add(objAp);
                 }
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
@@ -143,17 +143,15 @@ public class WS_AP_Search extends IntentService {
                 objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
                 objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                 //
-                apJsonArray.add(gson.toJsonTree(objAp));
+                apList.add(objAp);
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
                 return;
             }
         }
         //
-        obj = ToolBox_Inf.setWebSocketJsonParam(apJsonArray);
-        //
         DataPackage dataPackage = new DataPackage();
-        dataPackage.setAP(obj);
+        dataPackage.setAP(apList);
         //
         TSearch_Ap_Env env = new TSearch_Ap_Env();
         //
@@ -191,7 +189,7 @@ public class WS_AP_Search extends IntentService {
             return;
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_result"), "", "0");
         //
         processAPSearchReturn(rec.getObj());
     }
@@ -209,8 +207,9 @@ public class WS_AP_Search extends IntentService {
         List<String> translist = new ArrayList<>();
 
         translist.add("msg_receiving_ap_info");
-        translist.add("msg_processing_list");
+        translist.add("msg_processing_result");
         translist.add("msg_end_ap_sync");
+        translist.add("msg_no_ap_to_sync");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

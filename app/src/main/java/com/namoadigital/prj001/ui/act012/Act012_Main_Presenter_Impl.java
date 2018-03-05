@@ -3,11 +3,13 @@ package com.namoadigital.prj001.ui.act012;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.sql.Sql_Act012_002;
+import com.namoadigital.prj001.sql.Sql_Act012_003;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -46,9 +48,19 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
                         label_translation
                 ).toSqlQuery()
         );
-
+        //
         pendencies.addAll(NFormPendencies);
-
+        //
+        //Pendencias FORM AP
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+        List<HMAux> NFormAPPendencies = formApDao.query_HM(
+                new Sql_Act012_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        label_translation
+                ).toSqlQuery()
+        );
+        //
+        pendencies.addAll(NFormAPPendencies);
         if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
             //Seleciona "pendencias do usr"
             HMAux soMyPendencies = soDao.getByStringHM(
@@ -112,6 +124,13 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
             case Constant.MODULE_SO:
                 if (!item.get(Sql_Act012_001.PENDING_QTY).equalsIgnoreCase("0")) {
                     mView.callAct026(context);
+                }else{
+                    mView.showMsg();
+                }
+                break;
+            case Constant.MODULE_FORM_AP:
+                if (!item.get(Sql_Act012_003.PENDING_QTY).equalsIgnoreCase("0")) {
+                    mView.callAct037(context);
                 }else{
                     mView.showMsg();
                 }
