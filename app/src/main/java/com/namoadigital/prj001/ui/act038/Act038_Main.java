@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -82,17 +83,17 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private SearchableSpinner ss_users;
     private SearchableSpinner ss_departments;
     private TextView tv_form_what_ttl;
-    private EditText et_form_what_ttl;
+    private MKEditTextNM et_form_what_ttl;
     private TextView tv_form_where_ttl;
-    private EditText et_form_where_ttl;
+    private MKEditTextNM et_form_where_ttl;
     private TextView tv_form_why_ttl;
-    private EditText et_form_why_ttl;
+    private MKEditTextNM et_form_why_ttl;
     private TextView tv_form_how_ttl;
-    private EditText et_form_how_ttl;
+    private MKEditTextNM et_form_how_ttl;
     private TextView tv_form_how_much_ttl;
-    private EditText et_form_how_mcuch_ttl;
+    private MKEditTextNM et_form_how_mcuch_ttl;
     private TextView tv_form_comments_ttl;
-    private EditText et_form_comments_ttl;
+    private MKEditTextNM et_form_comments_ttl;
     private ArrayList<View> editable_views_list = new ArrayList<>();
 
     private ImageView iv_pdf;
@@ -220,27 +221,33 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         editable_views_list.add(ss_departments);
         //
         tv_form_what_ttl = (TextView) findViewById(R.id.act038_opc_tv_what_ttl);
-        et_form_what_ttl = (EditText) findViewById(R.id.act038_opc_et_what_ttl);
+        et_form_what_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_what_ttl);
+        et_form_what_ttl.setmMaxSize(4000);
         editable_views_list.add(et_form_what_ttl);
 
         tv_form_where_ttl = (TextView) findViewById(R.id.act038_opc_tv_where_ttl);
-        et_form_where_ttl = (EditText) findViewById(R.id.act038_opc_et_where_ttl);
+        et_form_where_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_where_ttl);
+        et_form_where_ttl.setmMaxSize(4000);
         editable_views_list.add(et_form_where_ttl);
 
         tv_form_why_ttl = (TextView) findViewById(R.id.act038_opc_tv_why_ttl);
-        et_form_why_ttl = (EditText) findViewById(R.id.act038_opc_et_why_ttl);
+        et_form_why_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_why_ttl);
+        et_form_why_ttl.setmMaxSize(4000);
         editable_views_list.add(et_form_why_ttl);
 
         tv_form_how_ttl = (TextView) findViewById(R.id.act038_opc_tv_how_ttl);
-        et_form_how_ttl = (EditText) findViewById(R.id.act038_opc_et_how_ttl);
+        et_form_how_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_how_ttl);
+        et_form_how_ttl.setmMaxSize(4000);
         editable_views_list.add(et_form_how_ttl);
 
         tv_form_how_much_ttl = (TextView) findViewById(R.id.act038_opc_tv_how_much_ttl);
-        et_form_how_mcuch_ttl = (EditText) findViewById(R.id.act038_opc_et_how_much_ttl);
+        et_form_how_mcuch_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_how_much_ttl);
+        et_form_how_mcuch_ttl.setmDecimal(4);
         editable_views_list.add(et_form_how_mcuch_ttl);
 
         tv_form_comments_ttl = (TextView) findViewById(R.id.act038_opc_tv_comments_ttl);
-        et_form_comments_ttl = (EditText) findViewById(R.id.act038_opc_et_comments_ttl);
+        et_form_comments_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_comments_ttl);
+        et_form_comments_ttl.setmMaxSize(4000);
         editable_views_list.add(et_form_comments_ttl);
         //
         iv_pdf = (ImageView) findViewById(R.id.act038_content_iv_pdf);
@@ -297,7 +304,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         tv_ap_desc_ttl.setText(String.valueOf(ap.getAp_code()) + " - " + ap.getAp_description());
         tv_customer_code_ttl.setText(hmAux_Trans.get("customer_code_lbl"));
         et_customer_code_ttl.setEnabled(false);
-        et_customer_code_ttl.setText(String.valueOf(ap.getCustom_form_code() + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context)));
+        et_customer_code_ttl.setText(String.valueOf(ap.getCustomer_code() + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context)));
         //
         tv_form_type_ttl.setText(hmAux_Trans.get("form_type_lbl"));
         et_form_type_ttl.setEnabled(false);
@@ -337,7 +344,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         tv_form_how_much_ttl.setText(hmAux_Trans.get("ap_how_much_lbl"));
         et_form_how_mcuch_ttl.setEnabled(true);
-        et_form_how_mcuch_ttl.setText(ap.getAp_how_much() == null ? "" : String.valueOf(ap.getAp_how_much()));
+        et_form_how_mcuch_ttl.setText(ap.getAp_how_much() == null ? "" : String.valueOf(ap.getAp_how_much()).replace(",","."));
 
         tv_form_comments_ttl.setText(hmAux_Trans.get("ap_comments_lbl"));
         et_form_comments_ttl.setEnabled(true);
@@ -523,21 +530,27 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     mGe_custom_form_ap.setDepartment_code(Integer.parseInt(ss_departments.getmValue().get(SearchableSpinner.ID)));
                     mGe_custom_form_ap.setDepartment_desc(ss_departments.getmValue().get(SearchableSpinner.DESCRIPTION));
                     mGe_custom_form_ap.setDepartment_id(ss_departments.getmValue().get("department_id"));
+                } else {
+                    mGe_custom_form_ap.setDepartment_code(null);
+                    mGe_custom_form_ap.setDepartment_desc(null);
+                    mGe_custom_form_ap.setDepartment_id(null);
                 }
-                mGe_custom_form_ap.setAp_what(et_form_what_ttl.getText().toString().trim());
-                mGe_custom_form_ap.setAp_where(et_form_where_ttl.getText().toString().trim());
-                mGe_custom_form_ap.setAp_why(et_form_why_ttl.getText().toString().trim());
-                mGe_custom_form_ap.setAp_how(et_form_how_ttl.getText().toString().trim());
-                //mGe_custom_form_ap.setAp_how_much(Double.parseDouble(et_form_how_mcuch_ttl.getText().toString().trim())); // Tratar
-                mGe_custom_form_ap.setAp_how_much(null);
-                mGe_custom_form_ap.setAp_what(et_form_what_ttl.getText().toString().trim());
-                mGe_custom_form_ap.setAp_comments(et_form_comments_ttl.getText().toString().trim());
+                mGe_custom_form_ap.setAp_what(ToolBox_Inf.prepareForNull(et_form_what_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_where(ToolBox_Inf.prepareForNull(et_form_where_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_why(ToolBox_Inf.prepareForNull(et_form_why_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_how(ToolBox_Inf.prepareForNull(et_form_how_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_how_much(ToolBox_Inf.convertStringToDouble(et_form_how_mcuch_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_what(ToolBox_Inf.prepareForNull(et_form_what_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_comments(ToolBox_Inf.prepareForNull(et_form_comments_ttl.getText().toString()));
                 mGe_custom_form_ap.setUpload_required(1);
+                //
+                mPresenter.loadSSStatus(mGe_custom_form_ap.getAp_status());
                 //
                 mPresenter.executeWsApSave(mGe_custom_form_ap);
             }
         });
     }
+
 
     @Override
     public void onBackPressed() {
@@ -594,7 +607,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mCustom_Form_Data,
                 mAp_Code
         );
-
     }
 
     @Override

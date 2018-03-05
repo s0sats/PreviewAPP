@@ -410,7 +410,8 @@
                         android:padding="10dp"
                         app:mBARCODE="false"
                         app:mNFC="false"
-                        app:mOCR="false" />
+                        app:mOCR="false"
+                        app:mInputType="NUMBER"/>
 
                     <TextView
                         android:id="@+id/act038_opc_tv_comments_ttl"

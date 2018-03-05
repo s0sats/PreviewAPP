@@ -2782,6 +2782,26 @@ public class ToolBox_Inf {
         }
     }
 
+    public static Double convertStringToDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String prepareForNull(String value) {
+        try {
+            if (value.trim().length() != 0) {
+                return value.trim();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void cleanUpApproval(Context context, SM_SODao sm_soDao) {
         String approval_type = ToolBox_Con.getApproval_Type(context);
         //
@@ -3856,8 +3876,8 @@ public class ToolBox_Inf {
         tv_status.setTextColor(context.getResources().getColor(getApStatusColor(status)));
     }
 
-    public static int getApStatusColor(String status){
-        switch (status){
+    public static int getApStatusColor(String status) {
+        switch (status) {
             case Constant.SO_STATUS_EDIT:
                 return R.color.namoa_color_pink_1;
             case Constant.SYS_STATUS_PROCESS:
