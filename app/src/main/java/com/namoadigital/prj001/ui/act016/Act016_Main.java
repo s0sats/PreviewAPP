@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -38,6 +42,10 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private Act016_Main_Presenter_Impl mPresenter;
     private Bundle bundle;
     private Date selected_date;
+    //Implementação AP
+    private LinearLayout ll_filter;
+    private TextView tv_filter;
+    private ImageView iv_filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +81,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private void loadTranslation() {
         //
         List<String> translateList = new ArrayList<>();
+        translateList.add("filter_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -105,6 +114,13 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                         hmAux_Trans
                 );
         //
+        ll_filter = (LinearLayout) findViewById(R.id.act016_ll_filter);
+        //
+        tv_filter = (TextView) findViewById(R.id.act016_tv_filter_lbl);
+        tv_filter.setText(hmAux_Trans.get("filter_lbl"));
+        //
+        iv_filter = (ImageView) findViewById(R.id.act016_iv_filter);
+        //
         lv_schedules = (ListView) findViewById(R.id.act016_lv_schedules);
         //
         cv_schedules = (CalendarView) findViewById(R.id.act016_cv_schedules);
@@ -116,6 +132,13 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     private void initActions() {
+        iv_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Chamar dialog de filter
+            }
+        });
+        //
         cv_schedules.setEventHandler(new CalendarView.EventHandler() {
             @Override
             public void onDayPress(Date date) {
