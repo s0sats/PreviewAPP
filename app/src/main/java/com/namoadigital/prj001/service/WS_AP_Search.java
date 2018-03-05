@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -89,7 +88,8 @@ public class WS_AP_Search extends IntentService {
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
         formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
-        JsonArray apJsonArray = new JsonArray();
+        ArrayList<TSearch_Ap_Env.ObjAp> apList = new ArrayList<>();
+
         String obj = "";
         //
         if (sync_required == 1) {
@@ -112,7 +112,7 @@ public class WS_AP_Search extends IntentService {
                     objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
                     objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                     //
-                    apJsonArray.add(gson.toJsonTree(objAp));
+                    apList.add(objAp);
                 }
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
@@ -143,17 +143,15 @@ public class WS_AP_Search extends IntentService {
                 objAp.setAp_code(hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
                 objAp.setAp_scn(hmAux.get(GE_Custom_Form_ApDao.AP_SCN));
                 //
-                apJsonArray.add(gson.toJsonTree(objAp));
+                apList.add(objAp);
             } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
                 return;
             }
         }
         //
-        obj = ToolBox_Inf.setWebSocketJsonParam(apJsonArray);
-        //
         DataPackage dataPackage = new DataPackage();
-        dataPackage.setAP(obj);
+        dataPackage.setAP(apList);
         //
         TSearch_Ap_Env env = new TSearch_Ap_Env();
         //

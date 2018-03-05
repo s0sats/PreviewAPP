@@ -89,10 +89,7 @@ public class WS_AP_Save extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
-        env.setObj(ToolBox_Inf.setWebSocketJsonParam(
-                ToolBox_Inf.arrayListToJsonArray(apAuxList)
-                )
-        );
+        env.setAP(apAuxList);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_ap_info"), "", "0");
         //
