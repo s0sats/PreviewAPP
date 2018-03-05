@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by d.luche on 23/02/2018.
  */
@@ -37,8 +39,11 @@ public class GE_Custom_Form_Ap {
     private String serial_id;
     private int sync_required;
     private int upload_required;
+
+    @Expose(serialize = false)
     private String custom_form_url;
-    private String custom_form_url_local;
+
+    private transient String custom_form_url_local;
     private String last_update;
 
     public GE_Custom_Form_Ap() {

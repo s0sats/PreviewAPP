@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act038;
 
 import android.view.View;
 
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
 
@@ -35,5 +36,9 @@ public interface Act038_Main_Presenter {
     void applyUserProfile(ArrayList<View> editable_views_list);
 
     void executeApSyncWs();
+
+    void executeWsApSave(GE_Custom_Form_Ap ap);
+
+
 
 }

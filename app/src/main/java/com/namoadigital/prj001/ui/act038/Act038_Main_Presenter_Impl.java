@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.sql.MD_Department_Sql_001;
@@ -150,7 +151,15 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     public void applyUserProfile(ArrayList<View> editable_views_list) {
         int status_change = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_CHANGE_STATUS) ? 1 : 0;
         int edit = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_EDIT) ? 2 : 0;
+        //
+        int mSync_required = mGe_custom_form_ap.getSync_required();
+        //
         int profile_level = status_change + edit;
+        //
+        if (mSync_required == 1){
+            profile_level = 0;
+        }
+
         //
         for (View view : editable_views_list) {
             switch (profile_level) {
@@ -206,6 +215,27 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         Intent mIntent = new Intent(context, WBR_AP_Search.class);
         Bundle bundle = new Bundle();
         bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED,1);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeWsApSave(GE_Custom_Form_Ap ap) {
+
+        mGe_custom_form_apDao.addUpdate(
+                ap
+        );
+
+        mView.showPD(
+//                hmAux_Trans.get("progress_save_ap_ttl"),
+//                hmAux_Trans.get("progress_save_ap_msg")
+                "Process Save Titulo - Trad",
+                "Process Save Mensagem - Trad"
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_AP_Save.class);
+        Bundle bundle = new Bundle();
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

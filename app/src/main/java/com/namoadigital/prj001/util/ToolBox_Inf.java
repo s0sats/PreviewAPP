@@ -2305,7 +2305,6 @@ public class ToolBox_Inf {
     }
 
 
-
     public static String millisecondsToString(long mils, String format) {
 
         String sResults = "";
@@ -2570,10 +2569,17 @@ public class ToolBox_Inf {
         return statusList;
     }
 
-    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, String... extra) {
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID, code);
         hmAux.put(SearchableSpinner.DESCRIPTION, desc);
+        //
+        if (extra.length > 0 && extra.length % 2 == 0) {
+            for (int i = 0; i < extra.length; i += 2) {
+                hmAux.put(extra[i], extra[i + 1]);
+            }
+        }
+        //
         ss_component.setmValue(hmAux);
         if (source_val) {
             ss_component.setTag(code);

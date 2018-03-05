@@ -411,7 +411,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                         ss_departments,
                         String.valueOf(dpto.getDepartment_code()),
                         dpto.getDepartment_desc(),
-                        true
+                        true,
+                        "department_id",
+                        dpto.getDepartment_id()
                 );
             }
         }
@@ -495,7 +497,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         iv_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "down", Toast.LENGTH_SHORT).show();
+                mPresenter.executeApSyncWs();
+                //Toast.makeText(context, "down", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -513,9 +516,23 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.executeApSyncWs();
 
-                Toast.makeText(context, "save", Toast.LENGTH_SHORT).show();
+                mGe_custom_form_ap.setAp_status(ss_status.getmValue().get(SearchableSpinner.ID));
+                mGe_custom_form_ap.setAp_when(et_form_when_ttl.getmValue());
+                mGe_custom_form_ap.setDepartment_code(Integer.parseInt(ss_departments.getmValue().get(SearchableSpinner.ID)));
+                mGe_custom_form_ap.setDepartment_desc(ss_departments.getmValue().get(SearchableSpinner.DESCRIPTION));
+                //mGe_custom_form_ap.setDepartment_id(ss_departments.getmValue().get("department_id")); // ainda nao tenho
+                mGe_custom_form_ap.setAp_what(et_form_what_ttl.getText().toString().trim());
+                mGe_custom_form_ap.setAp_where(et_form_where_ttl.getText().toString().trim());
+                mGe_custom_form_ap.setAp_why(et_form_why_ttl.getText().toString().trim());
+                mGe_custom_form_ap.setAp_how(et_form_how_ttl.getText().toString().trim());
+                //mGe_custom_form_ap.setAp_how_much(Double.parseDouble(et_form_how_mcuch_ttl.getText().toString().trim())); // Tratar
+                mGe_custom_form_ap.setAp_how_much(null);
+                mGe_custom_form_ap.setAp_what(et_form_what_ttl.getText().toString().trim());
+                mGe_custom_form_ap.setAp_comments(et_form_comments_ttl.getText().toString().trim());
+                mGe_custom_form_ap.setUpload_required(1);
+                //
+                mPresenter.executeWsApSave(mGe_custom_form_ap);
             }
         });
     }
@@ -552,6 +569,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
+
+
     }
 
     @Override
@@ -564,6 +583,16 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 hmAux_Trans.get("alert_sync_success_ttl"),
                 hmAux_Trans.get("alert_sync_success_msg")
         );
+        //
+        mPresenter.getloadAP(
+                mCustomer_Code,
+                mCustom_Form_Type,
+                mCustom_Form_Code,
+                mCustom_Form_Version,
+                mCustom_Form_Data,
+                mAp_Code
+        );
+
     }
 
     @Override
@@ -584,7 +613,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 null,
                 0
         );
+    }
 
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
     }
 
     private void testWsApSave() {

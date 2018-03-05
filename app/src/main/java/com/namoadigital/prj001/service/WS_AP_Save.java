@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,12 +33,12 @@ public class WS_AP_Save extends IntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_ap_search";
+    private String mResource_Name = "ws_ap_save";
     //
     private GE_Custom_Form_ApDao formApDao;
 
     public WS_AP_Save() {
-        super("WS_AP_Search");
+        super("WS_AP_Save");
     }
 
     @Override
@@ -96,9 +97,11 @@ public class WS_AP_Save extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_ap_info"), "", "0");
         //
+        String json = gson.toJson(env);
+
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_AP_SAVE,
-                gson.toJson(env)
+                json
         );
         //
         TSave_Ap_Rec rec = gson.fromJson(
@@ -128,7 +131,9 @@ public class WS_AP_Save extends IntentService {
 
     private void processApSaveReturn(TSave_Ap_Rec rec) {
 
-        switch (rec.getSave()){
+        Log.d("teste", "hugo teste");
+
+        switch (rec.getSave()) {
             case "OK":
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), "", "0");
                 break;
