@@ -29,6 +29,7 @@ import java.util.List;
  */
 
 public class WS_AP_Save extends IntentService {
+    public static final String AP_RETURN_LIST = "AP_RETURN_LIST";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -131,7 +132,18 @@ public class WS_AP_Save extends IntentService {
 
         switch (rec.getSave()){
             case "OK":
+                HMAux auxApReturned = new HMAux();
+                //
                 for (TSave_Ap_Rec.ApSaveStatus apSaveStatus: rec.getAp()) {
+                    String hmAuxPKKey =
+                            apSaveStatus.getCustomer_code()+"."+
+                            apSaveStatus.getCustom_form_type()+"."+
+                            apSaveStatus.getCustom_form_code()+"."+
+                            apSaveStatus.getCustom_form_version()+"."+
+                            apSaveStatus.getCustom_form_data()+"."+
+                            apSaveStatus.getAp_code();
+
+                    auxApReturned.put(hmAuxPKKey, apSaveStatus.getStatus_code() == 1 ? String.valueOf(apSaveStatus.getStatus_code()) : apSaveStatus.getStatus_msg());
                     //StatusCode é o codigo do status do server
                     //1 = OK
                     if(apSaveStatus.getStatus_code() == 1 ){
@@ -148,7 +160,7 @@ public class WS_AP_Save extends IntentService {
                     }
                 }
                 //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"),auxApReturned , "", "0");
                 break;
             case "ERROR":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", rec.getError_msg(), "", "0");

@@ -589,8 +589,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     }
 
     @Override
-    protected void processCloseACT(String mLink, String mRequired) {
-        super.processCloseACT(mLink, mRequired);
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
         //
         progressDialog.dismiss();
         //

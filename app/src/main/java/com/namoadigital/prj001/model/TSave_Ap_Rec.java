@@ -71,6 +71,7 @@ public class TSave_Ap_Rec {
         private long custom_form_data;
         private int ap_code;
         private int status_code;
+        private String status_msg;
 
         public long getCustomer_code() {
             return customer_code;
@@ -126,6 +127,14 @@ public class TSave_Ap_Rec {
 
         public void setStatus_code(int status_code) {
             this.status_code = status_code;
+        }
+
+        public String getStatus_msg() {
+            return status_msg;
+        }
+
+        public void setStatus_msg(String status_msg) {
+            this.status_msg = status_msg;
         }
     }
 }
