@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 /**
@@ -8,10 +10,15 @@ import java.util.ArrayList;
 
 public class TSave_Ap_Env {
 
+    @Expose
     private String app_code;
+    @Expose
     private String app_version;
+    @Expose
     private String session_app;
+    @Expose
     private String token;
+    @Expose
     private ArrayList<GE_Custom_Form_Ap> AP;
 
     public String getApp_code() {

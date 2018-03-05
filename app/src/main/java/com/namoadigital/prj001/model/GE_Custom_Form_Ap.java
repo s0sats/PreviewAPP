@@ -8,25 +8,42 @@ import com.google.gson.annotations.Expose;
 
 public class GE_Custom_Form_Ap {
 
+    @Expose
     private long customer_code;
+    @Expose
     private int custom_form_type;
     private String custom_form_type_desc;
+    @Expose
     private int custom_form_code;
+    @Expose
     private int custom_form_version;
     private String custom_form_desc;
+    @Expose
     private long custom_form_data;
+    @Expose
     private Integer ap_code;
+    @Expose
     private String ap_description;
+    @Expose
     private String ap_status;
+    @Expose
     private String ap_comments;
+    @Expose
     private String ap_what;
+    @Expose
     private String ap_where;
+    @Expose
     private String ap_why;
+    @Expose
     private Integer ap_who;
     private String ap_who_nick;
+    @Expose
     private String ap_how;
+    @Expose
     private Double ap_how_much;
+    @Expose
     private String ap_when;
+    @Expose
     private Integer department_code;
     private String department_id;
     private String department_desc;

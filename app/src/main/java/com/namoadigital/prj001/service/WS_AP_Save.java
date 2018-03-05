@@ -67,18 +67,19 @@ public class WS_AP_Save extends IntentService {
     private void processApSave() throws Exception {
         //Seleciona traduções
         loadTranslation();
-        //
-        Gson gson = new GsonBuilder().serializeNulls().create();
+        //Envia JSON apenas com campos marcados pela tag Expose
+        Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+        Gson gsonRec = new GsonBuilder().serializeNulls().create();
         formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         //
-        ArrayList<GE_Custom_Form_Ap> apAuxList = (ArrayList<GE_Custom_Form_Ap>) formApDao.query(
+        ArrayList<GE_Custom_Form_Ap> apList = (ArrayList<GE_Custom_Form_Ap>) formApDao.query(
                 new GE_Custom_Form_Ap_Sql_006(
                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                         GE_Custom_Form_Ap_Sql_006.RETURN_SQL_OBJ
                 ).toSqlQuery()
         );
         //
-        if (apAuxList == null || apAuxList.size() == 0) {
+        if (apList == null || apList.size() == 0) {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
             return;
         }
@@ -89,18 +90,18 @@ public class WS_AP_Save extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
-        env.setAP(apAuxList);
+        env.setAP(apList);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_ap_info"), "", "0");
         //
-        String json = gson.toJson(env);
-
+        String json = gsonEnv.toJson(env);
+        //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_AP_SAVE,
                 json
         );
         //
-        TSave_Ap_Rec rec = gson.fromJson(
+        TSave_Ap_Rec rec = gsonRec.fromJson(
                 resultado,
                 TSave_Ap_Rec.class
         );
@@ -122,13 +123,18 @@ public class WS_AP_Save extends IntentService {
             return;
         }
         //
-        processApSaveReturn(rec);
+        processApSaveReturn(rec,apList);
     }
 
-    private void processApSaveReturn(TSave_Ap_Rec rec) {
+    private void processApSaveReturn(TSave_Ap_Rec rec, ArrayList<GE_Custom_Form_Ap> apList) {
 
         switch (rec.getSave()){
             case "OK":
+                for (GE_Custom_Form_Ap formAp:apList) {
+                    formAp.setUpload_required(0);
+                }
+                formApDao.addUpdate(apList,false);
+                //
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), "", "0");
                 break;
             case "ERROR":
