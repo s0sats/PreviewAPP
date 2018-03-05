@@ -304,7 +304,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             if (cursor.isNull(cursor.getColumnIndex(AP_HOW_MUCH))) {
                 custom_form_ap.setAp_how_much(null);
             } else {
-                custom_form_ap.setAp_how_much(cursor.getDouble(cursor.getColumnIndex(AP_HOW_MUCH)));
+                custom_form_ap.setAp_how_much(cursor.getString(cursor.getColumnIndex(AP_HOW_MUCH)));
             }
             if (cursor.isNull(cursor.getColumnIndex(AP_WHEN))) {
                 custom_form_ap.setAp_when(null);

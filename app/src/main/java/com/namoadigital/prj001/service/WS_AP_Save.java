@@ -16,6 +16,7 @@ import com.namoadigital.prj001.model.TSave_Ap_Env;
 import com.namoadigital.prj001.model.TSave_Ap_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_006;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -123,17 +124,29 @@ public class WS_AP_Save extends IntentService {
             return;
         }
         //
-        processApSaveReturn(rec,apList);
+        processApSaveReturn(rec);
     }
 
-    private void processApSaveReturn(TSave_Ap_Rec rec, ArrayList<GE_Custom_Form_Ap> apList) {
+    private void processApSaveReturn(TSave_Ap_Rec rec) {
 
         switch (rec.getSave()){
             case "OK":
-                for (GE_Custom_Form_Ap formAp:apList) {
-                    formAp.setUpload_required(0);
+                for (TSave_Ap_Rec.ApSaveStatus apSaveStatus: rec.getAp()) {
+                    //StatusCode é o codigo do status do server
+                    //1 = OK
+                    if(apSaveStatus.getStatus_code() == 1 ){
+                        formApDao.addUpdate(
+                            new GE_Custom_Form_Ap_Sql_009(
+                                    apSaveStatus.getCustomer_code(),
+                                    apSaveStatus.getCustom_form_type(),
+                                    apSaveStatus.getCustom_form_code(),
+                                    apSaveStatus.getCustom_form_version(),
+                                    apSaveStatus.getCustom_form_data(),
+                                    apSaveStatus.getAp_code()
+                            ).toSqlQuery()
+                        );
+                    }
                 }
-                formApDao.addUpdate(apList,false);
                 //
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), "", "0");
                 break;
