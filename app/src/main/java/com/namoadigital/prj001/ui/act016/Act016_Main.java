@@ -254,6 +254,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     public void callAct017(Bundle bundle) {
         Intent mIntent = new Intent(context, Act017_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

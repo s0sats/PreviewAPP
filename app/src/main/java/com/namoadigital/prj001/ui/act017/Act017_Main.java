@@ -108,6 +108,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_msg_exists_in_processing");
         translateList.add("alert_ttl_start_new_processing");
         translateList.add("alert_msg_start_new_processing");
+        translateList.add("filter_lbl");
+        translateList.add("alert_filter_dialog_msg");
+        translateList.add("module_n_form");
+        translateList.add("module_n_form_ap");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
