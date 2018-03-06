@@ -188,9 +188,9 @@
                     <com.namoa_digital.namoa_library.ctls.MkDateTime
                         android:id="@+id/act038_header_et_form_when_ttl"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="7dp"
-                        android:layout_marginRight="7dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_marginRight="7dp" />
 
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -323,18 +323,15 @@
                         android:layout_height="wrap_content"
                         android:text="O que" />
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    <TextView
                         android:id="@+id/act038_opc_et_what_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/editTextBackground"
                         android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
                         android:padding="10dp"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false" />
+                        android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                        android:textColor="?attr/editTextColor" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_where_ttl"
@@ -342,18 +339,15 @@
                         android:layout_height="wrap_content"
                         android:text="Onde" />
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    <TextView
                         android:id="@+id/act038_opc_et_where_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/editTextBackground"
                         android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
                         android:padding="10dp"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false" />
+                        android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                        android:textColor="?attr/editTextColor" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_why_ttl"
@@ -361,18 +355,15 @@
                         android:layout_height="wrap_content"
                         android:text="Por Que" />
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    <TextView
                         android:id="@+id/act038_opc_et_why_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/editTextBackground"
                         android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
                         android:padding="10dp"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false" />
+                        android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                        android:textColor="?attr/editTextColor" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_how_ttl"
@@ -380,18 +371,15 @@
                         android:layout_height="wrap_content"
                         android:text="Como" />
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    <TextView
                         android:id="@+id/act038_opc_et_how_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/editTextBackground"
                         android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
                         android:padding="10dp"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false" />
+                        android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                        android:textColor="?attr/editTextColor" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_how_much_ttl"
@@ -403,15 +391,20 @@
                         android:id="@+id/act038_opc_et_how_much_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
-                        android:padding="10dp"
                         app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false"
-                        app:mInputType="NUMBER"/>
+                        app:mInputType="NUMBER"
+                        app:mDecimal="4"
+                        android:inputType="text"/>
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/act038_opc_et_how_much_ttl"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:background="?attr/editTextBackground"-->
+                        <!--android:gravity="center_vertical"-->
+                        <!--android:padding="10dp"-->
+                        <!--android:textAppearance="?android:attr/textAppearanceMediumInverse"-->
+                        <!--android:textColor="?attr/editTextColor" />-->
 
                     <TextView
                         android:id="@+id/act038_opc_tv_comments_ttl"
@@ -419,18 +412,15 @@
                         android:layout_height="wrap_content"
                         android:text="Comentario" />
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    <TextView
                         android:id="@+id/act038_opc_et_comments_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/editTextBackground"
                         android:gravity="center_vertical"
-                        android:hint=""
-                        android:inputType="text"
-                        android:minHeight="30dp"
                         android:padding="10dp"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false" />
+                        android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                        android:textColor="?attr/editTextColor" />
 
                 </LinearLayout>
             </LinearLayout>

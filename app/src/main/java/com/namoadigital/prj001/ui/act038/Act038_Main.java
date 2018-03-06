@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act038;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -83,18 +85,23 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private SearchableSpinner ss_users;
     private SearchableSpinner ss_departments;
     private TextView tv_form_what_ttl;
-    private MKEditTextNM et_form_what_ttl;
+    private TextView et_form_what_ttl;
     private TextView tv_form_where_ttl;
-    private MKEditTextNM et_form_where_ttl;
+    private TextView et_form_where_ttl;
     private TextView tv_form_why_ttl;
-    private MKEditTextNM et_form_why_ttl;
+    private TextView et_form_why_ttl;
     private TextView tv_form_how_ttl;
-    private MKEditTextNM et_form_how_ttl;
+    private TextView et_form_how_ttl;
     private TextView tv_form_how_much_ttl;
     private MKEditTextNM et_form_how_mcuch_ttl;
     private TextView tv_form_comments_ttl;
-    private MKEditTextNM et_form_comments_ttl;
+    private TextView et_form_comments_ttl;
     private ArrayList<View> editable_views_list = new ArrayList<>();
+
+    private ArrayList<View> editable_views_list_long = new ArrayList<>();
+    private ArrayList<String> editable_views_list_long_names = new ArrayList<>();
+    private TextView editable_views_current;
+    private int editable_views_current_Index;
 
     private ImageView iv_pdf;
     private ImageView iv_chat_nav;
@@ -221,34 +228,63 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         editable_views_list.add(ss_departments);
         //
         tv_form_what_ttl = (TextView) findViewById(R.id.act038_opc_tv_what_ttl);
-        et_form_what_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_what_ttl);
-        et_form_what_ttl.setmMaxSize(4000);
+        et_form_what_ttl = (TextView) findViewById(R.id.act038_opc_et_what_ttl);
+        et_form_what_ttl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show_Edit_InfoDialog(0);
+            }
+        });
         editable_views_list.add(et_form_what_ttl);
+        editable_views_list_long.add(et_form_what_ttl);
 
         tv_form_where_ttl = (TextView) findViewById(R.id.act038_opc_tv_where_ttl);
-        et_form_where_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_where_ttl);
-        et_form_where_ttl.setmMaxSize(4000);
+        et_form_where_ttl = (TextView) findViewById(R.id.act038_opc_et_where_ttl);
+        et_form_where_ttl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show_Edit_InfoDialog(1);
+            }
+        });
         editable_views_list.add(et_form_where_ttl);
+        editable_views_list_long.add(et_form_where_ttl);
 
         tv_form_why_ttl = (TextView) findViewById(R.id.act038_opc_tv_why_ttl);
-        et_form_why_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_why_ttl);
-        et_form_why_ttl.setmMaxSize(4000);
+        et_form_why_ttl = (TextView) findViewById(R.id.act038_opc_et_why_ttl);
+        et_form_why_ttl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show_Edit_InfoDialog(2);
+            }
+        });
         editable_views_list.add(et_form_why_ttl);
+        editable_views_list_long.add(et_form_why_ttl);
 
         tv_form_how_ttl = (TextView) findViewById(R.id.act038_opc_tv_how_ttl);
-        et_form_how_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_how_ttl);
-        et_form_how_ttl.setmMaxSize(4000);
+        et_form_how_ttl = (TextView) findViewById(R.id.act038_opc_et_how_ttl);
+        et_form_how_ttl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show_Edit_InfoDialog(3);
+            }
+        });
         editable_views_list.add(et_form_how_ttl);
+        editable_views_list_long.add(et_form_how_ttl);
 
         tv_form_how_much_ttl = (TextView) findViewById(R.id.act038_opc_tv_how_much_ttl);
         et_form_how_mcuch_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_how_much_ttl);
-        et_form_how_mcuch_ttl.setmDecimal(4);
         editable_views_list.add(et_form_how_mcuch_ttl);
 
         tv_form_comments_ttl = (TextView) findViewById(R.id.act038_opc_tv_comments_ttl);
-        et_form_comments_ttl = (MKEditTextNM) findViewById(R.id.act038_opc_et_comments_ttl);
-        et_form_comments_ttl.setmMaxSize(4000);
+        et_form_comments_ttl = (TextView) findViewById(R.id.act038_opc_et_comments_ttl);
+        et_form_comments_ttl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show_Edit_InfoDialog(4);
+            }
+        });
         editable_views_list.add(et_form_comments_ttl);
+        editable_views_list_long.add(et_form_comments_ttl);
         //
         iv_pdf = (ImageView) findViewById(R.id.act038_content_iv_pdf);
         iv_chat_nav = (ImageView) findViewById(R.id.act038_content_iv_chat_nav);
@@ -329,26 +365,31 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         tv_form_what_ttl.setText(hmAux_Trans.get("ap_what_lbl"));
         et_form_what_ttl.setEnabled(true);
         et_form_what_ttl.setText(ap.getAp_what() == null ? "" : String.valueOf(ap.getAp_what()));
+        editable_views_list_long_names.add(hmAux_Trans.get("ap_what_lbl"));
 
         tv_form_where_ttl.setText(hmAux_Trans.get("ap_where_lbl"));
         et_form_where_ttl.setEnabled(true);
         et_form_where_ttl.setText(ap.getAp_where() == null ? "" : String.valueOf(ap.getAp_where()));
+        editable_views_list_long_names.add(hmAux_Trans.get("ap_where_lbl"));
 
         tv_form_why_ttl.setText(hmAux_Trans.get("ap_why_lbl"));
         et_form_why_ttl.setEnabled(true);
         et_form_why_ttl.setText(ap.getAp_why() == null ? "" : String.valueOf(ap.getAp_why()));
+        editable_views_list_long_names.add(hmAux_Trans.get("ap_why_lbl"));
 
         tv_form_how_ttl.setText(hmAux_Trans.get("ap_how_lbl"));
         et_form_how_ttl.setEnabled(true);
         et_form_how_ttl.setText(ap.getAp_how() == null ? "" : String.valueOf(ap.getAp_how()));
+        editable_views_list_long_names.add(hmAux_Trans.get("ap_how_lbl"));
 
         tv_form_how_much_ttl.setText(hmAux_Trans.get("ap_how_much_lbl"));
         et_form_how_mcuch_ttl.setEnabled(true);
-        et_form_how_mcuch_ttl.setText(ap.getAp_how_much() == null ? "" : String.valueOf(ap.getAp_how_much()).replace(",","."));
+        et_form_how_mcuch_ttl.setText(ap.getAp_how_much() == null ? "" : String.valueOf(ap.getAp_how_much()).replace(",", "."));
 
         tv_form_comments_ttl.setText(hmAux_Trans.get("ap_comments_lbl"));
         et_form_comments_ttl.setEnabled(true);
         et_form_comments_ttl.setText(ap.getAp_comments() == null ? "" : String.valueOf(ap.getAp_comments()));
+        editable_views_list_long_names.add(hmAux_Trans.get("ap_comments_lbl"));
 
         if (mGe_custom_form_ap.getSync_required() == 1) {
             iv_down.setVisibility(View.VISIBLE);
@@ -539,7 +580,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mGe_custom_form_ap.setAp_where(ToolBox_Inf.prepareForNull(et_form_where_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_why(ToolBox_Inf.prepareForNull(et_form_why_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_how(ToolBox_Inf.prepareForNull(et_form_how_ttl.getText().toString()));
-                //mGe_custom_form_ap.setAp_how_much(ToolBox_Inf.convertStringToDouble(et_form_how_mcuch_ttl.getText().toString()));
+                mGe_custom_form_ap.setAp_how_much(et_form_how_mcuch_ttl.getText().toString().trim().replace(".", ","));
                 mGe_custom_form_ap.setAp_what(ToolBox_Inf.prepareForNull(et_form_what_ttl.getText().toString()));
                 mGe_custom_form_ap.setAp_comments(ToolBox_Inf.prepareForNull(et_form_comments_ttl.getText().toString()));
                 mGe_custom_form_ap.setUpload_required(1);
@@ -642,4 +683,117 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         context.sendBroadcast(mIntent);
     }
+
+    public void show_Edit_InfoDialog(int index) {
+
+        if (index >= 0 && index < editable_views_list_long.size()) {
+            editable_views_current = (TextView) editable_views_list_long.get(index);
+            editable_views_current_Index = index;
+        }
+
+        try {
+            //
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogTheme);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act038_edit_info, null);
+
+            final TextView tv_field_desc = (TextView) view.findViewById(R.id.act038_edit_info_tv_field_desc);
+            final MKEditTextNM mk_value = (MKEditTextNM) view.findViewById(R.id.act038_edit_info_mk_value);
+            final ImageView iv_prev = (ImageView) view.findViewById(R.id.act038_edit_info_iv_prev);
+            final ImageView iv_next = (ImageView) view.findViewById(R.id.act038_edit_info_iv_next);
+            final ImageView iv_cancel = (ImageView) view.findViewById(R.id.act038_edit_info_iv_cancel);
+            final ImageView iv_save = (ImageView) view.findViewById(R.id.act038_edit_info_iv_save);
+
+            tv_field_desc.setText(editable_views_list_long_names.get(index));
+
+            mk_value.setOnReportTextChangeListner(null);
+            //
+            mk_value.setText(editable_views_current.getText().toString().trim());
+            //
+            mk_value.setOnReportTextChangeListner(txtChange);
+            //
+            iv_prev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int indexAux = editable_views_current_Index - 1;
+
+                    if (indexAux >= 0 && indexAux < editable_views_list_long.size()) {
+                        editable_views_current = (TextView) editable_views_list_long.get(indexAux);
+                        editable_views_current_Index = indexAux;
+                        //
+                        tv_field_desc.setText(editable_views_list_long_names.get(indexAux));
+                        //
+                        mk_value.setOnReportTextChangeListner(null);
+                        //
+                        mk_value.setText(editable_views_current.getText().toString().trim());
+                        //
+                        mk_value.setOnReportTextChangeListner(txtChange);
+                    } else {
+                    }
+                }
+            });
+            //
+            iv_next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int indexAux = editable_views_current_Index + 1;
+
+                    if (indexAux >= 0 && indexAux < editable_views_list_long.size()) {
+                        editable_views_current = (TextView) editable_views_list_long.get(indexAux);
+                        editable_views_current_Index = indexAux;
+                        //
+                        tv_field_desc.setText(editable_views_list_long_names.get(indexAux));
+                        //
+                        mk_value.setOnReportTextChangeListner(null);
+                        //
+                        mk_value.setText(editable_views_current.getText().toString().trim());
+                        //
+                        mk_value.setOnReportTextChangeListner(txtChange);
+                    } else {
+                    }
+                }
+            });
+            //
+            builder
+                    .setView(view)
+                    .setCancelable(true);
+            //
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            //
+            iv_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            //
+            iv_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (
+                Exception e)
+
+        {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+
+    }
+
+    private MKEditTextNM.IMKEditTextChangeText txtChange = new MKEditTextNM.IMKEditTextChangeText() {
+        @Override
+        public void reportTextChange(String s) {
+            editable_views_current.setText(s);
+        }
+
+        @Override
+        public void reportTextChange(String s, boolean b) {
+
+        }
+    };
 }
