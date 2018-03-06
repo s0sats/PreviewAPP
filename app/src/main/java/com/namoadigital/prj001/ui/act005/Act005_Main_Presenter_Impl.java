@@ -169,6 +169,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 HMAux Aux = new HMAux();
                 String qty = "";
                 String qtySO = "";
+                String qtyAP = "";
                 String qtyBadge2 = "";
 
                 Aux.put(Act005_Main.MENU_ID, menuId[i]);
@@ -211,8 +212,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                        //
+                        qtyAP = customFormApDao.getByStringHM(
+                                new GE_Custom_Form_Ap_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
                         //Soma Qtd de n-form e n_service
-                        qty = String.valueOf(Integer.parseInt(qty) + Integer.parseInt(qtySO));
+                        qty = String.valueOf(
+                                Integer.parseInt(qty)
+                                + Integer.parseInt(qtySO)
+                                + Integer.parseInt(qtyAP)
+                        );
                         //
                         qtyBadge2 = soDao.getByStringHM(
                                 new Sql_Act005_004(
