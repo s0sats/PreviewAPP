@@ -39,6 +39,8 @@ import java.util.List;
 public class Act016_Main extends Base_Activity implements Act016_Main_View {
 
     public static final String ACT016_SELECTED_DATE = "selected_date";
+    public static final String ACT016_FILTER_FORM = "filter_form";
+    public static final String ACT016_FILTER_FORM_AP = "filter_form_ap";
 
     private ListView lv_schedules;
     private CalendarView cv_schedules;

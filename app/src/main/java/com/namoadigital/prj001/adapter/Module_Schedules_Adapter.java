@@ -29,14 +29,16 @@ import java.util.List;
 public class Module_Schedules_Adapter extends BaseAdapter {
 
     private Context context;
-    private int resource;
+    private int resource_01;
+    private int resource_02;
     private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
 
-    public Module_Schedules_Adapter(Context context, int resource, List<HMAux> source) {
+    public Module_Schedules_Adapter(Context context, int resource_01, int resource_02, List<HMAux> source) {
         this.context = context;
-        this.resource = resource;
+        this.resource_01 = resource_01;
+        this.resource_02 = resource_02;
         this.source = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                                     context,
@@ -60,17 +62,55 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0L;
     }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        HMAux item = source.get(position);
+        //
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
+            case Constant.MODULE_CHECKLIST:
+                return 1;
+            case Constant.MODULE_FORM_AP:
+                return 2;
+            default:
+                return 1;
+        }
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        //Resgata HmAux com as informações
+        HMAux item = source.get(position);
+        //
         if(convertView == null){
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            switch (getItemViewType(position)) {
+                case 1:
+                    convertView = mInflater.inflate(resource_01,parent,false);
+                    processFormItem(item,convertView);
+                    break;
+                case 2:
+                    convertView = mInflater.inflate(resource_02,parent,false);
+                    processFormAPItem(item,convertView);
+                    break;
+            }
         }
+        //
+        return convertView;
+    }
 
-        //Resgata HmAux com as informações
-        HMAux item = source.get(position);
+    private void processFormAPItem(HMAux item, View convertView) {
+
+
+    }
+
+    private void processFormItem(HMAux item, View convertView) {
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.module_schedules_cell_ll_bg);
         //
@@ -185,7 +225,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
                 }
-            break;
+                break;
 
         }
 
@@ -200,9 +240,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             case Constant.CUSTOM_FORM_STATUS_FINALIZED:
                 llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
                 llBackground.setBackground(llDrawable);
-//                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
                 break;
 
             case Constant.CUSTOM_FORM_STATUS_SENT:
@@ -223,7 +260,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
         }
 
-        return convertView;
+
     }
 
     private void loadTranslation() {

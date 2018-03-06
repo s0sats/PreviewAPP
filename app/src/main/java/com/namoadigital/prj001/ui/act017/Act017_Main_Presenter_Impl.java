@@ -35,7 +35,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     @Override
-    public void getSchedules(String selected_date) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap) {
 
         List<HMAux> schedules =
                 formLocalDao.query_HM(
