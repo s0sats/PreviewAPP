@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -245,27 +244,27 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         TextView tv_title = (TextView) view.findViewById(R.id.act037_helper_dialog_tv_title);
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
         //
-        CheckBox chk_edit = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_edit);
+        final CheckBox chk_edit = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_edit);
         chk_edit.setText(hmAux_Trans.get(Constant.SYS_STATUS_EDIT));
         chk_edit.setChecked(filter_edit);
         chk_edit.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_EDIT))));
         //
-        CheckBox chk_process = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_process);
+        final CheckBox chk_process = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_process);
         chk_process.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
         chk_process.setChecked(filter_process);
         chk_process.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
         //
-        CheckBox chk_waiting_action = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_waiting_action);
+        final CheckBox chk_waiting_action = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_waiting_action);
         chk_waiting_action.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_ACTION));
         chk_waiting_action.setChecked(filter_waiting_action);
         chk_waiting_action.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_ACTION))));
         //
-        CheckBox chk_done = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_done);
+        final CheckBox chk_done = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_done);
         chk_done.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
         chk_done.setChecked(filter_done);
         chk_done.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_DONE))));
         //
-        CheckBox chk_cancelled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_cancelled);
+        final CheckBox chk_cancelled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_cancelled);
         chk_cancelled.setText(hmAux_Trans.get(Constant.SYS_STATUS_CANCELLED));
         chk_cancelled.setChecked(filter_cancelled);
         chk_cancelled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_CANCELLED))));
@@ -276,37 +275,16 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
             .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    //
+                    filter_edit = chk_edit.isChecked();
+                    filter_process = chk_process.isChecked();
+                    filter_waiting_action = chk_waiting_action.isChecked();
+                    filter_done = chk_done.isChecked();
+                    filter_cancelled = chk_cancelled.isChecked();
+                    //
                     applyStatusFilter();
                 }
             });
-        CompoundButton.OnCheckedChangeListener chkListner = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switch (buttonView.getId()){
-                    case R.id.act037_helper_dialog_chk_edit:
-                        filter_edit = isChecked;
-                        break;
-                    case R.id.act037_helper_dialog_chk_process:
-                        filter_process = isChecked;
-                        break;
-                    case R.id.act037_helper_dialog_chk_waiting_action:
-                        filter_waiting_action = isChecked;
-                        break;
-                    case R.id.act037_helper_dialog_chk_done:
-                        filter_done = isChecked;
-                        break;
-                    case R.id.act037_helper_dialog_chk_cancelled:
-                        filter_cancelled = isChecked;
-                        break;
-                }
-            }
-        };
-        //
-        chk_edit.setOnCheckedChangeListener(chkListner);
-        chk_process.setOnCheckedChangeListener(chkListner);
-        chk_waiting_action.setOnCheckedChangeListener(chkListner);
-        chk_done.setOnCheckedChangeListener(chkListner);
-        chk_cancelled.setOnCheckedChangeListener(chkListner);
         //
         alert.show();
     }

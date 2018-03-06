@@ -8,7 +8,7 @@ import java.util.Date;
 
 public interface Act016_Main_Presenter {
 
-    void getSchedule();
+    void getSchedule(boolean filter_form, boolean filter_form_ap);
 
     void formatDate(Date date);
 

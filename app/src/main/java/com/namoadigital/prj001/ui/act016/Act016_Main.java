@@ -1,11 +1,15 @@
 package com.namoadigital.prj001.ui.act016;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -46,6 +50,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private LinearLayout ll_filter;
     private TextView tv_filter;
     private ImageView iv_filter;
+    private boolean filter_form;
+    private boolean filter_form_ap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +88,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         //
         List<String> translateList = new ArrayList<>();
         translateList.add("filter_lbl");
+        translateList.add("alert_filter_dialog_msg");
+        translateList.add("module_n_form");
+        translateList.add("module_n_form_ap");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -127,8 +136,15 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         //
         events = new HashSet<>();
         //
-        mPresenter.getSchedule();
+        initFilters();
+        //
+        //mPresenter.getSchedule(filter_form, filter_form_ap);
+        applyModuleFilter();
+    }
 
+    private void initFilters() {
+        filter_form = true;
+        filter_form_ap = true;
     }
 
     private void initActions() {
@@ -136,6 +152,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
             @Override
             public void onClick(View v) {
                 //Chamar dialog de filter
+                showFilterDialog();
             }
         });
         //
@@ -150,6 +167,51 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                 mPresenter.formatDate(date);
             }
         });
+    }
+
+    private void showFilterDialog() {
+        AlertDialog.Builder alert =  new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater =  this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.act016_filter_dialog,null);
+        //
+        TextView tv_title = (TextView) view.findViewById(R.id.act016_filter_dialog_tv_title);
+        tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
+        //
+        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.act016_filter_dialog_chk_n_form);
+        chk_form.setText(hmAux_Trans.get("module_n_form"));
+        chk_form.setChecked(filter_form);
+        chk_form.setTag(filter_form);
+        //
+        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.act016_filter_dialog_chk_n_form_ap);
+        chk_form_ap.setText(hmAux_Trans.get("module_n_form_ap"));
+        chk_form_ap.setChecked(filter_form_ap);
+        chk_form_ap.setTag(filter_form_ap);
+        //
+        alert
+                .setView(view)
+                .setCancelable(true)
+                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        filter_form = chk_form.isChecked();
+                        filter_form_ap = chk_form_ap.isChecked();
+                        //
+                        applyModuleFilter();
+                    }
+                });
+        //
+        alert.show();
+    }
+
+    private void applyModuleFilter() {
+        mPresenter.getSchedule(filter_form, filter_form_ap);
+        //
+        if(filter_form||filter_form_ap){
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        }else{
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+        }
     }
 
     private void iniUIFooter() {
@@ -174,6 +236,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     @Override
     public void loadSchedule(List<HMAux> scheduleData) {
         //
+        events.clear();
+        //
         events.addAll(scheduleData);
         //Se volta da Act017, lista de agendados, passa data clicada
         //para carregar calendario na data correta.
@@ -182,8 +246,6 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         }else{
             cv_schedules.updateCalendar(events);
         }
-
-
     }
 
     @Override
