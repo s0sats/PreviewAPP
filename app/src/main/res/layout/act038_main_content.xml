@@ -178,6 +178,39 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/act038_content_iv_up"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:paddingBottom="5dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="5dp"
+                            android:src="@drawable/ic_arrow_up_thick_black_24dp" />
+
+
+                        <ImageView
+                            android:id="@+id/act038_content_iv_down"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:paddingBottom="5dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="5dp"
+                            android:src="@drawable/ic_arrow_down_thick_black_24dp" />
+
+                    </LinearLayout>
+
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                         android:id="@+id/act038_content_ss_status"
                         android:layout_width="match_parent"
@@ -205,63 +238,65 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/act038_content_iv_pdf"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:paddingBottom="4dp"
-                            android:paddingLeft="4dp"
-                            android:paddingRight="4dp"
-                            android:paddingTop="4dp"
-                            android:src="@drawable/ic_cancelar_ns_states" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <Button
+                                android:id="@+id/act038_content_btn_pdf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/btn_namoa_main_states"
+                                android:padding="10dp"
+                                android:text="N - Form - trad"
+                                android:textColor="@color/padrao_WHITE" />
+                        </LinearLayout>
+
+                        <!--<ImageView-->
+                        <!--android:id="@+id/act038_content_iv_pdf"-->
+                        <!--android:layout_width="50dp"-->
+                        <!--android:layout_height="50dp"-->
+                        <!--android:paddingBottom="4dp"-->
+                        <!--android:paddingLeft="4dp"-->
+                        <!--android:paddingRight="4dp"-->
+                        <!--android:paddingTop="4dp"-->
+                        <!--android:src="@drawable/ic_cancelar_ns_states" />-->
 
                         <View
                             android:layout_width="0dp"
                             android:layout_height="1dp"
                             android:layout_weight="1" />
 
-                        <ImageView
-                            android:id="@+id/act038_content_iv_chat_nav"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:paddingBottom="4dp"
-                            android:paddingLeft="4dp"
-                            android:paddingRight="4dp"
-                            android:paddingTop="4dp"
-                            android:src="@drawable/ic_ok_ns_states" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <View
+                        <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="1" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/act038_content_iv_up"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:paddingBottom="4dp"
-                            android:paddingLeft="4dp"
-                            android:paddingRight="4dp"
-                            android:paddingTop="4dp"
-                            android:src="@drawable/ic_cancelar_ns_states" />
+                            <Button
+                                android:id="@+id/act038_content_btn_chat_nav"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/btn_namoa_main_states"
+                                android:padding="10dp"
+                                android:text="N - AP - trad"
+                                android:textColor="@color/padrao_WHITE"
+                                android:visibility="gone"/>
+                        </LinearLayout>
 
-
-                        <ImageView
-                            android:id="@+id/act038_content_iv_down"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:paddingBottom="4dp"
-                            android:paddingLeft="4dp"
-                            android:paddingRight="4dp"
-                            android:paddingTop="4dp"
-                            android:src="@drawable/ic_ok_ns_states" />
+                        <!--<ImageView-->
+                        <!--android:id="@+id/act038_content_iv_chat_nav"-->
+                        <!--android:layout_width="50dp"-->
+                        <!--android:layout_height="50dp"-->
+                        <!--android:paddingBottom="4dp"-->
+                        <!--android:paddingLeft="4dp"-->
+                        <!--android:paddingRight="4dp"-->
+                        <!--android:paddingTop="4dp"-->
+                        <!--android:src="@drawable/ic_ok_ns_states" />-->
 
                     </LinearLayout>
 
@@ -391,20 +426,20 @@
                         android:id="@+id/act038_opc_et_how_much_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="text"
                         app:mBARCODE="false"
-                        app:mInputType="NUMBER"
                         app:mDecimal="4"
-                        android:inputType="text"/>
+                        app:mInputType="NUMBER" />
 
                     <!--<TextView-->
-                        <!--android:id="@+id/act038_opc_et_how_much_ttl"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:background="?attr/editTextBackground"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:padding="10dp"-->
-                        <!--android:textAppearance="?android:attr/textAppearanceMediumInverse"-->
-                        <!--android:textColor="?attr/editTextColor" />-->
+                    <!--android:id="@+id/act038_opc_et_how_much_ttl"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:background="?attr/editTextBackground"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceMediumInverse"-->
+                    <!--android:textColor="?attr/editTextColor" />-->
 
                     <TextView
                         android:id="@+id/act038_opc_tv_comments_ttl"

@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +26,15 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
-import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -103,8 +107,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private TextView editable_views_current;
     private int editable_views_current_Index;
 
-    private ImageView iv_pdf;
-    private ImageView iv_chat_nav;
+    private Button btn_pdf;
+    private Button btn_chat_nav;
     private ImageView iv_up;
     private ImageView iv_down;
 
@@ -209,7 +213,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
         //
         ss_status = (SearchableSpinner) findViewById(R.id.act038_content_ss_status);
-        ss_status.setmLabel(hmAux_Trans.get("status_lbl"));
+        //ss_status.setmLabel(hmAux_Trans.get("status_lbl"));
         ss_status.setmTitle(hmAux_Trans.get("status_search_lbl"));
         //
         editable_views_list.add(ss_status);
@@ -286,8 +290,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         editable_views_list.add(et_form_comments_ttl);
         editable_views_list_long.add(et_form_comments_ttl);
         //
-        iv_pdf = (ImageView) findViewById(R.id.act038_content_iv_pdf);
-        iv_chat_nav = (ImageView) findViewById(R.id.act038_content_iv_chat_nav);
+        btn_pdf = (Button) findViewById(R.id.act038_content_btn_pdf);
+        btn_chat_nav = (Button) findViewById(R.id.act038_content_btn_chat_nav);
         iv_up = (ImageView) findViewById(R.id.act038_content_iv_up);
         iv_down = (ImageView) findViewById(R.id.act038_content_iv_down);
         //
@@ -308,6 +312,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         mPresenter.loadSSDepartments();
         //
         mPresenter.applyUserProfile(editable_views_list);
+        //
+        if (mGe_custom_form_ap.getSync_required() == 1) {
+            if (ToolBox_Con.isOnline(context)) {
+                mPresenter.executeApSyncWs();
+            } else {
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -316,7 +328,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         if (bundle != null) {
             mGe_custom_form_apDao = new GE_Custom_Form_ApDao(context);
             //
-            requestingAct = bundle.getString(Constant.MAIN_REQUESTING_ACT, "");
+            requestingAct = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT037);
             mCustomer_Code = bundle.getString(GE_Custom_Form_ApDao.CUSTOMER_CODE);
             mCustom_Form_Type = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE);
             mCustom_Form_Code = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE);
@@ -498,7 +510,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             }
         });
 
-        iv_pdf.setOnClickListener(new View.OnClickListener() {
+        btn_pdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -528,7 +540,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             }
         });
 
-        iv_chat_nav.setOnClickListener(new View.OnClickListener() {
+        btn_chat_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "chat_nav", Toast.LENGTH_SHORT).show();
@@ -585,9 +597,26 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mGe_custom_form_ap.setAp_comments(ToolBox_Inf.prepareForNull(et_form_comments_ttl.getText().toString()));
                 mGe_custom_form_ap.setUpload_required(1);
                 //
+                if (ToolBox_Con.isOnline(context)) {
+                    mPresenter.executeWsApSave(mGe_custom_form_ap);
+                } else {
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                    //
+                    mGe_custom_form_apDao.addUpdate(
+                            mGe_custom_form_ap
+                    );
+                    //
+                    mPresenter.getloadAP(
+                            mCustomer_Code,
+                            mCustom_Form_Type,
+                            mCustom_Form_Code,
+                            mCustom_Form_Version,
+                            mCustom_Form_Data,
+                            mAp_Code
+                    );
+                }
+
                 mPresenter.loadSSStatus(mGe_custom_form_ap.getAp_status());
-                //
-                mPresenter.executeWsApSave(mGe_custom_form_ap);
             }
         });
     }
@@ -599,18 +628,41 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         //mPresenter.onBackPressedClicked();
 
-        Log.d("DDDD", "Passei por aqui!!!");
+        switch (requestingAct.toLowerCase()) {
+            case Constant.ACT035:
+                callAct035(context);
+                break;
+            default:
+                callAct037(context);
+                break;
+        }
 
-        callAct005(context);
     }
 
-    public void callAct005(Context context) {
-        Intent mIntent = new Intent(context, Act005_Main.class);
+    public void callAct035(Context context) {
+        Intent mIntent = new Intent(context, Act035_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(CH_MessageDao.ROOM_CODE, mGe_custom_form_ap.getRoom_code());
+        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, Long.parseLong(mCustomer_Code));
+        //
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
 
+    public void callAct037(Context context) {
+        Intent mIntent = new Intent(context, Act037_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT036);
+        //
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -625,13 +677,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
-
+        progressDialog.dismiss();
 
     }
 
     @Override
-    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
-        super.processCloseACT(mLink, mRequired, hmAux);
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
         //
         progressDialog.dismiss();
         //
@@ -648,6 +700,92 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 mCustom_Form_Data,
                 mAp_Code
         );
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        progressDialog.dismiss();
+        //
+        String sKey = mCustomer_Code + "." + mCustom_Form_Type + "." + mCustom_Form_Code + "." + mCustom_Form_Version + "." + mCustom_Form_Data + "." + mAp_Code;
+        String sValue = hmAux.get(sKey);
+        //
+        showResults(hmAux, sKey, sValue);
+        //
+        mPresenter.getloadAP(
+                mCustomer_Code,
+                mCustom_Form_Type,
+                mCustom_Form_Code,
+                mCustom_Form_Version,
+                mCustom_Form_Data,
+                mAp_Code
+        );
+    }
+
+    private void showResults(HMAux aps, String ap_current, String ap_current_value) {
+        ArrayList<HMAux> mAps = new ArrayList<>();
+
+
+        for (String sKey : aps.keySet()) {
+            HMAux hmAux = new HMAux();
+            //
+            hmAux.put("ap_code", sKey);
+            hmAux.put("ap_result", sKey + " - " + (aps.get(sKey).equals("1") ? "OK" : aps.get(sKey)));
+            mAps.add(hmAux);
+        }
+
+        showResultsDialog(mAps);
+    }
+
+    public void showResultsDialog(List<HMAux> aps) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+        /**
+         * Ini Vars
+         */
+
+        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+
+        String[] from = {"ap_result"};
+        int[] to = {R.id.act038_results_adapter_cell_tv_msg_value};
+
+
+        lv_results.setAdapter(
+                new SimpleAdapter(
+                        context,
+                        aps,
+                        R.layout.act038_results_adapter_cell,
+                        from,
+                        to
+                )
+        );
+
+        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final AlertDialog show = builder.show();
+
+        /**
+         * Ini Action
+         */
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show.dismiss();
+            }
+        });
     }
 
     @Override
