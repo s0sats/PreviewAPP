@@ -424,6 +424,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void callAct016(Context context) {
         Intent mIntent = new Intent(context, Act016_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -444,6 +447,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Adicionan schedule_date no bundle
         bundle.putString(Act016_Main.ACT016_SELECTED_DATE,scheduled_date);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

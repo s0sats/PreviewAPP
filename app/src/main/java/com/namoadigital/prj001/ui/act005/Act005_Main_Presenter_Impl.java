@@ -49,6 +49,8 @@ import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act005_005;
+import com.namoadigital.prj001.sql.Sql_Act005_006;
+import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
@@ -249,11 +251,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         ToolBox_Con.getPreference_Customer_Code(context)
                                 ).toSqlQuery()
                         ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
-                        //int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
-                        //qtySO = String.valueOf(iqtySO);
-                        //Soma Qtd de n-form e n_service
-                        qty = String.valueOf(Integer.parseInt(qty) + Integer.parseInt(qtySO) + isSoWithinTokenFile());
 
+                        qtyAP = customFormApDao.getByStringHM(
+                                new Sql_Act005_007(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_007.BADGE_TO_SEND_QTY);
+                        //Soma Qtd de n-form e n_service e form_ap
+                        qty = String.valueOf(
+                                ToolBox_Inf.convertStringToInt(qty) +
+                                ToolBox_Inf.convertStringToInt(qtySO) +
+                                isSoWithinTokenFile() +
+                                ToolBox_Inf.convertStringToInt(qtyAP)
+                        );
+                        //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 
@@ -263,7 +274,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
+                        //
+                        qtyAP = customFormApDao.getByStringHM(
+                                new Sql_Act005_006(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
 
+                        qty = String.valueOf(
+                                ToolBox_Inf.convertStringToInt(qty) +
+                                ToolBox_Inf.convertStringToInt(qtyAP)
+                        );
+                        //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 

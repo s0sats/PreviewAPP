@@ -107,6 +107,11 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         bundle =  getIntent().getExtras();
         if(bundle != null && bundle.containsKey(Act016_Main.ACT016_SELECTED_DATE)){
             selected_date = ToolBox.generateDate(bundle.getString(Act016_Main.ACT016_SELECTED_DATE));
+            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,true);
+            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,true);
+        }else{
+            filter_form = true;
+            filter_form_ap = true;
         }
 
     }
@@ -138,15 +143,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         //
         events = new HashSet<>();
         //
-        initFilters();
-        //
         //mPresenter.getSchedule(filter_form, filter_form_ap);
         applyModuleFilter();
-    }
-
-    private void initFilters() {
-        filter_form = true;
-        filter_form_ap = true;
     }
 
     private void initActions() {
