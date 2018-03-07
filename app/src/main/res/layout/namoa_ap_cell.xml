@@ -7,6 +7,16 @@
     android:orientation="vertical"
     android:padding="15dp">
 
+    <TextView
+        android:id="@+id/namoa_ap_tv_module_ttl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Formulario - trad"
+        android:textSize="@dimen/font_size_title_md"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -337,7 +347,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="0dp"

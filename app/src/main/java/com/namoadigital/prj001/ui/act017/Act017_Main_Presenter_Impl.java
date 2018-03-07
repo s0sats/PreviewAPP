@@ -4,15 +4,17 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
+import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -24,6 +26,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private Context context;
     private Act017_Main_View mView;
     private GE_Custom_Form_LocalDao formLocalDao;
+    private GE_Custom_Form_ApDao formApDao;
     private HMAux hmAux_Trans;
 
 
@@ -31,21 +34,42 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         this.context = context;
         this.mView = mView;
         this.formLocalDao = formLocalDao;
+        this.formApDao = new GE_Custom_Form_ApDao(context);
         this.hmAux_Trans = hmAux_Trans;
     }
 
     @Override
-    public void getSchedules(String selected_date) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap) {
+        ArrayList<HMAux> schedules = new ArrayList<>();
 
-        List<HMAux> schedules =
-                formLocalDao.query_HM(
-                        new Sql_Act017_001(
-                                context,
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                selected_date
-                        ).toSqlQuery()
-                );
+        if(filter_form) {
+            ArrayList<HMAux> schedulesForm =
+                    (ArrayList<HMAux>) formLocalDao.query_HM(
+                            new Sql_Act017_001(
+                                    context,
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    selected_date
+                            ).toSqlQuery()
+                    );
+            if(schedulesForm != null){
+                schedules.addAll(schedulesForm);
 
+            }
+        }
+        //
+        if(filter_form_ap){
+            ArrayList<HMAux> schedulesFormAP =
+                    (ArrayList<HMAux>) formApDao.query_HM(
+                            new Sql_Act017_002(
+                                    context,
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    selected_date
+                            ).toSqlQuery()
+                    );
+            if(schedulesFormAP != null){
+                schedules.addAll(schedulesFormAP);
+            }
+        }
         mView.loadSchedules(schedules);
     }
 

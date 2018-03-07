@@ -1,14 +1,19 @@
 package com.namoadigital.prj001.ui.act017;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,6 +53,12 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private String scheduled_date;
     private Act017_Main_Presenter mPresenter;
     private Module_Schedules_Adapter mAdapter;
+    //Implementação AP
+    private boolean filter_form;
+    private boolean filter_form_ap;
+    private LinearLayout ll_filter;
+    private TextView tv_filter;
+    private ImageView iv_filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +96,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
+            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,false);
+            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,false);
         }
     }
 
@@ -95,6 +108,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_msg_exists_in_processing");
         translateList.add("alert_ttl_start_new_processing");
         translateList.add("alert_msg_start_new_processing");
+        translateList.add("filter_lbl");
+        translateList.add("alert_filter_dialog_msg");
+        translateList.add("module_n_form");
+        translateList.add("module_n_form_ap");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -118,11 +135,19 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                         hmAux_Trans
                 );
         //
+        ll_filter = (LinearLayout) findViewById(R.id.act017_ll_filter);
+        //
+        tv_filter = (TextView) findViewById(R.id.act017_tv_filter_lbl);
+        tv_filter.setText(hmAux_Trans.get("filter_lbl"));
+        //
+        iv_filter = (ImageView) findViewById(R.id.act017_iv_filter);
+        //
         tv_title = (TextView) findViewById(R.id.act017_tv_title);
         //
         lv_schedules = (ListView) findViewById(R.id.act017_lv_schedules);
         //
-        mPresenter.getSchedules(scheduled_date);
+        //mPresenter.getSchedules(scheduled_date,filter_form, filter_form_ap);
+        applyModuleFilter();
         //
         String date_desc = getDateDesc(scheduled_date);
 
@@ -188,6 +213,13 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     private void initActions() {
 
+        iv_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog();
+            }
+        });
+        //
         lv_schedules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -200,15 +232,61 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
 
     @Override
     public void loadSchedules(List<HMAux> schedules) {
-
+        //
         mAdapter = new Module_Schedules_Adapter(
                 context,
                 R.layout.module_schedules_cell,
+                R.layout.namoa_ap_cell,
                 schedules
         );
-
+        //
         lv_schedules.setAdapter(mAdapter);
 
+    }
+
+    private void showFilterDialog() {
+        AlertDialog.Builder alert =  new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater =  this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.act017_filter_dialog,null);
+        //
+        TextView tv_title = (TextView) view.findViewById(R.id.act017_filter_dialog_tv_title);
+        tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
+        //
+        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.act017_filter_dialog_chk_n_form);
+        chk_form.setText(hmAux_Trans.get("module_n_form"));
+        chk_form.setChecked(filter_form);
+        chk_form.setTag(filter_form);
+        //
+        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.act017_filter_dialog_chk_n_form_ap);
+        chk_form_ap.setText(hmAux_Trans.get("module_n_form_ap"));
+        chk_form_ap.setChecked(filter_form_ap);
+        chk_form_ap.setTag(filter_form_ap);
+        //
+        alert
+                .setView(view)
+                .setCancelable(true)
+                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        filter_form = chk_form.isChecked();
+                        filter_form_ap = chk_form_ap.isChecked();
+                        //
+                        applyModuleFilter();
+                    }
+                });
+        //
+        alert.show();
+    }
+
+    private void applyModuleFilter() {
+        mPresenter.getSchedules(scheduled_date,filter_form, filter_form_ap);
+        //
+        if(filter_form||filter_form_ap){
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        }else{
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+        }
     }
 
     @Override

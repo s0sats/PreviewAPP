@@ -18,6 +18,36 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="5dp">
+        <LinearLayout
+            android:id="@+id/act017_ll_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            >
+            <TextView
+                android:id="@+id/act017_tv_filter_lbl"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Filtros - trad"
+                android:layout_marginLeft="2dp"
+                />
+
+            <ImageView
+                android:id="@+id/act017_iv_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/namoa_icon_bg_states"
+                android:padding="10dp"
+                android:src="@drawable/ic_filter_black_24px"
+                android:tint="@color/namoa_color_gray_4" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
