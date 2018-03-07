@@ -51,7 +51,6 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
 
     @Override
     public void getloadAP(String mCustomer_Code, String mCustom_Form_Type, String mCustom_Form_Code, String mCustom_Form_Version, String mCustom_Form_Data, String mAp_Code) {
-        //
         mGe_custom_form_ap = mGe_custom_form_apDao.getByString(
                 new GE_Custom_Form_Ap_Sql_005(
                         mCustomer_Code,
@@ -70,24 +69,24 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     @Override
     public void loadSSStatus(String ap_status) {
         ArrayList<HMAux> statusList = new ArrayList<>();
-        if(ap_status.equals(Constant.SYS_STATUS_EDIT)) {
-            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_AP,Constant.PROFILE_MENU_AP_PARAM_EDIT)){
+        if (ap_status.equals(Constant.SYS_STATUS_EDIT)) {
+            if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_EDIT)) {
                 statusList = ToolBox_Inf.statusList(
                         hmAux_Trans
                 );
-            }else{
+            } else {
                 statusList = ToolBox_Inf.statusList(
                         hmAux_Trans,
                         Constant.SYS_STATUS_CANCELLED
                 );
             }
-        }else{
-            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_AP,Constant.PROFILE_MENU_AP_PARAM_EDIT)){
+        } else {
+            if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_EDIT)) {
                 statusList = ToolBox_Inf.statusList(
                         hmAux_Trans,
                         Constant.SYS_STATUS_EDIT
                 );
-            }else{
+            } else {
                 statusList = ToolBox_Inf.statusList(
                         hmAux_Trans,
                         Constant.SYS_STATUS_EDIT,
@@ -148,7 +147,7 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     }
 
     @Override
-    public void applyUserProfile(ArrayList<View> editable_views_list) {
+    public void applyUserProfile(ArrayList<View> editable_views_list, String status) {
         int status_change = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_CHANGE_STATUS) ? 1 : 0;
         int edit = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, Constant.PROFILE_MENU_AP_PARAM_EDIT) ? 2 : 0;
         //
@@ -156,7 +155,7 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         //
         int profile_level = status_change + edit;
         //
-        if (mSync_required == 1){
+        if (mSync_required == 1 || status.equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) || status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
             profile_level = 0;
         }
 
@@ -216,7 +215,7 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_AP_Search.class);
         Bundle bundle = new Bundle();
-        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED,1);
+        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 1);
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -241,5 +240,28 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public boolean detectApSyncRequired(String mCustomer_Code, String mCustom_Form_Type, String mCustom_Form_Code, String mCustom_Form_Version, String mCustom_Form_Data, String mAp_Code) {
+        mGe_custom_form_ap = mGe_custom_form_apDao.getByString(
+                new GE_Custom_Form_Ap_Sql_005(
+                        mCustomer_Code,
+                        mCustom_Form_Type,
+                        mCustom_Form_Code,
+                        mCustom_Form_Version,
+                        mCustom_Form_Data,
+                        mAp_Code,
+                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+                ).toSqlQuery()
+        );
+        //
+        if (mGe_custom_form_ap.getSync_required() == 1) {
+            mView.loadAP(mGe_custom_form_ap);
+            //
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -2580,7 +2580,8 @@ public class ToolBox_Inf {
             }
         }
         //
-        ss_component.setmValue(hmAux);
+        ss_component.setmValue(hmAux, source_val);
+        //
         if (source_val) {
             ss_component.setTag(code);
         }

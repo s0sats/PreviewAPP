@@ -61,16 +61,16 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String LAST_UPDATE = "last_update";
 
     public static String[] columns = {
-            CUSTOMER_CODE,CUSTOM_FORM_TYPE, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
+            CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
             AP_WHO_NICK, AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC, ROOM_CODE, AP_SCN,
-            PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED,UPLOAD_REQUIRED, CUSTOM_FORM_URL,
+            PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED, UPLOAD_REQUIRED, CUSTOM_FORM_URL,
             CUSTOM_FORM_URL_LOCAL, LAST_UPDATE
     };
 
 
     public GE_Custom_Form_ApDao(Context context) {
-        super(  context,
+        super(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM,
                 Constant.DB_MODE_MULTI
@@ -80,8 +80,8 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
         this.toGE_Custom_Form_ApMapper = new CursorToGE_Custom_Form_ApMapper();
     }
 
-    public GE_Custom_Form_ApDao(Context context,String mDB_NAME, int mDB_VERSION) {
-        super(context,mDB_NAME,mDB_VERSION,Constant.DB_MODE_MULTI);
+    public GE_Custom_Form_ApDao(Context context, String mDB_NAME, int mDB_VERSION) {
+        super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new GE_Custom_Form_ApToContentValuesMapper();
         this.toGE_Custom_Form_ApMapper = new CursorToGE_Custom_Form_ApMapper();
@@ -295,6 +295,11 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
                 custom_form_ap.setAp_who(null);
             } else {
                 custom_form_ap.setAp_who(cursor.getInt(cursor.getColumnIndex(AP_WHO)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(AP_WHO_NICK))) {
+                custom_form_ap.setAp_who_nick(null);
+            } else {
+                custom_form_ap.setAp_who_nick(cursor.getString(cursor.getColumnIndex(AP_WHO_NICK)));
             }
             if (cursor.isNull(cursor.getColumnIndex(AP_HOW))) {
                 custom_form_ap.setAp_how(null);

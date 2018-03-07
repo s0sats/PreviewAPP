@@ -33,12 +33,20 @@ public interface Act038_Main_Presenter {
 
     MD_Department loadDepartment(String customer_code, String department_code);
 
-    void applyUserProfile(ArrayList<View> editable_views_list);
+    void applyUserProfile(ArrayList<View> editable_views_list, String status);
 
     void executeApSyncWs();
 
     void executeWsApSave(GE_Custom_Form_Ap ap);
 
+    boolean detectApSyncRequired(
+            String mCustomer_Code,
+            String mCustom_Form_Type,
+            String mCustom_Form_Code,
+            String mCustom_Form_Version,
+            String mCustom_Form_Data,
+            String mAp_Code
+    );
 
 
 }

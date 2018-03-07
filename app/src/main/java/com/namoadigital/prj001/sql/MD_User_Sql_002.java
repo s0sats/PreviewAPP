@@ -24,7 +24,7 @@ public class MD_User_Sql_002 implements Specification {
         return sb
                 .append(
                         " SELECT \n" +
-                                "   *,  \n" +
+                                "   *  \n" +
                                 " FROM \n" +
                                 MD_UserDao.TABLE + "\n" +
                                 " WHERE " +
