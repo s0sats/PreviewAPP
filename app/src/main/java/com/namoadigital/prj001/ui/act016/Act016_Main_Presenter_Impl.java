@@ -46,7 +46,18 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
                                     filter_form_ap
                             ).toSqlQuery()
                     );
+        }else{
+            //SE ambos falso, chama query com amboos parametro true
+            schedules =
+                    (ArrayList<HMAux>) formLocalDao.query_HM(
+                            new Sql_Act016_001(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    true,
+                                    true
+                            ).toSqlQuery()
+                    );
         }
+        //
         mView.loadSchedule(schedules);
     }
 

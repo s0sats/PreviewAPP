@@ -42,7 +42,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap) {
         ArrayList<HMAux> schedules = new ArrayList<>();
 
-        if(filter_form) {
+        if(filter_form || (!filter_form && !filter_form_ap)) {
             ArrayList<HMAux> schedulesForm =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
                             new Sql_Act017_001(
@@ -53,11 +53,10 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     );
             if(schedulesForm != null){
                 schedules.addAll(schedulesForm);
-
             }
         }
         //
-        if(filter_form_ap){
+        if(filter_form_ap || (!filter_form && !filter_form_ap)){
             ArrayList<HMAux> schedulesFormAP =
                     (ArrayList<HMAux>) formApDao.query_HM(
                             new Sql_Act017_002(
@@ -95,8 +94,25 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
             break;
 
+            case Constant.MODULE_FORM_AP:
+                    prepareOpenFormAP(item);
+                break;
+
         }
 
+    }
+
+    private void prepareOpenFormAP(HMAux hmAux) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017);
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
+        bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+        //
+        mView.callAct038(context,bundle);
     }
 
     @Override

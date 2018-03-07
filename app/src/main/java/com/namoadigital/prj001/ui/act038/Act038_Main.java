@@ -33,6 +33,8 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
+import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -113,6 +115,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private ImageView iv_down;
 
     private Button btn_save;
+    //Ap Agendado
+    private String scheduled_date;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -335,6 +339,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mCustom_Form_Version = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION);
             mCustom_Form_Data = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA);
             mAp_Code = bundle.getString(GE_Custom_Form_ApDao.AP_CODE);
+            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE,ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":",""));
 
         } else {
         }
@@ -632,10 +637,26 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             case Constant.ACT035:
                 callAct035(context);
                 break;
+            case Constant.ACT017:
+                callAct017(context);
+                break;
             default:
                 callAct037(context);
                 break;
         }
+
+    }
+
+    private void callAct017(Context context) {
+        Intent mIntent = new Intent(context, Act017_Main.class);
+        //
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
 
     }
 

@@ -27,6 +27,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -96,8 +97,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,false);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,false);
+            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,true);
+            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,true);
         }
     }
 
@@ -432,6 +433,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct038(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act038_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Adicionan schedule_date no bundle
+        bundle.putString(Act016_Main.ACT016_SELECTED_DATE,scheduled_date);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
