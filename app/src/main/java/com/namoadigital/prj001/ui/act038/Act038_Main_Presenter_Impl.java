@@ -207,10 +207,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     @Override
     public void executeApSyncWs() {
         mView.showPD(
-                "Process Sync Titulo - Trad",
-                "Process Sync Mensagem - Trad"
-//                hmAux_Trans.get("progress_sync_ap_ttl"),
-//                hmAux_Trans.get("progress_sync_ap_msg")
+                hmAux_Trans.get("progress_sync_ap_ttl"),
+                hmAux_Trans.get("progress_sync_ap_msg")
         );
         //
         Intent mIntent = new Intent(context, WBR_AP_Search.class);
@@ -229,10 +227,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         );
 
         mView.showPD(
-//                hmAux_Trans.get("progress_save_ap_ttl"),
-//                hmAux_Trans.get("progress_save_ap_msg")
-                "Process Save Titulo - Trad",
-                "Process Save Mensagem - Trad"
+                hmAux_Trans.get("progress_save_ap_ttl"),
+                hmAux_Trans.get("progress_save_ap_msg")
         );
         //
         Intent mIntent = new Intent(context, WBR_AP_Save.class);

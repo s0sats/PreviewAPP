@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,7 +36,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
-import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -54,6 +56,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
     private Act038_Main_Presenter_Impl mPresenter;
 
+    private HMAux hmAux_Trans_Extra = new HMAux();
+
     private Bundle bundle;
 
     private int backAction;
@@ -70,11 +74,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private GE_Custom_Form_ApDao mGe_custom_form_apDao;
 
     private ImageView iv_header_show_hide;
+    private CheckBox cb_header_show_hide;
     private LinearLayout ll_header;
 
     private ImageView iv_opc_show_hide;
-    private LinearLayout ll_opc;
+    private CheckBox cb_opc_show_hide;
 
+    private LinearLayout ll_opc;
 
     private TextView tv_ap_desc_ttl;
     private TextView tv_customer_code_ttl;
@@ -90,6 +96,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private SearchableSpinner ss_status;
     private MkDateTime et_form_when_ttl;
     private SearchableSpinner ss_users;
+    private TextView tv_ap_extra_into_ttl;
     private SearchableSpinner ss_departments;
     private TextView tv_form_what_ttl;
     private TextView et_form_what_ttl;
@@ -140,9 +147,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         iniUIFooter();
         //
         initActions();
-        //
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void iniSetup() {
@@ -178,13 +182,37 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("department_lbl");
         transList.add("department_search_lbl");
         transList.add("btn_save_lbl");
-        //
+        transList.add("ap_extra_into_ttl");
+        transList.add("alert_sync_detected_tll");
+        transList.add("alert_sync_detected_msg");
+        transList.add("progress_save_ap_ttl");
+        transList.add("progress_save_ap_msg");
+        transList.add("progress_sync_ap_ttl");
+        transList.add("progress_sync_ap_msg");
+        transList.add("cell_ap_lbl");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
+        );
+
+        List<String> transList_Extra = new ArrayList<String>();
+        transList_Extra.add("lbl_checklist");
+        transList_Extra.add("lbl_chat");
+
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT005
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList_Extra
         );
     }
 
@@ -203,10 +231,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         properties = new ArrayList<>();
 
-        iv_header_show_hide = (ImageView) findViewById(R.id.act038_header_iv_show_hide);
+        //iv_header_show_hide = (ImageView) findViewById(R.id.act038_header_iv_show_hide);
+        cb_header_show_hide = (CheckBox) findViewById(R.id.act038_header_cb_show_hide);
         ll_header = (LinearLayout) findViewById(R.id.act038_header_ll_show_hide);
 
-        iv_opc_show_hide = (ImageView) findViewById(R.id.act038_opc_iv_show_hide);
+        //iv_opc_show_hide = (ImageView) findViewById(R.id.act038_opc_iv_show_hide);
+        cb_opc_show_hide = (CheckBox) findViewById(R.id.act038_opc_cb_show_hide);
         ll_opc = (LinearLayout) findViewById(R.id.act038_opc_ll_show_hide);
 
         tv_ap_desc_ttl = (TextView) findViewById(R.id.act038_header_tv_ap_desc_ttl);
@@ -226,6 +256,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
         //
         ss_status = (SearchableSpinner) findViewById(R.id.act038_content_ss_status);
+        ss_status.setmStyle(1);
+        ss_status.setmTextSizeLabel(15);
+        ss_status.setmTextSizeValue(15);
+        ss_status.setmShowLabel(false);
         //ss_status.setmLabel(hmAux_Trans.get("status_lbl"));
         ss_status.setmTitle(hmAux_Trans.get("status_search_lbl"));
         properties.add(ss_status);
@@ -233,18 +267,30 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         editable_views_list.add(ss_status);
         //
         et_form_when_ttl = (MkDateTime) findViewById(R.id.act038_header_et_form_when_ttl);
+        et_form_when_ttl.setmStyle(1);
+        et_form_when_ttl.setmTextSizeLabel(15);
+        et_form_when_ttl.setmTextSizeValue(15);
         editable_views_list.add(et_form_when_ttl);
         properties.add(et_form_when_ttl);
         //
         ss_users = (SearchableSpinner) findViewById(R.id.act038_content_ss_users);
         ss_users.setmLabel(hmAux_Trans.get("ap_who_lbl"));
         ss_users.setmTitle(hmAux_Trans.get("ap_who_search_lbl"));
+        ss_users.setmStyle(1);
+        ss_users.setmTextSizeLabel(15);
+        ss_users.setmTextSizeValue(15);
         editable_views_list.add(ss_users);
         properties.add(ss_users);
+        //
+        tv_ap_extra_into_ttl = (TextView) findViewById(R.id.act038_extra_info_tv_ttl);
+        tv_ap_extra_into_ttl.setText(hmAux_Trans.get("ap_extra_into_ttl"));
         //
         ss_departments = (SearchableSpinner) findViewById(R.id.act038_content_ss_departments);
         ss_departments.setmLabel(hmAux_Trans.get("department_lbl"));
         ss_departments.setmTitle(hmAux_Trans.get("department_search_lbl"));
+        ss_departments.setmStyle(1);
+        ss_departments.setmTextSizeLabel(15);
+        ss_departments.setmTextSizeValue(15);
         editable_views_list.add(ss_departments);
         properties.add(ss_departments);
         //
@@ -314,7 +360,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         properties.add(et_form_comments_ttl);
         //
         btn_pdf = (Button) findViewById(R.id.act038_content_btn_pdf);
+        btn_pdf.setText(hmAux_Trans_Extra.get("lbl_checklist"));
         btn_chat_nav = (Button) findViewById(R.id.act038_content_btn_chat_nav);
+        btn_chat_nav.setText(hmAux_Trans_Extra.get("lbl_chat"));
         iv_up = (ImageView) findViewById(R.id.act038_content_iv_up);
         iv_down = (ImageView) findViewById(R.id.act038_content_iv_down);
         //
@@ -359,9 +407,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mCustom_Form_Data = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA);
             mAp_Code = bundle.getString(GE_Custom_Form_ApDao.AP_CODE);
             //Fluxo vindo do agendamento
-            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE,ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":",""));
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,true);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,true);
+            scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":", ""));
+            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, true);
+            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP, true);
 
         } else {
         }
@@ -543,14 +591,27 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     }
 
     private void initActions() {
-        iv_header_show_hide.setOnClickListener(new View.OnClickListener() {
+//        iv_header_show_hide.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (ll_header.getVisibility() != View.VISIBLE) {
+//                    ll_header.setVisibility(View.VISIBLE);
+//                } else {
+//                    ll_header.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+
+        cb_header_show_hide.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (ll_header.getVisibility() != View.VISIBLE) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
                     ll_header.setVisibility(View.VISIBLE);
                 } else {
                     ll_header.setVisibility(View.GONE);
                 }
+
             }
         });
 
@@ -606,10 +667,21 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             }
         });
 
-        iv_opc_show_hide.setOnClickListener(new View.OnClickListener() {
+//        iv_opc_show_hide.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (ll_opc.getVisibility() != View.VISIBLE) {
+//                    ll_opc.setVisibility(View.VISIBLE);
+//                } else {
+//                    ll_opc.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+
+        cb_opc_show_hide.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (ll_opc.getVisibility() != View.VISIBLE) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
                     ll_opc.setVisibility(View.VISIBLE);
                 } else {
                     ll_opc.setVisibility(View.GONE);
@@ -637,6 +709,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         }
 
         HMAux aux = ss_status.getmValue();
+
+        if (aux.isEmpty()) {
+            return false;
+        }
 
         switch (aux.get(SearchableSpinner.ID)) {
             case Constant.SYS_STATUS_PROCESS:
@@ -728,8 +804,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
             ToolBox.alertMSG(
                     context,
-                    "Syncronismo Detectado Title - Trad",
-                    "Syncronismo Detectado Msg - Trad",
+                    hmAux_Trans.get("alert_sync_detected_tll"),
+                    hmAux_Trans.get("alert_sync_detected_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -837,17 +913,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         if (mDataChanged) {
             showAlertDialog(
-                    "Invalid Data Title - Trad",
-                    "Invalid Data Msg - Trad"
-//                    hmAux_Trans.get("alert_invalid_data_local_ttl"),
-//                    hmAux_Trans.get("alert_invalid_data_local_msg")
+                    hmAux_Trans.get("alert_invalid_data_local_ttl"),
+                    hmAux_Trans.get("alert_invalid_data_local_msg")
             );
         } else {
             showAlertDialog(
-                    "No Data Change Title - Trad",
-                    "No Data Change Msg - Trad"
-//                    hmAux_Trans.get("alert_no_data_changes_ttl"),
-//                    hmAux_Trans.get("alert_no_data_changes_msg")
+                    hmAux_Trans.get("alert_no_data_changes_ttl"),
+                    hmAux_Trans.get("alert_no_data_changes_msg")
             );
         }
 
@@ -880,8 +952,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Act016_Main.ACT016_SELECTED_DATE, scheduled_date);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM,filter_form);
-        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP,filter_form_ap);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM, filter_form);
+        bundle.putBoolean(Act016_Main.ACT016_FILTER_FORM_AP, filter_form_ap);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -912,6 +984,16 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -981,7 +1063,19 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             HMAux hmAux = new HMAux();
             //
             hmAux.put("ap_code", sKey);
-            hmAux.put("ap_result", sKey + " - " + (aps.get(sKey).equals("1") ? "OK" : aps.get(sKey)));
+            //hmAux.put("ap_result", sKey + " - " + (aps.get(sKey).equals("1") ? "OK" : aps.get(sKey)));
+            //
+            String[] res = aps.get(sKey).split(Constant.MAIN_CONCAT_STRING);
+            //
+            //hmAux.put("ap_result", sKey + " - " + (aps.get(sKey).equals("1") ? "OK" : aps.get(sKey)));
+            if (res.length > 1) {
+                hmAux.put("ap_result", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
+            } else {
+                hmAux.put("ap_result", "Tag Not Found - " + res[0]);
+            }
+            //
+            hmAux.put("ap_label", hmAux_Trans.get("cell_ap_lbl"));
+
             mAps.add(hmAux);
         }
 
@@ -1006,8 +1100,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
-        String[] from = {"ap_result"};
-        int[] to = {R.id.act038_results_adapter_cell_tv_msg_value};
+        String[] from = {"ap_label", "ap_result"};
+        int[] to = {R.id.act038_results_adapter_cell_tv_ttl, R.id.act038_results_adapter_cell_tv_msg_value};
 
 
         lv_results.setAdapter(

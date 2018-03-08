@@ -36,7 +36,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp">
 
                     <TextView
                         android:id="@+id/act038_header_tv_ap_desc_ttl"
@@ -44,7 +46,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="AP"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/act038_header_iv_show_hide"
@@ -53,9 +56,19 @@
                         android:layout_marginEnd="12dp"
                         android:paddingBottom="4dp"
                         android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
+                        android:paddingRight="0dp"
                         android:paddingTop="4dp"
-                        android:src="@drawable/ic_adicionar_tracking_number_states" />
+                        android:src="@drawable/ic_adicionar_tracking_number_states"
+                        android:visibility="gone" />
+
+                    <CheckBox
+                        android:id="@+id/act038_header_cb_show_hide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/ic_menos_info_states"
+                        android:button="@null" />
+
 
                 </LinearLayout>
 
@@ -70,7 +83,10 @@
                         android:id="@+id/act038_header_tv_customer_code_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Código do Cliente" />
+                        android:paddingLeft="10dp"
+                        android:text="Código do Cliente"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act038_header_et_customer_code_ttl"
@@ -81,6 +97,7 @@
                         android:inputType="text"
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:textSize="15sp"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false" />
@@ -89,7 +106,10 @@
                         android:id="@+id/act038_header_tv_form_type_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Form Type" />
+                        android:paddingLeft="10dp"
+                        android:text="Form Type"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act038_header_et_form_type_ttl"
@@ -100,6 +120,7 @@
                         android:inputType="text"
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:textSize="15sp"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false" />
@@ -108,7 +129,10 @@
                         android:id="@+id/act038_header_tv_form_code_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Código do Formulário" />
+                        android:paddingLeft="10dp"
+                        android:text="Código do Formulário"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act038_header_et_form_code_ttl"
@@ -119,6 +143,7 @@
                         android:inputType="text"
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:textSize="15sp"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false" />
@@ -127,7 +152,10 @@
                         android:id="@+id/act038_header_tv_form_version_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Versao do Formulario" />
+                        android:paddingLeft="10dp"
+                        android:text="Versao do Formulario"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act038_header_et_form_version_ttl"
@@ -138,6 +166,7 @@
                         android:inputType="text"
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:textSize="15sp"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false" />
@@ -146,7 +175,10 @@
                         android:id="@+id/act038_header_tv_form_seq_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Seq. Execucao" />
+                        android:paddingLeft="10dp"
+                        android:text="Seq. Execucao"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act038_header_et_form_seq_ttl"
@@ -157,6 +189,7 @@
                         android:inputType="text"
                         android:minHeight="30dp"
                         android:padding="10dp"
+                        android:textSize="15sp"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false" />
@@ -196,7 +229,8 @@
                             android:paddingLeft="5dp"
                             android:paddingRight="5dp"
                             android:paddingTop="5dp"
-                            android:src="@drawable/ic_arrow_up_thick_black_24dp" />
+                            android:src="@drawable/ic_arrow_up_thick_black_24dp"
+                            android:tint="@color/namoa_dark_blue" />
 
 
                         <ImageView
@@ -207,7 +241,8 @@
                             android:paddingLeft="5dp"
                             android:paddingRight="5dp"
                             android:paddingTop="5dp"
-                            android:src="@drawable/ic_arrow_down_thick_black_24dp" />
+                            android:src="@drawable/ic_arrow_down_thick_black_24dp"
+                            android:tint="@color/namoa_dark_blue" />
 
                     </LinearLayout>
 
@@ -285,7 +320,7 @@
                                 android:padding="10dp"
                                 android:text="N - AP - trad"
                                 android:textColor="@color/padrao_WHITE"
-                                android:visibility="gone"/>
+                                android:visibility="gone" />
                         </LinearLayout>
 
                         <!--<ImageView-->
@@ -314,15 +349,18 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingLeft="5dp">
 
                     <TextView
-                        android:id="@+id/act038_opc_tv_ttl"
+                        android:id="@+id/act038_extra_info_tv_ttl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:paddingLeft="10dp"
                         android:text="AP"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/act038_opc_iv_show_hide"
@@ -331,9 +369,18 @@
                         android:layout_marginEnd="12dp"
                         android:paddingBottom="4dp"
                         android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
+                        android:paddingRight="0dp"
                         android:paddingTop="4dp"
-                        android:src="@drawable/ic_adicionar_tracking_number_states" />
+                        android:src="@drawable/ic_adicionar_tracking_number_states"
+                        android:visibility="gone" />
+
+                    <CheckBox
+                        android:id="@+id/act038_opc_cb_show_hide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/ic_menos_info_states"
+                        android:button="@null" />
 
                 </LinearLayout>
 
@@ -342,6 +389,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:paddingLeft="5dp"
                     android:visibility="gone">
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -356,7 +404,10 @@
                         android:id="@+id/act038_opc_tv_what_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="O que" />
+                        android:paddingLeft="10dp"
+                        android:text="O que"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act038_opc_et_what_ttl"
@@ -366,13 +417,17 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                        android:textColor="?attr/editTextColor" />
+                        android:textColor="?attr/editTextColor"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_where_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Onde" />
+                        android:paddingLeft="10dp"
+                        android:text="Onde"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act038_opc_et_where_ttl"
@@ -382,13 +437,17 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                        android:textColor="?attr/editTextColor" />
+                        android:textColor="?attr/editTextColor"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_why_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Por Que" />
+                        android:paddingLeft="10dp"
+                        android:text="Por Que"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act038_opc_et_why_ttl"
@@ -398,13 +457,17 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                        android:textColor="?attr/editTextColor" />
+                        android:textColor="?attr/editTextColor"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_how_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Como" />
+                        android:paddingLeft="10dp"
+                        android:text="Como"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act038_opc_et_how_ttl"
@@ -414,19 +477,24 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                        android:textColor="?attr/editTextColor" />
+                        android:textColor="?attr/editTextColor"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/act038_opc_tv_how_much_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Quanto" />
+                        android:paddingLeft="10dp"
+                        android:text="Quanto"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act038_opc_et_how_much_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
+                        android:textSize="15sp"
                         app:mBARCODE="false"
                         app:mDecimal="4"
                         app:mInputType="NUMBER" />
@@ -445,7 +513,10 @@
                         android:id="@+id/act038_opc_tv_comments_ttl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Comentario" />
+                        android:paddingLeft="10dp"
+                        android:text="Comentario"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/act038_opc_et_comments_ttl"
@@ -455,7 +526,8 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                        android:textColor="?attr/editTextColor" />
+                        android:textColor="?attr/editTextColor"
+                        android:textSize="15sp" />
 
                 </LinearLayout>
             </LinearLayout>

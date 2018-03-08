@@ -29,13 +29,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:paddingLeft="10dp"
                 android:hint="Search Desc - Trad"
+                android:inputType="text"
+                android:paddingLeft="10dp"
                 app:mBARCODE="false"
                 app:mNFC="false"
-                app:mOCR="false"
-                android:inputType="text"
-                />
+                app:mOCR="false" />
 
             <ImageView
                 android:id="@+id/act037_iv_filter"
