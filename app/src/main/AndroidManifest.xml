@@ -504,6 +504,9 @@
         <receiver android:name=".receiver.WBR_AP_Save"/>
         <service android:name=".service.WS_AP_Save"/>
 
+        <receiver android:name=".receiver_chat.WBR_Add_Room_AP" />
+        <service android:name=".service_chat.WS_Add_Room_AP" />
+
     </application>
 
 </manifest>

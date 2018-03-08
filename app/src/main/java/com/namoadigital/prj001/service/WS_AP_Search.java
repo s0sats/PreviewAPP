@@ -196,7 +196,7 @@ public class WS_AP_Search extends IntentService {
 
     private void processAPSearchReturn(ArrayList<GE_Custom_Form_Ap> obj) {
         for (GE_Custom_Form_Ap formAp:obj) {
-            formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+            formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         }
         formApDao.addUpdate(obj,false);
         //

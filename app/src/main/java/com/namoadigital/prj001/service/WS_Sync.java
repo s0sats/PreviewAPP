@@ -664,7 +664,7 @@ public class WS_Sync extends IntentService {
                 );
                 //
                 for (GE_Custom_Form_Ap formAp:action_plans) {
-                    formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+                    formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                 }
                 //
                 geCustomFormApDao.addUpdate(action_plans, false);
