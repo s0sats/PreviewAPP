@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.CH_Room;
@@ -150,6 +151,13 @@ public class WS_C_Add_Room extends IntentService {
             HMAux hmAux = new HMAux();
             hmAux.put(CH_RoomDao.ROOM_CODE, chRooms.get(0).getRoom_code());
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD, hmAux);
+
+        } else if(ws_event.equals(Constant.CHAT_EVENT_POST_ROOM_AP)){
+            HMAux hmAux = new HMAux();
+            hmAux.put(CH_RoomDao.ROOM_CODE,chRooms.get(0).getRoom_code());
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT","",hmAux, "" , "0");
+
         } else {
             //
             ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);

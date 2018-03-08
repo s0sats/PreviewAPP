@@ -439,6 +439,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_EVENT_S_READ = "sRead";
     public static final String CHAT_EVENT_S_ROOM_PRIVATE = "sRoomPrivateCustomer";
     public static final String CHAT_EVENT_POST_ROOM_PRIVATE = "POST_ROOM_PRIVATE";
+    public static final String CHAT_EVENT_POST_ROOM_AP = "POST_ROOM_AP";
     public static final String CHAT_EVENT_S_LEAVEROOM = "sLeaveRoom";
     public static final String CHAT_EVENT_POST_LEAVEROOM = "EVENT_POST_LEAVEROOM";
 

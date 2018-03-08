@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act038;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 
@@ -25,5 +27,10 @@ public interface Act038_Main_View {
 
     void showAlertDialog(String title, String msg);
 
+    void setWSProcess(String ws_process);
+
+    void callAct035(Context context, String room_code);
+
+    void showBtnChatNav(boolean visible);
 
 }
