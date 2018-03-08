@@ -48,5 +48,6 @@ public interface Act038_Main_Presenter {
             String mAp_Code
     );
 
+    void chatFlow(GE_Custom_Form_Ap ap);
 
 }

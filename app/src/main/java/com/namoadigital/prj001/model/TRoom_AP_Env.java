@@ -4,7 +4,7 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 07/03/2018.
  */
 
-public class TAdd_Room_AP_Env {
+public class TRoom_AP_Env {
 
     private long customer_code;
     private String translate_code;
@@ -13,7 +13,7 @@ public class TAdd_Room_AP_Env {
     private int custom_form_type;
     private int custom_form_code;
     private int custom_form_version;
-    private int custom_form_data;
+    private long custom_form_data;
     private int ap_code;
 
     public long getCustomer_code() {
@@ -72,11 +72,11 @@ public class TAdd_Room_AP_Env {
         this.custom_form_version = custom_form_version;
     }
 
-    public int getCustom_form_data() {
+    public long getCustom_form_data() {
         return custom_form_data;
     }
 
-    public void setCustom_form_data(int custom_form_data) {
+    public void setCustom_form_data(long custom_form_data) {
         this.custom_form_data = custom_form_data;
     }
 

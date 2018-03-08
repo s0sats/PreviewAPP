@@ -82,7 +82,7 @@ public class WS_AP_Save extends IntentService {
         );
         //
         if (apList == null || apList.size() == 0) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_save"), "", "0");
             return;
         }
         //
@@ -94,7 +94,7 @@ public class WS_AP_Save extends IntentService {
         env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
         env.setAP(apList);
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_ap_info"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_ap_data"), "", "0");
         //
         String json = gsonEnv.toJson(env);
         //
@@ -102,6 +102,7 @@ public class WS_AP_Save extends IntentService {
                 Constant.WS_AP_SAVE,
                 json
         );
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_data_returned"), "", "0");
         //
         TSave_Ap_Rec rec = gsonRec.fromJson(
                 resultado,
@@ -125,10 +126,10 @@ public class WS_AP_Save extends IntentService {
             return;
         }
         //
-        processApSaveReturn(rec);
+        processApSaveReturn(rec,apList);
     }
 
-    private void processApSaveReturn(TSave_Ap_Rec rec) {
+    private void processApSaveReturn(TSave_Ap_Rec rec, ArrayList<GE_Custom_Form_Ap> apList) {
 
         switch (rec.getSave()){
             case "OK":
@@ -143,7 +144,13 @@ public class WS_AP_Save extends IntentService {
                             apSaveStatus.getCustom_form_data()+"."+
                             apSaveStatus.getAp_code();
 
-                    auxApReturned.put(hmAuxPKKey, apSaveStatus.getStatus_code() == 1 ? String.valueOf(apSaveStatus.getStatus_code()) : apSaveStatus.getStatus_msg());
+                    String ap_desc = getFormApInfo(apSaveStatus,apList);
+                    //
+                    auxApReturned.put(
+                            hmAuxPKKey,
+                            (ap_desc.length() > 0 ? (ap_desc + Constant.MAIN_CONCAT_STRING) : "") +
+                            (apSaveStatus.getStatus_code() == 1 ? String.valueOf(apSaveStatus.getStatus_code()) : apSaveStatus.getStatus_msg())
+                    );
                     //StatusCode é o codigo do status do server
                     //1 = OK
                     if(apSaveStatus.getStatus_code() == 1 ){
@@ -170,12 +177,30 @@ public class WS_AP_Save extends IntentService {
 
     }
 
+    private String getFormApInfo(TSave_Ap_Rec.ApSaveStatus apSaveStatus, ArrayList<GE_Custom_Form_Ap> apList) {
+        for (GE_Custom_Form_Ap formAp : apList) {
+            if(
+                apSaveStatus.getCustomer_code() == formAp.getCustomer_code() &&
+                apSaveStatus.getCustom_form_type() == formAp.getCustom_form_type() &&
+                apSaveStatus.getCustom_form_code() == formAp.getCustom_form_code() &&
+                apSaveStatus.getCustom_form_version() == formAp.getCustom_form_version() &&
+                apSaveStatus.getCustom_form_data() == formAp.getCustom_form_data() &&
+                apSaveStatus.getAp_code() == formAp.getAp_code()
+            ){
+                return formAp.getAp_code() + " - " + formAp.getAp_description();
+            }
+        }
+        //
+        return "";
+    }
+
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
 
-        translist.add("msg_receiving_ap_info");
-        translist.add("msg_processing_list");
+        translist.add("msg_no_ap_to_save");
+        translist.add("msg_sending_ap_data");
+        translist.add("msg_processing_data_returned");
         translist.add("msg_end_ap_save");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(

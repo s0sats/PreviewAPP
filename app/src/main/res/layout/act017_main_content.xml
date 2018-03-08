@@ -76,7 +76,16 @@
             android:layout_weight="1"
             android:divider="@color/padrao_TRANSPARENT"
             android:dividerHeight="4dp"
-            android:padding="5dp" />
+            android:padding="5dp"
+            />
+        <TextView
+            android:id="@+id/act017_tv_no_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/font_size_font_16"
+            android:visibility="gone"
+            android:gravity="center"
+            />
 
     </LinearLayout>
 

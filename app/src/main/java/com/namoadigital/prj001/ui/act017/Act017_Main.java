@@ -60,6 +60,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private LinearLayout ll_filter;
     private TextView tv_filter;
     private ImageView iv_filter;
+    private HMAux hmAux_Trans_Extra = new HMAux();
+    private TextView tv_no_result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +113,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_msg_start_new_processing");
         translateList.add("filter_lbl");
         translateList.add("alert_filter_dialog_msg");
-        translateList.add("module_n_form");
-        translateList.add("module_n_form_ap");
+        translateList.add("msg_no_result");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -120,6 +121,27 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
+        );
+
+  /*
+        * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
+        * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
+        * DO RECURSO DA ACT005
+        * */
+        List<String> transList_Extra = new ArrayList<String>();
+        transList_Extra.add("lbl_checklist");
+        transList_Extra.add("lbl_form_ap");
+
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT005
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList_Extra
         );
     }
 
@@ -146,6 +168,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         tv_title = (TextView) findViewById(R.id.act017_tv_title);
         //
         lv_schedules = (ListView) findViewById(R.id.act017_lv_schedules);
+        //
+        tv_no_result = (TextView) findViewById(R.id.act017_tv_no_result);
+        tv_no_result.setText(hmAux_Trans.get("msg_no_result"));
+        tv_no_result.setVisibility(View.GONE);
         //
         //mPresenter.getSchedules(scheduled_date,filter_form, filter_form_ap);
         applyModuleFilter();
@@ -242,6 +268,14 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         );
         //
         lv_schedules.setAdapter(mAdapter);
+        //
+        if(schedules.size() == 0){
+            lv_schedules.setVisibility(View.GONE);
+            tv_no_result.setVisibility(View.VISIBLE);
+        }else {
+            tv_no_result.setVisibility(View.GONE);
+            lv_schedules.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -255,12 +289,12 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
         //
         final CheckBox chk_form = (CheckBox) view.findViewById(R.id.act017_filter_dialog_chk_n_form);
-        chk_form.setText(hmAux_Trans.get("module_n_form"));
+        chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
         chk_form.setChecked(filter_form);
         chk_form.setTag(filter_form);
         //
         final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.act017_filter_dialog_chk_n_form_ap);
-        chk_form_ap.setText(hmAux_Trans.get("module_n_form_ap"));
+        chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
         chk_form_ap.setChecked(filter_form_ap);
         chk_form_ap.setTag(filter_form_ap);
         //

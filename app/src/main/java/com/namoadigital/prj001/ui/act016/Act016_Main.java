@@ -54,6 +54,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private ImageView iv_filter;
     private boolean filter_form;
     private boolean filter_form_ap;
+    private HMAux hmAux_Trans_Extra = new HMAux();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,26 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
+        );
+        /*
+        * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
+        * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
+        * DO RECURSO DA ACT005
+        * */
+        List<String> transList_Extra = new ArrayList<String>();
+        transList_Extra.add("lbl_checklist");
+        transList_Extra.add("lbl_form_ap");
+
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT005
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList_Extra
         );
     }
 
@@ -179,12 +200,12 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
         //
         final CheckBox chk_form = (CheckBox) view.findViewById(R.id.act016_filter_dialog_chk_n_form);
-        chk_form.setText(hmAux_Trans.get("module_n_form"));
+        chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
         chk_form.setChecked(filter_form);
         chk_form.setTag(filter_form);
         //
         final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.act016_filter_dialog_chk_n_form_ap);
-        chk_form_ap.setText(hmAux_Trans.get("module_n_form_ap"));
+        chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
         chk_form_ap.setChecked(filter_form_ap);
         chk_form_ap.setTag(filter_form_ap);
         //

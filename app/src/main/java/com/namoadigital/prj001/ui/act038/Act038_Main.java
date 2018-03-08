@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -33,7 +32,9 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
-import com.namoadigital.prj001.receiver.WBR_AP_Save;
+import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_AP_Search;
+import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -119,6 +120,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private boolean mDataChanged = false;
 
     private ArrayList<Object> properties;
+    private String ws_process = "";
 
     //Ap Agendado
     private String scheduled_date;
@@ -179,6 +181,11 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("department_search_lbl");
         transList.add("btn_save_lbl");
         //
+        transList.add("alert_join_room_ap_ttl");
+        transList.add("alert_join_room_ap_msg");
+        transList.add("dialog_join_room_ap_ttl");
+        transList.add("dialog_join_room_ap_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -197,6 +204,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                         this,
                         hmAux_Trans,
                         new GE_Custom_Form_ApDao(
+                                context
+                        ),
+                        new CH_RoomDao(
                                 context
                         )
                 );
@@ -315,6 +325,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         btn_pdf = (Button) findViewById(R.id.act038_content_btn_pdf);
         btn_chat_nav = (Button) findViewById(R.id.act038_content_btn_chat_nav);
+        btn_chat_nav.setVisibility(View.VISIBLE);
         iv_up = (ImageView) findViewById(R.id.act038_content_iv_up);
         iv_down = (ImageView) findViewById(R.id.act038_content_iv_down);
         //
@@ -370,6 +381,16 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     @Override
     public void showBtnSave(boolean visible) {
         btn_save.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showBtnChatNav(boolean visible) {
+        btn_chat_nav.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setWSProcess(String ws_process) {
+        this.ws_process = ws_process;
     }
 
     @Override
@@ -587,7 +608,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_chat_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "chat_nav", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "chat_nav", Toast.LENGTH_SHORT).show();
+                mPresenter.chatFlow(mGe_custom_form_ap);
             }
         });
 
@@ -862,7 +884,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         switch (requestingAct.toLowerCase()) {
             case Constant.ACT035:
-                callAct035(context);
+                callAct035(context, mGe_custom_form_ap.getRoom_code());
                 break;
             case Constant.ACT017:
                 callAct017(context);
@@ -888,12 +910,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         finish();
 
     }
-
-    public void callAct035(Context context) {
+    @Override
+    public void callAct035(Context context, String room_code) {
         Intent mIntent = new Intent(context, Act035_Main.class);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(CH_MessageDao.ROOM_CODE, mGe_custom_form_ap.getRoom_code());
+        //bundle.putString(CH_MessageDao.ROOM_CODE, mGe_custom_form_ap.getRoom_code());
+        bundle.putString(CH_MessageDao.ROOM_CODE, room_code);
         bundle.putLong(CH_RoomDao.CUSTOMER_CODE, Long.parseLong(mCustomer_Code));
         //
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -934,43 +957,66 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        //
-        progressDialog.dismiss();
-        //
-        showMsg(
-                hmAux_Trans.get("alert_sync_success_ttl"),
-                hmAux_Trans.get("alert_sync_success_msg")
-        );
-        //
-        mPresenter.getloadAP(
-                mCustomer_Code,
-                mCustom_Form_Type,
-                mCustom_Form_Code,
-                mCustom_Form_Version,
-                mCustom_Form_Data,
-                mAp_Code
-        );
+        if(ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName())){
+            resetWSProcess();
+            //
+            progressDialog.dismiss();
+            //
+            showMsg(
+                    hmAux_Trans.get("alert_sync_success_ttl"),
+                    hmAux_Trans.get("alert_sync_success_msg")
+            );
+            //
+            mPresenter.getloadAP(
+                    mCustomer_Code,
+                    mCustom_Form_Type,
+                    mCustom_Form_Code,
+                    mCustom_Form_Version,
+                    mCustom_Form_Data,
+                    mAp_Code
+            );
+        }else{
+            resetWSProcess();
+            //
+            progressDialog.dismiss();
+        }
+    }
+
+    private void resetWSProcess() {
+        setWSProcess("");
     }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        progressDialog.dismiss();
-        //
-        String sKey = mCustomer_Code + "." + mCustom_Form_Type + "." + mCustom_Form_Code + "." + mCustom_Form_Version + "." + mCustom_Form_Data + "." + mAp_Code;
-        String sValue = hmAux.get(sKey);
-        //
-        showResults(hmAux, sKey, sValue);
-        //
-        mPresenter.getloadAP(
-                mCustomer_Code,
-                mCustom_Form_Type,
-                mCustom_Form_Code,
-                mCustom_Form_Version,
-                mCustom_Form_Data,
-                mAp_Code
-        );
+        if(ws_process.equalsIgnoreCase(WS_Room_AP.class.getSimpleName())){
+            resetWSProcess();
+            //
+            progressDialog.dismiss();
+            //
+            callAct035(context,hmAux.get(CH_RoomDao.ROOM_CODE));
+        }else if(ws_process.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            progressDialog.dismiss();
+            //
+            String sKey = mCustomer_Code + "." + mCustom_Form_Type + "." + mCustom_Form_Code + "." + mCustom_Form_Version + "." + mCustom_Form_Data + "." + mAp_Code;
+            String sValue = hmAux.get(sKey);
+            //
+            showResults(hmAux, sKey, sValue);
+            //
+            mPresenter.getloadAP(
+                    mCustomer_Code,
+                    mCustom_Form_Type,
+                    mCustom_Form_Code,
+                    mCustom_Form_Version,
+                    mCustom_Form_Data,
+                    mAp_Code
+            );
+        }else{
+            resetWSProcess();
+            //
+            progressDialog.dismiss();
+        }
     }
 
     private void showResults(HMAux aps, String ap_current, String ap_current_value) {
