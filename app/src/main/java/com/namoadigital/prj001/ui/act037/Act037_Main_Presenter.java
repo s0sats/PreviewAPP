@@ -6,7 +6,7 @@ package com.namoadigital.prj001.ui.act037;
 
 public interface Act037_Main_Presenter {
 
-    void getloadAPs(boolean filter_edit, boolean filter_process, boolean filter_waiting_action, boolean filter_done, boolean filter_cancelled);
+    void getloadAPs(boolean filter_edit, boolean filter_process, boolean filter_waiting_action);
 
     void onBackPressedClicked(String requesting_act);
 

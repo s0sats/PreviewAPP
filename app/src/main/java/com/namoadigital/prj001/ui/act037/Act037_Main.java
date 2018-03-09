@@ -224,11 +224,10 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         mPresenter.getloadAPs(
                 filter_edit,
                 filter_process,
-                filter_waiting_action,
-                filter_done,
-                filter_cancelled);
+                filter_waiting_action
+        );
         //
-        if(filter_edit||filter_process||filter_waiting_action||filter_done||filter_cancelled){
+        if(filter_edit||filter_process||filter_waiting_action){
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
         }else{
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -263,11 +262,13 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
         chk_done.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
         chk_done.setChecked(filter_done);
         chk_done.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_DONE))));
+        chk_done.setVisibility(View.GONE);
         //
         final CheckBox chk_cancelled = (CheckBox) view.findViewById(R.id.act037_helper_dialog_chk_cancelled);
         chk_cancelled.setText(hmAux_Trans.get(Constant.SYS_STATUS_CANCELLED));
         chk_cancelled.setChecked(filter_cancelled);
         chk_cancelled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_CANCELLED))));
+        chk_cancelled.setVisibility(View.GONE);
         //
         alert
             .setView(view)
@@ -279,8 +280,8 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
                     filter_edit = chk_edit.isChecked();
                     filter_process = chk_process.isChecked();
                     filter_waiting_action = chk_waiting_action.isChecked();
-                    filter_done = chk_done.isChecked();
-                    filter_cancelled = chk_cancelled.isChecked();
+                    // filter_done = chk_done.isChecked();
+                    //filter_cancelled = chk_cancelled.isChecked();
                     //
                     applyStatusFilter();
                 }

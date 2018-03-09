@@ -30,7 +30,7 @@ public class Act037_Main_Presenter_Impl implements Act037_Main_Presenter {
     }
 
     @Override
-    public void getloadAPs(boolean filter_edit, boolean filter_process, boolean filter_waiting_action, boolean filter_done, boolean filter_cancelled) {
+    public void getloadAPs(boolean filter_edit, boolean filter_process, boolean filter_waiting_action) {
 
         mView.loadAPs(
                 (ArrayList<HMAux>) ge_custom_form_apDao.query_HM(
@@ -39,8 +39,8 @@ public class Act037_Main_Presenter_Impl implements Act037_Main_Presenter {
                                 filter_edit,
                                 filter_process,
                                 filter_waiting_action,
-                                filter_done,
-                                filter_cancelled
+                                false,
+                                false
                         ).toSqlQuery()
                 )
         );
