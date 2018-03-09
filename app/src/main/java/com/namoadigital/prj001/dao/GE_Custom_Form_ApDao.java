@@ -171,6 +171,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
         try {
             db.execSQL(sQuery);
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
         closeDB();

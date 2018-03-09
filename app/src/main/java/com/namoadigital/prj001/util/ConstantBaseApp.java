@@ -59,6 +59,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT036 = "act036";
     public static final String ACT037 = "act037";
     public static final String ACT038 = "act038";
+    public static final String ACT039 = "act039";
 
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";

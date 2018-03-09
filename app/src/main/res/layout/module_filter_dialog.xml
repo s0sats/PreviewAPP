@@ -6,7 +6,7 @@
     android:padding="20dp">
 
     <TextView
-        android:id="@+id/act016_filter_dialog_tv_title"
+        android:id="@+id/module_filter_dialog_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/font_size_title"
@@ -16,20 +16,18 @@
         />
 
     <CheckBox
-        android:id="@+id/act016_filter_dialog_chk_n_form"
+        android:id="@+id/module_filter_dialog_chk_n_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
         android:layout_marginBottom="20dp"
         android:text="Edit - trad"
         android:checked="true"
         />
 
     <CheckBox
-        android:id="@+id/act016_filter_dialog_chk_n_form_ap"
+        android:id="@+id/module_filter_dialog_chk_n_form_ap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
         android:layout_marginBottom="20dp"
         android:checked="true"
         android:text="Process - trad"

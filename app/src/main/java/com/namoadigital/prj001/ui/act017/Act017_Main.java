@@ -283,17 +283,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         AlertDialog.Builder alert =  new AlertDialog.Builder(context);
         //
         LayoutInflater inflater =  this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.act017_filter_dialog,null);
+        View view = inflater.inflate(R.layout.module_filter_dialog,null);
         //
-        TextView tv_title = (TextView) view.findViewById(R.id.act017_filter_dialog_tv_title);
+        TextView tv_title = (TextView) view.findViewById(R.id.module_filter_dialog_tv_title);
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
         //
-        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.act017_filter_dialog_chk_n_form);
+        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_n_form);
         chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
         chk_form.setChecked(filter_form);
         chk_form.setTag(filter_form);
         //
-        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.act017_filter_dialog_chk_n_form_ap);
+        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_n_form_ap);
         chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
         chk_form_ap.setChecked(filter_form_ap);
         chk_form_ap.setTag(filter_form_ap);
