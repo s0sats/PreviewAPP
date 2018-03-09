@@ -70,6 +70,7 @@ public class TSave_Ap_Rec {
         private int custom_form_version;
         private long custom_form_data;
         private int ap_code;
+        private int ap_scn;
         private int status_code;
         private String status_msg;
 
@@ -119,6 +120,14 @@ public class TSave_Ap_Rec {
 
         public void setAp_code(int ap_code) {
             this.ap_code = ap_code;
+        }
+
+        public int getAp_scn() {
+            return ap_scn;
+        }
+
+        public void setAp_scn(int ap_scn) {
+            this.ap_scn = ap_scn;
         }
 
         public int getStatus_code() {

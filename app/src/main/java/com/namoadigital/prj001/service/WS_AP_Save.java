@@ -161,7 +161,8 @@ public class WS_AP_Save extends IntentService {
                                     apSaveStatus.getCustom_form_code(),
                                     apSaveStatus.getCustom_form_version(),
                                     apSaveStatus.getCustom_form_data(),
-                                    apSaveStatus.getAp_code()
+                                    apSaveStatus.getAp_code(),
+                                    apSaveStatus.getAp_scn()
                             ).toSqlQuery()
                         );
                     }
