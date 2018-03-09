@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.ui.act038;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +38,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
@@ -49,6 +53,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoa_digital.namoa_library.util.ToolBox.SW_TYPE_BR_AP;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -135,6 +141,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private boolean filter_form;
     private boolean filter_form_ap;
 
+    private PDFStatusReceiver mPdfStatusReceiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,6 +168,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         );
 
         loadTranslation();
+    }
+
+    @Override
+    protected void onDestroy() {
+        startReceivers(false);
+        //
+        super.onDestroy();
     }
 
     private void loadTranslation() {
@@ -393,6 +408,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mPresenter.loadSSUsers();
             mPresenter.loadSSDepartments();
             //
+            startReceivers(true);
+            //
             if (mGe_custom_form_ap.getSync_required() == 1) {
                 if (ToolBox_Con.isOnline(context)) {
                     mPresenter.executeApSyncWs();
@@ -400,6 +417,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
+            //
+            if (mGe_custom_form_ap.getCustom_form_url_local() == null && mGe_custom_form_ap.getCustom_form_url_local().isEmpty()) {
+                if (WBR_DownLoad_PDF.IS_RUNNING == false && ToolBox_Con.isOnline(context)) {
+                    activateDownLoadPDF(context);
+                }
+            }
+
         }
     }
 
@@ -661,6 +685,17 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                     startActivity(intent);
+                } else {
+                    ToolBox.alertMSG(
+                            context,
+                            "Pdf Indisponivel Title - Trad",
+                            "Pdf Indisponivel Msg - Trad",
+//                            hmAux_Trans.get("alert_sync_detected_tll"),
+//                            hmAux_Trans.get("alert_sync_detected_msg"),
+                            null,
+                            -1,
+                            false
+                    );
                 }
             }
         });
@@ -726,7 +761,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private boolean validate() {
 
         if (!checkDataChanges(properties)) {
-            return false;
+            if (mGe_custom_form_ap.getUpload_required() == 1 && mGe_custom_form_ap.getSync_required() == 0) {
+                mDataChanged = false;
+                return true;
+            } else {
+                return false;
+            }
         }
 
         HMAux aux = ss_status.getmValue();
@@ -758,10 +798,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             default:
                 break;
         }
-
-//        if (!checkDataChanges(properties)) {
-//            return false;
-//        }
 
         return true;
     }
@@ -869,6 +905,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mGe_custom_form_ap.setAp_how_much(et_form_how_mcuch_ttl.getText().toString().trim().replace(".", ","));
             mGe_custom_form_ap.setAp_what(ToolBox_Inf.prepareForNull(et_form_what_ttl.getText().toString()));
             mGe_custom_form_ap.setAp_comments(ToolBox_Inf.prepareForNull(et_form_comments_ttl.getText().toString()));
+            mGe_custom_form_ap.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             mGe_custom_form_ap.setUpload_required(1);
             //
             if (ToolBox_Con.isOnline(context)) {
@@ -981,6 +1018,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         finish();
 
     }
+
     @Override
     public void callAct035(Context context, String room_code) {
         Intent mIntent = new Intent(context, Act035_Main.class);
@@ -1038,7 +1076,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        if(ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName())){
+        if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName())) {
             resetWSProcess();
             //
             progressDialog.dismiss();
@@ -1056,7 +1094,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     mCustom_Form_Data,
                     mAp_Code
             );
-        }else{
+        } else {
             resetWSProcess();
             //
             progressDialog.dismiss();
@@ -1071,13 +1109,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-        if(ws_process.equalsIgnoreCase(WS_Room_AP.class.getSimpleName())){
+        if (ws_process.equalsIgnoreCase(WS_Room_AP.class.getSimpleName())) {
             resetWSProcess();
             //
             progressDialog.dismiss();
             //
-            callAct035(context,hmAux.get(CH_RoomDao.ROOM_CODE));
-        }else if(ws_process.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            callAct035(context, hmAux.get(CH_RoomDao.ROOM_CODE));
+        } else if (ws_process.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             progressDialog.dismiss();
             //
             String sKey = mCustomer_Code + "." + mCustom_Form_Type + "." + mCustom_Form_Code + "." + mCustom_Form_Version + "." + mCustom_Form_Data + "." + mAp_Code;
@@ -1085,15 +1123,15 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             showResults(hmAux, sKey, sValue);
             //
-            mPresenter.getloadAP(
-                    mCustomer_Code,
-                    mCustom_Form_Type,
-                    mCustom_Form_Code,
-                    mCustom_Form_Version,
-                    mCustom_Form_Data,
-                    mAp_Code
-            );
-        }else{
+//            mPresenter.getloadAP(
+//                    mCustomer_Code,
+//                    mCustom_Form_Type,
+//                    mCustom_Form_Code,
+//                    mCustom_Form_Version,
+//                    mCustom_Form_Data,
+//                    mAp_Code
+//            );
+        } else {
             resetWSProcess();
             //
             progressDialog.dismiss();
@@ -1102,7 +1140,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
     private void showResults(HMAux aps, String ap_current, String ap_current_value) {
         ArrayList<HMAux> mAps = new ArrayList<>();
-
 
         for (String sKey : aps.keySet()) {
             HMAux hmAux = new HMAux();
@@ -1172,6 +1209,15 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPresenter.getloadAP(
+                        mCustomer_Code,
+                        mCustom_Form_Type,
+                        mCustom_Form_Code,
+                        mCustom_Form_Version,
+                        mCustom_Form_Data,
+                        mAp_Code
+                );
+                //
                 show.dismiss();
             }
         });
@@ -1348,4 +1394,52 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
     }
+
+    protected class PDFStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String mType = intent.getStringExtra(ToolBox.SW_TYPE);
+            HMAux hmAux = (HMAux) intent.getSerializableExtra(ToolBox.SW_HMAUX);
+            //
+            if (mType.equalsIgnoreCase("AP")) {
+                processPDF(hmAux);
+            }
+        }
+    }
+
+    private void processPDF(HMAux hmAux) {
+        String sKey = mCustomer_Code + "." + mCustom_Form_Type + "." + mCustom_Form_Code + "." + mCustom_Form_Version + "." + mCustom_Form_Data;
+
+        if (hmAux.get("pk").equalsIgnoreCase(sKey)) {
+            mGe_custom_form_ap.setCustom_form_url_local(hmAux.get("value"));
+        }
+    }
+
+    @Override
+    public void startReceivers(boolean start_stop) {
+        if (mPdfStatusReceiver == null) {
+            mPdfStatusReceiver = new PDFStatusReceiver();
+        }
+        IntentFilter mPdfStatusFilter = new IntentFilter(SW_TYPE_BR_AP);
+        mPdfStatusFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        if (start_stop) {
+            LocalBroadcastManager.getInstance(Act038_Main.this).registerReceiver(mPdfStatusReceiver, mPdfStatusFilter);
+        } else {
+            LocalBroadcastManager.getInstance(Act038_Main.this).unregisterReceiver(mPdfStatusReceiver);
+            //
+            mPdfStatusReceiver = null;
+        }
+    }
+
+    private void activateDownLoadPDF(Context context) {
+        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
 }
+

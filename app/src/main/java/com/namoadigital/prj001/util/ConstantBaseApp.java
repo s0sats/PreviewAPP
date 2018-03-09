@@ -267,7 +267,7 @@ public class ConstantBaseApp extends ConstantBase {
      */
 
     public static final String WS_SEND_RETURN = "ws_send_return";
-
+    public static final String SW_TYPE_PDF = "sw_type_pdf";
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";
     public static final String SW_VALUE = "sw_value";

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
@@ -127,15 +128,15 @@ public class WS_DownLoad_PDF extends IntentService {
             ArrayList<HMAux> formAplist = new ArrayList<>();
             //
             formAplist.addAll(
-              formApDao.query_HM(
-                      new GE_Custom_Form_Ap_Sql_007(
-                              ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                      ).toSqlQuery()
+                    formApDao.query_HM(
+                            new GE_Custom_Form_Ap_Sql_007(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            ).toSqlQuery()
 
-              )
+                    )
             );
             //
-            for (HMAux hmAux: formAplist) {
+            for (HMAux hmAux : formAplist) {
                 if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
 
                     ToolBox_Inf.deleteDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
@@ -157,6 +158,22 @@ public class WS_DownLoad_PDF extends IntentService {
                                 hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
                                 hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf"
                         ).toSqlQuery().toLowerCase()
+                );
+                //
+                HMAux auxPDF = new HMAux();
+                auxPDF.put("pk",
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)
+                );
+                auxPDF.put("value", hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf");
+                //
+                ToolBox.sendBCStatusPDF(
+                        getApplicationContext(),
+                        "AP",
+                        auxPDF
                 );
             }
             /**
@@ -187,7 +204,7 @@ public class WS_DownLoad_PDF extends IntentService {
                 for (HMAux hmAux : so_file_list) {
                     String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
                     String[] nameSplited = fileName.split(splitKey);
-                    String ext = "."+ nameSplited[nameSplited.length -1];
+                    String ext = "." + nameSplited[nameSplited.length - 1];
 
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ext)) {
 

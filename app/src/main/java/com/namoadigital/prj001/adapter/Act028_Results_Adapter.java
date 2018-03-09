@@ -29,6 +29,7 @@ public class Act028_Results_Adapter extends BaseAdapter {
 
     private String mResource_Code;
     private HMAux hmAux_Trans;
+    private HMAux hmAux_Trans_Extra;
 
     public Act028_Results_Adapter(Context context, int resource, List<HMAux> source) {
         this.context = context;
@@ -81,7 +82,22 @@ public class Act028_Results_Adapter extends BaseAdapter {
         TextView tv_msg_ttl = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_msg_ttl);
         TextView tv_msg_value = (TextView) convertView.findViewById(R.id.act028_results_adapter_cell_tv_msg_value);
 
-        tv_ttl.setText(hmAux_Trans.get("adapter_so_lbl"));
+        if (item.get("type") != null && !item.get("type").isEmpty()) {
+            switch (item.get("type").toUpperCase()) {
+                case "S.O.":
+                    tv_ttl.setText(hmAux_Trans.get("adapter_so_lbl"));
+                    break;
+                case "A.P.":
+                    tv_ttl.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
+                    break;
+                default:
+                    break;
+            }
+
+        } else {
+            tv_ttl.setText(hmAux_Trans.get("adapter_so_lbl"));
+        }
+
         iv_flag.setVisibility(View.GONE);
 
         tv_prod_ttl.setVisibility(View.GONE);
@@ -107,6 +123,21 @@ public class Act028_Results_Adapter extends BaseAdapter {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
+        );
+
+        List<String> transList_Extra = new ArrayList<String>();
+        transList_Extra.add("lbl_form_ap");
+
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        "APP_PRJ001",
+                        Constant.ACT005
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList_Extra
         );
     }
 

@@ -47,6 +47,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.ScreenStatusService;
+import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
@@ -974,10 +975,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-
                     setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
                     mPresenter.executeSoSave();
-
                 }
             }
         } else {
@@ -999,6 +998,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", "" + fields[0]);
+                    mHmAux.put("type", "S.O.");
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -1021,6 +1021,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
+                    mHmAux.put("type", "S.O.");
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -1029,7 +1030,26 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 }
             } else {
+            }
 
+            mPresenter.executeApSave();
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+
+            for (String sKey : hmAux.keySet()) {
+                HMAux mHmAux = new HMAux();
+                //
+                String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
+
+                mHmAux.put("label", res[0]);
+                mHmAux.put("type", "A.P.");
+                mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
+                mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
+                //
+                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    wsResults.add(mHmAux);
+                }
             }
 
             mPresenter.getMenuItens(hmAux_Trans);
@@ -1125,6 +1145,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
 
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+
+            setRes("N-AP", hmAux_Trans.get("N-AP SO Approval Error"), "");
+            super.processError_1(mLink, mRequired);
+            mPresenter.getMenuItens(hmAux_Trans);
+
         } else {
 
             setRes("N-Geral", hmAux_Trans.get("N-Geral Error"), "");
@@ -1153,6 +1179,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
             setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
+            mPresenter.getMenuItens(hmAux_Trans);
+            progressDialog.dismiss();
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+            setRes("N-AP", hmAux_Trans.get("N-AP SO Approval Error"), "");
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 

@@ -271,6 +271,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -496,7 +497,7 @@
                         android:inputType="text"
                         android:textSize="15sp"
                         app:mBARCODE="false"
-                        app:mDecimal="4"
+                        app:mDecimal="2"
                         app:mInputType="NUMBER" />
 
                     <!--<TextView-->

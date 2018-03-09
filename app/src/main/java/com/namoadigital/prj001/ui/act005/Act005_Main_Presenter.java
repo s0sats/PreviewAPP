@@ -30,7 +30,5 @@ public interface Act005_Main_Presenter {
 
     void stopChatServices();
 
-    //void generateWsListProcess();
-
-    //void executeNextProcess(String next_ws);
+    void executeApSave();
 }
