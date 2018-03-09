@@ -22,6 +22,7 @@ import com.namoadigital.prj001.sql.Sql_Act014_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
+import com.namoadigital.prj001.ui.act039.Act039_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -34,10 +35,12 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
 
     public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
     public static final String LABEL_TRANS_OS = "lbl_type_service_order";
+    public static final String LABEL_TRANS_FORM_AP = "lbl_type_form_ap";
 
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
     private Namoa_Custom_Cell_2_Adapter mAdapter;
+    private HMAux hmAux_Trans_Extra = new HMAux();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         List<String> translateList = new ArrayList<>();
         translateList.add(LABEL_TRANS_CHECKLIST);
         translateList.add(LABEL_TRANS_OS);
+        translateList.add(LABEL_TRANS_FORM_AP);
         translateList.add("alert_no_sent_data_title");
         translateList.add("alert_no_sent_data_msg");
 
@@ -81,6 +85,28 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
         );
+                /*
+        * ENQUANTO NÃO FOR DEFINIDO MODULO NÃO TRAUDZIVEL PARA O TEXTO
+        * DO NOME DOS MODULOS, SERÁ USADO ESSE METODO ABAIXO QUE BUSCA DIRETAMENTE
+        * DO RECURSO DA ACT005
+        * */
+        List<String> transList_Extra = new ArrayList<String>();
+        transList_Extra.add("lbl_checklist");
+        transList_Extra.add("lbl_form_ap");
+
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT005
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList_Extra
+        );
+        //
+        hmAux_Trans.put(LABEL_TRANS_FORM_AP ,hmAux_Trans_Extra.get("lbl_form_ap"));
     }
 
     private void initVars() {
@@ -175,6 +201,19 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
 
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
 
+        mIntent.putExtras(bundle);
+
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct039(Context context) {
+        Intent mIntent = new Intent(context, Act039_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT014);
         mIntent.putExtras(bundle);
 
         startActivity(mIntent);

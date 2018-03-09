@@ -42,6 +42,7 @@ import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
+import com.namoadigital.prj001.ui.act039.Act039_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -960,11 +961,25 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             case Constant.ACT017:
                 callAct017(context);
                 break;
+            case Constant.ACT039:
+                callAct039(context);
+                break;
             default:
                 callAct037(context);
                 break;
         }
 
+    }
+
+    private void callAct039(Context context) {
+        Intent mIntent = new Intent(context, Act039_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        //
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     private void callAct017(Context context) {
