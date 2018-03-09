@@ -42,7 +42,13 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                         " WHERE \n" +
                         "   a.customer_code = '"+customer_code+"'\n" +
                             status_filter +
-                        " ORDER BY " +
+                        " ORDER BY \n" +
+                        "   CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
+                        "        WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
+                        "        WHEN a.ap_status = '"+Constant.SYS_STATUS_WAITING_ACTION+"' THEN 2\n" +
+                        "        WHEN a.ap_status = '"+Constant.SYS_STATUS_DONE+"' THEN 3\n" +
+                        "        ELSE 4\n" +
+                        "   END,\n" +
                         "   a.customer_code,\n" +
                         "   a.custom_form_type,\n" +
                         "   a.custom_form_code,\n" +

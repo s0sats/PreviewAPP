@@ -214,7 +214,11 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
             mView.showBtnSave(false);
         }
         //Seta visibilidade do btn de chat.
-        mView.showBtnChatNav(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT));
+        mView.showBtnChatNav(
+                ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)
+                    && !status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                    && !status.equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
+        );
     }
 
     @Override
@@ -288,18 +292,23 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                 mView.callAct035(context,chRoom.getRoom_code() );
             }
         }else{
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_join_room_ap_ttl"),
-                    hmAux_Trans.get("alert_join_room_ap_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            executeWsRoomAp(ap);
-                        }
-                    },
-                    1
-            );
+            if( !ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
+                !ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
+                    )
+            {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_join_room_ap_ttl"),
+                        hmAux_Trans.get("alert_join_room_ap_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                executeWsRoomAp(ap);
+                            }
+                        },
+                        1
+                );
+            }
         }
     }
 
