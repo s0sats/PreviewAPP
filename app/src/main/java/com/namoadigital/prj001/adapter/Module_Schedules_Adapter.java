@@ -75,11 +75,11 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         //
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
             case Constant.MODULE_CHECKLIST:
-                return 1;
+                return 0;
             case Constant.MODULE_FORM_AP:
-                return 2;
-            default:
                 return 1;
+            default:
+                return 0;
         }
     }
 
@@ -92,11 +92,11 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
             switch (getItemViewType(position)) {
-                case 1:
+                case 0:
                     convertView = mInflater.inflate(resource_01,parent,false);
                     processFormItem(item,convertView);
                     break;
-                case 2:
+                case 1:
                     convertView = mInflater.inflate(resource_02,parent,false);
                     processFormAPItem(item,convertView);
                     break;
