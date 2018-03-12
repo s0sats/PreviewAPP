@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -667,6 +668,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_AP_Save.class);
         Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND,true);
+
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -780,6 +783,28 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Intent screenService = new Intent(context, ScreenStatusService.class);
                 context.stopService(screenService);
             }
+        }
+    }
+
+    @Override
+    public void syncFlow(int to_send_qty) {
+        if(to_send_qty > 0){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_send_to_sync_ttl"),
+                    hmAux_Trans.get("alert_send_to_sync_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.setSyncAfterSave(true);
+                            //
+                            accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+                        }
+                    },
+                    0
+            );
+        }else{
+            accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
         }
     }
 }

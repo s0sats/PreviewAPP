@@ -124,7 +124,7 @@ public class WS_C_Add_Room extends IntentService {
                     if(objFormAp != null){
                         chRoom.setRoom_status(objFormAp.getAp_status());
                         //Processa dados do Ap.
-                        processFormAP(objFormAp);
+                        processFormAP(objFormAp,chRoom.getRoom_code());
                     }
                     break;
                 default:
@@ -165,11 +165,11 @@ public class WS_C_Add_Room extends IntentService {
     }
     /*
     * Verifica se o ap da room existe no banco local,
-    * Se existir, verifica se scn server é maior e se for,
+    * Se existir, atualiza o room_code e verifica se scn server é maior e se for,
     * apenas seta sync_required para 1, indicando que o ap precisa
-    * ser atualizado
+    * ser atualizado.
     */
-    private void processFormAP(Chat_Room_Obj_Form_AP objFormAp) {
+    private void processFormAP(Chat_Room_Obj_Form_AP objFormAp, String room_code) {
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(objFormAp.getCustomer_code()),
@@ -189,9 +189,14 @@ public class WS_C_Add_Room extends IntentService {
         );
         //
         if(dbFormAp != null && dbFormAp.getCustomer_code() > 0){
+            //Atualiza room code no ap, caso room_code seja null
+            dbFormAp.setRoom_code(dbFormAp.getRoom_code() == null ? room_code : dbFormAp.getRoom_code());
+            //
             if(dbFormAp.getAp_scn() < objFormAp.getAp_scn()){
                 dbFormAp.setSync_required(1);
                 //
+                formApDao.addUpdate(dbFormAp);
+            }else{
                 formApDao.addUpdate(dbFormAp);
             }
         }

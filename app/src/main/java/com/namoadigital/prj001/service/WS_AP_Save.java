@@ -49,10 +49,11 @@ public class WS_AP_Save extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
+        boolean menu_send_process = bundle.getBoolean(Constant.PROCESS_MENU_SEND, false);
 
         try {
             //
-            processApSave();
+            processApSave(menu_send_process);
 
         } catch (Exception e) {
 
@@ -69,7 +70,7 @@ public class WS_AP_Save extends IntentService {
 
     }
 
-    private void processApSave() throws Exception {
+    private void processApSave(boolean menu_send_process) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //Envia JSON apenas com campos marcados pela tag Expose
@@ -85,8 +86,14 @@ public class WS_AP_Save extends IntentService {
         );
         //
         if (apList == null || apList.size() == 0) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_save"), "", "0");
-            return;
+            if(!menu_send_process){
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_save"), "", "0");
+                return;
+            }else{
+                HMAux auxApReturned = new HMAux();
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
+                return;
+            }
         }
         //
         TSave_Ap_Env env = new TSave_Ap_Env();

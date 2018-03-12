@@ -51,4 +51,6 @@ public interface Act005_Main_View {
 
     void setWsProcessList(ArrayList<HMAux> wsProcessList);
 
+    void setSyncAfterSave(boolean syncAfterSave);
+
 }

@@ -155,6 +155,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     private FCMReceiver fcmReceiver;
     private BR_Chat chatReceiver;
+    private boolean syncAfterSave;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -316,6 +317,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         transList.add("lbl_chat");
         //
+        transList.add("alert_send_to_sync_ttl");
+        transList.add("alert_send_to_sync_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -382,7 +386,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
         //
         mPresenter.getMenuItens(hmAux_Trans);
-
+        //
+        syncAfterSave = false;
+        //
         mDrawerToggle = new ActionBarDrawerToggle(
                 Act005_Main.this,
                 mDrawerLayout,
@@ -624,7 +630,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
                             }
                         },
                         1
@@ -757,6 +764,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void setWsProcessList(ArrayList<HMAux> wsProcessList) {
         this.wsProcessList = wsProcessList;
+    }
+
+    @Override
+    public void setSyncAfterSave(boolean syncAfterSave) {
+        this.syncAfterSave = syncAfterSave;
     }
 
     @Override
@@ -964,7 +976,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     // fechar drawer Hugo
                 }
             } else {
-
                 if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
                     progressDialog.dismiss();
                     showSuccessDialog();
@@ -1058,7 +1069,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (wsResults.size() > 1) {
                 showResults(wsResults);
             } else {
-                showSuccessDialog();
+                if(syncAfterSave){
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+                }else {
+                    showSuccessDialog();
+                }
             }
 
         } else {
@@ -1111,6 +1128,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
+                    //
+                }
+                //
+                if(syncAfterSave) {
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
                 }
             }
         });
@@ -1134,16 +1158,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
 
             setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
-
-            super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            //super.processError_1(mLink, mRequired);
+            mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
 
             setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
-
-            super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            //super.processError_1(mLink, mRequired);
+            mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
 
@@ -1152,7 +1174,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
 
         } else {
-
             setRes("N-Geral", hmAux_Trans.get("N-Geral Error"), "");
 
             super.processError_1(mLink, mRequired);
