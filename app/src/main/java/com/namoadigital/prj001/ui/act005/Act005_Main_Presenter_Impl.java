@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -226,8 +225,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //Soma Qtd de n-form e n_service
                         qty = String.valueOf(
                                 Integer.parseInt(qty)
-                                + Integer.parseInt(qtySO)
-                                + Integer.parseInt(qtyAP)
+                                        + Integer.parseInt(qtySO)
+                                        + Integer.parseInt(qtyAP)
                         );
                         //
                         qtyBadge2 = soDao.getByStringHM(
@@ -263,9 +262,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //Soma Qtd de n-form e n_service e form_ap
                         qty = String.valueOf(
                                 ToolBox_Inf.convertStringToInt(qty) +
-                                ToolBox_Inf.convertStringToInt(qtySO) +
-                                isSoWithinTokenFile() +
-                                ToolBox_Inf.convertStringToInt(qtyAP)
+                                        ToolBox_Inf.convertStringToInt(qtySO) +
+                                        isSoWithinTokenFile() +
+                                        ToolBox_Inf.convertStringToInt(qtyAP)
                         );
                         //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
@@ -286,7 +285,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                         qty = String.valueOf(
                                 ToolBox_Inf.convertStringToInt(qty) +
-                                ToolBox_Inf.convertStringToInt(qtyAP)
+                                        ToolBox_Inf.convertStringToInt(qtyAP)
                         );
                         //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
@@ -460,7 +459,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
         builder.setView(view);
         builder.setCancelable(false);
-        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"),null);
+        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), null);
         builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
 
         AlertDialog dialog = builder.create();
@@ -472,11 +471,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(et_support_msg.getText().toString().trim().length() > 0) {
+                        if (et_support_msg.getText().toString().trim().length() > 0) {
                             executeSupport(et_support_msg.getText().toString().trim());
                             //
                             dialog.dismiss();
-                        }else{
+                        } else {
                             et_support_msg.setText("");
                             et_support_msg.findFocus();
                             //
@@ -668,7 +667,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_AP_Save.class);
         Bundle bundle = new Bundle();
-        bundle.putBoolean(Constant.PROCESS_MENU_SEND,true);
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
 
         mIntent.putExtras(bundle);
         //
@@ -788,22 +787,26 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void syncFlow(int to_send_qty) {
-        if(to_send_qty > 0){
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_send_to_sync_ttl"),
-                    hmAux_Trans.get("alert_send_to_sync_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mView.setSyncAfterSave(true);
-                            //
-                            accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                        }
-                    },
-                    0
-            );
-        }else{
+        if (to_send_qty > 0) {
+            mView.setSyncAfterSave(true);
+            //
+            accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_send_to_sync_ttl"),
+//                    hmAux_Trans.get("alert_send_to_sync_msg"),
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            mView.setSyncAfterSave(true);
+//                            //
+//                            accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+//                        }
+//                    },
+//                    0
+//            );
+        } else {
             accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
         }
     }

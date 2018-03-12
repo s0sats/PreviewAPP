@@ -12,18 +12,21 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Room;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_013;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -125,6 +128,8 @@ public class WS_C_Room extends IntentService {
                     );
                     if(objFormAp != null){
                         chRoom.setRoom_status(objFormAp.getAp_status());
+                        //Processa dados do Ap.
+                        processFormAP(objFormAp);
                     }
                     break;
                 default:
@@ -140,6 +145,41 @@ public class WS_C_Room extends IntentService {
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
         //
         callCHistoricalMsg();
+    }
+
+    /*
+       * Verifica se o ap da room existe no banco local,
+       * Se existir, atualiza o room_code e verifica se scn server é maior e se for,
+       * apenas seta sync_required para 1, indicando que o ap precisa
+       * ser atualizado.
+       */
+    private void processFormAP(Chat_Room_Obj_Form_AP objFormAp) {
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(objFormAp.getCustomer_code()),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        GE_Custom_Form_Ap dbFormAp = formApDao.getByString(
+                new GE_Custom_Form_Ap_Sql_005(
+                        String.valueOf(objFormAp.getCustomer_code()),
+                        String.valueOf(objFormAp.getCustom_form_type()),
+                        String.valueOf(objFormAp.getCustom_form_code()),
+                        String.valueOf(objFormAp.getCustom_form_version()),
+                        String.valueOf(objFormAp.getCustom_form_data()),
+                        String.valueOf(objFormAp.getAp_code()),
+                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+                ).toSqlQuery()
+        );
+        //
+        if(dbFormAp != null && dbFormAp.getCustomer_code() > 0){
+            if(dbFormAp.getAp_scn() < objFormAp.getAp_scn()){
+                dbFormAp.setSync_required(1);
+                //
+                formApDao.addUpdate(dbFormAp);
+            }
+        }
+
     }
 
     private void cleanUPRooms(ArrayList<CH_Room> chRooms) {

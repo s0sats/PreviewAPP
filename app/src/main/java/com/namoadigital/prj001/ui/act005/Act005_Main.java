@@ -319,6 +319,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         transList.add("alert_send_to_sync_ttl");
         transList.add("alert_send_to_sync_msg");
+        transList.add("progress_so_save_ttl");
+        transList.add("progress_so_save_msg");
+        transList.add("progress_ap_save_ttl");
+        transList.add("progress_ap_save_msg");
+        transList.add("alert_ws_so_error_msg");
+        transList.add("alert_ws_ap_error_msg");
+        transList.add("alert_ws_general_error_ttl");
+        transList.add("alert_ws_general_error_msg");
+        transList.add("alert_results_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -986,7 +995,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
+                    //setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
                     mPresenter.executeSoSave();
                 }
             }
@@ -1066,7 +1075,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 1) {
+            if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
                 if(syncAfterSave){
@@ -1083,7 +1092,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 1) {
+            if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
                 showSuccessDialog();
@@ -1143,8 +1152,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
-
-            setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
+            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
 
             enableProgressDialog(
                     hmAux_Trans.get("progress_so_save_ttl"),
@@ -1156,25 +1164,44 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.executeSoSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
             //super.processError_1(mLink, mRequired);
             mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
             //super.processError_1(mLink, mRequired);
             mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
 
-            setRes("N-AP", hmAux_Trans.get("N-AP SO Approval Error"), "");
+            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
             super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            //
+            if(syncAfterSave){
+                setSyncAfterSave(false);
+                //
+                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+            }else {
+                mPresenter.getMenuItens(hmAux_Trans);
+            }
 
         } else {
-            setRes("N-Geral", hmAux_Trans.get("N-Geral Error"), "");
+            setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
 
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
