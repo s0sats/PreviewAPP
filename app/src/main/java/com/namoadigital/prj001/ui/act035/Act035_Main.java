@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,7 +38,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
-import com.namoadigital.prj001.adapter.Act035_Adapter_Messages_bk;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
@@ -49,6 +49,7 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -100,7 +101,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private ImageView iv_reorder;
     private ImageView iv_down;
 
-    private Act035_Adapter_Messages_bk act035_adapter_messages;
+    private Act035_Adapter_Messages act035_adapter_messages;
     private ArrayList<HMAux> dados;
     private ArrayList<HMAux> messages;
 
@@ -137,6 +138,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private MyRunnable_02 m2;
 
     private boolean endDetected = false;
+
+    private pdfDownload mPdfDownload;
 
     /*TESTE, MOVER PARA ACT035*/
     //private DownloadMemberImgTask downloadMemberImgTask;
@@ -359,7 +362,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             sw_messages.setEnabled(true);
         }
         //
-        act035_adapter_messages = new Act035_Adapter_Messages_bk(
+        act035_adapter_messages = new Act035_Adapter_Messages(
                 getBaseContext(),
                 R.layout.act035_main_content_cell_whats_img_other,
                 R.layout.act035_main_content_cell_whats_img_me,
@@ -368,11 +371,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_whats_text_data,
                 R.layout.act035_main_content_cell_whats_text_end,
                 R.layout.act035_main_content_cell_whats_text_trans,
+                R.layout.act035_main_content_cell_namoa_ap,
+                R.layout.act035_main_content_cell_whats_text_other,
                 this.dados,
                 hmAux_Trans
         );
 
-        act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages_bk.IAct035_Adapter_Messages() {
+        act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
             @Override
             public void showInfo(HMAux hmAux) {
 
@@ -390,6 +395,86 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
+
+            @Override
+            public void download_AP(String pk, String custom_form_url) {
+
+                String pk_fields[] = pk.replace("|", "#").split("#");
+
+                Log.d("ap_pk", pk);
+                Log.d("ap_pk", String.valueOf(pk_fields.length));
+
+
+                File file = new File(Constant.CACHE_PATH + "/" +
+                        "form_ap_" +
+                        pk_fields[0] + "_" +
+                        pk_fields[1] + "_" +
+                        pk_fields[2] + "_" +
+                        pk_fields[3] + "_" +
+                        pk_fields[4] +
+                        ".pdf"
+                );
+
+                if (file.exists()) {
+                    try {
+
+                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                        ToolBox_Inf.copyFile(
+                                file,
+                                new File(Constant.CACHE_PDF)
+                        );
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                    }
+
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +
+                                    "form_ap_" +
+                                    pk_fields[0] + "_" +
+                                    pk_fields[1] + "_" +
+                                    pk_fields[2] + "_" +
+                                    pk_fields[3] + "_" +
+                                    pk_fields[4] +
+                                    ".pdf")),
+                            "application/pdf");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                    startActivity(intent);
+                } else {
+
+                    mPdfDownload =
+
+                            new pdfDownload();
+
+                    mPdfDownload.execute(
+                            "form_ap_" +
+                                    pk_fields[0] + "_" +
+                                    pk_fields[1] + "_" +
+                                    pk_fields[2] + "_" +
+                                    pk_fields[3] + "_" +
+                                    pk_fields[4],
+                            custom_form_url
+                    );
+
+                    ToolBox.alertMSG(
+                            context,
+                            "Pdf Indisponivel Title - Trad",
+                            "Pdf Indisponivel Msg - Trad",
+//                            hmAux_Trans.get("alert_sync_detected_tll"),
+//                            hmAux_Trans.get("alert_sync_detected_msg"),
+                            null,
+                            -1,
+                            false
+                    );
+                }
+            }
+
+            @Override
+            public void join_AP() {
+
+            }
         });
 
         lv_messages.setAdapter(
@@ -399,6 +484,46 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         lv_messages.setSelection(this.dados.size() - 1);
         //
         sw_messages.setRefreshing(false);
+    }
+
+    private class pdfDownload extends AsyncTask<String, String, String> {
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            try {
+                if (!ToolBox_Inf.verifyDownloadFileInf(Constant.CACHE_PATH + "/" +
+                        strings[0] + ".pdf")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(Constant.CACHE_PATH + "/" +
+                            strings[0] + ".tmp");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            strings[1],
+                            Constant.CACHE_PATH + "/" +
+                                    strings[0] + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(strings[0], ".pdf");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+
+    }
+
+    private void activateDownLoadPDF(Context context) {
+        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
+        Bundle bundle = new Bundle();
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private void recoverIntentsInfo() {
@@ -685,6 +810,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onDestroy() {
         startReceivers(false);
+        //
+        if (mPdfDownload != null) {
+            mPdfDownload.cancel(true);
+        }
         //
         if (messageInfoTask != null) {
             messageInfoTask.cancel(true);

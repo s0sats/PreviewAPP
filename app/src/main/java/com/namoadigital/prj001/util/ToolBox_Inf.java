@@ -3894,5 +3894,22 @@ public class ToolBox_Inf {
         }
     }
 
+    public static HashMap<String, String> JsonToHashMap(JSONObject jsonObject, String root) throws Exception {
+        JSONObject mRoot = jsonObject.getJSONObject(root);
+        HashMap<String, String> map = new HashMap<>();
+
+        if (mRoot != null) {
+            Iterator iter = mRoot.keys();
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+                String value = mRoot.getString(key);
+                //
+                map.put(key, value);
+            }
+        }
+
+        return map;
+    }
+
 
 }
