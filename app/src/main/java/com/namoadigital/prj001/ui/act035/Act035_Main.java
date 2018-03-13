@@ -26,6 +26,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -50,9 +52,14 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
+import com.namoadigital.prj001.receiver.WBR_AP_Search;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
+import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
+import com.namoadigital.prj001.service.WS_AP_Search;
+import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.sql.CH_Message_Sql_008;
@@ -62,7 +69,10 @@ import com.namoadigital.prj001.sql.CH_Message_Sql_017;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.CH_Room_Sql_005;
 import com.namoadigital.prj001.sql.CH_Room_Sql_006;
+import com.namoadigital.prj001.sql.CH_Room_Sql_013;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
+import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -155,6 +165,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private LinearLayout ll_msg_edit;
 
     private GE_Custom_Form_ApDao mGe_custom_form_apDao;
+    private String mCustomer_Code;
+    private String mCustom_Form_Type;
+    private String mCustom_Form_Code;
+    private String mCustom_Form_Version;
+    private String mCustom_Form_Data;
+    private String mAp_Code;
+
+    private String ws_process = "";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -212,6 +231,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("progress_leave_room_msg");
         transList.add("ws_message_info_ttl");
         transList.add("ws_message_info_msg");
+        transList.add("join_ap_dialog_filter_ttl");
+        transList.add("join_type_lbl");
+        transList.add("ap_type_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -232,6 +254,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         hmAux_Trans,
                         new CH_MessageDao(context)
                 );
+        //
+        mGe_custom_form_apDao = new GE_Custom_Form_ApDao(context);
         //
         Act035_Adapter_Messages.hmAuxColors.clear();
         ToolBox_Inf.colorIndex = 0;
@@ -477,14 +501,61 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             @Override
             public void join_AP(String pk) {
 
-                GE_Custom_Form_ApDao mGe_custom_form_apDao = new GE_Custom_Form_ApDao(context);
 
+                HMAux hmItem = ch_roomDao.getByStringHM(
+                        new CH_Room_Sql_013(
+                                pk
+                        ).toSqlQuery()
+                );
 
+                if (hmItem != null && hmItem.get(CH_RoomDao.ROOM_CODE) != null && !hmItem.get(CH_RoomDao.ROOM_CODE).isEmpty()) {
+                    bundle.putString(CH_RoomDao.ROOM_CODE, hmItem.get(CH_RoomDao.ROOM_CODE));
+                    bundle.putString(Constant.CHAT_RELOAD, "1");
+                    //
+                    callAct034(context);
+                } else {
 
+                    String pk_fields[] = pk.replace("|", "#").split("#");
 
-                // Verifica a existencia do AP Se sim vai até ele
-                // Se nao mostra dialog permitindo a criacao a AP faz o sync com o servidor
+                    if (pk_fields.length == 6) {
+                        mCustomer_Code = pk_fields[0];
+                        mCustom_Form_Type = pk_fields[1];
+                        mCustom_Form_Code = pk_fields[2];
+                        mCustom_Form_Version = pk_fields[3];
+                        mCustom_Form_Data = pk_fields[4];
+                        mAp_Code = pk_fields[5];
 
+                        GE_Custom_Form_Ap mGe_custom_form_ap = mGe_custom_form_apDao.getByString(
+                                new GE_Custom_Form_Ap_Sql_005(
+                                        mCustomer_Code,
+                                        mCustom_Form_Type,
+                                        mCustom_Form_Code,
+                                        mCustom_Form_Version,
+                                        mCustom_Form_Data,
+                                        mAp_Code,
+                                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+                                ).toSqlQuery()
+                        );
+
+                        // mudar para diferente
+                        if (mGe_custom_form_ap != null) {
+
+                            HMAux hmAux = new HMAux();
+
+                            hmAux.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, mCustomer_Code);
+                            hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mCustom_Form_Type);
+                            hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mCustom_Form_Code);
+                            hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
+                            hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
+                            hmAux.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
+
+                            callAct038(context, hmAux);
+                        } else {
+                            processingJoinAPDialog();
+                        }
+
+                    }
+                }
             }
         });
 
@@ -497,8 +568,52 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         sw_messages.setRefreshing(false);
     }
 
-    private class pdfDownload extends AsyncTask<String, String, String> {
+    private void processingJoinAPDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.act035_join_ap_dialog, null);
+        //
+        final RadioGroup rg = (RadioGroup) view.findViewById(R.id.act035_join_ap_dialog_rg);
+        RadioButton rb_join = (RadioButton) view.findViewById(R.id.act035_join_ap_dialog_rb_join);
+        RadioButton rb_ap = (RadioButton) view.findViewById(R.id.act035_join_ap_dialog_rb_ap);
+        //
+        rb_join.setText(hmAux_Trans.get("join_type_lbl"));
+        rb_join.setChecked(true);
+        rb_ap.setText(hmAux_Trans.get("ap_type_lbl"));
+        //
+        builder
+                .setTitle(hmAux_Trans.get("join_ap_dialog_filter_ttl"))
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        processingJoinAP(rg.getCheckedRadioButtonId());
+                    }
+                })
+                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
+
+        //
+        AlertDialog joinApDialog = builder.create();
+
+        joinApDialog.show();
+    }
+
+    private void processingJoinAP(int selected) {
+        switch (selected) {
+            case R.id.act035_join_ap_dialog_rb_join:
+                executeApSyncWs("join");
+                break;
+            case R.id.act035_join_ap_dialog_rb_ap:
+                executeApSyncWs("");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private class pdfDownload extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... strings) {
@@ -524,7 +639,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             return null;
         }
-
 
     }
 
@@ -614,161 +728,163 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 ).toSqlQuery()
         );
 
-
-        if (mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
-            ll_msg_edit.setVisibility(View.GONE);
+        if (mRoom == null) {
+            callAct034(context);
         } else {
-            ll_msg_edit.setVisibility(View.VISIBLE);
-        }
 
-        tv_room_name_val.setText(mRoom.getRoom_desc());
+            if (mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
+                ll_msg_edit.setVisibility(View.GONE);
+            } else {
+                ll_msg_edit.setVisibility(View.VISIBLE);
+            }
 
-        tv_logged_customer.setText(mCustomer_name);
+            tv_room_name_val.setText(mRoom.getRoom_desc());
 
-        if (mCustomer_Count > 1) {
-            tv_logged_customer.setVisibility(View.VISIBLE);
-        } else {
-            tv_logged_customer.setVisibility(View.GONE);
-        }
+            tv_logged_customer.setText(mCustomer_name);
 
-        try {
-            iv_room_thumbnail.setImageBitmap(
-                    BitmapFactory.decodeFile(
-                            Constant.CACHE_CHAT_PATH + "/" +
-                                    mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) + ".jpg"
-                    )
-            );
+            if (mCustomer_Count > 1) {
+                tv_logged_customer.setVisibility(View.VISIBLE);
+            } else {
+                tv_logged_customer.setVisibility(View.GONE);
+            }
 
-        } catch (Exception e) {
-            iv_room_thumbnail.setImageDrawable(getDrawable(R.mipmap.ic_namoa));
-        } finally {
-            iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
+            try {
+                iv_room_thumbnail.setImageBitmap(
+                        BitmapFactory.decodeFile(
+                                Constant.CACHE_CHAT_PATH + "/" +
+                                        mRoom.getRoom_image_local().substring(0, mRoom.getRoom_image_local().length() - 4) + ".jpg"
+                        )
+                );
+
+            } catch (Exception e) {
+                iv_room_thumbnail.setImageDrawable(getDrawable(R.mipmap.ic_namoa));
+            } finally {
+                iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                            startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
+                    }
+                });
+            }
+            //
+            sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
-                public void onClick(View v) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                        startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+                public void onRefresh() {
+                    sw_messages.setRefreshing(true);
+                    //
+                    dadosSizePreRefresh = dados.size();
+                    //
+                    if (dados.size() > 0) {
+                        if (offSetV > dados.size()) {
+                            offSetV = dadosSizePreRefresh + 100;
+                            //
+                            for (int i = 0; i < dados.size(); i++) {
+                                if (dados.get(i).get(CH_MessageDao.TMP) != null) {
+                                    mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(i).get(CH_MessageDao.MSG_PREFIX), dados.get(i).get(CH_MessageDao.MSG_CODE));
+                                    break;
+                                }
+                            }
+                        } else {
+                            offSetV += 100;
+                            //
+                            rearrange_list();
+                        }
                     } else {
-                        ToolBox_Inf.showNoConnectionDialog(context);
+                        //sw_messages.setRefreshing(false);
+                        mPresenter.sendHistoricalScrollUp(mRoom_code, null, null);
                     }
                 }
             });
-        }
-        //
-        sw_messages.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                sw_messages.setRefreshing(true);
-                //
-                dadosSizePreRefresh = dados.size();
-                //
-                if (dados.size() > 0) {
-                    if (offSetV > dados.size()) {
-                        offSetV = dadosSizePreRefresh + 100;
-                        //
-                        for (int i = 0; i < dados.size(); i++) {
-                            if (dados.get(i).get(CH_MessageDao.TMP) != null) {
-                                mPresenter.sendHistoricalScrollUp(mRoom_code, dados.get(i).get(CH_MessageDao.MSG_PREFIX), dados.get(i).get(CH_MessageDao.MSG_CODE));
-                                break;
-                            }
-                        }
-                    } else {
-                        offSetV += 100;
-                        //
-                        rearrange_list();
-                    }
-                } else {
-                    //sw_messages.setRefreshing(false);
-                    mPresenter.sendHistoricalScrollUp(mRoom_code, null, null);
-                }
-            }
-        });
-        //
-        lv_messages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                if (item.get("msg_obj").toLowerCase().contains("IMAGE".toLowerCase())) {
-                    mPresenter.onOnItemClicked(item);
-                }
-            }
-        });
-        //
-        iv_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                statusCameraNew = true;
-
-                String sCustomName = ToolBox_Inf.yearMonthPrefix() + "." + UUID.randomUUID().toString() + ".jpg";
-
-                callCamera(-1, 1, sCustomName, true, true);
-            }
-        });
-        //
-        iv_send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!mkEditTextNM.getText().toString().trim().equals("")) {
-                    String texto = mkEditTextNM.getText().toString().trim();
+            //
+            lv_messages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux item = (HMAux) parent.getItemAtPosition(position);
                     //
-                    mkEditTextNM.setText("");
+                    if (item.get("msg_obj").toLowerCase().contains("IMAGE".toLowerCase())) {
+                        mPresenter.onOnItemClicked(item);
+                    }
+                }
+            });
+            //
+            iv_photo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    statusCameraNew = true;
+
+                    String sCustomName = ToolBox_Inf.yearMonthPrefix() + "." + UUID.randomUUID().toString() + ".jpg";
+
+                    callCamera(-1, 1, sCustomName, true, true);
+                }
+            });
+            //
+            iv_send.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (!mkEditTextNM.getText().toString().trim().equals("")) {
+                        String texto = mkEditTextNM.getText().toString().trim();
+                        //
+                        mkEditTextNM.setText("");
+                        //
+                        iv_reorder.setVisibility(View.GONE);
+                        iv_down.setVisibility(View.GONE);
+                        //
+                        mPresenter.sendMessage(mRoom_code, texto, "", String.valueOf(offSetV));
+                    }
+                }
+            });
+            //
+            iv_reorder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    statusReorderProcess = false;
+                    //
+                    mPresenter.setData(mRoom_code, String.valueOf(offSetV));
                     //
                     iv_reorder.setVisibility(View.GONE);
-                    iv_down.setVisibility(View.GONE);
+                }
+            });
+            //
+            iv_down.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lv_messages.setSelection(dados.size() - 1);
                     //
-                    mPresenter.sendMessage(mRoom_code, texto, "", String.valueOf(offSetV));
+                    iv_down.setVisibility(View.GONE);
                 }
-            }
-        });
-        //
-        iv_reorder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                statusReorderProcess = false;
-                //
-                mPresenter.setData(mRoom_code, String.valueOf(offSetV));
-                //
-                iv_reorder.setVisibility(View.GONE);
-            }
-        });
-        //
-        iv_down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lv_messages.setSelection(dados.size() - 1);
-                //
-                iv_down.setVisibility(View.GONE);
-            }
-        });
-        //
-        lv_messages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            });
+            //
+            lv_messages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if (ToolBox_Con.isOnline(context)) {
+                    if (ToolBox_Con.isOnline(context)) {
 
-                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+                        HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
 
-                    SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 
-                    if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
-                        startMessageInfoTask(
-                                singletonWebSocket.mSocket.id(),
-                                hmAux.get(CH_MessageDao.MSG_PREFIX),
-                                hmAux.get(CH_MessageDao.MSG_CODE)
-                        );
+                        if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
+                            startMessageInfoTask(
+                                    singletonWebSocket.mSocket.id(),
+                                    hmAux.get(CH_MessageDao.MSG_PREFIX),
+                                    hmAux.get(CH_MessageDao.MSG_CODE)
+                            );
+                        }
+                    } else {
+                        ToolBox_Inf.showNoConnectionDialog(context);
                     }
-                } else {
-                    ToolBox_Inf.showNoConnectionDialog(context);
+
+                    return true;
                 }
-
-
-                return true;
-            }
-        });
-
+            });
+        }
     }
 
     private void rearrange_list() {
@@ -847,6 +963,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mIntent.putExtra(NOTIFICATION, bTT);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct038(Context context, HMAux hmAux) {
+        Intent mIntent = new Intent(context, Act038_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        //Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT035);
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
+        bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+        //
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1751,4 +1886,156 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         super.processNotification_close(mValue, mActivity);
     }
 
+    public void executeApSyncWs(String type) {
+        if (!type.isEmpty()) {
+            setWSProcess(WS_AP_Search.class.getSimpleName() + "-" + type);
+        } else {
+            setWSProcess(WS_AP_Search.class.getSimpleName());
+        }
+        //
+        showPD(
+                //hmAux_Trans.get("progress_sync_ap_ttl"),
+                "sync ap ttl - Trad",
+                "sync ap msg - Trad"
+                //hmAux_Trans.get("progress_sync_ap_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_AP_Search.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 0);
+        bundle.putLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, Long.parseLong(mCustomer_Code));
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, Integer.parseInt(mCustom_Form_Type));
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, Integer.parseInt(mCustom_Form_Code));
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, Integer.parseInt(mCustom_Form_Version));
+        bundle.putLong(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, Long.parseLong(mCustom_Form_Data));
+        bundle.putInt(GE_Custom_Form_ApDao.AP_CODE, Integer.parseInt(mAp_Code));
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    private void executeWsRoomAp(HMAux ap) {
+        updatePD(
+                hmAux_Trans.get("dialog_join_room_ap_ttl"),
+                hmAux_Trans.get("dialog_join_room_ap_msg")
+        );
+        //
+        setWSProcess(WS_Room_AP.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_Room_AP.class);
+        Bundle mBundle = new Bundle();
+        //
+        mBundle.putLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, Long.parseLong(ap.get(GE_Custom_Form_ApDao.CUSTOMER_CODE)));
+        mBundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, Integer.parseInt(ap.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE)));
+        mBundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, Integer.parseInt(ap.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE)));
+        mBundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, Integer.parseInt(ap.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION)));
+        mBundle.putLong(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, Long.parseLong(ap.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)));
+        mBundle.putInt(GE_Custom_Form_ApDao.AP_CODE, Integer.parseInt(ap.get(GE_Custom_Form_ApDao.AP_CODE)));
+        //
+        mIntent.putExtras(mBundle);
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    private void updatePD(String ttl, String msg) {
+        progressDialog.setTitle(ttl);
+        progressDialog.setMessage(msg);
+    }
+
+    @Override
+    public void setWSProcess(String ws_process) {
+        this.ws_process = ws_process;
+    }
+
+    private void resetWSProcess() {
+        setWSProcess("");
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        //
+        HMAux hmAuxAP = new HMAux();
+        //
+        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, mCustomer_Code);
+        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mCustom_Form_Type);
+        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mCustom_Form_Code);
+        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
+        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
+        hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
+        //
+        if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
+            executeWsRoomAp(hmAuxAP);
+        } else {
+            callAct038(context, hmAuxAP);
+            //
+            progressDialog.dismiss();
+        }
+
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+
+
+        bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
+        bundle.putString(Constant.CHAT_RELOAD, "1");
+        //
+        callAct034(context);
+
+        progressDialog.dismiss();
+//
+//        //
+//        HMAux hmAuxAP = new HMAux();
+//        //
+//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, mCustomer_Code);
+//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mCustom_Form_Type);
+//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mCustom_Form_Code);
+//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
+//        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
+//        hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
+//        //
+//        if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
+//            executeWsRoomAp(hmAuxAP);
+//        } else if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName())) {
+//            bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
+//            bundle.putString(Constant.CHAT_RELOAD, "1");
+//            //
+//            callAct034(context);
+//
+//            progressDialog.dismiss();
+//        } else {
+//            callAct038(context, hmAuxAP);
+//            //
+//            progressDialog.dismiss();
+//        }
+    }
+
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
+        //
+        resetWSProcess();
+    }
 }

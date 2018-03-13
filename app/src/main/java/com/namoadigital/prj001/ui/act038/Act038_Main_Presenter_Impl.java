@@ -49,10 +49,10 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
 
     private GE_Custom_Form_Ap mGe_custom_form_ap;
     private GE_Custom_Form_ApDao mGe_custom_form_apDao;
-    private CH_RoomDao mRoomDao ;
+    private CH_RoomDao mRoomDao;
 
 
-    public Act038_Main_Presenter_Impl(Context context, Act038_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_ApDao mGe_custom_form_apDao, CH_RoomDao mRoomDao ) {
+    public Act038_Main_Presenter_Impl(Context context, Act038_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_ApDao mGe_custom_form_apDao, CH_RoomDao mRoomDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -215,9 +215,9 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         }
         //Seta visibilidade do btn de chat.
         mView.showBtnChatNav(
-                ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)
-                    && !status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-                    && !status.equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
+                ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)
+                        && !status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                        && !status.equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
         );
     }
 
@@ -232,7 +232,15 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_AP_Search.class);
         Bundle bundle = new Bundle();
-        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 1);
+
+        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 0);
+        bundle.putLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, mGe_custom_form_ap.getCustomer_code());
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mGe_custom_form_ap.getCustom_form_type());
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mGe_custom_form_ap.getCustom_form_code());
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mGe_custom_form_ap.getCustom_form_version());
+        bundle.putLong(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mGe_custom_form_ap.getCustom_form_data());
+        bundle.putInt(GE_Custom_Form_ApDao.AP_CODE, mGe_custom_form_ap.getAp_code());
+
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -282,20 +290,19 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     @Override
     public void chatFlow(final GE_Custom_Form_Ap ap) {
         CH_Room chRoom = mRoomDao.getByString(
-            new CH_Room_Sql_001(
-                    ap.getRoom_code()
-            ).toSqlQuery()
+                new CH_Room_Sql_001(
+                        ap.getRoom_code()
+                ).toSqlQuery()
         );
         //
-        if(chRoom != null){
-            if(chRoom.getRoom_code().length() > 0){
-                mView.callAct035(context,chRoom.getRoom_code() );
+        if (chRoom != null) {
+            if (chRoom.getRoom_code().length() > 0) {
+                mView.callAct035(context, chRoom.getRoom_code());
             }
-        }else{
-            if( !ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
-                !ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
-                    )
-            {
+        } else {
+            if (!ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
+                    !ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
+                    ) {
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_join_room_ap_ttl"),
@@ -324,6 +331,7 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
         Intent mIntent = new Intent(context, WBR_Room_AP.class);
         Bundle mBundle = new Bundle();
         //
+        mBundle.putLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, ap.getCustomer_code());
         mBundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, ap.getCustom_form_type());
         mBundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, ap.getCustom_form_code());
         mBundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, ap.getCustom_form_version());

@@ -42,6 +42,7 @@ public class WS_Room_AP extends IntentService {
         Bundle bundle = intent.getExtras();
         //
         try {
+            long customer_code = bundle.getLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, -1);
             int custom_form_type = bundle.getInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, -1);
             int custom_form_code = bundle.getInt(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, -1);
             int custom_form_version = bundle.getInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, -1);

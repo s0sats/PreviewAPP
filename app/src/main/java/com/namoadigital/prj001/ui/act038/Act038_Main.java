@@ -470,6 +470,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         mGe_custom_form_ap = ap;
         //
         if (mGe_custom_form_ap == null) {
+
+            requestingAct = Constant.ACT037;
+
             onBackPressed();
         } else {
             //
@@ -496,7 +499,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             et_form_when_ttl.setmLabel(hmAux_Trans.get("ap_when_lbl"));
             et_form_when_ttl.setEnabled(true);
-            et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
+            et_form_when_ttl.setmValue(ap.getAp_when() == null ? "" :
+
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(ap.getAp_when()),
+                            Constant.DATEFORMATDBH + ":ss Z"
+                    )
+
+            );
             //et_form_when_ttl.setTag(ap.getAp_when() == null ? "" : String.valueOf(ap.getAp_when()));
             //
             tv_form_what_ttl.setText(hmAux_Trans.get("ap_what_lbl"));
@@ -1130,6 +1140,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             progressDialog.dismiss();
             //
             callAct035(context, hmAux.get(CH_RoomDao.ROOM_CODE));
+
         } else if (ws_process.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             progressDialog.dismiss();
             //

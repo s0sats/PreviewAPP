@@ -799,6 +799,21 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 }
             }
         });
+
+        iv_join_ap.setTag(item);
+        iv_join_ap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                HashMap<String, String> itemAux = (HashMap<String, String>) v.getTag();
+
+                if (delegate != null) {
+                    delegate.join_AP(itemAux.get("pk"));
+                }
+            }
+        });
+
+
     }
 
     private void processSo(JSONObject message, HMAux hmAux, View convertView) {

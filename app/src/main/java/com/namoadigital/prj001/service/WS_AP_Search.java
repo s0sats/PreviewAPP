@@ -145,8 +145,17 @@ public class WS_AP_Search extends IntentService {
                 //
                 apList.add(objAp);
             } else {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_sync"), "", "0");
-                return;
+                TSearch_Ap_Env.ObjAp objAp = new TSearch_Ap_Env.ObjAp();
+                //
+                objAp.setCustomer_code(String.valueOf(customer_code));
+                objAp.setCustom_form_type(String.valueOf(custom_form_type));
+                objAp.setCustom_form_code(String.valueOf(custom_form_code));
+                objAp.setCustom_form_version(String.valueOf(custom_form_version));
+                objAp.setCustom_form_data(String.valueOf(custom_form_data));
+                objAp.setAp_code(String.valueOf(ap_code));
+                objAp.setAp_scn("0");
+                //
+                apList.add(objAp);
             }
         }
         //

@@ -17,10 +17,16 @@ public interface Act035_Main_View {
 
     void callAct034(Context context);
 
+    void callAct038(Context context, HMAux hmAux);
+
     void callCamera(int mId, int mType, String mFName, boolean mEdit, boolean mEnabled);
 
     //void startRoomPrivateWS(String user_code, String customer_code);
     void startRoomPrivateWS(String user_code, String customer_code, Integer active, @Nullable String room_code);
+
+    void showPD(String ttl, String msg);
+
+    void setWSProcess(String ws_process);
 
 
 }

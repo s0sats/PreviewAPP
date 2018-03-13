@@ -86,10 +86,10 @@ public class WS_AP_Save extends IntentService {
         );
         //
         if (apList == null || apList.size() == 0) {
-            if(!menu_send_process){
+            if (!menu_send_process) {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_save"), "", "0");
                 return;
-            }else{
+            } else {
                 HMAux auxApReturned = new HMAux();
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
                 return;
@@ -173,24 +173,24 @@ public class WS_AP_Save extends IntentService {
                                 ).toSqlQuery()
                         );
                         //
-                       wasApDeleted = checkForApExclusion(formAp);
+                        wasApDeleted = checkForApExclusion(formAp);
                     }
                     //Define msg do HmAux
                     String status = "";
-                    if(apSaveStatus.getStatus_code() == 1){
-                        if(wasApDeleted) {
+                    if (apSaveStatus.getStatus_code() == 1) {
+                        if (wasApDeleted) {
                             status = hmAux_Trans.get("msg_ap_removed");
-                        }else{
+                        } else {
                             status = String.valueOf(apSaveStatus.getStatus_code());
                         }
-                    }else{
+                    } else {
                         status = apSaveStatus.getStatus_msg();
                     }
                     //
                     auxApReturned.put(
                             hmAuxPKKey,
                             (ap_desc.length() > 0 ? (ap_desc + Constant.MAIN_CONCAT_STRING) : "") +
-                            status
+                                    status
                     );
                 }
                 //
@@ -206,16 +206,17 @@ public class WS_AP_Save extends IntentService {
 
     /**
      * Verifica se precisa apagar o AP
+     *
      * @param formAp
      */
     private boolean checkForApExclusion(GE_Custom_Form_Ap formAp) {
         int user_code = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(getApplicationContext()));
         boolean deleteAP = false;
         //
-        if(formAp.getAp_who() != user_code){
-            if(formAp.getRoom_code() == null){
+        if (formAp.getAp_who() == null || formAp.getAp_who() != user_code) {
+            if (formAp.getRoom_code() == null) {
                 deleteAP = true;
-            }else{
+            } else {
                 CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
                 //
                 CH_Room chRoom = roomDao.getByString(
@@ -224,13 +225,13 @@ public class WS_AP_Save extends IntentService {
                         ).toSqlQuery()
                 );
                 //
-                if(chRoom == null){
+                if (chRoom == null) {
                     deleteAP = true;
                 }
             }
         }
         //
-        if(deleteAP){
+        if (deleteAP) {
             formApDao.remove(
                     new GE_Custom_Form_Ap_Sql_010(
                             formAp.getCustomer_code(),
