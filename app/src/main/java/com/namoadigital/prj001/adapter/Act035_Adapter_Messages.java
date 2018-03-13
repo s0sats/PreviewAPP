@@ -117,7 +117,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
         void download_AP(String pk, String custom_form_url);
 
-        void join_AP();
+        void join_AP(String pk);
     }
 
     private IAct035_Adapter_Messages delegate;

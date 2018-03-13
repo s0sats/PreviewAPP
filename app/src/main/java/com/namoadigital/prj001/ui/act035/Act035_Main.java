@@ -42,6 +42,7 @@ import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Error;
@@ -152,6 +153,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private TextView tv_logged_customer;
     private LinearLayout ll_msg_edit;
+
+    private GE_Custom_Form_ApDao mGe_custom_form_apDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -472,7 +475,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
 
             @Override
-            public void join_AP() {
+            public void join_AP(String pk) {
+
+                GE_Custom_Form_ApDao mGe_custom_form_apDao = new GE_Custom_Form_ApDao(context);
+
+
+
+
+                // Verifica a existencia do AP Se sim vai até ele
+                // Se nao mostra dialog permitindo a criacao a AP faz o sync com o servidor
 
             }
         });
