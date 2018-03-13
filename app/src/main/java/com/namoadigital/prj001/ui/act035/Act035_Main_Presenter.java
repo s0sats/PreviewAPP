@@ -25,4 +25,6 @@ public interface Act035_Main_Presenter {
     void updateReadStatus(ArrayList<HMAux> hmAuxs, String type);
 
     void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code);
+
+    void checkFormApFlow(HMAux hmAux);
 }

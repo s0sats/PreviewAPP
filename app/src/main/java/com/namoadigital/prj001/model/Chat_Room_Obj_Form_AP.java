@@ -17,13 +17,15 @@ public class Chat_Room_Obj_Form_AP {
     private String ap_description;
     private String ap_status;
     private String ap_what;
-    private String ap_where;
-    private String ap_why;
     private Integer ap_who;
     private String ap_who_name;
-    private Integer ap_how;
-    private Float ap_how_much;
     private String ap_when;
+    private String custom_form_type_desc;
+    private String custom_form_desc;
+    private String custom_form_url;
+    private String ap_product_id;
+    private String ap_product_desc;
+    private String ap_serial_id;
 
     public String getPk() {
         return pk;
@@ -81,11 +83,11 @@ public class Chat_Room_Obj_Form_AP {
         this.ap_code = ap_code;
     }
 
-    public int getAp_scn() {
+    public Integer getAp_scn() {
         return ap_scn;
     }
 
-    public void setAp_scn(int ap_scn) {
+    public void setAp_scn(Integer ap_scn) {
         this.ap_scn = ap_scn;
     }
 
@@ -113,22 +115,6 @@ public class Chat_Room_Obj_Form_AP {
         this.ap_what = ap_what;
     }
 
-    public String getAp_where() {
-        return ap_where;
-    }
-
-    public void setAp_where(String ap_where) {
-        this.ap_where = ap_where;
-    }
-
-    public String getAp_why() {
-        return ap_why;
-    }
-
-    public void setAp_why(String ap_why) {
-        this.ap_why = ap_why;
-    }
-
     public Integer getAp_who() {
         return ap_who;
     }
@@ -145,27 +131,59 @@ public class Chat_Room_Obj_Form_AP {
         this.ap_who_name = ap_who_name;
     }
 
-    public Integer getAp_how() {
-        return ap_how;
-    }
-
-    public void setAp_how(Integer ap_how) {
-        this.ap_how = ap_how;
-    }
-
-    public Float getAp_how_much() {
-        return ap_how_much;
-    }
-
-    public void setAp_how_much(Float ap_how_much) {
-        this.ap_how_much = ap_how_much;
-    }
-
     public String getAp_when() {
         return ap_when;
     }
 
     public void setAp_when(String ap_when) {
         this.ap_when = ap_when;
+    }
+
+    public String getCustom_form_type_desc() {
+        return custom_form_type_desc;
+    }
+
+    public void setCustom_form_type_desc(String custom_form_type_desc) {
+        this.custom_form_type_desc = custom_form_type_desc;
+    }
+
+    public String getCustom_form_desc() {
+        return custom_form_desc;
+    }
+
+    public void setCustom_form_desc(String custom_form_desc) {
+        this.custom_form_desc = custom_form_desc;
+    }
+
+    public String getCustom_form_url() {
+        return custom_form_url;
+    }
+
+    public void setCustom_form_url(String custom_form_url) {
+        this.custom_form_url = custom_form_url;
+    }
+
+    public String getAp_product_id() {
+        return ap_product_id;
+    }
+
+    public void setAp_product_id(String ap_product_id) {
+        this.ap_product_id = ap_product_id;
+    }
+
+    public String getAp_product_desc() {
+        return ap_product_desc;
+    }
+
+    public void setAp_product_desc(String ap_product_desc) {
+        this.ap_product_desc = ap_product_desc;
+    }
+
+    public String getAp_serial_id() {
+        return ap_serial_id;
+    }
+
+    public void setAp_serial_id(String ap_serial_id) {
+        this.ap_serial_id = ap_serial_id;
     }
 }

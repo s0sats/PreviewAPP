@@ -3602,11 +3602,16 @@ public class ToolBox_Inf {
     }
 
     public static String getBreakNewLine(String s) {
-        String[] lines = s.split("\\r?\\n");
-        //
-        if (lines != null && lines.length > 0) {
-            return lines[0];
-        } else {
+        try {
+            String[] lines = s.split("\\r?\\n");
+            //
+            if (lines != null && lines.length > 0) {
+                return lines[0];
+            } else {
+                return "";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
             return "";
         }
     }

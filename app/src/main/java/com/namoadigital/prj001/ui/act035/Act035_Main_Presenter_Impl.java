@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
+import android.content.DialogInterface;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
@@ -18,6 +20,7 @@ import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act035_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -39,8 +42,8 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     private Act035_Main_View mView;
     private HMAux hmAux_Trans;
 
-
     private CH_MessageDao ch_messageDao;
+    private GE_Custom_Form_ApDao geCustomFormApDao;
 
 
     public Act035_Main_Presenter_Impl(Context context, Act035_Main_View mView, HMAux hmAux_Trans, CH_MessageDao ch_messageDao) {
@@ -48,6 +51,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.ch_messageDao = ch_messageDao;
+        this.geCustomFormApDao = new GE_Custom_Form_ApDao(context);
     }
 
     @Override
@@ -288,6 +292,38 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             if (file.exists()) {
                 mView.callCamera(-1, 1, item.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL), false, false);
             }
+        }
+    }
+
+    @Override
+    public void checkFormApFlow(HMAux hmAux) {
+        HMAux auxAP = geCustomFormApDao.getByStringHM(
+                new GE_Custom_Form_Ap_Sql_005(
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE),
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE),
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE),
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION),
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
+                        hmAux.get(GE_Custom_Form_ApDao.AP_CODE),
+                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_HM_AUX
+                ).toSqlQuery()
+        );
+        //
+        if(auxAP != null && auxAP.size() > 0){
+            mView.callAct038(context,hmAux);
+        }else{
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_download_ap_ttl"),
+                    hmAux_Trans.get("alert_download_ap_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //iniciar download da AP
+                        }
+                    },
+                    1
+            );
         }
     }
 

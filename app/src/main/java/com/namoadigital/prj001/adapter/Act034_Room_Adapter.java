@@ -144,7 +144,7 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
                 tv_room_status.setText("");
                 break;
             case Constant.CHAT_ROOM_TYPE_SO:
-            case Constant.CHAT_ROOM_TYPE_PA:
+            case Constant.CHAT_ROOM_TYPE_AP:
                 v_type_color.setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green3));
                 iv_room_icon.setImageDrawable(context.getDrawable(R.drawable.ic_room_others_type));
                 ll_room_status.setVisibility(View.VISIBLE);
