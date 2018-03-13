@@ -185,7 +185,7 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         } else if (type != null && type.equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
             tv_msg.setText(ToolBox_Inf.getSafeSubstring(getTranslateMsg(msg), 45));
         } else {
-            tv_msg.setText(type);
+            tv_msg.setText(hmAux_Trans.get(type));
         }
         //
         int i = ToolBox_Inf.convertStringToInt(item.get(Sql_Act034_004.BADGE));
