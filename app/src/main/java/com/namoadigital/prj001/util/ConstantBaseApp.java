@@ -307,6 +307,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
     public static final String USER_CUSTOMER_TRANSLATE_CODE_TMP = "user_customer_translate_code_temp";
 
+    public static final String PROCESS_MENU_SEND = "process_menu_send";
+
     //Constantes do Status do Cabeçalho
     public static final String CUSTOM_FORM_STATUS_RECEIVED = "RECEIVED";
     public static final String CUSTOM_FORM_STATUS_IN_PROCESSING = "IN_PROCESSING";

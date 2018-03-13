@@ -155,6 +155,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     private FCMReceiver fcmReceiver;
     private BR_Chat chatReceiver;
+    private boolean syncAfterSave;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -316,6 +317,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         transList.add("lbl_chat");
         //
+        transList.add("alert_send_to_sync_ttl");
+        transList.add("alert_send_to_sync_msg");
+        transList.add("progress_so_save_ttl");
+        transList.add("progress_so_save_msg");
+        transList.add("progress_ap_save_ttl");
+        transList.add("progress_ap_save_msg");
+        transList.add("alert_ws_so_error_msg");
+        transList.add("alert_ws_ap_error_msg");
+        transList.add("alert_ws_general_error_ttl");
+        transList.add("alert_ws_general_error_msg");
+        transList.add("alert_results_ttl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -382,7 +395,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
         //
         mPresenter.getMenuItens(hmAux_Trans);
-
+        //
+        syncAfterSave = false;
+        //
         mDrawerToggle = new ActionBarDrawerToggle(
                 Act005_Main.this,
                 mDrawerLayout,
@@ -624,7 +639,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
                             }
                         },
                         1
@@ -757,6 +773,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void setWsProcessList(ArrayList<HMAux> wsProcessList) {
         this.wsProcessList = wsProcessList;
+    }
+
+    @Override
+    public void setSyncAfterSave(boolean syncAfterSave) {
+        this.syncAfterSave = syncAfterSave;
     }
 
     @Override
@@ -964,7 +985,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     // fechar drawer Hugo
                 }
             } else {
-
                 if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
                     progressDialog.dismiss();
                     showSuccessDialog();
@@ -975,7 +995,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
+                    //setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
                     mPresenter.executeSoSave();
                 }
             }
@@ -1055,10 +1075,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 1) {
+            if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
-                showSuccessDialog();
+                if(syncAfterSave){
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+                }else {
+                    showSuccessDialog();
+                }
             }
 
         } else {
@@ -1066,7 +1092,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 1) {
+            if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
                 showSuccessDialog();
@@ -1111,6 +1137,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
+                    //
+                }
+                //
+                if(syncAfterSave) {
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
                 }
             }
         });
@@ -1119,8 +1152,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
-
-            setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
+            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
 
             enableProgressDialog(
                     hmAux_Trans.get("progress_so_save_ttl"),
@@ -1132,28 +1164,44 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.executeSoSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
-
-            super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //super.processError_1(mLink, mRequired);
+            mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
-
-            super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //super.processError_1(mLink, mRequired);
+            mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
 
-            setRes("N-AP", hmAux_Trans.get("N-AP SO Approval Error"), "");
+            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
             super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            //
+            if(syncAfterSave){
+                setSyncAfterSave(false);
+                //
+                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+            }else {
+                mPresenter.getMenuItens(hmAux_Trans);
+            }
 
         } else {
-
-            setRes("N-Geral", hmAux_Trans.get("N-Geral Error"), "");
+            setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
 
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);

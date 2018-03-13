@@ -47,6 +47,16 @@ public class Act005_Adapter extends BaseAdapter {
         return 0L;
     }
 
+    public int getBadgeQty(String menu_id){
+        for (HMAux hmAux:source) {
+            if(hmAux.get(Act005_Main.MENU_ID).equalsIgnoreCase(menu_id) ){
+                return ToolBox_Inf.convertStringToInt(hmAux.get(Act005_Main.MENU_BADGE));
+            }
+        }
+        //
+        return 0;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

@@ -31,4 +31,6 @@ public interface Act005_Main_Presenter {
     void stopChatServices();
 
     void executeApSave();
+
+    void syncFlow(int to_send_qty);
 }
