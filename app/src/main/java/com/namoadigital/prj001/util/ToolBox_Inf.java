@@ -3320,9 +3320,13 @@ public class ToolBox_Inf {
         builder.setAutoCancel(true);
         builder.setSmallIcon(R.drawable.ic_chat_24x24);
         builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
-        // builder.setSound(alarmSound);
-        builder.setSound(Uri.parse("android.resource://"
-                + context.getPackageName() + "/" + R.raw.morfador));
+        if(Constant.DEVELOPMENT_BASE) {
+            builder.setSound(Uri.parse("android.resource://"
+                    + context.getPackageName() + "/" + R.raw.morfador));
+        }else {
+            builder.setSound(alarmSound);
+        }
+
         builder.setContentTitle(hmAux_trans.get("notification_add_room_ttl"));
         builder.setContentText(hmAux_trans.get("notification_add_room_msg"));
 
@@ -3374,9 +3378,12 @@ public class ToolBox_Inf {
         builder.setAutoCancel(true);
         builder.setSmallIcon(R.drawable.ic_chat_24x24);
         builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
-        // builder.setSound(alarmSound);
-        builder.setSound(Uri.parse("android.resource://"
-                + context.getPackageName() + "/" + R.raw.morfador));
+        if(Constant.DEVELOPMENT_BASE) {
+            builder.setSound(Uri.parse("android.resource://"
+                    + context.getPackageName() + "/" + R.raw.morfador));
+        }else {
+            builder.setSound(alarmSound);
+        }
         builder.setContentIntent(pi);
         try {
             switch (type) {
