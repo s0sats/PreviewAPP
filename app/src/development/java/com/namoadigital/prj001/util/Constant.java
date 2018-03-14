@@ -28,7 +28,6 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_UPLOAD = "https://dev.namoadigital.com/inc/ws/aws_file.ws";
 
     public static final String WS_UPLOAD_CHAT = "https://dev.namoadigital.com/inc/ws/aws_file_node.ws";
-    public static final String WS_UPLOAD_NODE_CHAT = "https://chat.namoadigital.com/messageFile";
 
     public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SO_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_so.ws";
@@ -46,6 +45,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SERVER_AUTH_USER = "https://dev.namoadigital.com/ws/prj001/server_auth_user.ws";
 
     public static final String WEB_SOCKET_CHAT = "https://chatdev.namoadigital.com";
+    public static final String WS_UPLOAD_NODE_CHAT = "https://chatdev.namoadigital.com/messageFile";
     public static final String WS_CHAT_ROOM_INFO = "https://chatdev.namoadigital.com/roomMemberList";
     public static final String WS_CHAT_MESSAGE_INFO = "https://chatdev.namoadigital.com/messageDeliverList";
     public static final String WS_CHAT_ROOM_USER_LIST = "https://chatdev.namoadigital.com/userList";

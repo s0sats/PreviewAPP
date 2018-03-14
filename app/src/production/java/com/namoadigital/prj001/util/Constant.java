@@ -35,6 +35,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SERVER_AUTH_USER = "https://portal.namoadigital.com/ws/prj001/server_auth_user.ws";
 
     public static final String WEB_SOCKET_CHAT = "https://chat.namoadigital.com";
+    public static final String WS_UPLOAD_NODE_CHAT = "https://chat.namoadigital.com/messageFile";
     public static final String WS_CHAT_ROOM_INFO = "https://chat.namoadigital.com/roomMemberList";
     public static final String WS_CHAT_MESSAGE_INFO = "https://chat.namoadigital.com/messageDeliverList";
     public static final String WS_CHAT_ROOM_USER_LIST = "https://chat.namoadigital.com/userList";
