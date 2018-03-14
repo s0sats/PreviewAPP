@@ -33,6 +33,14 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CANCEL_NFC = "https://portal.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";
 
     public static final String WS_SERVER_AUTH_USER = "https://portal.namoadigital.com/ws/prj001/server_auth_user.ws";
-    public static final String WS_CHAT_ROOM_AP = "https://chat.namoadigital.com/joinFormAp";
 
+    public static final String WEB_SOCKET_CHAT = "https://chat.namoadigital.com";
+    public static final String WS_CHAT_ROOM_INFO = "https://chat.namoadigital.com/roomMemberList";
+    public static final String WS_CHAT_MESSAGE_INFO = "https://chat.namoadigital.com/messageDeliverList";
+    public static final String WS_CHAT_ROOM_USER_LIST = "https://chat.namoadigital.com/userList";
+    public static final String WS_CHAT_MESSAGE_DIST = "https://chat.namoadigital.com/messageDist?";
+    public static final String WS_CHAT_POST_DELIVERED = "https://chat.namoadigital.com/delivered";
+    public static final String WS_CHAT_ROOM_PRIVATE = "https://chat.namoadigital.com/roomPrivateCustomer";
+    public static final String WS_CHAT_LEAVE_ROOM = "https://chat.namoadigital.com/leaveRoom";
+    public static final String WS_CHAT_ROOM_AP = "https://chat.namoadigital.com/joinFormAp";
 }

@@ -106,7 +106,7 @@ public class WS_Leave_Room extends IntentService {
             ToolBox.sendBCStatus(
                     getApplicationContext(),
                     "ERROR_1",
-                    cError != null ? cError.getError_msg() : "Error-Trad",
+                    cError != null ? cError.getError_msg() : hmAux_Trans.get("msg_error"),
                     "",
                     "0"
             );
@@ -142,6 +142,7 @@ public class WS_Leave_Room extends IntentService {
         translist.add("msg_removing_room");
         translist.add("msg_error_no_data");
         translist.add("msg_no_info_return");
+        translist.add("msg_error");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
