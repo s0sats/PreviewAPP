@@ -80,7 +80,7 @@ public class WS_Leave_Room extends IntentService {
         ToolBox.sendBCStatus(
                 getApplicationContext(),
                 "STATUS",
-                    /*hmAux_Trans.get("msg_no_info_return")*/"Deixando a sala - Trad",
+                    hmAux_Trans.get("msg_removing_room"),
                 "",
                 "0"
         );
