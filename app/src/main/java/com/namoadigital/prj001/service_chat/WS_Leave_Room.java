@@ -80,7 +80,7 @@ public class WS_Leave_Room extends IntentService {
         ToolBox.sendBCStatus(
                 getApplicationContext(),
                 "STATUS",
-                    /*hmAux_Trans.get("msg_no_info_return")*/"Deixando a sala - Trad",
+                    hmAux_Trans.get("msg_no_info_return"),
                 "",
                 "0"
         );
@@ -91,7 +91,7 @@ public class WS_Leave_Room extends IntentService {
         );
         //
         if (resultado.equals("")) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1",/* hmAux_Trans.get("msg_no_info_return")*/"Erro - Nenhum dado retornado -Trad", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1",hmAux_Trans.get("msg_no_info_return"), "", "0");
             return;
         }
         //
@@ -141,6 +141,7 @@ public class WS_Leave_Room extends IntentService {
 
         translist.add("msg_removing_room");
         translist.add("msg_error_no_data");
+        translist.add("msg_no_info_return");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
