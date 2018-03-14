@@ -3906,6 +3906,47 @@ public class ToolBox_Inf {
         }
     }
 
+    public static int getStatusColor(String status) {
+        switch (status) {
+            case Constant.SYS_STATUS_EDIT:
+                return R.color.namoa_status_edit;
+            case Constant.SYS_STATUS_STOP:
+                return R.color.namoa_status_stop;
+            case Constant.SYS_STATUS_PENDING:
+                return R.color.namoa_status_pending;
+            case Constant.SYS_STATUS_PROCESS:
+                return R.color.namoa_status_process;
+            case Constant.SYS_STATUS_WAITING_APPROVAL:
+                return R.color.namoa_status_waiting_approval;
+            case Constant.SYS_STATUS_WAITING_BUDGET:
+                return R.color.namoa_status_waiting_budget;
+            case Constant.SYS_STATUS_WAITING_QUALITY:
+                return R.color.namoa_status_waiting_quality;
+            case Constant.SYS_STATUS_WAITING_WAITING_CLIENT:
+                return R.color.namoa_status_waiting_client;
+            case Constant.SYS_STATUS_WAITING_SYNC:
+                return R.color.namoa_status_waiting_sync;
+            case Constant.SYS_STATUS_DONE:
+                return R.color.namoa_status_done;
+            case Constant.SYS_STATUS_NOT_EXECUTED:
+                return R.color.namoa_status_not_executed;
+            case Constant.SYS_STATUS_CANCELLED:
+                return R.color.namoa_status_cancelled;
+            case Constant.SYS_STATUS_INCONSISTENT:
+                return R.color.namoa_status_inconsistent;
+            case Constant.SYS_STATUS_SCHEDULED:
+                return R.color.namoa_status_scheduled;
+            case Constant.SYS_STATUS_ERROR:
+                return R.color.namoa_status_error;
+            case Constant.SYS_STATUS_ACTIVE:
+                return R.color.namoa_status_active;
+            case Constant.SYS_STATUS_INACTIVE:
+                return R.color.namoa_status_inactive;
+            default:
+                return R.color.namoa_color_gray_4;
+        }
+    }
+
     public static HashMap<String, String> JsonToHashMap(JSONObject jsonObject, String root) throws Exception {
         JSONObject mRoot = jsonObject.getJSONObject(root);
         HashMap<String, String> map = new HashMap<>();
