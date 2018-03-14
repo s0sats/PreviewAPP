@@ -251,6 +251,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("progress_download_ap_msg");
         transList.add("progress_sync_ap_ttl");
         transList.add("progress_sync_ap_msg");
+        transList.add("dialog_join_room_ap_ttl");
+        transList.add("dialog_join_room_ap_msg");
+        transList.add("alert_ap_info_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -274,9 +277,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transListAct037_adapter.add("ap_who_lbl");
         transListAct037_adapter.add("ap_when_lbl");
         transListAct037_adapter.add("room_ap_info_menu_lbl");
-        transListAct037_adapter.add("alert_ap_info_ttl");
-        transListAct037_adapter.add("alert_ap_info_ttl");
-
         //
         List<String> translateListAct005 = new ArrayList<>();
         translateListAct005.add("lbl_checklist");
@@ -2217,8 +2217,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void executeWsRoomAp(HMAux ap) {
         updatePD(
-                hmAux_Trans.get("dialog_join_room_ap_ttl"),
-                hmAux_Trans.get("dialog_join_room_ap_msg")
+                hmAux_Trans.get("progress_join_ttl"),
+                hmAux_Trans.get("progress_join_msg")
         );
         //
         setWSProcess(WS_Room_AP.class.getSimpleName());
