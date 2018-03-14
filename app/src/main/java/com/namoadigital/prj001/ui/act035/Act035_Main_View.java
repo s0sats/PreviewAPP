@@ -28,5 +28,6 @@ public interface Act035_Main_View {
 
     void setWSProcess(String ws_process);
 
+    void executeApSyncWsViaInfo(HMAux hmAux);
 
 }
