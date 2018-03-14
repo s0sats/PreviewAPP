@@ -31,7 +31,7 @@ public class Sql_Act034_004 implements Specification {
             inFilter += filter_workgroup ? "'" + Constant.CHAT_ROOM_TYPE_WORKGROUP + "'," : "";
             inFilter += filter_private ? "'" + Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER + "'," : "";
             inFilter += filter_so ? "'" + Constant.CHAT_ROOM_TYPE_SO + "'," : "";
-            inFilter += filter_pa ? "'" + Constant.CHAT_ROOM_TYPE_PA + "'," : "";
+            inFilter += filter_pa ? "'" + Constant.CHAT_ROOM_TYPE_AP + "'," : "";
             //
             room_type_filter = "and r.room_type in ("
                     + inFilter.substring(0, inFilter.length() - 1) +

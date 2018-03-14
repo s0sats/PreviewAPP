@@ -26,4 +26,5 @@ public interface Act035_Main_Presenter {
 
     void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code);
 
+    void checkFormApFlow(HMAux hmAux);
 }

@@ -357,7 +357,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/namoa_ap_iv_download_ap"
+                android:id="@+id/namoa_ap_btn_download_ap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_namoa_main_states"
@@ -378,7 +378,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/namoa_ap_iv_join_ap"
+                android:id="@+id/namoa_ap_btn_join_ap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_namoa_main_states"

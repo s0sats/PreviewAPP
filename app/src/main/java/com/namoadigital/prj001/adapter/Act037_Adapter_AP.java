@@ -27,6 +27,8 @@ import java.util.List;
 
 public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
 
+    public static final String RESOURCE_NAME = "act037_adapter_ap";
+
     private Context context;
     private int resource_01;
     //

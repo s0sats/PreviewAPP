@@ -15,13 +15,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +43,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act035_Adapter_Messages;
+import com.namoadigital.prj001.adapter.Act037_Adapter_AP;
 import com.namoadigital.prj001.adapter.Chat_Member_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
@@ -54,6 +58,7 @@ import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
+import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
@@ -174,6 +179,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private String ws_process = "";
 
+    private HMAux hmAux_Trans_Extra = new HMAux();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -234,6 +240,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("join_ap_dialog_filter_ttl");
         transList.add("join_type_lbl");
         transList.add("ap_type_lbl");
+        transList.add("alert_room_obj_error_msg");
+        transList.add("alert_download_ap_ttl");
+        transList.add("alert_download_ap_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -242,6 +251,54 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+        //
+        List<String> transListAct037_adapter = new ArrayList<>();
+        transListAct037_adapter.add("form_ttl");
+        transListAct037_adapter.add("form_type_lbl");
+        transListAct037_adapter.add("form_code_lbl");
+        transListAct037_adapter.add("form_data_lbl");
+        transListAct037_adapter.add("product_code_lbl");
+        transListAct037_adapter.add("serial_lbl");
+        transListAct037_adapter.add("ap_ttl");
+        transListAct037_adapter.add("ap_code_lbl");
+        transListAct037_adapter.add("ap_status_lbl");
+        transListAct037_adapter.add("ap_what_lbl");
+        transListAct037_adapter.add("ap_who_lbl");
+        transListAct037_adapter.add("ap_when_lbl");
+        transListAct037_adapter.add("room_ap_info_menu_lbl");
+        transListAct037_adapter.add("alert_ap_info_ttl");
+        transListAct037_adapter.add("alert_ap_info_ttl");
+        //
+        List<String> translateListAct005 = new ArrayList<>();
+        translateListAct005.add("lbl_checklist");
+        translateListAct005.add("lbl_form_ap");
+        //
+        hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Act037_Adapter_AP.RESOURCE_NAME
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transListAct037_adapter
+        );
+        //
+        hmAux_Trans_Extra.putAll(
+                ToolBox_Inf.setLanguage(
+                    context,
+                    mModule_Code,
+                    ToolBox_Inf.getResourceCode(
+                            context,
+                            mModule_Code,
+                           Constant.ACT005
+                    ),
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translateListAct005
+                )
+        );
+
     }
 
     private void initVars() {
@@ -425,77 +482,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             @Override
             public void download_AP(String pk, String custom_form_url) {
-
-                String pk_fields[] = pk.replace("|", "#").split("#");
-
-                Log.d("ap_pk", pk);
-                Log.d("ap_pk", String.valueOf(pk_fields.length));
-
-
-                File file = new File(Constant.CACHE_PATH + "/" +
-                        "form_ap_" +
-                        pk_fields[0] + "_" +
-                        pk_fields[1] + "_" +
-                        pk_fields[2] + "_" +
-                        pk_fields[3] + "_" +
-                        pk_fields[4] +
-                        ".pdf"
-                );
-
-                if (file.exists()) {
-                    try {
-
-                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
-
-                        ToolBox_Inf.copyFile(
-                                file,
-                                new File(Constant.CACHE_PDF)
-                        );
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +
-                                    "form_ap_" +
-                                    pk_fields[0] + "_" +
-                                    pk_fields[1] + "_" +
-                                    pk_fields[2] + "_" +
-                                    pk_fields[3] + "_" +
-                                    pk_fields[4] +
-                                    ".pdf")),
-                            "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                    startActivity(intent);
-                } else {
-
-                    mPdfDownload =
-
-                            new pdfDownload();
-
-                    mPdfDownload.execute(
-                            "form_ap_" +
-                                    pk_fields[0] + "_" +
-                                    pk_fields[1] + "_" +
-                                    pk_fields[2] + "_" +
-                                    pk_fields[3] + "_" +
-                                    pk_fields[4],
-                            custom_form_url
-                    );
-
-                    ToolBox.alertMSG(
-                            context,
-                            "Pdf Indisponivel Title - Trad",
-                            "Pdf Indisponivel Msg - Trad",
-//                            hmAux_Trans.get("alert_sync_detected_tll"),
-//                            hmAux_Trans.get("alert_sync_detected_msg"),
-                            null,
-                            -1,
-                            false
-                    );
-                }
+                openPDF(pk,custom_form_url);
             }
 
             @Override
@@ -566,6 +553,80 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         lv_messages.setSelection(this.dados.size() - 1);
         //
         sw_messages.setRefreshing(false);
+    }
+
+    private void openPDF(String pk, String custom_form_url) {
+        String pk_fields[] = pk.replace("|", "#").split("#");
+
+        Log.d("ap_pk", pk);
+        Log.d("ap_pk", String.valueOf(pk_fields.length));
+
+
+        File file = new File(Constant.CACHE_PATH + "/" +
+                "form_ap_" +
+                pk_fields[0] + "_" +
+                pk_fields[1] + "_" +
+                pk_fields[2] + "_" +
+                pk_fields[3] + "_" +
+                pk_fields[4] +
+                ".pdf"
+        );
+
+        if (file.exists()) {
+            try {
+
+                ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                ToolBox_Inf.copyFile(
+                        file,
+                        new File(Constant.CACHE_PDF)
+                );
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +
+                            "form_ap_" +
+                            pk_fields[0] + "_" +
+                            pk_fields[1] + "_" +
+                            pk_fields[2] + "_" +
+                            pk_fields[3] + "_" +
+                            pk_fields[4] +
+                            ".pdf")),
+                    "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+            startActivity(intent);
+        } else {
+
+            mPdfDownload =
+
+                    new pdfDownload();
+
+            mPdfDownload.execute(
+                    "form_ap_" +
+                            pk_fields[0] + "_" +
+                            pk_fields[1] + "_" +
+                            pk_fields[2] + "_" +
+                            pk_fields[3] + "_" +
+                            pk_fields[4],
+                    custom_form_url
+            );
+
+            ToolBox.alertMSG(
+                    context,
+                    "Pdf Indisponivel Title - Trad",
+                    "Pdf Indisponivel Msg - Trad",
+//                            hmAux_Trans.get("alert_sync_detected_tll"),
+//                            hmAux_Trans.get("alert_sync_detected_msg"),
+                    null,
+                    -1,
+                    false
+            );
+        }
+
     }
 
     private void processingJoinAPDialog() {
@@ -1852,15 +1913,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        menu.add(0, 1, Menu.NONE + 1, getResources().getString(R.string.app_name));
+
 
 //        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
 //        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+        //Informações da room
+        if (mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
+            menu.add(0, 0, Menu.FIRST +1 , hmAux_Trans.get("room_ap_info_menu_lbl"));
+            menu.findItem(0).setIcon(R.drawable.ic_info);
+            menu.findItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+
+        //Icone para admin verificar status do chat
         if (ToolBox_Inf.isUsrAdmin(context)) {
-            menu.getItem(0).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
-            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else {
+            menu.add(0, 1, Menu.FIRST, getResources().getString(R.string.app_name));
+            menu.findItem(1).setIcon(R.drawable.ic_swap_vertical_circle_green_24dp);
+            menu.findItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+
+        if(menu.size() == 0){
             menu.setGroupVisible(0, false);
         }
 
@@ -1872,13 +1944,188 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         int id = item.getItemId();
 
-        if (id == 1) {
-            if (ToolBox_Inf.isUsrAdmin(context)) {
-                ToolBox_Inf.showChatAdminInfo(context, hmAux_Trans);
-            }
+        switch (id) {
+            case 0:
+                if (mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
+                    showApInfo();
+                }
+                break;
+            case 1:
+                if (ToolBox_Inf.isUsrAdmin(context)) {
+                    ToolBox_Inf.showChatAdminInfo(context, hmAux_Trans);
+                }
+                break;
+
         }
 
         return true;
+    }
+
+    private void showApInfo() {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.namoa_ap_cell, null);
+        //
+        try {
+            final Chat_Room_Obj_Form_AP roomFormAp =
+                    gson.fromJson(
+                            ToolBox_Inf.getRoomObjJsonParam(mRoom.getRoom_obj()),
+                            Chat_Room_Obj_Form_AP.class
+                    );
+            //
+            LinearLayout ll_bg = (LinearLayout) view.findViewById(R.id.namoa_ap_ll_bg);
+            TextView tv_form_ttl = (TextView) view.findViewById(R.id.namoa_ap_tv_form_ttl);
+            ImageView iv_sync_upload = (ImageView) view.findViewById(R.id.namoa_ap_iv_sync_upload);
+            TextView tv_type = (TextView) view.findViewById(R.id.namoa_ap_tv_type_label);
+            TextView tv_form_label = (TextView) view.findViewById(R.id.namoa_ap_tv_form_label);
+            TextView tv_data_serv = (TextView) view.findViewById(R.id.namoa_ap_tv_data_serv_lbl);
+            TextView tv_product = (TextView) view.findViewById(R.id.namoa_ap_tv_product_lbl);
+            TextView tv_serial = (TextView) view.findViewById(R.id.namoa_ap_tv_serial_lbl);
+            TextView tv_ap_ttl = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_ttl);
+            TextView tv_ap_code = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_code_lbl);
+            TextView tv_ap_status = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_status_lbl);
+            TextView tv_ap_what = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_what_lbl);
+            TextView tv_ap_who = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_who_lbl);
+            TextView tv_ap_when = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_when_lbl);
+            //
+            TextView tv_type_val = (TextView) view.findViewById(R.id.namoa_ap_tv_type_val);
+            TextView tv_form_val = (TextView) view.findViewById(R.id.namoa_ap_tv_form_val);
+            TextView tv_data_serv_val = (TextView) view.findViewById(R.id.namoa_ap_tv_data_serv_val);
+            TextView tv_product_val = (TextView) view.findViewById(R.id.namoa_ap_tv_product_val);
+            TextView tv_serial_val = (TextView) view.findViewById(R.id.namoa_ap_tv_serial_val);
+            TextView tv_ap_code_val = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_code_val);
+            TextView tv_ap_status_val = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_status_val);
+            TextView tv_ap_what_val = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_what_val);
+            TextView tv_ap_when_val = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_when_val);
+            TextView tv_ap_who_val = (TextView) view.findViewById(R.id.namoa_ap_tv_ap_who_val);
+            LinearLayout ll_action_btn = (LinearLayout) view.findViewById(R.id.namoa_ap_ll_action_btn);
+            Button btn_form = (Button) view.findViewById(R.id.namoa_ap_btn_download_ap);
+            Button btn_form_ap = (Button) view.findViewById(R.id.namoa_ap_btn_join_ap);
+            //
+            ll_bg.setBackground(null);
+            iv_sync_upload.setVisibility(View.GONE);
+            ll_action_btn.setVisibility(View.VISIBLE);
+            //
+            tv_form_ttl.setText(hmAux_Trans_Extra.get("form_ttl"));
+            //
+            tv_type.setText(hmAux_Trans_Extra.get("form_type_lbl"));
+            tv_type_val.setText(
+                    roomFormAp.getCustom_form_type() + " - " +
+                            roomFormAp.getCustom_form_type_desc()
+            );
+            //
+            tv_form_label.setText(hmAux_Trans_Extra.get("form_code_lbl"));
+            tv_form_val.setText(roomFormAp.getCustom_form_code() + " - " +
+                    roomFormAp.getCustom_form_version() + " - " +
+                    roomFormAp.getCustom_form_desc()
+            );
+            //
+            tv_data_serv.setText(hmAux_Trans_Extra.get("form_data_lbl"));
+            tv_data_serv_val.setText(String.valueOf(roomFormAp.getCustom_form_data()));
+            //
+            tv_product.setText(hmAux_Trans_Extra.get("product_code_lbl"));
+            tv_product_val.setText(
+                    roomFormAp.getAp_product_id() + " - " +
+                            roomFormAp.getAp_product_desc()
+            );
+            //
+            tv_serial.setText(hmAux_Trans_Extra.get("serial_lbl"));
+            tv_serial_val.setText(roomFormAp.getAp_serial_id());
+            //
+            tv_ap_ttl.setText(hmAux_Trans_Extra.get("ap_ttl"));
+            //
+            tv_ap_code.setText(hmAux_Trans_Extra.get("ap_code_lbl"));
+            tv_ap_code_val.setText(
+                    roomFormAp.getAp_code() + " - " +
+                            roomFormAp.getAp_description()
+            );
+            tv_ap_status.setText(hmAux_Trans_Extra.get("ap_status_lbl"));
+            tv_ap_status_val.setText(hmAux_Trans.get(roomFormAp.getAp_status())
+            );
+            ToolBox_Inf.setAPStatusColor(
+                    context,
+                    tv_ap_status_val,
+                    roomFormAp.getAp_status()
+            );
+            tv_ap_what.setText(hmAux_Trans_Extra.get("ap_what_lbl"));
+            tv_ap_what_val.setText(
+                    ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(roomFormAp.getAp_what()), 45)
+            );
+            tv_ap_who.setText(hmAux_Trans_Extra.get("ap_who_lbl"));
+            tv_ap_who_val.setText(
+                    roomFormAp.getAp_who_name()
+            );
+            tv_ap_when.setText(hmAux_Trans_Extra.get("ap_when_lbl"));
+            if (roomFormAp.getAp_when() != null) {
+                tv_ap_when_val.setText(
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(roomFormAp.getAp_when()),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                );
+            } else {
+                tv_ap_when_val.setText(roomFormAp.getAp_when());
+            }
+            //
+            btn_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
+            btn_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
+        /*
+        *Configura clique dos btn
+        */
+            btn_form.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openPDF(roomFormAp.getPk(), roomFormAp.getCustom_form_url());
+                }
+            });
+            //
+            btn_form_ap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HMAux hmAux = new HMAux();
+                    //
+                    hmAux.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, String.valueOf(roomFormAp.getCustomer_code()));
+                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, String.valueOf(roomFormAp.getCustom_form_type()));
+                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, String.valueOf(roomFormAp.getCustom_form_code()));
+                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, String.valueOf(roomFormAp.getCustom_form_version()));
+                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, String.valueOf(roomFormAp.getCustom_form_data()));
+                    hmAux.put(GE_Custom_Form_ApDao.AP_CODE, String.valueOf(roomFormAp.getAp_code()));
+                    //
+                    mPresenter.checkFormApFlow(hmAux);
+                    //callAct038(context, hmAux);
+                }
+            });
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            //
+            LinearLayout.LayoutParams viewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            view = new LinearLayout(context);
+            view.setLayoutParams(viewParams);
+            ((LinearLayout) view).setOrientation(LinearLayout.VERTICAL);
+            view.setPadding(10,10,10,10);
+            view.setMinimumWidth(300);
+            view.setMinimumHeight(200);
+            //
+            LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 0,1);
+            TextView tv_no_info = new TextView(context);
+            tv_no_info.setLayoutParams(tvParams);
+            tv_no_info.setGravity(Gravity.CENTER_VERTICAL);
+            tv_no_info.setPadding(25,10,25,10);
+            tv_no_info.setTextSize(16);
+            tv_no_info.setText(hmAux_Trans.get("alert_room_obj_error_msg"));
+            //
+            ((LinearLayout) view).addView(tv_no_info);
+        }
+        /*
+        * Configura Dialog
+        */
+        builder
+                .setTitle(hmAux_Trans.get("alert_ap_info_ttl"))
+                .setView(view)
+                .setCancelable(true);
+        //
+        builder.show();
     }
 
     @Override

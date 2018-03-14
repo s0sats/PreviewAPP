@@ -119,7 +119,7 @@ public class WS_C_Room extends IntentService {
                         chRoom.setRoom_status(roomObjSo.getSo_status());
                     }
                     break;
-                case Constant.CHAT_ROOM_TYPE_PA:
+                case Constant.CHAT_ROOM_TYPE_AP:
                     Chat_Room_Obj_Form_AP objFormAp = gson.fromJson(
                             ToolBox_Inf.getRoomObjJsonParam(
                                     chRoom.getRoom_obj()
