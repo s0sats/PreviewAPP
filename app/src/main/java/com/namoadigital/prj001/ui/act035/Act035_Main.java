@@ -243,6 +243,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_room_obj_error_msg");
         transList.add("alert_download_ap_ttl");
         transList.add("alert_download_ap_msg");
+        transList.add("alert_no_pdf_tll");
+        transList.add("alert_no_pdf_msg");
+        transList.add("progress_join_ttl");
+        transList.add("progress_join_msg");
+        transList.add("progress_download_ap_ttl");
+        transList.add("progress_download_ap_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -268,6 +274,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transListAct037_adapter.add("room_ap_info_menu_lbl");
         transListAct037_adapter.add("alert_ap_info_ttl");
         transListAct037_adapter.add("alert_ap_info_ttl");
+
         //
         List<String> translateListAct005 = new ArrayList<>();
         translateListAct005.add("lbl_checklist");
@@ -287,15 +294,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         hmAux_Trans_Extra.putAll(
                 ToolBox_Inf.setLanguage(
-                    context,
-                    mModule_Code,
-                    ToolBox_Inf.getResourceCode(
-                            context,
-                            mModule_Code,
-                           Constant.ACT005
-                    ),
-                    ToolBox_Con.getPreference_Translate_Code(context),
-                    translateListAct005
+                        context,
+                        mModule_Code,
+                        ToolBox_Inf.getResourceCode(
+                                context,
+                                mModule_Code,
+                                Constant.ACT005
+                        ),
+                        ToolBox_Con.getPreference_Translate_Code(context),
+                        translateListAct005
                 )
         );
 
@@ -458,7 +465,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_namoa_ap,
                 R.layout.act035_main_content_cell_whats_text_other,
                 this.dados,
-                hmAux_Trans
+                hmAux_Trans,
+                hmAux_Trans_Extra
         );
 
         act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
@@ -482,7 +490,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             @Override
             public void download_AP(String pk, String custom_form_url) {
-                openPDF(pk,custom_form_url);
+                openPDF(pk, custom_form_url);
             }
 
             @Override
@@ -617,10 +625,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             ToolBox.alertMSG(
                     context,
-                    "Pdf Indisponivel Title - Trad",
-                    "Pdf Indisponivel Msg - Trad",
-//                            hmAux_Trans.get("alert_sync_detected_tll"),
-//                            hmAux_Trans.get("alert_sync_detected_msg"),
+                    hmAux_Trans.get("alert_no_pdf_tll"),
+                    hmAux_Trans.get("alert_no_pdf_msg"),
                     null,
                     -1,
                     false
@@ -640,8 +646,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         RadioButton rb_ap = (RadioButton) view.findViewById(R.id.act035_join_ap_dialog_rb_ap);
         //
         rb_join.setText(hmAux_Trans.get("join_type_lbl"));
-        rb_join.setChecked(true);
         rb_ap.setText(hmAux_Trans.get("ap_type_lbl"));
+        rb_ap.setChecked(true);
         //
         builder
                 .setTitle(hmAux_Trans.get("join_ap_dialog_filter_ttl"))
@@ -662,15 +668,19 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void processingJoinAP(int selected) {
-        switch (selected) {
-            case R.id.act035_join_ap_dialog_rb_join:
-                executeApSyncWs("join");
-                break;
-            case R.id.act035_join_ap_dialog_rb_ap:
-                executeApSyncWs("");
-                break;
-            default:
-                break;
+        if (ToolBox_Con.isOnline(context)) {
+            switch (selected) {
+                case R.id.act035_join_ap_dialog_rb_join:
+                    executeApSyncWs("join");
+                    break;
+                case R.id.act035_join_ap_dialog_rb_ap:
+                    executeApSyncWs("");
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
@@ -1920,7 +1930,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         //Informações da room
         if (mRoom.getRoom_type() != null && mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_AP)) {
-            menu.add(0, 0, Menu.FIRST +1 , hmAux_Trans.get("room_ap_info_menu_lbl"));
+            menu.add(0, 0, Menu.FIRST + 1, hmAux_Trans.get("room_ap_info_menu_lbl"));
             menu.findItem(0).setIcon(R.drawable.ic_info);
             menu.findItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
@@ -1932,7 +1942,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             menu.findItem(1).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
 
-        if(menu.size() == 0){
+        if (menu.size() == 0) {
             menu.setGroupVisible(0, false);
         }
 
@@ -2096,22 +2106,22 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //callAct038(context, hmAux);
                 }
             });
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             //
             LinearLayout.LayoutParams viewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             view = new LinearLayout(context);
             view.setLayoutParams(viewParams);
             ((LinearLayout) view).setOrientation(LinearLayout.VERTICAL);
-            view.setPadding(10,10,10,10);
+            view.setPadding(10, 10, 10, 10);
             view.setMinimumWidth(300);
             view.setMinimumHeight(200);
             //
-            LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 0,1);
+            LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 0, 1);
             TextView tv_no_info = new TextView(context);
             tv_no_info.setLayoutParams(tvParams);
             tv_no_info.setGravity(Gravity.CENTER_VERTICAL);
-            tv_no_info.setPadding(25,10,25,10);
+            tv_no_info.setPadding(25, 10, 25, 10);
             tv_no_info.setTextSize(16);
             tv_no_info.setText(hmAux_Trans.get("alert_room_obj_error_msg"));
             //
@@ -2134,17 +2144,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     public void executeApSyncWs(String type) {
+        String mTitle = "";
+        String mMessage = "";
+
         if (!type.isEmpty()) {
             setWSProcess(WS_AP_Search.class.getSimpleName() + "-" + type);
+            //
+            mTitle = hmAux_Trans.get("progress_join_ttl");
+            mMessage = hmAux_Trans.get("progress_join_msg");
+
         } else {
             setWSProcess(WS_AP_Search.class.getSimpleName());
+            //
+            mTitle = hmAux_Trans.get("progress_download_ap_ttl");
+            mMessage = hmAux_Trans.get("progress_download_ap_msg");
         }
         //
         showPD(
-                //hmAux_Trans.get("progress_sync_ap_ttl"),
-                "sync ap ttl - Trad",
-                "sync ap msg - Trad"
-                //hmAux_Trans.get("progress_sync_ap_msg")
+                mTitle,
+                mMessage
         );
         //
         Intent mIntent = new Intent(context, WBR_AP_Search.class);

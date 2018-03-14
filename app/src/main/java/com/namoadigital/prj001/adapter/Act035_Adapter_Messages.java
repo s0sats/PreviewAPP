@@ -57,11 +57,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     public static boolean processingHMAux = false;
 
     private HMAux hmAux_Trans;
+    private HMAux hmAux_Trans_Extra;
     private String mResource_Code;
     private String mResource_Name = "act037_adapter_ap";
 
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, ArrayList<HMAux> data, HMAux hmAux_Trans) {
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
@@ -78,6 +79,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.mUser_Code = ToolBox_Con.getPreference_User_Code(context);
 
         this.hmAux_Trans = hmAux_Trans;
+
+        this.hmAux_Trans_Extra = hmAux_Trans_Extra;
 
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -110,6 +113,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
         ));
+        //
+        hmAux_Trans.putAll(hmAux_Trans_Extra);
     }
 
     public interface IAct035_Adapter_Messages {
@@ -788,6 +793,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
 
         iv_download_ap.setTag(item);
+        iv_download_ap.setText(hmAux_Trans.get("lbl_checklist"));
         iv_download_ap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -801,6 +807,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         });
 
         iv_join_ap.setTag(item);
+        iv_join_ap.setText(hmAux_Trans.get("lbl_form_ap"));
         iv_join_ap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -213,6 +213,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_join_room_ap_msg");
         transList.add("dialog_join_room_ap_ttl");
         transList.add("dialog_join_room_ap_msg");
+        transList.add("alert_no_pdf_tll");
+        transList.add("alert_no_pdf_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -699,10 +701,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 } else {
                     ToolBox.alertMSG(
                             context,
-                            "Pdf Indisponivel Title - Trad",
-                            "Pdf Indisponivel Msg - Trad",
-//                            hmAux_Trans.get("alert_sync_detected_tll"),
-//                            hmAux_Trans.get("alert_sync_detected_msg"),
+                            hmAux_Trans.get("alert_no_pdf_tll"),
+                            hmAux_Trans.get("alert_no_pdf_msg"),
                             null,
                             -1,
                             false
