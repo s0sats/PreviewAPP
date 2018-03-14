@@ -296,7 +296,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
-    public void checkFormApFlow(HMAux hmAux) {
+    public void checkFormApFlow(final HMAux hmAux) {
         HMAux auxAP = geCustomFormApDao.getByStringHM(
                 new GE_Custom_Form_Ap_Sql_005(
                         hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE),
@@ -319,7 +319,11 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //iniciar download da AP
+                            if(ToolBox_Con.isOnline(context)){
+                                mView.executeApSyncWsViaInfo(hmAux);
+                            }else{
+                                ToolBox_Inf.showNoConnectionDialog(context);
+                            }
                         }
                     },
                     1

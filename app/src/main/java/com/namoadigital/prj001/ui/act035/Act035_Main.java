@@ -249,6 +249,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("progress_join_msg");
         transList.add("progress_download_ap_ttl");
         transList.add("progress_download_ap_msg");
+        transList.add("progress_sync_ap_ttl");
+        transList.add("progress_sync_ap_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2141,6 +2143,38 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         super.processNotification_close(mValue, mActivity);
+    }
+
+    @Override
+    public void executeApSyncWsViaInfo(HMAux hmAux) {
+        setWSProcess(WS_AP_Search.class.getSimpleName());
+        //
+        showPD(
+                hmAux_Trans.get("progress_sync_ap_ttl"),
+                hmAux_Trans.get("progress_sync_ap_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_AP_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        mCustomer_Code = hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE);
+        mCustom_Form_Type = hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE);
+        mCustom_Form_Code = hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE);
+        mCustom_Form_Version = hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION);
+        mCustom_Form_Data = hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA);
+        mAp_Code = hmAux.get(GE_Custom_Form_ApDao.AP_CODE);
+        //
+        bundle.putInt(GE_Custom_Form_ApDao.SYNC_REQUIRED, 0);
+        bundle.putLong(GE_Custom_Form_ApDao.CUSTOMER_CODE, Long.parseLong(mCustomer_Code));
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, Integer.parseInt(mCustom_Form_Type));
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, Integer.parseInt(mCustom_Form_Code));
+        bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, Integer.parseInt(mCustom_Form_Version));
+        bundle.putLong(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, Long.parseLong(mCustom_Form_Data));
+        bundle.putInt(GE_Custom_Form_ApDao.AP_CODE, Integer.parseInt(mAp_Code));
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     public void executeApSyncWs(String type) {
