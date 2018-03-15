@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -668,6 +669,9 @@ public class WS_Sync extends IntentService {
                 }
                 //
                 geCustomFormApDao.addUpdate(action_plans, false);
+                //Apaga AP que não são pra mim e nem tenho sala
+                int qtyDel = ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
+                Log.d("FORM_AP","AP's del: "+ qtyDel);
             }
         }
 

@@ -53,6 +53,7 @@ import com.namoadigital.prj001.dao.EV_ProfileDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -69,6 +70,7 @@ import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
@@ -90,6 +92,7 @@ import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_020;
 import com.namoadigital.prj001.sql.CH_Message_Sql_022;
 import com.namoadigital.prj001.sql.CH_Message_Sql_023;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.CH_Room_Sql_004;
 import com.namoadigital.prj001.sql.CH_Room_Sql_007;
 import com.namoadigital.prj001.sql.CH_Room_Sql_008;
@@ -105,6 +108,8 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_010;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
@@ -3964,5 +3969,53 @@ public class ToolBox_Inf {
         return map;
     }
 
+    public static int deleteUnnecessaryAP(Context context){
+        int deletedCounter = 0;
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+        //
+        ArrayList<GE_Custom_Form_Ap> formList = (ArrayList<GE_Custom_Form_Ap>)
+                formApDao.query(
+                        new GE_Custom_Form_Ap_Sql_011(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        if(formList != null && formList.size()> 0){
+            for (GE_Custom_Form_Ap formAp:formList) {
+                boolean deleteAP = true;
+                //
+                if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)) {
+                    CH_RoomDao roomDao = new CH_RoomDao(context);
+                    //
+                    CH_Room chRoom = roomDao.getByString(
+                            new CH_Room_Sql_001(
+                                    formAp.getRoom_code()
+                            ).toSqlQuery()
+                    );
+                    //
+                    if (chRoom != null && chRoom.getRoom_code().length() > 0) {
+                        deleteAP = false;
+                    }
+                }
+                //
+                if(deleteAP){
+                    formApDao.remove(
+                            new GE_Custom_Form_Ap_Sql_010(
+                                    formAp.getCustomer_code(),
+                                    formAp.getCustom_form_type(),
+                                    formAp.getCustom_form_code(),
+                                    formAp.getCustom_form_version(),
+                                    formAp.getCustom_form_data(),
+                                    formAp.getAp_code()
+                            ).toSqlQuery()
+                    );
+                    deletedCounter++;
+                }
+            }
+        }
+        //
+        return deletedCounter;
+    }
 
 }

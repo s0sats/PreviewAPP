@@ -139,6 +139,8 @@ public class WS_C_Room extends IntentService {
         roomDao.addUpdate(chRooms, false);
         //
         cleanUPRooms(chRooms);
+        //Chama limpa Ap's desnecessarios.
+        ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
         //
         startDownloadService();
         //
