@@ -35,6 +35,7 @@ public class WS_AP_Search extends IntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_ap_search";
+    private String mType = "";
     //
     private GE_Custom_Form_ApDao formApDao;
 
@@ -55,6 +56,7 @@ public class WS_AP_Search extends IntentService {
             int custom_form_version = bundle.getInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, -1);
             long custom_form_data = bundle.getLong(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, -1L);
             Integer ap_code = bundle.getInt(GE_Custom_Form_ApDao.AP_CODE, -1);
+            this.mType = bundle.getString("type", "");
             //
             processAPSearch(
                     sync_required,
@@ -64,7 +66,6 @@ public class WS_AP_Search extends IntentService {
                     custom_form_version,
                     custom_form_data,
                     ap_code
-
             );
 
         } catch (Exception e) {
@@ -204,12 +205,57 @@ public class WS_AP_Search extends IntentService {
     }
 
     private void processAPSearchReturn(ArrayList<GE_Custom_Form_Ap> obj) {
-        for (GE_Custom_Form_Ap formAp:obj) {
+
+        int mErrorCountStatus = 0;
+        int mErrorCountOther = 0;
+
+
+        ArrayList<GE_Custom_Form_Ap> objFinal = new ArrayList<>();
+
+        for (GE_Custom_Form_Ap formAp : obj) {
             formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //
+            switch (formAp.getAp_status().toUpperCase()) {
+                case Constant.SYS_STATUS_CANCELLED:
+                    mErrorCountStatus += 1;
+                    break;
+                case Constant.SYS_STATUS_DONE:
+                    mErrorCountStatus += 1;
+                    break;
+                default:
+                    if (mType.equalsIgnoreCase(Constant.ACT035 + "AP")) {
+                        if (formAp.getAp_who() == null ||
+                                formAp.getAp_who() != Integer.parseInt(ToolBox_Con.getPreference_User_Code(getApplicationContext()))
+                                ) {
+
+                            mErrorCountOther += 1;
+
+                        } else {
+                            objFinal.add(formAp);
+                        }
+
+                    } else {
+                        objFinal.add(formAp);
+                    }
+
+                    break;
+            }
         }
-        formApDao.addUpdate(obj,false);
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_sync"),"", "0");
+
+        formApDao.addUpdate(objFinal, false);
+
+        if (mErrorCountStatus > 0) {
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", " Status Invalido - Trad", "", "0");
+            //
+            return;
+        } else if (mErrorCountOther > 0) {
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", " Atribuido a Outro Usuário - Trad", "", "0");
+            //
+            return;
+        } else {
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_sync"), "", "0");
+        }
     }
 
     private void loadTranslation() {

@@ -681,6 +681,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     private void processForm_AP(JSONObject message, HMAux hmAux, View convertView) {
         TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_ttl);
+        TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_hour_ttl);
         TextView tv_type = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_type_label);
         TextView tv_form_label = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_label);
         TextView tv_data_serv = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_data_serv_lbl);
@@ -723,6 +724,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         //
         tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
         //
+        tv_hour.setText(
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        " HH:mm"
+                )
+        );
+        //
         tv_type.setText(hmAux_Trans.get("form_type_lbl"));
         tv_type_val.setText(
                 item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + " - " +
@@ -736,7 +744,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         );
         //
         tv_data_serv.setText(hmAux_Trans.get("form_data_lbl"));
-        tv_data_serv_val.setText(hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
+        tv_data_serv_val.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
         //
         tv_product.setText(hmAux_Trans.get("product_code_lbl"));
         tv_product_val.setText(
@@ -745,7 +753,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         );
         //
         tv_serial.setText(hmAux_Trans.get("serial_lbl"));
-        tv_serial_val.setText(item.get(GE_Custom_Form_ApDao.SERIAL_ID));
+        tv_serial_val.setText(item.get("ap_" + GE_Custom_Form_ApDao.SERIAL_ID));
         //
         tv_ap_ttl.setText(hmAux_Trans.get("ap_ttl"));
         //
@@ -777,9 +785,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
         tv_ap_who.setText(hmAux_Trans.get("ap_who_lbl"));
         tv_ap_who_val.setText(
-                item.get(GE_Custom_Form_ApDao.AP_WHO_NICK)
+                item.get("ap_who_name")
         );
         tv_ap_when.setText(hmAux_Trans.get("ap_when_lbl"));
+        tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) != null ? item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) : "");
+
         if (!item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()) {
             tv_ap_when_val.setText(
                     ToolBox_Inf.millisecondsToString(

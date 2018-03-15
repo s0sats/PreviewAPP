@@ -201,10 +201,12 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             if (imagem.isEmpty()) {
                 jsonObject.put("type", "TEXT");
                 jsonObject.put("data", message);
+                chMessage.setMsg_type(Constant.CHAT_MESSAGE_TYPE_TEXT);
             } else {
                 jsonObject.put("type", "IMAGE");
                 //jsonObject.put("data", imagem);
                 jsonObject.put("data", "");
+                chMessage.setMsg_type(Constant.CHAT_MESSAGE_TYPE_IMAGE);
             }
 
             JSONObject jMessage = new JSONObject();

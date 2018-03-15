@@ -507,7 +507,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             @Override
             public void join_AP(String pk) {
 
-
                 HMAux hmItem = ch_roomDao.getByStringHM(
                         new CH_Room_Sql_013(
                                 pk
@@ -2232,6 +2231,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         bundle.putInt(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, Integer.parseInt(mCustom_Form_Version));
         bundle.putLong(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, Long.parseLong(mCustom_Form_Data));
         bundle.putInt(GE_Custom_Form_ApDao.AP_CODE, Integer.parseInt(mAp_Code));
+        //
+        if (!type.isEmpty()) {
+            bundle.putString("type", Constant.ACT035 + "JOIN");
+        } else {
+            bundle.putString("type", Constant.ACT035 + "AP");
+        }
 
         mIntent.putExtras(bundle);
         //
@@ -2296,6 +2301,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
         hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
         hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
+        //
+
         //
         if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
             executeWsRoomAp(hmAuxAP);

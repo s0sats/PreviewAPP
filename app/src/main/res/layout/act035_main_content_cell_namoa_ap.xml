@@ -9,9 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:padding="10dp"
         android:background="@drawable/border_grey_round"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/act035_main_content_cell_namoa_ap_tv_module_ttl"
@@ -359,10 +359,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
                 <Button
+
                     android:id="@+id/act035_main_content_cell_namoa_ap_iv_download_ap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -396,5 +396,26 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_namoa_ap_tv_hour_ttl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="11:30"
+                android:textColor="#9c9b9b"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:typeface="normal" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
