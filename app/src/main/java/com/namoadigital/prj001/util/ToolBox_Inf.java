@@ -108,6 +108,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_010;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
@@ -3157,8 +3158,8 @@ public class ToolBox_Inf {
         return px;
     }
 
-    public static void showChatNotification(Context context, String type, String attempt) {
-        showChatNotification(context, type, attempt, "", "");
+    public static void showChatNotification(Context context, String type, String attempt, boolean showAnyway) {
+        showChatNotification(context, type, attempt, "", "", showAnyway);
     }
 
     //
@@ -3344,7 +3345,7 @@ public class ToolBox_Inf {
         cancelNotification(context, Constant.NOTIFICATION_CHAT_ROOM);
     }
 
-    public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
+    public static void showChatNotification(Context context, String type, String attempt, String title, String message, boolean showAnyway) {
         //
         boolean show_notification = false;
         HMAux hmAux_trans = null;
@@ -3409,7 +3410,7 @@ public class ToolBox_Inf {
                         } else {
                             show_notification = true;
 
-                            if (Act035_Main.mRoom_code != null && Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))) {
+                            if (!showAnyway && Act035_Main.mRoom_code != null && Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))) {
                                 return;
                             }
 
@@ -4016,6 +4017,68 @@ public class ToolBox_Inf {
         }
         //
         return deletedCounter;
+    }
+
+    public static boolean checkForApExclusion(Context context,String customer_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code){
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+        int user_code = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context));
+        boolean deleteAP = false;
+        //
+        GE_Custom_Form_Ap formAp = formApDao.getByString(
+                new GE_Custom_Form_Ap_Sql_005(
+                        customer_code,
+                        custom_form_type,
+                        custom_form_code,
+                        custom_form_version,
+                        custom_form_data,
+                        ap_code,
+                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+                ).toSqlQuery()
+        );
+        if(formAp != null) {
+            if ( formAp.getAp_who() == null || formAp.getAp_who() != user_code) {
+                if(!formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                        && !formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
+                ) {
+                    if (formAp.getRoom_code() == null) {
+                        deleteAP = true;
+                    } else {
+                        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
+                            CH_RoomDao roomDao = new CH_RoomDao(context);
+                            //
+                            CH_Room chRoom = roomDao.getByString(
+                                    new CH_Room_Sql_001(
+                                            formAp.getRoom_code()
+                                    ).toSqlQuery()
+                            );
+                            //
+                            if (chRoom == null) {
+                                deleteAP = true;
+                            }
+                        } else {
+                            deleteAP = true;
+                        }
+                    }
+                }
+            }
+        }
+        //
+        if (deleteAP) {
+            formApDao.remove(
+                    new GE_Custom_Form_Ap_Sql_010(
+                            formAp.getCustomer_code(),
+                            formAp.getCustom_form_type(),
+                            formAp.getCustom_form_code(),
+                            formAp.getCustom_form_version(),
+                            formAp.getCustom_form_data(),
+                            formAp.getAp_code()
+                    ).toSqlQuery()
+            );
+            //
+            return true;
+        }
+        //
+        return false;
     }
 
 }
