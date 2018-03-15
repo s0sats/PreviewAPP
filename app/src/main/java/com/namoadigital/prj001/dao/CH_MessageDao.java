@@ -32,6 +32,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     public static final String MSG_TOKEN = "msg_token";
     public static final String ROOM_CODE = "room_code";
     public static final String MSG_DATE = "msg_date";
+    public static final String MSG_TYPE = "msg_type";
     public static final String MSG_OBJ = "msg_obj";
     public static final String MESSAGE_IMAGE_LOCAL = "message_image_local";
     public static final String MSG_ORIGIN = "msg_origin";
@@ -47,8 +48,8 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     public static final String STATUS_UPDATE = "status_update";
 
     public static String[] columns = {
-            MSG_PREFIX, MSG_CODE, TMP, MSG_TOKEN, ROOM_CODE, MSG_DATE, MSG_OBJ,
-            MESSAGE_IMAGE_LOCAL, MSG_ORIGIN, DELIVERED, DELIVERED_DATE,
+            MSG_PREFIX, MSG_CODE, TMP, MSG_TOKEN, ROOM_CODE, MSG_DATE, MSG_TYPE,
+            MSG_OBJ, MESSAGE_IMAGE_LOCAL, MSG_ORIGIN, DELIVERED, DELIVERED_DATE,
             READ, READ_DATE, MSG_PK, USER_CODE, USER_NICK, ALL_DELIVERED,
             ALL_READ, STATUS_UPDATE
     };
@@ -365,6 +366,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             ch_message.setMsg_token(cursor.getLong(cursor.getColumnIndex(MSG_TOKEN)));
             ch_message.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             ch_message.setMsg_date(cursor.getString(cursor.getColumnIndex(MSG_DATE)));
+            ch_message.setMsg_type(cursor.getString(cursor.getColumnIndex(MSG_TYPE)));
             ch_message.setMsg_obj(cursor.getString(cursor.getColumnIndex(MSG_OBJ)));
             ch_message.setMessage_image_local(cursor.getString(cursor.getColumnIndex(MESSAGE_IMAGE_LOCAL)));
             ch_message.setMsg_origin(cursor.getString(cursor.getColumnIndex(MSG_ORIGIN)));
@@ -422,6 +424,9 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             }
             if (ch_message.getMsg_date() != null) {
                 contentValues.put(MSG_DATE, ch_message.getMsg_date());
+            }
+            if (ch_message.getMsg_type() != null) {
+                contentValues.put(MSG_TYPE, ch_message.getMsg_type());
             }
             if (ch_message.getMsg_obj() != null) {
                 contentValues.put(MSG_OBJ, ch_message.getMsg_obj());

@@ -61,7 +61,8 @@ public class Sql_Act034_004 implements Specification {
                         "                THEN 1\n" +
                         "                ELSE 0\n" +
                         "           END) HAS_NULL,\n" +
-                        "           SUM(CASE WHEN m.read = 0 AND m.user_code <> '" + user_code + "'\n" +
+                        "           SUM(CASE WHEN m.read = 0 AND \n" +
+                        "                   (m.user_code <> '" + user_code + "' OR m.user_code = '" + user_code + "' AND m.msg_type not in ('"+Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"'))\n" +
                         "               THEN 1\n" +
                         "               ELSE 0\n" +
                         "           END) BADGE              \n" +

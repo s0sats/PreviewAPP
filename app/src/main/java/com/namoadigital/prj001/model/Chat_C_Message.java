@@ -17,6 +17,7 @@ public class Chat_C_Message {
     private int msg_code;
     private long msg_tmp;
     private String msg_date;
+    private String msg_type;
     private JsonObject msg_obj;
     private String msg_origin;
     private int delivered;
@@ -87,6 +88,14 @@ public class Chat_C_Message {
 
     public void setMsg_date(String msg_date) {
         this.msg_date = msg_date;
+    }
+
+    public String getMsg_type() {
+        return msg_type;
+    }
+
+    public void setMsg_type(String msg_type) {
+        this.msg_type = msg_type;
     }
 
     public JsonObject getMsg_obj() {
@@ -219,6 +228,7 @@ public class Chat_C_Message {
         ch_message.setTmp(chat_c_message.getMsg_tmp());
         ch_message.setRoom_code(chat_c_message.getRoom_code());
         ch_message.setMsg_date(chat_c_message.getMsg_date());
+        ch_message.setMsg_type(chat_c_message.getMsg_type());
         ch_message.setMsg_obj(chat_c_message.getMsg_obj().toString());
         ch_message.setMsg_origin(chat_c_message.getMsg_origin());
         ch_message.setDelivered(chat_c_message.getDelivered());
@@ -244,6 +254,7 @@ public class Chat_C_Message {
         ch_message.setTmp(chat_c_message.getMsg_tmp());
         ch_message.setRoom_code(chat_c_message.getRoom_code());
         ch_message.setRoom_code(chat_c_message.getRoom_code());
+        ch_message.setMsg_type(chat_c_message.getMsg_type());
         ch_message.setMsg_obj(chat_c_message.getMsg_obj().toString());
         ch_message.setMsg_origin(chat_c_message.getMsg_origin());
         ch_message.setDelivered(chat_c_message.getDelivered());
