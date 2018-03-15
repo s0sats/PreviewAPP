@@ -45,12 +45,13 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
     public static final String ALL_DELIVERED = "all_delivered";
     public static final String ALL_READ = "all_read";
     public static final String STATUS_UPDATE = "status_update";
+    public static final String FILE_STATUS = "file_status";
 
     public static String[] columns = {
             MSG_PREFIX, MSG_CODE, TMP, MSG_TOKEN, ROOM_CODE, MSG_DATE, MSG_OBJ,
             MESSAGE_IMAGE_LOCAL, MSG_ORIGIN, DELIVERED, DELIVERED_DATE,
             READ, READ_DATE, MSG_PK, USER_CODE, USER_NICK, ALL_DELIVERED,
-            ALL_READ, STATUS_UPDATE
+            ALL_READ, STATUS_UPDATE, FILE_STATUS
     };
 
     public CH_MessageDao(Context context) {
@@ -395,6 +396,7 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             ch_message.setAll_delivered(cursor.getInt(cursor.getColumnIndex(ALL_DELIVERED)));
             ch_message.setAll_read(cursor.getInt(cursor.getColumnIndex(ALL_READ)));
             ch_message.setStatus_update(cursor.getInt(cursor.getColumnIndex(STATUS_UPDATE)));
+            ch_message.setFile_status(cursor.getString(cursor.getColumnIndex(FILE_STATUS)));
 
             return ch_message;
         }
@@ -461,6 +463,9 @@ public class CH_MessageDao extends BaseDao implements Dao<CH_Message>, DaoTmp<CH
             }
             if (ch_message.getStatus_update() > -1) {
                 contentValues.put(STATUS_UPDATE, ch_message.getStatus_update());
+            }
+            if (ch_message.getFile_status() != null) {
+                contentValues.put(FILE_STATUS, ch_message.getFile_status());
             }
 
             return contentValues;

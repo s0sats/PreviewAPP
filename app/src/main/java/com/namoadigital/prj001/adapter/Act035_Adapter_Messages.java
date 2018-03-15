@@ -558,7 +558,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 )
         );
 
-        iv_badge.setImageDrawable(processBadge(hmAux));
+        iv_badge.setImageDrawable(processBadgeImage(hmAux));
     }
 
     private void processTxTOther(JSONObject message, HMAux hmAux, View convertView) {
@@ -834,6 +834,20 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         } else if (hmAux.get(CH_MessageDao.ALL_DELIVERED).equalsIgnoreCase("1")) {
             return context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp);
         } else if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
+            return context.getResources().getDrawable(R.drawable.ic_done_black_24dp);
+        } else {
+            return context.getResources().getDrawable(R.drawable.ic_clock_chat);
+        }
+    }
+
+    private Drawable processBadgeImage(HMAux hmAux) {
+        // Badge Status for All
+        if (hmAux.get(CH_MessageDao.ALL_READ).equalsIgnoreCase("1")) {
+            return context.getResources().getDrawable(R.drawable.ic_done_all_green_24dp);
+        } else if (hmAux.get(CH_MessageDao.ALL_DELIVERED).equalsIgnoreCase("1")) {
+            return context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp);
+        } else if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")
+                && hmAux.get(CH_MessageDao.FILE_STATUS).equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)) {
             return context.getResources().getDrawable(R.drawable.ic_done_black_24dp);
         } else {
             return context.getResources().getDrawable(R.drawable.ic_clock_chat);

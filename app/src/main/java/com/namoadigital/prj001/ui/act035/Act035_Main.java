@@ -56,13 +56,14 @@ import com.namoadigital.prj001.model.Chat_Message_Info_Env;
 import com.namoadigital.prj001.model.Chat_Message_Info_Rec;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.model.Chat_Room_Info_Rec;
+import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
-import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
+import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -196,6 +197,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         iniUIFooter();
         //
         initActions();
+        //
+        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
+        Bundle bundle = new Bundle();
+
+        // Verifica a necessidade de UpLoad.
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private void iniSetup() {
@@ -1089,6 +1098,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         processing_FromTo(context);
                         break;
 
+                    case Constant.CHAT_BR_TYPE_MSG_IMAGE_ME:
+                        processing_ImageME(context);
+                        break;
+
                     case Constant.CHAT_BR_TYPE_MSG_SCROLL_UP:
                         processing_Scroll_Up();
                         break;
@@ -1166,7 +1179,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             callAct034(context);
         }
     }
-
 
     private void processing_cMessage(final Context context) {
 
@@ -1337,6 +1349,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void processing_FromTo(Context context) {
         Log.d("PROCESSOS", "DePara " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
+
+        CH_MessageDao chMessageDao = new CH_MessageDao(context);
+
+        act035_adapter_messages.refill(chMessageDao.query_HM(
+                new CH_Message_Sql_012(dados).toSqlQuery()
+        ));
+    }
+
+
+    private void processing_ImageME(Context context) {
+        Log.d("PROCESSOS", "ImageME " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
 
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 

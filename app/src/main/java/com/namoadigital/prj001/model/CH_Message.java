@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.namoadigital.prj001.util.Constant;
+
 /**
  * Created by d.luche on 01/12/2017.
  */
@@ -25,11 +27,13 @@ public class CH_Message {
     private int all_delivered;
     private int all_read;
     private int status_update;
+    public String file_status;
 
     public CH_Message() {
         this.msg_prefix = -1;
         this.msg_code = -1;
         this.tmp = -1;
+        this.file_status = Constant.CUSTOM_FORM_STATUS_SENT;
         /*this.msg_token = null;
         this.room_code = null;
         this.msg_date= null;
@@ -45,7 +49,8 @@ public class CH_Message {
         this.user_nick = null;
         this.all_delivered= -1 ;
         this.all_read= -1;
-        this.status_update= -1;*/
+        this.status_update= -1;
+        this.file_status= null*/
     }
 
     public int getMsg_prefix() {
@@ -198,5 +203,13 @@ public class CH_Message {
 
     public void setStatus_update(int status_update) {
         this.status_update = status_update;
+    }
+
+    public String getFile_status() {
+        return file_status;
+    }
+
+    public void setFile_status(String file_status) {
+        this.file_status = file_status;
     }
 }

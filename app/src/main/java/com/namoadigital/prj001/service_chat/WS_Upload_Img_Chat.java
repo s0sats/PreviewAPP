@@ -10,12 +10,14 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.namoadigital.prj001.dao.CH_FileDao;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.TUploadImg_Chat_Env;
 import com.namoadigital.prj001.model.TUploadImg_Chat_Rec;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_File_Sql_001;
+import com.namoadigital.prj001.sql.CH_Message_Sql_024;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -58,6 +60,10 @@ public class WS_Upload_Img_Chat extends IntentService {
                     getApplicationContext()
             );
             //
+            CH_MessageDao chMessageDao = new CH_MessageDao(
+                    getApplicationContext()
+            );
+            //
             chFiles = (ArrayList<CH_File>) chFileDao.query(
                     new CH_File_Sql_001().toSqlQuery()
             );
@@ -87,11 +93,26 @@ public class WS_Upload_Img_Chat extends IntentService {
                 if (rec.getResult().toUpperCase().contains(("OK"))) {
                     chFile.setFile_status("SENT");
                     chFileDao.addUpdate(chFile);
+                    //
+                    String pk[] = chFile.getFile_code().replace(".", "#").split("#");
+
+                    chMessageDao.addUpdate(
+                            new CH_Message_Sql_024(
+                                    Integer.parseInt(pk[0]),
+                                    Long.parseLong(pk[1])
+                            ).toSqlQuery()
+                    );
                 }
 
                 Log.d("CHFILE", rec.getResult());
             }
+
+            //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);
+
         } catch (Exception e) {
+
+            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);
+
             programAlarm(getApplicationContext());
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {

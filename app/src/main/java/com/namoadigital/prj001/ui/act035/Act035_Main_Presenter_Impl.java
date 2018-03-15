@@ -167,7 +167,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             Gson gson = new GsonBuilder().serializeNulls().create();
             singletonWebSocket.attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
         } else {
-            if (msg_prefix == null ) {
+            if (msg_prefix == null) {
                 Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
                 sHistoricalMessage.setRoom_code(mRoom_code);
                 sHistoricalMessage.setMsg_ref_prefix(null);
@@ -224,6 +224,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         chMessage.setStatus_update(1);
         chMessage.setRead_date(null);
         chMessage.setMsg_pk(null);
+        chMessage.setFile_status("");
         chMessage.setUser_code(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
         chMessage.setUser_nick(ToolBox_Con.getPreference_User_Code_Nick(context) + "(" + ToolBox_Con.getPreference_User_Code(context) + ")");
         //
@@ -309,9 +310,9 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if(auxAP != null && auxAP.size() > 0){
-            mView.callAct038(context,hmAux);
-        }else{
+        if (auxAP != null && auxAP.size() > 0) {
+            mView.callAct038(context, hmAux);
+        } else {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_download_ap_ttl"),
@@ -319,9 +320,9 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(ToolBox_Con.isOnline(context)){
+                            if (ToolBox_Con.isOnline(context)) {
                                 mView.executeApSyncWsViaInfo(hmAux);
-                            }else{
+                            } else {
                                 ToolBox_Inf.showNoConnectionDialog(context);
                             }
                         }

@@ -111,14 +111,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         initActions();
         //
         startReceivers(true);
-        //
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-
-        // Verifica a necessidade de UpLoad.
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     private void iniSetup() {
