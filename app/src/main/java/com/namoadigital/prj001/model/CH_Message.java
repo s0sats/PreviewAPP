@@ -14,6 +14,7 @@ public class CH_Message {
     private long msg_token;
     private String room_code;
     private String msg_date;
+    private String msg_type;
     private String msg_obj;
     private String message_image_local;
     private String msg_origin;
@@ -99,6 +100,14 @@ public class CH_Message {
 
     public void setMsg_date(String msg_date) {
         this.msg_date = msg_date;
+    }
+
+    public String getMsg_type() {
+        return msg_type;
+    }
+
+    public void setMsg_type(String msg_type) {
+        this.msg_type = msg_type;
     }
 
     public String getMsg_obj() {

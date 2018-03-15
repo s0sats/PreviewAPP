@@ -129,8 +129,13 @@ public class WS_C_Message extends IntentService {
                     //Atualiza valor de dado entregue
                     chMessage.setDelivered(1);
                     chMessage.setDelivered_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                    chMessage.setRead(1);
-                    chMessage.setRead_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    //Se msg é minha, mas é msg "sistemica", não seta como lido
+                    if(chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) ||
+                       chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
+                    ) {
+                        chMessage.setRead(1);
+                        chMessage.setRead_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    }
                     chMessage.setStatus_update(1);//verificar a necessidade disso
                     chMessage.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                     //Monta obj para chamar sDelivered
@@ -149,6 +154,22 @@ public class WS_C_Message extends IntentService {
                 * */
                 //
                 messageDao.addUpdate(chMessage);
+                //
+               /*
+               TESTE DE ABRIR MSG_OBJ VIA CLASSE
+               INSISTIR NA IDEIA DEPOIS
+               Chat_Message_Obj messageObj = gson.fromJson(
+                        ToolBox_Inf.getRoomObjJsonParam(chMessage.getMsg_obj()),
+                        Chat_Message_Obj.class
+                        );
+                //
+                messageObj.dataConverter();*/
+                //
+                if(!chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) ||
+                   !chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
+                ){
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                }
                 //
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
                 //

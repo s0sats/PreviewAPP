@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act037_Adapter_AP;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -159,6 +160,20 @@ public class Act039_Main extends Base_Activity implements Act039_Main_View {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void callAct014(Context context) {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

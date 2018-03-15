@@ -16,4 +16,6 @@ public interface Act039_Main_View{
 
     void callAct038(Context context, HMAux item);
 
+    void callAct014(Context context);
+
 }

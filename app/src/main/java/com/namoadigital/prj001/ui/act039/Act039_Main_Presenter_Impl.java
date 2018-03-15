@@ -45,4 +45,9 @@ public class Act039_Main_Presenter_Impl implements Act039_Main_Presenter {
                 )
         );
     }
+
+    @Override
+    public void onBackPressedClicked() {
+        mView.callAct014(context);
+    }
 }

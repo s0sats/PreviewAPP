@@ -14,7 +14,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -190,7 +190,7 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
 
     @Override
     public void callAct014(Context context) {
-        Intent mIntent = new Intent(context, Act012_Main.class);
+        Intent mIntent = new Intent(context, Act014_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
