@@ -4,6 +4,7 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -76,7 +77,9 @@ public class Sql_Chat_Notification_001 implements Specification {
                         "             WHERE\n" +
                         "                   m.room_code = r.room_code" +
                         "                   AND m.read = 0\n" +
-                        "                   AND m.user_code <> '" + user_code + "'\n" +
+                        "                   AND (m.user_code <> '" + user_code + "'\n" +
+                        "                        or m.user_code ='" + user_code+"' AND m.msg_type not in ('"+ Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"')\n" +
+                        "                       )\n" +
                         "              LIMIT 1 ) last_msg_pk\n" +
                         "           FROM    \n" +
                         "               " + CH_RoomDao.TABLE + " r\n" +
@@ -84,7 +87,9 @@ public class Sql_Chat_Notification_001 implements Specification {
                         "              " + CH_MessageDao.TABLE + " m ON r.room_code = m.room_code\n" +
                         "           WHERE\n" +
                         "              m.read = 0\n" +
-                        "              and m.user_code <> '" + user_code + "'\n" +
+                        "              AND (m.user_code <> '" + user_code + "'\n" +
+                        "                   or m.user_code ='" + user_code+"' AND m.msg_type not in ('"+ Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"')\n" +
+                        "                  )\n" +
                         "           )t\n" +
                         "   WHERE\n" +
                         "    m.room_code = r.room_code" +
