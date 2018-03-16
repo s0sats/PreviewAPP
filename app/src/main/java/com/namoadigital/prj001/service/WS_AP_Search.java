@@ -245,11 +245,11 @@ public class WS_AP_Search extends IntentService {
         formApDao.addUpdate(objFinal, false);
 
         if (mErrorCountStatus > 0) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", " Status Invalido - Trad", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_invalid_status"), "", "0");
             //
             return;
         } else if (mErrorCountOther > 0) {
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", " Atribuido a Outro Usuário - Trad", "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_change_user"), "", "0");
             //
             return;
         } else {
@@ -265,6 +265,9 @@ public class WS_AP_Search extends IntentService {
         translist.add("msg_processing_result");
         translist.add("msg_end_ap_sync");
         translist.add("msg_no_ap_to_sync");
+        translist.add("msg_invalid_status");
+        translist.add("msg_change_user");
+
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
