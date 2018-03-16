@@ -32,6 +32,7 @@ public class MD_User_Sql_001 implements Specification {
                                 MD_UserDao.TABLE + "\n" +
                                 " WHERE " +
                                 MD_UserDao.CUSTOMER_CODE + " = '" + customer_code + "' " +
+                                " AND " + MD_UserDao.AP + " = '1' " +
                                 " ORDER BY " +
                                 "      user_nick")
                 .append(";" + HmAuxFields + "#" + SearchableSpinner.ID + "#" + SearchableSpinner.DESCRIPTION)

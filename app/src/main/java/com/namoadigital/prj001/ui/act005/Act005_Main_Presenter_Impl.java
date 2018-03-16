@@ -183,21 +183,25 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 switch (menuId[i]) {
 
                     case Act005_Main.MENU_ID_SERVICE:
+                        try {
+                            qty = soDao.getByStringHM(
+                                    new Sql_Act021_004(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
+                            //
 
-                        qty = soDao.getByStringHM(
-                                new Sql_Act021_004(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
-                        //
-
-                        qtyBadge2 = soDao.getByStringHM(
-                                new Sql_Act005_005(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        ToolBox_Con.getPreference_Site_Code(context),
-                                        ToolBox_Con.getPreference_Zone_Code(context)
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_005.QTD_MY_PENDING_SO);
+                            qtyBadge2 = soDao.getByStringHM(
+                                    new Sql_Act005_005(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            ToolBox_Con.getPreference_Site_Code(context),
+                                            ToolBox_Con.getPreference_Zone_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_005.QTD_MY_PENDING_SO);
+                        }catch (Exception e){
+                            qty = "0";
+                            qtyBadge2 = "0";
+                        }
                         //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
