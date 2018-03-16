@@ -150,6 +150,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
+        bundle.putBoolean(Constant.GS_LOGIN_PROCESS, true);
 
         mIntent.putExtras(bundle);
         //

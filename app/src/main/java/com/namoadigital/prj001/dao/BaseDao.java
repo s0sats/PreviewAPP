@@ -7,6 +7,7 @@ import com.namoadigital.prj001.database.DatabaseHelperChat;
 import com.namoadigital.prj001.database.DatabaseHelperMulti;
 import com.namoadigital.prj001.database.DatabaseHelperSingle;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by neomatrix on 18/01/17.
@@ -30,30 +31,35 @@ public class BaseDao {
     }
 
     public void openDB() {
-        switch (mMode) {
-            case "MULTI":
-                DatabaseHelperMulti SQLHelper_var_multi = new DatabaseHelperMulti(context, mDB_NAME,
-                        mDB_VERSION);
+        try {
+            switch (mMode) {
+                case "MULTI":
+                    DatabaseHelperMulti SQLHelper_var_multi = new DatabaseHelperMulti(context, mDB_NAME,
+                            mDB_VERSION);
 
-                this.db = SQLHelper_var_multi.getWritableDatabase();
+                    this.db = SQLHelper_var_multi.getWritableDatabase();
 
-                break;
+                    break;
 
-            case Constant.DB_MODE_CHAT:
-                DatabaseHelperChat SQLHelper_var_chat = new DatabaseHelperChat(context, mDB_NAME,
-                        mDB_VERSION);
+                case Constant.DB_MODE_CHAT:
+                    DatabaseHelperChat SQLHelper_var_chat = new DatabaseHelperChat(context, mDB_NAME,
+                            mDB_VERSION);
 
-                this.db = SQLHelper_var_chat.getWritableDatabase();
+                    this.db = SQLHelper_var_chat.getWritableDatabase();
 
-                break;
+                    break;
 
-            default:
-                DatabaseHelperSingle SQLHelper_var_single = new DatabaseHelperSingle(context, mDB_NAME,
-                        mDB_VERSION);
+                default:
+                    DatabaseHelperSingle SQLHelper_var_single = new DatabaseHelperSingle(context, mDB_NAME,
+                            mDB_VERSION);
 
-                this.db = SQLHelper_var_single.getWritableDatabase();
+                    this.db = SQLHelper_var_single.getWritableDatabase();
 
-                break;
+                    break;
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            e.printStackTrace();
         }
     }
 

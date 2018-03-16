@@ -14,8 +14,8 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "2.7.1.1";
-    public static final String PKG_CLEAN_APP = "65";
+    public static final String PRJ001_VERSION = "2.7.1.2";
+    public static final String PKG_CLEAN_APP = "67";
     //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -199,6 +199,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String GS_SESSION_APP = "sessionapp";
     public static final String GS_DATA_PACKAGE = "datapackage";
     public static final String GS_PRODUCT_CODE = "product_code";
+    public static final String GS_LOGIN_PROCESS = "login_process";
     /**
      * Serial WS
      */

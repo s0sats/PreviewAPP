@@ -158,8 +158,9 @@ public class WS_Sync extends IntentService {
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
             //Essa chave só é passada pela Act008, tela de criação se formulario.
             Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE,-1L);
+            boolean loginProcess = bundle.getBoolean(Constant.GS_LOGIN_PROCESS,false);
 
-            processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD,product_code );
+            processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD,product_code, loginProcess);
 
             // Limpeza da Notificacao
             cleanNotification(getApplicationContext());
@@ -188,7 +189,7 @@ public class WS_Sync extends IntentService {
         ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "");
     }
 
-    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code) throws Exception {
+    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess) throws Exception {
         EV_UserDao userDao =  new EV_UserDao(getApplicationContext(),Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
@@ -669,9 +670,12 @@ public class WS_Sync extends IntentService {
                 }
                 //
                 geCustomFormApDao.addUpdate(action_plans, false);
+            }
+            //Se for processo de login, pula rotina de deleção de AP
+            if(!loginProcess) {
                 //Apaga AP que não são pra mim e nem tenho sala
                 int qtyDel = ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
-                Log.d("FORM_AP","AP's del: "+ qtyDel);
+                Log.d("FORM_AP", "AP's del: " + qtyDel);
             }
         }
 

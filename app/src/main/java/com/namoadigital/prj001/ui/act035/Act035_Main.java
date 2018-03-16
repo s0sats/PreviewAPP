@@ -2237,8 +2237,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         setWSProcess(WS_AP_Search.class.getSimpleName());
         //
         showPD(
-                hmAux_Trans.get("progress_sync_ap_ttl"),
-                hmAux_Trans.get("progress_sync_ap_msg")
+                hmAux_Trans.get("progress_download_ap_ttl"),
+                hmAux_Trans.get("progress_download_ap_msg")
         );
         //
         Intent mIntent = new Intent(context, WBR_AP_Search.class);
