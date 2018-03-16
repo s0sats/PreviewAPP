@@ -2554,9 +2554,9 @@ public class ToolBox_Inf {
         String[] mStatus = {
                 Constant.SYS_STATUS_EDIT,
                 Constant.SYS_STATUS_PROCESS,
-                Constant.SYS_STATUS_CANCELLED,
+                Constant.SYS_STATUS_WAITING_ACTION,
                 Constant.SYS_STATUS_DONE,
-                Constant.SYS_STATUS_WAITING_ACTION
+                Constant.SYS_STATUS_CANCELLED
         };
 
         for (int i = 0; i < mStatus.length; i++) {
