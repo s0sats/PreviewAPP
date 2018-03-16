@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -143,6 +144,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private boolean filter_form_ap;
 
     private PDFStatusReceiver mPdfStatusReceiver;
+
+    private pdfDownload mPdfDownload;
+
+    private int repeatTry = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -678,34 +683,36 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             @Override
             public void onClick(View v) {
 
-                if (mGe_custom_form_ap.getCustom_form_url_local().trim().length() != 0) {
+                openPDF();
 
-                    File file = new File(Constant.CACHE_PATH + "/" + mGe_custom_form_ap.getCustom_form_url_local().trim());
-
-                    try {
-
-                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
-
-                        ToolBox_Inf.copyFile(
-                                file,
-                                new File(Constant.CACHE_PDF)
-                        );
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + mGe_custom_form_ap.getCustom_form_url_local().trim())), "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-                    startActivity(intent);
-                } else {
-                    showPD(
-                            hmAux_Trans.get("alert_no_pdf_tll"),
-                            hmAux_Trans.get("alert_no_pdf_msg")
-                    );
-                }
+//                if (mGe_custom_form_ap.getCustom_form_url_local().trim().length() != 0) {
+//
+//                    File file = new File(Constant.CACHE_PATH + "/" + mGe_custom_form_ap.getCustom_form_url_local().trim());
+//
+//                    try {
+//
+//                        ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+//
+//                        ToolBox_Inf.copyFile(
+//                                file,
+//                                new File(Constant.CACHE_PDF)
+//                        );
+//                    } catch (Exception e) {
+//                        ToolBox_Inf.registerException(getClass().getName(), e);
+//                    }
+//
+//
+//                    Intent intent = new Intent(Intent.ACTION_VIEW);
+//                    intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" + mGe_custom_form_ap.getCustom_form_url_local().trim())), "application/pdf");
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//
+//                    startActivity(intent);
+//                } else {
+//                    showPD(
+//                            hmAux_Trans.get("alert_no_pdf_tll"),
+//                            hmAux_Trans.get("alert_no_pdf_msg")
+//                    );
+//                }
             }
         });
 
@@ -1481,5 +1488,157 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         context.sendBroadcast(mIntent);
     }
+
+    private void openPDF() {
+        File file = new File(Constant.CACHE_PATH + "/" +
+                "form_ap_" +
+                String.valueOf(mGe_custom_form_ap.getCustomer_code()) + "_" +
+                String.valueOf(mGe_custom_form_ap.getCustom_form_type()) + "_" +
+                String.valueOf(mGe_custom_form_ap.getCustom_form_code()) + "_" +
+                String.valueOf(mGe_custom_form_ap.getCustom_form_version()) + "_" +
+                String.valueOf(mGe_custom_form_ap.getCustom_form_data()) +
+                ".pdf"
+        );
+
+        if (file.exists()) {
+            repeatTry = 0;
+            try {
+
+                ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+
+                ToolBox_Inf.copyFile(
+                        file,
+                        new File(Constant.CACHE_PDF)
+                );
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(new File(Constant.CACHE_PDF + "/" +
+                            "form_ap_" +
+                            String.valueOf(mGe_custom_form_ap.getCustomer_code()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_type()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_code()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_version()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_data()) +
+                            ".pdf")),
+                    "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+            startActivity(intent);
+        } else {
+
+            if (!ToolBox_Con.isOnline(context)) {
+                ToolBox_Inf.showNoConnectionDialog(context);
+                //
+                return;
+            }
+
+            if (repeatTry >= 1) {
+                repeatTry = 0;
+
+                return;
+            } else {
+                repeatTry++;
+            }
+
+            mPdfDownload =
+
+                    new pdfDownload();
+
+
+            mPdfDownload.execute(
+                    "form_ap_" +
+                            String.valueOf(mGe_custom_form_ap.getCustomer_code()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_type()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_code()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_version()) + "_" +
+                            String.valueOf(mGe_custom_form_ap.getCustom_form_data()),
+                    mGe_custom_form_ap.getCustom_form_url()
+            );
+
+            showPDPDF(
+                    hmAux_Trans.get("alert_no_pdf_tll"),
+                    hmAux_Trans.get("alert_no_pdf_msg"),
+                    true
+            );
+
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_no_pdf_tll"),
+//                    hmAux_Trans.get("alert_no_pdf_msg"),
+//                    null,
+//                    -1,
+//                    false
+//            );
+        }
+
+    }
+
+    public void showPDPDF(String ttl, String msg, boolean cancelable) {
+        //
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_no"),
+                hmAux_Trans.get("sys_alert_btn_yes")
+        );
+        //
+        progressDialog.setCancelable(cancelable);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if (mPdfDownload != null) {
+                    mPdfDownload.cancel(true);
+                }
+
+                repeatTry = 0;
+            }
+        });
+    }
+
+    private class pdfDownload extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            try {
+                if (!ToolBox_Inf.verifyDownloadFileInf(Constant.CACHE_PATH + "/" +
+                        strings[0] + ".pdf")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(Constant.CACHE_PATH + "/" +
+                            strings[0] + ".tmp");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            strings[1],
+                            Constant.CACHE_PATH + "/" +
+                                    strings[0] + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(strings[0], ".pdf");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //
+            disablePD();
+            //
+            openPDF();
+        }
+    }
+
+    public void disablePD() {
+        disableProgressDialog();
+    }
+
 }
 

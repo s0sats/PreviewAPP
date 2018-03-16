@@ -158,6 +158,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private pdfDownload mPdfDownload;
 
+    private int repeatTry = 0;
+
     /*TESTE, MOVER PARA ACT035*/
     //private DownloadMemberImgTask downloadMemberImgTask;
     private MessageInfoTask messageInfoTask;
@@ -598,6 +600,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         );
 
         if (file.exists()) {
+            repeatTry = 0;
+
             try {
 
                 ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
@@ -625,6 +629,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
             startActivity(intent);
         } else {
+
+            if (!ToolBox_Con.isOnline(context)) {
+                ToolBox_Inf.showNoConnectionDialog(context);
+                //
+                return;
+            }
+
+            if (repeatTry >= 1) {
+                repeatTry = 0;
+
+                return;
+            } else {
+                repeatTry++;
+            }
 
             mPdfDownload =
 
@@ -1522,7 +1540,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 hmAux_Trans.get("sys_alert_btn_yes")
         );
         //
-        //progressDialog.setCancelable(cancelable);
+        progressDialog.setCancelable(cancelable);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -1530,7 +1548,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     mPdfDownload.cancel(true);
                 }
 
-
+                repeatTry = 0;
             }
         });
     }

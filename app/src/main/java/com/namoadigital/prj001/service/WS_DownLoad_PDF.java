@@ -31,6 +31,9 @@ import java.util.ArrayList;
 
 public class WS_DownLoad_PDF extends IntentService {
 
+
+    private boolean mAp;
+
     public WS_DownLoad_PDF() {
         super("WS_DownLoad_PDF");
     }
@@ -46,6 +49,8 @@ public class WS_DownLoad_PDF extends IntentService {
             }
 
             WBR_DownLoad_PDF.IS_RUNNING = true;
+
+            mAp = false;
 
             Bundle bundle = intent.getExtras();
             //
@@ -123,6 +128,9 @@ public class WS_DownLoad_PDF extends IntentService {
             /*
             *  Action Plan 01/03/2018
             */
+            //
+            mAp = true;
+
             GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
             //
             ArrayList<HMAux> formAplist = new ArrayList<>();
@@ -176,6 +184,7 @@ public class WS_DownLoad_PDF extends IntentService {
                         auxPDF
                 );
             }
+            mAp = false;
             /**
              *
              * Download de files do Cabeçalho do S.O
@@ -235,6 +244,12 @@ public class WS_DownLoad_PDF extends IntentService {
             ToolBox_Inf.registerException(getClass().getName(), e);
 
         } finally {
+
+            if (mAp){
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
+                mAp = false;
+            }
+
             WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);
             if (!ToolBox_Inf.isDownloadRunning()) {
