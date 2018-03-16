@@ -104,6 +104,8 @@ public class WS_Upload_Img_Chat extends IntentService {
                     );
                 }
 
+                ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);
+
                 Log.d("CHFILE", rec.getResult());
             }
 
@@ -111,7 +113,7 @@ public class WS_Upload_Img_Chat extends IntentService {
 
         } catch (Exception e) {
 
-            ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);
+            //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);
 
             programAlarm(getApplicationContext());
             ToolBox_Inf.registerException(getClass().getName(), e);
