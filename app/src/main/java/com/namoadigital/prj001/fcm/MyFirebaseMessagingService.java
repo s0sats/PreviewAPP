@@ -178,8 +178,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                     fcmMessage.getModule().toUpperCase(),
                                     "0",
                                     "",//fcmMessage.getTitle().trim(),
-                                    ""//fcmMessage.getMsg_short().trim()
-                            );
+                                    "",//fcmMessage.getMsg_short().trim()
+                                    true);
 
                     }
 

@@ -43,19 +43,15 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                         "   a.customer_code = '"+customer_code+"'\n" +
                             status_filter +
                         " ORDER BY \n" +
+                        "   CASE WHEN a.ap_when IS NULL THEN 0\n" +
+                        "        ELSE a.ap_when\n" +
+                        "   END," +
                         "   CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
                         "        WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
                         "        WHEN a.ap_status = '"+Constant.SYS_STATUS_WAITING_ACTION+"' THEN 2\n" +
                         "        WHEN a.ap_status = '"+Constant.SYS_STATUS_DONE+"' THEN 3\n" +
                         "        ELSE 4\n" +
-                        "   END,\n" +
-                        "   a.customer_code,\n" +
-                        "   a.custom_form_type,\n" +
-                        "   a.custom_form_code,\n" +
-                        "   a.custom_form_version,\n" +
-                        "   a.custom_form_data,\n" +
-                        "   a.ap_code,\n"+
-                        "   a.ap_when \n"
+                        "   END\n"
                 )
                 .append(";")
                 .append(HmAuxFields)

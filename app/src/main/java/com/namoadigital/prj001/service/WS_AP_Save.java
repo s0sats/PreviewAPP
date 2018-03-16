@@ -173,7 +173,16 @@ public class WS_AP_Save extends IntentService {
                                 ).toSqlQuery()
                         );
                         //
-                        wasApDeleted = checkForApExclusion(formAp);
+                        //wasApDeleted = checkForApExclusion(formAp);
+                        wasApDeleted = ToolBox_Inf.checkForApExclusion(
+                                getApplicationContext(),
+                                String.valueOf(formAp.getCustomer_code()),
+                                String.valueOf(formAp.getCustom_form_type()),
+                                String.valueOf(formAp.getCustom_form_code()),
+                                String.valueOf(formAp.getCustom_form_version()),
+                                String.valueOf(formAp.getCustom_form_data()),
+                                String.valueOf(formAp.getAp_code())
+                        );
                     }
                     //Define msg do HmAux
                     String status = "";

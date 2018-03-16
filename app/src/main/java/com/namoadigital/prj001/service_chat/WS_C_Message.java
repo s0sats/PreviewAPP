@@ -168,7 +168,7 @@ public class WS_C_Message extends IntentService {
                 if(!chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) ||
                    !chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
                 ){
-                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
                 }
                 //
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG);
@@ -301,7 +301,7 @@ public class WS_C_Message extends IntentService {
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_MESSAGE_FCM);
                 //
                 if(hasNewMsg){
-                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, true);
                 }
                 return;
             }
@@ -331,7 +331,7 @@ public class WS_C_Message extends IntentService {
                     //Se foram, reseta contador, dispara broadcast e envia offlines
                     if(singletonWebSocket.areAllMsgProcessed()){
                         if(singletonWebSocket.isShow_notification()){
-                            ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                            ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
                         }
                         singletonWebSocket.resetProcessMsgCounter();
                         //
@@ -346,7 +346,7 @@ public class WS_C_Message extends IntentService {
                     ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
                 }else{
                     if(singletonWebSocket.isShow_notification() && showNotification){
-                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null);
+                        ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
                         //
                         singletonWebSocket.setShow_notification(false);
                     }
