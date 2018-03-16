@@ -215,6 +215,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("dialog_join_room_ap_msg");
         transList.add("alert_no_pdf_tll");
         transList.add("alert_no_pdf_msg");
+        transList.add("alert_ap_save_tll");
+        transList.add("alert_ap_save_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -699,17 +701,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
                     startActivity(intent);
                 } else {
-                    ToolBox.alertMSG(
-                            context,
+                    showPD(
                             hmAux_Trans.get("alert_no_pdf_tll"),
-                            hmAux_Trans.get("alert_no_pdf_msg"),
-                            null,
-                            -1,
-                            false
+                            hmAux_Trans.get("alert_no_pdf_msg")
                     );
                 }
             }
         });
+
 
         btn_chat_nav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -759,9 +758,20 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (validate()) {
-                    save();
+                    ToolBox.alertMSG(
+                            Act038_Main.this,
+                            hmAux_Trans.get("alert_ap_save_tll"),
+                            hmAux_Trans.get("alert_ap_save_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    save();
+                                }
+                            },
+                            2,
+                            null
+                    );
                 } else {
                     showError();
                 }
@@ -1149,14 +1159,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             showResults(hmAux, sKey, sValue);
             //
-//            mPresenter.getloadAP(
-//                    mCustomer_Code,
-//                    mCustom_Form_Type,
-//                    mCustom_Form_Code,
-//                    mCustom_Form_Version,
-//                    mCustom_Form_Data,
-//                    mAp_Code
-//            );
+            mPresenter.getloadAP(
+                    mCustomer_Code,
+                    mCustom_Form_Type,
+                    mCustom_Form_Code,
+                    mCustom_Form_Version,
+                    mCustom_Form_Data,
+                    mAp_Code
+            );
         } else {
             resetWSProcess();
             //
@@ -1439,6 +1449,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         if (hmAux.get("pk").equalsIgnoreCase(sKey)) {
             mGe_custom_form_ap.setCustom_form_url_local(hmAux.get("value"));
+            //
+            disableProgressDialog();
+            //
+            btn_pdf.performClick();
         }
     }
 

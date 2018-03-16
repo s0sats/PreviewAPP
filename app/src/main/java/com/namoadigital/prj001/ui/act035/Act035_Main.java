@@ -182,6 +182,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private HMAux hmAux_Trans_Extra = new HMAux();
 
+
+    private String pk_pdf;
+    private String custom_form_url_pdf;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -574,6 +578,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void openPDF(String pk, String custom_form_url) {
+        pk_pdf = pk;
+        custom_form_url_pdf = custom_form_url;
+
         String pk_fields[] = pk.replace("|", "#").split("#");
 
         Log.d("ap_pk", pk);
@@ -623,6 +630,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                     new pdfDownload();
 
+
             mPdfDownload.execute(
                     "form_ap_" +
                             pk_fields[0] + "_" +
@@ -633,14 +641,21 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     custom_form_url
             );
 
-            ToolBox.alertMSG(
-                    context,
+
+            showPDPDF(
                     hmAux_Trans.get("alert_no_pdf_tll"),
                     hmAux_Trans.get("alert_no_pdf_msg"),
-                    null,
-                    -1,
-                    false
+                    true
             );
+
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_no_pdf_tll"),
+//                    hmAux_Trans.get("alert_no_pdf_msg"),
+//                    null,
+//                    -1,
+//                    false
+//            );
         }
 
     }
@@ -721,6 +736,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //
+            disablePD();
+            //
+            openPDF(pk_pdf, custom_form_url_pdf);
+        }
     }
 
     private void activateDownLoadPDF(Context context) {
@@ -802,7 +825,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void initActions() {
-        CH_Room mRoom = ch_roomDao.getByString(
+        final CH_Room mRoom = ch_roomDao.getByString(
 
                 new CH_Room_Sql_001(
                         mRoom_code
@@ -843,11 +866,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (ToolBox_Con.isOnline(context)) {
-                            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                            startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
-                        } else {
-                            ToolBox_Inf.showNoConnectionDialog(context);
+                        if (!mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
+                            if (ToolBox_Con.isOnline(context)) {
+                                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                                startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+                            } else {
+                                ToolBox_Inf.showNoConnectionDialog(context);
+                            }
                         }
                     }
                 });
@@ -1484,6 +1509,28 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 if (roomInfoTask != null) {
                     roomInfoTask.cancel(true);
                 }
+            }
+        });
+    }
+
+    public void showPDPDF(String ttl, String msg, boolean cancelable) {
+        //
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_no"),
+                hmAux_Trans.get("sys_alert_btn_yes")
+        );
+        //
+        //progressDialog.setCancelable(cancelable);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if (mPdfDownload != null) {
+                    mPdfDownload.cancel(true);
+                }
+
+
             }
         });
     }

@@ -753,7 +753,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         );
         //
         tv_serial.setText(hmAux_Trans.get("serial_lbl"));
-        tv_serial_val.setText(item.get("ap_" + GE_Custom_Form_ApDao.SERIAL_ID));
+        tv_serial_val.setText(item.get("ap_" + GE_Custom_Form_ApDao.SERIAL_ID) != "null" ? item.get("ap_" + GE_Custom_Form_ApDao.SERIAL_ID) : "");
         //
         tv_ap_ttl.setText(hmAux_Trans.get("ap_ttl"));
         //
@@ -785,7 +785,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
         tv_ap_who.setText(hmAux_Trans.get("ap_who_lbl"));
         tv_ap_who_val.setText(
-                item.get("ap_who_name")
+                item.get("ap_who_name") != "null" ? item.get("ap_who_name") : ""
         );
         tv_ap_when.setText(hmAux_Trans.get("ap_when_lbl"));
         tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) != null ? item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) : "");
@@ -800,8 +800,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         } else {
             tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHEN));
         }
-
-
+        
         iv_download_ap.setTag(item);
         iv_download_ap.setText(hmAux_Trans.get("lbl_checklist"));
         iv_download_ap.setOnClickListener(new View.OnClickListener() {
