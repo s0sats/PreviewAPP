@@ -293,16 +293,17 @@ public class WS_C_Message extends IntentService {
             }
             //
             if(ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)){
+                if(hasNewMsg){
+                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, true);
+                }
+                //
                 Intent postDeliveredIntent = new Intent(getApplicationContext(), WBR_Delivered.class);
                 Bundle bundle = new Bundle();
                 // bundle.putString(Constant.CHAT_WS_JSON_PARAM,ToolBox_Inf.setWebSocketJsonParam(sDeliveredList));
                 postDeliveredIntent.putExtras(bundle);
                 getApplicationContext().sendBroadcast(postDeliveredIntent);
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_EVENT_C_MESSAGE_FCM);
-                //
-                if(hasNewMsg){
-                    ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, true);
-                }
+
                 return;
             }
             //
