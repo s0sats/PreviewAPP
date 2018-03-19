@@ -28,7 +28,7 @@ public class GE_Custom_Form_Ap_Sql_001 implements Specification {
                         "    "+GE_Custom_Form_ApDao.TABLE+" a\n" +
                         "WHERE\n" +
                         "   a.customer_code = '"+customer_code+"'\n" +
-                        "   and a.ap_status not in ('"+ Constant.SO_STATUS_DONE+"','"+Constant.SO_STATUS_CANCELLED+"')\n")
+                        "   and a.ap_status not in ('"+ Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"')\n")
                 .append(";" + BADGE_IN_PROCESSING_QTY )
 
                 .toString();

@@ -43,7 +43,7 @@ public class Sql_Act020_001 implements Specification {
                         "    l.customer_code = '"+customer_code+"' \n" +
                         "    and l.custom_product_code = '"+product_code+"' \n" +
                         "    and l.serial_id = '"+serial_id+"'  \n" +
-                        "    and l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"' \n" +
+                        "    and l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' \n" +
                         " ORDER BY \n" +
                         "    d.date_start asc")
                 .toString();

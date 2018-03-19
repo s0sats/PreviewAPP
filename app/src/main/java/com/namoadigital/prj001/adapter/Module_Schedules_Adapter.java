@@ -337,23 +337,23 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
 
-            case Constant.CUSTOM_FORM_STATUS_IN_PROCESSING:
+            case Constant.SYS_STATUS_IN_PROCESSING:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
                 llBackground.setBackground(llDrawable);
                 break;
             //
-            case Constant.CUSTOM_FORM_STATUS_FINALIZED:
+            case Constant.SYS_STATUS_FINALIZED:
                 llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
                 llBackground.setBackground(llDrawable);
                 break;
 
-            case Constant.CUSTOM_FORM_STATUS_SENT:
+            case Constant.SYS_STATUS_SENT:
                 llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
                 llBackground.setBackground(llDrawable);
                 break;
 
-            case Constant.CUSTOM_FORM_STATUS_SCHEDULED:
+            case Constant.SYS_STATUS_SCHEDULE:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
                 //
                 llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);

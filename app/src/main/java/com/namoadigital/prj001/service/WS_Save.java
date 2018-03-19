@@ -262,7 +262,7 @@ public class WS_Save extends IntentService {
 
                 //Se enviado com sucesso, atualiza Status para SENT
                 for (GE_Custom_Form_Data form_data : form_datas){
-                    form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_SENT);
+                    form_data.setCustom_form_status(Constant.SYS_STATUS_SENT);
                     GE_Custom_Form_Local aux =
                             formLocalDao.getByString(
                             new GE_Custom_Form_Local_Sql_003(
@@ -273,7 +273,7 @@ public class WS_Save extends IntentService {
                                     String.valueOf(form_data.getCustom_form_data())
                             ).toSqlQuery()
                     );
-                    aux.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_SENT);
+                    aux.setCustom_form_status(Constant.SYS_STATUS_SENT);
                     formLocals.add(aux);
                 }
                 //Atualiza dados na tabela.

@@ -39,7 +39,7 @@ public class SM_SO_Service_Sql_Status_001 implements Specification {
         return sb
                 .append(" UPDATE\n" +
                         SM_SO_ServiceDao.TABLE + "\n" +
-                        " SET status = '" + Constant.SO_STATUS_PROCESS + "' " +
+                        " SET status = '" + Constant.SYS_STATUS_PROCESS + "' " +
                         " WHERE\n" +
                         "        customer_code =          '" + customer_code + "'\n" +
                         "    AND so_prefix =              '" + so_prefix + "'\n" +
@@ -51,7 +51,7 @@ public class SM_SO_Service_Sql_Status_001 implements Specification {
                         "    AND service_code =           '" + service_code + "'\n" +
                         "    AND service_seq =            '" + service_seq + "' " +
 
-                        "    AND status =            '" + Constant.SO_STATUS_PENDING + "' "
+                        "    AND status =            '" + Constant.SYS_STATUS_PENDING + "' "
                 )
                 .toString();
     }

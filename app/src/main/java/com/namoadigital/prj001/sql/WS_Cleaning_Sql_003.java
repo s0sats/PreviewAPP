@@ -27,9 +27,9 @@ public class WS_Cleaning_Sql_003 implements Specification {
                 .append(s_date)
                 .append("') \n" +
                         "   AND ( s." + SM_SODao.STATUS + "" +
-                        "    = '" + Constant.SO_STATUS_CANCELLED + "' " +
+                        "    = '" + Constant.SYS_STATUS_CANCELLED + "' " +
                         "   OR  s." + SM_SODao.STATUS + "" +
-                        "    = '" + Constant.SO_STATUS_DONE + "' ")
+                        "    = '" + Constant.SYS_STATUS_DONE + "' ")
                 .append(")\n")
                 .append(";")
                 .toString();

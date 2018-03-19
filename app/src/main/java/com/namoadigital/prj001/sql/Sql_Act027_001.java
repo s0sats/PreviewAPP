@@ -42,8 +42,8 @@ public class Sql_Act027_001 implements Specification {
                         "       P.PACK_ID,\n" +
                         "       P.PACK_DESC,\n" +
                         "       s.*,\n" +
-                        "       MAX(CASE WHEN e.status = '"+ Constant.SO_STATUS_PROCESS+"' THEN 1 ELSE 0 END) "+SET_FLAG+",\n" +
-                        "       SUM(CASE WHEN e.status = '"+ Constant.SO_STATUS_DONE+"' THEN 1 ELSE 0 END) "+QTY_DONE+"\n" +
+                        "       MAX(CASE WHEN e.status = '"+ Constant.SYS_STATUS_PROCESS+"' THEN 1 ELSE 0 END) "+SET_FLAG+",\n" +
+                        "       SUM(CASE WHEN e.status = '"+ Constant.SYS_STATUS_DONE+"' THEN 1 ELSE 0 END) "+QTY_DONE+"\n" +
                         "    \n" +
                         "   FROM\n" +
                         "     "+ SM_SO_PackDao.TABLE+" p,\n" +

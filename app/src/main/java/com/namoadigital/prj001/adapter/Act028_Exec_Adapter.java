@@ -99,7 +99,7 @@ public class Act028_Exec_Adapter extends BaseAdapter {
         tv_exec_status.setText(hmAux_Trans.get(item.get(SM_SO_Service_ExecDao.STATUS)));
         ToolBox_Inf.setExecStatusColor(context,tv_exec_status,item.get(SM_SO_Service_ExecDao.STATUS));
         //
-        if(item.get(SM_SO_Service_ExecDao.STATUS).equals(Constant.SO_STATUS_INCONSISTENT)){
+        if(item.get(SM_SO_Service_ExecDao.STATUS).equals(Constant.SYS_STATUS_INCONSISTENT)){
             ll_line2.setVisibility(View.GONE);
             ll_line3.setVisibility(View.GONE);
         }else{

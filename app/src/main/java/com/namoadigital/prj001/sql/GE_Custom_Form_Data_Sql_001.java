@@ -43,7 +43,7 @@ public class GE_Custom_Form_Data_Sql_001 implements Specification {
                         "      F."+GE_Custom_Form_DataDao.CUSTOMER_CODE+" = '"+s_customer_code+"'"+
                         "      AND F."+GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS+
                                 "  = '"
-                                + Constant.CUSTOM_FORM_STATUS_FINALIZED+"' " +
+                                + Constant.SYS_STATUS_FINALIZED+"' " +
                                 tokenFilter +
                         "  ORDER BY " +
                         "      F.customer_code,  " +

@@ -28,22 +28,22 @@ public class Sql_Act013_001 implements Specification {
             String status =  "";
 
             if(filter_in_processing){
-                status += "'"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"',";
+                status += "'"+ Constant.SYS_STATUS_IN_PROCESSING+"',";
             }
             if(filter_finalized){
-                status += "'"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"',";
+                status += "'"+Constant.SYS_STATUS_FINALIZED+"',";
             }
             if(filter_scheduled){
-                status += "'"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"',";
+                status += "'"+Constant.SYS_STATUS_SCHEDULE+"',";
             }
             status = status.substring(0,status.length() -1);
             s_filter += "AND l.custom_form_status in(" +status+")";
         }else{
             //Se todos os filtros falsos, não filtra nada.
             s_filter += "AND l.custom_form_status NOT in(" +
-                    "'"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"',"+
-                    "'"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"'," +
-                    "'"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' "+
+                    "'"+ Constant.SYS_STATUS_IN_PROCESSING+"',"+
+                    "'"+Constant.SYS_STATUS_FINALIZED+"'," +
+                    "'"+Constant.SYS_STATUS_SCHEDULE+"' "+
                     ")";
 
         }
@@ -93,18 +93,18 @@ public class Sql_Act013_001 implements Specification {
                         "      AND l.custom_form_data = d.custom_form_data\n" +
                         "  WHERE\n" +
                         "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        "      AND l.custom_form_status <> '" + Constant.CUSTOM_FORM_STATUS_SENT+"'" +
+                        "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'" +
                         s_filter +
                         "  ORDER BY\n" +
-                        "      CASE WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"' THEN 0\n" +
-                        "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' THEN 1\n" +
-                        "           WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' THEN 2\n" +
+                        "      CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
+                        "           WHEN l.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +
+                        "           WHEN l.custom_form_status = '"+Constant.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
                         "           ELSE 3\n" +
                         "      END ," +
-                        "      (CASE WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
+                        "      (CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
                         "            ELSE  '31/12/9999 23:59'\n" +
                         "       END) ASC,\n" +
-                        "      (CASE WHEN l.custom_form_status = '"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' THEN d.date_end\n" +
+                        "      (CASE WHEN l.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN d.date_end\n" +
                         "            ELSE  '01/01/1900 00:00'\n" +
                         "       END) DESC , \n" +
                         "      l.custom_form_type, \n" +

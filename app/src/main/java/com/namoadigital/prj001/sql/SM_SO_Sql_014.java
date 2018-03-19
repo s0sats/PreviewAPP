@@ -25,13 +25,13 @@ public class SM_SO_Sql_014 implements Specification {
         StringBuilder sbStatus = new StringBuilder();
 
         if (approval_type.trim().isEmpty()) {
-            approval_type = Constant.SO_STATUS_WAITING_CLIENT;
+            approval_type = Constant.SYS_STATUS_WAITING_CLIENT;
         }
 
         return sb
                 .append(" UPDATE " + SM_SODao.TABLE + "\n" +
                         "  set approval_required = '0',\n" +
-                        //"  status ='" + Constant.SO_STATUS_WAITING_CLIENT + "',\n" +
+                        //"  status ='" + Constant.SYS_STATUS_WAITING_CLIENT + "',\n" +
                         "  status ='" + approval_type + "',\n" +
                         "  client_approval_user = NULL,\n" +
 

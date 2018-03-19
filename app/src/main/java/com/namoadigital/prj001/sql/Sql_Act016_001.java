@@ -28,11 +28,11 @@ public class Sql_Act016_001 implements Specification {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
                     "      strftime('%Y-%m-%d',l.schedule_date_start_format,'localtime') schedule_date_start,\n" +
-                    "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"' ) delayed_count,\n" +
-                    "      (l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-                    "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now')  * 1000 ) AND l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SCHEDULED+"') scheduled_count,    \n" +
-                    "      (l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_FINALIZED+"') finalized_count,\n" +
-                    "      (l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SENT+"') sent_count\n" +
+                    "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
+                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
+                    "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now')  * 1000 ) AND l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
+                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_FINALIZED+"') finalized_count,\n" +
+                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_SENT+"') sent_count\n" +
                     "     \n" +
                     "  FROM "+ GE_Custom_Form_LocalDao.TABLE+" l\n" +
                     "  \n" +

@@ -257,7 +257,7 @@ public class SO_Header_Adapter extends BaseAdapter {
         */
         if(config_type.equals(CONFIG_TYPE_DOWNLOAD)) {
             //Se status da OS for edit ou stop, não exibe opções de download.
-            if (so.get(SM_SODao.STATUS).equals(Constant.SO_STATUS_EDIT) || so.get(SM_SODao.STATUS).equals(Constant.SO_STATUS_STOP)) {
+            if (so.get(SM_SODao.STATUS).equals(Constant.SYS_STATUS_EDIT) || so.get(SM_SODao.STATUS).equals(Constant.SYS_STATUS_STOP)) {
                 ll_download_optc.setVisibility(View.GONE);
             } else {
                 ll_download_optc.setVisibility(View.VISIBLE);

@@ -27,13 +27,13 @@ public class SM_SO_Sql_Status_001 implements Specification {
         return sb
                 .append(" UPDATE\n" +
                         SM_SODao.TABLE + "\n" +
-                        " SET status = '" + Constant.SO_STATUS_PROCESS  + "' " +
+                        " SET status = '" + Constant.SYS_STATUS_PROCESS  + "' " +
                         " WHERE\n" +
                         "        customer_code =          '" + customer_code + "'\n" +
                         "    AND so_prefix =              '" + so_prefix + "'\n" +
                         "    AND so_code =                '" + so_code + "'\n" +
 
-                        "    AND status =            '" + Constant.SO_STATUS_PENDING + "' "
+                        "    AND status =            '" + Constant.SYS_STATUS_PENDING + "' "
                 )
                 .toString();
     }

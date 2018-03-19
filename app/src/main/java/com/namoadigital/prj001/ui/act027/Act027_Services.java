@@ -179,8 +179,8 @@ public class Act027_Services extends BaseFragment {
                 //
                 //sw_filter.setChecked(true);
                 //
-                if ((!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) &&
-                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) ||
+                if ((!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) &&
+                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) ||
                     !mMain.hasExecutionProfile()
                         ){
                     sw_filter.setOnCheckedChangeListener(null);
@@ -513,7 +513,7 @@ public class Act027_Services extends BaseFragment {
         newTask.setTask_seq_oper(next_task_seq_oper);
         newTask.setTask_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
         newTask.setTask_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-        newTask.setStatus(Constant.SO_STATUS_PROCESS);
+        newTask.setStatus(Constant.SYS_STATUS_PROCESS);
         newTask.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         newTask.setEnd_date("");
         //newTask.setComments(null);
@@ -577,7 +577,7 @@ public class Act027_Services extends BaseFragment {
         ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
         //
         newExec.setExec_tmp(nExecTemp);
-        newExec.setStatus(Constant.SO_STATUS_PROCESS);
+        newExec.setStatus(Constant.SYS_STATUS_PROCESS);
         //
         if (sm_so_service.getPartner_code() == null) {
             try {

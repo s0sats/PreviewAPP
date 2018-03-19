@@ -104,7 +104,7 @@ public class WS_Cleaning_Sql_005 implements Specification {
                         "\n" +
                         "\t\t\t\t\t\t\t\tt.exec_tmp = '" + exec_tmp + "' and\n" +
                         "\t\t\t\t\t\t\t\t\n" +
-                        "\t\t\t\t\t\t\t\tt.status != '" + Constant.SO_STATUS_CANCELLED + "' )\n" +
+                        "\t\t\t\t\t\t\t\tt.status != '" + Constant.SYS_STATUS_CANCELLED + "' )\n" +
                         "\t\t\t\t)\n" +
                         "\n" +
                         "\t\t= 0 and \n" +

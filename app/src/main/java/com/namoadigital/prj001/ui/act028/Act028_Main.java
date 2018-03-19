@@ -399,7 +399,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                     ).toSqlQuery()
             );
             //Força DONE se null, para não exibir o menu para N-form
-            so_status = mSoAux != null ? mSoAux.get(SM_SODao.STATUS) : Constant.SO_STATUS_DONE ;
+            so_status = mSoAux != null ? mSoAux.get(SM_SODao.STATUS) : Constant.SYS_STATUS_DONE ;
             //
             if (bundle.getString(SM_SO_Service_Exec_TaskDao.EXEC_TMP) != null) {
                 mExec = loadExec(
@@ -438,7 +438,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         } else {
             //Força DONE, para não exibir o menu para N-form
-            so_status = Constant.SO_STATUS_DONE ;
+            so_status = Constant.SYS_STATUS_DONE ;
             mService = null;
             mExec = null;
             mTask = null;
@@ -624,7 +624,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
 
             if (mService.getExec_type().equalsIgnoreCase(ConstantBaseApp.SO_SERVICE_TYPE_YES_NO) &&
-                    mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                    mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
                     ) {
 
                 title = hmAux_Trans.get("alert_task_lost_data_ttl");
@@ -675,7 +675,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                     if (mTask != null && String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
 
                         if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)
-                                && mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+                                && mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
 
                             ToolBox.alertMSG(
                                     context,
@@ -1241,7 +1241,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             task.setTask_perc(100);
         }
         task.setQty_people(1);
-        task.setStatus(Constant.SO_STATUS_PROCESS);
+        task.setStatus(Constant.SYS_STATUS_PROCESS);
 
         task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         task.setEnd_date("");
@@ -1307,7 +1307,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 //        }
 
         task.setQty_people(1);
-        task.setStatus(Constant.SO_STATUS_NOT_EXECUTED);
+        task.setStatus(Constant.SYS_STATUS_NOT_EXECUTED);
 
         task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         task.setEnd_date(task.getStart_date());
@@ -1592,7 +1592,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         if(
             ToolBox_Inf.parameterExists(context,Constant.PARAM_CHECKLIST) &&
             hasExecutionProfile() &&
-            !so_status.equalsIgnoreCase(Constant.SO_STATUS_DONE)
+            !so_status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
         ){
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));

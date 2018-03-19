@@ -52,7 +52,7 @@ public class Act027_Services_Adapter_Sql_001 implements Specification {
                         "    AND e.category_price_code =    '" + category_price_code + "'\n" +
                         "    AND e.service_code =           '" + service_code + "'\n" +
                         "    AND e.service_seq =            '" + service_seq + "' " +
-                        "    AND e.status = '"+ Constant.SO_STATUS_PROCESS+"'")
+                        "    AND e.status = '"+ Constant.SYS_STATUS_PROCESS+"'")
                 .append(";")
                 .append(SET_FLAG)
                 .toString();

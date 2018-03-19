@@ -40,8 +40,8 @@ public class Sql_Act012_001 implements Specification {
                         " WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'" +
-                        //" ,'"+Constant.CUSTOM_FORM_STATUS_FINALIZED+"' " +
+                        "    in('"+ Constant.SYS_STATUS_IN_PROCESSING+"'" +
+                        //" ,'"+Constant.SYS_STATUS_FINALIZED+"' " +
                         ");")
                 .append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();

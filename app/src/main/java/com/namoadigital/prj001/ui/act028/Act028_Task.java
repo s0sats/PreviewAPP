@@ -226,7 +226,7 @@ public class Act028_Task extends BaseFragment {
 
         try {
 
-            if (mTask != null && mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+            if (mTask != null && mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
                     &&
                     String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
 
@@ -275,7 +275,7 @@ public class Act028_Task extends BaseFragment {
         if (mTask != null && String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
 
             if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)
-                    && mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+                    && mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
                 sm_so_service_execDao.remove(
                         new SM_SO_Service_Exec_Sql_005(
                                 mTask.getCustomer_code(),
@@ -495,7 +495,7 @@ public class Act028_Task extends BaseFragment {
 
                     rb_stepped_perc.setProgress((int) ((ToolBox.convertSelector(String.valueOf(mTask.getTask_perc())) - min) / interval));
 
-                    if (mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) ||
+                    if (mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
                             mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
 
                         tv_stepped_txt_lbl.setVisibility(View.GONE);
@@ -730,7 +730,7 @@ public class Act028_Task extends BaseFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mTask.setStatus(Constant.SO_STATUS_CANCELLED);
+                                mTask.setStatus(Constant.SYS_STATUS_CANCELLED);
                                 mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
                                 mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
@@ -849,7 +849,7 @@ public class Act028_Task extends BaseFragment {
 
             if (full_status.equalsIgnoreCase("1")) {
                 switch (mTask.getStatus().toUpperCase()) {
-                    case Constant.SO_STATUS_PROCESS:
+                    case Constant.SYS_STATUS_PROCESS:
 
                         if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_YES_NO)) {
                             iv_cancel_task.setVisibility(View.GONE);
@@ -917,7 +917,7 @@ public class Act028_Task extends BaseFragment {
     }
 
     public void informTaskActiveClosed() {
-        mTask.setStatus(Constant.SO_STATUS_DONE);
+        mTask.setStatus(Constant.SYS_STATUS_DONE);
         mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
         mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
@@ -1129,22 +1129,22 @@ public class Act028_Task extends BaseFragment {
         * Tratativa de cor por Status
         * */
         switch (status) {
-            case Constant.SO_STATUS_PENDING:
+            case Constant.SYS_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_PROCESS:
+            case Constant.SYS_STATUS_PROCESS:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-            case Constant.SO_STATUS_DONE:
+            case Constant.SYS_STATUS_DONE:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED:
+            case Constant.SYS_STATUS_CANCELLED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
-            case Constant.SO_STATUS_NOT_EXECUTED:
+            case Constant.SYS_STATUS_NOT_EXECUTED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
                 break;
-            case Constant.SO_STATUS_INCONSISTENT:
+            case Constant.SYS_STATUS_INCONSISTENT:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
                 break;
             default:
@@ -1161,7 +1161,7 @@ public class Act028_Task extends BaseFragment {
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "p");
 
-        if (mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+        if (mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
             mIntent.putExtra(ConstantBase.PENABLED, true);
         } else {
             mIntent.putExtra(ConstantBase.PENABLED, false);
@@ -1194,7 +1194,7 @@ public class Act028_Task extends BaseFragment {
 
         if (mEnabled) {
             switch (mTask.getStatus()) {
-                case Constant.SO_STATUS_PENDING:
+                case Constant.SYS_STATUS_PENDING:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1207,7 +1207,7 @@ public class Act028_Task extends BaseFragment {
                     iv_gallery.setEnabled(false);
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_CANCELLED:
+                case Constant.SYS_STATUS_CANCELLED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1226,7 +1226,7 @@ public class Act028_Task extends BaseFragment {
 
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_DONE:
+                case Constant.SYS_STATUS_DONE:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1246,7 +1246,7 @@ public class Act028_Task extends BaseFragment {
                     mk_comments.setEnabled(false);
                     break;
 
-                case Constant.SO_STATUS_NOT_EXECUTED:
+                case Constant.SYS_STATUS_NOT_EXECUTED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1265,7 +1265,7 @@ public class Act028_Task extends BaseFragment {
 
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_PROCESS:
+                case Constant.SYS_STATUS_PROCESS:
                     mk_qty_people.setEnabled(true);
                     mk_start_date.setEnabled(true);
                     mk_start_hour.setEnabled(true);
@@ -1287,7 +1287,7 @@ public class Act028_Task extends BaseFragment {
             }
         } else {
             switch (mTask.getStatus()) {
-                case Constant.SO_STATUS_PENDING:
+                case Constant.SYS_STATUS_PENDING:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1300,7 +1300,7 @@ public class Act028_Task extends BaseFragment {
                     iv_gallery.setEnabled(false);
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_CANCELLED:
+                case Constant.SYS_STATUS_CANCELLED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1319,7 +1319,7 @@ public class Act028_Task extends BaseFragment {
 
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_DONE:
+                case Constant.SYS_STATUS_DONE:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1338,7 +1338,7 @@ public class Act028_Task extends BaseFragment {
 
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_NOT_EXECUTED:
+                case Constant.SYS_STATUS_NOT_EXECUTED:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1357,7 +1357,7 @@ public class Act028_Task extends BaseFragment {
 
                     mk_comments.setEnabled(false);
                     break;
-                case Constant.SO_STATUS_PROCESS:
+                case Constant.SYS_STATUS_PROCESS:
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
                     mk_start_hour.setEnabled(false);
@@ -1387,7 +1387,7 @@ public class Act028_Task extends BaseFragment {
         }
 
         if (String.valueOf(mTask.getTask_user()).equalsIgnoreCase(user_code)) {
-            if (!mTask.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)) {
+            if (!mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
                 iv_play_stop.setVisibility(View.GONE);
                 iv_save.setVisibility(View.GONE);
             }

@@ -36,7 +36,7 @@ public class GE_Custom_Form_Local_Sql_008 implements Specification {
                         " WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    in('"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"');")
+                        "    in('"+ Constant.SYS_STATUS_IN_PROCESSING+"');")
                 .append(PENDING_QTY)
                 .toString();
     }

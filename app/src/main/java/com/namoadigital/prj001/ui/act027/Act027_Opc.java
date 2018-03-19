@@ -368,10 +368,10 @@ public class Act027_Opc extends BaseFragment {
                 tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
                 tv_serial_value.setText(mSm_so.getSerial_id());
                 //
-                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
-                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) ||
-                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ||
-                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED)
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) ||
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) ||
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) ||
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
                         ) {
                     ll_approval.setVisibility(View.VISIBLE);
 
@@ -380,10 +380,10 @@ public class Act027_Opc extends BaseFragment {
                 }
                 //
 //                // Hugo Visibilidade
-//                if( !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
-//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) &&
-//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
-//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_SYNC)
+//                if( !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
+//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
+//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
+//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC)
 //                ){
 //                    ll_product.setVisibility(View.VISIBLE);
 //                }else{
@@ -393,27 +393,27 @@ public class Act027_Opc extends BaseFragment {
                 ll_product.setVisibility(View.VISIBLE);
                 //
                 switch (mSm_so.getStatus()) {
-                    case Constant.SO_STATUS_PENDING:
+                    case Constant.SYS_STATUS_PENDING:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_light_blue_9));
                         break;
-                    case Constant.SO_STATUS_PROCESS:
+                    case Constant.SYS_STATUS_PROCESS:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_yellow_2));
                         break;
-                    case Constant.SO_STATUS_DONE:
+                    case Constant.SYS_STATUS_DONE:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_green_2));
                         break;
-                    case Constant.SO_STATUS_CANCELLED:
+                    case Constant.SYS_STATUS_CANCELLED:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_gray_4));
                         break;
-                    case Constant.SO_STATUS_BLOCKED:
+                    case Constant.SYS_STATUS_STOP:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_black));
                         break;
-                    case Constant.SO_STATUS_WAITING_BUDGET:
-                    case Constant.SO_STATUS_WAITING_QUALITY:
-                    case Constant.SO_STATUS_WAITING_CLIENT:
+                    case Constant.SYS_STATUS_WAITING_BUDGET:
+                    case Constant.SYS_STATUS_WAITING_QUALITY:
+                    case Constant.SYS_STATUS_WAITING_CLIENT:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_brown));
                         break;
-                    case Constant.SO_STATUS_EDIT:
+                    case Constant.SYS_STATUS_EDIT:
                         tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_pink_1));
                         break;
                     default:

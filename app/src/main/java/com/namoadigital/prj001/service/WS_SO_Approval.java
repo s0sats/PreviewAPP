@@ -111,7 +111,7 @@ public class WS_SO_Approval extends IntentService {
 
             String sType = ToolBox_Con.getApproval_Type(getApplicationContext());
 
-            if (sType.equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)){
+            if (sType.equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)){
                 item.setAction(Constant.PROFILE_MENU_SO_PARAM_APPROVE_QUALITY);
                 item.setQuality_user(String.valueOf(so.getQuality_approval_user()));
                 item.setQuality_date(so.getQuality_approval_date());

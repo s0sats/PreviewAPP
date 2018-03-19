@@ -62,7 +62,7 @@ public class Sql_Act015_001 implements Specification {
                         "      AND l.custom_form_version = d.custom_form_version\n" +
                         "      AND l.custom_form_data = d.custom_form_data\n" +
                         "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        "      AND l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_SENT+"'" +
+                        "      AND l.custom_form_status = '"+ Constant.SYS_STATUS_SENT+"'" +
                         "  ORDER BY" +
                         "    d.date_end desc," +
                         "    l.custom_form_type, " +

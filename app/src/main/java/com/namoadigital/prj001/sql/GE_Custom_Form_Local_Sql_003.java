@@ -31,7 +31,7 @@ public class GE_Custom_Form_Local_Sql_003 implements Specification {
         this.s_formversion_code = s_formversion_code;
 
         if (s_form_data.equals("0")) {
-            this.s_form_status = Constant.CUSTOM_FORM_STATUS_IN_PROCESSING;
+            this.s_form_status = Constant.SYS_STATUS_IN_PROCESSING;
             s_filter =
                     "     AND " + GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS + " = '" + s_form_status + "' ";
         } else {
@@ -49,7 +49,7 @@ public class GE_Custom_Form_Local_Sql_003 implements Specification {
         this.s_serial_id = s_serial_id;
 
         if (s_form_data.equals("0")) {
-            this.s_form_status = Constant.CUSTOM_FORM_STATUS_IN_PROCESSING;
+            this.s_form_status = Constant.SYS_STATUS_IN_PROCESSING;
             s_filter =
                     "     AND " + GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS + " = '" + s_form_status + "' " +
                     "     AND " + GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE + " = '" + s_product_code + "' " +

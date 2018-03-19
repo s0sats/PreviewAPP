@@ -119,8 +119,8 @@ public class Act027_Product_List_Adapter extends BaseAdapter {
             qty_apply_val.setVisibility(View.GONE);
         }
         //
-        if(item.get(SM_SO_Product_EventDao.STATUS).equals(Constant.SO_STATUS_PENDING)
-           || item.get(SM_SO_Product_EventDao.STATUS).equals(Constant.SO_STATUS_DONE)
+        if(item.get(SM_SO_Product_EventDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
+           || item.get(SM_SO_Product_EventDao.STATUS).equals(Constant.SYS_STATUS_DONE)
         ){
             ll_line3.setVisibility(View.VISIBLE);
             //Tipo do evento

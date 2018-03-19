@@ -377,16 +377,16 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             sbCommand.append(" UPDATE ");
             sbCommand.append(SM_SO_Service_ExecDao.TABLE);
 
-            if (task.getStatus().equalsIgnoreCase(Constant.SO_STATUS_NOT_EXECUTED)) {
+            if (task.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_NOT_EXECUTED)) {
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_NOT_EXECUTED);
+                sbCommand.append(Constant.SYS_STATUS_NOT_EXECUTED);
                 sbCommand.append("' ");
 
             } else {
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append(Constant.SYS_STATUS_DONE);
                 sbCommand.append("' ");
             }
 
@@ -444,13 +444,13 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
             sbCommand.append(" ( ");
 
             sbCommand.append(STATUS).append(" = '");
-            sbCommand.append(Constant.SO_STATUS_DONE);
+            sbCommand.append(Constant.SYS_STATUS_DONE);
             sbCommand.append("' ");
 
             sbCommand.append(" or ");
 
             sbCommand.append(STATUS).append(" = '");
-            sbCommand.append(Constant.SO_STATUS_NOT_EXECUTED);
+            sbCommand.append(Constant.SYS_STATUS_NOT_EXECUTED);
             sbCommand.append("' ");
 
             sbCommand.append(" ) ");
@@ -473,7 +473,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append(Constant.SYS_STATUS_DONE);
                 sbCommand.append("' ");
 
                 sbCommand.append(" WHERE ");
@@ -522,7 +522,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
                 sbCommand.append(SERVICE_SEQ).append(" = '").append(String.valueOf(task.getService_seq())).append("'");
                 sbCommand.append(" and ");
                 sbCommand.append(STATUS).append(" = '");
-                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append(Constant.SYS_STATUS_DONE);
                 sbCommand.append("' ");
                 sbCommand.append("  ) = ");
                 sbCommand.append(sm_so_service.getQty());
@@ -541,7 +541,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_DONE);
+                sbCommand.append(Constant.SYS_STATUS_DONE);
                 sbCommand.append("' ");
 
                 sbCommand.append(" WHERE ");
@@ -580,13 +580,13 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" ( ");
                 sbCommand.append(STATUS).append(" = '");
-                sbCommand.append(Constant.SO_STATUS_PENDING);
+                sbCommand.append(Constant.SYS_STATUS_PENDING);
                 sbCommand.append("' ");
 
                 sbCommand.append(" or ");
 
                 sbCommand.append(STATUS).append(" = '");
-                sbCommand.append(Constant.SO_STATUS_PROCESS);
+                sbCommand.append(Constant.SYS_STATUS_PROCESS);
                 sbCommand.append("' ");
                 sbCommand.append(" ) ");
 
@@ -605,7 +605,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" SET ");
                 sbCommand.append("  status = '");
-                sbCommand.append(Constant.SO_STATUS_WAITING_SYNC);
+                sbCommand.append(Constant.SYS_STATUS_WAITING_SYNC);
                 sbCommand.append("' ");
 
                 sbCommand.append(" WHERE ");
@@ -632,13 +632,13 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" ( ");
                 sbCommand.append(STATUS).append(" = '");
-                sbCommand.append(Constant.SO_STATUS_PENDING);
+                sbCommand.append(Constant.SYS_STATUS_PENDING);
                 sbCommand.append("' ");
 
                 sbCommand.append(" or ");
 
                 sbCommand.append(STATUS).append(" = '");
-                sbCommand.append(Constant.SO_STATUS_PROCESS);
+                sbCommand.append(Constant.SYS_STATUS_PROCESS);
                 sbCommand.append("' ");
 
                 sbCommand.append(" ) ");
@@ -663,7 +663,7 @@ public class SM_SO_Service_Exec_TaskDao extends BaseDao implements DaoTmpStatus<
 
                 sbCommand.append(" ( ");
                 sbCommand.append(STATUS).append(" = '");
-                sbCommand.append(Constant.SO_STATUS_PENDING);
+                sbCommand.append(Constant.SYS_STATUS_PENDING);
                 sbCommand.append("' ");
                 sbCommand.append(" ) ");
 

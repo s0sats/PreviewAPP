@@ -206,11 +206,11 @@ public class Act027_Product_List extends BaseFragment {
 
     private void checkStatus() {
 
-        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_SYNC)
+        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC)
                 ) {
             iv_new_event.setVisibility(View.VISIBLE);
         } else {

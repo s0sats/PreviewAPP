@@ -46,7 +46,7 @@ public class GE_Custom_Form_Data_Sql_004 implements Specification {
                         "   AND d.custom_form_version = '"+custom_form_version+"'\n" +
                         "   AND d.product_code = '"+product_code+"'\n" +
                         "   AND d.serial_id = '"+serial_id+"'\n" +
-                        "   AND d.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"';")
+                        "   AND d.custom_form_status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"';")
                 .toString();
     }
 }

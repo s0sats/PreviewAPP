@@ -110,7 +110,7 @@ public class Sql_Act028_001 implements Specification {
                         "                  AND T.CATEGORY_PRICE_CODE = '"+category_price_code+"'\n" +
                         "                  AND T.SERVICE_CODE = '"+service_code+"'\n" +
                         "                  AND T.SERVICE_SEQ = '"+service_seq+"'\n" +
-                        "                  AND T.STATUS NOT IN ('"+ Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n" +
+                        "                  AND T.STATUS NOT IN ('"+ Constant.SYS_STATUS_CANCELLED+"','"+Constant.SYS_STATUS_INCONSISTENT+"')\n" +
 //                        "            GROUP BY T.EXEC_CODE) T\n" +
                         "            GROUP BY T.EXEC_TMP) T\n" +
                         "\n" +
@@ -126,7 +126,7 @@ public class Sql_Act028_001 implements Specification {
                         "                  AND X.CATEGORY_PRICE_CODE = '"+category_price_code+"'\n" +
                         "                  AND X.SERVICE_CODE = '"+service_code+"'\n" +
                         "                  AND X.SERVICE_SEQ = '"+service_seq+"'\n" +
-                        "                  AND X.STATUS NOT IN ('"+ Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n"+
+                        "                  AND X.STATUS NOT IN ('"+ Constant.SYS_STATUS_CANCELLED+"','"+Constant.SYS_STATUS_INCONSISTENT+"')\n"+
                         "                  ) X ON T.EXEC_TMP = X.EXEC_TMP AND  T.MAX_TASK_SEQ_OPER = X.TASK_SEQ_OPER            \n" +
 //                        "      GROUP BY T.EXEC_CODE) T ON E.EXEC_CODE = T.EXEC_CODE            \n" +
                         "      GROUP BY T.EXEC_TMP) T ON E.EXEC_TMP = T.EXEC_TMP            \n" +

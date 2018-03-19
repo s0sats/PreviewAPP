@@ -413,17 +413,21 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SYS_STATUS_WAITING_APPROVAL = "WAITING_APPROVAL";
     public static final String SYS_STATUS_WAITING_BUDGET = "WAITING_BUDGET";
     public static final String SYS_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
-    public static final String SYS_STATUS_WAITING_WAITING_CLIENT = "WAITING_CLIENT";
+    public static final String SYS_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
     public static final String SYS_STATUS_WAITING_ACTION = "WAITING_ACTION";
     public static final String SYS_STATUS_WAITING_SYNC = "WAITING_SYNC";
     public static final String SYS_STATUS_DONE = "DONE";
     public static final String SYS_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
     public static final String SYS_STATUS_CANCELLED = "CANCELLED";
     public static final String SYS_STATUS_INCONSISTENT = "INCONSISTENT";
-    public static final String SYS_STATUS_SCHEDULED = "SCHEDULED";
+    public static final String SYS_STATUS_SCHEDULE = "SCHEDULE";
     public static final String SYS_STATUS_ERROR = "ERROR";
     public static final String SYS_STATUS_ACTIVE = "ACTIVE";
     public static final String SYS_STATUS_INACTIVE = "INACTIVE";
+    //Status N-Form, diferente dos do Server...
+    public static final String SYS_STATUS_IN_PROCESSING = "IN_PROCESSING";
+    public static final String SYS_STATUS_FINALIZED = "FINALIZED";
+    public static final String SYS_STATUS_SENT = "SENT";
 
     /*
     * Constantes CHAT

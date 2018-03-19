@@ -24,7 +24,7 @@ public class CH_Message_Sql_024 implements Specification {
 
         return sb
                 .append(" UPDATE " + CH_MessageDao.TABLE + " SET\n" +
-                        "    file_status = '" + Constant.CUSTOM_FORM_STATUS_SENT + "' \n" +
+                        "    file_status = '" + Constant.SYS_STATUS_SENT + "' \n" +
                         " WHERE\n" +
                         "  msg_prefix  = '" + msg_prefix + "' \n " +
                         "  and msg_code  = '" + msg_code + "' \n ")

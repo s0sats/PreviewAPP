@@ -75,7 +75,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION))
                 )
          ){
-            if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+            if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
                 if (isAnyFormInProcessing(item)) {
                       mView.showMsg(Act013_Main.FORM_IN_PROCESSING, item);
                 } else {

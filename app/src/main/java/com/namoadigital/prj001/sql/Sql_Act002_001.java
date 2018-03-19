@@ -28,8 +28,8 @@ public class Sql_Act002_001 implements Specification {
                         "  WHERE\n" +
                         "   l.customer_code = '"+s_customer_code+"' \n" +
                         "   and l.custom_form_status in(" +
-                        "'"+ Constant.CUSTOM_FORM_STATUS_IN_PROCESSING+"'," +
-                        "'"+ Constant.CUSTOM_FORM_STATUS_FINALIZED+"'" +
+                        "'"+ Constant.SYS_STATUS_IN_PROCESSING+"'," +
+                        "'"+ Constant.SYS_STATUS_FINALIZED+"'" +
                         ");" +
                         QTY_CUSTOMER_PENDENCIES)
                 .toString();

@@ -165,7 +165,7 @@ public class WS_C_Message extends IntentService {
                 //
                 messageObj.dataConverter();*/
                 //
-                if(!chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) ||
+                if(!chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_TEXT) &&
                    !chMessage.getMsg_type().equalsIgnoreCase(Constant.CHAT_MESSAGE_TYPE_IMAGE)
                 ){
                     ToolBox_Inf.showChatNotification(getApplicationContext(), Constant.CHAT_NOTIFICATION_TYPE_MESSAGE,null, false);
