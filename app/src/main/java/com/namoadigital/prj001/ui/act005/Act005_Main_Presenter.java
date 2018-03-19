@@ -28,7 +28,9 @@ public interface Act005_Main_Presenter {
 
     void executeSoSaveApproval();
 
-    //void generateWsListProcess();
+    void stopChatServices();
 
-    //void executeNextProcess(String next_ws);
+    void executeApSave();
+
+    void syncFlow(int to_send_qty);
 }

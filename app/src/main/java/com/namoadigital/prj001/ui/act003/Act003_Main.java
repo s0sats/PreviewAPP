@@ -69,6 +69,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     public void callAct033(Context context) {
         Intent mIntent =  new Intent(context, Act033_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(mIntent);
         finish();
     }
@@ -85,6 +86,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         startLogoDownload();
 
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
+        //Chama start do serviço do Chat.
+        mPresenter.startChatService();
         //
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
@@ -253,5 +256,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
     }
 }

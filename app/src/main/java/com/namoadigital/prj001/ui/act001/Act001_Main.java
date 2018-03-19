@@ -214,6 +214,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     public void call_Act002_Main(Context context) {
         Intent mIntent = new Intent(context, Act002_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         //
         Bundle bundle = new Bundle();
         bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER,0);
@@ -302,6 +303,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         protected Integer doInBackground(Void... params) {
             return null;
         }
+    }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
     }
 
 }

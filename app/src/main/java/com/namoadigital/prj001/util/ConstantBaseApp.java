@@ -14,8 +14,8 @@ public class ConstantBaseApp extends ConstantBase {
      * PROJECT ID - PRJ001 - SMS
      */
     public static final String PRJ001_CODE = "PRJ001";
-    public static final String PRJ001_VERSION = "2.6.2";
-    public static final String PKG_CLEAN_APP = "53";
+    public static final String PRJ001_VERSION = "3.0.0";
+    public static final String PKG_CLEAN_APP = "68";
     //          UPDATE ESSA VAR NOS APP BASE PKG_CLEAN
 
     /**
@@ -54,6 +54,18 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT031 = "act031";
     public static final String ACT032 = "act032";
     public static final String ACT033 = "act033";
+    public static final String ACT034 = "act034";
+    public static final String ACT035 = "act035";
+    public static final String ACT036 = "act036";
+    public static final String ACT037 = "act037";
+    public static final String ACT038 = "act038";
+    public static final String ACT039 = "act039";
+
+    //Contantes classes relativas ao chat
+    public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
+    public static final String WBR_BOOTCOMPLETED = "WBR_BootCompleted";
+    public static final String SCREEN_STATUS_RECEIVER = "ScreenStatusReceiver";
+    public static final String WBR_CONNECTIONS_CHANGE = "WBR_Connections_Change";
 
     public static final String ACT007_PRODUCT_CODE = "product_code";
     public static final String ACT007_PRODUCT_SEARCH = "product_search";
@@ -111,8 +123,13 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
     public static int DB_VERSION_CUSTOM;
 
+    public static String DB_NAME_CHAT = "namoa_chat.db3";
+    public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
+    public static int DB_VERSION_CHAT;
+
     public static String DB_MODE_MULTI = "MULTI";
     public static String DB_MODE_SINGLE = "SINGLE";
+    public static final String DB_MODE_CHAT = "CHAT";
 
     /**
      * Directory Definition
@@ -122,6 +139,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String THU_PATH;
     public static String SUPPORT_PATH;
     public static String TOKEN_PATH;
+    public static String CHAT_PATH;
+    public static String CACHE_CHAT_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -134,6 +153,11 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static String TOKEN_SO_NAME_FULL;
     public static String TOKEN_SERIAL_NAME_FULL;
+
+    public static String CHAT_PREFIX;
+    public static String CHAT_NAME_FULL;
+
+    public static final String THUMB_SUFFIX = "_thumb";
 
     /**
      * SM_SO_Service Login Parameter
@@ -175,6 +199,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String GS_SESSION_APP = "sessionapp";
     public static final String GS_DATA_PACKAGE = "datapackage";
     public static final String GS_PRODUCT_CODE = "product_code";
+    public static final String GS_LOGIN_PROCESS = "login_process";
     /**
      * Serial WS
      */
@@ -244,7 +269,7 @@ public class ConstantBaseApp extends ConstantBase {
      */
 
     public static final String WS_SEND_RETURN = "ws_send_return";
-
+    public static final String SW_TYPE_PDF = "sw_type_pdf";
     public static final String SW_TYPE_BR = "sw_type_br";
     public static final String SW_TYPE = "sw_type";
     public static final String SW_VALUE = "sw_value";
@@ -283,6 +308,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
     public static final String USER_CUSTOMER_TRANSLATE_CODE_TMP = "user_customer_translate_code_temp";
 
+    public static final String PROCESS_MENU_SEND = "process_menu_send";
+
     //Constantes do Status do Cabeçalho
     public static final String CUSTOM_FORM_STATUS_RECEIVED = "RECEIVED";
     public static final String CUSTOM_FORM_STATUS_IN_PROCESSING = "IN_PROCESSING";
@@ -293,11 +320,13 @@ public class ConstantBaseApp extends ConstantBase {
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
     public static final int NOTIFICATION_DOWNLOAD = 667;
+    public static final int NOTIFICATION_CHAT_MSG = 668;
+    public static final int NOTIFICATION_CHAT_ROOM = 669;
 
     //Helper
     public static final String BACK_ACTION = "back_action";
 
-    //Parametros de Permissões
+    //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
     public static final String PARAM_CHECKLIST = "CHECKLIST";// "CHECKLIST";
     public static final String PARAM_WM = "WM";
@@ -305,6 +334,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PARAM_SO_MOV = "SO_MOV";
     public static final String CLIENT_TYPE_CLIENT = "CLIENT";
     public static final String CLIENT_TYPE_USER = "USER";
+    public static final String PARAM_CHAT = "CHAT";
 
     /**
      * Parametros EV_PROFILE
@@ -316,11 +346,16 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
+    public static final String PROFILE_MENU_AP = "PRJ001_AP";
+    public static final String PROFILE_MENU_AP_PARAM_CHANGE_STATUS = "CHANGE_STATUS";
+    public static final String PROFILE_MENU_AP_PARAM_EDIT = "EDIT";
+
 
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
     public static final String MODULE_SO = "MODULE_SO";
+    public static final String MODULE_FORM_AP = "MODULE_FORM_AP";
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
     public static final String MODULE_SO_SEARCH_SERIAL_EXPRESS = "MODULE_SO_SEARCH_SERIAL_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";
@@ -368,6 +403,128 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
 
     public static final String WS_FCM = "WS_FCM";
+    /*
+     Constante Status AP
+     */
+    public static final String SYS_STATUS_EDIT = "EDIT";
+    public static final String SYS_STATUS_STOP = "STOP";
+    public static final String SYS_STATUS_PENDING = "PENDING";
+    public static final String SYS_STATUS_PROCESS = "PROCESS";
+    public static final String SYS_STATUS_WAITING_APPROVAL = "WAITING_APPROVAL";
+    public static final String SYS_STATUS_WAITING_BUDGET = "WAITING_BUDGET";
+    public static final String SYS_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
+    public static final String SYS_STATUS_WAITING_WAITING_CLIENT = "WAITING_CLIENT";
+    public static final String SYS_STATUS_WAITING_ACTION = "WAITING_ACTION";
+    public static final String SYS_STATUS_WAITING_SYNC = "WAITING_SYNC";
+    public static final String SYS_STATUS_DONE = "DONE";
+    public static final String SYS_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
+    public static final String SYS_STATUS_CANCELLED = "CANCELLED";
+    public static final String SYS_STATUS_INCONSISTENT = "INCONSISTENT";
+    public static final String SYS_STATUS_SCHEDULED = "SCHEDULED";
+    public static final String SYS_STATUS_ERROR = "ERROR";
+    public static final String SYS_STATUS_ACTIVE = "ACTIVE";
+    public static final String SYS_STATUS_INACTIVE = "INACTIVE";
 
+    /*
+    * Constantes CHAT
+    */
+    //Eventos Client
+    public static final String CHAT_EVENT_C_LOGIN = "cLogin";
+    public static final String CHAT_EVENT_C_ROOM = "cRoom";
+    public static final String CHAT_EVENT_C_ERROR = "cError";
+    public static final String CHAT_EVENT_C_ERROR_LOGIN = "cErrorLogin";
+    public static final String CHAT_EVENT_C_PENDING_MESSAGES = "cPendingMessages";
+    public static final String CHAT_EVENT_C_HISTORICAL_MESSAGES = "cHistoricalMessages";
+    public static final String CHAT_EVENT_C_MESSAGE = "cMessage";
+    public static final String CHAT_EVENT_C_MESSAGE_FCM = "cMessageFCM";
+    public static final String CHAT_EVENT_C_MESSAGE_TMP = "cMessageTmp";
+    public static final String CHAT_EVENT_C_ADD_ROOM = "cAddRoom";
+    public static final String CHAT_EVENT_C_REMOVE_ROOM = "cRemoveRoom";
+    public static final String CHAT_EVENT_C_ALL_DELIVERED = "cAllDelivered";
+    public static final String CHAT_EVENT_C_ALL_READ = "cAllRead";
+    public static final String CHAT_EVENT_C_ROOM_PRIVATE = "cRoomPrivateCustomer";
+    public static final String CHAT_EVENT_C_ROOM_PRIVATE_REMOVE = "cRoomPrivateRemove";
+
+    //Eventos Server
+    public static final String CHAT_EVENT_S_LOGIN = "sLogin";
+    public static final String CHAT_EVENT_S_ROOM = "sRoom";
+    public static final String CHAT_EVENT_S_PENDING_MESSAGES = "sPendingMessages";
+    public static final String CHAT_EVENT_S_HISTORICAL_MESSAGES = "sHistoricalMessages";
+    public static final String CHAT_EVENT_S_MESSAGE = "sMessage";
+    public static final String CHAT_EVENT_S_MESSAGE2 = "sMessage2";
+    public static final String CHAT_EVENT_S_MESSAGE_TMP = "sMessageTmp";
+    public static final String CHAT_EVENT_S_DELIVERED = "sDelivered";
+    public static final String CHAT_EVENT_S_READ = "sRead";
+    public static final String CHAT_EVENT_S_ROOM_PRIVATE = "sRoomPrivateCustomer";
+    public static final String CHAT_EVENT_POST_ROOM_PRIVATE = "POST_ROOM_PRIVATE";
+    public static final String CHAT_EVENT_POST_ROOM_AP = "POST_ROOM_AP";
+    public static final String CHAT_EVENT_S_LEAVEROOM = "sLeaveRoom";
+    public static final String CHAT_EVENT_POST_LEAVEROOM = "EVENT_POST_LEAVEROOM";
+
+    //
+    public static final String CHAT_WS_JSON_PARAM = "WS_JSON_PARAM";
+    public static final String CHAT_WS_EVENT_PARAM = "WS_EVENT_PARAM";
+    public static final String CHAT_WS_HISTORICAL_ACTION_PARAM = "WS_HISTORICAL_ACTION_PARAM";
+    public static final String CHAT_WS_MSG_TMP_PARAM = "WS_MSG_TMP_PARAM";
+    public static final String CHAT_WS_MSG_COUNTER_PARAM = "WS_MSG_COUNTER_PARAM";
+    public static final String CHAT_MESSAGE_TYPE_IMAGE = "IMAGE";
+    public static final String CHAT_MESSAGE_TYPE_TEXT = "TEXT";
+    public static final String CHAT_MESSAGE_TYPE_TRANSLATE = "TRANSLATE";
+    public static final String CHAT_ROOM_TYPE_WORKGROUP = "WORKGROUP";
+    public static final String CHAT_ROOM_TYPE_SO = "SO";
+    public static final String CHAT_ROOM_TYPE_AP = "FORM_AP";
+    public static final String CHAT_ROOM_TYPE_SYS = "SYS";
+    public static final String CHAT_ROOM_TYPE_PRIVATE_CUSTOMER = "PRIVATE_CUSTOMER";
+    public static final String CHAT_WS_SOCKET_ID_PARAM = "WS_SOCKET_ID_PARAM";
+    public static final String CHAT_WS_ROOM_CODE_PARAM = "WS_ROOM_CODE_PARAM";
+    public static final String CHAT_WS_ROOM_PRIVATE_ACTIVE_PARAM = "WS_ROOM_PRIVATE_ACTIVE_PARAM";
+    //filters
+    public static final String CHAT_BR_FILTER_ROOM = "CHAT_BR_FILTER_ROOM";
+    public static final String CHAT_BR_FILTER = "CHAT_BR_FILTER";
+    public static final String CHAT_BR_FILTER_DOWNLOAD = "CHAT_BR_FILTER_DOWNLOAD";
+    public static final String CHAT_FINISH_ACT_FILTER = "CHAT_FINISH_ACT_FILTER";
+    //
+    public static final String CHAT_BR_TYPE = "CHAT_BR_TYPE";
+    public static final String CHAT_BR_PARAM = "CHAT_BR_PARAM";
+    public static final String CHAT_BR_PARAM_RECONNECTING_QTD = "CHAT_BR_PARAM_RECONNECTING_QTD";
+    public static final String CHAT_BR_TYPE_CHAT_STATUS_CHANGE = "CHAT_BR_TYPE_CHAT_STATUS_CHANGE";
+    public static final String CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE = "CHAT_LOGGED_STATUS_CHANGE";
+    public static final String CHAT_BR_TYPE_ROOM = "CHAT_BR_TYPE_ROOM";
+    public static final String CHAT_BR_TYPE_MSG = "CHAT_BR_TYPE_MSG";
+    public static final String CHAT_BR_TYPE_ROOM_INFO = "CHAT_BR_TYPE_ROOM_INFO";
+    public static final String CHAT_BR_TYPE_MSG_SCROLL_UP = "CHAT_BR_TYPE_MSG_SCROLL_UP";
+    public static final String CHAT_BR_TYPE_MSG_TMP = "CHAT_BR_TYPE_MSG_TMP";
+    public static final String CHAT_BR_TYPE_MSG_IMAGE_ME = "CHAT_BR_TYPE_MSG_IMAGE_ME";
+    public static final String CHAT_BR_TYPE_MSG_ALL_DELIVERED = "CHAT_BR_TYPE_MSG_ALL_DELIVERED";
+    public static final String CHAT_BR_TYPE_MSG_ALL_READ = "CHAT_BR_TYPE_MSG_ALL_READ";
+    public static final String CHAT_BR_TYPE_RECONNECTED = "CHAT_BR_TYPE_RECONNECTED";
+    public static final String CHAT_BR_TYPE_RECONNECTING = "CHAT_BR_TYPE_RECONNECTING";
+    public static final String CHAT_BR_TYPE_ROOM_PRIVATE_ADD = "CHAT_BR_TYPE_ROOM_PRIVATE_ADD";
+    public static final String CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE = "CHAT_BR_TYPE_ROOM_PRIVATE_REMOVE";
+    public static final String CHAT_BR_TYPE_LEAVE_ROOM = "CHAT_BR_TYPE_LEAVE_ROOM";
+    public static final String CHAT_PREFERENCE_MSG_PREFIX = "CHAT_PREFERENCE_MSG_PREFIX";
+    public static final String CHAT_PREFERENCE_MSG_CODE = "CHAT_PREFERENCE_MSG_CODE";
+    public static final String CHAT_PREFERENCE_MSG_TOKEN = "CHAT_PREFERENCE_MSG_TOKEN";
+    public static final String CHAT_HISTORICAL_MSG_ACTION_LOGIN = "LOGIN";
+    public static final String CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP = "SCROLL_UP";
+    public static final String CHAT_NOTIFICATION_TYPE_MESSAGE = "MESSAGE";
+    public static final String CHAT_NOTIFICATION_TYPE_RECONNECTING = "RECONNECTING";
+    public static final String CHAT_NOTIFICATION_TYPE_CHAT = "CHAT";
+    public static final String CHAT_START_SERVICE_CALLER = "CHAT_START_SERVICE_CALLER";
+    public static final String CHAT_NOTIFICATION_FCM_MSG = "<CHAT_MSG>";
+    public static final String CHAT_NOTIFICATION_FCM_ADD_ROOM = "<CHAT_ADD_ROOM>";
+    public static final String CHAT_NOTIFICATION_FCM_REMOVE_ROOM = "<CHAT_REMOVE_ROOM>";
+
+    //Errors
+    public static final String CHAT_ERROR_CHAT_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";
+    public static final String CHAT_ERROR_SESSION_NOT_FOUND = "SESSION_NOT_FOUND";
+    public static final String CHAT_ERROR_CUSTOMER_NOT_ACCESS_CHAT = "CUSTOMER_NOT_ACCESS_CHAT";
+    //
+    public static final String CHAT_START_WITH_IMAGE_MSG = "{\"message\":{\"type\":\"IMAGE\",";
+    public static final String CHAT_NO_USER_IMAGE = "no_user";
+
+    //Chat Reload
+    public static final String CHAT_RELOAD = "chat_reload";
+    public static final String CHAT_ROOM_POSITION = "chat_room_position";
 
 }

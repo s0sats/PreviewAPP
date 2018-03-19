@@ -287,4 +287,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         return true;
     }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
 }

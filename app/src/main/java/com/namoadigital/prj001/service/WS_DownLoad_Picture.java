@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -13,6 +15,10 @@ import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.sql.CH_Message_Sql_006;
+import com.namoadigital.prj001.sql.CH_Message_Sql_007;
+import com.namoadigital.prj001.sql.CH_Room_Sql_002;
+import com.namoadigital.prj001.sql.CH_Room_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
@@ -50,9 +56,11 @@ public class WS_DownLoad_Picture extends IntentService {
         try {
             if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_Picture","true");
-                WBR_DownLoad_Picture.IS_RUNNING = true;
+                //WBR_DownLoad_Picture.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
+
+            WBR_DownLoad_Picture.IS_RUNNING = true;
 
             Bundle bundle = intent.getExtras();
 
@@ -222,9 +230,9 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : product_sketch_list) {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg",Constant.CACHE_PATH)) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp",Constant.CACHE_PATH);
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(MD_ProductDao.SKETCH_URL),
@@ -238,7 +246,7 @@ public class WS_DownLoad_Picture extends IntentService {
                             new MD_Product_Sql_005(
                                     ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                                     hmAux.get(MD_ProductDao.PRODUCT_CODE),
-                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) +".jpg"
+                                    hmAux.get(MD_Product_Sql_004.PROD_FILE_LOCAL_NAME) + ".jpg"
                             ).toSqlQuery()
                     );
                 }//FIM CROQUI
@@ -262,17 +270,17 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : event_sketch_list) {
-                    String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4 );
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH)) {
+                    String fileName = hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_EventDao.SKETCH_NAME).length() - 4);
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH);
+                        ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_Product_EventDao.SKETCH_URL),
-                                Constant.CACHE_PATH + "/" + fileName +  ".tmp"
+                                Constant.CACHE_PATH + "/" + fileName + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInf(fileName , ".jpg");
+                        ToolBox_Inf.renameDownloadFileInf(fileName, ".jpg");
                     }
                     //Atualiza campo com url local
                     eventDao.addUpdate(
@@ -281,7 +289,7 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(SM_SO_Product_EventDao.SO_PREFIX),
                                     hmAux.get(SM_SO_Product_EventDao.SO_CODE),
                                     hmAux.get(SM_SO_Product_EventDao.SEQ),
-                                    fileName +".jpg"
+                                    fileName + ".jpg"
                             ).toSqlQuery()
                     );
                 }//FIM Event File
@@ -303,17 +311,17 @@ public class WS_DownLoad_Picture extends IntentService {
                 );
                 //
                 for (HMAux hmAux : event_file_list) {
-                    String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0,hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4 );
-                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg",Constant.CACHE_PATH_PHOTO)) {
+                    String fileName = hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).toLowerCase().substring(0, hmAux.get(SM_SO_Product_Event_FileDao.FILE_NAME).length() - 4);
+                    if (!ToolBox_Inf.verifyDownloadFileInf(fileName + ".jpg", Constant.CACHE_PATH_PHOTO)) {
 
-                        ToolBox_Inf.deleteDownloadFileInf(fileName +  ".tmp",Constant.CACHE_PATH_PHOTO);
+                        ToolBox_Inf.deleteDownloadFileInf(fileName + ".tmp", Constant.CACHE_PATH_PHOTO);
                         //
                         ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(SM_SO_Product_Event_FileDao.FILE_URL),
-                                Constant.CACHE_PATH_PHOTO + "/" + fileName +  ".tmp"
+                                Constant.CACHE_PATH_PHOTO + "/" + fileName + ".tmp"
                         );
                         //
-                        ToolBox_Inf.renameDownloadFileInfPHOTO(fileName , ".jpg");
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(fileName, ".jpg");
                     }
                     //Atualiza campo com url local
                     productDao.addUpdate(
@@ -323,13 +331,108 @@ public class WS_DownLoad_Picture extends IntentService {
                                     hmAux.get(SM_SO_Product_Event_FileDao.SO_CODE),
                                     hmAux.get(SM_SO_Product_Event_FileDao.SEQ),
                                     hmAux.get(SM_SO_Product_Event_FileDao.FILE_CODE),
-                                    fileName +".jpg"
+                                    fileName + ".jpg"
                             ).toSqlQuery()
                     );
                 }//FIM Event File
 
             }
             //fim SO
+            /**
+             *
+             * Download de files do CHAT
+             *
+             */
+
+            if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+                //
+                // Room
+                CH_RoomDao roomDao = new CH_RoomDao(getApplicationContext());
+
+                ArrayList<HMAux> roomImgList = new ArrayList<>();
+                roomImgList.addAll(roomDao.query_HM(
+                        new CH_Room_Sql_002().toSqlQuery()
+                ));
+                //
+                for (HMAux hmAux : roomImgList) {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_CHAT_PATH)) {
+
+                        ToolBox_Inf.deleteDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_CHAT_PATH);
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(CH_RoomDao.ROOM_IMAGE),
+                                Constant.CACHE_CHAT_PATH + "/" + hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME).toLowerCase(), ".jpg", Constant.CACHE_CHAT_PATH);
+                        //
+                        //Atualiza campo com url local
+                        roomDao.addUpdate(
+                                new CH_Room_Sql_003(
+                                        hmAux.get(CH_RoomDao.ROOM_CODE),
+                                        hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
+                                ).toSqlQuery().toLowerCase()
+                        );
+
+                    } else {
+                        //Atualiza campo com url local
+                        roomDao.addUpdate(
+                                new CH_Room_Sql_003(
+                                        hmAux.get(CH_RoomDao.ROOM_CODE),
+                                        hmAux.get(CH_Room_Sql_002.FILE_LOCAL_NAME) + ".jpg"
+                                ).toSqlQuery().toLowerCase()
+                        );
+                    }
+                    //
+                    ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
+                }
+
+                // Messages
+                CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
+
+                ArrayList<HMAux> messageImgList = new ArrayList<>();
+                messageImgList.addAll(messageDao.query_HM(
+                        new CH_Message_Sql_006().toSqlQuery()
+                ));
+                //
+                for (HMAux hmAux : messageImgList) {
+
+                    JSONObject jsonObject = new JSONObject(hmAux.get("msg_obj"));
+                    JSONObject jsonObject1 = jsonObject.getJSONObject("message");
+
+                    String sFileD = jsonObject1.getString("data");
+                    // String arr[] = sFileD.split("/");
+                    //String sFile = arr[arr.length - 1].replace(".jpg", "").replace(".png", "");
+                    String sFile = hmAux.get(CH_MessageDao.MSG_PREFIX) + "." + hmAux.get(CH_MessageDao.MSG_CODE);
+
+                    if (!ToolBox_Inf.verifyDownloadFileInfV2(sFile + ".jpg")) {
+
+                        ToolBox_Inf.deleteDownloadFileInfV2(sFile + ".tmp");
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                                sFileD,
+                                Constant.CACHE_PATH_PHOTO + "/" + sFile + ".tmp"
+                        );
+                        //
+                        ToolBox_Inf.renameDownloadFileInfPHOTO(sFile, ".jpg");
+                        //
+                        ToolBox_Inf.createThumbNail_Images(Constant.CACHE_PATH_PHOTO, sFile + ".jpg");
+                    }
+                    //Atualiza campo com url local
+                    messageDao.addUpdate(
+                            new CH_Message_Sql_007(
+                                    Integer.parseInt(hmAux.get(CH_MessageDao.MSG_PREFIX)),
+                                    Long.parseLong(hmAux.get(CH_MessageDao.MSG_CODE)),
+                                    sFile + ".jpg"
+                            ).toSqlQuery().toLowerCase()
+                    );
+                    //
+                    hmAux.put(CH_MessageDao.MESSAGE_IMAGE_LOCAL, sFile + ".jpg");
+                    ToolBox_Inf.sendBRChatDownloadUpdate(getApplicationContext(), hmAux);
+                }
+
+            }//FIM chat
+
 
         } catch (Exception e) {
             String results = e.toString();

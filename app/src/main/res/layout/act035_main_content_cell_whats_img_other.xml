@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <View
+            android:id="@+id/act035_main_content_cell_whats_v_space_left"
+            android:layout_width="100dp"
+            android:layout_height="1dp"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/act035_main_content_cell_whats_iv_other_img"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginRight="-6dp"
+            android:background="@drawable/ic_play" />
+
+        <LinearLayout
+            android:id="@+id/act035_main_content_cell_whats_ll_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_msg_from"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_whats_tv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="N.Hugo"
+                    android:textColor="#f1194f"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="normal" />
+            </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/act035_main_content_cell_whats_iv_foto"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_camera" />
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_whats_tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clima na região central de São Bernando do Campo "
+                android:textColor="#FF000000"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:typeface="normal"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_whats_tv_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="11:30"
+                    android:textColor="#9c9b9b"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    android:typeface="normal" />
+
+                <ImageView
+                    android:id="@+id/act035_main_content_cell_iv_badge"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:maxHeight="24dp"
+                    android:maxWidth="24dp"
+                    android:src="@drawable/ic_clock_chat"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/act035_main_content_cell_whats_iv_me_img"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="-6dp"
+            android:background="@drawable/ic_play_2"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/act035_main_content_cell_whats_v_space_right"
+            android:layout_width="100dp"
+            android:layout_height="1dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

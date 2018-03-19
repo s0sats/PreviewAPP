@@ -39,12 +39,14 @@
         <activity
             android:name=".ui.act002.Act002_Main"
             android:label="@string/act002_title_"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <!-- Site List -->
         <activity
             android:name=".ui.act003.Act003_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -52,6 +54,7 @@
         <activity
             android:name=".ui.act004.Act004_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -59,6 +62,7 @@
         <activity
             android:name=".ui.act005.Act005_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -66,6 +70,7 @@
         <activity
             android:name=".ui.act006.Act006_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -73,6 +78,7 @@
         <activity
             android:name=".ui.act007.Act007_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -80,6 +86,7 @@
         <activity
             android:name=".ui.act008.Act008_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -87,6 +94,7 @@
         <activity
             android:name=".ui.act009.Act009_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -94,6 +102,7 @@
         <activity
             android:name=".ui.act010.Act010_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -101,6 +110,7 @@
         <activity
             android:name=".ui.act011.Act011_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -108,6 +118,7 @@
         <activity
             android:name=".ui.act012.Act012_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -115,6 +126,7 @@
         <activity
             android:name=".ui.act013.Act013_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -122,6 +134,7 @@
         <activity
             android:name=".ui.act014.Act014_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -129,133 +142,172 @@
         <activity
             android:name=".ui.act015.Act015_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act016.Act016_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act017.Act017_Main"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act018.Act018_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act019.Act019_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act020.Act020_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act021.Act021_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act022.Act022_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act023.Act023_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act024.Act024_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act025.Act025_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act026.Act026_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act027.Act027_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <!-- Tirar -->
-
         <activity
             android:name=".ui.act028.Act028_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act029.Act029_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act030.Act030_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act031.Act031_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act032.Act032_Main"
-            android:excludeFromRecents="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.act033.Act033_Main"
-            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.act034.Act034_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.act035.Act035_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.act036.Act036_Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.act037.Act037_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.act038.Act038_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.act039.Act039_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
@@ -293,6 +345,10 @@
 
         <service android:name=".service.WS_Upload_Img" />
 
+        <receiver android:name=".receiver_chat.WBR_Upload_Img_Chat" />
+
+        <service android:name=".service_chat.WS_Upload_Img_Chat" />
+
         <receiver android:name=".receiver.WBR_DownLoad_Customer_Logo" />
 
         <service android:name=".service.WS_DownLoad_Customer_Logo" />
@@ -329,11 +385,6 @@
         <service android:name=".service.WS_AL_Quarter" />
 
         <service android:name=".service.SV_LocationTracker" />
-
-        <!--<activity-->
-        <!--android:name=".ui.act016.Act015_Main"-->
-        <!--android:label="@string/title_activity_act015__main"-->
-        <!--android:theme="@style/AppTheme.NoActionBar"></activity>-->
 
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
@@ -396,6 +447,71 @@
         <receiver android:name=".receiver.WBR_UserAuthor" />
 
         <service android:name=".service.WS_UserAuthor" />
+
+        <service
+            android:name=".service.AppBackgroundService"
+            android:stopWithTask="false" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Room" />
+
+        <service android:name=".service_chat.WS_C_Room" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Message" />
+
+        <service android:name=".service_chat.WS_C_Message" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Add_Room" />
+
+        <service android:name=".service_chat.WS_C_Add_Room" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Remove_Room" />
+
+        <service android:name=".service_chat.WS_C_Remove_Room" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Remove_Room" />
+
+        <receiver android:name=".receiver_chat.WBR_C_Message_Tmp" />
+
+        <service android:name=".service_chat.WS_C_Message_Tmp" />
+
+        <receiver android:name=".receiver_chat.WBR_C_All_Delivered" />
+
+        <service android:name=".service_chat.WS_C_All_Delivered" />
+
+        <receiver android:name=".receiver_chat.WBR_C_All_Read" />
+
+        <service android:name=".service_chat.WS_C_All_Read" />
+
+        <receiver android:name=".receiver_chat.WBR_Room_Info" />
+
+        <service android:name=".service_chat.WS_Room_Info" />
+
+        <!-- Screen On/Off Status -->
+        <receiver android:name=".service.ScreenStatusReceiver" />
+        <service android:name=".service.ScreenStatusService" />
+        <!-- Screen On/Off Status -->
+
+        <receiver android:name=".receiver.NotificationReceiver" />
+        <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
+
+        <receiver android:name=".receiver_chat.WBR_Delivered" />
+
+        <service android:name=".service_chat.WS_Delivered" />
+
+        <receiver android:name=".receiver_chat.WBR_Room_Private" />
+        <service android:name=".service_chat.WS_Room_Private" />
+
+        <receiver android:name=".receiver_chat.WBR_Leave_Room" />
+        <service android:name=".service_chat.WS_Leave_Room" />
+
+        <receiver android:name=".receiver.WBR_AP_Search" />
+        <service android:name=".service.WS_AP_Search" />
+
+        <receiver android:name=".receiver.WBR_AP_Save"/>
+        <service android:name=".service.WS_AP_Save"/>
+
+        <receiver android:name=".receiver_chat.WBR_Room_AP" />
+        <service android:name=".service_chat.WS_Room_AP" />
 
     </application>
 

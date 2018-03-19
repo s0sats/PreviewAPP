@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,11 +24,13 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -36,13 +39,20 @@ import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.service.ScreenStatusService;
+import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act005_005;
+import com.namoadigital.prj001.sql.Sql_Act005_006;
+import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
@@ -70,6 +80,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private EV_User_CustomerDao userCustomerDao;
     private FCMMessageDao fcmMessageDao;
     private SM_SODao soDao;
+    private GE_Custom_Form_ApDao customFormApDao;
 
     private String logoutList = "";
     private transient Dialog logoutDialog;
@@ -77,7 +88,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private ListView lv_customer;
     private List<HMAux> customer_list;
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao) {
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -85,10 +96,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.userCustomerDao = userCustomerDao;
         this.fcmMessageDao = fcmMessageDao;
         this.soDao = soDao;
+        this.customFormApDao = customFormApDao;
     }
 
     String[] menuId = {
             Act005_Main.MENU_ID_CHECKLIST,
+            Act005_Main.MENU_ID_FORM_AP,
             Act005_Main.MENU_ID_SERVICE,
             Act005_Main.MENU_ID_SCHEDULE_DATA,
             Act005_Main.MENU_ID_SERIAL,
@@ -97,11 +110,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             Act005_Main.MENU_ID_MESSAGES,
             Act005_Main.MENU_ID_SEND_DATA,
             //       Act005_Main.MENU_ID_SYNC_DATA,
+            Act005_Main.MENU_ID_CHAT,
             Act005_Main.MENU_ID_CLOSE
     };
 
     String[] menuDesc = {
             "lbl_checklist",
+            "lbl_form_ap",
             "lbl_so",
             "lbl_schedule_data",
             "lbl_serial_data",
@@ -110,10 +125,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             "lbl_messages",
             "lbl_send_data",
             //        "lbl_sync_data",
+            "lbl_chat",
             "lbl_close_app"
     };
 
     String[] icon = {
+            String.valueOf(R.drawable.ic_n_form),
             String.valueOf(R.drawable.ic_n_form),
             String.valueOf(R.drawable.ic_n_service2_24x24),
             String.valueOf(R.drawable.ic_calendario),
@@ -123,10 +140,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_notificacao),
             String.valueOf(R.drawable.ic_enviar),
             //       String.valueOf(R.drawable.ic_sincronizar),
+            String.valueOf(R.drawable.ic_chat_24x24),
             String.valueOf(R.drawable.ic_sair)
     };
 
     String[][] parameter = {
+            {""},
             {""},
             {Constant.PARAM_SO, Constant.PARAM_SO_MOV},
             {Constant.PARAM_SCHEDULE_CHECKLIST},
@@ -136,6 +155,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             {""},
             {""},
             // {""},
+            {Constant.PARAM_CHAT},
             {""}
     };
 
@@ -153,6 +173,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 HMAux Aux = new HMAux();
                 String qty = "";
                 String qtySO = "";
+                String qtyAP = "";
                 String qtyBadge2 = "";
 
                 Aux.put(Act005_Main.MENU_ID, menuId[i]);
@@ -162,21 +183,25 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 switch (menuId[i]) {
 
                     case Act005_Main.MENU_ID_SERVICE:
+                        try {
+                            qty = soDao.getByStringHM(
+                                    new Sql_Act021_004(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
+                            //
 
-                        qty = soDao.getByStringHM(
-                                new Sql_Act021_004(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
-                        //
-
-                        qtyBadge2 = soDao.getByStringHM(
-                                new Sql_Act005_005(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        ToolBox_Con.getPreference_Site_Code(context),
-                                        ToolBox_Con.getPreference_Zone_Code(context)
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_005.QTD_MY_PENDING_SO);
+                            qtyBadge2 = soDao.getByStringHM(
+                                    new Sql_Act005_005(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            ToolBox_Con.getPreference_Site_Code(context),
+                                            ToolBox_Con.getPreference_Zone_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_005.QTD_MY_PENDING_SO);
+                        }catch (Exception e){
+                            qty = "0";
+                            qtyBadge2 = "0";
+                        }
                         //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
@@ -195,8 +220,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                        //
+                        qtyAP = customFormApDao.getByStringHM(
+                                new GE_Custom_Form_Ap_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
                         //Soma Qtd de n-form e n_service
-                        qty = String.valueOf(Integer.parseInt(qty) +  Integer.parseInt(qtySO));
+                        qty = String.valueOf(
+                                Integer.parseInt(qty)
+                                        + Integer.parseInt(qtySO)
+                                        + Integer.parseInt(qtyAP)
+                        );
                         //
                         qtyBadge2 = soDao.getByStringHM(
                                 new Sql_Act005_004(
@@ -222,11 +257,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         ToolBox_Con.getPreference_Customer_Code(context)
                                 ).toSqlQuery()
                         ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
-                        //int iqtySO = Integer.parseInt(qtySO) + isSoWithinTokenFile();
-                        //qtySO = String.valueOf(iqtySO);
-                        //Soma Qtd de n-form e n_service
-                        qty = String.valueOf(Integer.parseInt(qty) +  Integer.parseInt(qtySO) + isSoWithinTokenFile());
 
+                        qtyAP = customFormApDao.getByStringHM(
+                                new Sql_Act005_007(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_007.BADGE_TO_SEND_QTY);
+                        //Soma Qtd de n-form e n_service e form_ap
+                        qty = String.valueOf(
+                                ToolBox_Inf.convertStringToInt(qty) +
+                                        ToolBox_Inf.convertStringToInt(qtySO) +
+                                        isSoWithinTokenFile() +
+                                        ToolBox_Inf.convertStringToInt(qtyAP)
+                        );
+                        //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 
@@ -236,7 +280,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                 ).toSqlQuery()
                         ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
+                        //
+                        qtyAP = customFormApDao.getByStringHM(
+                                new Sql_Act005_006(
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                ).toSqlQuery()
+                        ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
 
+                        qty = String.valueOf(
+                                ToolBox_Inf.convertStringToInt(qty) +
+                                        ToolBox_Inf.convertStringToInt(qtyAP)
+                        );
+                        //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 
@@ -246,7 +301,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
 
                         Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
 
+                    case Act005_Main.MENU_ID_CHAT:
+                        qty = "1";
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        break;
+                    case Act005_Main.MENU_ID_FORM_AP:
+                        qty = customFormApDao.getByStringHM(
+                                new GE_Custom_Form_Ap_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                        //
+                        qtyBadge2 = customFormApDao.getByStringHM(
+                                new GE_Custom_Form_Ap_Sql_002(
+                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                ).toSqlQuery()
+                        ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
+                        //
+                        Aux.put(Act005_Main.MENU_BADGE, qty);
+                        Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
+
+                        break;
                     default:
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGE2, qtySO);
@@ -273,7 +350,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         if (ToolBox_Inf.parameterExists(context, Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
-
+        data_package.add(DataPackage.DATA_PACKAGE_AP);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
@@ -298,6 +375,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             switch (menu_id) {
                 case Act005_Main.MENU_ID_CHECKLIST:
                     mView.callAct006(context);
+                    break;
+
+                case Act005_Main.MENU_ID_FORM_AP:
+                    mView.callAct036(context);
                     break;
 
                 case Act005_Main.MENU_ID_SERVICE:
@@ -347,6 +428,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     }
                     break;
 
+                case Act005_Main.MENU_ID_CHAT:
+                    mView.callAct034(context);
+                    break;
+
                 case Act005_Main.MENU_ID_CLOSE:
                     mView.closeApp();
                     break;
@@ -373,19 +458,43 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         TextView tv_msg = (TextView) view.findViewById(R.id.act005_dialog_support_tv_msg);
         tv_msg.setText(hmAux_Trans.get("alert_support_msg"));
         final MKEditTextNM et_support_msg = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_msg);
+        et_support_msg.setHint(hmAux_Trans.get("alert_support_hint"));
 
         builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
         builder.setView(view);
         builder.setCancelable(false);
-        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                executeSupport(et_support_msg.getText().toString().trim());
-            }
-        });
+        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), null);
         builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
 
-        builder.show();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                //
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (et_support_msg.getText().toString().trim().length() > 0) {
+                            executeSupport(et_support_msg.getText().toString().trim());
+                            //
+                            dialog.dismiss();
+                        } else {
+                            et_support_msg.setText("");
+                            et_support_msg.findFocus();
+                            //
+                            Toast.makeText(
+                                    context,
+                                    hmAux_Trans.get("alert_support_empty_msg"),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    }
+                });
+            }
+        });
+        dialog.show();
+        //builder.show();
     }
 
     @Override
@@ -456,6 +565,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 }
 
                 if (logoutList.length() > 0) {
+                    //Cancela notificações do chat
+                    ToolBox_Inf.cancelChatNotification(context);
                     //
                     logoutList = logoutList.substring(0, logoutList.length() - 1);
                     //
@@ -463,7 +574,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         executeLogout(logoutList);
                     } else {
                         if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
-                            mView.callLoginProcess();
+
+                            List<HMAux> sessionsOn = userCustomerDao
+                                    .query_HM(
+                                            new EV_User_Customer_Sql_004(
+                                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                                    ToolBox_Con.getPreference_User_Code(context)
+                                            ).toSqlQuery()
+                                    );
+
+                            if (sessionsOn != null && sessionsOn.size() != 0) {
+                                mView.callChangeCustomerProcess();
+                            } else {
+                                mView.callLoginProcess();
+                            }
+                        } else {
+                            // fechar drawer Hugo
                         }
                     }
                 }
@@ -499,95 +625,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         logoutDialog.show();
     }
 
-//    @Override
-//    public void generateWsListProcess() {
-//        ArrayList<HMAux> hmAuxList = new ArrayList<>();
-//        /*
-//        * N-FORM
-//        */
-//        String qty = customFormLocalDao.getByStringHM(
-//                new Sql_Act005_001(
-//                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-//                ).toSqlQuery()
-//        ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
-//
-//        if (qty != null && !qty.equals("0")) {
-//            HMAux nFormHM = new HMAux();
-//            nFormHM.put(Act005_Main.WS_LIST_ITEM, Act005_Main.WS_PROCESS_SEND_N_FORM);
-//            nFormHM.put(Act005_Main.WS_LIST_ITEM_RETURN, "");
-//            nFormHM.put(Act005_Main.WS_LIST_ITEM_LABEL, hmAux_Trans.get("lbl_checklist"));
-//            hmAuxList.add(nFormHM);
-//        }
-//
-//        /*
-//        * S.O
-//        */
-//        if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
-//            //
-//            HMAux soHMQty = soDao.getByStringHM(
-//                    new Sql_Act021_001(
-//                            ToolBox_Con.getPreference_Customer_Code(context)
-//                    ).toSqlQuery()
-//            );
-//            //
-//            int so_qty = Integer.parseInt(soHMQty.get(UPDATE_REQUIRED_QTY));
-//            if (so_qty > 0) {
-//                HMAux SOHM = new HMAux();
-//                SOHM.put(Act005_Main.WS_LIST_ITEM, Act005_Main.WS_PROCESS_SEND_SO);
-//                SOHM.put(Act005_Main.WS_LIST_ITEM_RETURN, "");
-//                SOHM.put(Act005_Main.WS_LIST_ITEM_LABEL, hmAux_Trans.get("lbl_so"));
-//                hmAuxList.add(SOHM);
-//            }
-//
-//        }
-//
-//    }
-
-//    public void executeNextProcess(String next_ws) {
-//
-//        switch (next_ws) {
-//
-//            case Constant.MODULE_CHECKLIST:
-//                executeNFormSend();
-//                break;
-//            case Constant.MODULE_SO:
-//                executeSOSend();
-//                break;
-//            default:
-//                break;
-//        }
-//
-//    }
-
-//    private void executeNFormSend() {
-//        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_N_FORM);
-//
-//        Intent mIntent = new Intent(context, WBR_Save.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-//        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-//
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        //
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
-//
-//    }
-
-//    private void executeSOSend() {
-//        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND_SO);
-//        //
-//        Intent mIntent = new Intent(context, WBR_SO_Serial_Save.class);
-//        Bundle bundle = new Bundle();
-//        mIntent.putExtras(bundle);
-//        //
-//        context.sendBroadcast(mIntent);
-//        //
-//        ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_so_send_data"), "", "0");
-//
-//    }
-
     private void executeSaveProcess() {
 
         Intent mIntent = new Intent(context, WBR_Save.class);
@@ -606,14 +643,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeSoSave() {
         mView.setWsSoProcess(WS_PROCESS_SO_SAVE);
-
-//        enableProgressDialog(
-//                hmAux_Trans.get("progress_so_save_ttl"),
-//                hmAux_Trans.get("progress_so_save_msg"),
-//                hmAux_Trans.get("sys_alert_btn_cancel"),
-//                hmAux_Trans.get("sys_alert_btn_ok")
-//        );
-
         //
         Intent mIntent = new Intent(context, WBR_SO_Save.class);
         Bundle bundle = new Bundle();
@@ -627,14 +656,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeSoSaveApproval() {
         mView.setWsSoProcess(WS_PROCESS_SO_SAVE_APPROVAL);
-
-//        enableProgressDialog(
-//                hmAux_Trans.get("progress_so_save_ttl"),
-//                hmAux_Trans.get("progress_so_save_msg"),
-//                hmAux_Trans.get("sys_alert_btn_cancel"),
-//                hmAux_Trans.get("sys_alert_btn_ok")
-//        );
-
         //
         Intent mIntent = new Intent(context, WBR_SO_Approval.class);
         Bundle bundle = new Bundle();
@@ -644,6 +665,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         context.sendBroadcast(mIntent);
     }
 
+    @Override
+    public void executeApSave() {
+        mView.setWsSoProcess(WS_AP_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_AP_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
 
     private void executeLogout(String customer_list) {
         mView.setWsProcess(Act005_Main.WS_PROCESS_LOGOUT);
@@ -690,7 +723,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeSupport(String support_msg) {
 
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
             mView.showPD();
@@ -702,7 +735,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -727,6 +760,58 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             ToolBox_Inf.registerException(getClass().getName(), e);
             //
             return 0;
+        }
+    }
+
+    @Override
+    public void stopChatServices() {
+        //No logoff, verifica se era a ultima sessão ativa.
+        //Caso fosse, parar serviços do chat e do screestatus
+        List<HMAux> sessionsOn = userCustomerDao
+                .query_HM(
+                        new EV_User_Customer_Sql_004(
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+
+        if (sessionsOn != null && sessionsOn.size() == 0) {
+            if (AppBackgroundService.isRunning) {
+                //
+                Intent socketService = new Intent(context, AppBackgroundService.class);
+                context.stopService(socketService);
+            }
+
+            if (ScreenStatusService.isRunning) {
+                Intent screenService = new Intent(context, ScreenStatusService.class);
+                context.stopService(screenService);
+            }
+        }
+    }
+
+    @Override
+    public void syncFlow(int to_send_qty) {
+        if (to_send_qty > 0) {
+            mView.setSyncAfterSave(true);
+            //
+            accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+
+//            ToolBox.alertMSG(
+//                    context,
+//                    hmAux_Trans.get("alert_send_to_sync_ttl"),
+//                    hmAux_Trans.get("alert_send_to_sync_msg"),
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            mView.setSyncAfterSave(true);
+//                            //
+//                            accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+//                        }
+//                    },
+//                    0
+//            );
+        } else {
+            accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
         }
     }
 }

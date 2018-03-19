@@ -19,6 +19,8 @@ public interface Act005_Main_View {
 
     void callAct006(Context context);
 
+    void callAct036(Context context);
+
     void callAct012(Context context);
 
     void callAct014(Context context);
@@ -31,6 +33,8 @@ public interface Act005_Main_View {
 
     void callAct030(Context context);
 
+    void callAct034(Context context);
+
     void showNoConnectionDialog();
 
     void closeApp();
@@ -41,8 +45,12 @@ public interface Act005_Main_View {
 
     void callLoginProcess();
 
+    void callChangeCustomerProcess();
+
     void cleanUpResults();
 
     void setWsProcessList(ArrayList<HMAux> wsProcessList);
+
+    void setSyncAfterSave(boolean syncAfterSave);
 
 }

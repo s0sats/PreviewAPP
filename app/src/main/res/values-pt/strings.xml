@@ -50,12 +50,13 @@
     <string name="alert_msg_signature_validation">Erro: Assinatura não informada!!!</string>
     <string name="signature_hint">Nome do responsável pela assinatura</string>
     <string name="sys_alert_btn_ok">OK</string>
+    <string name="sys_alert_btn_cancel">Cancel</string>
     <string name="mdots_server_title">Informação de Referência</string>
     <string name="mdots_user_title">Comentário do Usuário</string>
     <string name="mdots_non_compliance">Não Conformidade</string>
     <string name="footer_label">Tela </string>
     <string name="act002_logout_ttl">Logout</string>
-    <string name="act002_logout_one_customer_msg">Deseja realmente fazer logout do APP?</string>
+    <string name="act002_logout_one_customer_msg">Deseja realmente fazer logout do APP?\nOBS:Todas as sessões de aplicativo ativas serão deslogadas! </string>
     <string name="msg_lost_access_to_site_or_operation">Você não possui mais acesso ao Site ou Operação em que esta logado!\nVocê precisará selecionar outro Cliente ou fazer Login novamente.</string>
     <string name="msg_lost_access_to_zone">Você não possui mais acesso a Zona em que esta logado!\nVocê precisará selecionar outra Zona ou fazer Login novamente.</string>
     <string name="generic_start_update_process_msg">Iniciando processo de atualização</string>
@@ -87,7 +88,7 @@
     <string name="generic_dialog_logout_msg">Realizando logout</string>
     <string name="generic_alert_no_site_ttl">Lista de Site vazia</string>
     <string name="generic_alert_no_site_msg">Nenhum Site encontrado.\nVerifique se você possui acesso a algum Site ou clique em voltar e tente novamente</string>
-
+    <string name="act002_offline_logout_msg">Conexão não encontrada!\n Não foi possível finalizar as sessões no servidor!</string>
 
 
 </resources>

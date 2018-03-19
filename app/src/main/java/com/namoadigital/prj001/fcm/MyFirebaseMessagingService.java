@@ -12,11 +12,19 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
+import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
@@ -29,6 +37,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -41,6 +52,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Constant.DB_FULL_BASE,
                 Constant.DB_VERSION_BASE
         );
+
+        /*
+        * LOG PARA IDENTIFICAR FALHA OU NÃO DO FCM - APAGAR APOS TESTES
+        * */
+        try {
+            File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Recebeu fcm - Tamanho getData() =   " + (remoteMessage.getData() == null ? "nullo":remoteMessage.getData().size()) +"\n" , log_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (remoteMessage.getData().size() > 0) {
 
@@ -73,11 +94,98 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setMsg_long(remoteMessage.getData().get("msg_long"));
             fcmMessage.setModule(remoteMessage.getData().get("module"));
             fcmMessage.setSender(remoteMessage.getData().get("sender"));
+            fcmMessage.setReceiver(remoteMessage.getData().get("receiver"));
             fcmMessage.setSync(remoteMessage.getData().get("sync"));
             fcmMessage.setStatus("0");
             String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
+            /*
+            * LOG PARA IDENTIFICAR FALHA OU NÃO DO FCM - APAGAR APOS TESTES
+            */
+            try {
+                File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "FCM fcm.getMsgShort =  " + fcmMessage.getMsg_short() +"\n" , log_file);
+                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "FCM fcm.getMsgLong =  " + fcmMessage.getMsg_long() +"\n" , log_file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //Se FCM não é o que esta usr logado, aborta FCM
+            if(!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))){
+                return;
+            }
+            /*
+            * Valida se o customer do FCM esta logado
+            * */
+            EV_User_CustomerDao customerDao = new EV_User_CustomerDao(getApplicationContext());
+            boolean loggedCustomer = false;
+            //Seleciona todos customers con sessão ativa e que tem acesso ao chat.
+            ArrayList<HMAux> chatSessionCustomers = (ArrayList<HMAux>) customerDao.query_HM(
+                    new EV_User_Customer_Sql_007(
+                            ToolBox_Con.getPreference_User_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //
+            if (chatSessionCustomers != null && chatSessionCustomers.size() > 0) {
+                for (int i = 0; i < chatSessionCustomers.size(); i++) {
+                    if(fcmMessage.getCustomer().equals(chatSessionCustomers.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE))){
+                        loggedCustomer = true;
+                        break;
+                    }
+                }
+
+            }else{
+                return;
+            }
+            //Se o customer do FCM não tem cessão no app, aborta
+            if(!loggedCustomer){
+                return;
+            }
+            //
+            if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
+                if (ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
+                    String param = "";
+                    switch (fcmMessage.getTitle()){
+                        case Constant.CHAT_NOTIFICATION_FCM_MSG:
+                            param = ToolBox_Inf.getWebSocketJsonParam(fcmMessage.getMsg_long().trim());
+                            //
+                            Intent cMessageIntent = new Intent(getApplicationContext(), WBR_C_Message.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constant.CHAT_WS_JSON_PARAM, param);
+                            bundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_EVENT_C_MESSAGE_FCM);
+                            cMessageIntent.putExtras(bundle);
+                            getApplicationContext().sendBroadcast(cMessageIntent);
+                            break;
+                        case Constant.CHAT_NOTIFICATION_FCM_ADD_ROOM:
+                            ToolBox_Inf.showChatRoomNotification(getApplicationContext());
+                            break;
+                        case Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM:
+                            Gson gson = new GsonBuilder().serializeNulls().create();
+                            Chat_C_Remove_Room chatCRemoveRoom = new Chat_C_Remove_Room();
+                            chatCRemoveRoom.setRoom_code(fcmMessage.getMsg_short());
+                            //
+                            Intent cRemoveRoomIntent = new Intent(getApplicationContext(), WBR_C_Remove_Room.class);
+                            Bundle removeBundle = new Bundle();
+                            removeBundle.putString(Constant.CHAT_WS_JSON_PARAM, gson.toJson(chatCRemoveRoom) );
+                            removeBundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM);
+                            cRemoveRoomIntent.putExtras(removeBundle);
+                            getApplicationContext().sendBroadcast(cRemoveRoomIntent);
+                            break;
+                        default:
+                            ToolBox_Inf.showChatNotification(
+                                    getApplicationContext(),
+                                    fcmMessage.getModule().toUpperCase(),
+                                    "0",
+                                    "",//fcmMessage.getTitle().trim(),
+                                    "",//fcmMessage.getMsg_short().trim()
+                                    true);
+
+                    }
+
+                }
+                return;
+            }
             //
             if (fcmMessage.getTitle().trim().equalsIgnoreCase("<SM_SO_UPDATE>") &&
                     fcmMessage.getModule().trim().equalsIgnoreCase("SM_")) {
@@ -85,8 +193,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 checkNService_SO_Status(fcmMessage);
 
             } else {
-
-
                 //
                 fcmMessageDao.addUpdate(fcmMessage);
                 long fcmmessage_code = Long.parseLong(

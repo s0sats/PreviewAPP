@@ -51,12 +51,13 @@
     <string name="alert_msg_signature_validation">Error: Signature not informed!</string>
     <string name="signature_hint">Signature Responsible Name</string>
     <string name="sys_alert_btn_ok">OK</string>
+    <string name="sys_alert_btn_cancel">Cancel</string>
     <string name="mdots_server_title">Reference Info</string>
     <string name="mdots_user_title">User Comment</string>
     <string name="mdots_non_compliance">Non-Conformity</string>
     <string name="footer_label">Screen</string>
     <string name="act002_logout_ttl">Logout</string>
-    <string name="act002_logout_one_customer_msg">Do you really want to logout from the APP?</string>
+    <string name="act002_logout_one_customer_msg">Do you really want to logout from the APP?\nNOTE: All active app sessions will be logged off! </string>
     <string name="msg_lost_access_to_site_or_operation">You have no longer access to the Site or Operation you are logged!\nYou shall select another Customer or Login again</string>
     <string name="msg_lost_access_to_zone">You have no longer access to the Zone you are logged!\nYou shall select another Customer or Login again</string>
     <string name="generic_start_update_process_msg">Starting Update Process</string>
@@ -88,5 +89,6 @@
     <string name="generic_dialog_logout_msg">Accomplishing Logout</string>
     <string name="generic_alert_no_site_ttl">Empty Sites List</string>
     <string name="generic_alert_no_site_msg">None Site Found.\nPlease verify if you have access to any Site or click the back button and try again</string>
+    <string name="act002_offline_logout_msg">Connection not found!\nServer app sessions will not logged off!</string>
 
 </resources>

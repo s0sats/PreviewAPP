@@ -141,7 +141,7 @@ public class Sql_Act028_001 implements Specification {
                         "        AND E.SERVICE_CODE = '"+service_code+"'\n" +
                         "        AND E.SERVICE_SEQ = '"+service_seq+"'\n" +
                         " ORDER BY \n" +
-                        "   E.EXEC_TMP DESC" +
+                        "   E.EXEC_TMP DESC\n" +
                         ";")
                 .append(HmAuxFields+"#"+TASK_PERC+"#"+SUM_EXEC_TIME+"#"+QTY_COMMENT+"#"+QTY_FILES+"#"+MY_TASK)
                 .toString();

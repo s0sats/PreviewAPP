@@ -1,0 +1,56 @@
+package com.namoadigital.prj001.model;
+
+import java.util.ArrayList;
+
+/**
+ * Created by d.luche on 12/12/2017.
+ */
+
+public class Chat_S_Historical_Message {
+
+    private String room_code;
+    private Integer msg_ref_prefix;
+    private Integer msg_ref_code;
+    private String action;
+    private ArrayList<Chat_Ref_Json> ref_json;
+
+    public String getRoom_code() {
+        return room_code;
+    }
+
+    public void setRoom_code(String room_code) {
+        this.room_code = room_code;
+    }
+
+    public Integer getMsg_ref_prefix() {
+        return msg_ref_prefix;
+    }
+
+    public void setMsg_ref_prefix(Integer msg_ref_prefix) {
+        this.msg_ref_prefix = msg_ref_prefix;
+    }
+
+    public Integer getMsg_ref_code() {
+        return msg_ref_code;
+    }
+
+    public void setMsg_ref_code(Integer msg_ref_code) {
+        this.msg_ref_code = msg_ref_code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public ArrayList<Chat_Ref_Json> getRef_json() {
+        return ref_json;
+    }
+
+    public void setRef_json(ArrayList<Chat_Ref_Json> ref_json) {
+        this.ref_json = ref_json;
+    }
+}

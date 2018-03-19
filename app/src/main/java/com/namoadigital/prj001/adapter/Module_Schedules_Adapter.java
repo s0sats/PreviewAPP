@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
@@ -29,14 +30,16 @@ import java.util.List;
 public class Module_Schedules_Adapter extends BaseAdapter {
 
     private Context context;
-    private int resource;
+    private int resource_01;
+    private int resource_02;
     private List<HMAux> source;
     private String mResource_Code;
     private HMAux hmAux_Trans;
 
-    public Module_Schedules_Adapter(Context context, int resource, List<HMAux> source) {
+    public Module_Schedules_Adapter(Context context, int resource_01, int resource_02, List<HMAux> source) {
         this.context = context;
-        this.resource = resource;
+        this.resource_01 = resource_01;
+        this.resource_02 = resource_02;
         this.source = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                                     context,
@@ -60,17 +63,158 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0L;
     }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        HMAux item = source.get(position);
+        //
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
+            case Constant.MODULE_CHECKLIST:
+                return 0;
+            case Constant.MODULE_FORM_AP:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        //Resgata HmAux com as informações
+        HMAux item = source.get(position);
+        //
         if(convertView == null){
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            switch (getItemViewType(position)) {
+                case 0:
+                    convertView = mInflater.inflate(resource_01,parent,false);
+                    processFormItem(item,convertView);
+                    break;
+                case 1:
+                    convertView = mInflater.inflate(resource_02,parent,false);
+                    processFormAPItem(item,convertView);
+                    break;
+            }
+        }
+        //
+        return convertView;
+    }
+
+    private void processFormAPItem(HMAux item, View convertView) {
+        TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.namoa_ap_tv_form_ttl);
+        ImageView iv_sync_upload = (ImageView) convertView.findViewById(R.id.namoa_ap_iv_sync_upload);
+        TextView tv_type = (TextView) convertView.findViewById(R.id.namoa_ap_tv_type_label);
+        TextView tv_module_ttl = (TextView) convertView.findViewById(R.id.namoa_ap_tv_module_ttl);
+        TextView tv_form_label = (TextView) convertView.findViewById(R.id.namoa_ap_tv_form_label);
+        TextView tv_data_serv = (TextView) convertView.findViewById(R.id.namoa_ap_tv_data_serv_lbl);
+        TextView tv_product = (TextView) convertView.findViewById(R.id.namoa_ap_tv_product_lbl);
+        TextView tv_serial = (TextView) convertView.findViewById(R.id.namoa_ap_tv_serial_lbl);
+        TextView tv_ap_ttl = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_ttl);
+        TextView tv_ap_code = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_code_lbl);
+        TextView tv_ap_status = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_status_lbl);
+        TextView tv_ap_what = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_what_lbl);
+        TextView tv_ap_who = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_who_lbl);
+        TextView tv_ap_when = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_when_lbl);
+        //
+        TextView tv_type_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_type_val);
+        TextView tv_form_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_form_val);
+        TextView tv_data_serv_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_data_serv_val);
+        TextView tv_product_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_product_val);
+        TextView tv_serial_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_serial_val);
+        TextView tv_ap_code_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_code_val);
+        TextView tv_ap_status_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_status_val);
+        TextView tv_ap_what_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_what_val);
+        TextView tv_ap_when_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_when_val);
+        TextView tv_ap_who_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_who_val);
+        LinearLayout ll_action_btn = (LinearLayout) convertView.findViewById(R.id.namoa_ap_ll_action_btn);
+        //
+        tv_module_ttl.setText("N-Form AP -trad");
+        tv_module_ttl.setVisibility(View.VISIBLE);
+        //
+        ll_action_btn.setVisibility(View.GONE);
+        //
+        tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
+        if(item.get(GE_Custom_Form_ApDao.SYNC_REQUIRED).equals("1")){
+            iv_sync_upload.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_down_thick_black_24dp));
+            iv_sync_upload.setVisibility(View.VISIBLE);
+        }else if(item.get(GE_Custom_Form_ApDao.UPLOAD_REQUIRED).equals("1")){
+            iv_sync_upload.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_up_thick_black_24dp));
+            iv_sync_upload.setVisibility(View.VISIBLE);
+        }else{
+            iv_sync_upload.setVisibility(View.GONE);
+        }
+        tv_type.setText(hmAux_Trans.get("form_type_lbl"));
+        tv_type_val.setText(
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + " - " +
+                        item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE_DESC)
+        );
+        //
+        tv_form_label.setText(hmAux_Trans.get("form_code_lbl"));
+        tv_form_val.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + " - " +
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + " - " +
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DESC)
+        );
+        //
+        tv_data_serv.setText(hmAux_Trans.get("form_data_lbl"));
+        tv_data_serv_val.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
+        //
+        tv_product.setText(hmAux_Trans.get("product_code_lbl"));
+        tv_product_val.setText(
+                item.get(GE_Custom_Form_ApDao.PRODUCT_ID) + " - " +
+                        item.get(GE_Custom_Form_ApDao.PRODUCT_DESC)
+        );
+        //
+        tv_serial.setText(hmAux_Trans.get("serial_lbl"));
+        tv_serial_val.setText(item.get(GE_Custom_Form_ApDao.SERIAL_ID));
+        //
+        tv_ap_ttl.setText(hmAux_Trans.get("ap_ttl"));
+        //
+        tv_ap_code.setText(hmAux_Trans.get("ap_code_lbl"));
+        tv_ap_code_val.setText(
+                item.get(GE_Custom_Form_ApDao.AP_CODE) + " - " +
+                        item.get(GE_Custom_Form_ApDao.AP_DESCRIPTION)
+        );
+        tv_ap_status.setText(hmAux_Trans.get("ap_status_lbl"));
+        tv_ap_status_val.setText(
+                hmAux_Trans.get(item.get(
+                        GE_Custom_Form_ApDao.AP_STATUS
+                        )
+                )
+        );
+        ToolBox_Inf.setAPStatusColor(
+                context,
+                tv_ap_status_val,
+                item.get(GE_Custom_Form_ApDao.AP_STATUS)
+        );
+        tv_ap_what.setText(hmAux_Trans.get("ap_what_lbl"));
+        tv_ap_what_val.setText(
+                ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(item.get(GE_Custom_Form_ApDao.AP_WHAT)), 45)
+        );
+        tv_ap_who.setText(hmAux_Trans.get("ap_who_lbl"));
+        tv_ap_who_val.setText(
+                item.get(GE_Custom_Form_ApDao.AP_WHO_NICK)
+        );
+        tv_ap_when.setText( hmAux_Trans.get("ap_when_lbl"));
+        if(!item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()){
+            tv_ap_when_val.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_ApDao.AP_WHEN)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
+        }else{
+            tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHEN));
         }
 
-        //Resgata HmAux com as informações
-        HMAux item = source.get(position);
+    }
+
+    private void processFormItem(HMAux item, View convertView) {
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.module_schedules_cell_ll_bg);
         //
@@ -156,6 +300,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             case Constant.MODULE_CHECKLIST:
 
                 iv_main.setImageDrawable(context.getDrawable(R.drawable.ic_n_form));
+                //APÓS IMPLANTAÇÃO DO FORM_AP, ICONE FOI ESCONDIDO
+                iv_main.setVisibility(View.GONE);
                 //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
                 tv_main_lbl.setText(hmAux_Trans.get("CHECKLIST"));
 
@@ -185,7 +331,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
                 }
-            break;
+                break;
 
         }
 
@@ -200,9 +346,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             case Constant.CUSTOM_FORM_STATUS_FINALIZED:
                 llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
                 llBackground.setBackground(llDrawable);
-//                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
                 break;
 
             case Constant.CUSTOM_FORM_STATUS_SENT:
@@ -223,7 +366,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
         }
 
-        return convertView;
+
     }
 
     private void loadTranslation() {
@@ -241,6 +384,19 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("CHECKLIST");
         translateList.add("lbl_data_serv");
         translateList.add("lbl_date_schedule_start");
+        //Form_AP
+        translateList.add("form_ttl");
+        translateList.add("form_type_lbl");
+        translateList.add("form_code_lbl");
+        translateList.add("form_data_lbl");
+        translateList.add("product_code_lbl");
+        translateList.add("serial_lbl");
+        translateList.add("ap_ttl");
+        translateList.add("ap_code_lbl");
+        translateList.add("ap_status_lbl");
+        translateList.add("ap_what_lbl");
+        translateList.add("ap_who_lbl");
+        translateList.add("ap_when_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

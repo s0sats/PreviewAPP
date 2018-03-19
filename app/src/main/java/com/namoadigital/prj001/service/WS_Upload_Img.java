@@ -36,13 +36,15 @@ public class WS_Upload_Img extends IntentService {
         try {
 
             if (!ToolBox_Inf.isUploadRunning()) {
-                WBR_Upload_Img.IS_RUNNING = true;
+                //WBR_Upload_Img.IS_RUNNING = true;
                 //Chama notificação.
                 ToolBox_Inf.showNotification(
                         getApplicationContext(),
                         Constant.NOTIFICATION_UPLOAD
                 );
             }
+
+            WBR_Upload_Img.IS_RUNNING = true;
 
             Gson gson = new Gson();
             TUploadImg_Env env = new TUploadImg_Env();
@@ -73,9 +75,6 @@ public class WS_Upload_Img extends IntentService {
                         geFile.getFile_path(),
                         geFile.getFile_path_new()
                 );
-
-                // Hugo Erro
-                //throw new Exception("TimeOut Exception");
 
                 TUploadImg_Rec rec = gson.fromJson(
                         sResults,

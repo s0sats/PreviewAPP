@@ -126,13 +126,6 @@ public class WS_SO_Approval extends IntentService {
                 item.setClient_name(so.getClient_name());
             }
 
-//            item.setClient_date(so.getClient_approval_date());
-//            item.setClient_image(so.getClient_approval_image_name());
-//            item.setClient_type_sig(so.getClient_type().equals("CLIENT") ? so.getClient_approval_type_sig() : null);
-//
-//            item.setClient_user(so.getClient_approval_user());
-//            item.setClient_name(so.getClient_name());
-            //
             so_status.add(item);
         }
 

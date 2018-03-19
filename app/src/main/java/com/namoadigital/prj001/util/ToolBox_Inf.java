@@ -3,22 +3,28 @@ package com.namoadigital.prj001.util;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,17 +36,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.EV_ProfileDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -50,15 +63,20 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
+import com.namoadigital.prj001.model.CH_Room;
+import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt_Trans;
 import com.namoadigital.prj001.model.EV_Profile;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SM_SO_Service;
+import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
 import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -68,12 +86,31 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Message_Sql_020;
+import com.namoadigital.prj001.sql.CH_Message_Sql_022;
+import com.namoadigital.prj001.sql.CH_Message_Sql_023;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
+import com.namoadigital.prj001.sql.CH_Room_Sql_004;
+import com.namoadigital.prj001.sql.CH_Room_Sql_007;
+import com.namoadigital.prj001.sql.CH_Room_Sql_008;
+import com.namoadigital.prj001.sql.CH_Room_Sql_010;
+import com.namoadigital.prj001.sql.CH_Room_Sql_011;
+import com.namoadigital.prj001.sql.CH_Room_Sql_012;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_010;
+import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
@@ -83,13 +120,20 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
+import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -98,6 +142,10 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
@@ -109,7 +157,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -126,6 +177,46 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 public class ToolBox_Inf {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf";
+
+    private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
+
+    private static Map<Character, Character> initAccentMap() {
+        Map<Character, Character> map = new HashMap<Character, Character>();
+        //
+        map.put('à', 'a');
+        map.put('á', 'a');
+        map.put('â', 'a');
+        map.put('ã', 'a');
+        map.put('ä', 'a');
+        map.put('å', 'a');
+        map.put('ç', 'c');
+        map.put('č', 'c');
+        map.put('ć', 'c');
+        map.put('è', 'e');
+        map.put('é', 'e');
+        map.put('ê', 'e');
+        map.put('ë', 'e');
+        map.put('ì', 'i');
+        map.put('í', 'i');
+        map.put('î', 'i');
+        map.put('ï', 'i');
+        map.put('ñ', 'n');
+        map.put('ò', 'o');
+        map.put('ó', 'o');
+        map.put('ô', 'o');
+        map.put('õ', 'o');
+        map.put('ö', 'o');
+        map.put('ø', 'o');
+        map.put('ß', 's');
+        map.put('§', 's');
+        map.put('ù', 'u');
+        map.put('ú', 'u');
+        map.put('û', 'u');
+        map.put('ü', 'u');
+        map.put('ÿ', 'y');
+        //
+        return map;
+    }
 
     public static void mkDirectory() {
         File dirDB = new File(Constant.DB_PATH);
@@ -171,6 +262,16 @@ public class ToolBox_Inf {
         File dirToken = new File(Constant.TOKEN_PATH);
         if (!dirToken.exists()) {
             dirToken.mkdir();
+        }
+
+        File dirChat = new File(Constant.CHAT_PATH);
+        if (!dirChat.exists()) {
+            dirChat.mkdir();
+        }
+
+        File dirChatImage = new File(Constant.CACHE_CHAT_PATH);
+        if (!dirChatImage.exists()) {
+            dirChatImage.mkdir();
         }
 
         File dirCamTest = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
@@ -378,6 +479,139 @@ public class ToolBox_Inf {
         }
     }
 
+    public static String uploadFileChat(String json, String sFile, String sNewName) {
+        try {
+            //Como no processo de SO a foto pode mudar de nome,
+            //Verifica qual o nome o arquivo esta no momento.
+            String sRealFileName = sNewName != null ? sNewName : sFile;
+            // Set your file path here
+            FileInputStream fstrm = new FileInputStream(Constant.CACHE_PATH_PHOTO + "/" + sRealFileName);
+
+            // Set your server page url (and the file title/description)
+            HttpFileUpload hfu = new HttpFileUpload(
+                    //Constant.WS_UPLOAD_CHAT
+                    Constant.WS_UPLOAD_NODE_CHAT
+                    , json);
+
+            return hfu.Send_Now(fstrm, sFile);
+
+        } catch (Exception e) {
+            String error = e.toString();
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return "Error: " + e.toString();
+        }
+    }
+
+    // Testar como substituto
+    public static String multiPartRequest(String urlTo, String post, String filepath, String filefield) throws ParseException, IOException {
+        HttpURLConnection connection = null;
+        DataOutputStream outputStream = null;
+        InputStream inputStream = null;
+
+        String twoHyphens = "--";
+        String boundary = "*****" + Long.toString(System.currentTimeMillis()) + "*****";
+        String lineEnd = "\r\n";
+
+        String result = "";
+
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
+
+        String[] q = filepath.split("/");
+        int idx = q.length - 1;
+
+        try {
+            File file = new File(filepath);
+            FileInputStream fileInputStream = new FileInputStream(file);
+
+            URL url = new URL(urlTo);
+            connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0");
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+            outputStream = new DataOutputStream(connection.getOutputStream());
+            outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"" + filefield + "\"; filename=\"" + q[idx] + "\"" + lineEnd);
+            //outputStream.writeBytes("Content-Type: image/jpeg" + lineEnd);
+            outputStream.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
+            outputStream.writeBytes(lineEnd);
+
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            while (bytesRead > 0) {
+                outputStream.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            }
+
+            outputStream.writeBytes(lineEnd);
+
+            // Upload POST Data
+            String[] posts = post.split("&");
+            int max = posts.length;
+            for (int i = 0; i < max; i++) {
+                outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                String[] kv = posts[i].split("=");
+                outputStream.writeBytes("Content-Disposition: form-data; name=\"" + kv[0] + "\"" + lineEnd);
+                outputStream.writeBytes("Content-Type: text/plain" + lineEnd);
+                outputStream.writeBytes(lineEnd);
+                outputStream.writeBytes(kv[1]);
+                outputStream.writeBytes(lineEnd);
+            }
+
+            outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+            inputStream = connection.getInputStream();
+            result = convertStreamToString(inputStream);
+
+            fileInputStream.close();
+            inputStream.close();
+            outputStream.flush();
+            outputStream.close();
+
+            return result;
+        } catch (Exception e) {
+            Log.e("MultipartRequest", "Multipart Form Upload Error");
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
+    private static String convertStreamToString(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
+// see http://www.androidsnippets.com/multipart-http-requests
+
+
     public static String uploadFileSupport(String ws_url, String json, String sPath, String sFile) {
         try {
             // Set your file path here
@@ -561,6 +795,11 @@ public class ToolBox_Inf {
         deleteDownloadFileInf(sName, Constant.CACHE_PATH);
     }
 
+    public static void deleteDownloadFileInfV2(String sName) {
+        deleteDownloadFileInf(sName, Constant.CACHE_PATH_PHOTO);
+    }
+
+
     public static void deleteDownloadFileInf(String sName, String path) {
         File file = new File(path + "/" + sName);
 
@@ -572,6 +811,13 @@ public class ToolBox_Inf {
     public static void renameDownloadFileInf(String sName, String ext) {
         File from = new File(Constant.CACHE_PATH + "/", sName + ".tmp");
         File to = new File(Constant.CACHE_PATH + "/", sName + ext);
+        //
+        from.renameTo(to);
+    }
+
+    public static void renameDownloadFileInf(String sName, String ext, String path) {
+        File from = new File(path + "/", sName + ".tmp");
+        File to = new File(path + "/", sName + ext);
         //
         from.renameTo(to);
     }
@@ -603,6 +849,10 @@ public class ToolBox_Inf {
 
     public static boolean verifyDownloadFileInf(String sName) {
         return verifyDownloadFileInf(sName, Constant.CACHE_PATH);
+    }
+
+    public static boolean verifyDownloadFileInfV2(String sName) {
+        return verifyDownloadFileInf(sName, Constant.CACHE_PATH_PHOTO);
     }
 
     public static boolean verifyFileExists(String sName) {
@@ -938,7 +1188,6 @@ public class ToolBox_Inf {
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
         Intent mIntent = new Intent(context, WS_Notification_Sync.class);
-        ;
 
         PendingIntent pi = PendingIntent.getService(
                 context,
@@ -1669,6 +1918,7 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("mdots_user_title", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_user_title") || Constant.HMAUX_TRANS_LIB.get("mdots_user_title").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_user_title) : Constant.HMAUX_TRANS_LIB.get("mdots_user_title")));
         Constant.HMAUX_TRANS_LIB.put("mdots_non_compliance", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_non_compliance") || Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_non_compliance) : Constant.HMAUX_TRANS_LIB.get("mdots_non_compliance")));
         Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_ok", (!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_ok") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.sys_alert_btn_ok) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_ok")));
+        Constant.HMAUX_TRANS_LIB.put("sys_alert_btn_cancel", (!Constant.HMAUX_TRANS_LIB.containsKey("sys_alert_btn_cancel") || Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_cancel").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.sys_alert_btn_cancel) : Constant.HMAUX_TRANS_LIB.get("sys_alert_btn_cancel")));
         Constant.HMAUX_TRANS_LIB.put("footer_label", (!Constant.HMAUX_TRANS_LIB.containsKey("footer_label") || Constant.HMAUX_TRANS_LIB.get("footer_label").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.footer_label) : Constant.HMAUX_TRANS_LIB.get("footer_label")));
     }
 
@@ -2035,6 +2285,32 @@ public class ToolBox_Inf {
         }
     }
 
+    public static long dateToMillisecondsChat(String date_tmz, String type) {
+        String sFormat = "";
+
+        if (date_tmz != null && date_tmz.isEmpty()) {
+            return 0L;
+        }
+
+        if (type.equalsIgnoreCase("SECOND")) {
+            sFormat = "yyyy-MM-dd HH:mm";
+        } else {
+            sFormat = "yyyy-MM-dd HH:mm:ss";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sFormat);
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(date_tmz));
+            return calendar.getTimeInMillis();
+        } catch (ParseException e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return 0L;
+        }
+    }
+
+
     public static String millisecondsToString(long mils, String format) {
 
         String sResults = "";
@@ -2272,12 +2548,46 @@ public class ToolBox_Inf {
         );
     }
 
+    public static ArrayList<HMAux> statusList(HMAux hmAux_trans, String... status) {
+        ArrayList<HMAux> statusList = new ArrayList<>();
+        //
+        String[] mStatus = {
+                Constant.SYS_STATUS_EDIT,
+                Constant.SYS_STATUS_PROCESS,
+                Constant.SYS_STATUS_WAITING_ACTION,
+                Constant.SYS_STATUS_DONE,
+                Constant.SYS_STATUS_CANCELLED
+        };
 
-    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val) {
+        for (int i = 0; i < mStatus.length; i++) {
+            if (mStatus != null && mStatus.length > 0 && Arrays.asList(status).contains(mStatus[i])) {
+                continue;
+            } else {
+                HMAux hmAux = new HMAux();
+                hmAux.put(SearchableSpinner.ID, mStatus[i]);
+                hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_trans.get(mStatus[i]));
+                //
+                statusList.add(hmAux);
+            }
+
+        }
+        //
+        return statusList;
+    }
+
+    public static void setSSmValue(SearchableSpinner ss_component, String code, String desc, boolean source_val, String... extra) {
         HMAux hmAux = new HMAux();
         hmAux.put(SearchableSpinner.ID, code);
         hmAux.put(SearchableSpinner.DESCRIPTION, desc);
-        ss_component.setmValue(hmAux);
+        //
+        if (extra.length > 0 && extra.length % 2 == 0) {
+            for (int i = 0; i < extra.length; i += 2) {
+                hmAux.put(extra[i], extra[i + 1]);
+            }
+        }
+        //
+        ss_component.setmValue(hmAux, source_val);
+        //
         if (source_val) {
             ss_component.setTag(code);
         }
@@ -2479,6 +2789,26 @@ public class ToolBox_Inf {
         }
     }
 
+    public static Double convertStringToDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String prepareForNull(String value) {
+        try {
+            if (value.trim().length() != 0) {
+                return value.trim();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void cleanUpApproval(Context context, SM_SODao sm_soDao) {
         String approval_type = ToolBox_Con.getApproval_Type(context);
         //
@@ -2589,4 +2919,1166 @@ public class ToolBox_Inf {
             }
         }
     }
+
+    public static String getWebSocketJsonParam(String socket_arg) {
+        try {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            //
+            Chat_Obj obj = gson.fromJson(socket_arg, Chat_Obj.class);
+            //
+            if (obj != null) {
+                return obj.getObj().toString();
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return null;
+        }
+        return null;
+    }
+
+    public static String setWebSocketJsonParam(Object emit_param) {
+        try {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            Chat_Obj chatObj = new Chat_Obj();
+
+            chatObj.setObj(gson.toJsonTree(emit_param));
+
+            if (chatObj.getObj() != null) {
+                return gson.toJson(chatObj);
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return null;
+        }
+        return null;
+    }
+
+    public static String getRoomObjJsonParam(String socket_arg) {
+        try {
+            JSONObject jsonObject = new JSONObject(socket_arg);
+           /* Iterator<String> key = jsonObject.keys();
+            String key_name = key.next();
+            JSONObject obj = jsonObject.getJSONObject(key_name);*/
+            JSONObject obj = jsonObject.getJSONObject(jsonObject.keys().next());
+            //
+            if (obj != null) {
+                return obj.toString();
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+            return null;
+        }
+        return null;
+    }
+
+    public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key) {
+        boolean ret = true;
+        //
+        for (HMAux hmAux : hmAuxList) {
+            boolean hasError = addJsonObjAsHmAuxKey(hmAux, key);
+            if (ret) {
+                ret = hasError;
+            }
+        }
+        return ret;
+    }
+
+    public static boolean addJsonObjAsHmAuxKey(HMAux hmAux, String key) {
+        JSONObject json = null;
+        //
+        try {
+            json = new JSONObject(String.valueOf(hmAux.get(key)));
+            //
+            if (json.length() > 0) {
+                Iterator<String> root = json.keys();
+
+                if (root.hasNext()) {
+                    JSONObject innerJson = json.getJSONObject(root.next());
+
+                    for (Iterator<String> iter = innerJson.keys(); iter.hasNext(); ) {
+                        String json_key = iter.next();
+
+                        String json_new_key = key + "_" + json_key;
+
+                        hmAux.put(json_new_key, innerJson.getString(json_key));
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } catch (JSONException e) {
+            //registerException(CLASS_NAME,e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean addJsonStringAsHmAux(HMAux hmAux, String value) {
+        JSONObject json = null;
+        //
+        try {
+            json = new JSONObject(value);
+            //
+            if (json.length() > 0) {
+
+                for (Iterator<String> iter = json.keys(); iter.hasNext(); ) {
+                    String json_key = iter.next();
+                    hmAux.put(json_key, json.getString(json_key));
+                }
+                return true;
+
+            } else {
+                return false;
+            }
+        } catch (JSONException e) {
+            //registerException(CLASS_NAME,e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public static boolean createThumbNail_Images(String path, String original) {
+
+        try {
+            File image = new File(path + "/" + original);
+
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(image.getPath(), bounds);
+            if ((bounds.outWidth == -1) || (bounds.outHeight == -1))
+                return false;
+
+            int originalSize = (bounds.outHeight > bounds.outWidth) ? bounds.outHeight
+                    : bounds.outWidth;
+
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inSampleSize = originalSize / 512;
+
+            Bitmap imgFinal = BitmapFactory.decodeFile(image.getPath(), opts);
+
+            File file = new File(Constant.THU_PATH + "/" + original.replace(".jpg", "") + "_thumb.jpg");
+
+            if (file.exists()) {
+                file.delete();
+            }
+
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+
+            imgFinal.compress(Bitmap.CompressFormat.JPEG, 25, os);
+
+            os.flush();
+            os.close();
+
+            return true;
+
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
+            return false;
+        }
+
+    }
+
+    synchronized public static long chatNextMSGCode(Context context) {
+
+        long nextID = ToolBox_Con.getPreference_Chat_Msg_Code(context);
+        //
+        /*String mPrefix = yearMonthPrefix();
+        //
+        if (mPrefix.equalsIgnoreCase(ToolBox_Con.getPreference_Chat_Msg_Prefix(context))) {
+            ToolBox_Con.setPreference_Chat_Msg_Code(context, ++nextID);
+            //Log.d("Chat","NEXT_TMP ->" + String.valueOf(nextID));
+            return nextID;
+        } else {
+            ToolBox_Con.setPreference_Chat_Msg_Prefix(context, mPrefix);
+            Log.d("Chat", "NEXT_TMP ->" + String.valueOf(nextID));
+            return 101L;
+        }*/
+        ToolBox_Con.setPreference_Chat_Msg_Code(context, ++nextID);
+        return nextID;
+    }
+
+    synchronized public static long chatNextMSGToken(Context context) {
+        long nextToken = ToolBox_Con.getPreference_Chat_Msg_Token(context);
+        //
+        ToolBox_Con.setPreference_Chat_Msg_Token(context, ++nextToken);
+        return nextToken;
+    }
+
+    public static String yearMonthPrefix() {
+        /*SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        //
+        Calendar cAux = Calendar.getInstance();
+        //
+        return sdf.format(cAux.getTime());*/
+        //Como não existirá mais prefix temporario, retorna 0
+        //Remover a chamada desse metodo após modificação da pk
+        return "0";
+    }
+
+    public static void sendBRChat(Context context, String type) {
+        Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+    }
+
+    public static void sendBRChat(Context context, String type, HMAux param) {
+        Intent mIntent = new Intent(Constant.CHAT_BR_FILTER);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(Constant.CHAT_BR_TYPE, type);
+        mIntent.putExtra(Constant.CHAT_BR_PARAM, (Serializable) param);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+    }
+
+    public static void sendBRChatDownloadUpdate(Context context, HMAux param) {
+        Intent mIntent = new Intent(Constant.CHAT_BR_FILTER_DOWNLOAD);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(Constant.CHAT_BR_PARAM, (Serializable) param);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+    }
+
+    public static String lPad(int qtd, int msg) {
+        return String.format("%0" + qtd + "d", msg);
+
+    }
+
+
+    public static float convertDpToPixel(Context context, float dp) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    public static void showChatNotification(Context context, String type, String attempt, boolean showAnyway) {
+        showChatNotification(context, type, attempt, "", "", showAnyway);
+    }
+
+    //
+//    public static void showChatNotification(Context context, String type, String attempt, String title, String message) {
+//        //
+//        HMAux hmAux_trans = null;
+//
+//        List<String> translateList = new ArrayList<>();
+//        //
+//        hmAux_trans = ToolBox_Inf.setLanguage(
+//                context,
+//                Constant.APP_MODULE,
+//                ToolBox_Inf.getResourceCode(
+//                        context,
+//                        Constant.APP_MODULE,
+//                        "sys"
+//                ),
+//                ToolBox_Con.getPreference_Translate_Code(context),
+//                translateList
+//        );
+//        //
+//        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+//            //Necessidade de incluir arquivo de String ?!
+//        }
+//        //
+//        NotificationManager nm = (NotificationManager)
+//                context.getSystemService(NOTIFICATION_SERVICE);
+//        //
+//        RemoteViews view =
+//                new RemoteViews(context.getPackageName(), R.layout.notification_chat_msg);
+//        //
+//        Intent mIntent = new Intent(context, NotificationReceiver.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//        PendingIntent pi = PendingIntent.getBroadcast(
+//                context,
+//                0,
+//                mIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT
+//        );
+//
+//        try {
+//            switch (type) {
+//                case Constant.CHAT_NOTIFICATION_TYPE_MESSAGE:
+//                    CH_RoomDao roomDao = new CH_RoomDao(context);
+//                    //
+//                    HMAux msgInfo =
+//                            roomDao.getByStringHM(
+//                                    new Sql_Chat_Notification_001(
+//                                            ToolBox_Con.getPreference_User_Code(context)
+//                                    ).toSqlQuery()
+//                            );
+//                    //
+//                    if (msgInfo != null && msgInfo.size() > 0) {
+//                        view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
+//                        if (
+//                                msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
+//                                        msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
+//                                ) {
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_1,
+//                                    msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
+//                            );
+//                            HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
+//                            //
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_2,
+//                                    msgAux.get("type").equals("TEXT") ? msgAux.get("data") : msgAux.get("type")
+//                            );
+//
+//                        } else {
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_1,
+//                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
+//                            );
+//                            view.setTextViewText(
+//                                    R.id.notification_chat_msg_tv_msg_2,
+//                                    msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
+//                            );
+//                        }
+//
+//                    }
+//                    break;
+//                case Constant.CHAT_NOTIFICATION_TYPE_RECONNECTING:
+//                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.sync_notification_animation);
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_1,
+//                            hmAux_trans.get("chat_no_connecton_lbl")
+//                    );
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_2,
+//                            hmAux_trans.get("chat_reconnection_attempt") + "  " + attempt
+//                    );
+//                    break;
+//
+//                case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
+//                    view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_1,
+//                            //title
+//                            hmAux_trans.get("chat_fcm_offline_ttl")
+//                    );
+//                    view.setTextViewText(
+//                            R.id.notification_chat_msg_tv_msg_2,
+//                            //message,
+//                            hmAux_trans.get("chat_fcm_offline_msg")
+//                    );
+//
+//                    break;
+//            }
+//
+//            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+//            //builder.setSmallIcon(type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) ? R.mipmap.ic_namoa : R.drawable.sync_notification_animation);
+//            builder.setAutoCancel(true);
+//            builder.setContent(view);
+//            //builder.setCustomBigContentView(view);
+//
+//            if (type.equals(Constant.CHAT_NOTIFICATION_TYPE_MESSAGE) || type.equals(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
+//                // builder.setSound(alarmSound);
+//                builder.setSound(Uri.parse("android.resource://"
+//                        + context.getPackageName() + "/" + R.raw.morfador));
+//
+//                builder.setContentIntent(pi);
+//
+//                builder.setSmallIcon(R.drawable.ic_chat_24x24);
+//            } else {
+//                builder.setSmallIcon(R.drawable.sync_notification_animation);
+//            }
+//            Notification notification = builder.build();
+//            //
+//            nm.notify(Constant.NOTIFICATION_CHAT_MSG, notification);
+//
+//        } catch (Exception e) {
+//            registerException(CLASS_NAME, e);
+//        }
+//
+//    }
+    public static void showChatRoomNotification(Context context) {
+        HMAux hmAux_trans = null;
+        List<String> translateList = new ArrayList<>();
+        //
+        hmAux_trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+            //Necessidade de incluir arquivo de String ?!
+        }
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_chat_24x24);
+        builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
+        if(Constant.DEVELOPMENT_BASE) {
+            builder.setSound(Uri.parse("android.resource://"
+                    + context.getPackageName() + "/" + R.raw.morfador));
+        }else {
+            builder.setSound(alarmSound);
+        }
+
+        builder.setContentTitle(hmAux_trans.get("notification_add_room_ttl"));
+        builder.setContentText(hmAux_trans.get("notification_add_room_msg"));
+
+        Notification notification = builder.build();
+        //
+        nm.notify(Constant.NOTIFICATION_CHAT_ROOM, notification);
+    }
+
+    public static void cancelChatRoomNotification(Context context) {
+        cancelNotification(context, Constant.NOTIFICATION_CHAT_ROOM);
+    }
+
+    public static void showChatNotification(Context context, String type, String attempt, String title, String message, boolean showAnyway) {
+        //
+        boolean show_notification = false;
+        HMAux hmAux_trans = null;
+        List<String> translateList = new ArrayList<>();
+        //
+        hmAux_trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+        //
+        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+            //Necessidade de incluir arquivo de String ?!
+        }
+        //
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Intent mIntent = new Intent(context, NotificationReceiver.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pi = PendingIntent.getBroadcast(
+                context,
+                0,
+                mIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_chat_24x24);
+        builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
+        if(Constant.DEVELOPMENT_BASE) {
+            builder.setSound(Uri.parse("android.resource://"
+                    + context.getPackageName() + "/" + R.raw.morfador));
+        }else {
+            builder.setSound(alarmSound);
+        }
+        builder.setContentIntent(pi);
+        try {
+            switch (type) {
+                case Constant.CHAT_NOTIFICATION_TYPE_MESSAGE:
+                    CH_RoomDao roomDao = new CH_RoomDao(context);
+                    //
+                    HMAux msgInfo =
+                            roomDao.getByStringHM(
+                                    new Sql_Chat_Notification_001(
+                                            ToolBox_Con.getPreference_User_Code(context)
+                                    ).toSqlQuery()
+                            );
+                    //
+                    if (msgInfo != null && msgInfo.size() > 0) {
+                        if (msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("0") ||
+                                msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("0")) {
+                            show_notification = false;
+                        } else {
+                            show_notification = true;
+
+                            if (!showAnyway && Act035_Main.mRoom_code != null && Act035_Main.mRoom_code.equalsIgnoreCase(msgInfo.get("room_code"))) {
+                                return;
+                            }
+
+                            /*if (msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1")) {
+                                mIntent = new Intent(context, NotificationReceiver.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mIntent.putExtra("room_code", msgInfo.get("room_code"));
+
+                                pi = PendingIntent.getBroadcast(
+                                        context,
+                                        0,
+                                        mIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+
+                                builder.setContentIntent(pi);
+                            } else {
+                            }*/
+                            //Se msg são de apenas um customer, passa como parametro
+                            if (msgInfo.get(Sql_Chat_Notification_001.QTY_CUSTOMER).equals("1")) {
+                                mIntent = new Intent(context, NotificationReceiver.class);
+                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mIntent.putExtra(CH_RoomDao.CUSTOMER_CODE, Long.parseLong(msgInfo.get(CH_RoomDao.CUSTOMER_CODE)));
+                                //
+                                pi = PendingIntent.getBroadcast(
+                                        context,
+                                        0,
+                                        mIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+
+                                builder.setContentIntent(pi);
+                            }
+
+                            if (
+                                    msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
+                                            msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
+                                    ) {
+                                builder.setContentTitle(
+                                        msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
+                                );
+                                HMAux msgAux = getChatMsgContent(msgInfo.get(Sql_Chat_Notification_001.LAST_MSG));
+                                //
+                                switch (msgAux.get("type")) {
+                                    case Constant.CHAT_MESSAGE_TYPE_TEXT:
+                                        builder.setContentText(
+                                                msgAux.get("data")
+                                        );
+                                        break;
+                                    case Constant.CHAT_MESSAGE_TYPE_TRANSLATE:
+                                        String transMsg = "";
+                                        if (msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE) != null) {
+                                            transMsg =
+                                                    msgAux.get("data").replace(
+                                                            msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE) + "|",
+                                                            hmAux_trans.get(msgAux.get(Constant.CHAT_MESSAGE_TYPE_TRANSLATE))
+                                                    );
+                                        } else {
+                                            transMsg = Constant.CHAT_MESSAGE_TYPE_TRANSLATE;
+                                        }
+                                        //
+                                        builder.setContentText(transMsg);
+                                        //
+                                        break;
+                                    default:
+                                        builder.setContentText(
+                                                hmAux_trans.get(
+                                                        msgAux.get("type")
+                                                )
+                                        );
+                                }
+
+                            } else {
+                                builder.setContentTitle(
+                                        msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM) + " " + hmAux_trans.get("notification_rooms_lbl")
+                                );
+
+                                builder.setContentText(
+                                        msgInfo.get(Sql_Chat_Notification_001.QTY_MSG) + " " + hmAux_trans.get("notification_messages_lbl")
+                                );
+                            }
+                        }
+                    }
+                    break;
+                case Constant.CHAT_NOTIFICATION_TYPE_CHAT:
+                    show_notification = true;
+                    //view.setImageViewResource(R.id.notification_chat_msg_iv_icon, R.drawable.ic_chat_24x24);
+                    builder.setContentTitle(
+                            hmAux_trans.get("chat_fcm_offline_ttl")
+                    );
+                    builder.setContentText(
+                            hmAux_trans.get("chat_fcm_offline_msg")
+                    );
+
+                    break;
+                default:
+                    show_notification = false;
+            }
+            if (show_notification) {
+                Notification notification = builder.build();
+                //
+                nm.notify(Constant.NOTIFICATION_CHAT_MSG, notification);
+            }
+
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
+        }
+
+    }
+
+    public static void cancelChatNotification(Context context) {
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(Constant.NOTIFICATION_CHAT_MSG);
+    }
+
+    public static HMAux getChatMsgContent(String msg_obj) {
+        HMAux hmAux = new HMAux();
+        //
+        try {
+            JSONObject jsonObj = new JSONObject(msg_obj);
+            JSONObject jsonMsg = jsonObj.getJSONObject("message");
+            hmAux.put("type", String.valueOf(jsonMsg.getString("type")));
+            hmAux.put("data", String.valueOf(jsonMsg.getString("data")));
+            if (String.valueOf(jsonMsg.getString("type")).equals(Constant.CHAT_MESSAGE_TYPE_TRANSLATE)) {
+                try {
+                    String[] translation =
+                            String.valueOf(jsonMsg.getString("data"))
+                                    .replace("|", Constant.MAIN_CONCAT_STRING)
+                                    .split(Constant.MAIN_CONCAT_STRING);
+                    hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE, translation[0]);
+                } catch (Exception e) {
+                    hmAux.put(Constant.CHAT_MESSAGE_TYPE_TRANSLATE, Constant.CHAT_MESSAGE_TYPE_TRANSLATE);
+                }
+            }
+            return hmAux;
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
+            return hmAux;
+        }
+    }
+
+    /**
+     * Valida se usr tem as preferencias de user, customer e session preenchidas
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isUsrAppLogged(Context context) {
+        boolean logged =
+                !ToolBox_Con.getPreference_User_Code(context).equals("")
+                        && ToolBox_Con.getPreference_Customer_Code(context) != -1
+                        && !ToolBox_Con.getPreference_Session_App(context).equals("");
+        return logged;
+    }
+
+    public static boolean equalDate(String dtStart, String dtEnd) {
+        try {
+            String sDtStart[] = dtStart.split(" ");
+            String sDtEnd[] = dtEnd.split(" ");
+
+            if (sDtStart[0].equalsIgnoreCase(sDtEnd[0])) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public static boolean isToday_Yesterday(long date, boolean today) {
+        Calendar now = Calendar.getInstance();
+        Calendar cdate = Calendar.getInstance();
+        cdate.setTimeInMillis(date);
+
+        if (today) {
+            now.add(Calendar.DATE, 0);
+        } else {
+            now.add(Calendar.DATE, -1);
+        }
+
+        return now.get(Calendar.YEAR) == cdate.get(Calendar.YEAR)
+                && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
+                && now.get(Calendar.DAY_OF_MONTH) == cdate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static String getSafeSubstring(String s, int maxLength) {
+        if (!TextUtils.isEmpty(s)) {
+            if (s.length() >= maxLength) {
+                return s.substring(0, maxLength) + " ...";
+            }
+        }
+        return s;
+    }
+
+    public static String getBreakNewLine(String s) {
+        try {
+            String[] lines = s.split("\\r?\\n");
+            //
+            if (lines != null && lines.length > 0) {
+                return lines[0];
+            } else {
+                return "";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static void cleanRoom_RoomMessages(Context context) {
+        CH_RoomDao mRoomDao = new CH_RoomDao(context);
+
+        /**
+         * Marcar os customer que estao locais mas que nao vieram da lista para serem ignorados no processo de limpeza
+         */
+        mRoomDao.addUpdate(new CH_Room_Sql_012(
+                ).toSqlQuery()
+        );
+
+        ArrayList<File> imagesList = new ArrayList<>();
+        //
+        ArrayList<HMAux> mRooms = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Room_Sql_008().toSqlQuery()
+        );
+
+        ArrayList<HMAux> mRoomsImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Room_Sql_010().toSqlQuery()
+        );
+
+        try {
+            for (HMAux aux : mRoomsImages) {
+                imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+
+        ArrayList<HMAux> mRoomsMessagesImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Message_Sql_023().toSqlQuery()
+        );
+
+        try {
+            for (HMAux aux : mRoomsMessagesImages) {
+                imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                imagesList.add(new File(Constant.THU_PATH + "/" +
+                        aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                        Constant.THUMB_SUFFIX + ".jpg"));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+
+        deleteFileListExceptionSafe(imagesList);
+
+        for (HMAux aux : mRooms) {
+            // Remove Messages of this Room
+            mRoomDao.remove(
+                    new CH_Message_Sql_022(
+                            aux.get(CH_RoomDao.ROOM_CODE)
+                    ).toSqlQuery()
+            );
+            // Remove Room
+            mRoomDao.remove(new CH_Room_Sql_004(
+                            aux.get(CH_RoomDao.ROOM_CODE)
+                    ).toSqlQuery()
+            );
+        }
+
+        mRoomDao.addUpdate(new CH_Room_Sql_007(
+                ).toSqlQuery()
+        );
+    }
+
+    public static void cleanRoom_RoomMessages(Context context, CH_Room ch_room) {
+        CH_RoomDao mRoomDao = new CH_RoomDao(context);
+
+        ArrayList<File> imagesList = new ArrayList<>();
+        //
+        ArrayList<HMAux> mRoomsImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Room_Sql_011(ch_room.getRoom_code()).toSqlQuery()
+        );
+        //
+        try {
+            for (HMAux aux : mRoomsImages) {
+                imagesList.add(new File(Constant.CACHE_CHAT_PATH + "/" + aux.get(CH_RoomDao.ROOM_IMAGE_LOCAL)));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+        //
+        ArrayList<HMAux> msgImages = (ArrayList<HMAux>) mRoomDao.query_HM(
+                new CH_Message_Sql_020(
+                        ch_room.getRoom_code()
+                ).toSqlQuery()
+        );
+        try {
+            //
+            for (HMAux aux : msgImages) {
+                imagesList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL)));
+                imagesList.add(new File(Constant.THU_PATH + "/" +
+                        aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).substring(0, aux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).length() - 4) +
+                        Constant.THUMB_SUFFIX + ".jpg"));
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+
+        deleteFileListExceptionSafe(imagesList);
+
+        // Remove Messages of this Room
+        mRoomDao.remove(
+                new CH_Message_Sql_022(
+                        ch_room.getRoom_code()
+                ).toSqlQuery()
+        );
+        // Remove Room
+        mRoomDao.remove(new CH_Room_Sql_004(
+                        ch_room.getRoom_code()
+                ).toSqlQuery()
+        );
+    }
+
+    public static boolean isScreenOn(Context context) {
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isOn = pm.isScreenOn();
+
+        return isOn;
+    }
+
+    public static boolean isUsrAdmin(Context context) {
+        EV_UserDao userDao = new EV_UserDao(context);
+        //
+        EV_User ev_user = userDao.getByString(
+                new EV_User_Sql_001(
+                        ToolBox_Con.getPreference_User_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return ev_user != null && ev_user.getAdmin() == 1;
+    }
+
+    public static void showChatAdminInfo(Context context, HMAux hmAuxTrans) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.chat_admin_dialog, null);
+        //
+        TextView tv_service_status = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_service_status);
+        TextView tv_socket_status = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_status);
+        TextView tv_socket_logged = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_logged);
+        TextView tv_socket_id = (TextView) view.findViewById(R.id.chat_admin_dialog_tv_socket_id);
+        //
+        tv_service_status.setText(AppBackgroundService.isRunning ? "Rodando" : "Parado");
+        tv_socket_status.setText(SingletonWebSocket.isSocketSetted() ? "Setado" : "Nullo");
+        tv_socket_logged.setText(SingletonWebSocket.ismSocketLogged() ? "Logado" : "Deslogado");
+        tv_socket_id.setText(SingletonWebSocket.isSocketSetted() ? SingletonWebSocket.mSocket.id() : "Socket não setado");
+        //
+        builder
+                .setTitle("Debug Info Chat")
+                .setView(view)
+                .setCancelable(true)
+                .setPositiveButton("OK", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    public static int colorIndex = 0;
+
+    private static int userColors[] = {
+            0xFFFF0000,
+            0xFF868A08,
+            0xFF40FF00,
+            0xFF01DFA5,
+            0xFF01A9DB,
+            0xFF0101DF,
+            0xFFA901DB,
+            0xFFDF01A5,
+            0xFFFF0040,
+            0xFFFF8000
+    };
+
+    public static int userColor() {
+        if (colorIndex >= userColors.length) {
+            colorIndex = 0;
+        }
+        //
+        return userColors[colorIndex++];
+    }
+
+    public static String AccentMapper(String string) {
+        //
+        if (string == null) {
+            return "";
+        }
+        //
+        StringBuilder sb = new StringBuilder(string);
+        //
+        for (int i = 0; i < string.length(); i++) {
+            Character c = ACCENT_MAP.get(sb.charAt(i));
+            if (c != null) {
+                sb.setCharAt(i, c.charValue());
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static String getCustomerSession(Context context, String user_code, long customer_code) {
+        String session_app = null;
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        HMAux session_info = userCustomerDao.getByStringHM(
+                new EV_User_Customer_Sql_008(
+                        user_code,
+                        customer_code
+                ).toSqlQuery()
+        );
+        //
+        if (session_info != null && session_info.size() > 0) {
+            session_app = session_info.get(EV_User_CustomerDao.SESSION_APP);
+        }
+        //
+        return session_app;
+    }
+
+    public static ArrayList<HMAux> getSessionCustomerChatList(Context context) {
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
+                query_HM(
+                        new EV_User_Customer_Sql_007(
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        return customer_list;
+    }
+
+    public static ArrayList<HMAux> getActiveCustomerSession(Context context) {
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
+                query_HM(
+                        new EV_User_Customer_Sql_010(
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        return customer_list;
+    }
+
+    public static String returnHmAuxListInString(ArrayList<HMAux> auxList, String key, String separator) {
+        String hmAuxInLine = "";
+        separator = separator == null ? "," : separator;
+        //
+        for (HMAux hmAux : auxList) {
+            if (hmAux.containsKey(key)) {
+                hmAuxInLine += hmAux.get(key) + separator;
+            }
+        }
+        //
+        hmAuxInLine = hmAuxInLine.length() > 0 ? hmAuxInLine.substring(0, hmAuxInLine.length() - 1) : "";
+        //
+        return hmAuxInLine;
+    }
+
+    public static JsonArray arrayListToJsonArray(ArrayList<?> arrayList) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        JsonArray jsonArray = new JsonArray();
+        //
+        for (int i = 0; i < arrayList.size(); i++) {
+            jsonArray.add(gson.toJsonTree(arrayList.get(i)));
+        }
+        return jsonArray;
+    }
+
+    public static void setAPStatusColor(Context context, TextView tv_status, String status) {
+        tv_status.setTextColor(context.getResources().getColor(getApStatusColor(status)));
+    }
+
+    public static int getApStatusColor(String status) {
+        switch (status) {
+            case Constant.SO_STATUS_EDIT:
+                return R.color.namoa_color_pink_1;
+            case Constant.SYS_STATUS_PROCESS:
+                return R.color.namoa_color_yellow_2;
+            case Constant.SYS_STATUS_WAITING_ACTION:
+                return R.color.namoa_color_brown;
+            case Constant.SYS_STATUS_DONE:
+                return R.color.namoa_color_green_2;
+            case Constant.SYS_STATUS_CANCELLED:
+                return R.color.namoa_color_gray_4;
+            default:
+                return R.color.namoa_color_gray_4;
+        }
+    }
+
+    public static int getStatusColor(String status) {
+        switch (status) {
+            case Constant.SYS_STATUS_EDIT:
+                return R.color.namoa_status_edit;
+            case Constant.SYS_STATUS_STOP:
+                return R.color.namoa_status_stop;
+            case Constant.SYS_STATUS_PENDING:
+                return R.color.namoa_status_pending;
+            case Constant.SYS_STATUS_PROCESS:
+                return R.color.namoa_status_process;
+            case Constant.SYS_STATUS_WAITING_APPROVAL:
+                return R.color.namoa_status_waiting_approval;
+            case Constant.SYS_STATUS_WAITING_BUDGET:
+                return R.color.namoa_status_waiting_budget;
+            case Constant.SYS_STATUS_WAITING_QUALITY:
+                return R.color.namoa_status_waiting_quality;
+            case Constant.SYS_STATUS_WAITING_WAITING_CLIENT:
+                return R.color.namoa_status_waiting_client;
+            case Constant.SYS_STATUS_WAITING_SYNC:
+                return R.color.namoa_status_waiting_sync;
+            case Constant.SYS_STATUS_DONE:
+                return R.color.namoa_status_done;
+            case Constant.SYS_STATUS_NOT_EXECUTED:
+                return R.color.namoa_status_not_executed;
+            case Constant.SYS_STATUS_CANCELLED:
+                return R.color.namoa_status_cancelled;
+            case Constant.SYS_STATUS_INCONSISTENT:
+                return R.color.namoa_status_inconsistent;
+            case Constant.SYS_STATUS_SCHEDULED:
+                return R.color.namoa_status_scheduled;
+            case Constant.SYS_STATUS_ERROR:
+                return R.color.namoa_status_error;
+            case Constant.SYS_STATUS_ACTIVE:
+                return R.color.namoa_status_active;
+            case Constant.SYS_STATUS_INACTIVE:
+                return R.color.namoa_status_inactive;
+            default:
+                return R.color.namoa_color_gray_4;
+        }
+    }
+
+    public static HashMap<String, String> JsonToHashMap(JSONObject jsonObject, String root) throws Exception {
+        JSONObject mRoot = jsonObject.getJSONObject(root);
+        HashMap<String, String> map = new HashMap<>();
+
+        if (mRoot != null) {
+            Iterator iter = mRoot.keys();
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+                String value = mRoot.getString(key);
+                //
+                map.put(key, value);
+            }
+        }
+
+        return map;
+    }
+
+    public static int deleteUnnecessaryAP(Context context){
+        int deletedCounter = 0;
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+        //
+        ArrayList<GE_Custom_Form_Ap> formList = (ArrayList<GE_Custom_Form_Ap>)
+                formApDao.query(
+                        new GE_Custom_Form_Ap_Sql_011(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                ToolBox_Con.getPreference_User_Code(context)
+                        ).toSqlQuery()
+                );
+        //
+        if(formList != null && formList.size()> 0){
+            for (GE_Custom_Form_Ap formAp:formList) {
+                boolean deleteAP = true;
+                //
+                if(ToolBox_Inf.parameterExists(context,Constant.PARAM_CHAT)) {
+                    CH_RoomDao roomDao = new CH_RoomDao(context);
+                    //
+                    CH_Room chRoom = roomDao.getByString(
+                            new CH_Room_Sql_001(
+                                    formAp.getRoom_code()
+                            ).toSqlQuery()
+                    );
+                    //
+                    if (chRoom != null && chRoom.getRoom_code().length() > 0) {
+                        deleteAP = false;
+                    }
+                }
+                //
+                if(deleteAP){
+                    formApDao.remove(
+                            new GE_Custom_Form_Ap_Sql_010(
+                                    formAp.getCustomer_code(),
+                                    formAp.getCustom_form_type(),
+                                    formAp.getCustom_form_code(),
+                                    formAp.getCustom_form_version(),
+                                    formAp.getCustom_form_data(),
+                                    formAp.getAp_code()
+                            ).toSqlQuery()
+                    );
+                    deletedCounter++;
+                }
+            }
+        }
+        //
+        return deletedCounter;
+    }
+
+    public static boolean checkForApExclusion(Context context,String customer_code, String custom_form_type, String custom_form_code, String custom_form_version, String custom_form_data, String ap_code){
+        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+        int user_code = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context));
+        boolean deleteAP = false;
+        //
+        GE_Custom_Form_Ap formAp = formApDao.getByString(
+                new GE_Custom_Form_Ap_Sql_005(
+                        customer_code,
+                        custom_form_type,
+                        custom_form_code,
+                        custom_form_version,
+                        custom_form_data,
+                        ap_code,
+                        GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
+                ).toSqlQuery()
+        );
+        if(formAp != null) {
+            if ( formAp.getAp_who() == null || formAp.getAp_who() != user_code) {
+                if(!formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                        && !formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
+                ) {
+                    if (formAp.getRoom_code() == null) {
+                        deleteAP = true;
+                    } else {
+                        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
+                            CH_RoomDao roomDao = new CH_RoomDao(context);
+                            //
+                            CH_Room chRoom = roomDao.getByString(
+                                    new CH_Room_Sql_001(
+                                            formAp.getRoom_code()
+                                    ).toSqlQuery()
+                            );
+                            //
+                            if (chRoom == null) {
+                                deleteAP = true;
+                            }
+                        } else {
+                            deleteAP = true;
+                        }
+                    }
+                }
+            }
+        }
+        //
+        if (deleteAP) {
+            formApDao.remove(
+                    new GE_Custom_Form_Ap_Sql_010(
+                            formAp.getCustomer_code(),
+                            formAp.getCustom_form_type(),
+                            formAp.getCustom_form_code(),
+                            formAp.getCustom_form_version(),
+                            formAp.getCustom_form_data(),
+                            formAp.getAp_code()
+                    ).toSqlQuery()
+            );
+            //
+            return true;
+        }
+        //
+        return false;
+    }
+
 }

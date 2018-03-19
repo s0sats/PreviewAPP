@@ -11,11 +11,13 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_009;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -35,6 +37,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     private EV_User_CustomerDao ev_user_customerDao;
     private HMAux HMCustomer;
     private GE_Custom_Form_LocalDao customFormLocalDao;
+
 
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
@@ -139,6 +142,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SO)) {
             data_package.add(DataPackage.DATA_PACKAGE_SO);
         }
+        data_package.add(DataPackage.DATA_PACKAGE_AP);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
@@ -146,10 +150,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE,data_package);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
+        bundle.putBoolean(Constant.GS_LOGIN_PROCESS, true);
 
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+        //
         ToolBox_Inf.sendBCStatus(context, "STATUS", context.getString(R.string.msg_start_to_sync), "", "0");
 
     }
@@ -175,6 +181,27 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void killAllSessions() {
+        EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
+        //
+        userCustomerDao.addUpdate(
+                new EV_User_Customer_Sql_009(
+                        ToolBox_Con.getPreference_User_Code(context)
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public void executeLogoutProcess() {
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST,"");
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

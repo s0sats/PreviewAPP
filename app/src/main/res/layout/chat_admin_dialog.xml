@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Service:"
+            android:layout_marginEnd="3dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/chat_admin_dialog_tv_service_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Não sei"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Socket Setado:"
+            android:layout_marginEnd="3dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/chat_admin_dialog_tv_socket_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Não sei"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Socket Logged:"
+            android:layout_marginEnd="3dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/chat_admin_dialog_tv_socket_logged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Não sei"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Socket id:"
+            android:layout_marginEnd="3dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/chat_admin_dialog_tv_socket_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Irineu"/>
+
+    </LinearLayout>
+
+</LinearLayout>

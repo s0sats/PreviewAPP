@@ -81,6 +81,43 @@ public class ToolBox_Con {
         return sb.toString();
     }
 
+    //Teste de chama GET "https://chat.namoadigital.com/messageDist?msg_prefix=201712&msg_code=2267"
+    public static String connHttpGet(String urlEnd, String params) throws Exception {
+        StringBuilder sb = new StringBuilder();
+
+        URL url;
+        HttpsURLConnection conn = null;
+
+        url = new URL(urlEnd);
+
+        SSLContext contextS = SSLContext.getInstance("TLS");
+        TrustManager[] tmlist = {new MyTrustManager()};
+
+        contextS.init(null, tmlist, null);
+        conn = (HttpsURLConnection) url.openConnection();
+        conn.setSSLSocketFactory(contextS.getSocketFactory());
+        conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+
+        conn.setReadTimeout(60000);
+        conn.setConnectTimeout(60000);
+
+        conn.setRequestMethod("GET");
+
+        int httpStatus = conn.getResponseCode();
+        if (httpStatus == HttpURLConnection.HTTP_OK) {
+            sb.append(readStreamAux(conn.getInputStream()));
+        } else {
+            throw new Exception(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR);
+            //sb.append("Error: " + "HTTP_STATUS " + httpStatus);
+        }
+
+        if (conn != null) {
+            conn.disconnect();
+        }
+
+        return sb.toString();
+    }
+
     private static String readStreamAux(InputStream inputStream) {
         Reader reader = null;
         Writer writer = new StringWriter();
@@ -323,6 +360,74 @@ public class ToolBox_Con {
     }
 
     //endregion
+
+    //region Chat_Msg_Code
+    public static void setPreference_Chat_Msg_Code(Context context, long chat_msg_code) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.CHAT_PREFERENCE_MSG_CODE,
+                chat_msg_code
+        ).apply();
+    }
+
+    public static long getPreference_Chat_Msg_Code(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.CHAT_PREFERENCE_MSG_CODE,
+                100L
+        );
+    }
+    //endregion
+
+    //region Chat_Msg_Token
+    public static void setPreference_Chat_Msg_Token(Context context, long chat_msg_token) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                Constant.CHAT_PREFERENCE_MSG_TOKEN,
+                chat_msg_token
+        ).apply();
+    }
+
+    public static long getPreference_Chat_Msg_Token(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getLong(
+                Constant.CHAT_PREFERENCE_MSG_TOKEN,
+                1L
+        );
+    }
+    //endregion
+
+
+    //region Chat_Msg_Prefix
+    public static void setPreference_Chat_Msg_Prefix(Context context, String chat_msg_prefix ) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.CHAT_PREFERENCE_MSG_PREFIX,
+                chat_msg_prefix
+        ).apply();
+    }
+
+    public static String getPreference_Chat_Msg_Prefix(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.CHAT_PREFERENCE_MSG_PREFIX,
+                ""
+        );
+    }
+    //endregion
+
 
     //region Translate_Code
     public static void setPreference_Translate_Code(Context context, String translate_code) {

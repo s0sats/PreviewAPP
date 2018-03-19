@@ -47,6 +47,16 @@ public class Act005_Adapter extends BaseAdapter {
         return 0L;
     }
 
+    public int getBadgeQty(String menu_id){
+        for (HMAux hmAux:source) {
+            if(hmAux.get(Act005_Main.MENU_ID).equalsIgnoreCase(menu_id) ){
+                return ToolBox_Inf.convertStringToInt(hmAux.get(Act005_Main.MENU_BADGE));
+            }
+        }
+        //
+        return 0;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -83,6 +93,18 @@ public class Act005_Adapter extends BaseAdapter {
         } else {
             tvBadge.setVisibility(View.GONE);
             tvBadge.setText(" ");
+        }
+
+        if(item.get(Act005_Main.MENU_ID).equals(Act005_Main.MENU_ID_CHAT)){
+            tvBadge.setVisibility(View.GONE);
+            //
+            if(badgeNum == 1) {
+                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_24x24));
+            }else{
+                //ivIcon.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red));
+                ivIcon.setImageDrawable(context.getDrawable(R.drawable.ic_chat_desativado_24x24));
+            }
         }
 
         //Se chave Badge2 tiver preenchida exibe no menu

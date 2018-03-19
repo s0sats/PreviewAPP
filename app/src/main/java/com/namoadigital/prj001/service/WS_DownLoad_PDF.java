@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_007;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_002;
@@ -27,6 +31,9 @@ import java.util.ArrayList;
 
 public class WS_DownLoad_PDF extends IntentService {
 
+
+    private boolean mAp;
+
     public WS_DownLoad_PDF() {
         super("WS_DownLoad_PDF");
     }
@@ -37,10 +44,13 @@ public class WS_DownLoad_PDF extends IntentService {
 
             if (!ToolBox_Inf.isDownloadRunning()) {
                 //Log.v("WS_DownLoad_PDF","true");
-                WBR_DownLoad_PDF.IS_RUNNING = true;
+                //WBR_DownLoad_PDF.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
 
+            WBR_DownLoad_PDF.IS_RUNNING = true;
+
+            mAp = false;
 
             Bundle bundle = intent.getExtras();
             //
@@ -115,7 +125,66 @@ public class WS_DownLoad_PDF extends IntentService {
                 );
 
             }
+            /*
+            *  Action Plan 01/03/2018
+            */
+            //
+            mAp = true;
 
+            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+            //
+            ArrayList<HMAux> formAplist = new ArrayList<>();
+            //
+            formAplist.addAll(
+                    formApDao.query_HM(
+                            new GE_Custom_Form_Ap_Sql_007(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            ).toSqlQuery()
+
+                    )
+            );
+            //
+            for (HMAux hmAux : formAplist) {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_URL),
+                            Constant.CACHE_PATH + "/" + hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase(), ".pdf");
+                }
+                //
+                formApDao.addUpdate(
+                        new GE_Custom_Form_Ap_Sql_008(
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION),
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA),
+                                hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf"
+                        ).toSqlQuery().toLowerCase()
+                );
+                //
+                HMAux auxPDF = new HMAux();
+                auxPDF.put("pk",
+                        hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + "." +
+                                hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)
+                );
+                auxPDF.put("value", hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME) + ".pdf");
+                //
+                ToolBox.sendBCStatusPDF(
+                        getApplicationContext(),
+                        "AP",
+                        auxPDF
+                );
+            }
+            mAp = false;
             /**
              *
              * Download de files do Cabeçalho do S.O
@@ -144,7 +213,7 @@ public class WS_DownLoad_PDF extends IntentService {
                 for (HMAux hmAux : so_file_list) {
                     String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
                     String[] nameSplited = fileName.split(splitKey);
-                    String ext = "."+ nameSplited[nameSplited.length -1];
+                    String ext = "." + nameSplited[nameSplited.length - 1];
 
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(SM_SO_File_Sql_003.FILE_LOCAL_NAME).toLowerCase() + ext)) {
 
@@ -175,6 +244,12 @@ public class WS_DownLoad_PDF extends IntentService {
             ToolBox_Inf.registerException(getClass().getName(), e);
 
         } finally {
+
+            if (mAp){
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
+                mAp = false;
+            }
+
             WBR_DownLoad_PDF.IS_RUNNING = false;
             WBR_DownLoad_PDF.completeWakefulIntent(intent);
             if (!ToolBox_Inf.isDownloadRunning()) {

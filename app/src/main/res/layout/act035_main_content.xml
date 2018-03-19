@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/chat_fundo"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act035.Act035_Main"
+    tools:showIn="@layout/act035_main">
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:gravity="center_vertical"-->
+    <!--android:orientation="horizontal"-->
+    <!--android:padding="15dp">-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/act035_iv_room_thumbnail_val"-->
+    <!--android:layout_width="60dp"-->
+    <!--android:layout_height="60dp"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:padding="5dp"-->
+    <!--android:src="@drawable/ic_site" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/act035_tv_room_name_val"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="20dp"-->
+    <!--android:text="Customer"-->
+    <!--android:textSize="@dimen/font_size_title_md"-->
+    <!--android:textStyle="bold" />-->
+
+    <!--</LinearLayout>-->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp">
+
+        <!--<Button-->
+        <!--android:id="@+id/act035_btn_reorder"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:layout_margin="20dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:text="ListOrder" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/act035_sw_messages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ListView
+                    android:id="@+id/act0035_lv_messages"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@color/padrao_TRANSPARENT" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/act035_iv_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="70dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/chat_move_2_bottom_arrow"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/act035_iv_reorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/chat_reorder_arrow"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/act035_tv_logged_customer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/namoa_color_dark_blue_lib"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textColor="@color/padrao_WHITE"
+        android:textSize="@dimen/font_size_item_md" />
+
+    <LinearLayout
+        android:id="@+id/act035_ll_msg_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/namoa_color_dark_blue"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp">
+
+        <!--<com.namoa_digital.namoa_library.ctls.MKEditTextNM-->
+        <!--android:id="@+id/act035_mket_serial"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:inputType="text"-->
+        <!--app:mBARCODE="false"-->
+        <!--app:mNFC="false"-->
+        <!--app:mOCR="false" />-->
+
+
+        <EditText
+            android:id="@+id/act035_mket_chat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_msg_from"
+            android:maxHeight="100dp"
+            android:minHeight="45dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+
+        <ImageView
+            android:id="@+id/act035_iv_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:focusable="false"
+            android:paddingBottom="4dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="4dp"
+            android:src="@drawable/ic_foto_marcada_ns_white" />
+
+        <ImageView
+            android:id="@+id/act035_iv_send"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:focusable="false"
+            android:paddingBottom="4dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="4dp"
+            android:src="@drawable/ic_send_white" />
+
+    </LinearLayout>
+
+</LinearLayout>

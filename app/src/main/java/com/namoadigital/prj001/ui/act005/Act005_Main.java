@@ -34,6 +34,7 @@ import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -45,7 +46,10 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.ScreenStatusService;
+import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -61,6 +65,9 @@ import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
+import com.namoadigital.prj001.ui.act034.Act034_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -85,6 +92,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public static final String MENU_BADGE2 = "menu_badgeso";
 
     public static final String MENU_ID_CHECKLIST = "menu_checklist";
+    public static final String MENU_ID_FORM_AP = "menu_form_ap";
     public static final String MENU_ID_SERVICE = "menu_service";
     public static final String MENU_ID_SERIAL = "menu_serial";
     public static final String MENU_ID_SCHEDULE_DATA = "menu_schedule_data";
@@ -94,6 +102,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     public static final String MENU_ID_SEND_DATA = "menu_send_data";
     public static final String MENU_ID_SYNC_DATA = "menu_sync_data";
+    public static final String MENU_ID_CHAT = "menu_chat";
     public static final String MENU_ID_CLOSE = "menu_close_app";
 
     public static final String WS_PROCESS_SYNC = "ws_process_sync";
@@ -145,6 +154,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private ArrayList<HMAux> wsProcessList = new ArrayList<>();
 
     private FCMReceiver fcmReceiver;
+    private BR_Chat chatReceiver;
+    private boolean syncAfterSave;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -164,16 +175,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
         //
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        mIntentPIC.putExtras(bundle);
+        context.sendBroadcast(mIntentPIC);
+        //
+        if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
+            Intent mScreenStatusService = new Intent(context, ScreenStatusService.class);
+            context.startService(mScreenStatusService);
+        }
+        //
         fcmReceiver = new FCMReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.WS_FCM);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
+        //
+        chatReceiver = new BR_Chat();
+        IntentFilter brRoomFilter = new IntentFilter(Constant.CHAT_BR_FILTER);
+        brRoomFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, brRoomFilter);
     }
 
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
         super.onDestroy();
     }
 
@@ -202,7 +229,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
 
     private void iniSetup() {
-
 
         context = Act005_Main.this;
         //
@@ -280,12 +306,28 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_support_finish_msg");
         //alert support
         transList.add("support_dialog_ttl");
+        transList.add("alert_support_hint");
+        transList.add("alert_support_empty_msg");
         //
         transList.add("lbl_change_zone");
         transList.add("drawer_change_zone_one_zone_alert_ttl");
         transList.add("drawer_change_zone_one_zone_alert_msg");
         transList.add("drawer_change_zone_alert_ttl");
         transList.add("drawer_change_zone_alert_msg");
+        //
+        transList.add("lbl_chat");
+        //
+        transList.add("alert_send_to_sync_ttl");
+        transList.add("alert_send_to_sync_msg");
+        transList.add("progress_so_save_ttl");
+        transList.add("progress_so_save_msg");
+        transList.add("progress_ap_save_ttl");
+        transList.add("progress_ap_save_msg");
+        transList.add("alert_ws_so_error_msg");
+        transList.add("alert_ws_ap_error_msg");
+        transList.add("alert_ws_general_error_ttl");
+        transList.add("alert_ws_general_error_msg");
+        transList.add("alert_results_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -305,7 +347,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     private void initVars() {
-        //
+        Act035_Main.mRoom_code = "";
+
         wsProcess = "";
         wsSoProcess = "";
 
@@ -335,14 +378,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                new GE_Custom_Form_ApDao(context)
         );
         //
         gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
-        //Metodo que criar os diretorio basicos do app.
-        //Contingencia para diretorio da camtest
-        ToolBox_Inf.mkDirectory();
         //
+        ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
                 context,
                 new SM_SODao(
@@ -353,7 +395,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
         //
         mPresenter.getMenuItens(hmAux_Trans);
-
+        //
+        syncAfterSave = false;
+        //
         mDrawerToggle = new ActionBarDrawerToggle(
                 Act005_Main.this,
                 mDrawerLayout,
@@ -546,6 +590,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
                         break;
                     case Act005_Opc.DRAWER_OPC_LOGOUT:
+                        /*
+                        *
+                        *
+                        * Esse case não funciona mais, o metodo chamado no "botão logout" é
+                        * a interface logoutClicked()
+                        *
+                        * */
                         //
                         alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
                         alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
@@ -588,7 +639,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
                             }
                         },
                         1
@@ -650,22 +702,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         setTitleLanguage();
         setFooter();
 
-        //Aplica informações do rodapé
-       /* HMAux hmAuxFooter = ToolBox_Inf.loadFooterDialogInfo(context);
-
-        mCustomer_Img_Path = ToolBox_Inf.getCustomerLogoPath(context);
-
-        mCustomer_Lbl = hmAuxFooter.get(Constant.FOOTER_CUSTOMER_LBL);
-        mCustomer_Value = hmAuxFooter.get(Constant.FOOTER_CUSTOMER);
-        mSite_Lbl = hmAuxFooter.get(Constant.FOOTER_SITE_LBL);
-        mSite_Value = hmAuxFooter.get(Constant.FOOTER_SITE);
-        mOperation_Lbl = hmAuxFooter.get(Constant.FOOTER_OPERATION_LBL);
-        mOperation_Value = hmAuxFooter.get(Constant.FOOTER_OPERATION);
-        mBtn_Lbl = hmAuxFooter.get(Constant.FOOTER_BTN_OK);
-        mImei_Lbl = hmAuxFooter.get(Constant.FOOTER_IMEI_LBL);
-        mImei_Value = hmAuxFooter.get(Constant.FOOTER_IMEI);
-        mVersion_Lbl = hmAuxFooter.get(Constant.FOOTER_VERSION_LBL);
-        mVersion_Value = Constant.PRJ001_VERSION;*/
     }
 
     @Override
@@ -740,8 +776,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     @Override
+    public void setSyncAfterSave(boolean syncAfterSave) {
+        this.syncAfterSave = syncAfterSave;
+    }
+
+    @Override
     public void callAct006(Context context) {
+        //
         Intent mIntent = new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct036(Context context) {
+        //
+        Intent mIntent = new Intent(context, Act036_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
@@ -845,6 +896,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     @Override
+    public void callAct034(Context context) {
+        Intent mIntent = new Intent(context, Act034_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void closeApp() {
 
         ToolBox.alertMSG(
@@ -898,10 +960,31 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
                 progressDialog.dismiss();
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
-                    processLogin();
+                    mPresenter.stopChatServices();
+                    //
+                    EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(
+                            context,
+                            Constant.DB_FULL_BASE,
+                            Constant.DB_VERSION_BASE
+                    );
+                    //
+                    List<HMAux> sessionsOn = userCustomerDao
+                            .query_HM(
+                                    new EV_User_Customer_Sql_004(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                            ToolBox_Con.getPreference_User_Code(context)
+                                    ).toSqlQuery()
+                            );
+
+                    if (sessionsOn != null && sessionsOn.size() != 0) {
+                        changeCustomer();
+                    } else {
+                        processLogin();
+                    }
+                } else {
+                    // fechar drawer Hugo
                 }
             } else {
-
                 if (!wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
                     progressDialog.dismiss();
                     showSuccessDialog();
@@ -912,10 +995,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-
-                    setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
+                    //setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
                     mPresenter.executeSoSave();
-
                 }
             }
         } else {
@@ -937,6 +1018,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", "" + fields[0]);
+                    mHmAux.put("type", "S.O.");
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -959,6 +1041,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
+                    mHmAux.put("type", "S.O.");
                     mHmAux.put("status", fields[1]);
                     mHmAux.put("final_status", fields[0] + " / " + fields[1]);
                     //
@@ -967,16 +1050,41 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 }
             } else {
+            }
 
+            mPresenter.executeApSave();
+
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+
+            for (String sKey : hmAux.keySet()) {
+                HMAux mHmAux = new HMAux();
+                //
+                String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
+
+                mHmAux.put("label", res[0]);
+                mHmAux.put("type", "A.P.");
+                mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
+                mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
+                //
+                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    wsResults.add(mHmAux);
+                }
             }
 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 1) {
+            if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
-                showSuccessDialog();
+                if(syncAfterSave){
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+                }else {
+                    showSuccessDialog();
+                }
             }
 
         } else {
@@ -984,7 +1092,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-            if (wsResults.size() > 1) {
+            if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
                 showSuccessDialog();
@@ -1029,6 +1137,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
+                    //
+                }
+                //
+                if(syncAfterSave) {
+                    setSyncAfterSave(false);
+                    //
+                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
                 }
             }
         });
@@ -1037,8 +1152,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
-
-            setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
+            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
 
             enableProgressDialog(
                     hmAux_Trans.get("progress_so_save_ttl"),
@@ -1050,22 +1164,44 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.executeSoSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
-
-            super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //super.processError_1(mLink, mRequired);
+            mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_ap_save_ttl"),
+                    hmAux_Trans.get("progress_ap_save_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //super.processError_1(mLink, mRequired);
+            mPresenter.executeApSave();
 
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
 
+            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
             super.processError_1(mLink, mRequired);
-            mPresenter.getMenuItens(hmAux_Trans);
+            //
+            if(syncAfterSave){
+                setSyncAfterSave(false);
+                //
+                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+            }else {
+                mPresenter.getMenuItens(hmAux_Trans);
+            }
 
         } else {
-
-            setRes("N-Geral", hmAux_Trans.get("N-Geral Error"), "");
+            setRes(hmAux_Trans.get("alert_ws_general_error_ttl"), hmAux_Trans.get("alert_ws_general_error_msg"), "");
 
             super.processError_1(mLink, mRequired);
             mPresenter.getMenuItens(hmAux_Trans);
@@ -1094,45 +1230,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
-        } else if(wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+            setRes("N-AP", hmAux_Trans.get("N-AP SO Approval Error"), "");
+            mPresenter.getMenuItens(hmAux_Trans);
+            progressDialog.dismiss();
+
+        } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
             changeCustomer();
-        }else{
+        } else {
             progressDialog.dismiss();
         }
-    }
-
-    private void showSendStatusScore() {
-
-        //Atualiza menu e os badges
-        mPresenter.getMenuItens(hmAux_Trans);
-
-        String msg = "";
-        for (int i = 0; i < wsProcessList.size(); i++) {
-            msg += wsProcessList.get(i).get(WS_LIST_ITEM_LABEL) + " : " + wsProcessList.get(i).get(WS_LIST_ITEM_RETURN) + "\n";
-        }
-        //
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_send_return_ttl"),
-                msg,
-                null,
-                0
-        );
-
-    }
-
-    private int getWsIdx(String ws) {
-        try {
-            for (int i = 0; i < wsProcessList.size(); i++) {
-                if (wsProcessList.get(i).get(WS_LIST_ITEM).equals(ws)) {
-                    return i;
-                }
-            }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            return -1;
-        }
-        return -1;
     }
 
     private void showSuccessDialog() {
@@ -1186,6 +1294,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     public void callLoginProcess() {
         processLogin();
+    }
+
+    @Override
+    public void callChangeCustomerProcess() {
+        changeCustomer();
     }
 
     //TRATA SESSION_NOT_FOUND
@@ -1321,7 +1434,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     }
                 };*/
                 break;
-
             default:
                 return true;
         }
@@ -1343,8 +1455,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
-        //Metodo que criar os diretorio basicos do app.
-        //Contingencia para diretorio da camtest
+        //
         ToolBox_Inf.mkDirectory();
         //
         mPresenter.getMenuItens(hmAux_Trans);
@@ -1379,7 +1490,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         context.sendBroadcast(mIntent);
         //
         ToolBox_Con.cleanPreferences(context);
-
+        //
         finish();
     }
 
@@ -1388,5 +1499,31 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         public void onReceive(Context context, Intent intent) {
             mPresenter.getMenuItens(hmAux_Trans);
         }
+    }
+
+    private class BR_Chat extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra(Constant.CHAT_BR_TYPE);
+
+            switch (type) {
+                case Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE:
+                    //mPresenter.getMenuItens(hmAux_Trans);
+                    break;
+                case Constant.CHAT_BR_TYPE_CHAT_LOGGED_STATUS_CHANGE:
+                    //mPresenter.getMenuItens(hmAux_Trans);
+                    break;
+                case Constant.CHAT_BR_TYPE_ROOM:
+                    mPresenter.getMenuItens(hmAux_Trans);
+                    break;
+                default:
+            }
+
+        }
+    }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
     }
 }

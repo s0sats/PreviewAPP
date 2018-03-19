@@ -254,4 +254,9 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
 }

@@ -922,5 +922,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         context.sendBroadcast(mIntent);
     }
 
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
+    }
+
 
 }

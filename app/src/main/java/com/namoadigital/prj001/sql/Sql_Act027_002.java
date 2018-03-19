@@ -272,7 +272,7 @@ public class Sql_Act027_002 implements Specification {
                                 "             ) MY_PROCESS_EXEC\n" +
                                 "        \n" +
                                 "        FROM\n" +
-                                         SM_SO_Service_ExecDao.TABLE+" e1\n" +
+                                SM_SO_Service_ExecDao.TABLE+" e1\n" +
                                 "         \n" +
                                 "        INNER JOIN \n" +
                                 "                "+ SM_SO_Service_Exec_TaskDao.TABLE+" t ON\n" +
@@ -321,7 +321,7 @@ public class Sql_Act027_002 implements Specification {
                                 "             ) IN_PROCESS_EXEC\n" +
                                 "        \n" +
                                 "        FROM\n" +
-                                        SM_SO_Service_ExecDao.TABLE+" e1\n" +
+                                SM_SO_Service_ExecDao.TABLE+" e1\n" +
                                 "        WHERE\n" +
                                 "           E1.customer_code = E.customer_code\n" +
                                 "           and E1.so_prefix = E.so_prefix\n" +

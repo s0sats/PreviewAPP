@@ -23,6 +23,7 @@ import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
+import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -38,6 +39,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
 
     public static final String LABEL_TRANS_CHECKLIST = "lbl_type_checklist";
     public static final String LABEL_TRANS_OS = "lbl_type_service_order";
+    public static final String LABEL_TRANS_FORM_AP = "lbl_type_form_ap";
 
     private ListView lv_pendencies;
     private Act012_Main_Presenter mPresenter;
@@ -77,6 +79,7 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         List<String> translateList = new ArrayList<>();
         translateList.add(LABEL_TRANS_CHECKLIST);
         translateList.add(LABEL_TRANS_OS);
+        translateList.add(LABEL_TRANS_FORM_AP);
         translateList.add("alert_no_pendencies_title");
         translateList.add("alert_no_pendencies_msg");
 
@@ -204,6 +207,19 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
     }
 
     @Override
+    public void callAct037(Context context) {
+        Intent mIntent = new Intent(context, Act037_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT012);
+
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
@@ -218,5 +234,10 @@ public class Act012_Main extends Base_Activity implements Act012_Main_View {
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    @Override
+    protected void processNotification_close(String mValue, String mActivity) {
+        //super.processNotification_close(mValue, mActivity);
     }
 }
