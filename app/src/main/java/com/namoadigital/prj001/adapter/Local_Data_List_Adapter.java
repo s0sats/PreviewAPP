@@ -188,7 +188,11 @@ public class Local_Data_List_Adapter extends BaseAdapter {
             tv_date_schedule_start_lbl.setVisibility(View.GONE);
             tv_date_schedule_start_lbl.setText("");
         }
+        TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_lbl);
+        TextView tv_status_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_val);
 
+        tv_status_lbl.setText(hmAux_Trans.get("lbl_status"));
+        tv_status_val.setVisibility(View.VISIBLE);
 
         TextView tv_so_code_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_so_code_ttl);
         TextView tv_so_code_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_so_code_val);
@@ -231,44 +235,46 @@ public class Local_Data_List_Adapter extends BaseAdapter {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
-                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
-                llBackground.setBackground(llDrawable);
+                //llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
+                //llBackground.setBackground(llDrawable);
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
+                tv_status_val.setTextColor(
+                       context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_PROCESS))
+                );
+
                 break;
             //
             case Constant.SYS_STATUS_FINALIZED:
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
-                llBackground.setBackground(llDrawable);
-//                tvItem.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(R.color.namoa_color_dark_blue));
-
+                //llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
+                //llBackground.setBackground(llDrawable);
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DONE))
+                );
                 break;
             case Constant.SYS_STATUS_SENT:
-                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
-                llBackground.setBackground(llDrawable);
+                //llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
+                //llBackground.setBackground(llDrawable);
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_END));
-//                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SENT));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SENT))
+                );
 
                 break;
             case Constant.SYS_STATUS_SCHEDULE:
                 tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
-                llBackground.setBackground(llDrawable);
-//                tvItem.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem2.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-//                tvItem3.setTextColor(context.getResources().getColorStateList(namoa_color_dark_blue));
-
+                //llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
+                //llBackground.setBackground(llDrawable);
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SCHEDULE));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SCHEDULE))
+                );
                 break;
 
             default:
-                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
-                llBackground.setBackground(llDrawable);
-                //               tvItem.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                //               tvItem2.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-                //               tvItem3.setTextColor(context.getResources().getColorStateList(R.color.lib_custom_cell_font_color));
-
+                //llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+                //llBackground.setBackground(llDrawable);
                 break;
         }
 
@@ -290,6 +296,7 @@ public class Local_Data_List_Adapter extends BaseAdapter {
         translateList.add("lbl_data_serv");
         translateList.add("lbl_date_schedule_start");
         translateList.add("lbl_so_code");
+        translateList.add("lbl_status");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

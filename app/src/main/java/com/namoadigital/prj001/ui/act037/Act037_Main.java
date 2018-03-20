@@ -126,7 +126,7 @@ public class Act037_Main extends Base_Activity implements Act037_Main_View {
     }
 
     private void initFilters() {
-        filter_edit = filter_process = filter_waiting_action = true;
+        filter_edit = filter_process = filter_waiting_action = false;
         filter_done = filter_cancelled = false;
     }
 

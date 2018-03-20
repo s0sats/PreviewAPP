@@ -42,10 +42,10 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         this.resource_02 = resource_02;
         this.source = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
-                                    context,
-                                    Constant.APP_MODULE,
-                                    "module_schedules_adapter"
-                                );
+                context,
+                Constant.APP_MODULE,
+                "module_schedules_adapter"
+        );
         loadTranslation();
     }
 
@@ -73,7 +73,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     public int getItemViewType(int position) {
         HMAux item = source.get(position);
         //
-        switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
             case Constant.MODULE_CHECKLIST:
                 return 0;
             case Constant.MODULE_FORM_AP:
@@ -88,17 +88,17 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         //Resgata HmAux com as informações
         HMAux item = source.get(position);
         //
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
             switch (getItemViewType(position)) {
                 case 0:
-                    convertView = mInflater.inflate(resource_01,parent,false);
-                    processFormItem(item,convertView);
+                    convertView = mInflater.inflate(resource_01, parent, false);
+                    processFormItem(item, convertView);
                     break;
                 case 1:
-                    convertView = mInflater.inflate(resource_02,parent,false);
-                    processFormAPItem(item,convertView);
+                    convertView = mInflater.inflate(resource_02, parent, false);
+                    processFormAPItem(item, convertView);
                     break;
             }
         }
@@ -134,19 +134,19 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_ap_who_val = (TextView) convertView.findViewById(R.id.namoa_ap_tv_ap_who_val);
         LinearLayout ll_action_btn = (LinearLayout) convertView.findViewById(R.id.namoa_ap_ll_action_btn);
         //
-        tv_module_ttl.setText("N-Form AP -trad");
+        tv_module_ttl.setText(hmAux_Trans.get("lbl_form_ap"));
         tv_module_ttl.setVisibility(View.VISIBLE);
         //
         ll_action_btn.setVisibility(View.GONE);
         //
         tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
-        if(item.get(GE_Custom_Form_ApDao.SYNC_REQUIRED).equals("1")){
+        if (item.get(GE_Custom_Form_ApDao.SYNC_REQUIRED).equals("1")) {
             iv_sync_upload.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_down_thick_black_24dp));
             iv_sync_upload.setVisibility(View.VISIBLE);
-        }else if(item.get(GE_Custom_Form_ApDao.UPLOAD_REQUIRED).equals("1")){
+        } else if (item.get(GE_Custom_Form_ApDao.UPLOAD_REQUIRED).equals("1")) {
             iv_sync_upload.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_up_thick_black_24dp));
             iv_sync_upload.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             iv_sync_upload.setVisibility(View.GONE);
         }
         tv_type.setText(hmAux_Trans.get("form_type_lbl"));
@@ -200,15 +200,15 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         tv_ap_who_val.setText(
                 item.get(GE_Custom_Form_ApDao.AP_WHO_NICK)
         );
-        tv_ap_when.setText( hmAux_Trans.get("ap_when_lbl"));
-        if(!item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()){
+        tv_ap_when.setText(hmAux_Trans.get("ap_when_lbl"));
+        if (!item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()) {
             tv_ap_when_val.setText(
                     ToolBox_Inf.millisecondsToString(
                             ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_ApDao.AP_WHEN)),
                             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                     )
             );
-        }else{
+        } else {
             tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHEN));
         }
 
@@ -293,9 +293,14 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         tv_list.add(tv_item_08_lbl);
         tv_list.add(tv_item_08_val);
         //
+        TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_lbl);
+        TextView tv_status_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_val);
+        tv_status_lbl.setText(hmAux_Trans.get("lbl_status"));
+
+        //
         Drawable llDrawable = null;
 
-        switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
 
             case Constant.MODULE_CHECKLIST:
 
@@ -305,29 +310,29 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
                 tv_main_lbl.setText(hmAux_Trans.get("CHECKLIST"));
 
-                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
                 tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
-                tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
-                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
-                tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
-                tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id")+" "+item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
+                tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
+                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
+                tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
+                tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id") + " " + item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
 
-                if(item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0){
+                if (item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0) {
                     tv_item_04_lbl.setVisibility(View.GONE);
                     tv_item_04_val.setVisibility(View.GONE);
                 }
 
                 tv_ttl_002.setText(hmAux_Trans.get("ttl_form"));
-                tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-                tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
+                tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+                tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
 
-                if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0){
+                if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0) {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
-                    tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv")+" "+item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+                    tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
 
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
-                    tv_item_08_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
-                }else{
+                    tv_item_08_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                } else {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
                 }
@@ -335,29 +340,49 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
         }
 
-        switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)){
+        switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
-                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_DataDao.DATE_START));
-                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
-                llBackground.setBackground(llDrawable);
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
+//                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_in_processing_states);
+//                llBackground.setBackground(llDrawable);
+                //
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_PROCESS))
+                );
                 break;
             //
             case Constant.SYS_STATUS_FINALIZED:
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
-                llBackground.setBackground(llDrawable);
+//                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
+//                llBackground.setBackground(llDrawable);
+                //
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DONE))
+                );
                 break;
 
             case Constant.SYS_STATUS_SENT:
-                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
-                llBackground.setBackground(llDrawable);
+//                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
+//                llBackground.setBackground(llDrawable);
+                //
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SENT));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SENT))
+                );
                 break;
 
             case Constant.SYS_STATUS_SCHEDULE:
-                tv_date_lbl.setText(hmAux_Trans.get("lbl_date")+" "+item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
+                tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
                 //
-                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
-                llBackground.setBackground(llDrawable);
+//                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
+//                llBackground.setBackground(llDrawable);
+                //
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SCHEDULE));
+                tv_status_val.setTextColor(
+                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SCHEDULE))
+                );
                 break;
 
             default:
@@ -384,6 +409,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         translateList.add("CHECKLIST");
         translateList.add("lbl_data_serv");
         translateList.add("lbl_date_schedule_start");
+        translateList.add("lbl_status");
         //Form_AP
         translateList.add("form_ttl");
         translateList.add("form_type_lbl");
@@ -404,6 +430,22 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 translateList
+        );
+        //
+        List<String> transeList005 = new ArrayList<>();
+        transeList005.add("lbl_form_ap");
+        //
+        hmAux_Trans.putAll(ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "act005"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transeList005
+                )
         );
     }
 }

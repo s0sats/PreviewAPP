@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -134,11 +135,14 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         chk_processing = (CheckBox) findViewById(R.id.act013_chk_in_process);
         chk_processing.setChecked(true);
+        chk_processing.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_IN_PROCESSING))));
         //
         chk_scheduled = (CheckBox) findViewById(R.id.act013_chk_scheduled);
         chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
+        chk_scheduled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_SCHEDULE))));
         //
         chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
+        chk_finalized.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_FINALIZED))));
         //Add checkbox na lista
         checkBoxList.add(chk_processing);
         checkBoxList.add(chk_scheduled);
@@ -263,14 +267,17 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         tv_title.setText(hmAux_Trans.get("alert_helper_dialog_msg"));
 
         CheckBox chk_processing = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_processing);
-        chk_processing.setText(hmAux_Trans.get("lbl_chk_in_processing"));
+        chk_processing.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
+        chk_processing.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_IN_PROCESSING))));
         //
         CheckBox chk_scheduled = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_scheduled);
-        chk_scheduled.setText(hmAux_Trans.get("lbl_chk_scheduled"));
+        chk_scheduled.setText(hmAux_Trans.get(Constant.SYS_STATUS_SCHEDULE));
+        chk_scheduled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_SCHEDULE))));
         chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         //
         CheckBox chk_finalized = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_finalized);
-        chk_finalized.setText(hmAux_Trans.get("lbl_chk_finalized"));
+        chk_finalized.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
+        chk_finalized.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_FINALIZED))));
 
         alert
             .setView(view)
