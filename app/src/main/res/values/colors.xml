@@ -94,25 +94,25 @@
     <color name="namoa_color_blue_balloon_chat">#C0DBE2</color>
     <color name="namoa_color_green_chat">#28A745</color>
 
-    <!--REVISÃO CORES STATUS-->
-    <color name="namoa_status_edit" >#FF1493</color>
-    <color name="namoa_status_stop" >#000000</color>
-    <color name="namoa_status_pending" >#3C93A9</color>
-    <color name="namoa_status_process" >#EEAD0E</color>
-    <color name="namoa_status_waiting_approval" >#A52A2A</color>
-    <color name="namoa_status_waiting_client" >#A52A2A</color>
-    <color name="namoa_status_waiting_action" >#A52A2A</color>
-    <color name="namoa_status_waiting_quality" >#A52A2A</color>
-    <color name="namoa_status_waiting_budget" >#A52A2A</color>
-    <color name="namoa_status_waiting_sync" >#0F4D61</color>
-    <color name="namoa_status_done" >#9ACD32</color>
-    <color name="namoa_status_not_executed" >#228B22</color>
-    <color name="namoa_status_cancelled" >#808080</color>
-    <color name="namoa_status_inconsistent" >#BDB76B</color>
-    <color name="namoa_status_scheduled" >#A020F0</color>
-    <color name="namoa_status_error" >#FF0000</color>
-    <color name="namoa_status_active" >	#9ACD32</color>
-    <color name="namoa_status_inactive" >#000000</color>
+    <!--&lt;!&ndash;REVISÃO CORES STATUS&ndash;&gt;-->
+    <!--<color name="namoa_status_edit" >#FF1493</color>-->
+    <!--<color name="namoa_status_stop" >#000000</color>-->
+    <!--<color name="namoa_status_pending" >#3C93A9</color>-->
+    <!--<color name="namoa_status_process" >#EEAD0E</color>-->
+    <!--<color name="namoa_status_waiting_approval" >#A52A2A</color>-->
+    <!--<color name="namoa_status_waiting_client" >#A52A2A</color>-->
+    <!--<color name="namoa_status_waiting_action" >#A52A2A</color>-->
+    <!--<color name="namoa_status_waiting_quality" >#A52A2A</color>-->
+    <!--<color name="namoa_status_waiting_budget" >#A52A2A</color>-->
+    <!--<color name="namoa_status_waiting_sync" >#0F4D61</color>-->
+    <!--<color name="namoa_status_done" >#9ACD32</color>-->
+    <!--<color name="namoa_status_not_executed" >#228B22</color>-->
+    <!--<color name="namoa_status_cancelled" >#808080</color>-->
+    <!--<color name="namoa_status_inconsistent" >#BDB76B</color>-->
+    <!--<color name="namoa_status_scheduled" >#A020F0</color>-->
+    <!--<color name="namoa_status_error" >#FF0000</color>-->
+    <!--<color name="namoa_status_active" >	#9ACD32</color>-->
+    <!--<color name="namoa_status_inactive" >#000000</color>-->
 
     <!-- Cores WEB -->
     <color name="main_bar_background"> #a3ca55 </color>

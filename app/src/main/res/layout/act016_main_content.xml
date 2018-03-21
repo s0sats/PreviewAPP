@@ -67,6 +67,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:divider="@color/padrao_TRANSPARENT"
+            android:visibility="gone"
             android:dividerHeight="4dp"/>
 
     </LinearLayout>
