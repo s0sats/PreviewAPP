@@ -36,10 +36,11 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
     public static final String SKETCH_LINES = "sketch_lines";
     public static final String SKETCH_COLUMNS = "sketch_columns";
     public static final String SKETCH_COLOR = "sketch_color";
+    public static final String FLAG_OFFLINE = "flag_offline";
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
             REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
-            SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR
+            SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE
     };
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -309,6 +310,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             }else{
                 md_product.setSketch_color(cursor.getString(cursor.getColumnIndex(SKETCH_COLOR)));
             }
+            md_product.setFlag_offline(cursor.getInt(cursor.getColumnIndex(FLAG_OFFLINE)));
 
             return md_product;
         }
@@ -349,6 +351,9 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             contentValues.put(SKETCH_LINES,md_product.getSketch_lines());
             contentValues.put(SKETCH_COLUMNS,md_product.getSketch_columns());
             contentValues.put(SKETCH_COLOR,md_product.getSketch_color());
+            if (md_product.getFlag_offline() > -1) {
+                contentValues.put(FLAG_OFFLINE, md_product.getFlag_offline());
+            }
 
             return contentValues;
 
