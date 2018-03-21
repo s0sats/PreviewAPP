@@ -49,7 +49,7 @@ public class Sql_Act027_002_bkp implements Specification {
         //
         if(filter_only_avaliable){
             this.only_avaliable_where =
-                    "     AND TTT.status = '"+Constant.SO_STATUS_PENDING+"'\n" +
+                    "     AND TTT.status = '"+Constant.SYS_STATUS_PENDING+"'\n" +
                             "     AND (TTT.PARTNER_RESTRICTION IN (-1,1) or TTT.ANY_PARTNER > 0)\n" +
                             "     AND (TTT.ZONE_CODE is null or (TTT.SITE_CODE||'|'||TTT.ZONE_CODE = '"+site_code+"|"+zone_code+"'))" ;
         }
@@ -62,15 +62,15 @@ public class Sql_Act027_002_bkp implements Specification {
         return
                 sb
                 .append(" SELECT\n" +
-                        "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_YES_NO+"' AND TTT.QTY_DONE < TTT.qty AND TTT.PARTNER_RESTRICTION IN (-1,1)\n" +
+                        "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SYS_STATUS_PENDING+"','"+ Constant.SYS_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SYS_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_YES_NO+"' AND TTT.QTY_DONE < TTT.qty AND TTT.PARTNER_RESTRICTION IN (-1,1)\n" +
                         "       THEN\n" +
                         "        1\n" +
                         "       ELSE\n" +
                         "        0\n" +
                         "       END  "+YES_NO_ICON+",\n" +
-                        "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SO_STATUS_PENDING+"','"+ Constant.SO_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SO_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_START_STOP+"' AND TTT.qty = 1 AND TTT.PARTNER_RESTRICTION IN (-1,1) \n" +
+                        "   CASE WHEN TTT.SO_STATUS IN ('"+ Constant.SYS_STATUS_PENDING+"','"+ Constant.SYS_STATUS_PROCESS+"') AND TTT.status = '"+ Constant.SYS_STATUS_PENDING+"' AND TTT.exec_type = '"+ Constant.SO_SERVICE_TYPE_START_STOP+"' AND TTT.qty = 1 AND TTT.PARTNER_RESTRICTION IN (-1,1) \n" +
                         "       THEN\n" +
-                        "          CASE WHEN TTT.LAST_STATUS in ('"+Constant.SO_STATUS_DONE+"','NOT_EXIST') \n" +
+                        "          CASE WHEN TTT.LAST_STATUS in ('"+Constant.SYS_STATUS_DONE+"','NOT_EXIST') \n" +
                         "               THEN \n" +
                         "                 '"+ACTION_PLAY+"' \n" +
                         "               WHEN TTT.LAST_STATUS ='NONE'  \n" +
@@ -95,10 +95,10 @@ public class Sql_Act027_002_bkp implements Specification {
                         "        P."+SM_SO_PackDao.PACK_ID+",\n" +
                         "        P."+SM_SO_PackDao.PACK_DESC+",\n" +
                         "        s.*,       \n" +
-                        "        sum(CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN 1 ELSE 0 END) "+SET_FLAG+",\n" +
-                        "        SUM(CASE WHEN e.status in ('"+Constant.SO_STATUS_DONE+"','"+Constant.SO_STATUS_NOT_EXECUTED+"') THEN 1 ELSE 0 END) "+QTY_DONE+",\n" +
+                        "        sum(CASE WHEN e.status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1 ELSE 0 END) "+SET_FLAG+",\n" +
+                        "        SUM(CASE WHEN e.status in ('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_NOT_EXECUTED+"') THEN 1 ELSE 0 END) "+QTY_DONE+",\n" +
 //                        "        CASE WHEN IFNULL(" +
-//                        "                         CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
+//                        "                         CASE WHEN e.status = '"+Constant.SYS_STATUS_PROCESS+"' THEN\n" +
 //                        "                              e.partner_code\n" +
 //                        "                          ELSE\n" +
 //                        "                              null\n" +
@@ -112,7 +112,7 @@ public class Sql_Act027_002_bkp implements Specification {
 //                        "              WHERE                        \n" +
 //                        "                  m.customer_code = s.customer_code\n" +
 //                        "                  and m.partner_code = IFNULL(" +
-//                        "                                              CASE WHEN e.status = '"+Constant.SO_STATUS_PROCESS+"' THEN\n" +
+//                        "                                              CASE WHEN e.status = '"+Constant.SYS_STATUS_PROCESS+"' THEN\n" +
 //                        "                                                  e.partner_code\n" +
 //                        "                                              ELSE\n" +
 //                        "                                                  null\n" +
@@ -155,7 +155,7 @@ public class Sql_Act027_002_bkp implements Specification {
                         "                                           AND e2.category_price_code = e.category_price_code\n" +
                         "                                           AND e2.service_code  = e.service_code\n" +
                         "                                           AND e2.service_seq  = e.service_seq   \n" +
-                        "                                           AND e2.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n)\n" +
+                        "                                           AND e2.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_INCONSISTENT + "')\n)\n" +
                         "                       \n" +
                         "                                         , s.partner_code) IS NOT NULL \n" +
                         "                            THEN\n" +
@@ -180,7 +180,7 @@ public class Sql_Act027_002_bkp implements Specification {
                         "                                           AND e2.category_price_code = e.category_price_code\n" +
                         "                                           AND e2.service_code  = e.service_code\n" +
                         "                                           AND e2.service_seq  = e.service_seq   \n" +
-                        "                                           AND e2.status NOT IN('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
+                        "                                           AND e2.status NOT IN('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_INCONSISTENT + "')\n" +
                         "                                          ), s.partner_code )\n" +
                         "                             ) \n" +
                         "                            ELSE \n" +
@@ -236,8 +236,8 @@ public class Sql_Act027_002_bkp implements Specification {
                         "                                    AND t.so_prefix = '"+so_prefix+"'\n" +
                         "                                    AND t.so_code = '"+so_code+"'\n" +
                         "                                    AND t.task_user = '"+user_code+"'\n" +
-                        "                                    AND t.status NOT IN ('"+Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n" +
-                        "                                    AND e.status NOT IN ('"+Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n" +
+                        "                                    AND t.status NOT IN ('"+Constant.SYS_STATUS_CANCELLED+"','"+Constant.SYS_STATUS_INCONSISTENT+"')\n" +
+                        "                                    AND e.status NOT IN ('"+Constant.SYS_STATUS_CANCELLED+"','"+Constant.SYS_STATUS_INCONSISTENT+"')\n" +
                         "                                    ) \n" +
                         " \n" +
                         "        ),'NOT_EXIST')\n" +
@@ -252,7 +252,7 @@ public class Sql_Act027_002_bkp implements Specification {
                         "       AND so.so_code = '"+so_code+"'\n" +
                         "    ) "+SO_STATUS+" ,\n" +
                         "    SUM(CASE WHEN \n" +
-                        "          e.status = '"+Constant.SO_STATUS_PROCESS+"' \n" +
+                        "          e.status = '"+Constant.SYS_STATUS_PROCESS+"' \n" +
                         "          and \n" +
                         "          ( \n" +
                         "            e.partner_code IS NULL OR" +
@@ -288,7 +288,7 @@ public class Sql_Act027_002_bkp implements Specification {
                         "                              AND S.customer_code = '"+customer_code+"'\n" +
                         "                              AND S.so_prefix = '"+so_prefix+"'\n" +
                         "                              AND S.so_code = '"+so_code+"'\n" +
-                        "                              AND e.status NOT IN ('"+Constant.SO_STATUS_CANCELLED+"','"+Constant.SO_STATUS_INCONSISTENT+"')\n" +
+                        "                              AND e.status NOT IN ('"+Constant.SYS_STATUS_CANCELLED+"','"+Constant.SYS_STATUS_INCONSISTENT+"')\n" +
                         "    \n" +
                         "    WHERE\n" +
                         "    \n" +

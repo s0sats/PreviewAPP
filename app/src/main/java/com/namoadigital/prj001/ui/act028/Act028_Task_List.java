@@ -229,9 +229,9 @@ public class Act028_Task_List extends BaseFragment {
                 if (full_status.equalsIgnoreCase("1")) {
 
                     switch (sm_so_service_exec.getStatus().toUpperCase()) {
-                        case Constant.SO_STATUS_PENDING:
+                        case Constant.SYS_STATUS_PENDING:
                             break;
-                        case Constant.SO_STATUS_PROCESS:
+                        case Constant.SYS_STATUS_PROCESS:
                             break;
                         default:
                             iv_new_task.setVisibility(View.GONE);
@@ -292,7 +292,7 @@ public class Act028_Task_List extends BaseFragment {
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
-            if (auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
+            if (auxHM.get("status").equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
                     auxHM.get("task_user").equalsIgnoreCase(
                             ToolBox_Con.getPreference_User_Code(context))
                     ) {
@@ -304,7 +304,7 @@ public class Act028_Task_List extends BaseFragment {
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
-            if (auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE) &&
+            if (auxHM.get("status").equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
                     auxHM.get("task_user").equalsIgnoreCase(
                             ToolBox_Con.getPreference_User_Code(context)) &&
 
@@ -318,8 +318,8 @@ public class Act028_Task_List extends BaseFragment {
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             HMAux auxHM = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
-            if (auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS) ||
-                    auxHM.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE)
+            if (auxHM.get("status").equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) ||
+                    auxHM.get("status").equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                     ) {
 
                 numberofMyTasksProcess_DONE++;
@@ -337,7 +337,7 @@ public class Act028_Task_List extends BaseFragment {
         if (numberofMyTasksProcess_DONE == 0 &&
                 sm_so_service.getOptional() == 1 &&
                 full_status.equalsIgnoreCase("1") &&
-                sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+                sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
                 ) {
 
             iv_not_exec.setVisibility(View.VISIBLE);
@@ -412,7 +412,7 @@ public class Act028_Task_List extends BaseFragment {
         }
 
         task.setQty_people(1);
-        task.setStatus(Constant.SO_STATUS_PROCESS);
+        task.setStatus(Constant.SYS_STATUS_PROCESS);
 
         task.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
         task.setEnd_date("");
@@ -507,8 +507,8 @@ public class Act028_Task_List extends BaseFragment {
         for (int i = 0; i < lv_tasks.getAdapter().getCount(); i++) {
             auxTMP = (HMAux) lv_tasks.getAdapter().getItem(i);
             //
-            if (auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
-                    auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_PROCESS)
+            if (auxTMP.get("status").equalsIgnoreCase(Constant.SYS_STATUS_DONE) ||
+                    auxTMP.get("status").equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
                     ) {
 
                 numberOfValidTasks++;
@@ -519,7 +519,7 @@ public class Act028_Task_List extends BaseFragment {
                 finalTask_Seq_Oper = Integer.parseInt(auxTMP.get("task_seq_oper"));
             }
 
-            if (auxTMP.get("status").equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
+            if (auxTMP.get("status").equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
                 int perc = Integer.parseInt(auxTMP.get("task_perc"));
                 int task_seq_oper = Integer.parseInt(auxTMP.get("task_seq_oper"));
 
@@ -546,22 +546,22 @@ public class Act028_Task_List extends BaseFragment {
         * Tratativa de cor por Status
         * */
         switch (status) {
-            case Constant.SO_STATUS_PENDING:
+            case Constant.SYS_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_PROCESS:
+            case Constant.SYS_STATUS_PROCESS:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-            case Constant.SO_STATUS_DONE:
+            case Constant.SYS_STATUS_DONE:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED:
+            case Constant.SYS_STATUS_CANCELLED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
-            case Constant.SO_STATUS_NOT_EXECUTED:
+            case Constant.SYS_STATUS_NOT_EXECUTED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
                 break;
-            case Constant.SO_STATUS_INCONSISTENT:
+            case Constant.SYS_STATUS_INCONSISTENT:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
                 break;
             default:

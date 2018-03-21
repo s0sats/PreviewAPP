@@ -286,7 +286,7 @@ public class Act028_Opc extends BaseFragment {
                 ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
 
                 sm_so_service_execNew.setExec_tmp(nExecTemp);
-                sm_so_service_execNew.setStatus(Constant.SO_STATUS_PROCESS);
+                sm_so_service_execNew.setStatus(Constant.SYS_STATUS_PROCESS);
 
                 if (mService.getPartner_code() == null) {
                     handlePartnerDefinition(sm_so_service_execNew, 1);
@@ -344,7 +344,7 @@ public class Act028_Opc extends BaseFragment {
                 ).get(SM_SO_Service_Exec_Sql_003.NEXT_TMP));
 
                 sm_so_service_execNew.setExec_tmp(nExecTemp);
-                sm_so_service_execNew.setStatus(Constant.SO_STATUS_NOT_EXECUTED);
+                sm_so_service_execNew.setStatus(Constant.SYS_STATUS_NOT_EXECUTED);
 
                 if (mService.getPartner_code() == null) {
                     handlePartnerDefinition(sm_so_service_execNew, 2);
@@ -462,13 +462,13 @@ public class Act028_Opc extends BaseFragment {
                 );
 
                 for (SM_SO_Service_Exec sm_so_service_exec : mExecList) {
-                    if (!sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_CANCELLED) &&
-                            !sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_INCONSISTENT)) {
+                    if (!sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
+                            !sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_INCONSISTENT)) {
                         qty++;
                     }
 
-                    if (sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE) ||
-                            sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SO_STATUS_NOT_EXECUTED)) {
+                    if (sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) ||
+                            sm_so_service_exec.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_NOT_EXECUTED)) {
                         qty_done++;
                     }
 
@@ -797,8 +797,8 @@ public class Act028_Opc extends BaseFragment {
 //        );
 //
 //        if (
-//                !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
-//                        !sm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+//                !sm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
+//                        !sm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
 //                ) {
 //
 //            return false;
@@ -813,14 +813,14 @@ public class Act028_Opc extends BaseFragment {
 //
 //                        ) {
 //
-//                    if (!sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
-//                            !sm_so_pack.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+//                    if (!sm_so_pack.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
+//                            !sm_so_pack.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
 //                            ) {
 //                        return false;
 //                    } else {
 //
-//                        if (!sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PROCESS) &&
-//                                !sm_so_service.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)
+//                        if (!sm_so_service.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS) &&
+//                                !sm_so_service.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
 //                                ) {
 //
 //                            return false;

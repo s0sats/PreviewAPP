@@ -2674,46 +2674,49 @@ public class ToolBox_Inf {
     }
 
     public static void setServiceStatusColor(Context context, TextView tv_status, String status) {
-        switch (status) {
-            case Constant.SO_STATUS_PENDING:
+       /* switch (status) {
+            case Constant.SYS_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_DONE:
+            case Constant.SYS_STATUS_DONE:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED:
+            case Constant.SYS_STATUS_CANCELLED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
             default:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-        }
+        }*/
+        tv_status.setTextColor(context.getResources().getColor(getStatusColor(status)));
+
     }
 
 
     public static void setTaskStatusColor(Context context, TextView tv_status, String status) {
-        switch (status) {
-            case Constant.SO_STATUS_PENDING:
+        /*switch (status) {
+            case Constant.SYS_STATUS_PENDING:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
                 break;
-            case Constant.SO_STATUS_PROCESS:
+            case Constant.SYS_STATUS_PROCESS:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
                 break;
-            case Constant.SO_STATUS_DONE:
+            case Constant.SYS_STATUS_DONE:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
                 break;
-            case Constant.SO_STATUS_CANCELLED:
+            case Constant.SYS_STATUS_CANCELLED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
                 break;
-            case Constant.SO_STATUS_NOT_EXECUTED:
+            case Constant.SYS_STATUS_NOT_EXECUTED:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
                 break;
-            case Constant.SO_STATUS_INCONSISTENT:
+            case Constant.SYS_STATUS_INCONSISTENT:
                 tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
                 break;
             default:
                 break;
-        }
+        }*/
+        tv_status.setTextColor(context.getResources().getColor(getStatusColor(status)));
     }
 
 
@@ -2721,63 +2724,65 @@ public class ToolBox_Inf {
                 /*
         * Tratativa de cor por Status
         * */
-        switch (status) {
-            case Constant.SO_STATUS_PENDING:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_PROCESS:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
-            case Constant.SO_STATUS_DONE:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            case Constant.SO_STATUS_NOT_EXECUTED:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
-                break;
-            case Constant.SO_STATUS_INCONSISTENT:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
-                break;
-            default:
-                break;
-        }
+//        switch (status) {
+//            case Constant.SYS_STATUS_PENDING:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+//                break;
+//            case Constant.SYS_STATUS_PROCESS:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+//                break;
+//            case Constant.SYS_STATUS_DONE:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+//                break;
+//            case Constant.SYS_STATUS_CANCELLED:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+//                break;
+//            case Constant.SYS_STATUS_NOT_EXECUTED:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_purple_3));
+//                break;
+//            case Constant.SYS_STATUS_INCONSISTENT:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+//                break;
+//            default:
+//                break;
+//        }
+        tv_status.setTextColor(context.getResources().getColor(getStatusColor(status)));
     }
 
     public static void setSOStatusColor(Context context, TextView tv_status, String status) {
 
-        switch (status) {
-            case Constant.SO_STATUS_PENDING:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
-                break;
-            case Constant.SO_STATUS_PROCESS:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
-                break;
-            case Constant.SO_STATUS_DONE:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
-                break;
-            case Constant.SO_STATUS_CANCELLED:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
-                break;
-            case Constant.SO_STATUS_BLOCKED:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_black));
-                break;
-            case Constant.SO_STATUS_WAITING_BUDGET:
-            case Constant.SO_STATUS_WAITING_QUALITY:
-            case Constant.SO_STATUS_WAITING_CLIENT:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_brown));
-                break;
-            case Constant.SO_STATUS_EDIT:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
-                break;
-            case Constant.SO_STATUS_WAITING_SYNC:
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
-                break;
-            default:
-                break;
-
-        }
+//        switch (status) {
+//            case Constant.SYS_STATUS_PENDING:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_light_blue_9));
+//                break;
+//            case Constant.SYS_STATUS_PROCESS:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_yellow_2));
+//                break;
+//            case Constant.SYS_STATUS_DONE:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_green_2));
+//                break;
+//            case Constant.SYS_STATUS_CANCELLED:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_4));
+//                break;
+//            case Constant.SYS_STATUS_STOP:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_black));
+//                break;
+//            case Constant.SYS_STATUS_WAITING_BUDGET:
+//            case Constant.SYS_STATUS_WAITING_QUALITY:
+//            case Constant.SYS_STATUS_WAITING_CLIENT:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_brown));
+//                break;
+//            case Constant.SYS_STATUS_EDIT:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_pink_1));
+//                break;
+//            case Constant.SYS_STATUS_WAITING_SYNC:
+//                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_color_dark_blue));
+//                break;
+//            default:
+//                break;
+//
+//        }
+        tv_status.setTextColor(context.getResources().getColor(getStatusColor(status)));
 
     }
 
@@ -3896,8 +3901,8 @@ public class ToolBox_Inf {
     }
 
     public static int getApStatusColor(String status) {
-        switch (status) {
-            case Constant.SO_STATUS_EDIT:
+        /*switch (status) {
+            case Constant.SYS_STATUS_EDIT:
                 return R.color.namoa_color_pink_1;
             case Constant.SYS_STATUS_PROCESS:
                 return R.color.namoa_color_yellow_2;
@@ -3909,7 +3914,8 @@ public class ToolBox_Inf {
                 return R.color.namoa_color_gray_4;
             default:
                 return R.color.namoa_color_gray_4;
-        }
+        }*/
+        return getStatusColor(status);
     }
 
     public static int getStatusColor(String status) {
@@ -3921,6 +3927,7 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_PENDING:
                 return R.color.namoa_status_pending;
             case Constant.SYS_STATUS_PROCESS:
+            case Constant.SYS_STATUS_IN_PROCESSING:
                 return R.color.namoa_status_process;
             case Constant.SYS_STATUS_WAITING_APPROVAL:
                 return R.color.namoa_status_waiting_approval;
@@ -3928,19 +3935,23 @@ public class ToolBox_Inf {
                 return R.color.namoa_status_waiting_budget;
             case Constant.SYS_STATUS_WAITING_QUALITY:
                 return R.color.namoa_status_waiting_quality;
-            case Constant.SYS_STATUS_WAITING_WAITING_CLIENT:
+            case Constant.SYS_STATUS_WAITING_CLIENT:
+                return R.color.namoa_status_waiting_client;
+            case Constant.SYS_STATUS_WAITING_ACTION:
                 return R.color.namoa_status_waiting_client;
             case Constant.SYS_STATUS_WAITING_SYNC:
                 return R.color.namoa_status_waiting_sync;
             case Constant.SYS_STATUS_DONE:
+            case Constant.SYS_STATUS_FINALIZED:
                 return R.color.namoa_status_done;
             case Constant.SYS_STATUS_NOT_EXECUTED:
                 return R.color.namoa_status_not_executed;
             case Constant.SYS_STATUS_CANCELLED:
+            case Constant.SYS_STATUS_SENT:
                 return R.color.namoa_status_cancelled;
             case Constant.SYS_STATUS_INCONSISTENT:
                 return R.color.namoa_status_inconsistent;
-            case Constant.SYS_STATUS_SCHEDULED:
+            case Constant.SYS_STATUS_SCHEDULE:
                 return R.color.namoa_status_scheduled;
             case Constant.SYS_STATUS_ERROR:
                 return R.color.namoa_status_error;

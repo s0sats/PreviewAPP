@@ -929,7 +929,7 @@ public class WS_Sync extends IntentService {
                                     && local.getCustom_form_data_serv() != null
                                     && local.getCustom_form_data_serv().equals(schedules.getCustom_form_data_serv())
                                     ) {
-                                if (!local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+                                if (!local.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
                                     add = false;
                                 } else {
                                     //Se registro ja existe, atualiza form_data no novo item
@@ -979,7 +979,7 @@ public class WS_Sync extends IntentService {
                         List<GE_Custom_Form_Local> finalDelete = new ArrayList<>(formLocalToDelete);
                         //
                         for (GE_Custom_Form_Local local : formLocalToDelete) {
-                            if(local.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)){
+                            if(local.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)){
                                 formFieldLocalDao.remove(
                                         new GE_Custom_Form_Field_Local_Sql_006(
                                                 String.valueOf(local.getCustomer_code()),

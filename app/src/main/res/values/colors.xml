@@ -76,7 +76,9 @@
     <color name="namoa_color_green_3">#228B22</color>
     <color name="namoa_color_light_blue_9">#3C93A9 </color>
     <color name="namoa_color_gray_4">#808080</color>
-    <color name="namoa_color_gray_5">#f7f7f9</color>
+    <color name="namoa_color_gray_5">#F7F7F9</color>
+    <color name="namoa_color_gray_6">#D5D5D6</color>
+    <color name="namoa_color_gray_7">#BDBDBE</color>
     <color name="namoa_color_red">#FF0000</color>
     <color name="namoa_color_black">#000000</color>
     <color name="namoa_color_purple_3">#800080</color>

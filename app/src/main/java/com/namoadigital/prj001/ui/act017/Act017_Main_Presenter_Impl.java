@@ -78,7 +78,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)){
 
             case Constant.MODULE_CHECKLIST:
-                if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+                if(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
                     if (isAnyFormInProcessing(item)) {
                         mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item);
                     } else {
@@ -136,7 +136,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         if(hasSerial){
             mView.callAct011(context,bundle);
-        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SCHEDULED)){
+        }else if(!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)){
             mView.callAct011(context,bundle);
         }else{
             mView.callAct008(context,bundle);
@@ -155,7 +155,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE),
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION),
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA),
-                        Constant.CUSTOM_FORM_STATUS_IN_PROCESSING
+                        Constant.SYS_STATUS_IN_PROCESSING
                 ).toSqlQuery()
         );
     }

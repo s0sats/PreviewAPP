@@ -99,8 +99,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE);
-            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,true);
-            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,true);
+            filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM,false);
+            filter_form_ap = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM_AP,false);
+        }else{
+            filter_form = false;
+            filter_form_ap = false;
         }
     }
 

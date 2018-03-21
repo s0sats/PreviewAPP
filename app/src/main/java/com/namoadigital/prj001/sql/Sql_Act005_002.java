@@ -28,7 +28,7 @@ public class Sql_Act005_002 implements Specification {
                         "   ge_custom_forms_local l\n" +
                         " WHERE\n" +
                         "   l.customer_code = '"+customer_code+"' \n" +
-                        "   and l.custom_form_status = '"+ Constant.CUSTOM_FORM_STATUS_FINALIZED+"'\n")
+                        "   and l.custom_form_status = '"+ Constant.SYS_STATUS_FINALIZED+"'\n")
                 .append(";"+ BADGE_FINALIZED_QTY)
                 .toString();
         /**

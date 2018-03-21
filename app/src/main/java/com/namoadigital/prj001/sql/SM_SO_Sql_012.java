@@ -53,9 +53,9 @@ public class SM_SO_Sql_012 implements Specification {
         StringBuilder sbStatus = new StringBuilder();
 
         if (approval_required == 1 || approval_required == 2) {
-            sbStatus.append(Constant.SO_STATUS_WAITING_SYNC);
+            sbStatus.append(Constant.SYS_STATUS_WAITING_SYNC);
         } else {
-            //sbStatus.append(Constant.SO_STATUS_WAITING_CLIENT);
+            //sbStatus.append(Constant.SYS_STATUS_WAITING_CLIENT);
             sbStatus.append(approval_type);
         }
 

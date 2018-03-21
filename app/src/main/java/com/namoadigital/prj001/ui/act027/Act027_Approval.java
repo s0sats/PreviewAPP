@@ -110,7 +110,7 @@ public class Act027_Approval extends BaseFragment {
     }
 
     public void setOnLineApproval(Integer user_code) {
-        mSm_so.setStatus(Constant.SO_STATUS_WAITING_SYNC);
+        mSm_so.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
         mSm_so.setApproval_required(WS_PROCESS_APPROVAL_ON_LINE);
         mSm_so.setClient_approval_user(user_code);
 
@@ -143,7 +143,7 @@ public class Act027_Approval extends BaseFragment {
     }
 
     public void setOnLineApprovalSig(String image_name) {
-        mSm_so.setStatus(Constant.SO_STATUS_WAITING_SYNC);
+        mSm_so.setStatus(Constant.SYS_STATUS_WAITING_SYNC);
         mSm_so.setApproval_required(WS_PROCESS_APPROVAL_ON_SIGNATURE);
         mSm_so.setClient_approval_user(null);
 
@@ -356,7 +356,7 @@ public class Act027_Approval extends BaseFragment {
                 String user_id = mk_user_value.getText().toString();
                 String password = mk_password_value.getText().toString();
                 //
-                String Autor_Type = ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ? Constant.SO_PARAM_AUTH_TYPE_QUALITY : Constant.SO_PARAM_AUTH_TYPE_CLIENT;
+                String Autor_Type = ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) ? Constant.SO_PARAM_AUTH_TYPE_QUALITY : Constant.SO_PARAM_AUTH_TYPE_CLIENT;
                 //
                 Act027_Main mMain = (Act027_Main) getActivity();
                 mMain.executeUserAuthorCheck(
@@ -454,8 +454,8 @@ public class Act027_Approval extends BaseFragment {
         iv_signature.setVisibility(View.GONE);
 
         // Fechado
-        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
+        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
+                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)) {
 
             tv_so_approval_quality_type_lbl.setVisibility(View.VISIBLE);
 
@@ -533,7 +533,7 @@ public class Act027_Approval extends BaseFragment {
 
         } else {
             // abertp
-            if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
+            if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)) {
                 int iStatus = 0;
 
                 if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_QUALITY)) {
@@ -660,7 +660,7 @@ public class Act027_Approval extends BaseFragment {
                 ll_quality.setVisibility(View.GONE);
                 ll_final.setVisibility(View.VISIBLE);
 
-            } else if (ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+            } else if (ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
                 tv_name_lbl.setVisibility(View.VISIBLE);
                 mk_name_value.setVisibility(View.VISIBLE);
 
@@ -718,13 +718,13 @@ public class Act027_Approval extends BaseFragment {
 //
 //                int iStatus = 0;
 //
-//                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
+//                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)) {
 //                    if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_QUALITY)) {
 //                        iStatus = 1;
 //                    } else {
 //                        iStatus = 0;
 //                    }
-//                } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+//                } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
 //                    iStatus = mSm_so.getApprove_client();
 //                } else {
 //                    iStatus = 0;
@@ -785,13 +785,13 @@ public class Act027_Approval extends BaseFragment {
 //                    approvalUser_Password.setVisibility(View.VISIBLE);
 //                }
 //
-//                if (ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
+//                if (ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)) {
 //                    tv_so_approval_quality_type_lbl.setVisibility(View.VISIBLE);
 //                    tv_so_approval_type_lbl.setVisibility(View.GONE);
 //
 //                    ll_quality.setVisibility(View.VISIBLE);
 //                    ll_final.setVisibility(View.GONE);
-//                } else if (ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+//                } else if (ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
 //                    tv_so_approval_quality_type_lbl.setVisibility(View.GONE);
 //                    tv_so_approval_type_lbl.setVisibility(View.VISIBLE);
 //

@@ -54,7 +54,7 @@ public class Sql_Act005_005 implements Specification {
                         "                       s.site_code,\n" +
                         "                       s.zone_code,\n" +
                         "                       s.status, \n" +
-                        "                       SUM(CASE WHEN e.status in ('"+Constant.SO_STATUS_DONE+"','"+Constant.SO_STATUS_NOT_EXECUTED+"') THEN 1 ELSE 0 END) QTY_DONE,\n" +
+                        "                       SUM(CASE WHEN e.status in ('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_NOT_EXECUTED+"') THEN 1 ELSE 0 END) QTY_DONE,\n" +
                         "                       (CASE WHEN \n" +
                         "                              S.exec_type = '"+ Constant.SO_SERVICE_TYPE_YES_NO+"' \n" +
                         "                                 THEN\n" +
@@ -86,7 +86,7 @@ public class Sql_Act005_005 implements Specification {
                         "                                                          AND e2.category_price_code = e.category_price_code\n" +
                         "                                                          AND e2.service_code  = e.service_code\n" +
                         "                                                          AND e2.service_seq  = e.service_seq   \n" +
-                        "                                                          AND e2.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
+                        "                                                          AND e2.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_INCONSISTENT + "')\n" +
                         "               )\n" +
                         "                                      \n" +
                         "                                                        , s.partner_code) IS NOT NULL \n" +
@@ -111,7 +111,7 @@ public class Sql_Act005_005 implements Specification {
                         "                                                          AND e2.category_price_code = e.category_price_code\n" +
                         "                                                          AND e2.service_code  = e.service_code\n" +
                         "                                                          AND e2.service_seq  = e.service_seq   \n" +
-                        "                                                          AND e2.status NOT IN('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
+                        "                                                          AND e2.status NOT IN('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_INCONSISTENT + "')\n" +
                         "                                                         ), s.partner_code )\n" +
                         "                                            ) \n" +
                         "                                           ELSE \n" +
@@ -128,7 +128,7 @@ public class Sql_Act005_005 implements Specification {
                         "                      AND so.so_code = s3.so_code\n" +
                         "                   ) SO_STATUS ,\n" +
                         "                   SUM(CASE WHEN \n" +
-                        "                         e.status = '"+Constant.SO_STATUS_PROCESS+"' \n" +
+                        "                         e.status = '"+Constant.SYS_STATUS_PROCESS+"' \n" +
                         "                         and \n" +
                         "                         ( \n" +
                         "                           e.partner_code IS NULL OR \n" +
@@ -161,7 +161,7 @@ public class Sql_Act005_005 implements Specification {
                         "                                             AND S.customer_code = s3.customer_code\n" +
                         "                                             AND S.so_prefix = s3.so_prefix\n" +
                         "                                             AND S.so_code = s3.so_code\n" +
-                        "                                             AND e.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_INCONSISTENT + "')\n" +
+                        "                                             AND e.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_INCONSISTENT + "')\n" +
                         "                   \n" +
                         "                   WHERE\n" +
                         "                   \n" +
@@ -191,7 +191,7 @@ public class Sql_Act005_005 implements Specification {
                         "                    exec_seq_oper) TTT \n" +
                         "                WHERE\n" +
                         "                    1 = 1\n" +
-                        "                    AND TTT.status = '"+Constant.SO_STATUS_PENDING+"'\n" +
+                        "                    AND TTT.status = '"+Constant.SYS_STATUS_PENDING+"'\n" +
                         "                    AND (TTT.PARTNER_RESTRICTION IN (-1,1) or TTT.ANY_PARTNER > 0)\n" +
                         "                    AND (TTT.ZONE_CODE is null or (TTT.SITE_CODE||'|'||TTT.ZONE_CODE = '"+site_code+"|"+zone_code+"'))\n" +
                         "               GROUP BY\n" +
@@ -200,9 +200,9 @@ public class Sql_Act005_005 implements Specification {
                         "                 TTT.so_code\n" +
                         "                    \n" +
                         "           ),\n" +
-                        "            CASE WHEN S3.status = '"+Constant.SO_STATUS_WAITING_SYNC+"'    \n" +
+                        "            CASE WHEN S3.status = '"+Constant.SYS_STATUS_WAITING_SYNC+"'    \n" +
                         "                      THEN 1\n" +
-                        "                 WHEN S3.status = '"+Constant.SO_STATUS_WAITING_CLIENT+"' AND S3.client_type = '"+Constant.CLIENT_TYPE_USER+"' AND s3.approve_client = 1\n" +
+                        "                 WHEN S3.status = '"+Constant.SYS_STATUS_WAITING_CLIENT+"' AND S3.client_type = '"+Constant.CLIENT_TYPE_USER+"' AND s3.approve_client = 1\n" +
                         "                      THEN 1\n" +
                         "                      ELSE 0\n" +
                         "            END           \n" +
@@ -212,7 +212,7 @@ public class Sql_Act005_005 implements Specification {
                         "        "+SM_SODao.TABLE+" s3\n" +
                         "       WHERE\n" +
                         "         s3.customer_code = '"+customer_code+"'\n" +
-                        "         and s3.status NOT IN ('" + Constant.SO_STATUS_CANCELLED + "','" + Constant.SO_STATUS_DONE + "')\n " +
+                        "         and s3.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "')\n " +
                         "         and "+QTD_SERVICES+" > 0 \n " +
                         "         and s3.sync_required = 1 \n " +
                         " ) F \n")

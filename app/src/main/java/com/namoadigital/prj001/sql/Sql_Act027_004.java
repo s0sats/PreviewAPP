@@ -63,7 +63,7 @@ public class Sql_Act027_004 implements Specification {
                         "          AND e.CATEGORY_PRICE_CODE = '"+ category_price_code +"'\n" +
                         "          AND e.SERVICE_CODE = '"+service_code+"'\n" +
                         "          AND e.SERVICE_SEQ = '"+service_seq+"' \n" +
-                        "          AND e.status = '"+ Constant.SO_STATUS_PROCESS+"') e" +
+                        "          AND e.status = '"+ Constant.SYS_STATUS_PROCESS+"') e" +
                         "         WHERE\n" +
                         "               t.CUSTOMER_CODE = e.CUSTOMER_CODE\n" +
                         "               AND t.SO_PREFIX = e.SO_PREFIX\n" +
@@ -75,7 +75,7 @@ public class Sql_Act027_004 implements Specification {
                         "               AND t.SERVICE_CODE = e.SERVICE_CODE\n" +
                         "               AND t.SERVICE_SEQ = e.SERVICE_SEQ\n" +
                         "               AND t.exec_tmp = e.exec_tmp \n" +
-                        "               AND t.status = '"+ Constant.SO_STATUS_PROCESS+"' \n" +
+                        "               AND t.status = '"+ Constant.SYS_STATUS_PROCESS+"' \n" +
                         "               AND t.task_user = '"+user_code+"'")
                 /*.append("   SELECT\n" +
                         "       e.exec_tmp,  \n" +
@@ -94,7 +94,7 @@ public class Sql_Act027_004 implements Specification {
                         "               AND t.SERVICE_CODE = e.SERVICE_CODE\n" +
                         "               AND t.SERVICE_SEQ = e.SERVICE_SEQ\n" +
                         "               AND t.exec_tmp = e.exec_tmp \n" +
-                        "               AND t.status = '"+ Constant.SO_STATUS_PROCESS+"' \n" +
+                        "               AND t.status = '"+ Constant.SYS_STATUS_PROCESS+"' \n" +
                         "               AND t.task_user = '"+user_code+"' ) task_tmp," +
                         "       ( SELECT\n" +
                         "           t.task_perc\n" +
@@ -111,7 +111,7 @@ public class Sql_Act027_004 implements Specification {
                         "               AND t.SERVICE_CODE = e.SERVICE_CODE\n" +
                         "               AND t.SERVICE_SEQ = e.SERVICE_SEQ\n" +
                         "               AND t.exec_tmp = e.exec_tmp \n" +
-                        "               AND t.status = '"+ Constant.SO_STATUS_PROCESS+"' \n" +
+                        "               AND t.status = '"+ Constant.SYS_STATUS_PROCESS+"' \n" +
                         "               AND '"+user_code+"' ) task_perc  \n" +
                         "   FROM\n" +
                             SM_SO_Service_ExecDao.TABLE +"  e \n " +
@@ -125,7 +125,7 @@ public class Sql_Act027_004 implements Specification {
                         "          AND e.CATEGORY_PRICE_CODE = '"+ category_price_code +"'\n" +
                         "          AND e.SERVICE_CODE = '"+service_code+"'\n" +
                         "          AND e.SERVICE_SEQ = '"+service_seq+"' \n" +
-                        "          AND e.status = '"+ Constant.SO_STATUS_PROCESS+"'")*/
+                        "          AND e.status = '"+ Constant.SYS_STATUS_PROCESS+"'")*/
                 .append(";")
                 .append(SM_SO_Service_Exec_TaskDao.EXEC_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_TMP+"#"+SM_SO_Service_Exec_TaskDao.TASK_PERC)
                 .toString();

@@ -82,7 +82,7 @@ public class WS_Cleaning_Sql_004 implements Specification {
                         "\n" +
                         "\t\t\t\t\t\t\t\te.exec_tmp = t.exec_tmp and \n" +
                         "\t\t\t\t\t\t\t\t\n" +
-                        "\t\t\t\t\t\t\t\tt.status != '" + Constant.SO_STATUS_CANCELLED + "' )\n" +
+                        "\t\t\t\t\t\t\t\tt.status != '" + Constant.SYS_STATUS_CANCELLED + "' )\n" +
                         "\t\t\t\t)\n" +
                         "\n" +
                         "\t\t= 0\n" +

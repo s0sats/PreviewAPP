@@ -515,7 +515,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
             public void nserv() {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                if (formData != null && formData.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING)) {
+                if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                     exitAlertNServ();
                 } else {
                     nservCall();
@@ -1002,8 +1002,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         mkEditTextNMFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
@@ -1036,8 +1036,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         comboBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             comboBoxFF.setmEnabled(false);
         } else {
@@ -1085,8 +1085,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             checkBoxFF.setmEnabled(false);
         } else {
@@ -1120,8 +1120,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             ratingImageFF.setmEnabled(false);
         } else {
@@ -1153,8 +1153,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             ratingBarFF.setmEnabled(false);
         } else {
@@ -1187,8 +1187,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             pictureFF.setmEnabled(false);
         } else {
@@ -1220,8 +1220,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
 
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.CUSTOM_FORM_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
                 ) {
             photoFF.setmEnabled(false);
         } else {
@@ -1693,7 +1693,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
 
-        if (formData != null && formData.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING)) {
+        if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
             exitAlert();
         } else {
             callAct005(Act011_Main.this);

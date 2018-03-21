@@ -40,8 +40,8 @@ public class SM_SO_Sql_016 implements Specification {
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
                             filter +
-                        //"    AND s.status in ('"+ Constant.SO_STATUS_CANCELLED+"','" + Constant.SO_STATUS_WAITING_QUALITY +"','"+ Constant.SO_STATUS_DONE+"');")
-                        "    AND s.status in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"');")
+                        //"    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','" + Constant.SYS_STATUS_WAITING_QUALITY +"','"+ Constant.SYS_STATUS_DONE+"');")
+                        "    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"');")
                 .append(fields)
                 .toString();
     }

@@ -240,7 +240,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
             });
         }else {
             //
-            if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_PENDING)) {
+            if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)) {
                 //
             /*if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
                 iv_express.setVisibility(View.VISIBLE);
@@ -282,7 +282,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     }
                 }
             } else {
-                if(item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SO_STATUS_DONE)) {
+                if(item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_DONE)) {
 
                     if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
                         ll_express.setVisibility(View.VISIBLE);

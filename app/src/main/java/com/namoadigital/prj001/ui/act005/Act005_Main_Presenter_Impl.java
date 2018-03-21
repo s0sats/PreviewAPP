@@ -131,7 +131,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     String[] icon = {
             String.valueOf(R.drawable.ic_n_form),
-            String.valueOf(R.drawable.ic_n_form),
+            String.valueOf(R.drawable.ic_n_action_plan),
             String.valueOf(R.drawable.ic_n_service2_24x24),
             String.valueOf(R.drawable.ic_calendario),
             String.valueOf(R.drawable.ic_serial_24x24),
@@ -140,7 +140,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String.valueOf(R.drawable.ic_notificacao),
             String.valueOf(R.drawable.ic_enviar),
             //       String.valueOf(R.drawable.ic_sincronizar),
-            String.valueOf(R.drawable.ic_chat_24x24),
+            String.valueOf(R.drawable.ic_n_chat),//old R.drawable.ic_chat_24x24
             String.valueOf(R.drawable.ic_sair)
     };
 
@@ -190,7 +190,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                     ).toSqlQuery()
                             ).get(Sql_Act021_004.UPDATE_SYNC_REQUIRED_QTY);
                             //
-
+                        } catch (Exception e) {
+                            qty = "0";
+                        }
+                        try {
                             qtyBadge2 = soDao.getByStringHM(
                                     new Sql_Act005_005(
                                             ToolBox_Con.getPreference_Customer_Code(context),
@@ -198,8 +201,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             ToolBox_Con.getPreference_Zone_Code(context)
                                     ).toSqlQuery()
                             ).get(Sql_Act005_005.QTD_MY_PENDING_SO);
-                        }catch (Exception e){
-                            qty = "0";
+                        } catch (Exception e) {
                             qtyBadge2 = "0";
                         }
                         //
@@ -208,24 +210,34 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_PENDING_DATA:
-
-                        qty = customFormLocalDao.getByStringHM(
-                                new Sql_Act005_001(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
-
-                        qtySO = soDao.getByStringHM(
-                                new Sql_Act021_002(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                ).toSqlQuery()
-                        ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                        try {
+                            qty = customFormLocalDao.getByStringHM(
+                                    new Sql_Act005_001(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_001.BADGE_IN_PROCESSING_QTY);
+                        } catch (Exception e) {
+                            qty = "0";
+                        }
+                        try {
+                            qtySO = soDao.getByStringHM(
+                                    new Sql_Act021_002(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                    ).toSqlQuery()
+                            ).get(Sql_Act021_002.PENDING_PROCESS_QTY);
+                        } catch (Exception e) {
+                            qtySO = "0";
+                        }
                         //
-                        qtyAP = customFormApDao.getByStringHM(
-                                new GE_Custom_Form_Ap_Sql_001(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                        try {
+                            qtyAP = customFormApDao.getByStringHM(
+                                    new GE_Custom_Form_Ap_Sql_001(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                        } catch (Exception e) {
+                            qtyAP = "0";
+                        }
                         //Soma Qtd de n-form e n_service
                         qty = String.valueOf(
                                 Integer.parseInt(qty)
@@ -233,36 +245,50 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                         + Integer.parseInt(qtyAP)
                         );
                         //
-                        qtyBadge2 = soDao.getByStringHM(
-                                new Sql_Act005_004(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        ToolBox_Con.getPreference_Site_Code(context),
-                                        ToolBox_Con.getPreference_Zone_Code(context)
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
-
+                        //
+                        try {
+                            qtyBadge2 = soDao.getByStringHM(
+                                    new Sql_Act005_004(
+                                            ToolBox_Con.getPreference_Customer_Code(context),
+                                            ToolBox_Con.getPreference_Site_Code(context),
+                                            ToolBox_Con.getPreference_Zone_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
+                        }catch (Exception e){
+                            qtyBadge2 = "0";
+                        }
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);
                         break;
 
                     case Act005_Main.MENU_ID_SEND_DATA:
-                        qty = customFormLocalDao.getByStringHM(
-                                new Sql_Act005_002(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
-
-                        qtySO = soDao.getByStringHM(
-                                new Sql_Act021_003(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
-
-                        qtyAP = customFormApDao.getByStringHM(
-                                new Sql_Act005_007(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_007.BADGE_TO_SEND_QTY);
+                        try {
+                            qty = customFormLocalDao.getByStringHM(
+                                    new Sql_Act005_002(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
+                        }catch (Exception e){
+                            qty = "0";
+                        }
+                        try {
+                            qtySO = soDao.getByStringHM(
+                                    new Sql_Act021_003(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
+                        }catch (Exception e){
+                            qtySO = "0";
+                        }
+                        try {
+                            qtyAP = customFormApDao.getByStringHM(
+                                    new Sql_Act005_007(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_007.BADGE_TO_SEND_QTY);
+                        }catch (Exception e){
+                            qtyAP = "0";
+                        }
                         //Soma Qtd de n-form e n_service e form_ap
                         qty = String.valueOf(
                                 ToolBox_Inf.convertStringToInt(qty) +
@@ -275,18 +301,25 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_SCHEDULE_DATA:
-                        qty = customFormLocalDao.getByStringHM(
-                                new Sql_Act005_003(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
+                        try {
+                            qty = customFormLocalDao.getByStringHM(
+                                    new Sql_Act005_003(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
+                        }catch (Exception e){
+                            qty = "0";
+                        }
                         //
-                        qtyAP = customFormApDao.getByStringHM(
-                                new Sql_Act005_006(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                                ).toSqlQuery()
-                        ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
-
+                        try {
+                            qtyAP = customFormApDao.getByStringHM(
+                                    new Sql_Act005_006(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                    ).toSqlQuery()
+                            ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
+                        }catch (Exception e){
+                            qtyAP = "0";
+                        }
                         qty = String.valueOf(
                                 ToolBox_Inf.convertStringToInt(qty) +
                                         ToolBox_Inf.convertStringToInt(qtyAP)
@@ -296,10 +329,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         break;
 
                     case Act005_Main.MENU_ID_MESSAGES:
-                        qty = fcmMessageDao.getByStringHM(
-                                new FCMMessage_Sql_003().toSqlQuery()
-                        ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
-
+                        try {
+                            qty = fcmMessageDao.getByStringHM(
+                                    new FCMMessage_Sql_003().toSqlQuery()
+                            ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
+                        }catch (Exception e){
+                            qty = "0";
+                        }
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
 
@@ -308,17 +344,25 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         break;
                     case Act005_Main.MENU_ID_FORM_AP:
-                        qty = customFormApDao.getByStringHM(
-                                new GE_Custom_Form_Ap_Sql_001(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                        try {
+                            qty = customFormApDao.getByStringHM(
+                                    new GE_Custom_Form_Ap_Sql_001(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                        }catch (Exception e){
+                            qty = "0";
+                        }
                         //
-                        qtyBadge2 = customFormApDao.getByStringHM(
-                                new GE_Custom_Form_Ap_Sql_002(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
+                        try {
+                            qtyBadge2 = customFormApDao.getByStringHM(
+                                    new GE_Custom_Form_Ap_Sql_002(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
+                        }catch (Exception e){
+                            qtyBadge2 = "0";
+                        }
                         //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
                         Aux.put(Act005_Main.MENU_BADGE2, qtyBadge2);

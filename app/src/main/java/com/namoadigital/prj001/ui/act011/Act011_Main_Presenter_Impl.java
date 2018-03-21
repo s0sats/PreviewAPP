@@ -105,9 +105,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         if (customFormLocal != null) {
             //Se Form vem do agendamento, muda status para in processing
-            if (customFormLocal.getCustom_form_status().equals(Constant.CUSTOM_FORM_STATUS_SCHEDULED)) {
+            if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
                 //
-                customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
+                customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
                 customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
                 //
                 custom_form_LocalDao.addUpdate(customFormLocal);
@@ -171,7 +171,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
-            customFormLocal.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
+            customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
             customFormLocal.setCustom_form_data_serv(null);
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
@@ -296,7 +296,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_version((int) custom_form_version);
             form_data.setCustom_form_data(custom_form_data);
             form_data.setCustom_form_data_serv(custom_form_data_serv);
-            form_data.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_IN_PROCESSING);
+            form_data.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
             form_data.setProduct_code(product_code);
             form_data.setSerial_id("");
             form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -335,11 +335,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         String.valueOf(formData.getCustom_form_code()),
                         String.valueOf(formData.getCustom_form_version()),
                         String.valueOf(formData.getCustom_form_data()),
-                        Constant.CUSTOM_FORM_STATUS_FINALIZED
+                        Constant.SYS_STATUS_FINALIZED
                 ).toSqlQuery().toString()
         );
         //
-        formData.setCustom_form_status(Constant.CUSTOM_FORM_STATUS_FINALIZED);
+        formData.setCustom_form_status(Constant.SYS_STATUS_FINALIZED);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         custom_form_dataDao.addUpdate(formData);

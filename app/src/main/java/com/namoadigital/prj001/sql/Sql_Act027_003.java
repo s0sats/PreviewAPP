@@ -57,7 +57,7 @@ public class Sql_Act027_003 implements Specification {
                         "       AND e.CATEGORY_PRICE_CODE = '"+ category_price_code +"'\n" +
                         "       AND e.SERVICE_CODE = '"+service_code+"'\n" +
                         "       AND e.SERVICE_SEQ = '"+service_seq+"' \n" +
-                        "       AND e.status not in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_INCONSISTENT+"')")
+                        "       AND e.status not in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_INCONSISTENT+"')")
                 /*.append(";")
                 .append(HmAuxFields)*/
                 .toString();

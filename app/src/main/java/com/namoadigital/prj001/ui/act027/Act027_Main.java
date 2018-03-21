@@ -703,8 +703,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
             }
 
             if (mSm_so != null) {
-                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ||
-                        mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) ||
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
                     ToolBox_Con.setApproval_Type(context, mSm_so.getStatus());
                 } else {
                     ToolBox_Con.setApproval_Type(context, "");
@@ -736,8 +736,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         );
 
         // Recarregar o Status da SO;
-        if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ||
-                mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+        if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) ||
+                mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
             ToolBox_Con.setApproval_Type(context, mSm_so.getStatus());
         } else {
             ToolBox_Con.setApproval_Type(context, "");
@@ -1579,7 +1579,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 break;
             case Act027_Main.SELECTION_APPROVAL:
 
-                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_CLIENT)) {
+                if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT)) {
 
                     if (mSm_so.getClient_type().equalsIgnoreCase(Constant.CLIENT_TYPE_CLIENT)) {
                         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT)) {
@@ -1599,7 +1599,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                         mDrawerLayout.closeDrawer(GravityCompat.START);
                     }
 
-                } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY)) {
+                } else if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY)) {
                     setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
@@ -1651,7 +1651,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
     }
 
     private void recoverApprovalState() {
-        //mSm_so.setStatus(Constant.SO_STATUS_WAITING_CLIENT);
+        //mSm_so.setStatus(Constant.SYS_STATUS_WAITING_CLIENT);
         mSm_so.setStatus(ToolBox_Con.getApproval_Type(context));
         mSm_so.setApproval_required(WS_PROCESS_APPROVAL_NOT);
         mSm_so.setClient_approval_user(null);
@@ -1765,7 +1765,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
                 progressDialog.dismiss();
             }
 
-            String Autor_Type = ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SO_STATUS_WAITING_QUALITY) ? Constant.SO_PARAM_AUTH_TYPE_QUALITY : Constant.SO_PARAM_AUTH_TYPE_CLIENT;
+            String Autor_Type = ToolBox_Con.getApproval_Type(context).equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) ? Constant.SO_PARAM_AUTH_TYPE_QUALITY : Constant.SO_PARAM_AUTH_TYPE_CLIENT;
 
             executeUserAuthorCheck(
                     mSm_so.getCustomer_code(),
@@ -1906,7 +1906,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements Act027_
         if (
             ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
             hasExecutionProfile() &&
-            !mSm_so.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)
+            !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
         ){
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));

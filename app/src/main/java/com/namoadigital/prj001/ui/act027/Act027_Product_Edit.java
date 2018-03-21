@@ -113,7 +113,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     public boolean eventStatusOpen() {
-        if (mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+        if (mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
             return true;
         } else {
             return false;
@@ -151,7 +151,7 @@ public class Act027_Product_Edit extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
             if (bStatusNew) {
                 bStatusNew = false;
 
@@ -400,13 +400,13 @@ public class Act027_Product_Edit extends BaseFragment {
         arff_applyrepair.setmIv_Dots(0);
         arff_applyrepair.setmV_Line(0);
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
             bStatusNew = true;
         } else {
             bStatusNew = false;
         }
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_DONE)) {
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
             ll_log.setVisibility(View.VISIBLE);
             //
             tv_nick.setText(mSm_so_product_event.getDone_user_nick());
@@ -589,7 +589,7 @@ public class Act027_Product_Edit extends BaseFragment {
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());
         mIntent.putExtra(ConstantBase.MPRE, "pp");
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) ||
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) ||
                 mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
             mIntent.putExtra(ConstantBase.PENABLED, true);
         } else {
@@ -629,7 +629,7 @@ public class Act027_Product_Edit extends BaseFragment {
             return;
         }
 
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING) ||
+        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) ||
                 mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
 
             arff_applyrepair.setmEnabled(true);
@@ -819,7 +819,7 @@ public class Act027_Product_Edit extends BaseFragment {
         mSm_so_product_event.setSketch(sketches);
         mSm_so_product_event.setFile(eventFiles);
         mSm_so_product_event.setIntegrated(0);
-        mSm_so_product_event.setStatus(Constant.SO_STATUS_DONE);
+        mSm_so_product_event.setStatus(Constant.SYS_STATUS_DONE);
 
         sm_so_product_eventDao.addUpdateTmp(mSm_so_product_event);
 
@@ -923,7 +923,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     public String getEventStatus() {
-        if (mSm_so_product_event == null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SO_STATUS_PENDING)) {
+        if (mSm_so_product_event == null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
             return EVENT_EDIT_MODE;
         } else {
             return mSm_so_product_event.getStatus();

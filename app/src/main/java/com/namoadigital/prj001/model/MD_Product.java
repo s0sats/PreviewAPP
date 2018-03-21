@@ -19,6 +19,7 @@ public class MD_Product {
     private Integer sketch_lines;
     private Integer sketch_columns;
     private String sketch_color;
+    private int flag_offline;
 
 
     public long getCustomer_code() {
@@ -123,5 +124,13 @@ public class MD_Product {
 
     public void setSketch_color(String sketch_color) {
         this.sketch_color = sketch_color;
+    }
+
+    public int getFlag_offline() {
+        return flag_offline;
+    }
+
+    public void setFlag_offline(int flag_offline) {
+        this.flag_offline = flag_offline;
     }
 }

@@ -77,7 +77,7 @@ public class Sql_Act027_005 implements Specification {
                         "          AND e.CATEGORY_PRICE_CODE = '"+ category_price_code +"'\n" +
                         "          AND e.SERVICE_CODE = '"+service_code+"'\n" +
                         "          AND e.SERVICE_SEQ = '"+service_seq+"' \n" +
-                        "          AND t.status = '"+ Constant.SO_STATUS_DONE+"'"+
+                        "          AND t.status = '"+ Constant.SYS_STATUS_DONE+"'"+
                         "           \n" +
                         "        GROUP BY\n" +
                         "           e.CUSTOMER_CODE,\n" +

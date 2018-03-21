@@ -33,7 +33,7 @@ public class SM_SO_Sql_004 implements Specification {
                         SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
-                        "    AND s.status not in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"')" +
+                        "    AND s.status not in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"')" +
                         ";")
                 .append(PENDING_QTY)
                 .toString();

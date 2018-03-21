@@ -34,7 +34,7 @@ public class CH_Message {
         this.msg_prefix = -1;
         this.msg_code = -1;
         this.tmp = -1;
-        this.file_status = Constant.CUSTOM_FORM_STATUS_SENT;
+        this.file_status = Constant.SYS_STATUS_SENT;
         /*this.msg_token = null;
         this.room_code = null;
         this.msg_date= null;

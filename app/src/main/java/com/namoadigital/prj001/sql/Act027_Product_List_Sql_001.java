@@ -58,9 +58,9 @@ public class Act027_Product_List_Sql_001 implements Specification {
                         "      and f.so_code = s.so_code\n" +
                         "      and f.seq_tmp = s.seq_tmp \n" +
                         "  ) "+FILE_QTY+",\n" +
-                        " (CASE WHEN s.status = '"+ Constant.SO_STATUS_INCONSISTENT+"' \n" +
+                        " (CASE WHEN s.status = '"+ Constant.SYS_STATUS_INCONSISTENT+"' \n" +
                         "           THEN '999'\n" +
-                        "      WHEN s.status = '"+ Constant.SO_STATUS_CANCELLED+"'\n" +
+                        "      WHEN s.status = '"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
                         "           THEN '998'\n" +
                         "           ELSE '0'             \n" +
                         " END) status_order \n" +

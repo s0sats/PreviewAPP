@@ -33,7 +33,7 @@ public class SM_SO_Pack_Sql_Status_001 implements Specification {
         return sb
                 .append(" UPDATE\n" +
                         SM_SO_PackDao.TABLE + "\n" +
-                        " SET status = '" + Constant.SO_STATUS_PROCESS  + "' " +
+                        " SET status = '" + Constant.SYS_STATUS_PROCESS  + "' " +
                         " WHERE\n" +
                         "        customer_code =          '" + customer_code + "'\n" +
                         "    AND so_prefix =              '" + so_prefix + "'\n" +
@@ -42,7 +42,7 @@ public class SM_SO_Pack_Sql_Status_001 implements Specification {
                         "    AND pack_code =              '" + pack_code + "'\n" +
                         "    AND pack_seq =               '" + pack_seq + "'\n" +
 
-                        "    AND status =            '" + Constant.SO_STATUS_PENDING + "' "
+                        "    AND status =            '" + Constant.SYS_STATUS_PENDING + "' "
                 )
                 .toString();
     }

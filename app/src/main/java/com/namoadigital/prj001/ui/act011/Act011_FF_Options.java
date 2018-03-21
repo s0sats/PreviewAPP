@@ -250,14 +250,14 @@ public class Act011_FF_Options extends Fragment {
         }
 
         switch (status.toUpperCase()) {
-            case Constant.CUSTOM_FORM_STATUS_SENT:
+            case Constant.SYS_STATUS_SENT:
                 ff_options_ll_e.setVisibility(View.GONE);
                 ff_options_ll_s.setVisibility(View.GONE);
                 ff_options_ll_f.setVisibility(View.GONE);
                 ff_options_ll_auto.setVisibility(View.GONE);
 
                 break;
-            case Constant.CUSTOM_FORM_STATUS_FINALIZED:
+            case Constant.SYS_STATUS_FINALIZED:
                 ff_options_ll_e.setVisibility(View.VISIBLE);
                 ff_options_ll_s.setVisibility(View.GONE);
                 ff_options_ll_f.setVisibility(View.GONE);

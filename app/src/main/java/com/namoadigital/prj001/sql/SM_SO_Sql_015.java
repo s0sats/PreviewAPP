@@ -40,11 +40,11 @@ public class SM_SO_Sql_015 implements Specification {
                         " WHERE\n" +
                         "   l." + SM_SODao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
                         "   AND ( l." + SM_SODao.STATUS + "" +
-                        "    = '" + Constant.SO_STATUS_CANCELLED + "' " +
+                        "    = '" + Constant.SYS_STATUS_CANCELLED + "' " +
                         "   OR  l." + SM_SODao.STATUS + "" +
-                        "    = '" + Constant.SO_STATUS_DONE + "' " +
+                        "    = '" + Constant.SYS_STATUS_DONE + "' " +
                         "   OR  l." + SM_SODao.STATUS + "" )
-//                        "    = '" + Constant.SO_STATUS_WAITING_QUALITY + "' ")
+//                        "    = '" + Constant.SYS_STATUS_WAITING_QUALITY + "' ")
 
                 .append(") ;")
                 .append(SENT_QTY + "#" + TYPE)

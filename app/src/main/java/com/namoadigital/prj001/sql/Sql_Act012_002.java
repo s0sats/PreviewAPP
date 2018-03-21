@@ -38,7 +38,7 @@ public class Sql_Act012_002 implements Specification {
                         SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S."+SM_SODao.CUSTOMER_CODE+" =  '" + s_customer_code + "'\n" +
-                        "    AND s."+SM_SODao.STATUS+" not in ('"+ Constant.SO_STATUS_CANCELLED+"','"+ Constant.SO_STATUS_DONE+"')" +
+                        "    AND s."+SM_SODao.STATUS+" not in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"')" +
                         ";")
                 .append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();
