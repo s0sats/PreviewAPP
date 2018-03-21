@@ -42,6 +42,8 @@ import com.namoadigital.prj001.dao.MD_Product_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SegmentDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
@@ -77,6 +79,8 @@ import com.namoadigital.prj001.model.MD_Product_Category_Price;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Product_Segment;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
@@ -110,6 +114,12 @@ import com.namoadigital.prj001.sql.MD_Product_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Segment_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
@@ -157,19 +167,19 @@ public class WS_Sync extends IntentService {
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
             //Essa chave só é passada pela Act008, tela de criação se formulario.
-            Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE,-1L);
-            boolean loginProcess = bundle.getBoolean(Constant.GS_LOGIN_PROCESS,false);
+            Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE, -1L);
+            boolean loginProcess = bundle.getBoolean(Constant.GS_LOGIN_PROCESS, false);
 
-            processWS_Sync(session_app,dataPackageType,jumpValidation,jumpOD,product_code, loginProcess);
+            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess);
 
             // Limpeza da Notificacao
             cleanNotification(getApplicationContext());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
 
-            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
 
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
 
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
@@ -190,12 +200,12 @@ public class WS_Sync extends IntentService {
     }
 
     private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess) throws Exception {
-        EV_UserDao userDao =  new EV_UserDao(getApplicationContext(),Constant.DB_FULL_BASE,Constant.DB_VERSION_BASE);
-        EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        EV_Module_Res_TxtDao moduleResTxtDao =  new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-        EV_ProfileDao evProfileDao =  new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+        EV_UserDao userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        EV_Module_Res_TxtDao moduleResTxtDao = new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        EV_Module_Res_Txt_TransDao moduleResTxtTransDao = new EV_Module_Res_Txt_TransDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -206,54 +216,54 @@ public class WS_Sync extends IntentService {
         //Inicia processsamento das informações para o envio
 
         //Verifica se existe o "Tipo" e adiciona a proprieda no data_package
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
             //No caso do Main, sempre é vazio
             ArrayList<String> MAIN = new ArrayList<>();
             dataPackage.setMAIN(MAIN);
         }
 
         //Verifica o tipo Checklist e gera lista de codigo de produtos.
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)) {
             ArrayList<Long> CHECKLIST = new ArrayList<>();
 
             //Pega lista de Sync_Checklist
             syncChecklists = syncChecklistDao.query(
-                new Sync_Checklist_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                ).toSqlQuery()
+                    new Sync_Checklist_Sql_001(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
             );
 
             //Monta lista de produtos a serem enviados
-            for (Sync_Checklist syncChecklist:syncChecklists) {
+            for (Sync_Checklist syncChecklist : syncChecklists) {
                 CHECKLIST.add(syncChecklist.getProduct_code());
             }
             //Se é chamada da Act008, inclui o itenm na lista
             //para receber os forms do produto.
-            if(product_code != -1L){
+            if (product_code != -1L) {
                 CHECKLIST.add(product_code);
             }
             //Se não existe produtos a serem enviados,
             //Nem adiciona tag na chamada do WS
-            if(CHECKLIST.size() > 0) {
+            if (CHECKLIST.size() > 0) {
                 dataPackage.setCHECKLIST(CHECKLIST);
             }
         }
         //Verifica se customer possui acesso aos agendamentos e se tiver
         //adiciona parametro no sincronismo.
-        if(ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_SCHEDULE_CHECKLIST)){
+        if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_SCHEDULE_CHECKLIST)) {
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SCHEDULE = new ArrayList<>();
             dataPackage.setSCHEDULE(SCHEDULE);
         }
         //Verifica se customer possui acesso ao SO
         //adiciona parametro no sincronismo.
-        if(ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})){
+        if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO, Constant.PARAM_SO_MOV})) {
             //Assim como o Main, o array list é vazio.
             ArrayList<String> SO = new ArrayList<>();
             dataPackage.setSO(SO);
         }
         //Adiciona form_aps no data_package
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_AP)){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_AP)) {
             ArrayList<TSearch_Ap_Env.ObjAp> apList = new ArrayList<>();
             ArrayList<HMAux> apAuxList = (ArrayList<HMAux>) formApDao.query_HM(
                     new GE_Custom_Form_Ap_Sql_004(
@@ -282,7 +292,7 @@ public class WS_Sync extends IntentService {
 
         }
 
-        TSync_Env env =  new TSync_Env();
+        TSync_Env env = new TSync_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
@@ -308,20 +318,20 @@ public class WS_Sync extends IntentService {
                 rec.getLink_url(),
                 jump_validation,
                 jump_od
-                )
+        )
                 ||
                 !ToolBox_Inf.processoOthersError(
                         getApplicationContext(),
                         getResources().getString(R.string.generic_error_lbl),
                         rec.getError_msg())
-        ) {
+                ) {
             return;
         }
         //Carrega traduções , quando existem.
         loadTranslation();
         //
 
-        if(rec.getZip() == null){
+        if (rec.getZip() == null) {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
             return;
         }
@@ -360,14 +370,14 @@ public class WS_Sync extends IntentService {
 
             ArrayList<EV_Module_Res> moduleRes = gson.fromJson(
                     ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
+                            ToolBox_Inf.getContents(_file)
                     ),
                     new TypeToken<ArrayList<EV_Module_Res>>() {
                     }.getType()
             );
 
-            for (EV_Module_Res item : moduleRes){
-               moduleResDao.deleteModuleTrans(item.getModule_code());
+            for (EV_Module_Res item : moduleRes) {
+                moduleResDao.deleteModuleTrans(item.getModule_code());
             }
 
             moduleResDao.addUpdate(moduleRes, false);
@@ -381,7 +391,7 @@ public class WS_Sync extends IntentService {
 
             ArrayList<EV_Module_Res_Txt> moduleResTxts = gson.fromJson(
                     ToolBox.jsonFromOracle(
-                       ToolBox_Inf.getContents(_file)
+                            ToolBox_Inf.getContents(_file)
                     ),
                     new TypeToken<ArrayList<EV_Module_Res_Txt>>() {
                     }.getType()
@@ -398,7 +408,7 @@ public class WS_Sync extends IntentService {
 
             ArrayList<EV_Module_Res_Txt_Trans> moduleResTxtTrans = gson.fromJson(
                     ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
+                            ToolBox_Inf.getContents(_file)
                     ),
                     new TypeToken<ArrayList<EV_Module_Res_Txt_Trans>>() {
                     }.getType()
@@ -430,31 +440,33 @@ public class WS_Sync extends IntentService {
         // Tenta pegar tradução dos itens do WS
         //Seleciona traduções
         //if(!ToolBox_Con.getPreference_Translate_Code(getApplicationContext()).equals("")){
-          //  loadTranslation();
+        //  loadTranslation();
         //}
 
         //
         //Processamento das tabelas do MAIN
         //
         /**
-        *    VARIAVEIS DE PROFILE PARA OPERATION E SITE
-        *  Após aplicação do profile na web, sempre que houver sincronismo do MAIN
-        *  é necessario verificar se a operação e site das preferencias, ainda
-        *  existem na lista enviado pelo server.
-        *  Caso um deles não exista, após processar todas as tabelas envia msg
-        *  e envia para change customer.
-        */
+         *    VARIAVEIS DE PROFILE PARA OPERATION E SITE
+         *  Após aplicação do profile na web, sempre que houver sincronismo do MAIN
+         *  é necessario verificar se a operação e site das preferencias, ainda
+         *  existem na lista enviado pelo server.
+         *  Caso um deles não exista, após processar todas as tabelas envia msg
+         *  e envia para change customer.
+         */
         boolean operationExist = ToolBox_Con.getPreference_Operation_Code(getApplicationContext()) == -1L;
         //Se for site externo, seta true, senão false.
         boolean siteExist = ToolBox_Con.getPreference_Site_Code(getApplicationContext()).equals("-1");
 
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
             //Cria DAOs das tabelas MAIN
-            MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_OperationDao operationDao = new MD_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Product_Group_ProductDao productGroupProductDao =  new MD_Product_Group_ProductDao(getApplicationContext(),ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            MD_SiteDao siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_OperationDao operationDao = new MD_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_Group_ProductDao productGroupProductDao = new MD_Product_Group_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(getApplicationContext());
+            MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(getApplicationContext());
             MD_DepartmentDao departmentDao = new MD_DepartmentDao(getApplicationContext());
             MD_UserDao mdUserDao = new MD_UserDao(getApplicationContext());
             GE_Custom_Form_ApDao geCustomFormApDao = new GE_Custom_Form_ApDao(getApplicationContext());
@@ -477,7 +489,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<MD_Operation> operations = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<MD_Operation>>() {
                         }.getType()
@@ -489,11 +501,11 @@ public class WS_Sync extends IntentService {
                 * Se não tiver, ao final do processo envia para change customer.
                 *
                 */
-                if(!operationExist) {
+                if (!operationExist) {
                     for (MD_Operation operation : operations) {
                         if (ToolBox_Con.getPreference_Operation_Code(getApplicationContext())
-                             == operation.getOperation_code()
-                        ) {
+                                == operation.getOperation_code()
+                                ) {
                             operationExist = true;
                             break;
                         }
@@ -515,7 +527,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<MD_Site> sites = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<MD_Site>>() {
                         }.getType()
@@ -526,12 +538,12 @@ public class WS_Sync extends IntentService {
                 * esta na lista de site enviadas.
                 * Se não tiver, ao final do processo desloga usr.
                 */
-                if(!siteExist){
+                if (!siteExist) {
                     for (MD_Site site : sites) {
-                        if(ToolBox_Con
+                        if (ToolBox_Con
                                 .getPreference_Site_Code(getApplicationContext())
                                 .equals(String.valueOf(site.getSite_code()))
-                        ){
+                                ) {
                             siteExist = true;
                             break;
                         }
@@ -550,7 +562,7 @@ public class WS_Sync extends IntentService {
             for (File _file : files_product) {
                 ArrayList<MD_Product> products = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<MD_Product>>() {
                         }.getType()
@@ -561,10 +573,10 @@ public class WS_Sync extends IntentService {
                 //a todos os produtos da tabela interna.
                 //Os que não tiver mais acesso, serão apagados.
                 //
-                if(product_code == -1L){
+                if (product_code == -1L) {
                     for (Sync_Checklist sync_prod : syncChecklists) {
                         for (MD_Product product : products) {
-                            if(product.getProduct_code() == sync_prod.getProduct_code() ){
+                            if (product.getProduct_code() == sync_prod.getProduct_code()) {
                                 newSyncList.add(sync_prod);
                                 break;
                             }
@@ -575,7 +587,7 @@ public class WS_Sync extends IntentService {
                 productDao.addUpdate(products, false);
             }
 
-            if(product_code == -1L) {
+            if (product_code == -1L) {
                 //Reconstroi tabela de produtos interno
                 //com os produtos que o usr ainda tem acesso.
                 syncChecklistDao.addUpdate(newSyncList, true);
@@ -590,7 +602,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<MD_Product_Group> productGroups = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<MD_Product_Group>>() {
                         }.getType()
@@ -608,13 +620,140 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<MD_Product_Group_Product> productGroupProducts = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<MD_Product_Group_Product>>() {
                         }.getType()
                 );
 
                 productGroupProductDao.addUpdate(productGroupProducts, false);
+            }
+            //
+            // Processamento Produto Serial
+            //
+            //Seta flag de processamento no syncronismo de TODOS OS SERIAIS
+            //PARA 0
+            serialDao.addUpdate(
+                    new MD_Product_Serial_Sql_010(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //
+            File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
+
+            for (File _file : files_serial) {
+
+                ArrayList<MD_Product_Serial> serialList = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial>>() {
+                        }.getType()
+                );
+                //Analisa lista enviada pra atualizar ou inserir registros
+                for (MD_Product_Serial serverSerial : serialList) {
+                    MD_Product_Serial dbSerial = serialDao.getByString(
+                            new MD_Product_Serial_Sql_009(
+                                    serverSerial.getCustomer_code(),
+                                    serverSerial.getProduct_code(),
+                                    (int) serverSerial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                    //Se encontrou no banco, seta o serial_tmp do banco no obj to server
+                    //e o salva no banco.
+                    //Se não existe, chama metodo que insere registro ja criando um tmp
+                    //Em ambos os casos seta sync_process para 1
+                    if (dbSerial != null && dbSerial.getSerial_code() > 0) {
+                        serverSerial.setSerial_tmp(dbSerial.getSerial_tmp());
+                        serverSerial.setSync_proccess(1);
+                        //
+                        serialDao.addUpdate(serverSerial);
+                    } else {
+                        serverSerial.setSync_proccess(1);
+                        //
+                        serialDao.addUpdateTmp(serverSerial);
+                    }
+                }
+                //Seleciona todos os seriais que estão no banco e não foram atualizados
+                //no loop de cima, ou seja não foi enviado pelo server
+                ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
+                        serialDao.query(
+                                new MD_Product_Serial_Sql_011(
+                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                ).toSqlQuery()
+                        );
+                //Faz loop no seriais que não vieram via sincronismo
+                //Avaliando se esse serial tem vinculo com algum S.O
+                for (MD_Product_Serial productSerial : serialDelCheck) {
+                    HMAux auxExists = serialDao.getByStringHM(
+                            new MD_Product_Serial_Sql_012(
+                                    productSerial.getCustomer_code(),
+                                    productSerial.getProduct_code(),
+                                    productSerial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                    //Se não existir vinculo, apaga o serial e seus trackings
+                    if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
+                        serialDao.remove(
+                                new MD_Product_Serial_Sql_013(
+                                        productSerial.getCustomer_code(),
+                                        productSerial.getProduct_code(),
+                                        productSerial.getSerial_code()
+                                ).toSqlQuery()
+                        );
+                        //
+                        trackingDao.remove(
+                                new MD_Product_Serial_Tracking_Sql_004(
+                                        productSerial.getCustomer_code(),
+                                        productSerial.getProduct_code(),
+                                        productSerial.getSerial_code()
+                                ).toSqlQuery()
+                        );
+                    }
+                }
+            }
+            //
+            // Processamento Tracking do serial
+            //
+            File[] files_serial_tracking = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tracking-");
+
+            for (File _file : files_serial_tracking) {
+
+                ArrayList<MD_Product_Serial_Tracking> trackingList = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial_Tracking>>() {
+                        }.getType()
+                );
+                //
+                for (MD_Product_Serial_Tracking tracking : trackingList){
+                    //Seleciona o serial do tracking para descobrir o serial_tmp
+                    MD_Product_Serial dbSerial = serialDao.getByString(
+                            new MD_Product_Serial_Sql_009(
+                                    tracking.getCustomer_code(),
+                                    tracking.getProduct_code(),
+                                    (int) tracking.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                    //
+                    if(dbSerial != null && dbSerial.getSerial_code() > 0){
+                        //Remove todos os trackings do serial
+                        trackingDao.remove(
+                                new MD_Product_Serial_Tracking_Sql_004(
+                                        tracking.getCustomer_code(),
+                                        tracking.getProduct_code(),
+                                        tracking.getSerial_code()
+                                ).toSqlQuery() );
+                        //Atualiza serial_tmp no obj tracking e depois no banco
+                        tracking.setSerial_tmp(dbSerial.getSerial_tmp());
+                        //
+                        trackingDao.addUpdate(tracking);
+                    }else{
+                        //Devemos tratar?
+                        String s = "deu ruim";
+                    }
+                }
             }
             //
             // Processamento Department
@@ -665,14 +804,14 @@ public class WS_Sync extends IntentService {
                         }.getType()
                 );
                 //
-                for (GE_Custom_Form_Ap formAp:action_plans) {
+                for (GE_Custom_Form_Ap formAp : action_plans) {
                     formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                 }
                 //
                 geCustomFormApDao.addUpdate(action_plans, false);
             }
             //Se for processo de login, pula rotina de deleção de AP
-            if(!loginProcess) {
+            if (!loginProcess) {
                 //Apaga AP que não são pra mim e nem tenho sala
                 int qtyDel = ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
                 Log.d("FORM_AP", "AP's del: " + qtyDel);
@@ -695,14 +834,14 @@ public class WS_Sync extends IntentService {
          */
         boolean productExist = true;
 
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST)) {
             //Cria DAOs das tabelas do Checklist
-            GE_Custom_FormDao customFormDao =  new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_OperationDao customFormOperationDao = new GE_Custom_Form_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+            GE_Custom_FormDao customFormDao = new GE_Custom_FormDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_TypeDao customFormTypeDao = new GE_Custom_Form_TypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_FieldDao customFormFieldDao = new GE_Custom_Form_FieldDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_ProductDao customFormProductDao = new GE_Custom_Form_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_OperationDao customFormOperationDao = new GE_Custom_Form_OperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_BlobDao customFormBlobDao = new GE_Custom_Form_BlobDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             customFormDao.remove(new GE_Custom_Form_Sql_Truncate().toSqlQuery());
@@ -731,10 +870,10 @@ public class WS_Sync extends IntentService {
                 );
                 //Se controle de produto existe for false,
                 //Verifica se o produto buscado  esta na lista de forms enviados
-                if(!productExist){
+                if (!productExist) {
                     //Busca em todos os registros o produto buscado.
                     for (GE_Custom_Form_Product formProduct : customFormsProduct) {
-                        if(formProduct.getProduct_code() == product_code){
+                        if (formProduct.getProduct_code() == product_code) {
                             //Se encontrou o produto, seta variavel pra true
                             //e finaliza o loop
                             productExist = true;
@@ -756,7 +895,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<GE_Custom_Form> customForms = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<GE_Custom_Form>>() {
                         }.getType()
@@ -774,7 +913,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<GE_Custom_Form_Type> customFormsTypes = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<GE_Custom_Form_Type>>() {
                         }.getType()
@@ -791,7 +930,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<GE_Custom_Form_Field> customFormsFields = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<GE_Custom_Form_Field>>() {
                         }.getType()
@@ -826,7 +965,7 @@ public class WS_Sync extends IntentService {
 
                 ArrayList<GE_Custom_Form_Blob> geCustomFormBlobs = gson.fromJson(
                         ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
+                                ToolBox_Inf.getContents(_file)
                         ),
                         new TypeToken<ArrayList<GE_Custom_Form_Blob>>() {
                         }.getType()
@@ -839,10 +978,10 @@ public class WS_Sync extends IntentService {
         //
         //Processamento das tabelas do SCHEDULE
         //
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SCHEDULE) && dataPackage.getSCHEDULE() != null){
-            GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_Field_LocalDao formFieldLocalDao = new GE_Custom_Form_Field_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            GE_Custom_Form_Blob_LocalDao blobLocalDao = new GE_Custom_Form_Blob_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SCHEDULE) && dataPackage.getSCHEDULE() != null) {
+            GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_Field_LocalDao formFieldLocalDao = new GE_Custom_Form_Field_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            GE_Custom_Form_Blob_LocalDao blobLocalDao = new GE_Custom_Form_Blob_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
             /*
             *
@@ -863,9 +1002,9 @@ public class WS_Sync extends IntentService {
 
             File[] files_sch_forms = ToolBox_Inf.getListOfFiles_v2("schedule_ge_custom_form-");
 
-            if(files_sch_forms.length == 0){
+            if (files_sch_forms.length == 0) {
                 //Lista de form locais COM STATUS SCHEDULE
-                List<GE_Custom_Form_Local>  formLocals =
+                List<GE_Custom_Form_Local> formLocals =
                         formLocalDao.query(
                                 new GE_Custom_Form_Local_Sql_011(
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -873,7 +1012,7 @@ public class WS_Sync extends IntentService {
                                 ).toSqlQuery()
                         );
 
-                if(formLocals.size() > 0) {
+                if (formLocals.size() > 0) {
                     //APAGA TODOS OS ITENS DA LISTA.
                     formLocalDao.remove(formLocals);
                     //FAZ LOOP NA LISTA E APAGA TODOS AS PERGUNTAS e BLOBS
@@ -892,9 +1031,9 @@ public class WS_Sync extends IntentService {
 
                     }
                 }
-            }else {
+            } else {
                 //Lista de form locais com data_serv INDEPENDENTE DO STATUS.
-                List<GE_Custom_Form_Local>  formLocals =
+                List<GE_Custom_Form_Local> formLocals =
                         formLocalDao.query(
                                 new GE_Custom_Form_Local_Sql_011(
                                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -965,7 +1104,7 @@ public class WS_Sync extends IntentService {
 
                             schedules.setSchedule_date_start_format_ms(ToolBox_Inf.dateToMilliseconds(schedules.getSchedule_date_start_format()));
                             schedules.setSchedule_date_end_format_ms(ToolBox_Inf.dateToMilliseconds(schedules.getSchedule_date_end_format()));
-                             //
+                            //
                             newFormsLocal.add(schedules);
                             //Insere/Atualiza
                             formLocalDao.addUpdate(schedules);
@@ -974,12 +1113,12 @@ public class WS_Sync extends IntentService {
                     //SE EXISTE ITENS A SEREM DELETADOS
                     //VERIFICA O STATUS E SE = SCHEDULE APAGA,
                     //SENÃO NÃO APAGA.
-                    if(formLocalToDelete.size() > 0) {
+                    if (formLocalToDelete.size() > 0) {
                         //LISTA COM OS QUE SERÃO DELETADOS MESMO
                         List<GE_Custom_Form_Local> finalDelete = new ArrayList<>(formLocalToDelete);
                         //
                         for (GE_Custom_Form_Local local : formLocalToDelete) {
-                            if(local.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)){
+                            if (local.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
                                 formFieldLocalDao.remove(
                                         new GE_Custom_Form_Field_Local_Sql_006(
                                                 String.valueOf(local.getCustomer_code()),
@@ -989,12 +1128,12 @@ public class WS_Sync extends IntentService {
                                                 String.valueOf(local.getCustom_form_data_serv())
                                         ).toSqlQuery()
                                 );
-                            }else{
+                            } else {
                                 finalDelete.remove(local);
                             }
                         }
                         //
-                        if(finalDelete.size() > 0){
+                        if (finalDelete.size() > 0) {
                             //APAGA TODOS OS ITENS DA LISTA.
                             formLocalDao.remove(finalDelete);
                         }
@@ -1061,13 +1200,13 @@ public class WS_Sync extends IntentService {
                                     && local.getCustom_form_type() == blob.getCustom_form_type()
                                     && local.getCustom_form_code() == blob.getCustom_form_code()
                                     && local.getCustom_form_version() == blob.getCustom_form_version()
-                            ){
+                                    ) {
                                 add = true;
                                 break;
                             }
                         }
 
-                        if(!add){
+                        if (!add) {
                             finalBlobs.remove(blob);
                         }
 
@@ -1091,18 +1230,18 @@ public class WS_Sync extends IntentService {
          */
         boolean zoneExist = ToolBox_Con.getPreference_Zone_Code(getApplicationContext()) == -1;
 
-        if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)){
-            MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Product_BrandDao productBrandDao  = new MD_Product_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Product_SegmentDao productSegmentDao = new MD_Product_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
-            MD_Product_Category_PriceDao productCategoryPriceDao = new MD_Product_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),Constant.DB_VERSION_CUSTOM);
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)) {
+            MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Site_Zone_LocalDao siteZoneLocalDao = new MD_Site_Zone_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_SegmentDao segmentDao = new MD_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Category_PriceDao categoryPriceDao = new MD_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_BrandDao brandDao = new MD_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ModelDao brandModelDao = new MD_Brand_ModelDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Brand_ColorDao brandColorDao = new MD_Brand_ColorDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_BrandDao productBrandDao = new MD_Product_BrandDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_SegmentDao productSegmentDao = new MD_Product_SegmentDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_Category_PriceDao productCategoryPriceDao = new MD_Product_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
             //apaga tabelas
             siteZoneDao.remove(new MD_Site_Zone_Sql_Truncate().toSqlQuery());
@@ -1141,24 +1280,24 @@ public class WS_Sync extends IntentService {
                 * esta na lista de zona enviadas.
                 * Se não tiver, ao final do processo desloga usr.
                 */
-               if(!siteExist){
-                   zoneExist = false;
-               }else {
-                   if (!zoneExist) {
-                       for (MD_Site_Zone zone : mdSiteZones) {
-                           if (ToolBox_Con.getPreference_Site_Code(getApplicationContext())
-                               .equalsIgnoreCase(String.valueOf(zone.getSite_code()))
-                               &&
-                               ToolBox_Con
-                                   .getPreference_Zone_Code(getApplicationContext())
-                                   == zone.getZone_code()
-                                   ) {
-                               zoneExist = true;
-                               break;
-                           }
-                       }
-                   }
-               }
+                if (!siteExist) {
+                    zoneExist = false;
+                } else {
+                    if (!zoneExist) {
+                        for (MD_Site_Zone zone : mdSiteZones) {
+                            if (ToolBox_Con.getPreference_Site_Code(getApplicationContext())
+                                    .equalsIgnoreCase(String.valueOf(zone.getSite_code()))
+                                    &&
+                                    ToolBox_Con
+                                            .getPreference_Zone_Code(getApplicationContext())
+                                            == zone.getZone_code()
+                                    ) {
+                                zoneExist = true;
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 siteZoneDao.addUpdate(mdSiteZones, false);
             }
@@ -1330,7 +1469,7 @@ public class WS_Sync extends IntentService {
 
             for (File _file : files_product_category_price) {
 
-                ArrayList<MD_Product_Category_Price> mdProductCategoryPrices  = gson.fromJson(
+                ArrayList<MD_Product_Category_Price> mdProductCategoryPrices = gson.fromJson(
                         ToolBox.jsonFromOracle(
                                 ToolBox_Inf.getContents(_file)
                         ),
@@ -1343,13 +1482,13 @@ public class WS_Sync extends IntentService {
 
         }
 
-        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist ){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist) {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
-        }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN) && (!operationExist || !siteExist)){
+        } else if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN) && (!operationExist || !siteExist)) {
             ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_site_or_operation"), rec.getLink_url(), "0");
-        }else if(dataPackageType.contains(DataPackage.DATA_PACKAGE_SO) && !zoneExist){
+        } else if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO) && !zoneExist) {
             ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_zone"), rec.getLink_url(), "0");
-        }else{
+        } else {
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
@@ -1375,9 +1514,9 @@ public class WS_Sync extends IntentService {
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
                 translist);
 
-        for (String trans: translist) {
-            if(hmAux_Trans.containsKey(trans) && hmAux_Trans.get(trans).contains(Constant.APP_MODULE+"/") ){
-                hmAux_Trans.put(trans,getString(getResources().getIdentifier(trans,"string",getPackageName())));
+        for (String trans : translist) {
+            if (hmAux_Trans.containsKey(trans) && hmAux_Trans.get(trans).contains(Constant.APP_MODULE + "/")) {
+                hmAux_Trans.put(trans, getString(getResources().getIdentifier(trans, "string", getPackageName())));
             }
         }
     }

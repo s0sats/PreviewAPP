@@ -67,6 +67,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         this.toMD_Product_SerialMapper = new CursorMD_Product_SerialMapper();
     }
 
+    public MD_Product_SerialDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+
+        this.toContentValuesMapper = new MD_Product_SerialToContentValuesMapper();
+        this.toMD_Product_SerialMapper = new CursorMD_Product_SerialMapper();
+    }
+
+
 
     @Override
     public void addUpdate(MD_Product_Serial md_product_serial) {
