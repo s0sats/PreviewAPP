@@ -283,7 +283,7 @@
 
                             <Button
                                 android:id="@+id/act038_content_btn_pdf"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/btn_namoa_main_states"
                                 android:padding="10dp"
@@ -302,9 +302,8 @@
                         <!--android:src="@drawable/ic_cancelar_ns_states" />-->
 
                         <View
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="1" />
+                            android:layout_width="30dp"
+                            android:layout_height="1dp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -315,7 +314,7 @@
 
                             <Button
                                 android:id="@+id/act038_content_btn_chat_nav"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/btn_namoa_main_states"
                                 android:padding="10dp"
@@ -350,6 +349,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingLeft="5dp">
 

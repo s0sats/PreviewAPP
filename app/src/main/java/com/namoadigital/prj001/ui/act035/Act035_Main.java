@@ -151,6 +151,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private int mTotal = 0;
     private int offSetV = 100;
 
+    private int mFirstUnReadposition = -1;
+
     private MyRunnable_01 m1;
     private MyRunnable_02 m2;
 
@@ -396,6 +398,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 ).toSqlQuery()
         );
 
+//        mPresenter.updateReadStatus(
+//                (ArrayList<HMAux>) chMessageDao.query_HM(
+//                        new CH_Message_Sql_017(
+//                                mRoom_code
+//                        ).toSqlQuery()
+//                ),
+//                "FULL"
+//        );
+        //
+        iv_reorder.setVisibility(View.GONE);
+        iv_down.setVisibility(View.GONE);
+        //
+        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
+        //
         mPresenter.updateReadStatus(
                 (ArrayList<HMAux>) chMessageDao.query_HM(
                         new CH_Message_Sql_017(
@@ -404,11 +420,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 ),
                 "FULL"
         );
-        //
-        iv_reorder.setVisibility(View.GONE);
-        iv_down.setVisibility(View.GONE);
-        //
-        mPresenter.setData(mRoom_code, String.valueOf(offSetV));
         //
         startReceivers(true);
     }
@@ -447,6 +458,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             fisrtAux.put("msg_date_zone", dados.get(0).get("msg_date_zone"));
             fisrtAux.put("type", "DATE");
             //
+            int no_read_count = 0;
             dados.add(0, fisrtAux);
             for (int i = 1; i < dados.size(); i++) {
                 if (!ToolBox_Inf.equalDate(dados.get(i - 1).get("msg_date_zone"), dados.get(i).get("msg_date_zone"))) {
@@ -455,7 +467,27 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     mAux.put("type", "DATE");
                     //
                     dados.add(i, mAux);
+                } else {
+                    if (dados.get(i).get("read") != null && !dados.get(i).get("read").isEmpty() && dados.get(i).get("read").equalsIgnoreCase("0")) {
+
+                        no_read_count++;
+
+                        if (mFirstUnReadposition == -1) {
+                            mFirstUnReadposition = i;
+
+                            dados.get(i).put("read", "1");
+
+                            HMAux mAux = new HMAux();
+                            mAux.put("type", "NO_READ");
+                            //
+                            dados.add(i, mAux);
+                        }
+                    }
                 }
+            }
+
+            if (mFirstUnReadposition != -1) {
+                dados.get(mFirstUnReadposition).put("count", String.valueOf(no_read_count));
             }
         }
         //
@@ -481,6 +513,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_whats_text_trans,
                 R.layout.act035_main_content_cell_namoa_ap,
                 R.layout.act035_main_content_cell_whats_text_other,
+                R.layout.act035_main_content_cell_whats_text_no_read,
                 this.dados,
                 hmAux_Trans,
                 hmAux_Trans_Extra
@@ -574,7 +607,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 act035_adapter_messages
         );
         //
-        lv_messages.setSelection(this.dados.size() - 1);
+        if (mFirstUnReadposition != -1) {
+            lv_messages.post(new Runnable() {
+                @Override
+                public void run() {
+                    lv_messages.requestFocusFromTouch();
+                    lv_messages.setSelection(mFirstUnReadposition);
+                    lv_messages.requestFocus();
+                }
+            });
+
+            iv_down.setVisibility(View.VISIBLE);
+
+
+//            lv_messages.setSelection(mFirstUnReadposition);
+            Log.d("VAMOS", "NN " + String.valueOf(mFirstUnReadposition));
+
+        } else {
+            lv_messages.setSelection(this.dados.size() - 1);
+            Log.d("VAMOS", "XX " + String.valueOf(this.dados.size() - 1));
+        }
         //
         sw_messages.setRefreshing(false);
     }
@@ -959,6 +1011,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         iv_reorder.setVisibility(View.GONE);
                         iv_down.setVisibility(View.GONE);
                         //
+                        mFirstUnReadposition = -1;
+                        act035_adapter_messages.removeNoRead();
+                        //
                         mPresenter.sendMessage(mRoom_code, texto, "", String.valueOf(offSetV));
                     }
                 }
@@ -969,6 +1024,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 public void onClick(View v) {
                     statusReorderProcess = false;
                     //
+                    mFirstUnReadposition = -1;
+                    act035_adapter_messages.removeNoRead();
+                    //
                     mPresenter.setData(mRoom_code, String.valueOf(offSetV));
                     //
                     iv_reorder.setVisibility(View.GONE);
@@ -978,9 +1036,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             iv_down.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    lv_messages.setSelection(dados.size() - 1);
+                    mFirstUnReadposition = -1;
+                    act035_adapter_messages.removeNoRead();
                     //
                     iv_down.setVisibility(View.GONE);
+                    //
+                    lv_messages.setSelection(dados.size() - 1);
                 }
             });
             //
@@ -1009,6 +1070,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void rearrange_list() {
@@ -1227,6 +1293,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         Log.d("PC", "PC ENTREI");
 
         Log.d("PROCESSOS", "cMessage " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
+
+        mFirstUnReadposition = -1;
 
         if (!isProcessing_C_Message) {
             isProcessing_C_Message = true;

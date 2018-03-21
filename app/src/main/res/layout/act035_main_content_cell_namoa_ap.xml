@@ -364,7 +364,7 @@
                 <Button
 
                     android:id="@+id/act035_main_content_cell_namoa_ap_iv_download_ap"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_namoa_main_states"
                     android:focusable="false"
@@ -374,7 +374,7 @@
             </LinearLayout>
 
             <View
-                android:layout_width="10dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent" />
 
             <LinearLayout
@@ -386,7 +386,7 @@
 
                 <Button
                     android:id="@+id/act035_main_content_cell_namoa_ap_iv_join_ap"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_namoa_main_states"
                     android:focusable="false"

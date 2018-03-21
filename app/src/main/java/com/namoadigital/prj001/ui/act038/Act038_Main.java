@@ -720,8 +720,27 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_chat_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(context, "chat_nav", Toast.LENGTH_SHORT).show();
-                mPresenter.chatFlow(mGe_custom_form_ap);
+                if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
+                        mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
+                    mPresenter.chatFlow(mGe_custom_form_ap);
+
+                } else {
+                    ToolBox.alertMSG(
+                            Act038_Main.this,
+                            //hmAux_Trans.get("alert_ap_exit_tll"),
+                            //hmAux_Trans.get("alert_ap_exit_msg"),
+                            "Ir ao chat - Trad",
+                            "Dados não salvos podem ser perdidos - Trad",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mPresenter.chatFlow(mGe_custom_form_ap);
+                                }
+                            },
+                            2,
+                            null
+                    );
+                }
             }
         });
 
@@ -911,7 +930,11 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
             if (ss_users.getmValue().get(SearchableSpinner.ID) != null && ss_users.getmValue().get(SearchableSpinner.ID) != "null" && !ss_users.getmValue().get(SearchableSpinner.ID).isEmpty()) {
                 mGe_custom_form_ap.setAp_who(Integer.parseInt(ss_users.getmValue().get(SearchableSpinner.ID)));
-                mGe_custom_form_ap.setAp_who_nick(ss_users.getmValue().get(SearchableSpinner.DESCRIPTION));
+                mGe_custom_form_ap.setAp_who_nick(ToolBox_Inf.getFullNick(
+                        ss_users.getmValue().get(SearchableSpinner.DESCRIPTION),
+                        ss_users.getmValue().get(SearchableSpinner.ID)
+                ));
+
             } else {
                 mGe_custom_form_ap.setAp_who(null);
                 mGe_custom_form_ap.setAp_who_nick(null);
@@ -1018,6 +1041,30 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
         //mPresenter.onBackPressedClicked();
 
+        if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
+                mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
+            actionBackPressed();
+
+        } else {
+            ToolBox.alertMSG(
+                    Act038_Main.this,
+//                    hmAux_Trans.get("alert_ap_exit_tll"),
+//                    hmAux_Trans.get("alert_ap_exit_msg"),
+                    "Voltar - Trad",
+                    "Dados não salvos podem ser perdidos - Trad",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            actionBackPressed();
+                        }
+                    },
+                    2,
+                    null
+            );
+        }
+    }
+
+    private void actionBackPressed() {
         switch (requestingAct.toLowerCase()) {
             case Constant.ACT035:
                 callAct035(context, mGe_custom_form_ap.getRoom_code());
@@ -1032,7 +1079,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 callAct037(context);
                 break;
         }
-
     }
 
     private void callAct039(Context context) {

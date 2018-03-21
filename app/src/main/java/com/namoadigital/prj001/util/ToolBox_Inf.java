@@ -4081,4 +4081,13 @@ public class ToolBox_Inf {
         return false;
     }
 
+    public static String getFullNick(String nick, int id){
+        return getFullNick(nick, String.valueOf(id));
+    }
+
+
+    public static String getFullNick(String nick, String id){
+        return nick +  " (" + id + ")";
+    }
+
 }

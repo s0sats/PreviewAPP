@@ -46,6 +46,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_07;
     private int resource_08;
     private int resource_09;
+    private int resource_10;
 
     //
     private ArrayList<HMAux> data;
@@ -62,7 +63,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private String mResource_Name = "act037_adapter_ap";
 
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra) {
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, int resource_10, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
@@ -73,6 +74,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.resource_07 = resource_07;
         this.resource_08 = resource_08;
         this.resource_09 = resource_09;
+        this.resource_10 = resource_10;
 
         this.data = data;
 
@@ -89,6 +91,16 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         );
 
         loadTranslation();
+    }
+
+    public void removeNoRead() {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).get("type") != null && data.get(i).get("type").equalsIgnoreCase("NO_READ")) {
+                data.remove(i);
+                //
+                notifyDataSetChanged();
+            }
+        }
     }
 
     private void loadTranslation() {
@@ -231,6 +243,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             //
             data.addAll(dadosRNew);
             //
+            for (int i = data.size() - 1; i >= 0; i--) {
+                if (data.get(i).get("type") != null && data.get(i).get("type").equalsIgnoreCase("NO_READ")) {
+                    data.get(i).put("count", String.valueOf(data.size() - (i + 1)));
+                }
+            }
+            //
             mSizeAddUpdate = dadosRNew.size();
         } else {
             mSizeAddUpdate = 0;
@@ -297,7 +315,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 9;
+        return 10;
     }
 
     @Override
@@ -310,6 +328,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     return 4;
                 } else if (item.get("type").equalsIgnoreCase("END")) {
                     return 5;
+                } else if (item.get("type").equalsIgnoreCase("NO_READ")) {
+                    return 9;
                 } else {
                 }
             }
@@ -380,6 +400,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 results = false;
                 break;
 
+            // NO READ
+            case 9:
+                results = false;
+                break;
+
             // 0 - Other IMG / 1 - Me IMG / 2 - Other TXT / 3 - Me TXT
             default:
                 results = true;
@@ -440,6 +465,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 // SO
                 case 8:
                     convertView = mInflater.inflate(resource_09, parent, false);
+                    break;
+
+                // NO READ
+                case 9:
+                    convertView = mInflater.inflate(resource_10, parent, false);
                     break;
             }
         }
@@ -502,6 +532,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             // SO
             case 8:
                 processSo(message, hmAux, convertView);
+                break;
+
+            // NO READ
+            case 9:
+                processNoRead(hmAux, convertView);
                 break;
         }
         return convertView;
@@ -644,8 +679,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             tv_message.setText(
                     ToolBox_Inf.millisecondsToString(
                             ToolBox_Inf.dateToMillisecondsChat(hmAux.get("msg_date_zone"), ""),
-                            ""
-//                            ToolBox_Inf.nlsDateFormat(context)
+//                            ""
+                            ToolBox_Inf.nlsDateFormat(context)
                     )
             );
 
@@ -800,7 +835,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         } else {
             tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHEN));
         }
-        
+
         iv_download_ap.setTag(item);
         iv_download_ap.setText(hmAux_Trans.get("lbl_checklist"));
         iv_download_ap.setOnClickListener(new View.OnClickListener() {
@@ -833,6 +868,13 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     private void processSo(JSONObject message, HMAux hmAux, View convertView) {
+
+    }
+
+    private void processNoRead(HMAux hmAux, View convertView) {
+        LinearLayout ll_item = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_whats_ll_item);
+        TextView tv_message = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+        tv_message.setText("(" + hmAux.get("count") + ") " + "mensagens nao lidas ");//hmAux_Trans.get("NO_READ_MESSAGES"));
 
     }
 

@@ -222,7 +222,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         chMessage.setMsg_origin("APP");
         chMessage.setDelivered(0);
         chMessage.setDelivered_date(null);
-        chMessage.setRead(0);
+        chMessage.setRead(1);
         chMessage.setStatus_update(1);
         chMessage.setRead_date(null);
         chMessage.setMsg_pk(null);
