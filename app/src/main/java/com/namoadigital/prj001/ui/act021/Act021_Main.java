@@ -36,6 +36,7 @@ import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
+import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -63,6 +64,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
     private Act021_Main_Presenter mPresenter;
     private Button btn_load;
     private Button btn_pendencies;
+    private Button btn_so_express;
     private Button btn_sync;
 
     private MKEditTextNM mket_serial;
@@ -118,6 +120,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         transList.add("act021_title");
         transList.add("btn_load_so");
         transList.add("btn_pendencies_so");
+        transList.add("btn_so_express");
         transList.add("btn_sync_so");
 
         transList.add("alert_new_opt_ttl");
@@ -185,6 +188,10 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         btn_pendencies = (Button) findViewById(R.id.act021_btn_pendencies);
         btn_pendencies.setText(hmAux_Trans.get("btn_pendencies_so"));
+        //
+        btn_so_express = (Button) findViewById(R.id.act021_btn_so_express);
+        btn_so_express.setTag("btn_so_express");
+        views.add(btn_so_express);
         //
         btn_sync = (Button) findViewById(R.id.act021_btn_sync);
         btn_sync.setText(hmAux_Trans.get("btn_sync_so"));
@@ -269,7 +276,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         mPresenter.getPendencies();
         mPresenter.getSync();
-
     }
 
     private void initActions() {
@@ -310,6 +316,15 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
             }
         });
 
+        btn_so_express.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                callAct040(context);
+
+            }
+        });
+
         btn_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -324,7 +339,6 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
 
             }
         });
-
 
         //Interface acionando quando o usuário digita na caixa.
         mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
@@ -424,7 +438,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         pendencies_qty = qty;
         String btn_text =
                 hmAux_Trans.get("btn_pendencies_so") + " (" +
-                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" :  qtyMyPendencies +"/") +
+                        (qtyMyPendencies.equalsIgnoreCase("0") ? "" : qtyMyPendencies + "/") +
                         pendencies_qty + ")";
         btn_pendencies.setText(btn_text);
     }
@@ -609,6 +623,16 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         finish();
     }
 
+    @Override
+    public void callAct040(Context context) {
+        Intent mIntent = new Intent(context, Act040_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT021);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
 
     @Override
     public void onBackPressed() {

@@ -1,10 +1,11 @@
-package com.namoadigital.prj001.ui.act022;
+package com.namoadigital.prj001.ui.act041;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +21,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act007_Adapter_Groups_Products;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
-import com.namoadigital.prj001.ui.act006.Act006_Main;
-import com.namoadigital.prj001.ui.act021.Act021_Main;
-import com.namoadigital.prj001.ui.act023.Act023_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -36,12 +34,12 @@ import java.util.Stack;
  * Created by d.luche on 22/06/2017.
  */
 
-public class Act022_Main extends Base_Activity implements Act022_Main_View {
+public class Act041_Main extends Base_Activity implements Act041_Main_View {
 
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
 
-    private Act022_Main_Presenter mPresenter;
+    private Act041_Main_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
     private ListView lv_groups_products;
     private Button btn_back;
@@ -58,7 +56,7 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.act022_main);
+        setContentView(R.layout.act041_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,7 +74,7 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT022
+                Constant.ACT041
         );
 
         loadTranslation();
@@ -106,7 +104,7 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
 
         iniCurrentIndex();
         //
-        mPresenter = new Act022_Main_Presenter_Impl(
+        mPresenter = new Act041_Main_Presenter_Impl(
                 context,
                 this,
                 new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
@@ -149,8 +147,8 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
     }
 
     private void iniCurrentIndex() {
-        currentIndex.put(INDEX_GROUP_CODE,"0");
-        currentIndex.put(INDEX_RECURSIVE_CODE,"0");
+        currentIndex.put(INDEX_GROUP_CODE, "0");
+        currentIndex.put(INDEX_RECURSIVE_CODE, "0");
     }
 
     private void recoverIntentsInfo() {
@@ -182,25 +180,26 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                         //
                         mket_product_search.setText(bundle.getString(Constant.ACT007_PRODUCT_SEARCH));
                         //
-                        if(mStack.size() != 0){
+                        if (mStack.size() != 0) {
                             btn_back.setVisibility(View.VISIBLE);
                         }
 
                     } catch (EmptyStackException stackExcep) {
                         resetSearch();
-                    }catch (Exception e){
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
                 }
 
-            }else{
+            } else {
                 resetSearch();
             }
-        }else{
-            ToolBox_Inf.alertBundleNotFound(this,hmAux_Trans);
+        } else {
+            ToolBox_Inf.alertBundleNotFound(this, hmAux_Trans);
         }
 
     }
+
     private void resetSearch() {
         //Se não significa que iniciou fluxo de busca de produto.
         iniCurrentIndex();
@@ -217,8 +216,8 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT022;
-        mAct_Title = Constant.ACT022 + "_" + "title";
+        mAct_Info = Constant.ACT041;
+        mAct_Title = Constant.ACT041 + "_" + "title";
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
@@ -248,8 +247,6 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
 
             }
         });
-
-
         //
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,13 +259,13 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
                     mket_product_search.setText("");
                     mkUpdate = true;
                     //
-                    if(currentIndex.get(INDEX_GROUP_CODE).equals("0")){
+                    if (currentIndex.get(INDEX_GROUP_CODE).equals("0")) {
                         btn_back.setVisibility(View.INVISIBLE);
                     }
                     //
                     callSetAdapterData(mket_product_search.getText().toString());
                 } catch (Exception e) {
-                    ToolBox_Inf.registerException(getClass().getName(),e);
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                     mPresenter.onBackPressedClicked();
                 }
             }
@@ -327,58 +324,20 @@ public class Act022_Main extends Base_Activity implements Act022_Main_View {
     }
 
     @Override
-    public void callAct006(Context context) {
-        Intent mIntent = new Intent(context, Act006_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
-    public void callAct008(Context context, String product_code) {
-
-//        Intent mIntent = new Intent(context, Act008_Main.class);
-//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//        Bundle bundle = new Bundle();
-//        //bundle.putString(Constant.ACT007_CURRENTINDEX, String.valueOf(currentIndex) + ":" + String.valueOf(currentIndex2));
-//        bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
-//        //bundle.putString(Constant.ACT007_MSTACKVALUES, getStackValues());
-//        bundle.putSerializable(Constant.ACT022_MSTACKVALUES, mStack);
-//        bundle.putString(Constant.ACT007_PRODUCT_CODE, product_code);
-//
-//        mIntent.putExtras(bundle);
-//
-//        startActivity(mIntent);
-//        finish();
-    }
-
-    @Override
-    public void callAct021(Context context) {
-        Intent mIntent = new Intent(context, Act021_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(mIntent);
-        finish();
-    }
-
-    @Override
-    public void callAct023(Context context, String product_code) {
-        //MUDAR PARA
-        //Intent mIntent = new Intent(context, Act023_Main.class);
-        //APOS TESTE
-        Intent mIntent = new Intent(context, Act023_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    public void callAct040(Context context, String product_code) {
+        Log.d("PRODUCT", product_code.isEmpty() ? "sem nada" : product_code);
         //
-        bundle.putString(Constant.ACT007_PRODUCT_SEARCH, mket_product_search.getText().toString().trim());
-        bundle.putSerializable(Constant.MAIN_MSTACKVALUES, mStack);
-        bundle.putString(Constant.MAIN_PRODUCT_CODE, product_code);
-        //
-        mIntent.putExtras(bundle);
-
-        startActivity(mIntent);
-        finish();
+        if (product_code.isEmpty()) {
+            finish();
+        } else {
+            Intent mIntent = new Intent();
+            mIntent.putExtra("product_code", product_code);
+            //
+            setResult(RESULT_OK, mIntent);
+            //
+            finish();
+        }
     }
-
 
     @Override
     public void onBackPressed() {

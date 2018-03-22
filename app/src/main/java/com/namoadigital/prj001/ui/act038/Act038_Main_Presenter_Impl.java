@@ -288,18 +288,33 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
     }
 
     @Override
-    public void chatFlow(final GE_Custom_Form_Ap ap) {
+    public boolean chatFlow(final GE_Custom_Form_Ap ap, boolean checkRoom) {
+
+        boolean statusRoom = false;
+
         CH_Room chRoom = mRoomDao.getByString(
                 new CH_Room_Sql_001(
                         ap.getRoom_code()
                 ).toSqlQuery()
         );
         //
+        if (checkRoom){
+            if (chRoom !=  null){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         if (chRoom != null) {
+            statusRoom = true;
+
             if (chRoom.getRoom_code().length() > 0) {
                 mView.callAct035(context, chRoom.getRoom_code());
             }
         } else {
+            statusRoom = false;
+
             if (!ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
                     !ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
                     ) {
@@ -317,6 +332,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                 );
             }
         }
+
+        return statusRoom;
     }
 
     private void executeWsRoomAp(GE_Custom_Form_Ap ap) {

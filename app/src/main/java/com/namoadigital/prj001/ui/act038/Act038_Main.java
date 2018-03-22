@@ -222,6 +222,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_no_pdf_msg");
         transList.add("alert_ap_save_tll");
         transList.add("alert_ap_save_msg");
+        transList.add("alert_ap_exit_no_save_tll");
+        transList.add("alert_ap_exit_no_save_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -722,24 +724,31 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             public void onClick(View v) {
                 if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
                         mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
-                    mPresenter.chatFlow(mGe_custom_form_ap);
+
+                    mPresenter.chatFlow(mGe_custom_form_ap, false);
 
                 } else {
-                    ToolBox.alertMSG(
-                            Act038_Main.this,
-                            //hmAux_Trans.get("alert_ap_exit_tll"),
-                            //hmAux_Trans.get("alert_ap_exit_msg"),
-                            "Ir ao chat - Trad",
-                            "Dados não salvos podem ser perdidos - Trad",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mPresenter.chatFlow(mGe_custom_form_ap);
-                                }
-                            },
-                            2,
-                            null
-                    );
+
+                    boolean hasDataChange = checkDataChanges(properties);
+
+                    if (hasDataChange) {
+                        ToolBox.alertMSG(
+                                Act038_Main.this,
+                                hmAux_Trans.get("alert_ap_exit_no_save_tll"),
+                                hmAux_Trans.get("alert_ap_exit_no_save_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mPresenter.chatFlow(mGe_custom_form_ap, false);
+                                    }
+                                },
+                                2,
+                                null
+                        );
+
+                    } else {
+                        mPresenter.chatFlow(mGe_custom_form_ap, false);
+                    }
                 }
             }
         });
@@ -1034,7 +1043,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
     }
 
-
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
@@ -1046,21 +1054,23 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             actionBackPressed();
 
         } else {
-            ToolBox.alertMSG(
-                    Act038_Main.this,
-//                    hmAux_Trans.get("alert_ap_exit_tll"),
-//                    hmAux_Trans.get("alert_ap_exit_msg"),
-                    "Voltar - Trad",
-                    "Dados não salvos podem ser perdidos - Trad",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            actionBackPressed();
-                        }
-                    },
-                    2,
-                    null
-            );
+            if (checkDataChanges(properties)) {
+                ToolBox.alertMSG(
+                        Act038_Main.this,
+                        hmAux_Trans.get("alert_ap_exit_no_save_tll"),
+                        hmAux_Trans.get("alert_ap_exit_no_save_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                actionBackPressed();
+                            }
+                        },
+                        2,
+                        null
+                );
+            } else {
+                actionBackPressed();
+            }
         }
     }
 

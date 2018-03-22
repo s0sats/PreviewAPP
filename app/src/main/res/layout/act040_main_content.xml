@@ -5,26 +5,23 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.act021.Act021_Main"
-    tools:showIn="@layout/act021_main">
+    tools:context=".ui.act040.Act040_Main"
+    tools:showIn="@layout/act040_main">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/padrao_WHITE"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@android:color/white"
+            android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,56 +35,19 @@
                 android:paddingTop="10dp">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act021_mket_serial"
+                    android:id="@+id/act040_mket_product"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Serial"
+                    android:enabled="false"
+                    android:hint="Produto"
                     android:inputType="text"
-                    app:mBARCODE="true"
+                    app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
 
                 <ImageView
-                    android:id="@+id/act021_iv_search_serial"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="7dp"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="4dp"
-                    android:src="@drawable/ic_lupa_states"
-
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/border_back"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="10dp">
-
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act021_mket_tracking"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Tracking"
-                    android:inputType="text"
-                    app:mBARCODE="true"
-                    app:mNFC="false"
-                    app:mOCR="false" />
-
-                <ImageView
-                    android:id="@+id/act021_iv_search_tracking"
+                    android:id="@+id/act040_iv_search_product"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="7dp"
@@ -100,62 +60,100 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="30dp"
-                android:background="@color/namoa_color_gray2" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp">
 
-            <Button
-                android:id="@+id/act021_btn_load"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Carregar o.s"
-                android:textColor="@color/padrao_WHITE" />
-
-            <Button
-                android:id="@+id/act021_btn_pendencies"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Pendentes (14) "
-                android:textColor="@color/padrao_WHITE" />
+                android:background="@drawable/border_back"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
-            <Button
-                android:id="@+id/act021_btn_so_express"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="SO Express (3) "
-                android:textColor="@color/padrao_WHITE" />
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act040_mket_serial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Serial"
+                    android:inputType="text"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
 
-            <Button
-                android:id="@+id/act021_btn_sync"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Syncs (14) "
-                android:textColor="@color/padrao_WHITE" />
+                <ImageView
+                    android:id="@+id/act040_iv_search_serial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:focusable="false"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="4dp"
+                    android:src="@drawable/ic_lupa_states"
+                    android:visibility="gone" />
 
+            </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_back"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act040_mket_barcode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="BarCode"
+                    android:inputType="text"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+                <ImageView
+                    android:id="@+id/act040_iv_search_barcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:focusable="false"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="4dp"
+                    android:src="@drawable/ic_lupa_states"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
 
     <include layout="@layout/footer_base" />
 

@@ -56,8 +56,6 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
         }
 
         closeDB();
-
-
     }
 
     @Override

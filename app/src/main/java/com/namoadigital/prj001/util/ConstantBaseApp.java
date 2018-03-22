@@ -60,6 +60,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT037 = "act037";
     public static final String ACT038 = "act038";
     public static final String ACT039 = "act039";
+    public static final String ACT040 = "act040";
+    public static final String ACT041 = "act041";
 
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
@@ -358,8 +360,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_FORM_AP = "MODULE_FORM_AP";
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
     public static final String MODULE_SO_SEARCH_SERIAL_EXPRESS = "MODULE_SO_SEARCH_SERIAL_EXPRESS";
+    public static final String MODULE_SO_PACK_EXPRESS = "MODULE_SO_PACK_EXPRESS";
     public static final String MODULE_WM = "MODULE_WM";
     public static final String MODULE_TO = "MODULE_TO";
+
 
 
     //Constantes Status da SO

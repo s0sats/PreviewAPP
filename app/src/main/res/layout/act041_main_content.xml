@@ -8,7 +8,7 @@
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.act022.Act022_Main"
+    tools:context=".ui.act041.Act041_Main"
     tools:showIn="@layout/act022_main">
 
     <LinearLayout
