@@ -132,7 +132,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -582,6 +584,45 @@ public class WS_Sync extends IntentService {
                             }
                         }
                     }
+                    //
+                    //Implementação do nForm offline 22/03/2018
+                    //Se produto possui a flag_offline = 1, os forms desse produto serão no sincronismo geral.
+                    //Esse produto serão inseridos na tabela Sync_Checklist para evitar que a act008
+                    //seja pulado a etapa de chamada do WS.
+                    List<Sync_Checklist> offlineSyncList = new ArrayList<>();
+                    for (MD_Product product : products) {
+                        if (product.getFlag_offline() == 1) {
+                            boolean isProductInList = false;
+                            for(Sync_Checklist sync_prod : newSyncList){
+                                if(
+                                        sync_prod.getCustomer_code() == product.getCustomer_code()
+                                                && sync_prod.getProduct_code() == product.getProduct_code()
+                                        ) {
+                                    isProductInList = true;
+                                    break;
+                                }
+                            }
+                            //
+                            if(!isProductInList){
+                                //
+                                Calendar cDate =  Calendar.getInstance();
+                                SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+                                String last_update = dateFormat.format(cDate.getTime());
+                                //
+                                Sync_Checklist objSyncChkl = new Sync_Checklist();
+                                //
+                                objSyncChkl.setCustomer_code(product.getCustomer_code());
+                                objSyncChkl.setProduct_code(product.getProduct_code());
+                                objSyncChkl.setLast_update(last_update);
+                                //
+                                offlineSyncList.add(objSyncChkl);
+                            }
+                        }
+                    }
+                    //Implementação do nForm offline 22/03/2018
+                    //Adiciona produtos offline na lista de sync_checlist
+                    newSyncList.addAll(offlineSyncList);
+
                 }
 
                 productDao.addUpdate(products, false);
@@ -674,44 +715,47 @@ public class WS_Sync extends IntentService {
                         serialDao.addUpdateTmp(serverSerial);
                     }
                 }
-                //Seleciona todos os seriais que estão no banco e não foram atualizados
-                //no loop de cima, ou seja não foi enviado pelo server
-                ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
-                        serialDao.query(
-                                new MD_Product_Serial_Sql_011(
-                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                                ).toSqlQuery()
-                        );
-                //Faz loop no seriais que não vieram via sincronismo
-                //Avaliando se esse serial tem vinculo com algum S.O
-                for (MD_Product_Serial productSerial : serialDelCheck) {
-                    HMAux auxExists = serialDao.getByStringHM(
-                            new MD_Product_Serial_Sql_012(
+            }
+            //Se não vier arquivo de serial, limpa todos que não tiverem vinculo com S.O
+            //Seleciona todos os seriais que estão no banco e não foram atualizados
+            //no loop de cima, ou seja não foi enviado pelo server
+            ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
+                    serialDao.query(
+                            new MD_Product_Serial_Sql_011(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            ).toSqlQuery()
+                    );
+            //Faz loop no seriais que não vieram via sincronismo
+            //Avaliando se esse serial tem vinculo com algum S.O
+            for (MD_Product_Serial productSerial : serialDelCheck) {
+                HMAux auxExists = serialDao.getByStringHM(
+                        new MD_Product_Serial_Sql_012(
+                                productSerial.getCustomer_code(),
+                                productSerial.getProduct_code(),
+                                productSerial.getSerial_code()
+                        ).toSqlQuery()
+                );
+                //Se não existir vinculo, apaga o serial e seus trackings
+                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
+                    serialDao.remove(
+                            new MD_Product_Serial_Sql_013(
                                     productSerial.getCustomer_code(),
                                     productSerial.getProduct_code(),
                                     productSerial.getSerial_code()
                             ).toSqlQuery()
                     );
-                    //Se não existir vinculo, apaga o serial e seus trackings
-                    if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
-                        serialDao.remove(
-                                new MD_Product_Serial_Sql_013(
-                                        productSerial.getCustomer_code(),
-                                        productSerial.getProduct_code(),
-                                        productSerial.getSerial_code()
-                                ).toSqlQuery()
-                        );
-                        //
-                        trackingDao.remove(
-                                new MD_Product_Serial_Tracking_Sql_004(
-                                        productSerial.getCustomer_code(),
-                                        productSerial.getProduct_code(),
-                                        productSerial.getSerial_code()
-                                ).toSqlQuery()
-                        );
-                    }
+                    //
+                    trackingDao.remove(
+                            new MD_Product_Serial_Tracking_Sql_004(
+                                    productSerial.getCustomer_code(),
+                                    productSerial.getProduct_code(),
+                                    productSerial.getSerial_code()
+                            ).toSqlQuery()
+                    );
                 }
             }
+            //FIM DO PROCESSAMENTO DO SERIAL
+
             //
             // Processamento Tracking do serial
             //
