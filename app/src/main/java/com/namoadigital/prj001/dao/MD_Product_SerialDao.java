@@ -51,13 +51,13 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String ONLY_POSITION = "only_position";
     public static final String FLAG_OFFLINE = "flag_offline";
-    public static final String SYNC_PROCCESS = "sync_proccess";
+    public static final String SYNC_PROCESS = "sync_process";
 
     private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_TMP,
             SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
             MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1,
             ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED, FLAG_OFFLINE,
-            SYNC_PROCCESS
+            SYNC_PROCESS
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -580,7 +580,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 md_product_serial.setOnly_position(cursor.getInt(cursor.getColumnIndex(ONLY_POSITION)));
             }
             md_product_serial.setFlag_offline(cursor.getInt(cursor.getColumnIndex(FLAG_OFFLINE)));
-            md_product_serial.setSync_proccess(cursor.getInt(cursor.getColumnIndex(SYNC_PROCCESS)));
+            md_product_serial.setSync_process(cursor.getInt(cursor.getColumnIndex(SYNC_PROCESS)));
 
             return md_product_serial;
         }
@@ -664,8 +664,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 contentValues.put(FLAG_OFFLINE, md_product_serial.getFlag_offline());
             }
             //
-            if (md_product_serial.getSync_proccess() > -1) {
-                contentValues.put(SYNC_PROCCESS, md_product_serial.getSync_proccess());
+            if (md_product_serial.getSync_process() > -1) {
+                contentValues.put(SYNC_PROCESS, md_product_serial.getSync_process());
             }
 
 

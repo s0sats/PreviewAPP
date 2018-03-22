@@ -665,11 +665,11 @@ public class WS_Sync extends IntentService {
                     //Em ambos os casos seta sync_process para 1
                     if (dbSerial != null && dbSerial.getSerial_code() > 0) {
                         serverSerial.setSerial_tmp(dbSerial.getSerial_tmp());
-                        serverSerial.setSync_proccess(1);
+                        serverSerial.setSync_process(1);
                         //
                         serialDao.addUpdate(serverSerial);
                     } else {
-                        serverSerial.setSync_proccess(1);
+                        serverSerial.setSync_process(1);
                         //
                         serialDao.addUpdateTmp(serverSerial);
                     }

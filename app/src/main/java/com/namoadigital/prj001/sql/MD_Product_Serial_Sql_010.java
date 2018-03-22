@@ -25,7 +25,7 @@ public class MD_Product_Serial_Sql_010 implements Specification {
 
         return sb
                 .append("UPDATE "+ MD_Product_SerialDao.TABLE+" SET\n" +
-                        "    sync_process = 0" +
+                        "    sync_process = 0\n" +
                         " WHERE\n" +
                         "    customer_code = '" + customer_code + "'\n")
                 .toString();

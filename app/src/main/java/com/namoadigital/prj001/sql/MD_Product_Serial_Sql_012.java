@@ -9,7 +9,7 @@ import com.namoadigital.prj001.database.Specification;
  */
 
 public class MD_Product_Serial_Sql_012 implements Specification {
-    public static final String EXISTS = "EXISTS";
+    public static final String EXISTS = "LINK_EXISTS";
 
     private long customer_code;
     private long product_code;

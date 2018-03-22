@@ -54,7 +54,7 @@ public class MD_Product_Serial implements Serializable {
     @Expose
     private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
     private int flag_offline;
-    private int sync_proccess;
+    private int sync_process;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -238,11 +238,11 @@ public class MD_Product_Serial implements Serializable {
         this.flag_offline = flag_offline;
     }
 
-    public int getSync_proccess() {
-        return sync_proccess;
+    public int getSync_process() {
+        return sync_process;
     }
 
-    public void setSync_proccess(int sync_proccess) {
-        this.sync_proccess = sync_proccess;
+    public void setSync_process(int sync_process) {
+        this.sync_process = sync_process;
     }
 }
