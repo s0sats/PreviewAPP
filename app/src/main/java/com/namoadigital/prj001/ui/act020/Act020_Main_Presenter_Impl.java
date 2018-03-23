@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -25,6 +26,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
+import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -49,6 +51,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     private Sync_ChecklistDao syncChecklistDao;
     private GE_Custom_Form_OperationDao formOperationDao;
     private MD_ProductDao productDao;
+    private MD_Product_SerialDao serialDao;
 
     //
     private boolean downloadStarted = false;
@@ -62,6 +65,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         this.syncChecklistDao = syncChecklistDao;
         this.formOperationDao = formOperationDao;
         this.productDao = productDao;
+        this.serialDao = new MD_Product_SerialDao(context);
     }
 
     @Override
@@ -109,8 +113,58 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
         }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
+            ArrayList<TProduct_Serial> serial_list = hasLocalSerial(product_id,serial_id,tracking);
+            //
+            if(serial_list.size() > 0){
+                //VALOR 100 CHUMBADO TROCAR DEPOIS DE TESTAR
+                //VER COM JHON QUAL DEIXAR.
+                //Seta qtd de registro
+                mView.setRecordInfo(serial_list.size(), 100);
+                //chama
+                mView.loadProductSerialList(serial_list);
+                //Se qtd 1, chama proxima define flow
+                if(serial_list.size() == 1){
+                    defineFlow(serial_list.get(0));
+                }else if (serial_list.size() > 100){
+                    //Se qtd de registro maior que o total retornado,
+                    //exibe msg para refinar a busca.
+                    mView.showQtyExceededMsg(serial_list.size(), 100);
+                }
+
+            }else {
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
         }
+    }
+
+    private ArrayList<TProduct_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
+        ArrayList<HMAux> serial_list = (ArrayList<HMAux>)
+                serialDao.query_HM(
+                        new Sql_Act020_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_id,
+                                serial_id,
+                                tracking
+                        ).toSqlQuery()
+                );
+        //
+        ArrayList<TProduct_Serial> tSerialList = new ArrayList<>();
+        //
+        if (serial_list != null && serial_list.size() > 0) {
+            for (HMAux hmAux : serial_list) {
+                TProduct_Serial auxObj = new TProduct_Serial();
+                //
+                auxObj.setCustomer_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.CUSTOMER_CODE)));
+                auxObj.setProduct_code(Long.valueOf(hmAux.get(MD_Product_SerialDao.PRODUCT_CODE)));
+                auxObj.setProduct_id(hmAux.get(MD_ProductDao.PRODUCT_ID));
+                auxObj.setProduct_desc(hmAux.get(MD_ProductDao.PRODUCT_DESC));
+                auxObj.setSerial_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.SERIAL_CODE)));
+                auxObj.setSerial_id(hmAux.get(MD_Product_SerialDao.SERIAL_ID));
+                tSerialList.add(auxObj);
+            }
+        }
+        //
+        return tSerialList;
     }
 
     @Override
