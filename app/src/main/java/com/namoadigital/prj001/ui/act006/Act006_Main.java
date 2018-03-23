@@ -23,6 +23,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
@@ -124,6 +125,11 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
                 context,
                 this,
                 new GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                new MD_ProductDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -310,8 +316,10 @@ public class Act006_Main extends Base_Activity implements Act006_Main_View {
         super.processCloseACT(result, mRequired);
         //
         progressDialog.dismiss();
-        //
-        mPresenter.defineSearchResultFlow(result);
+        //Até 22/03/2018
+        //mPresenter.defineSearchResultFlow(result);
+        //Alteração form e serial offiline 22/03/2018
+        mPresenter.extractSearchResult(result);
     }
 
     private void showNewOptDialog() {

@@ -245,4 +245,32 @@ public class MD_Product_Serial implements Serializable {
     public void setSync_process(int sync_process) {
         this.sync_process = sync_process;
     }
+
+    /**
+     * Monta Obj TProduct_Serial baseado nas informações da classe.
+     * @return
+     */
+    public TProduct_Serial getTProductSerial(){
+        TProduct_Serial tProduct_serial = new TProduct_Serial();
+
+        tProduct_serial.setCustomer_code(this.customer_code);
+        tProduct_serial.setProduct_code(this.product_code);
+        tProduct_serial.setSerial_code(this.serial_code);
+        tProduct_serial.setSerial_id(this.serial_id);
+        tProduct_serial.setSite_code(this.site_code);
+        tProduct_serial.setZone_code(this.zone_code);
+        tProduct_serial.setLocal_code(this.local_code);
+        tProduct_serial.setSite_code_owner(this.site_code_owner);
+        tProduct_serial.setBrand_code(this.brand_code);
+        tProduct_serial.setModel_code(this.model_code);
+        tProduct_serial.setColor_code(this.color_code);
+        tProduct_serial.setSegment_code(this.segment_code);
+        tProduct_serial.setCategory_price_code(this.category_price_code);
+        tProduct_serial.setAdd_inf1(this.add_inf1);
+        tProduct_serial.setAdd_inf2(this.add_inf2);
+        tProduct_serial.setAdd_inf3(this.add_inf3);
+        tProduct_serial.setTracking_list(this.tracking_list);
+
+        return tProduct_serial;
+    }
 }

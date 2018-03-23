@@ -8,11 +8,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_009;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_014;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -30,12 +36,17 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     private Act006_Main_View mView;
     private GE_Custom_Form_LocalDao customFormLocalDao;
     private HMAux hmAux_Trans;
+    private MD_Product_SerialDao serialDao;
+    private MD_ProductDao productDao;
 
-    public Act006_Main_Presenter_Impl(Context context, Act006_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans) {
+    public Act006_Main_Presenter_Impl(Context context, Act006_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao,MD_ProductDao productDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
+        this.productDao = productDao;
         this.hmAux_Trans = hmAux_Trans;
+        this.serialDao = new MD_Product_SerialDao(context);
+
     }
 
     @Override
@@ -55,9 +66,9 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 
     @Override
     public void checkPendenciesFlow(int pendencies_qty) {
-        if(pendencies_qty > 0){
+        if (pendencies_qty > 0) {
             mView.callAct013(context);
-        }else{
+        } else {
             //Se qt de in_processing é 0 , veriica se existem finalizado
             List<HMAux> finalizeds =
                     customFormLocalDao.query_HM(
@@ -66,12 +77,12 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                             ).toSqlQuery()
                     );
             //Se não existir, exibe msg de bloqueio
-            if(finalizeds.get(0).get(GE_Custom_Form_Local_Sql_009.FINALIZED_QTY).equalsIgnoreCase("0")){
+            if (finalizeds.get(0).get(GE_Custom_Form_Local_Sql_009.FINALIZED_QTY).equalsIgnoreCase("0")) {
                 mView.showMsg(
                         hmAux_Trans.get("alert_no_pendencies_title"),
                         hmAux_Trans.get("alert_no_pendencies_msg")
                 );
-            }else{
+            } else {
                 //se não avança para proxima tela.
                 mView.callAct013(context);
             }
@@ -81,22 +92,22 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     @Override
     public void defineFlow(HMAux item) {
 
-        switch (item.get(Act006_Main.NEW_OPT_ID)){
+        switch (item.get(Act006_Main.NEW_OPT_ID)) {
             case Act006_Main.NEW_OPT_TP_PRODUCT:
                 mView.callAct007(context);
                 break;
             case Act006_Main.NEW_OPT_TP_SERIAL:
-                mView.callAct020(context,null);
+                mView.callAct020(context, null);
                 break;
             case Act006_Main.NEW_OPT_TP_LOCATION:
-                default:
+            default:
                 break;
         }
     }
 
     @Override
     public void executeSerialSearch(String serial_id) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")
@@ -112,13 +123,18 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
+        } else {
+            ArrayList<TProduct_Serial> serial_list = hasLocalSerial(serial_id);
+            //
+            if(serial_list.size() > 0){
+                defineSearchResultFlowV2(serial_list);
+            }else {
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
         }
-
     }
 
-    @Override
+   /* @Override
     public void defineSearchResultFlow(String result) {
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -128,20 +144,83 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         //
         ArrayList<TProduct_Serial> serial_list = rec.getRecord();
         //
-        if(serial_list == null || serial_list.size() == 0){
+        if (serial_list == null || serial_list.size() == 0) {
             //
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
                     hmAux_Trans.get("alert_no_serial_found_msg")
             );
-        }else {
+        } else {
             Bundle bundle = new Bundle();
             //bundle.putString(Constant.MAIN_SERIAL_TRACKING,"");
-            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL,serial_list);
-            bundle.putString(Act006_Main.WS_RETURN_STRING,result);
-            mView.callAct020(context,bundle);
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+            bundle.putString(Act006_Main.WS_RETURN_STRING, result);
+            mView.callAct020(context, bundle);
 
         }
+    }*/
+
+    @Override
+    public void extractSearchResult(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class);
+        //
+        ArrayList<TProduct_Serial> serial_list = rec.getRecord();
+        //
+        defineSearchResultFlowV2(serial_list);
+    }
+
+    @Override
+    public void defineSearchResultFlowV2(ArrayList<TProduct_Serial> serial_list) {
+        if (serial_list == null || serial_list.size() == 0) {
+            //
+            mView.showMsg(
+                    hmAux_Trans.get("alert_no_serial_found_ttl"),
+                    hmAux_Trans.get("alert_no_serial_found_msg")
+            );
+        } else {
+            Bundle bundle = new Bundle();
+            //bundle.putString(Constant.MAIN_SERIAL_TRACKING,"");
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+            //bundle.putString(Act006_Main.WS_RETURN_STRING, result);
+            mView.callAct020(context, bundle);
+        }
+    }
+
+    private ArrayList<TProduct_Serial> hasLocalSerial(String serial) {
+        ArrayList<MD_Product_Serial> serial_list = (ArrayList<MD_Product_Serial>)
+                serialDao.query(
+                        new MD_Product_Serial_Sql_014(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                serial
+                        ).toSqlQuery()
+                );
+        //
+        ArrayList<TProduct_Serial> tSerialList = new ArrayList<>();
+        //
+        if (serial_list != null && serial_list.size() > 0) {
+            for (MD_Product_Serial product_serial : serial_list) {
+                TProduct_Serial auxObj = product_serial.getTProductSerial();
+                //
+                MD_Product product = productDao.getByString(
+                        new MD_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_serial.getProduct_code()
+                        ).toSqlQuery()
+                );
+                //
+                if(product != null && product.getProduct_code() > 0){
+                    auxObj.setProduct_id(product.getProduct_id());
+                    auxObj.setProduct_desc(product.getProduct_desc());
+                }
+                //
+                tSerialList.add(auxObj);
+            }
+        }
+
+        return tSerialList;
     }
 
     @Override
@@ -151,7 +230,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 
     String[] opcs = {
             "new",
-          //  "barcode",
+            //  "barcode",
             "checklist"
     };
 }
