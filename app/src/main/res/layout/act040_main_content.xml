@@ -28,6 +28,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/border_back"
+                android:orientation="horizontal">
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act040_ss_partner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="Site" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_back"
                 android:orientation="horizontal"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
@@ -151,6 +167,44 @@
                     android:visibility="gone" />
 
             </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/act040_tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="@dimen/font_size_title_md" />
+
+
+        <!--<com.namoa_digital.namoa_library.ctls.SearchableSpinner-->
+        <!--android:id="@+id/act040_ss_partner"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/namoa_color_gray"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:layout_margin="5dp"-->
+        <!--android:text="Site" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/act040_btn_create_so"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="center"
+                android:text="Criar S.O."
+                android:textColor="@color/padrao_WHITE" />
 
         </LinearLayout>
     </LinearLayout>

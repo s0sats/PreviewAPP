@@ -9,8 +9,9 @@ public class SO_Pack_Express {
     private long customer_code;
     private long site_code;
     private long operation_code;
-    private String pack_desc;
     private String express_code;
+    private String pack_desc;
+    private long product_code;
 
     public long getCustomer_code() {
         return customer_code;
@@ -36,6 +37,14 @@ public class SO_Pack_Express {
         this.operation_code = operation_code;
     }
 
+    public String getExpress_code() {
+        return express_code;
+    }
+
+    public void setExpress_code(String express_code) {
+        this.express_code = express_code;
+    }
+
     public String getPack_desc() {
         return pack_desc;
     }
@@ -44,11 +53,11 @@ public class SO_Pack_Express {
         this.pack_desc = pack_desc;
     }
 
-    public String getExpress_code() {
-        return express_code;
+    public long getProduct_code() {
+        return product_code;
     }
 
-    public void setExpress_code(String express_code) {
-        this.express_code = express_code;
+    public void setProduct_code(long product_code) {
+        this.product_code = product_code;
     }
 }

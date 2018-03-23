@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act040;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,13 +9,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
+import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -38,6 +47,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private Bundle bundle;
     private Act040_Main_Presenter_Impl mPresenter;
     private SO_Pack_Express mSo_pack_express;
+    private MD_Partner md_partner;
+    private MD_Product md_product;
 
     private MD_Product mdProduct;
 
@@ -49,6 +60,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private MKEditTextNM mket_barcode;
     private ImageView iv_search_barcode;
+
+    private TextView tv_status;
+    private SearchableSpinner ss_partner;
+
+    private Button btn_create_so;
 
 
     @Override
@@ -108,6 +124,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                ),
+                new MD_PartnerDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
         );
         //
@@ -120,12 +141,22 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mket_barcode = (MKEditTextNM) findViewById(R.id.act040_mket_barcode);
         iv_search_barcode = (ImageView) findViewById(R.id.act040_iv_search_barcode);
         //
+        btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
+        //
+        tv_status = (TextView) findViewById(R.id.act040_tv_status);
+        //
+        ss_partner = (SearchableSpinner) findViewById(R.id.act040_ss_partner);
+        ss_partner.setmShowLabel(false);
+        ss_partner.setmHint("Partner - Trad");
+        ss_partner.setmTitle("Title - Trad");
+        //
         //Add controles no array list.
         controls_sta.add(mket_produto);
         controls_sta.add(mket_serial);
         controls_sta.add(mket_barcode);
         //
         mPresenter.checkJump(ToolBox_Con.getPreference_Customer_Code(context));
+        mPresenter.setPartners();
     }
 
     private void recoverIntentsInfo() {
@@ -139,6 +170,47 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void loadSO_Pack_Express(SO_Pack_Express so_pack_express) {
         mSo_pack_express = so_pack_express;
+        //
+        if (mSo_pack_express != null) {
+            tv_status.setText(mSo_pack_express.getPack_desc());
+            //
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mket_barcode.getWindowToken(), 0);
+        } else {
+            tv_status.setText("Nao Encontrado - Trad");
+        }
+    }
+
+
+    @Override
+    public void loadMD_Partner(MD_Partner md_partner) {
+        this.md_partner = md_partner;
+        //
+        HMAux md_partner_hm = new HMAux();
+        md_partner_hm.put("description", md_partner.getPartner_desc());
+        md_partner_hm.put("partner_id", md_partner.getPartner_id());
+        md_partner_hm.put("id", String.valueOf(md_partner.getPartner_code()));
+        md_partner_hm.put("customer_code", String.valueOf(md_partner.getCustomer_code()));
+        //
+        this.ss_partner.setmValue(md_partner_hm);
+    }
+
+    @Override
+    public void loadMD_Product(MD_Product md_product) {
+        this.md_product = md_product;
+        //
+        mPresenter.setSO_Pack_Express(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
+                ToolBox_Con.getPreference_Operation_Code(context),
+                mket_barcode.getText().toString().trim(),
+                md_product.getProduct_code()
+        );
+    }
+
+    @Override
+    public void setPartnerList(ArrayList<HMAux> partnerList) {
+        ss_partner.setmOption(partnerList);
     }
 
     private void iniUIFooter() {
@@ -168,6 +240,74 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             }
         });
 
+        mket_barcode.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if (b) {
+                    mPresenter.setSO_Pack_Express(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
+                            ToolBox_Con.getPreference_Operation_Code(context),
+                            s,
+                            md_product != null ? md_product.getProduct_code() : -1
+                    );
+                } else {
+                    tv_status.setText("");
+                }
+            }
+        });
+
+        ss_partner.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                mPresenter.setMD_Partner(
+                        Long.parseLong(hmAux.get("customer_code")),
+                        Long.parseLong(hmAux.get("partner_id"))
+                );
+            }
+        });
+
+        btn_create_so.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.getText().toString().trim().length() != 0) {
+                    ToolBox.alertMSG(
+                            context,
+                            "Criacao de S.O.",
+                            "Deseja Realmente Criar a S.O.?",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            },
+                            1,
+                            false
+                    );
+                } else {
+                    ToolBox.alertMSG(
+                            context,
+                            "Erros",
+                            "Campos Obrigatórios",
+                            //hmAux_Trans.get("alert_no_pdf_tll"),
+                            //hmAux_Trans.get("alert_no_pdf_msg"),
+                            null,
+                            -1,
+                            false
+                    );
+                }
+
+            }
+        });
     }
 
     @Override
@@ -228,9 +368,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             //
             if (mdProduct != null) {
                 mket_produto.setText(mdProduct.getProduct_desc());
-                mket_serial.setText("");
-                mket_barcode.setText("");
-                mket_serial.requestFocus();
+                //
+                loadMD_Product(mdProduct);
             } else {
                 mket_produto.setText("");
             }
@@ -263,6 +402,4 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 }
