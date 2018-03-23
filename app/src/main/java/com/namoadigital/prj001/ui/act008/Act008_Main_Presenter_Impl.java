@@ -137,7 +137,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                if(ToolBox_Con.isOnline(context)) {
                    executeSyncProcess();
                }else{
-                   mView.continueOffline();
+                   mView.continueOfflineV2(false);
                }
            }else{
                checkNextStep(serial, required, allow_new);
@@ -172,7 +172,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     if (ToolBox_Con.isOnline(context)) {
                         executeSerialProcess(serial);
                     } else {
-                        mView.continueOffline();
+                        mView.continueOfflineV2(checkForLocalSerial(product_code, serial));
                     }
                 }
 

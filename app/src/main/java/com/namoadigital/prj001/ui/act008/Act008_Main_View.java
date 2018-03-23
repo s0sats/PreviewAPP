@@ -20,6 +20,8 @@ public interface Act008_Main_View {
 
     void continueOffline();
 
+    void continueOfflineV2(boolean serial_offline);
+
     void callAct009(Context context);
 
     void callAct007(Context context);
