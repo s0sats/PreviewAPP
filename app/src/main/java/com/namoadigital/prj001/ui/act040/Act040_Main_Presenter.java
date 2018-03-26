@@ -8,7 +8,7 @@ import com.namoadigital.prj001.model.SO_Pack_Express;
 
 public interface Act040_Main_Presenter {
 
-    void setSO_Pack_Express(long customer_code, long site_code, long operation_code, String express_code, long product_code);
+    void setSO_Pack_Express(long customer_code, long site_code, long operation_code, long product_code, String express_code);
 
     void setMD_Partner(long customer_code, long partner_code);
 

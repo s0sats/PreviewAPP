@@ -28,11 +28,11 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String SITE_CODE = "site_code";
     public static final String OPERATION_CODE = "operation_code";
+    public static final String PRODUCT_CODE = "product_code";
     public static final String EXPRESS_CODE = "express_code";
     public static final String PACK_DESC = "pack_desc";
-    public static final String PRODUCT_CODE = "product_code";
 
-    private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, EXPRESS_CODE, PACK_DESC};
+    private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, PACK_DESC};
 
     public SO_Pack_ExpressDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -55,9 +55,9 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
                 sbWhere.append(" and ");
                 sbWhere.append(OPERATION_CODE).append(" = '").append(String.valueOf(so_pack_express.getOperation_code())).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(EXPRESS_CODE).append(" = '").append(so_pack_express.getExpress_code()).append("'");
-                sbWhere.append(" and ");
                 sbWhere.append(PRODUCT_CODE).append(" = '").append(so_pack_express.getProduct_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(EXPRESS_CODE).append(" = '").append(so_pack_express.getExpress_code()).append("'");
 
                 db.update(TABLE, toContentValuesMapper.map(so_pack_express), sbWhere.toString(), null);
             }
@@ -90,9 +90,9 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
                     sbWhere.append(" and ");
                     sbWhere.append(OPERATION_CODE).append(" = '").append(String.valueOf(so_pack_express.getOperation_code())).append("'");
                     sbWhere.append(" and ");
-                    sbWhere.append(EXPRESS_CODE).append(" = '").append(so_pack_express.getExpress_code()).append("'");
-                    sbWhere.append(" and ");
                     sbWhere.append(PRODUCT_CODE).append(" = '").append(so_pack_express.getProduct_code()).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(EXPRESS_CODE).append(" = '").append(so_pack_express.getExpress_code()).append("'");
 
                     db.update(TABLE, toContentValuesMapper.map(so_pack_express), sbWhere.toString(), null);
                 }
@@ -251,9 +251,9 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             so_pack_express.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             so_pack_express.setSite_code(cursor.getLong(cursor.getColumnIndex(SITE_CODE)));
             so_pack_express.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
+            so_pack_express.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             so_pack_express.setExpress_code(cursor.getString(cursor.getColumnIndex(EXPRESS_CODE)));
             so_pack_express.setPack_desc(cursor.getString(cursor.getColumnIndex(PACK_DESC)));
-            so_pack_express.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             return so_pack_express;
         }
 
@@ -273,14 +273,14 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             if (so_pack_express.getOperation_code() > -1) {
                 contentValues.put(OPERATION_CODE, so_pack_express.getOperation_code());
             }
+            if (so_pack_express.getProduct_code() > -1) {
+                contentValues.put(PRODUCT_CODE, so_pack_express.getProduct_code());
+            }
             if (so_pack_express.getExpress_code() != null) {
                 contentValues.put(EXPRESS_CODE, so_pack_express.getExpress_code());
             }
             if (so_pack_express.getPack_desc() != null) {
                 contentValues.put(PACK_DESC, so_pack_express.getPack_desc());
-            }
-            if (so_pack_express.getProduct_code() > -1) {
-                contentValues.put(PRODUCT_CODE, so_pack_express.getProduct_code());
             }
             //
             return contentValues;

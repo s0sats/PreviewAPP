@@ -203,8 +203,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 ToolBox_Con.getPreference_Customer_Code(context),
                 Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
                 ToolBox_Con.getPreference_Operation_Code(context),
-                mket_barcode.getText().toString().trim(),
-                md_product.getProduct_code()
+                md_product.getProduct_code(),
+                mket_barcode.getText().toString().trim()
         );
     }
 
@@ -252,8 +252,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             ToolBox_Con.getPreference_Customer_Code(context),
                             Long.parseLong(ToolBox_Con.getPreference_Site_Code(context)),
                             ToolBox_Con.getPreference_Operation_Code(context),
-                            s,
-                            md_product != null ? md_product.getProduct_code() : -1
+                            md_product != null ? md_product.getProduct_code() : -1,
+                            s
                     );
                 } else {
                     tv_status.setText("");

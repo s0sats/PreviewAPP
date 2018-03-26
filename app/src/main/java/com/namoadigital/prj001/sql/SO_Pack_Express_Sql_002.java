@@ -14,12 +14,14 @@ public class SO_Pack_Express_Sql_002 implements Specification {
     private long customer_code;
     private long site_code;
     private long operation_code;
+    private long product_code;
     private String express_code;
 
-    public SO_Pack_Express_Sql_002(long customer_code, long site_code, long operation_code, String express_code) {
+    public SO_Pack_Express_Sql_002(long customer_code, long site_code, long operation_code, long product_code, String express_code) {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.operation_code = operation_code;
+        this.product_code = product_code;
         this.express_code = express_code;
     }
 
@@ -33,6 +35,7 @@ public class SO_Pack_Express_Sql_002 implements Specification {
                         "    customer_code =  '" + customer_code + "'\n" +
                         "    AND site_code =  '" + site_code + "'\n" +
                         "    AND operation_code =    '" + operation_code + "'\n" +
+                        "    AND product_code =    '" + product_code + "'\n" +
                         "    AND express_code =  '" + express_code + "' ")
                 .toString();
     }
