@@ -28,8 +28,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
@@ -37,11 +39,13 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
@@ -294,6 +298,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                 ToolBox_Inf.convertStringToInt(qty) +
                                         ToolBox_Inf.convertStringToInt(qtySO) +
                                         isSoWithinTokenFile() +
+                                        isSerialWithinTokenFile() +
                                         ToolBox_Inf.convertStringToInt(qtyAP)
                         );
                         //
@@ -722,6 +727,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         context.sendBroadcast(mIntent);
     }
 
+    @Override
+    public void executeSerialSave() {
+        mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
     private void executeLogout(String customer_list) {
         mView.setWsProcess(Act005_Main.WS_PROCESS_LOGOUT);
 
@@ -797,6 +815,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).getSo();
                 //
                 return token_so_list.size();
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            //
+            return 0;
+        }
+    }
+
+    private int isSerialWithinTokenFile() {
+        try {
+            File[] serialToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SERIAL_PREFIX);
+            if (serialToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+                //
+                ArrayList<MD_Product_Serial> token_serial_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(serialToken[0]),
+                                TSerial_Save_Env.class
+                        ).getSerial();
+                //
+                return token_serial_list.size();
             } else {
                 return 0;
             }

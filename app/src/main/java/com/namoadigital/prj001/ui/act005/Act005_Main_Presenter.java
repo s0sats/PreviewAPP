@@ -32,5 +32,7 @@ public interface Act005_Main_Presenter {
 
     void executeApSave();
 
+    void executeSerialSave();
+
     void syncFlow(int to_send_qty);
 }

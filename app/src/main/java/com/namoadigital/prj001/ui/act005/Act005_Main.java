@@ -1087,6 +1087,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 }
             }
 
+        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
+
         } else {
             setWsSoProcess("");
             mPresenter.getMenuItens(hmAux_Trans);

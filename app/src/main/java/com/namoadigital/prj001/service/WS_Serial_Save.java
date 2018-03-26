@@ -52,7 +52,8 @@ public class WS_Serial_Save extends IntentService {
         try {
             gson = new GsonBuilder().serializeNulls().create();
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            processWS_Serial_Save();
+            boolean menu_send_process = bundle.getBoolean(Constant.PROCESS_MENU_SEND, false);
+            processWS_Serial_Save(menu_send_process);
 
         } catch (Exception e) {
 
@@ -69,7 +70,7 @@ public class WS_Serial_Save extends IntentService {
 
     }
 
-    private void processWS_Serial_Save() throws Exception {
+    private void processWS_Serial_Save(boolean menu_send_process) throws Exception {
         //
         loadTranslation();
         //
@@ -95,7 +96,7 @@ public class WS_Serial_Save extends IntentService {
             //Carrega lista de Serial
             serialList = env.getSerial();
             //
-            callSerial_Save_WS(env);
+            callSerial_Save_WS(env, menu_send_process);
 
         } else {
             ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_serial_data"), "", "0");
@@ -109,7 +110,12 @@ public class WS_Serial_Save extends IntentService {
             );
             //Se lista vazia, dispara msg de erro.
             if (serialList == null || serialList.size() == 0) {
-                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_to_update"), "", "0");
+                if(menu_send_process){
+                    HMAux auxApReturned = new HMAux();
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
+                }else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_serial_to_update"), "", "0");
+                }
                 return;
             }
             //
@@ -137,12 +143,12 @@ public class WS_Serial_Save extends IntentService {
                 serialDao.addUpdateTmp(serialList.get(i));
             }
             //
-            callSerial_Save_WS(env);
+            callSerial_Save_WS(env,menu_send_process);
         }
 
     }
 
-    private void callSerial_Save_WS(TSerial_Save_Env env) throws Exception {
+    private void callSerial_Save_WS(TSerial_Save_Env env, boolean menu_send_process) throws Exception {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_serial_data"), "", "0");
         //
@@ -175,10 +181,10 @@ public class WS_Serial_Save extends IntentService {
             return;
         }
         //
-        processSerialSaveRet(rec);
+        processSerialSaveRet(rec,menu_send_process);
     }
 
-    private void processSerialSaveRet(TSerial_Save_Rec rec) throws Exception {
+    private void processSerialSaveRet(TSerial_Save_Rec rec, boolean menu_send_process) throws Exception {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_updating_serial"), "", "0");
         //
         HMAux hmAuxRet = new HMAux();
@@ -227,7 +233,7 @@ public class WS_Serial_Save extends IntentService {
                 //Reseta var de re transmissão.
                 so_re_send = false;
                 //
-                processWS_Serial_Save();
+                processWS_Serial_Save(menu_send_process);
             } else {
                 callFinishProcessing(hmAuxRet);
             }
