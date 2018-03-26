@@ -53,7 +53,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String FLAG_OFFLINE = "flag_offline";
     public static final String SYNC_PROCESS = "sync_process";
 
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_TMP,
+    public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_TMP,
             SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
             MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1,
             ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED, FLAG_OFFLINE,

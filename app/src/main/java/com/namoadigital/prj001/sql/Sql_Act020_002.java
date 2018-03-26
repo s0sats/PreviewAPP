@@ -4,6 +4,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by d.luche on 23/03/2018.
@@ -18,6 +19,7 @@ public class Sql_Act020_002 implements Specification {
     private String product_id;
     private String serial_id;
     private String tracking;
+    private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(MD_Product_SerialDao.columns);
 
     public Sql_Act020_002(long customer_code, String product_id, String serial_id, String tracking) {
         this.customer_code = customer_code;
@@ -33,17 +35,18 @@ public class Sql_Act020_002 implements Specification {
         return
                 sb
                 .append(" SELECT\n" +
-                                "s."+ MD_Product_SerialDao.CUSTOMER_CODE +",\n"+
-                                "s."+ MD_Product_SerialDao.PRODUCT_CODE +",\n"+
-                                "p."+ MD_ProductDao.PRODUCT_ID +",\n"+
-                                "p."+ MD_ProductDao.PRODUCT_DESC +",\n"+
-                                "s."+ MD_Product_SerialDao.SERIAL_CODE +",\n"+
-                                "s."+ MD_Product_SerialDao.SERIAL_ID + "\n" +
+                        "   DISTINCT " +
+                        "       s."+ MD_Product_SerialDao.CUSTOMER_CODE +",\n"+
+                        "       s."+ MD_Product_SerialDao.PRODUCT_CODE +",\n"+
+                        "       p."+ MD_ProductDao.PRODUCT_ID +",\n"+
+                        "       p."+ MD_ProductDao.PRODUCT_DESC +",\n"+
+                        "       s."+ MD_Product_SerialDao.SERIAL_CODE +",\n"+
+                        "       s."+ MD_Product_SerialDao.SERIAL_ID + "\n" +
                         " FROM\n" +
                         "     "+ MD_ProductDao.TABLE+" p\n" +
                         " INNER JOIN\n" +
                         "     "+ MD_Product_SerialDao.TABLE+" s on p.customer_code = s.customer_code\n" +
-                        "                             and p.product_code = s.product_code11\n" +
+                        "                             and p.product_code = s.product_code\n" +
                         " LEFT JOIN\n" +
                         "     "+ MD_Product_Serial_TrackingDao.TABLE+" t on t.customer_code = s.customer_code\n" +
                         "                                   and t.product_code = s.product_code\n" +
@@ -52,20 +55,17 @@ public class Sql_Act020_002 implements Specification {
                         "     p.customer_code = '"+customer_code+"'\n" +
                         "     and ('"+ product_id +"' is null or p.product_id = '"+ product_id +"')\n" +
                         "     and ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%')\n" +
-                        "     and ( '"+tracking+"' is null  or t.tracking = '%"+tracking+"%')\n" +
+                        "     and ( '"+tracking+"' is null  or t.tracking like '%"+tracking+"%')\n" +
                         "     \n" +
                         " ORDER BY\n" +
                         "     p.product_id,\n" +
                         "     s.serial_id,\n" +
                         "     t.tracking\n" +
                         ";" +
-                            MD_Product_SerialDao.CUSTOMER_CODE +"#"+
-                            MD_Product_SerialDao.PRODUCT_CODE +"#"+
+                            HmAuxFields +"#"+
                             MD_ProductDao.PRODUCT_ID +"#"+
-                            MD_ProductDao.PRODUCT_DESC +"#"+
-                            MD_Product_SerialDao.SERIAL_CODE +"#"+
-                            MD_Product_SerialDao.SERIAL_ID
-
-                ).toString().replace("'%null%'","null").replace("'null'","null");
+                            MD_ProductDao.PRODUCT_DESC
+                ).toString()
+                .replace("'%null%'","null").replace("'null'","null");
     }
 }

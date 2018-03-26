@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.database.Specification;
 
 import java.text.SimpleDateFormat;
@@ -29,11 +31,19 @@ public class Sync_Checklist_Sql_003 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append(" DELETE FROM " +
-                        "   sync_checklist  " +
-                        " WHERE " +
-                        "   customer_code = '"+customer_code+"'" +
-                        "   and Date(last_update) <= Date('"+date_now+"')")
+                .append(" DELETE FROM \n" +
+                        Sync_ChecklistDao.TABLE +"  \n" +
+                        " WHERE \n" +
+                        "   customer_code = '"+customer_code+"' \n" +
+                        "   and Date(last_update) <= Date('"+date_now+"')\n" +
+                        "   and product_code in (SELECT s.product_code\n" +
+                        "                        FROM "+Sync_ChecklistDao.TABLE +" s\n" +
+                        "                        LEFT JOIN "+ MD_ProductDao.TABLE +" p on p.customer_code = s.customer_code \n" +
+                        "                                               and p.product_code = s.product_code \n" +
+                        "                        WHERE  \n" +
+                        "                        p.flag_offline <> 1\n" +
+                        "                        --or p.product_code is null                                            \n" +
+                        "                       )")
                 .toString();
     }
 }

@@ -759,6 +759,9 @@ public class WS_Sync extends IntentService {
             //
             // Processamento Tracking do serial
             //
+            //HmAux que contem como chave a pk do serial ja deletados.
+            HMAux serialAlreadyDeleted = new HMAux();
+
             File[] files_serial_tracking = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tracking-");
 
             for (File _file : files_serial_tracking) {
@@ -772,6 +775,9 @@ public class WS_Sync extends IntentService {
                 );
                 //
                 for (MD_Product_Serial_Tracking tracking : trackingList){
+                    String pk = tracking.getCustomer_code()+"."+
+                                tracking.getProduct_code()+"."+
+                                tracking.getSerial_code();
                     //Seleciona o serial do tracking para descobrir o serial_tmp
                     MD_Product_Serial dbSerial = serialDao.getByString(
                             new MD_Product_Serial_Sql_009(
@@ -782,13 +788,17 @@ public class WS_Sync extends IntentService {
                     );
                     //
                     if(dbSerial != null && dbSerial.getSerial_code() > 0){
-                        //Remove todos os trackings do serial
-                        trackingDao.remove(
-                                new MD_Product_Serial_Tracking_Sql_004(
-                                        tracking.getCustomer_code(),
-                                        tracking.getProduct_code(),
-                                        tracking.getSerial_code()
-                                ).toSqlQuery() );
+                        if(!serialAlreadyDeleted.containsValue(pk)) {
+                            //Remove todos os trackings do serial
+                            trackingDao.remove(
+                                    new MD_Product_Serial_Tracking_Sql_004(
+                                            tracking.getCustomer_code(),
+                                            tracking.getProduct_code(),
+                                            tracking.getSerial_code()
+                                    ).toSqlQuery());
+                            //
+                            serialAlreadyDeleted.put(MD_Product_Serial_TrackingDao.SERIAL_CODE,pk);
+                        }
                         //Atualiza serial_tmp no obj tracking e depois no banco
                         tracking.setSerial_tmp(dbSerial.getSerial_tmp());
                         //

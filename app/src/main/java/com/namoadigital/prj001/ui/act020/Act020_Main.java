@@ -448,6 +448,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
         if (!status) {
