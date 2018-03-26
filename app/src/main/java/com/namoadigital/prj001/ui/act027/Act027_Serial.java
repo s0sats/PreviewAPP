@@ -396,9 +396,17 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
             public void onClick(View v) {
                 //
                 if (checkSerialChangesV2()) {
-                    buildSerialFull();
-                    //
-                    mPresenter.updateSerialInfo(serialObj);
+                    if (ToolBox_Con.isOnline(context)) {
+                        buildSerialFull();
+                        //
+                        mPresenter.updateSerialInfo(serialObj);
+                    }else{
+                        //ToolBox_Inf.showNoConnectionDialog(context);
+                        showAlertDialog(
+                                hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+                                hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                        );
+                    }
                 } else {
                     showAlertDialog(
                             hmAux_Trans.get("alert_no_data_changes_ttl"),

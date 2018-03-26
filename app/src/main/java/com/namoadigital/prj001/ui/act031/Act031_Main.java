@@ -251,7 +251,9 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         transList.add("new_serial_data_lost_msg");
         transList.add("serial_data_lost_ttl");
         transList.add("serial_data_lost_msg");
-
+        //
+        transList.add("alert_offline_data_not_saved_ttl");
+        transList.add("alert_offline_data_not_saved_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -785,16 +787,25 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
         listnerSearchSO = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mket_serial_id.setEnabled(false);
+
                 //validateSerialProperties esta comentado , mas seráa validação oficial no futuro.
                 //if(validateSerialProperties(serialProperties)) {
                 if (validadeSerialLocation()) {
                     if (checkSerialChangesV2(serialProperties)) {
-                        buildSerialFull();
-                        //
-                        serialObj.setSerial_id(mket_serial_id.getText().toString().trim());
-                        //
-                        mPresenter.updateSerialInfo(serialObj);
+                        if(ToolBox_Con.isOnline(context)) {
+                            mket_serial_id.setEnabled(false);
+                            //
+                            buildSerialFull();
+                            //
+                            serialObj.setSerial_id(mket_serial_id.getText().toString().trim());
+                            //
+                            mPresenter.updateSerialInfo(serialObj);
+                        }else{
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+                                    hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                            );
+                        }
                     } else {
                         //mPresenter.executeSaveSerial(product_code, mket_serial_id.getText().toString().trim(), serialInfoChanges);
                         showAlertDialog(

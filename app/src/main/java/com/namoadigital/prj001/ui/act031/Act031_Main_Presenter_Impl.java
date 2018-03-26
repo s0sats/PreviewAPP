@@ -240,10 +240,10 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
         //
         refreshUI(productSerial.getProduct_code(), productSerial.getSerial_id());
         //
-        if (ToolBox_Con.isOnline(context)) {
+        //if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
             executeSaveSerial(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
-        } else {
+        /*} else {
             //Save Offiline
             //ToolBox_Inf.showNoConnectionDialog(context);
             mView.showSingleResultMsg(
@@ -251,7 +251,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
                     hmAux_Trans.get("alert_save_serial_offline_msg")
             );
 
-        }
+        }*/
     }
 
     @Override
