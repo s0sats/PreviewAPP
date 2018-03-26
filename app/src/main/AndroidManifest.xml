@@ -525,6 +525,9 @@
         <receiver android:name=".receiver_chat.WBR_Room_AP" />
         <service android:name=".service_chat.WS_Room_AP" />
 
+        <receiver android:name=".receiver.WBR_SO_Pack_Express_Local" />
+        <service android:name=".service.WS_SO_Pack_Express_Local" />
+
     </application>
 
 </manifest>

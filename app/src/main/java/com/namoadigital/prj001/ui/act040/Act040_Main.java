@@ -23,9 +23,11 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act041.Act041_Main;
@@ -116,6 +118,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 this,
                 hmAux_Trans,
                 new SO_Pack_ExpressDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                new SO_Pack_Express_LocalDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -281,6 +288,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             public void onClick(View v) {
 
                 if (mSo_pack_express != null && md_partner != null && md_product != null && mket_serial.getText().toString().trim().length() != 0) {
+
                     ToolBox.alertMSG(
                             context,
                             "Criacao de S.O.",
@@ -288,6 +296,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    mPresenter.onCreateSo_Pack_Express(
+                                            mSo_pack_express,
+                                            md_partner,
+                                            md_product,
+                                            mket_serial.getText().toString().trim()
+                                    );
                                 }
                             },
                             1,
@@ -376,6 +390,24 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
         } else {
         }
+    }
+
+    @Override
+    public void automationCleanForm() {
+        mket_serial.setText("");
+        mket_barcode.setText("");
+        //
+        mket_serial.requestFocus();
+    }
+
+    @Override
+    public void executeSO_Pack_Express_Local() {
+        Intent mIntent = new Intent(context, WBR_SO_Pack_Express_Local.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

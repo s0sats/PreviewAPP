@@ -91,6 +91,7 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             }
 
         } catch (Exception e) {
+            String error = e.toString();
         } finally {
         }
 
@@ -429,10 +430,10 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getPartner_code() > -1) {
                 contentValues.put(PARTNER_CODE, so_pack_express_local.getPartner_code());
             }
-            if (so_pack_express_local.getSo_prefix() > -1) {
+            if (so_pack_express_local.getSo_prefix() != null) {
                 contentValues.put(SO_PREFIX, so_pack_express_local.getSo_prefix());
             }
-            if (so_pack_express_local.getSo_code() > -1) {
+            if (so_pack_express_local.getSo_code() != null){
                 contentValues.put(SO_CODE, so_pack_express_local.getSo_code());
             }
             if (so_pack_express_local.getSo_id() != null) {
@@ -444,13 +445,13 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getSo_status() != null) {
                 contentValues.put(SO_STATUS, so_pack_express_local.getSo_status());
             }
-            if (so_pack_express_local.getContract_code() > -1) {
+            if (so_pack_express_local.getContract_code() != null){
                 contentValues.put(CONTRACT_CODE, so_pack_express_local.getContract_code());
             }
             if (so_pack_express_local.getContract_desc() != null) {
                 contentValues.put(CONTRACT_DESC, so_pack_express_local.getContract_desc());
             }
-            if (so_pack_express_local.getPriority_code() > -1) {
+            if (so_pack_express_local.getPriority_code() != null){
                 contentValues.put(PRIORITY_CODE, so_pack_express_local.getPriority_code());
             }
             if (so_pack_express_local.getPriority_desc() != null) {
@@ -474,10 +475,10 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getProduct_desc() != null) {
                 contentValues.put(PRODUCT_DESC, so_pack_express_local.getProduct_desc());
             }
-            if (so_pack_express_local.getSerial_code() > -1) {
+            if (so_pack_express_local.getSerial_code() != null){
                 contentValues.put(SERIAL_CODE, so_pack_express_local.getSerial_code());
             }
-            if (so_pack_express_local.getSegment_code() > -1) {
+            if (so_pack_express_local.getSegment_code() != null){
                 contentValues.put(SEGMENT_CODE, so_pack_express_local.getSegment_code());
             }
             if (so_pack_express_local.getSegment_id() != null) {

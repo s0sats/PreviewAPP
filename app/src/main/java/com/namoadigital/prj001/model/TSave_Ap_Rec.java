@@ -13,6 +13,7 @@ public class TSave_Ap_Rec {
     private String link_url;
     private String error_msg;
     private String save;
+
     private ArrayList<ApSaveStatus> ap = new ArrayList<>();
 
     public String getApp() {

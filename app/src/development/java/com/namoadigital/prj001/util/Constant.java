@@ -55,4 +55,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_LEAVE_ROOM = "https://chatdev.namoadigital.com/leaveRoom";
     public static final String WS_CHAT_ROOM_AP = "https://chatdev.namoadigital.com/joinFormAp";
 
+    public static final String WS_SO_PACK_EXPRESSION = "https://dev.namoadigital.com/ws/prj001/server_save_so_pack_express.ws";
+
+
 }

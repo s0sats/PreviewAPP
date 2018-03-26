@@ -210,7 +210,6 @@ public class WS_AP_Save extends IntentService {
                 break;
             default:
         }
-
     }
 
     /**

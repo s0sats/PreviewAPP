@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.model;
 
-import com.google.gson.annotations.Expose;
-
 import java.util.ArrayList;
 
 /**
@@ -10,16 +8,12 @@ import java.util.ArrayList;
 
 public class TSO_Pack_Express_Env {
 
-    @Expose
     private String app_code;
-    @Expose
     private String app_version;
-    @Expose
     private String session_app;
-    @Expose
     private String token;
-    @Expose
-    private ArrayList<GE_Custom_Form_Ap> AP;
+
+    private ArrayList<SO_Pack_Express_Local> pack_express;
 
     public String getApp_code() {
         return app_code;
@@ -53,12 +47,11 @@ public class TSO_Pack_Express_Env {
         this.token = token;
     }
 
-    public ArrayList<GE_Custom_Form_Ap> getAP() {
-        return AP;
+    public ArrayList<SO_Pack_Express_Local> getPack_express() {
+        return pack_express;
     }
 
-    public void setAP(ArrayList<GE_Custom_Form_Ap> AP) {
-        this.AP = AP;
+    public void setPack_express(ArrayList<SO_Pack_Express_Local> pack_express) {
+        this.pack_express = pack_express;
     }
-
 }

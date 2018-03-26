@@ -6,10 +6,16 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_006;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -25,14 +31,16 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     private Act040_Main mView;
     private HMAux hmAux_Trans;
     private SO_Pack_ExpressDao so_pack_expressDao;
+    private SO_Pack_Express_LocalDao so_pack_express_localDao;
     private MD_ProductDao md_productDao;
     private MD_PartnerDao md_partnerDao;
 
-    public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao) {
+    public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, SO_Pack_Express_LocalDao so_pack_express_localDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.so_pack_expressDao = so_pack_expressDao;
+        this.so_pack_express_localDao = so_pack_express_localDao;
         this.md_productDao = md_productDao;
         this.md_partnerDao = md_partnerDao;
     }
@@ -106,6 +114,38 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                     Long.parseLong(partnerList.get(0).get("partner_id"))
             );
         }
+    }
+
+    @Override
+    public void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial) {
+        SO_Pack_Express_Local so_pack_express_local = new SO_Pack_Express_Local();
+
+
+        long nTemp = Long.parseLong(so_pack_express_localDao.getByStringHM(
+                new SO_Pack_Express_Local_Sql_006(
+                        mSo_pack_express.getCustomer_code(),
+                        mSo_pack_express.getSite_code(),
+                        mSo_pack_express.getOperation_code(),
+                        mSo_pack_express.getProduct_code(),
+                        mSo_pack_express.getExpress_code()
+                ).toSqlQuery()
+        ).get(SM_SO_Service_Exec_Task_File_Sql_005.NEXT_TMP));
+
+        so_pack_express_local.setCustomer_code(mSo_pack_express.getCustomer_code());
+        so_pack_express_local.setSite_code(mSo_pack_express.getSite_code());
+        so_pack_express_local.setOperation_code(mSo_pack_express.getOperation_code());
+        so_pack_express_local.setProduct_code(mSo_pack_express.getProduct_code());
+        so_pack_express_local.setExpress_code(mSo_pack_express.getExpress_code());
+        so_pack_express_local.setExpress_tmp(nTemp);
+        so_pack_express_local.setPartner_code(md_partner.getPartner_code());
+        so_pack_express_local.setSerial_id(serial);
+        so_pack_express_local.setStatus("NEW");
+        //
+        so_pack_express_localDao.addUpdate(so_pack_express_local);
+        //
+        // chamar WebService
+        //
+        //mView.automationCleanForm();
     }
 
     @Override

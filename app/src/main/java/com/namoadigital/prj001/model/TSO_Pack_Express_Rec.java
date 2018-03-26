@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.model;
 
-import com.google.gson.annotations.Expose;
-
 import java.util.ArrayList;
 
 /**
@@ -10,55 +8,60 @@ import java.util.ArrayList;
 
 public class TSO_Pack_Express_Rec {
 
-    @Expose
-    private String app_code;
-    @Expose
-    private String app_version;
-    @Expose
-    private String session_app;
-    @Expose
-    private String token;
-    @Expose
-    private ArrayList<GE_Custom_Form_Ap> AP;
 
-    public String getApp_code() {
-        return app_code;
+    private String app;
+    private String validation;
+    private String link_url;
+    private String error_msg;
+    private String save;
+
+    private ArrayList<SO_Pack_Express_Local> pack_express;
+
+    public String getApp() {
+        return app;
     }
 
-    public void setApp_code(String app_code) {
-        this.app_code = app_code;
+    public void setApp(String app) {
+        this.app = app;
     }
 
-    public String getApp_version() {
-        return app_version;
+    public String getValidation() {
+        return validation;
     }
 
-    public void setApp_version(String app_version) {
-        this.app_version = app_version;
+    public void setValidation(String validation) {
+        this.validation = validation;
     }
 
-    public String getSession_app() {
-        return session_app;
+    public String getLink_url() {
+        return link_url;
     }
 
-    public void setSession_app(String session_app) {
-        this.session_app = session_app;
+    public void setLink_url(String link_url) {
+        this.link_url = link_url;
     }
 
-    public String getToken() {
-        return token;
+    public String getError_msg() {
+        return error_msg;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setError_msg(String error_msg) {
+        this.error_msg = error_msg;
     }
 
-    public ArrayList<GE_Custom_Form_Ap> getAP() {
-        return AP;
+    public String getSave() {
+        return save;
     }
 
-    public void setAP(ArrayList<GE_Custom_Form_Ap> AP) {
-        this.AP = AP;
+    public void setSave(String save) {
+        this.save = save;
     }
 
+    public ArrayList<SO_Pack_Express_Local> getPack_express() {
+        return pack_express;
+    }
+
+    public void setPack_express(ArrayList<SO_Pack_Express_Local> pack_express) {
+        this.pack_express = pack_express;
+    }
 }

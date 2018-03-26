@@ -27,5 +27,9 @@ public interface Act040_Main_View {
 
     void jumpToOne();
 
+    void automationCleanForm();
+
     void setPartnerList(ArrayList<HMAux> partnerList);
+
+    void executeSO_Pack_Express_Local();
 }

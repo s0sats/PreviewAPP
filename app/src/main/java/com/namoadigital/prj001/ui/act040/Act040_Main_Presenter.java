@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act040;
 
+import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 
 /**
@@ -17,6 +19,8 @@ public interface Act040_Main_Presenter {
     void setPartners();
 
     void onBackPressedClicked();
+
+    void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial);
 
     boolean processValidation(SO_Pack_Express mSo_pack_express, long partner_code, long product_code, String serial);
 
