@@ -26,8 +26,10 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Save_Env;
@@ -50,6 +52,7 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
@@ -898,5 +901,23 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } else {
             accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
         }
+    }
+
+    @Override
+    public String getProductInfo(Long product_code) {
+        MD_ProductDao mdProductDao = new MD_ProductDao(context);
+        MD_Product mdProduct = mdProductDao.getByString(
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code
+                    ).toSqlQuery()
+                );
+        //
+        if(mdProduct != null){
+            return mdProduct.getProduct_id()+" - "+mdProduct.getProduct_desc();
+        }else{
+            return "";
+        }
+
     }
 }

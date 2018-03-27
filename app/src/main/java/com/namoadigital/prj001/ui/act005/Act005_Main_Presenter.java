@@ -34,5 +34,7 @@ public interface Act005_Main_Presenter {
 
     void executeSerialSave();
 
+    String getProductInfo(Long product_code);
+
     void syncFlow(int to_send_qty);
 }

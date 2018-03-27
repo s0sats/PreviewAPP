@@ -29,6 +29,7 @@ public class Generic_Results_Adapter extends BaseAdapter {
 
     /*CONFIGURAÇÕES*/
     public static final String CONFIG_3_ITENS = "CONFIG_3_ITENS";
+    public static final String CONFIG_MENU_SEND_RET = "CONFIG_MENU_SEND_RET";
 
     private Context context;
     private int resource;
@@ -83,6 +84,20 @@ public class Generic_Results_Adapter extends BaseAdapter {
         TextView tv_item3_value = (TextView) convertView.findViewById(R.id.generic_results_adapter_cell_tv_msg_value);
 
         switch (config){
+            case CONFIG_MENU_SEND_RET:
+                //Esse item é quebra de conceito com o adapter
+                //Mas foi necessario pelo tempo curto e correção de
+                //gambiarra ancestrais
+                tv_ttl.setText(item.get(LABEL_TTL));
+                //
+                tv_item1_ttl.setText(item.get(LABEL_ITEM_1));
+                tv_item1_value.setText(item.get(VALUE_ITEM_1));
+                //
+                tv_item2_ttl.setVisibility(View.GONE);
+                tv_item2_value.setVisibility(View.GONE);
+                tv_item3_ttl.setVisibility(View.GONE);
+                tv_item3_value.setVisibility(View.GONE);
+                break;
             case CONFIG_3_ITENS:
                 default:
                     tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));

@@ -31,6 +31,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
@@ -49,6 +50,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_SO_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
@@ -78,6 +80,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -328,6 +331,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_ws_general_error_ttl");
         transList.add("alert_ws_general_error_msg");
         transList.add("alert_results_ttl");
+        transList.add("alert_ws_serial_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1071,7 +1075,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     wsResults.add(mHmAux);
                 }
             }
+            //
+            mPresenter.executeSerialSave();
+            //
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+            //
+            if(!hmAux.isEmpty() && hmAux.size() > 0) {
+                for (Map.Entry<String, String> item : hmAux.entrySet()) {
+                    HMAux aux = new HMAux();
+                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                    String status = item.getValue();
+                    String productInfo = mPresenter.getProductInfo(Long.parseLong(pk[0]));
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", ""+productInfo +" - "+ pk[1]);
+                    mHmAux.put("type", "SERIAL");
+                    mHmAux.put("status", status);
+                    mHmAux.put("final_status", productInfo +" - "+ pk[1] + " / " + status);
+                    //
+                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                        wsResults.add(mHmAux);
+                    }
 
+                }
+            }
+            //
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
@@ -1086,8 +1115,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     showSuccessDialog();
                 }
             }
-
-        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
 
         } else {
             setWsSoProcess("");
@@ -1116,14 +1143,44 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
-        lv_results.setAdapter(
+        /*lv_results.setAdapter(
                 new Act028_Results_Adapter(
                         context,
                         R.layout.act028_results_adapter_cell,
                         res
                 )
+        );*/
+        List<HMAux> gAdapterRes = new ArrayList<>();
+        for (HMAux item:res) {
+            HMAux hmAux = new HMAux();
+            //
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1,item.get("label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1,item.get("status"));
+            //
+            switch (item.get("type")){
+                case "SERIAL":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("lbl_serial_data"));
+                    break;
+                case "A.P.":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("lbl_form_ap"));
+                    break;
+                case "S.O.":
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL,hmAux_Trans.get("lbl_so"));
+                    break;
+            }
+            //
+            gAdapterRes.add(hmAux);
+        }
+        //
+        lv_results.setAdapter(
+                new Generic_Results_Adapter(
+                        context,
+                        gAdapterRes,
+                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                        hmAux_Trans
+                )
         );
-
+        //
         builder.setView(view);
         builder.setCancelable(false);
 
@@ -1190,8 +1247,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.executeApSave();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
-
             setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
+            super.processError_1(mLink, mRequired);
+            //
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+
+            setRes(hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
             super.processError_1(mLink, mRequired);
             //
             if(syncAfterSave){
@@ -1216,25 +1277,31 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
             setWsSoProcess("");
-            setRes("N-Form", hmAux_Trans.get("N-Form Error"), "");
+            setRes(hmAux_Trans.get("lbl_checklist"), hmAux_Trans.get("alert_ws_form_error_msg"), "");
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
             setWsSoProcess("");
             mPresenter.getMenuItens(hmAux_Trans);
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Save Error"), "");
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_error_msg"), "");
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
-            setRes("N-Service", hmAux_Trans.get("N-Service SO Approval Error"), "");
+            setRes(hmAux_Trans.get("lbl_so"), hmAux_Trans.get("alert_ws_so_approval_error_msg"), "");
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
-            setRes("N-AP", hmAux_Trans.get("N-AP SO Approval Error"), "");
+            setRes(hmAux_Trans.get("lbl_form_ap"), hmAux_Trans.get("alert_ws_ap_error_msg"), "");
+            mPresenter.getMenuItens(hmAux_Trans);
+            progressDialog.dismiss();
+
+        }else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+            setRes(hmAux_Trans.get("lbl_send_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
             mPresenter.getMenuItens(hmAux_Trans);
             progressDialog.dismiss();
 
