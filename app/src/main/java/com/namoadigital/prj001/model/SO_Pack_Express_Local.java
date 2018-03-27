@@ -37,6 +37,8 @@ public class SO_Pack_Express_Local {
     private String ret_code;
     private String ret_msg;
     private String status;
+    private String log_date;
+    private String token;
 
     public SO_Pack_Express_Local() {
         this.customer_code = -1L;
@@ -70,6 +72,7 @@ public class SO_Pack_Express_Local {
         this.ret_code = null;
         this.ret_msg = null;
         this.status = "NEW";
+        this.token = "";
     }
 
     public long getCustomer_code() {
@@ -310,5 +313,21 @@ public class SO_Pack_Express_Local {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getLog_date() {
+        return log_date;
+    }
+
+    public void setLog_date(String log_date) {
+        this.log_date = log_date;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -35,11 +35,11 @@ public class SO_Pack_Express_Local_Sql_006 implements Specification {
                         " FROM\n" +
                         SO_Pack_Express_LocalDao.TABLE + " \n" +
                         " WHERE\n" +
-                        "    customer_code =  '" + customer_code + "'\n" +
-                        "    AND site_code =  '" + site_code + "'\n" +
-                        "    AND operation_code =    '" + operation_code + "'\n" +
-                        "    AND product_code =  '" + product_code + "'\n" +
-                        "    AND express_code =  '" + express_code + "' ")
+                        "    customer_code =  '" + customer_code + "' ")
+//                        "    AND site_code =  '" + site_code + "'\n" +
+//                        "    AND operation_code =    '" + operation_code + "'\n" +
+//                        "    AND product_code =  '" + product_code + "'\n" +
+//                        "    AND express_code =  '" + express_code + "' ")
                 .append(";" + NEXT_TMP)
                 .toString();
     }

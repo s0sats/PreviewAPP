@@ -31,5 +31,5 @@ public interface Act040_Main_View {
 
     void setPartnerList(ArrayList<HMAux> partnerList);
 
-    void executeSO_Pack_Express_Local();
+    void showPD(String ttl, String msg);
 }

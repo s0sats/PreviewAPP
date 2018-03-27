@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.ui.act040;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
@@ -11,6 +14,7 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_001;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_006;
@@ -18,6 +22,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -140,12 +145,33 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setPartner_code(md_partner.getPartner_code());
         so_pack_express_local.setSerial_id(serial);
         so_pack_express_local.setStatus("NEW");
+        so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
-        // chamar WebService
-        //
-        //mView.automationCleanForm();
+        executeSO_Pack_Express_Local();
+    }
+
+
+    @Override
+    public void executeSO_Pack_Express_Local() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.showPD(
+                    //hmAux_Trans.get("progress_sync_ap_ttl"),
+                    //hmAux_Trans.get("progress_sync_ap_msg")
+                    "Express Progress Title - Trad",
+                    "Express Progress Msg - Trad"
+            );
+
+            Intent mIntent = new Intent(context, WBR_SO_Pack_Express_Local.class);
+            Bundle bundle = new Bundle();
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override

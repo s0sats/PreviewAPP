@@ -57,8 +57,10 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static final String RET_CODE = "ret_code";
     public static final String RET_MSG = "ret_msg";
     public static final String STATUS = "status";
+    public static final String LOG_DATE = "log_date";
+    public static final String TOKEN = "token";
 
-    private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC, SITE_ID, SITE_DESC, OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS};
+    private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC, SITE_ID, SITE_DESC, OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS, LOG_DATE, TOKEN};
 
     public SO_Pack_Express_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -394,6 +396,8 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
                 so_pack_express_local.setRet_msg(cursor.getString(cursor.getColumnIndex(RET_MSG)));
             }
             so_pack_express_local.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            so_pack_express_local.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
+            so_pack_express_local.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             //
             return so_pack_express_local;
         }
@@ -433,7 +437,7 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getSo_prefix() != null) {
                 contentValues.put(SO_PREFIX, so_pack_express_local.getSo_prefix());
             }
-            if (so_pack_express_local.getSo_code() != null){
+            if (so_pack_express_local.getSo_code() != null) {
                 contentValues.put(SO_CODE, so_pack_express_local.getSo_code());
             }
             if (so_pack_express_local.getSo_id() != null) {
@@ -445,13 +449,13 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getSo_status() != null) {
                 contentValues.put(SO_STATUS, so_pack_express_local.getSo_status());
             }
-            if (so_pack_express_local.getContract_code() != null){
+            if (so_pack_express_local.getContract_code() != null) {
                 contentValues.put(CONTRACT_CODE, so_pack_express_local.getContract_code());
             }
             if (so_pack_express_local.getContract_desc() != null) {
                 contentValues.put(CONTRACT_DESC, so_pack_express_local.getContract_desc());
             }
-            if (so_pack_express_local.getPriority_code() != null){
+            if (so_pack_express_local.getPriority_code() != null) {
                 contentValues.put(PRIORITY_CODE, so_pack_express_local.getPriority_code());
             }
             if (so_pack_express_local.getPriority_desc() != null) {
@@ -475,10 +479,10 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             if (so_pack_express_local.getProduct_desc() != null) {
                 contentValues.put(PRODUCT_DESC, so_pack_express_local.getProduct_desc());
             }
-            if (so_pack_express_local.getSerial_code() != null){
+            if (so_pack_express_local.getSerial_code() != null) {
                 contentValues.put(SERIAL_CODE, so_pack_express_local.getSerial_code());
             }
-            if (so_pack_express_local.getSegment_code() != null){
+            if (so_pack_express_local.getSegment_code() != null) {
                 contentValues.put(SEGMENT_CODE, so_pack_express_local.getSegment_code());
             }
             if (so_pack_express_local.getSegment_id() != null) {
@@ -495,6 +499,12 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             }
             if (so_pack_express_local.getStatus() != null) {
                 contentValues.put(STATUS, so_pack_express_local.getStatus());
+            }
+            if (so_pack_express_local.getLog_date() != null) {
+                contentValues.put(LOG_DATE, so_pack_express_local.getLog_date());
+            }
+            if (so_pack_express_local.getToken() != null) {
+                contentValues.put(TOKEN, so_pack_express_local.getToken());
             }
             //
             return contentValues;

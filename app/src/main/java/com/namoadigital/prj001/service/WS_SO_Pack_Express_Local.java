@@ -15,7 +15,8 @@ import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.TSO_Pack_Express_Env;
 import com.namoadigital.prj001.model.TSO_Pack_Express_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
-import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_005;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_007;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_008;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -36,6 +37,11 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     //
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
+    private String token;
+    private ArrayList<SO_Pack_Express_Local> so_pack_express_List;
+    private HMAux auxApReturned;
+    private int repeting;
+
     //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
     private Gson gsonEnv;
     //Gson de Retorno com inicilização padrão.
@@ -54,21 +60,20 @@ public class WS_SO_Pack_Express_Local extends IntentService {
             // token = ToolBox_Inf.getToken(getApplicationContext());
             soPackExpressLocalDao = new SO_Pack_Express_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
+            token = ToolBox_Inf.getToken(getApplicationContext());
+            so_pack_express_List = new ArrayList<>();
+            auxApReturned = new HMAux();
+            //
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
             //
             processSO_Pack_Express();
 
         } catch (Exception e) {
-
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
-
             ToolBox_Inf.registerException(getClass().getName(), e);
-
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
-
         } finally {
-
             WBR_SO_Pack_Express_Local.completeWakefulIntent(intent);
         }
     }
@@ -79,78 +84,119 @@ public class WS_SO_Pack_Express_Local extends IntentService {
         Gson gsonEnv = new GsonBuilder().serializeNulls().create();
         Gson gsonRec = new GsonBuilder().serializeNulls().create();
 
-        ArrayList<SO_Pack_Express_Local> so_pack_express_List = (ArrayList<SO_Pack_Express_Local>) soPackExpressLocalDao.query(
-                new SO_Pack_Express_Local_Sql_005(
+        repeting = 0;
+
+        while (++repeting <= 2) {
+
+            if (processPendingToken() == 0) {
+                processNewToken();
+            }
+            if (so_pack_express_List == null || so_pack_express_List.size() == 0) {
+                //HMAux auxApReturned = new HMAux();
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_no_so_pack_save"), auxApReturned, "", "0");
+                return;
+            }
+            //
+            TSO_Pack_Express_Env env = new TSO_Pack_Express_Env();
+            //
+            env.setApp_code(Constant.PRJ001_CODE);
+            env.setApp_version(Constant.PRJ001_VERSION);
+            env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+            env.setToken(token);
+            env.setPack_express(so_pack_express_List);
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_ap_data"), "", "0");
+            //
+            String json = gsonEnv.toJson(env);
+            //
+            String resultado = ToolBox_Con.connWebService(
+                    Constant.WS_SO_PACK_EXPRESSION,
+                    json
+            );
+
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_data_returned"), "", "0");
+            //
+            TSO_Pack_Express_Rec rec = gsonRec.fromJson(
+                    resultado,
+                    TSO_Pack_Express_Rec.class
+            );
+            //
+            if (
+                    !ToolBox_Inf.processWSCheckValidation(
+                            getApplicationContext(),
+                            rec.getValidation(),
+                            rec.getError_msg(),
+                            rec.getLink_url(),
+                            1,
+                            1)
+                            ||
+                            !ToolBox_Inf.processoOthersError(
+                                    getApplicationContext(),
+                                    getResources().getString(R.string.generic_error_lbl),
+                                    rec.getError_msg())
+                    ) {
+                return;
+            }
+            //
+            processSO_Pack_Express_Local_Return(rec, so_pack_express_List);
+            //
+        }
+
+        //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
+    }
+
+    private int processPendingToken() {
+        so_pack_express_List = (ArrayList<SO_Pack_Express_Local>) soPackExpressLocalDao.query(
+                new SO_Pack_Express_Local_Sql_007(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        1
                 ).toSqlQuery()
         );
-        //
-        if (so_pack_express_List == null || so_pack_express_List.size() == 0) {
-//            if (!menu_send_process) {
-//                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_ap_to_save"), "", "0");
-//                return;
-//            } else {
-            HMAux auxApReturned = new HMAux();
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_no_so_pack_save"), auxApReturned, "", "0");
-            return;
-//            }
+
+        if (so_pack_express_List.size() > 0) {
+            token = so_pack_express_List.get(0).getToken();
         }
-        //
-        TSO_Pack_Express_Env env = new TSO_Pack_Express_Env();
-        //
-        env.setApp_code(Constant.PRJ001_CODE);
-        env.setApp_version(Constant.PRJ001_VERSION);
-        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-        env.setToken(ToolBox_Inf.getToken(getApplicationContext()));
-        env.setPack_express(so_pack_express_List);
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_ap_data"), "", "0");
-        //
-        String json = gsonEnv.toJson(env);
-        //
-        String resultado = ToolBox_Con.connWebService(
-                Constant.WS_SO_PACK_EXPRESSION,
-                json
-        );
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_data_returned"), "", "0");
-        //
-        TSO_Pack_Express_Rec rec = gsonRec.fromJson(
-                resultado,
-                TSO_Pack_Express_Rec.class
-        );
-        //
-        if (
-                !ToolBox_Inf.processWSCheckValidation(
-                        getApplicationContext(),
-                        rec.getValidation(),
-                        rec.getError_msg(),
-                        rec.getLink_url(),
-                        1,
-                        1)
-                        ||
-                        !ToolBox_Inf.processoOthersError(
-                                getApplicationContext(),
-                                getResources().getString(R.string.generic_error_lbl),
-                                rec.getError_msg())
-                ) {
-            return;
-        }
-        //
-        processSO_Pack_Express_Local_Return(rec, so_pack_express_List);
+
+        return so_pack_express_List.size();
     }
+
+    private int processNewToken() {
+        soPackExpressLocalDao.query(
+                new SO_Pack_Express_Local_Sql_008(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        token
+                ).toSqlQuery()
+        );
+
+        so_pack_express_List = (ArrayList<SO_Pack_Express_Local>) soPackExpressLocalDao.query(
+                new SO_Pack_Express_Local_Sql_007(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        1
+                ).toSqlQuery()
+        );
+
+        return so_pack_express_List.size();
+    }
+
 
     private void processSO_Pack_Express_Local_Return(TSO_Pack_Express_Rec rec, ArrayList<SO_Pack_Express_Local> so_pack_express_List) {
         switch (rec.getSave()) {
             case "OK":
-                HMAux auxApReturned = new HMAux();
+                //HMAux auxApReturned = new HMAux();
                 //
                 for (SO_Pack_Express_Local so_pack_express_local : rec.getPack_express()) {
-                    String hmAuxPKKey =
-                            so_pack_express_local.getCustomer_code() + "." +
-                                    so_pack_express_local.getSite_code() + "." +
-                                    so_pack_express_local.getOperation_code() + "." +
-                                    so_pack_express_local.getProduct_code() + "." +
-                                    so_pack_express_local.getExpress_code() + "." +
-                                    so_pack_express_local.getExpress_tmp();
+                    String hmAuxPKKey;
+
+                    if (so_pack_express_local.getRet_code().equalsIgnoreCase("OK")) {
+                        hmAuxPKKey = so_pack_express_local.getCustomer_code() + "." +
+                                so_pack_express_local.getSite_code() + "." +
+                                so_pack_express_local.getOperation_code() + "." +
+                                so_pack_express_local.getProduct_code() + "." +
+                                so_pack_express_local.getExpress_tmp();
+                    } else {
+                        hmAuxPKKey = so_pack_express_local.getCustomer_code() + "." +
+                                so_pack_express_local.getExpress_tmp();
+                    }
 
                     auxApReturned.put(
                             hmAuxPKKey,
@@ -159,10 +205,10 @@ public class WS_SO_Pack_Express_Local extends IntentService {
 
                     moveData(so_pack_express_local, so_pack_express_List);
 
-                    // save so_pack_express
+                    soPackExpressLocalDao.addUpdate(so_pack_express_local);
                 }
                 //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
+                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
                 break;
             case "ERROR":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", rec.getError_msg(), "", "0");
@@ -173,29 +219,59 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     }
 
     private void moveData(SO_Pack_Express_Local so_pack_express_local, ArrayList<SO_Pack_Express_Local> so_pack_express_list) {
+        if (so_pack_express_local.getRet_code().equalsIgnoreCase("OK")) {
 
-        String keyL = so_pack_express_local.getCustomer_code() + "." +
-                so_pack_express_local.getSite_code() + "." +
-                so_pack_express_local.getOperation_code() + "." +
-                so_pack_express_local.getProduct_code() + "." +
-                so_pack_express_local.getExpress_code() + "." +
-                so_pack_express_local.getExpress_tmp();
 
-        for (SO_Pack_Express_Local mSo_pack_express_local : so_pack_express_list) {
-            String keyML = mSo_pack_express_local.getCustomer_code() + "." +
-                    mSo_pack_express_local.getSite_code() + "." +
-                    mSo_pack_express_local.getOperation_code() + "." +
-                    mSo_pack_express_local.getProduct_code() + "." +
-                    mSo_pack_express_local.getExpress_tmp();
+            String keyL = so_pack_express_local.getCustomer_code() + "." +
+                    so_pack_express_local.getSite_code() + "." +
+                    so_pack_express_local.getOperation_code() + "." +
+                    so_pack_express_local.getProduct_code() + "." +
+                    so_pack_express_local.getExpress_tmp();
 
-            if (keyL.equalsIgnoreCase(keyML)){
-                so_pack_express_local.setPartner_code(mSo_pack_express_local.getPartner_code());
-                so_pack_express_local.setExpress_code(mSo_pack_express_local.getExpress_code());
-                //
-                break;
+            for (SO_Pack_Express_Local mSo_pack_express_local : so_pack_express_list) {
+                String keyML = mSo_pack_express_local.getCustomer_code() + "." +
+                        mSo_pack_express_local.getSite_code() + "." +
+                        mSo_pack_express_local.getOperation_code() + "." +
+                        mSo_pack_express_local.getProduct_code() + "." +
+                        mSo_pack_express_local.getExpress_tmp();
+
+                if (keyL.equalsIgnoreCase(keyML)) {
+                    so_pack_express_local.setPartner_code(mSo_pack_express_local.getPartner_code());
+                    so_pack_express_local.setExpress_code(mSo_pack_express_local.getExpress_code());
+                    so_pack_express_local.setStatus(Constant.SYS_STATUS_SENT);
+                    so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    //
+                    break;
+                }
+            }
+        } else {
+            String keyL = so_pack_express_local.getCustomer_code() + "." +
+                    so_pack_express_local.getExpress_tmp();
+
+            for (SO_Pack_Express_Local mSo_pack_express_local : so_pack_express_list) {
+                String keyML = mSo_pack_express_local.getCustomer_code() + "." +
+                        mSo_pack_express_local.getExpress_tmp();
+
+                if (keyL.equalsIgnoreCase(keyML)) {
+                    so_pack_express_local.setSite_code(mSo_pack_express_local.getSite_code());
+                    so_pack_express_local.setOperation_code(mSo_pack_express_local.getOperation_code());
+                    so_pack_express_local.setProduct_code(mSo_pack_express_local.getProduct_code());
+                    so_pack_express_local.setExpress_code(mSo_pack_express_local.getExpress_code());
+                    so_pack_express_local.setSerial_id(mSo_pack_express_local.getSerial_id());
+                    so_pack_express_local.setPartner_code(mSo_pack_express_local.getPartner_code());
+                    //
+                    if (so_pack_express_local.getRet_code().equalsIgnoreCase("ERROR")) {
+                        so_pack_express_local.setToken("");
+                    } else {
+                        so_pack_express_local.setStatus(Constant.SYS_STATUS_SENT);
+                    }
+                    //
+                    so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    //
+                    break;
+                }
             }
         }
-
     }
 
     private void loadTranslation() {
