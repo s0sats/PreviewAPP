@@ -90,5 +90,6 @@
     <string name="generic_alert_no_site_ttl">Empty Sites List</string>
     <string name="generic_alert_no_site_msg">None Site Found.\nPlease verify if you have access to any Site or click the back button and try again</string>
     <string name="act002_offline_logout_msg">Connection not found!\nServer app sessions will not logged off!</string>
+    <string name="title_activity_act042__main">Act042_Main</string>
 
 </resources>

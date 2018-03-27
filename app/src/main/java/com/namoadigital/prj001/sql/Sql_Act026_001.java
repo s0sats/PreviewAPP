@@ -222,7 +222,8 @@ public class Sql_Act026_001 implements Specification {
                         "                ELSE 0\n" +
                         "      END           \n" +
                         "      ) "+QTD_SERVICES+" ,\n" +
-                        "       s3.*          \n" +
+                        "       s3.*          \n," +
+                        "      '"+Constant.PARAM_KEY_TYPE_SO+"' " + Constant.PARAM_KEY_TYPE+" \n" +
                         " FROM\n" +
                         "  "+SM_SODao.TABLE+" s3\n" +
                         " WHERE\n" +
@@ -231,7 +232,7 @@ public class Sql_Act026_001 implements Specification {
                 .append(serialFilter)
                 .append(only_avaliable_where)
                 .append(";")
-                .append(HmAuxFields+"#"+QTD_SERVICES)
+                .append(HmAuxFields+"#"+QTD_SERVICES+"#"+Constant.PARAM_KEY_TYPE)
                 .toString();
     }
 }

@@ -60,6 +60,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT037 = "act037";
     public static final String ACT038 = "act038";
     public static final String ACT039 = "act039";
+    public static final String ACT042 = "act042";
 
     //Contantes classes relativas ao chat
     public static final String MY_FIRE_BASE_MESSAGING_SERVICE = "MyFirebaseMessagingService";
@@ -325,6 +326,10 @@ public class ConstantBaseApp extends ConstantBase {
 
     //Helper
     public static final String BACK_ACTION = "back_action";
+    public static final String PARAM_KEY_TYPE = "TYPE";
+    public static final String PARAM_KEY_TYPE_SO = "SO";
+    public static final String PARAM_KEY_TYPE_SO_EXPRESS = "SO_EXPRESS";
+
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";
