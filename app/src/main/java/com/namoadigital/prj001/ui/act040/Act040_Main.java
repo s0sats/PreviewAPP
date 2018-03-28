@@ -25,14 +25,20 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act041.Act041_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -55,6 +61,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private SO_Pack_Express mSo_pack_express;
     private MD_Partner md_partner;
     private MD_Product md_product;
+    private MD_Site md_site;
+    private MD_Operation md_operation;
 
     private MD_Product mdProduct;
 
@@ -143,6 +151,32 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 )
+        );
+        //
+        MD_SiteDao mdSiteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        MD_OperationDao mdOperationDao = new MD_OperationDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        md_site = mdSiteDao.getByString(
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
+        );
+
+        md_operation = mdOperationDao.getByString(
+                new MD_Operation_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Operation_Code(context)
+                ).toSqlQuery()
         );
         //
         mket_produto = (MKEditTextNM) findViewById(R.id.act040_mket_product);
@@ -309,6 +343,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                             md_partner,
                                             md_product,
                                             mket_serial.getText().toString().trim(),
+                                            md_site,
+                                            md_operation,
                                             connectionStatusAlter
                                     );
                                 }
