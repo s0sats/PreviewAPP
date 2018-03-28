@@ -254,13 +254,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtyAP = "0";
                         }
-                        //
 
-                        //Soma Qtd de n-form e n_service
+                        try {
+                            qtySO_Express = soPackExpressLocalDao.getByStringHM(
+                                    new SO_Pack_Express_Local_Sql_010(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY);
+                        } catch (Exception e) {
+                            qtySO_Express = "0";
+                        }
+                        //Soma Qtd de n-form ,n_service, n_form_ap e so_express
                         qty = String.valueOf(
                                 Integer.parseInt(qty)
                                         + Integer.parseInt(qtySO)
                                         + Integer.parseInt(qtyAP)
+                                        + Integer.parseInt(qtySO_Express)
                         );
                         //
                         //

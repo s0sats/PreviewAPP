@@ -1,6 +1,10 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.dao.MD_BrandDao;
+import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
+import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
@@ -222,17 +226,41 @@ public class Sql_Act026_001 implements Specification {
                         "                ELSE 0\n" +
                         "      END           \n" +
                         "      ) "+QTD_SERVICES+" ,\n" +
-                        "       s3.*          \n," +
-                        "      '"+Constant.PARAM_KEY_TYPE_SO+"' " + Constant.PARAM_KEY_TYPE+" \n" +
+                        "       s3.*,\n" +
+                        "      '"+Constant.PARAM_KEY_TYPE_SO+"' " + Constant.PARAM_KEY_TYPE+" \n," +
+                                MD_BrandDao.BRAND_DESC+" ,\n" +
+                                MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
+                                MD_Brand_ColorDao.COLOR_DESC+" \n" +
                         " FROM\n" +
                         "  "+SM_SODao.TABLE+" s3\n" +
+                        "  LEFT JOIN\n" +
+                        MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s3.customer_code\n" +
+                        "                             and ps.product_code = s3.product_code \n" +
+                        "                             and ps.serial_code = s3.serial_code\n" +
+                        " LEFT JOIN\n" +
+                        MD_BrandDao.TABLE +" b on ps.customer_code = b.customer_code\n" +
+                        "                    and ps.brand_code = b.brand_code\n" +
+                        " LEFT JOIN\n" +
+                        MD_Brand_ModelDao.TABLE +" m on ps.customer_code = m.customer_code\n" +
+                        "                       and ps.brand_code = m.brand_code\n" +
+                        "                       and ps.model_code = m.model_code\n" +
+                        " LEFT JOIN\n" +
+                        MD_Brand_ColorDao.TABLE +" c on ps.customer_code = c.customer_code\n" +
+                        "                       and ps.brand_code = c.brand_code\n" +
+                        "                       and ps.color_code = c.color_code\n" +
                         " WHERE\n" +
                         "   s3.customer_code = '"+customer_code+"'\n" +
                         "   and s3.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "') \n")
                 .append(serialFilter)
                 .append(only_avaliable_where)
                 .append(";")
-                .append(HmAuxFields+"#"+QTD_SERVICES+"#"+Constant.PARAM_KEY_TYPE)
+                .append(HmAuxFields+"#" +
+                                QTD_SERVICES+"#"+
+                                Constant.PARAM_KEY_TYPE+"#"+
+                                MD_BrandDao.BRAND_DESC+"#"+
+                                MD_Brand_ModelDao.MODEL_DESC+"#"+
+                                MD_Brand_ColorDao.COLOR_DESC
+                )
                 .toString();
     }
 }
