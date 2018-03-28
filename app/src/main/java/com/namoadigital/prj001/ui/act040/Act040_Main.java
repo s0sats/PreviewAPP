@@ -286,7 +286,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             public void onItemPostSelected(HMAux hmAux) {
                 mPresenter.setMD_Partner(
                         Long.parseLong(hmAux.get("customer_code")),
-                        Long.parseLong(hmAux.get("partner_id"))
+                        Long.parseLong(hmAux.get(SearchableSpinner.ID))
                 );
             }
         });
