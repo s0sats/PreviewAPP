@@ -6,7 +6,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.sql.SM_SO_Sql_015;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_011;
 import com.namoadigital.prj001.sql.Sql_Act014_001;
 import com.namoadigital.prj001.sql.Sql_Act014_003;
 import com.namoadigital.prj001.util.Constant;
@@ -26,13 +28,16 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
     private Act014_Main mView;
     private GE_Custom_Form_LocalDao customFormLocalDao;
     private SM_SODao sm_soDao;
+    private SO_Pack_Express_LocalDao soPackExpressLocalDao;
+
     private HMAux hmAux_Trans;
 
-    public Act014_Main_Presenter_Impl(Context context, Act014_Main mView, GE_Custom_Form_LocalDao customFormLocalDao, SM_SODao sm_soDao, HMAux hmAux_Trans) {
+    public Act014_Main_Presenter_Impl(Context context, Act014_Main mView, GE_Custom_Form_LocalDao customFormLocalDao, SM_SODao sm_soDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
         this.sm_soDao = sm_soDao;
+        this.soPackExpressLocalDao = soPackExpressLocalDao;
         this.hmAux_Trans = hmAux_Trans;
     }
 
@@ -69,7 +74,30 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
                             ).toSqlQuery()
                     );
 
-            senList.addAll(senListSO);
+            HMAux hmAuxSO = senListSO.get(0);
+
+            ArrayList<HMAux> senListSOExpress =
+                    (ArrayList<HMAux>) soPackExpressLocalDao.query_HM(
+                            new SO_Pack_Express_Local_Sql_011(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    hmAux_Trans
+                            ).toSqlQuery()
+                    );
+
+            HMAux hmAuxSOExpress = senListSOExpress.get(0);
+
+            HMAux hmAuxTotal = new HMAux();
+
+            int mTotal = ToolBox_Inf.convertStringToInt(hmAuxSO.get(SM_SO_Sql_015.SENT_QTY)) +
+                    ToolBox_Inf.convertStringToInt(hmAuxSOExpress.get(SM_SO_Sql_015.SENT_QTY));
+
+
+            hmAuxTotal.put(SM_SO_Sql_015.TYPE, hmAuxSOExpress.get(SM_SO_Sql_015.TYPE));
+            hmAuxTotal.put(SM_SO_Sql_015.SENT_QTY, String.valueOf(mTotal));
+
+
+            senList.add(hmAuxTotal);
+
         }
         //
         mView.loadSentData(senList);
