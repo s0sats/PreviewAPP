@@ -331,6 +331,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PARAM_KEY_TYPE = "TYPE";
     public static final String PARAM_KEY_TYPE_SO = "SO";
     public static final String PARAM_KEY_TYPE_SO_EXPRESS = "SO_EXPRESS";
+    public static final String RETURN_SQL_OBJ = "RETURN_SQL_OBJ";
+    public static final String RETURN_SQL_HM_AUX = "RETURN_SQL_HM_AUX";
+
 
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS

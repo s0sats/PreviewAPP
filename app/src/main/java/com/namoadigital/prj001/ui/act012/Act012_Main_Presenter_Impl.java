@@ -6,10 +6,12 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act005_004;
 import com.namoadigital.prj001.sql.Sql_Act012_001;
 import com.namoadigital.prj001.sql.Sql_Act012_002;
 import com.namoadigital.prj001.sql.Sql_Act012_003;
+import com.namoadigital.prj001.sql.Sql_Act012_004;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -30,12 +32,14 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
     private Act012_Main mView;
     private GE_Custom_Form_LocalDao customFormLocalDao;
     private SM_SODao soDao;
+    private SO_Pack_Express_LocalDao expressLocalDao;
 
     public Act012_Main_Presenter_Impl(Context context, Act012_Main mView, GE_Custom_Form_LocalDao customFormLocalDao, SM_SODao soDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
         this.soDao = soDao;
+        this.expressLocalDao = new SO_Pack_Express_LocalDao(context);
     }
 
     @Override
@@ -87,6 +91,16 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
             }
             //
             pendencies.addAll(SOPendencies);
+            //So Express "Pendentes"
+            List<HMAux> soExpressPendencies =
+                    expressLocalDao.query_HM(
+                            new Sql_Act012_004(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    label_translation
+                            ).toSqlQuery()
+                    );
+            //
+            pendencies.addAll(soExpressPendencies);
         }
 
         mView.loadPendencies(pendencies);
@@ -131,6 +145,13 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
             case Constant.MODULE_FORM_AP:
                 if (!item.get(Sql_Act012_003.PENDING_QTY).equalsIgnoreCase("0")) {
                     mView.callAct037(context);
+                }else{
+                    mView.showMsg();
+                }
+                break;
+            case Constant.MODULE_SO_PACK_EXPRESS:
+                if (!item.get(Sql_Act012_004.PENDING_QTY).equalsIgnoreCase("0")) {
+                    mView.callAct042(context);
                 }else{
                     mView.showMsg();
                 }
