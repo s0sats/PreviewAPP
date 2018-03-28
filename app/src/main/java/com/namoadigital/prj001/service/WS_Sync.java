@@ -42,6 +42,8 @@ import com.namoadigital.prj001.dao.MD_Product_Category_PriceDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SegmentDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
@@ -78,6 +80,8 @@ import com.namoadigital.prj001.model.MD_Product_Category_Price;
 import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Product_Segment;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
@@ -112,6 +116,12 @@ import com.namoadigital.prj001.sql.MD_Product_Category_Price_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Segment_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
@@ -125,7 +135,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -458,6 +470,8 @@ public class WS_Sync extends IntentService {
             MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_Product_Group_ProductDao productGroupProductDao = new MD_Product_Group_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(getApplicationContext());
+            MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(getApplicationContext());
             MD_DepartmentDao departmentDao = new MD_DepartmentDao(getApplicationContext());
             MD_UserDao mdUserDao = new MD_UserDao(getApplicationContext());
             GE_Custom_Form_ApDao geCustomFormApDao = new GE_Custom_Form_ApDao(getApplicationContext());
@@ -573,6 +587,45 @@ public class WS_Sync extends IntentService {
                             }
                         }
                     }
+                    //
+                    //Implementação do nForm offline 22/03/2018
+                    //Se produto possui a flag_offline = 1, os forms desse produto serão no sincronismo geral.
+                    //Esse produto serão inseridos na tabela Sync_Checklist para evitar que a act008
+                    //seja pulado a etapa de chamada do WS.
+                    List<Sync_Checklist> offlineSyncList = new ArrayList<>();
+                    for (MD_Product product : products) {
+                        if (product.getFlag_offline() == 1) {
+                            boolean isProductInList = false;
+                            for(Sync_Checklist sync_prod : newSyncList){
+                                if(
+                                        sync_prod.getCustomer_code() == product.getCustomer_code()
+                                                && sync_prod.getProduct_code() == product.getProduct_code()
+                                        ) {
+                                    isProductInList = true;
+                                    break;
+                                }
+                            }
+                            //
+                            if(!isProductInList){
+                                //
+                                Calendar cDate =  Calendar.getInstance();
+                                SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+                                String last_update = dateFormat.format(cDate.getTime());
+                                //
+                                Sync_Checklist objSyncChkl = new Sync_Checklist();
+                                //
+                                objSyncChkl.setCustomer_code(product.getCustomer_code());
+                                objSyncChkl.setProduct_code(product.getProduct_code());
+                                objSyncChkl.setLast_update(last_update);
+                                //
+                                offlineSyncList.add(objSyncChkl);
+                            }
+                        }
+                    }
+                    //Implementação do nForm offline 22/03/2018
+                    //Adiciona produtos offline na lista de sync_checlist
+                    newSyncList.addAll(offlineSyncList);
+
                 }
 
                 productDao.addUpdate(products, false);
@@ -618,6 +671,146 @@ public class WS_Sync extends IntentService {
                 );
 
                 productGroupProductDao.addUpdate(productGroupProducts, false);
+            }
+            //
+            // Processamento Produto Serial
+            //
+            //Seta flag de processamento no syncronismo de TODOS OS SERIAIS
+            //PARA 0
+            serialDao.addUpdate(
+                    new MD_Product_Serial_Sql_010(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //
+            File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
+
+            for (File _file : files_serial) {
+
+                ArrayList<MD_Product_Serial> serialList = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial>>() {
+                        }.getType()
+                );
+                //Analisa lista enviada pra atualizar ou inserir registros
+                for (MD_Product_Serial serverSerial : serialList) {
+                    MD_Product_Serial dbSerial = serialDao.getByString(
+                            new MD_Product_Serial_Sql_009(
+                                    serverSerial.getCustomer_code(),
+                                    serverSerial.getProduct_code(),
+                                    (int) serverSerial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                    //Se encontrou no banco, seta o serial_tmp do banco no obj to server
+                    //e o salva no banco.
+                    //Se não existe, chama metodo que insere registro ja criando um tmp
+                    //Em ambos os casos seta sync_process para 1
+                    if (dbSerial != null && dbSerial.getSerial_code() > 0) {
+                        serverSerial.setSerial_tmp(dbSerial.getSerial_tmp());
+                        serverSerial.setSync_process(1);
+                        //
+                        serialDao.addUpdate(serverSerial);
+                    } else {
+                        serverSerial.setSync_process(1);
+                        //
+                        serialDao.addUpdateTmp(serverSerial);
+                    }
+                }
+            }
+            //Se não vier arquivo de serial, limpa todos que não tiverem vinculo com S.O
+            //Seleciona todos os seriais que estão no banco e não foram atualizados
+            //no loop de cima, ou seja não foi enviado pelo server
+            ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
+                    serialDao.query(
+                            new MD_Product_Serial_Sql_011(
+                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                            ).toSqlQuery()
+                    );
+            //Faz loop no seriais que não vieram via sincronismo
+            //Avaliando se esse serial tem vinculo com algum S.O
+            for (MD_Product_Serial productSerial : serialDelCheck) {
+                HMAux auxExists = serialDao.getByStringHM(
+                        new MD_Product_Serial_Sql_012(
+                                productSerial.getCustomer_code(),
+                                productSerial.getProduct_code(),
+                                productSerial.getSerial_code()
+                        ).toSqlQuery()
+                );
+                //Se não existir vinculo, apaga o serial e seus trackings
+                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
+                    serialDao.remove(
+                            new MD_Product_Serial_Sql_013(
+                                    productSerial.getCustomer_code(),
+                                    productSerial.getProduct_code(),
+                                    productSerial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                    //
+                    trackingDao.remove(
+                            new MD_Product_Serial_Tracking_Sql_004(
+                                    productSerial.getCustomer_code(),
+                                    productSerial.getProduct_code(),
+                                    productSerial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                }
+            }
+            //FIM DO PROCESSAMENTO DO SERIAL
+
+            //
+            // Processamento Tracking do serial
+            //
+            //HmAux que contem como chave a pk do serial ja deletados.
+            HMAux serialAlreadyDeleted = new HMAux();
+
+            File[] files_serial_tracking = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tracking-");
+
+            for (File _file : files_serial_tracking) {
+
+                ArrayList<MD_Product_Serial_Tracking> trackingList = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial_Tracking>>() {
+                        }.getType()
+                );
+                //
+                for (MD_Product_Serial_Tracking tracking : trackingList){
+                    String pk = tracking.getCustomer_code()+"."+
+                                tracking.getProduct_code()+"."+
+                                tracking.getSerial_code();
+                    //Seleciona o serial do tracking para descobrir o serial_tmp
+                    MD_Product_Serial dbSerial = serialDao.getByString(
+                            new MD_Product_Serial_Sql_009(
+                                    tracking.getCustomer_code(),
+                                    tracking.getProduct_code(),
+                                    (int) tracking.getSerial_code()
+                            ).toSqlQuery()
+                    );
+                    //
+                    if(dbSerial != null && dbSerial.getSerial_code() > 0){
+                        if(!serialAlreadyDeleted.containsValue(pk)) {
+                            //Remove todos os trackings do serial
+                            trackingDao.remove(
+                                    new MD_Product_Serial_Tracking_Sql_004(
+                                            tracking.getCustomer_code(),
+                                            tracking.getProduct_code(),
+                                            tracking.getSerial_code()
+                                    ).toSqlQuery());
+                            //
+                            serialAlreadyDeleted.put(MD_Product_Serial_TrackingDao.SERIAL_CODE,pk);
+                        }
+                        //Atualiza serial_tmp no obj tracking e depois no banco
+                        tracking.setSerial_tmp(dbSerial.getSerial_tmp());
+                        //
+                        trackingDao.addUpdate(tracking);
+                    }else{
+                        //Devemos tratar?
+                        String s = "deu ruim";
+                    }
+                }
             }
             //
             // Processamento Department

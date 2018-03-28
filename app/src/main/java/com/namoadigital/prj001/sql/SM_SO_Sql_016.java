@@ -34,7 +34,8 @@ public class SM_SO_Sql_016 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      S.*\n" +
+                        "      S.*\n," +
+                        "      '"+Constant.PARAM_KEY_TYPE_SO+"' "+Constant.PARAM_KEY_TYPE+"\n"+
                         " FROM\n" +
                         SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
@@ -42,7 +43,7 @@ public class SM_SO_Sql_016 implements Specification {
                             filter +
                         //"    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','" + Constant.SYS_STATUS_WAITING_QUALITY +"','"+ Constant.SYS_STATUS_DONE+"');")
                         "    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"');")
-                .append(fields)
+                .append(fields+"#"+Constant.PARAM_KEY_TYPE)
                 .toString();
     }
 }

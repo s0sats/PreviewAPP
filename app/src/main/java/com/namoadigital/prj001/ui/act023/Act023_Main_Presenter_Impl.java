@@ -186,13 +186,13 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
         );
         //Salva dados alterados do S.O
         serialDao.addUpdateTmp(productSerial);
-        if (ToolBox_Con.isOnline(context)) {
+        //if (ToolBox_Con.isOnline(context)) {
             //Chama consulta de S.O informando qe o serial precisa ser alterado.
             // executeSoDownload(productSerial.getProduct_code(), productSerial.getSerial_id(), true);
             executeSerialSave();
-        } else {
+        /*} else {
             ToolBox_Inf.showNoConnectionDialog(context);
-        }
+        }*/
     }
 
     private boolean isValidProduct(MD_Product md_product) {

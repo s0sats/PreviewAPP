@@ -352,6 +352,43 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
+    public void continueOfflineV2(boolean serial_offline) {
+        String title = "";
+        String msg = "";
+        DialogInterface.OnClickListener listener = null;
+
+        if(serial_offline){
+            mPresenter.defineFlow();
+        }else {
+            if (serial_allow_new == 0 &&
+                    mket_serial_id.getText().toString().trim().length() > 0
+                    ) {
+                title = hmAux_Trans.get("alert_no_connection_title"); //"Connection";
+                msg = hmAux_Trans.get("alert_no_connection_msg"); // "No connection has been found!\nThis product requires connection to proceed.\nTry again later.";
+            } else {
+                title = hmAux_Trans.get("alert_offine_mode_title"); //"Continue in offline mode?";
+                msg = hmAux_Trans.get("alert_offine_mode_msg"); //"No connection has been found!\nDo you want continue without check the Serial id ?! ";
+
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //callAct009(context);
+                        mPresenter.defineFlow();
+                    }
+                };
+            }
+            //
+            ToolBox.alertMSG(
+                    Act008_Main.this,
+                    title,
+                    msg,
+                    listener,
+                    1
+            );
+        }
+    }
+
+    @Override
     public void showPD(String wsProcess) {
 
         String alertTitle = "";

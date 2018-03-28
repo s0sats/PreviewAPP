@@ -156,6 +156,10 @@ public class SO_Header_Adapter extends BaseAdapter {
         ImageView btn_download = (ImageView) convertView.findViewById(R.id.so_header_cell_btn_single_download);
         //
         CheckBox chk_download = (CheckBox) convertView.findViewById(R.id.so_header_cell_chk_download);
+        //SO EXPRESS
+        LinearLayout ll_so_express = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_express_so);
+        //
+        ImageView iv_express_so = (ImageView) convertView.findViewById(R.id.so_header_cell_iv_express_so);
         //
         //Montagem dos dados na tela.
         //
@@ -177,9 +181,6 @@ public class SO_Header_Adapter extends BaseAdapter {
         }else{
             ll_so_desc.setVisibility(View.GONE);
         }
-
-        //
-
         //
         tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
         tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
@@ -250,6 +251,12 @@ public class SO_Header_Adapter extends BaseAdapter {
                 }
             }
         });
+        //
+        if(so.get(Constant.PARAM_KEY_TYPE).equals(Constant.PARAM_KEY_TYPE_SO_EXPRESS)){
+            ll_so_express.setVisibility(View.VISIBLE);
+        }else{
+            ll_so_express.setVisibility(View.GONE);
+        }
         //
         /*
         * Tratativas

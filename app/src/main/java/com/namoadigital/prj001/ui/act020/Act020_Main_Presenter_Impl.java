@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -25,6 +26,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
+import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -40,7 +42,7 @@ import java.util.List;
  * Created by d.luche on 17/05/2017.
  */
 
-public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
+public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     private Context context;
     private Act020_Main_View mView;
@@ -49,6 +51,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     private Sync_ChecklistDao syncChecklistDao;
     private GE_Custom_Form_OperationDao formOperationDao;
     private MD_ProductDao productDao;
+    private MD_Product_SerialDao serialDao;
 
     //
     private boolean downloadStarted = false;
@@ -62,6 +65,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         this.syncChecklistDao = syncChecklistDao;
         this.formOperationDao = formOperationDao;
         this.productDao = productDao;
+        this.serialDao = new MD_Product_SerialDao(context);
     }
 
     @Override
@@ -79,9 +83,9 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         //chama
         mView.loadProductSerialList(rec.getRecord());
         //Se qtd 1, chama proxima define flow
-        if(rec.getRecord().size() == 1){
+        if (rec.getRecord().size() == 1) {
             defineFlow(rec.getRecord().get(0));
-        }else if (rec.getRecord_count() > rec.getRecord_page()){
+        } else if (rec.getRecord_count() > rec.getRecord_page()) {
             //Se qtd de registro maior que o total retornado,
             //exibe msg para refinar a busca.
             mView.showQtyExceededMsg(rec.getRecord_page(), rec.getRecord_count());
@@ -91,7 +95,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     @Override
     public void executeSerialSearch(String product_id, String serial_id, String tracking) {
 
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
             mView.showPD();
 
@@ -108,9 +112,75 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             //
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
-        }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
+        } else {
+            ArrayList<TProduct_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
+            //
+            mView.closeDrawer();
+            //
+            //VALOR 100 CHUMBADO TROCAR DEPOIS DE TESTAR
+            //VER COM JHON QUAL DEIXAR.
+            //Seta qtd de registro
+            mView.setRecordInfo(serial_list.size(), 100);
+            //chama
+            mView.loadProductSerialList(serial_list);
+            //
+            if (serial_list.size() > 0) {
+                //Se qtd 1, chama proxima define flow
+                if (serial_list.size() == 1) {
+                    defineFlow(serial_list.get(0));
+                } else if (serial_list.size() > 100) {
+                    //Se qtd de registro maior que o total retornado,
+                    //exibe msg para refinar a busca.
+                    mView.showQtyExceededMsg(serial_list.size(), 100);
+                }
+
+            } else {
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
         }
+    }
+
+    private ArrayList<TProduct_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
+        ArrayList<HMAux> serial_list = (ArrayList<HMAux>)
+                serialDao.query_HM(
+                        new Sql_Act020_002(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                product_id,
+                                serial_id,
+                                tracking
+                        ).toSqlQuery()
+                );
+        //
+        ArrayList<TProduct_Serial> tSerialList = new ArrayList<>();
+        //
+        if (serial_list != null && serial_list.size() > 0) {
+            for (HMAux hmAux : serial_list) {
+                TProduct_Serial auxObj = new TProduct_Serial();
+                //
+                auxObj.setCustomer_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.CUSTOMER_CODE)));
+                auxObj.setProduct_code(Long.valueOf(hmAux.get(MD_Product_SerialDao.PRODUCT_CODE)));
+                auxObj.setProduct_id(hmAux.get(MD_ProductDao.PRODUCT_ID));
+                auxObj.setProduct_desc(hmAux.get(MD_ProductDao.PRODUCT_DESC));
+                auxObj.setSerial_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.SERIAL_CODE)));
+                auxObj.setSerial_id(hmAux.get(MD_Product_SerialDao.SERIAL_ID));
+                auxObj.setSite_code(!hmAux.get(MD_Product_SerialDao.SITE_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.SITE_CODE)) : null);
+                auxObj.setZone_code(!hmAux.get(MD_Product_SerialDao.ZONE_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.ZONE_CODE)) : null);
+                auxObj.setLocal_code(!hmAux.get(MD_Product_SerialDao.LOCAL_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.LOCAL_CODE)) : null);
+                auxObj.setAdd_inf1(!hmAux.get(MD_Product_SerialDao.ADD_INF1).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF1) : null);
+                auxObj.setAdd_inf2(!hmAux.get(MD_Product_SerialDao.ADD_INF2).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF2) : null);
+                auxObj.setAdd_inf3(!hmAux.get(MD_Product_SerialDao.ADD_INF3).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF3) : null);
+                auxObj.setSite_code_owner(!hmAux.get(MD_Product_SerialDao.SITE_CODE_OWNER).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.SITE_CODE_OWNER) : null);
+                auxObj.setBrand_code(!hmAux.get(MD_Product_SerialDao.BRAND_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.BRAND_CODE) : null);
+                auxObj.setModel_code(!hmAux.get(MD_Product_SerialDao.MODEL_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.MODEL_CODE) : null);
+                auxObj.setColor_code(!hmAux.get(MD_Product_SerialDao.COLOR_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.COLOR_CODE) : null);
+                auxObj.setSegment_code(!hmAux.get(MD_Product_SerialDao.SEGMENT_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.SEGMENT_CODE) : null);
+                auxObj.setCategory_price_code(!hmAux.get(MD_Product_SerialDao.CATEGORY_PRICE_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.CATEGORY_PRICE_CODE) : null);
+                //
+                tSerialList.add(auxObj);
+            }
+        }
+        //
+        return tSerialList;
     }
 
     @Override
@@ -118,15 +188,15 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         //
         tProductSerial = productSerial;
         //
-        List<HMAux> syncChecklists =  checkSyncChecklist();
+        List<HMAux> syncChecklists = checkSyncChecklist();
 
-        if(syncChecklists == null || syncChecklists.size() == 0){
-            if(ToolBox_Con.isOnline(context)) {
+        if (syncChecklists == null || syncChecklists.size() == 0) {
+            if (ToolBox_Con.isOnline(context)) {
                 executeSyncProcess();
-            }else{
+            } else {
                 ToolBox_Inf.showNoConnectionDialog(context);
             }
-        }else{
+        } else {
             prepareAct009();
         }
         /**
@@ -207,11 +277,11 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     @Override
     public void updateSyncChecklist() {
         //Pega data atual
-        Calendar cDate =  Calendar.getInstance();
-        SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cDate = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String last_update = dateFormat.format(cDate.getTime());
 
-        Sync_Checklist syncChecklist =  new Sync_Checklist();
+        Sync_Checklist syncChecklist = new Sync_Checklist();
 
         syncChecklist.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
         syncChecklist.setProduct_code(tProductSerial.getProduct_code());
@@ -224,7 +294,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
 
     private void executeSyncProcess() {
 
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
 
             mView.setWs_process(Act020_Main.PROGRESS_WS_SYNC);
             mView.showPD();
@@ -243,7 +313,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -258,7 +328,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
                                 ToolBox_Con.getPreference_Operation_Code(context)
                         ).toSqlQuery()
                 ).get(Sql_Form_x_Operation.FORM_OPERATION_PROFILE);
-        if(hasFormXOperation.equals("0") ||hasFormXOperation.equals("null")){
+        if (hasFormXOperation.equals("0") || hasFormXOperation.equals("null")) {
             return false;
         }
 
@@ -275,7 +345,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
                 ).toSqlQuery()
         );
         //
-        if(md_product != null){
+        if (md_product != null) {
             return md_product.getProduct_id();
         }
         //
@@ -285,7 +355,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
     @Override
     public void prepareAct009() {
 
-        if(checkFormXOperationExists()) {
+        if (checkFormXOperationExists()) {
             Bundle bundle = new Bundle();
             bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(Constant.ACT008_PRODUCT_DESC, tProductSerial.getProduct_desc());
@@ -294,7 +364,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
 
             mView.callAct009(context, bundle);
-        }else{
+        } else {
             //
             ToolBox.alertMSG(
                     context,
@@ -312,7 +382,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter{
         if (!downloadStarted) {
             Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
             Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-            Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
+            Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
 
             Bundle bundle = new Bundle();
             mIntentPDF.putExtras(bundle);

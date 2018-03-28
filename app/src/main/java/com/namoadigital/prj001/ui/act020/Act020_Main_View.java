@@ -29,4 +29,6 @@ public interface Act020_Main_View {
 
     void setWs_process(String ws_process);
 
+    void closeDrawer();
+
 }

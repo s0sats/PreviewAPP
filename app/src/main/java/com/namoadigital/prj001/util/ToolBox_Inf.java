@@ -1618,6 +1618,15 @@ public class ToolBox_Inf {
 
     }
 
+    /**
+     * Essa rotina de deleção visa apenas limpar a tabela sync_checklist
+     * que indica que os forms daquele produto foram sincronzados e quando.
+     * Uma vez removido esse vinculo, o produto não será mais envia no CHECKLIST
+     * do sincronismo e seus forms não serão mais enviado.
+     * Sendo assim, os forms só serão "deletados" no proximo sincronismo.
+     * Luche 26/03/2018
+     * @param context
+     */
     public static void cleanOldSyncChecklistData(Context context) {
         Sync_ChecklistDao syncChecklistDao =
                 new Sync_ChecklistDao(
@@ -3956,9 +3965,9 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_FINALIZED:
                 return R.color.namoa_status_done;
             case Constant.SYS_STATUS_NOT_EXECUTED:
+            case Constant.SYS_STATUS_SENT:
                 return R.color.namoa_status_not_executed;
             case Constant.SYS_STATUS_CANCELLED:
-            case Constant.SYS_STATUS_SENT:
                 return R.color.namoa_status_cancelled;
             case Constant.SYS_STATUS_INCONSISTENT:
                 return R.color.namoa_status_inconsistent;

@@ -23,8 +23,8 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                 inFilter += filter_edit ? "'" + Constant.SYS_STATUS_EDIT + "'," : "";
                 inFilter += filter_process ? "'" + Constant.SYS_STATUS_PROCESS + "',"  : "";
                 inFilter += filter_waiting_action ? "'" + Constant.SYS_STATUS_WAITING_ACTION + "'," : "";
-                inFilter += filter_done ? "'" + Constant.SYS_STATUS_DONE + "'," : "";
-                inFilter += filter_cancelled ? "'" + Constant.SYS_STATUS_CANCELLED + "'," : "";
+                /*inFilter += filter_done ? "'" + Constant.SYS_STATUS_DONE + "'," : "";
+                inFilter += filter_cancelled ? "'" + Constant.SYS_STATUS_CANCELLED + "'," : "";*/
                 inFilter =  inFilter.length() > 0 ? inFilter.substring(0,inFilter.length()-1) : "";
                 //
                 status_filter = inFilter.length() > 0 ? "  and a.ap_status in ("+inFilter+") \n" : "";
@@ -42,10 +42,11 @@ public class GE_Custom_Form_Ap_Sql_003 implements Specification {
                         " WHERE \n" +
                         "   a.customer_code = '"+customer_code+"'\n" +
                             status_filter +
+                        "   and a.ap_status not in('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "')\n"+
                         " ORDER BY \n" +
                         "   CASE WHEN a.ap_when IS NULL THEN 0\n" +
                         "        ELSE a.ap_when\n" +
-                        "   END," +
+                        "   END,\n" +
                         "   CASE WHEN a.ap_status = '"+Constant.SYS_STATUS_EDIT+"' THEN 0\n" +
                         "        WHEN a.ap_status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 1\n" +
                         "        WHEN a.ap_status = '"+Constant.SYS_STATUS_WAITING_ACTION+"' THEN 2\n" +

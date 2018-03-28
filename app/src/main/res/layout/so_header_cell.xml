@@ -20,11 +20,35 @@
         <TextView
             android:id="@+id/so_header_cell_tv_so_ttl"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="O.S"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            />
+
+        <LinearLayout
+            android:id="@+id/so_header_cell_ll_express_so"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/so_header_cell_iv_express_so"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:background="@drawable/border_blue"
+                android:focusable="false"
+                android:src="@drawable/ic_qrcode_black_24dp"
+                android:tint="@color/namoa_color_dark_blue"
+                android:layout_margin="2dp"
+                />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/so_header_cell_ll_prefix_code"

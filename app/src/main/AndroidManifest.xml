@@ -5,11 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -321,6 +319,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.act042.Act042_Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
@@ -387,7 +391,6 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receiver.WBR_AL_Full" />
 
         <service android:name=".service.WS_AL_Full" />
@@ -395,9 +398,7 @@
         <receiver android:name=".receiver.WBR_AL_Quarter" />
 
         <service android:name=".service.WS_AL_Quarter" />
-
         <service android:name=".service.SV_LocationTracker" />
-
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -411,9 +412,7 @@
         </service>
 
         <service android:name=".fcm.RegistrationIntentService" />
-
         <service android:name=".fcm.WS_Google" />
-
         <service android:name=".fcm.WS_Notification_Sync" />
 
         <receiver android:name=".receiver.WBR_Enable_NFC" />
@@ -500,33 +499,39 @@
 
         <!-- Screen On/Off Status -->
         <receiver android:name=".service.ScreenStatusReceiver" />
+
         <service android:name=".service.ScreenStatusService" />
         <!-- Screen On/Off Status -->
 
         <receiver android:name=".receiver.NotificationReceiver" />
         <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
-
         <receiver android:name=".receiver_chat.WBR_Delivered" />
 
         <service android:name=".service_chat.WS_Delivered" />
 
         <receiver android:name=".receiver_chat.WBR_Room_Private" />
+
         <service android:name=".service_chat.WS_Room_Private" />
 
         <receiver android:name=".receiver_chat.WBR_Leave_Room" />
+
         <service android:name=".service_chat.WS_Leave_Room" />
 
         <receiver android:name=".receiver.WBR_AP_Search" />
+
         <service android:name=".service.WS_AP_Search" />
 
-        <receiver android:name=".receiver.WBR_AP_Save"/>
-        <service android:name=".service.WS_AP_Save"/>
+        <receiver android:name=".receiver.WBR_AP_Save" />
+
+        <service android:name=".service.WS_AP_Save" />
 
         <receiver android:name=".receiver_chat.WBR_Room_AP" />
+
         <service android:name=".service_chat.WS_Room_AP" />
 
         <receiver android:name=".receiver.WBR_SO_Pack_Express_Local" />
         <service android:name=".service.WS_SO_Pack_Express_Local" />
+
 
     </application>
 

@@ -257,6 +257,8 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
         transList.add("spinner_site_lbl");
         transList.add("spinner_zone_lbl");
         transList.add("spinner_local_lbl");
+        transList.add("alert_offline_data_not_saved_ttl");
+        transList.add("alert_offline_data_not_saved_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -483,11 +485,22 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 //
                 if (validadeSerialLocation()) {
                     if (checkSerialChangesV2()) {
-                        buildSerialFull();
-                        //
-                        mPresenter.updateSerialInfo(serialObj);
+                        if (ToolBox_Con.isOnline(context)) {
+                            buildSerialFull();
+                            //
+                            mPresenter.updateSerialInfo(serialObj);
+                        }else{
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+                                    hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                            );
+                        }
                     } else {
-                        mPresenter.executeSoDownload(product_code, mket_serial_id.getText().toString().trim());
+                        if (ToolBox_Con.isOnline(context)) {
+                            mPresenter.executeSoDownload(product_code, mket_serial_id.getText().toString().trim());
+                        }else{
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
                     }
                 }else{
                     showAlertDialog(

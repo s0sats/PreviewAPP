@@ -9,27 +9,29 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act016.Act016_Main"
-    tools:showIn="@layout/act016_main">
+    tools:showIn="@layout/act016_main"
+    android:background="@color/padrao_WHITE"
+    >
 
     <LinearLayout
         android:id="@+id/act016_ll_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:paddingRight="5dp"
         android:paddingLeft="5dp"
-        >
+        android:paddingRight="5dp"
+        android:paddingTop="2dp"
+        android:background="@color/padrao_WHITE">
+
         <TextView
             android:id="@+id/act016_tv_filter_lbl"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="2dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Filtros - trad"
-            android:layout_marginLeft="2dp"
-            />
+            android:text="Filtros - trad" />
 
         <ImageView
             android:id="@+id/act016_iv_filter"
@@ -37,7 +39,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@drawable/namoa_icon_bg_states"
-            android:padding="10dp"
+            android:paddingTop="5dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="10dp"
             android:src="@drawable/ic_filter_black_24px"
             android:tint="@color/namoa_color_gray_4" />
     </LinearLayout>
@@ -46,15 +51,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="5dp">
 
         <com.namoa_digital.namoa_library.ctls.CalendarView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/act016_cv_schedules"
-            >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         </com.namoa_digital.namoa_library.ctls.CalendarView>
 
@@ -65,12 +69,13 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:padding="5dp"
             android:divider="@color/padrao_TRANSPARENT"
-            android:visibility="gone"
-            android:dividerHeight="4dp"/>
+            android:dividerHeight="4dp"
+            android:padding="5dp"
+            android:visibility="gone" />
 
     </LinearLayout>
+
     <include layout="@layout/footer_base" />
 
 </LinearLayout>

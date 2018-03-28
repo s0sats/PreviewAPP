@@ -50,8 +50,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String ADD_INF3 = "add_inf3";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String ONLY_POSITION = "only_position";
+    public static final String FLAG_OFFLINE = "flag_offline";
+    public static final String SYNC_PROCESS = "sync_process";
 
-    private String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_TMP, SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE, MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1, ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED};
+    public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, SERIAL_CODE, SERIAL_TMP,
+            SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
+            MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1,
+            ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED, FLAG_OFFLINE,
+            SYNC_PROCESS
+    };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -59,6 +66,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         this.toContentValuesMapper = new MD_Product_SerialToContentValuesMapper();
         this.toMD_Product_SerialMapper = new CursorMD_Product_SerialMapper();
     }
+
+    public MD_Product_SerialDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+
+        this.toContentValuesMapper = new MD_Product_SerialToContentValuesMapper();
+        this.toMD_Product_SerialMapper = new CursorMD_Product_SerialMapper();
+    }
+
 
 
     @Override
@@ -560,6 +579,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             } else {
                 md_product_serial.setOnly_position(cursor.getInt(cursor.getColumnIndex(ONLY_POSITION)));
             }
+            md_product_serial.setFlag_offline(cursor.getInt(cursor.getColumnIndex(FLAG_OFFLINE)));
+            md_product_serial.setSync_process(cursor.getInt(cursor.getColumnIndex(SYNC_PROCESS)));
 
             return md_product_serial;
         }
@@ -639,6 +660,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 contentValues.put(UPDATE_REQUIRED, md_product_serial.getUpdate_required());
             }
             contentValues.put(ONLY_POSITION, md_product_serial.getOnly_position());
+            if (md_product_serial.getFlag_offline() > -1) {
+                contentValues.put(FLAG_OFFLINE, md_product_serial.getFlag_offline());
+            }
+            //
+            if (md_product_serial.getSync_process() > -1) {
+                contentValues.put(SYNC_PROCESS, md_product_serial.getSync_process());
+            }
+
 
             return contentValues;
         }

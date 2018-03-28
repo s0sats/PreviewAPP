@@ -133,6 +133,8 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
         ArrayList<String> data_package = new ArrayList<>();
         data_package.add(DataPackage.DATA_PACKAGE_MAIN);
+        //add 22/03/2018 - Forms offline
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);
         if (ToolBox_Inf.parameterExists(context,Constant.PARAM_SCHEDULE_CHECKLIST)) {
             data_package.add(DataPackage.DATA_PACKAGE_SCHEDULE);

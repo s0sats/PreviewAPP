@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -36,6 +37,18 @@ public class MD_Product_Serial_TrackingDao extends BaseDao implements Dao<MD_Pro
 
     public MD_Product_Serial_TrackingDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
+
+        this.toContentValuesMapper = new MD_Product_Serial_TrackingToContentValuesMapper();
+        this.toMD_Product_Serial_TrackingMapper = new CursorMD_Product_Serial_TrackingMapper();
+
+    }
+
+    public MD_Product_Serial_TrackingDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
 
         this.toContentValuesMapper = new MD_Product_Serial_TrackingToContentValuesMapper();
         this.toMD_Product_Serial_TrackingMapper = new CursorMD_Product_Serial_TrackingMapper();
