@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -60,11 +61,22 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static final String LOG_DATE = "log_date";
     public static final String TOKEN = "token";
 
-    private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC, SITE_ID, SITE_DESC, OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS, LOG_DATE, TOKEN};
+    public static String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC, SITE_ID, SITE_DESC, OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS, LOG_DATE, TOKEN};
 
     public SO_Pack_Express_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
 
+        this.toContentValuesMapper = new SO_Pack_Express_LocalToContentValuesMapper();
+        this.toSO_Pack_Express_LocalMapper = new CursorSO_Pack_Express_LocalMapper();
+    }
+
+    public SO_Pack_Express_LocalDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+        //
         this.toContentValuesMapper = new SO_Pack_Express_LocalToContentValuesMapper();
         this.toSO_Pack_Express_LocalMapper = new CursorSO_Pack_Express_LocalMapper();
     }

@@ -1,11 +1,16 @@
 package com.namoadigital.prj001.ui.act042;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.SO_Header_Adapter;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -13,10 +18,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act042_Main extends Base_Activity {
+public class Act042_Main extends Base_Activity implements Act042_Main_View{
 
     private Act042_Main_Presenter_Impl mPresenter;
     private ListView lv_sos;
+    private SO_Header_Adapter mAdapter;
 
 
     @Override
@@ -64,10 +70,15 @@ public class Act042_Main extends Base_Activity {
     private void initVars() {
         recoverIntentsInfo();
         //
-        mPresenter = new Act042_Main_Presenter_Impl();
+        mPresenter = new Act042_Main_Presenter_Impl(
+                context,
+                this,
+                hmAux_Trans
+        );
         //
         lv_sos = (ListView) findViewById(R.id.act042_lv_sos);
-
+        //
+        mPresenter.getSoExpressList();
     }
 
     private void recoverIntentsInfo() {
@@ -104,4 +115,33 @@ public class Act042_Main extends Base_Activity {
 
     }
 
+    @Override
+    public void loadSoExpress(ArrayList<HMAux> so_express_list) {
+
+        mAdapter = new SO_Header_Adapter(
+                context,
+                R.layout.so_header_cell,
+                so_express_list,
+                SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL
+        );
+        //
+        lv_sos.setAdapter(mAdapter);
+        //
+    }
+
+    @Override
+    public void callAct012(Context context) {
+        Intent mIntent = new Intent(context, Act012_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        mPresenter.onBackPressedClicked();
+    }
 }
