@@ -122,7 +122,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial) {
+    public void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, boolean connectionStatusAlter) {
         SO_Pack_Express_Local so_pack_express_local = new SO_Pack_Express_Local();
 
 
@@ -149,12 +149,12 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
-        executeSO_Pack_Express_Local();
+        executeSO_Pack_Express_Local(connectionStatusAlter);
     }
 
 
     @Override
-    public void executeSO_Pack_Express_Local() {
+    public void executeSO_Pack_Express_Local(boolean connectionStatusAlter) {
         if (ToolBox_Con.isOnline(context)) {
             mView.showPD(
                     //hmAux_Trans.get("progress_sync_ap_ttl"),
@@ -170,7 +170,18 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             //
             context.sendBroadcast(mIntent);
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context);
+            if (!connectionStatusAlter){
+                connectionStatusAlter = true;
+                mView.setConnectionStatusAlter(connectionStatusAlter);
+                //
+                ToolBox_Inf.showNoConnectionDialog(context);
+            } else {
+
+            }
+
+            mView.showMsgToast("Express Salva Com - Trad");
+
+            mView.automationCleanForm();
         }
     }
 

@@ -32,4 +32,8 @@ public interface Act040_Main_View {
     void setPartnerList(ArrayList<HMAux> partnerList);
 
     void showPD(String ttl, String msg);
+
+    void showMsgToast(String msg);
+
+    void setConnectionStatusAlter(boolean connectionStatusAlter);
 }

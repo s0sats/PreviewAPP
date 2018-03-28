@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -39,6 +40,7 @@ import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -47,12 +49,14 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
+import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
@@ -89,13 +93,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private SM_SODao soDao;
     private GE_Custom_Form_ApDao customFormApDao;
 
+    private SO_Pack_Express_LocalDao soPackExpressLocalDao;
+
+
     private String logoutList = "";
     private transient Dialog logoutDialog;
     private Act005_Logout_Adapter mAdapter;
     private ListView lv_customer;
     private List<HMAux> customer_list;
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao) {
+    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -104,6 +111,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.fcmMessageDao = fcmMessageDao;
         this.soDao = soDao;
         this.customFormApDao = customFormApDao;
+        this.soPackExpressLocalDao = soPackExpressLocalDao;
     }
 
     String[] menuId = {
@@ -181,6 +189,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 String qty = "";
                 String qtySO = "";
                 String qtyAP = "";
+                String qtySO_Express = "";
                 String qtyBadge2 = "";
 
                 Aux.put(Act005_Main.MENU_ID, menuId[i]);
@@ -245,6 +254,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtyAP = "0";
                         }
+                        //
+
                         //Soma Qtd de n-form e n_service
                         qty = String.valueOf(
                                 Integer.parseInt(qty)
@@ -261,7 +272,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             ToolBox_Con.getPreference_Zone_Code(context)
                                     ).toSqlQuery()
                             ).get(Sql_Act005_004.QTD_MY_PENDING_SO);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qtyBadge2 = "0";
                         }
                         Aux.put(Act005_Main.MENU_BADGE, qty);
@@ -275,7 +286,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                     ).toSqlQuery()
                             ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qty = "0";
                         }
                         try {
@@ -284,7 +295,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             ToolBox_Con.getPreference_Customer_Code(context)
                                     ).toSqlQuery()
                             ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qtySO = "0";
                         }
                         try {
@@ -293,16 +304,27 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                     ).toSqlQuery()
                             ).get(Sql_Act005_007.BADGE_TO_SEND_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qtyAP = "0";
                         }
+                        try {
+                            qtySO_Express = soPackExpressLocalDao.getByStringHM(
+                                    new SO_Pack_Express_Local_Sql_010(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY);
+                        } catch (Exception e) {
+                            qtySO_Express = "0";
+                        }
+
                         //Soma Qtd de n-form e n_service e form_ap
                         qty = String.valueOf(
                                 ToolBox_Inf.convertStringToInt(qty) +
                                         ToolBox_Inf.convertStringToInt(qtySO) +
                                         isSoWithinTokenFile() +
                                         isSerialWithinTokenFile() +
-                                        ToolBox_Inf.convertStringToInt(qtyAP)
+                                        ToolBox_Inf.convertStringToInt(qtyAP) +
+                                        ToolBox_Inf.convertStringToInt(qtySO_Express)
                         );
                         //
                         Aux.put(Act005_Main.MENU_BADGE, qty);
@@ -315,7 +337,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                     ).toSqlQuery()
                             ).get(Sql_Act005_003.BADGE_SCHEDULED_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qty = "0";
                         }
                         //
@@ -325,7 +347,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                     ).toSqlQuery()
                             ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qtyAP = "0";
                         }
                         qty = String.valueOf(
@@ -341,7 +363,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qty = fcmMessageDao.getByStringHM(
                                     new FCMMessage_Sql_003().toSqlQuery()
                             ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qty = "0";
                         }
                         Aux.put(Act005_Main.MENU_BADGE, qty);
@@ -358,7 +380,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             ToolBox_Con.getPreference_Customer_Code(context)
                                     ).toSqlQuery()
                             ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qty = "0";
                         }
                         //
@@ -368,7 +390,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             ToolBox_Con.getPreference_Customer_Code(context)
                                     ).toSqlQuery()
                             ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             qtyBadge2 = "0";
                         }
                         //
@@ -718,6 +740,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
+    public void executeSOPackExpress() {
+        mView.setWsSoProcess(WS_SO_Pack_Express_Local.class.getSimpleName());
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Pack_Express_Local.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
     public void executeApSave() {
         mView.setWsSoProcess(WS_AP_Save.class.getSimpleName());
         //
@@ -910,12 +944,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 new MD_Product_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code
-                    ).toSqlQuery()
-                );
+                ).toSqlQuery()
+        );
         //
-        if(mdProduct != null){
-            return mdProduct.getProduct_id()+" - "+mdProduct.getProduct_desc();
-        }else{
+        if (mdProduct != null) {
+            return mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc();
+        } else {
             return "";
         }
 

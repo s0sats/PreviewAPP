@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -65,6 +66,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private MKEditTextNM mket_barcode;
     private ImageView iv_search_barcode;
+
+    private boolean connectionStatusAlter;
 
     private TextView tv_status;
     private SearchableSpinner ss_partner;
@@ -167,6 +170,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         mPresenter.checkJump(ToolBox_Con.getPreference_Customer_Code(context));
         mPresenter.setPartners();
+        //
+        connectionStatusAlter = false;
     }
 
     private void recoverIntentsInfo() {
@@ -303,7 +308,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                             mSo_pack_express,
                                             md_partner,
                                             md_product,
-                                            mket_serial.getText().toString().trim()
+                                            mket_serial.getText().toString().trim(),
+                                            connectionStatusAlter
                                     );
                                 }
                             },
@@ -441,13 +447,29 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         super.processCloseACT(mLink, mRequired);
         progressDialog.dismiss();
         //
-        showResults(hmAux);
+        if (hmAux.keySet().size() == 0) {
+            automationCleanForm();
+            //
+            showMsg(
+                    "Orderm Express - Trad",
+                    "Sem Orderm Express - Trad"
+            );
+        } else {
+            showResults(hmAux);
+        }
     }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+        //
+        automationCleanForm();
+        //
+        showMsg(
+                "Orderm Express - Trad",
+                "Orderm Express aguardando na fila para envio - Trad"
+        );
     }
 
 
@@ -548,5 +570,25 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 show.dismiss();
             }
         });
+    }
+
+    private void showMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
+    }
+
+    @Override
+    public void showMsgToast(String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setConnectionStatusAlter(boolean connectionStatusAlter) {
+        this.connectionStatusAlter = connectionStatusAlter;
     }
 }
