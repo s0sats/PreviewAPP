@@ -13,7 +13,11 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_BrandDao;
+import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
+import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -96,6 +100,7 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_ttl);
         //SO Prefix.SO_code
+        LinearLayout ll_prefix_code = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_prefix_code);
         TextView tv_so_prefix_code = (TextView) convertView.findViewById(R.id.so_header_cell_tv_prefix_code);
 
         LinearLayout ll_so_id = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_id);
@@ -149,7 +154,9 @@ public class SO_Header_Adapter extends BaseAdapter {
             LinearLayout ll_category_price = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_category_price);
             TextView tv_category_price_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_lbl);
             TextView tv_category_price_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_val);
-        //}
+        //} so_header_cell_ll_brand_model_color
+        LinearLayout ll_brand_model_color = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_brand_model_color);
+        TextView tv_brand_model_color_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_brand_model_color_val);
         //
         LinearLayout ll_download_optc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_download_opt);
         //
@@ -234,6 +241,26 @@ public class SO_Header_Adapter extends BaseAdapter {
         tv_category_price_lbl.setText(hmAux_Trans.get("category_price_lbl"));
         tv_category_price_val.setText(so.get(SM_SODao.CATEGORY_PRICE_ID) + " - " + so.get(SM_SODao.CATEGORY_PRICE_DESC));
         //
+        String brand_model_color = "";
+            if( ( so.containsKey(MD_BrandDao.BRAND_DESC)
+              || so.containsKey(MD_Brand_ModelDao.MODEL_DESC)
+              || so.containsKey(MD_Brand_ColorDao.COLOR_DESC)
+            )
+        ){
+            brand_model_color += so.get(MD_BrandDao.BRAND_DESC).length() == 0 ? "" : "| " + so.get(MD_BrandDao.BRAND_DESC) + " ";
+            brand_model_color += so.get(MD_Brand_ModelDao.MODEL_DESC).length() == 0 ? "" :  "| " +  so.get(MD_Brand_ModelDao.MODEL_DESC)+ " ";
+            brand_model_color += so.get(MD_Brand_ColorDao.COLOR_DESC).length() == 0 ? "" :"| " +   so.get(MD_Brand_ColorDao.COLOR_DESC)+ " ";
+        }
+        //
+        if( brand_model_color.length() > 0){
+            brand_model_color = brand_model_color.substring(1,brand_model_color.length());
+            tv_brand_model_color_val.setText(brand_model_color);
+            ll_brand_model_color.setVisibility(View.VISIBLE);
+        }else{
+            tv_brand_model_color_val.setText("");
+            ll_brand_model_color.setVisibility(View.GONE);
+        }
+        //
         //Checkbox
         chk_download.setTag(position);
         //
@@ -275,6 +302,30 @@ public class SO_Header_Adapter extends BaseAdapter {
             ll_serial_info.setVisibility(View.GONE);
         }else{
             ll_serial_info.setVisibility(View.VISIBLE);
+        }
+
+        if(so.get(Constant.PARAM_KEY_TYPE).equals(Constant.PARAM_KEY_TYPE_SO)) {
+            ll_prefix_code.setVisibility(View.VISIBLE);
+            ll_priority.setVisibility(View.VISIBLE);
+            ll_deadline.setVisibility(View.VISIBLE);
+            ll_contract.setVisibility(View.VISIBLE);
+            ll_client.setVisibility(View.VISIBLE);
+            ll_category_price.setVisibility(View.VISIBLE);
+            ll_segment.setVisibility(View.VISIBLE);
+        }else{
+            ll_prefix_code.setVisibility(View.INVISIBLE);
+            ll_so_id.setVisibility(View.GONE);
+            ll_priority.setVisibility(View.GONE);
+            ll_deadline.setVisibility(View.GONE);
+            ll_contract.setVisibility(View.GONE);
+            ll_client.setVisibility(View.GONE);
+            ll_category_price.setVisibility(View.GONE);
+            ll_segment.setVisibility(View.GONE);
+            //ll_brand_model_color.setVisibility(View.GONE);
+            //
+            tv_status_val.setText(hmAux_Trans.get(so.get(SO_Pack_Express_LocalDao.SO_STATUS)));
+            ToolBox_Inf.setSOStatusColor(context,tv_status_val,so.get(SO_Pack_Express_LocalDao.SO_STATUS));
+
         }
 
         return convertView;

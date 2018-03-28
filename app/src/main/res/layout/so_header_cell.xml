@@ -486,6 +486,23 @@
                 android:text="17 - Caro" />
 
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/so_header_cell_ll_brand_model_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/so_header_cell_tv_brand_model_color_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="VW | Virtus | Azul"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
