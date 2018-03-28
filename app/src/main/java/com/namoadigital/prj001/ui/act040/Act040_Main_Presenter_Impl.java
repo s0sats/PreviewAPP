@@ -170,10 +170,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     public void executeSO_Pack_Express_Local(boolean connectionStatusAlter) {
         if (ToolBox_Con.isOnline(context)) {
             mView.showPD(
-                    //hmAux_Trans.get("progress_sync_ap_ttl"),
-                    //hmAux_Trans.get("progress_sync_ap_msg")
-                    "Express Progress Title - Trad",
-                    "Express Progress Msg - Trad"
+                    hmAux_Trans.get("progress_sync_express_ttl"),
+                    hmAux_Trans.get("progress_sync_express_msg")
             );
 
             Intent mIntent = new Intent(context, WBR_SO_Pack_Express_Local.class);
@@ -183,7 +181,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             //
             context.sendBroadcast(mIntent);
         } else {
-            if (!connectionStatusAlter){
+            if (!connectionStatusAlter) {
                 connectionStatusAlter = true;
                 mView.setConnectionStatusAlter(connectionStatusAlter);
                 //
@@ -192,7 +190,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
             }
 
-            mView.showMsgToast("Express Salva Com - Trad");
+            mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
 
             mView.automationCleanForm();
         }

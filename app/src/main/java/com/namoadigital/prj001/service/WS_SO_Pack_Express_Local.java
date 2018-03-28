@@ -93,7 +93,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
             }
             if (so_pack_express_List == null || so_pack_express_List.size() == 0) {
                 //HMAux auxApReturned = new HMAux();
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_no_so_pack_save"), auxApReturned, "", "0");
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_express_save"), auxApReturned, "", "0");
                 return;
             }
             //
@@ -105,7 +105,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
             env.setToken(token);
             env.setPack_express(so_pack_express_List);
             //
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_ap_data"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_express_data"), "", "0");
             //
             String json = gsonEnv.toJson(env);
             //
@@ -114,7 +114,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                     json
             );
 
-            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_data_returned"), "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_express_data_returned"), "", "0");
             //
             TSO_Pack_Express_Rec rec = gsonRec.fromJson(
                     resultado,
@@ -141,8 +141,6 @@ public class WS_SO_Pack_Express_Local extends IntentService {
             processSO_Pack_Express_Local_Return(rec, so_pack_express_List);
             //
         }
-
-        //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
     }
 
     private int processPendingToken() {
@@ -208,7 +206,6 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                     soPackExpressLocalDao.addUpdate(so_pack_express_local);
                 }
                 //
-                //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_ap_save"), auxApReturned, "", "0");
                 break;
             case "ERROR":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", rec.getError_msg(), "", "0");
@@ -262,8 +259,10 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                     //
                     if (so_pack_express_local.getRet_code().equalsIgnoreCase("ERROR")) {
                         so_pack_express_local.setToken("");
+                        so_pack_express_local.setSo_status(Constant.SYS_STATUS_ERROR);
                     } else {
                         so_pack_express_local.setStatus(Constant.SYS_STATUS_SENT);
+                        so_pack_express_local.setSo_status(Constant.SYS_STATUS_DENIED);
                     }
                     //
                     so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -277,11 +276,9 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
-        translist.add("msg_no_ap_to_save");
-        translist.add("msg_sending_ap_data");
-        translist.add("msg_processing_data_returned");
-        translist.add("msg_end_ap_save");
-        translist.add("msg_ap_removed");
+        translist.add("msg_no_express_save");
+        translist.add("msg_sending_express_data");
+        translist.add("msg_processing_express_data_returned");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

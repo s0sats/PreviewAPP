@@ -74,7 +74,7 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT041
+                Constant.ACT007
         );
 
         loadTranslation();
@@ -97,6 +97,27 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
+        );
+
+        HMAux hmAux_TransACT041 = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        Constant.ACT041
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+
+        hmAux_Trans.put(Constant.ACT041, hmAux_TransACT041.get(Constant.ACT041));
+        hmAux_Trans.put(Constant.ACT041 + "_" + "title", hmAux_TransACT041.get(Constant.ACT041 + "_" + "title"));
+
+        ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT007
         );
     }
 

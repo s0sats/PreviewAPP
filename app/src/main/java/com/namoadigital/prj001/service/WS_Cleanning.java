@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
@@ -26,6 +27,7 @@ import com.namoadigital.prj001.sql.WS_Cleaning_Sql_002;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_003;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_006;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_007;
+import com.namoadigital.prj001.sql.WS_Cleaning_Sql_008;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -56,6 +58,7 @@ public class WS_Cleanning extends IntentService {
 
             deleteFormLocal();
             deleteSO();
+            deleteSOExpress();
             deleteFCMMessages();
             deleteFormAP();
 
@@ -103,10 +106,10 @@ public class WS_Cleanning extends IntentService {
                 int i = formUsingPdf != null ? formUsingPdf.size() : 0;
                 //
                 if (formUsingPdf != null &&
-                    formUsingPdf.containsKey(WS_Cleaning_Sql_007.USING_PDF_QTY) &&
-                    formUsingPdf.get(WS_Cleaning_Sql_007.USING_PDF_QTY).equalsIgnoreCase("0")
-                ) {
-                    File filePDF = new File(Constant.CACHE_PATH+"/"+apPDF);
+                        formUsingPdf.containsKey(WS_Cleaning_Sql_007.USING_PDF_QTY) &&
+                        formUsingPdf.get(WS_Cleaning_Sql_007.USING_PDF_QTY).equalsIgnoreCase("0")
+                        ) {
+                    File filePDF = new File(Constant.CACHE_PATH + "/" + apPDF);
                     filesToDeleteList.add(filePDF);
                 }
             }
@@ -152,6 +155,23 @@ public class WS_Cleanning extends IntentService {
             ToolBox_Inf.deleteFileListExceptionSafe(filesToDeleteList);
         }
 
+    }
+
+    private void deleteSOExpress() {
+
+        SO_Pack_Express_LocalDao soPackExpressLocalDao =
+                new SO_Pack_Express_LocalDao(
+                        getApplicationContext(),
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                        Constant.DB_VERSION_CUSTOM
+                );
+
+        // Remove TODAS AS S.O. Express
+        soPackExpressLocalDao.remove(
+                new WS_Cleaning_Sql_008(
+                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                ).toSqlQuery()
+        );
     }
 
     private void deleteFormLocal() {

@@ -114,6 +114,23 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
         List<String> transList = new ArrayList<String>();
         transList.add("act040_title");
+        transList.add("ss_partner_hint");
+        transList.add("ss_partner_ttl");
+        transList.add("status_no_pack_msg");
+        transList.add("status_no_partner_msg");
+        transList.add("status_no_product_msg");
+        transList.add("status_no_serial_msg");
+        transList.add("alert_express_error_tll");
+        transList.add("alert_express_no_tll");
+        transList.add("alert_express_no_msg");
+        transList.add("alert_express_general_error_ttl");
+        transList.add("alert_express_general_error_msg");
+        transList.add("progress_sync_express_ttl");
+        transList.add("progress_sync_express_msg");
+        transList.add("toast_express_saved_msg");
+        transList.add("tv_product_hint");
+        transList.add("tv_serial_hint");
+        transList.add("tv_barcode_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -181,12 +198,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         mket_produto = (MKEditTextNM) findViewById(R.id.act040_mket_product);
         iv_search_produto = (ImageView) findViewById(R.id.act040_iv_search_product);
+        mket_produto.setHint(hmAux_Trans.get("tv_product_hint"));
         //
         mket_serial = (MKEditTextNM) findViewById(R.id.act040_mket_serial);
         iv_search_serial = (ImageView) findViewById(R.id.act040_iv_search_serial);
+        mket_serial.setHint(hmAux_Trans.get("tv_serial_hint"));
         //
         mket_barcode = (MKEditTextNM) findViewById(R.id.act040_mket_barcode);
         iv_search_barcode = (ImageView) findViewById(R.id.act040_iv_search_barcode);
+        mket_barcode.setHint(hmAux_Trans.get("tv_barcode_hint"));
         //
         btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
         //
@@ -194,8 +214,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         ss_partner = (SearchableSpinner) findViewById(R.id.act040_ss_partner);
         ss_partner.setmShowLabel(false);
-        ss_partner.setmHint("Partner - Trad");
-        ss_partner.setmTitle("Title - Trad");
+        ss_partner.setmHint(hmAux_Trans.get("ss_partner_hint"));
+        ss_partner.setmTitle(hmAux_Trans.get("ss_partner_ttl"));
         //
         //Add controles no array list.
         controls_sta.add(mket_produto);
@@ -226,7 +246,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mket_barcode.getWindowToken(), 0);
         } else {
-            tv_status.setText("Nao Encontrado - Trad");
+            tv_status.setText(hmAux_Trans.get("status_no_pack_msg"));
         }
     }
 
@@ -353,12 +373,25 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             false
                     );
                 } else {
+
+                    String result = "";
+
+                    if (mSo_pack_express == null) {
+                        result = hmAux_Trans.get("status_no_pack_msg");
+                    } else if (md_partner == null) {
+                        result = hmAux_Trans.get("status_no_partner_msg");
+                    } else if (md_product == null) {
+                        result = hmAux_Trans.get("status_no_product_msg");
+                    } else if (mket_serial.getText().toString().trim().length() == 0) {
+                        result = hmAux_Trans.get("status_no_serial_msg");
+                    } else {
+                        result = "";
+                    }
+
                     ToolBox.alertMSG(
                             context,
-                            "Erros",
-                            "Campos Obrigatórios",
-                            //hmAux_Trans.get("alert_no_pdf_tll"),
-                            //hmAux_Trans.get("alert_no_pdf_msg"),
+                            hmAux_Trans.get("alert_so_pack_error_tll"),
+                            result,
                             null,
                             -1,
                             false
@@ -487,8 +520,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             automationCleanForm();
             //
             showMsg(
-                    "Orderm Express - Trad",
-                    "Sem Orderm Express - Trad"
+                    hmAux_Trans.get("alert_express_no_tll"),
+                    hmAux_Trans.get("alert_express_no_msg")
             );
         } else {
             showResults(hmAux);
@@ -503,8 +536,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         automationCleanForm();
         //
         showMsg(
-                "Orderm Express - Trad",
-                "Orderm Express aguardando na fila para envio - Trad"
+                hmAux_Trans.get("alert_express_general_error_ttl"),
+                hmAux_Trans.get("alert_express_general_error_msg")
         );
     }
 
