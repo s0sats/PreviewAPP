@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import java.io.File;
 
 /**
  * Created by neomatrix on 1/16/18.
@@ -18,11 +15,11 @@ import java.io.File;
 
 public class ScreenStatusReceiver extends BroadcastReceiver {
 
-    private File log_file = null;
+    //private File log_file = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+        //File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
         try {
 
             boolean screenOn;
@@ -31,7 +28,7 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
                 //
                 Log.d("ChatEvent", "Status da Tela :DESLIGADO");
                 //
-                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "  ===================================>DISPLAY_OFF<===================================\n.", log_file);
+                //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "  ===================================>DISPLAY_OFF<===================================\n.", log_file);
                 //
                 Intent chatService = new Intent(context, AppBackgroundService.class);
                 context.stopService(chatService);
@@ -39,7 +36,7 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 screenOn = true;
                 Log.d("ChatEvent", "Status da Tela : LIGADO");
-                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n___________________________________>DISPLAY_ON<____________________________________\n.", log_file);
+                //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n___________________________________>DISPLAY_ON<____________________________________\n.", log_file);
                 //
                 if (ToolBox_Inf.isUsrAppLogged(context)) {
                     if(!AppBackgroundService.isRunning) {
