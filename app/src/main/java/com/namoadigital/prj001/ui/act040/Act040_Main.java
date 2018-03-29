@@ -131,6 +131,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("tv_product_hint");
         transList.add("tv_serial_hint");
         transList.add("tv_barcode_hint");
+        transList.add("btn_create_so");
+        transList.add("alert_create_so_express_ttl");
+        transList.add("alert_create_so_express_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -209,6 +212,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mket_barcode.setHint(hmAux_Trans.get("tv_barcode_hint"));
         //
         btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
+        btn_create_so.setText(hmAux_Trans.get("btn_create_so"));
         //
         tv_status = (TextView) findViewById(R.id.act040_tv_status);
         //
@@ -353,8 +357,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
                     ToolBox.alertMSG(
                             context,
-                            "Criacao de S.O.",
-                            "Deseja Realmente Criar a S.O.?",
+                            hmAux_Trans.get("alert_create_so_express_ttl"),
+                            hmAux_Trans.get("alert_create_so_express_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
