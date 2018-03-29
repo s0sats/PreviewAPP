@@ -352,6 +352,7 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String APPROVAL_TYPE = "approval_type";
     public static final String PROFILE_MENU_SO = "PRJ001_SO";
+    public static final String PROFILE_MENU_SO_EXPRESS = "PRJ001_SO_PACK_EXPRESS";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_CLIENT = "APPROVE_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_APPROVE_QUALITY = "APPROVE_QUALITY";
     public static final String PROFILE_MENU_SO_PARAM_EXECUTION = "EXECUTION";

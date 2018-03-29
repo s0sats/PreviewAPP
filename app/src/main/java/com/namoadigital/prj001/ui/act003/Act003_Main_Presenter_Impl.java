@@ -17,8 +17,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
-
 /**
  * Created by neomatrix on 17/01/17.
  */
@@ -68,7 +66,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                     Intent mIntent = new Intent(context, ScreenStatusService.class);
                     context.startService(mIntent);
                 }
-                File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+                //File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
                 if (ToolBox_Inf.isUsrAppLogged(context)) {
                     //Se usr esta logado, mas não tem preferencias se site e operação
                     //Ou é primeiro login ou change customer e requer ação
@@ -97,16 +95,16 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
                             context.startService(chatIntent);
 
-                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
+                            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
                         } else {
                             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                             singletonWebSocket.attemptSendLogin();
-                            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Rodou singletonGetInstance() e attemptLogin \n", log_file);
+                            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Rodou singletonGetInstance() e attemptLogin \n", log_file);
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
                         }
                     }else{
-                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Usr com preferencias setadas, não faz nada \n", log_file);
+                        //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Usr com preferencias setadas, não faz nada \n", log_file);
                         Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Usr com preferencias setadas, não faz nada \n");
                     }
                 } else {

@@ -11,8 +11,6 @@ import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
-
 /**
  * Created by neomatrix on 27/11/17.
  */
@@ -22,7 +20,7 @@ public class AppBackgroundService extends Service {
     public static boolean isRunning;
     private SingletonWebSocket singletonWebSocket;
     //APAGAR APOS TESTE
-    private File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+    //private File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
     private String serviceLastCaller = "";
     //
 
@@ -34,11 +32,11 @@ public class AppBackgroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.isRunning = true;
         try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
+            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
             if(intent != null) {
                 serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
             }
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
+            //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
             Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n");
             //
             singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
@@ -55,11 +53,11 @@ public class AppBackgroundService extends Service {
     @Override
     public void onDestroy() {
         this.isRunning = false;
-        try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onDestroy \n", log_file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onDestroy \n", log_file);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         Log.d("ChatEvent"," onDestroy AppBackgroundService \n");
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_CHAT_STATUS_CHANGE);
@@ -71,11 +69,11 @@ public class AppBackgroundService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        try {
-            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onBind \n", log_file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onBind \n", log_file);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         Log.d("ChatEvent"," onBind AppBackgroundService \n");
         return null;
     }

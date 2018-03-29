@@ -204,10 +204,10 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         //
         mAdapter = new SO_Header_Adapter(
                 context,
-                //R.layout.act024_content_cell,
-                R.layout.so_header_cell,
                 soList,
-                configType
+                configType,
+                R.layout.so_header_cell,
+                R.layout.so_header_cell
         );
         //
         lv_so.setAdapter(mAdapter);

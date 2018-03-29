@@ -187,6 +187,15 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     }
 
     @Override
+    public void checkSOExpressProfile() {
+        boolean hasExpressProfile;
+        //
+        hasExpressProfile = ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO_EXPRESS,null);
+        //
+        mView.setSoExpressVisibility(hasExpressProfile);
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
     }

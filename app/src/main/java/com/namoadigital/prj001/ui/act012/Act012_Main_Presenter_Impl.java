@@ -91,16 +91,19 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
             }
             //
             pendencies.addAll(SOPendencies);
-            //So Express "Pendentes"
-            List<HMAux> soExpressPendencies =
-                    expressLocalDao.query_HM(
-                            new Sql_Act012_004(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    label_translation
-                            ).toSqlQuery()
-                    );
-            //
-            pendencies.addAll(soExpressPendencies);
+            //Se possui acesso ao profile so_express, exibe item so_express
+            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO_EXPRESS,null)) {
+                //So Express "Pendentes"
+                List<HMAux> soExpressPendencies =
+                        expressLocalDao.query_HM(
+                                new Sql_Act012_004(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        label_translation
+                                ).toSqlQuery()
+                        );
+                //
+                pendencies.addAll(soExpressPendencies);
+            }
         }
 
         mView.loadPendencies(pendencies);
