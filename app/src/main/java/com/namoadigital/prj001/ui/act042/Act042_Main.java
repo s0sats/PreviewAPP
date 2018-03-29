@@ -120,9 +120,10 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
 
         mAdapter = new SO_Header_Adapter(
                 context,
-                R.layout.so_header_cell,
                 so_express_list,
-                SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL
+                SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL,
+                R.layout.so_header_cell,
+                R.layout.so_header_cell
         );
         //
         lv_sos.setAdapter(mAdapter);

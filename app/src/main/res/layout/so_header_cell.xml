@@ -29,7 +29,7 @@
             />
 
         <LinearLayout
-            android:id="@+id/so_header_cell_ll_express_so"
+            android:id="@+id/so_header_cell_ll_express_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -206,6 +206,24 @@
             android:layout_weight="1"
             android:gravity="right"
             android:text="PENDING"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/so_header_cell_ll_express_ret"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/so_header_cell_tv_express_ret_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|top"
+            android:text="--"
             android:textStyle="bold"/>
 
     </LinearLayout>

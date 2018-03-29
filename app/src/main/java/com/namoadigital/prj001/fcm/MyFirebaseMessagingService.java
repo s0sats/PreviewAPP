@@ -37,8 +37,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -56,12 +54,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         /*
         * LOG PARA IDENTIFICAR FALHA OU NÃO DO FCM - APAGAR APOS TESTES
         * */
-        try {
+        /*try {
             File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Recebeu fcm - Tamanho getData() =   " + (remoteMessage.getData() == null ? "nullo":remoteMessage.getData().size()) +"\n" , log_file);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         if (remoteMessage.getData().size() > 0) {
 
@@ -100,16 +98,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
-            /*
-            * LOG PARA IDENTIFICAR FALHA OU NÃO DO FCM - APAGAR APOS TESTES
-            */
-            try {
-                File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "FCM fcm.getMsgShort =  " + fcmMessage.getMsg_short() +"\n" , log_file);
-                ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "FCM fcm.getMsgLong =  " + fcmMessage.getMsg_long() +"\n" , log_file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             //Se FCM não é o que esta usr logado, aborta FCM
             if(!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))){
