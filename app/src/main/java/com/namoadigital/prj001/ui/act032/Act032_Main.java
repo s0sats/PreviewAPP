@@ -166,7 +166,9 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux so = (HMAux) parent.getItemAtPosition(position);
                 //
-                mPresenter.defineForwardFlow(so);
+                if (!so.get("TYPE").equalsIgnoreCase("SO_EXPRESS")) {
+                    mPresenter.defineForwardFlow(so);
+                }
 
             }
         });
