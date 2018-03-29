@@ -197,7 +197,7 @@ public class SO_Header_Adapter extends BaseAdapter {
         ToolBox_Inf.setSOStatusColor(context,tv_status_val,so.get(SM_SODao.STATUS));
         //
         tv_deadline_lbl.setText(hmAux_Trans.get("deadline_lbl"));
-        if(so.get(SM_SODao.DEADLINE) != null && so.get(SM_SODao.DEADLINE).length() > 0){
+        if(so.get(SM_SODao.DEADLINE) != null && so.get(SM_SODao.DEADLINE).length() > 0 && so.get(Constant.PARAM_KEY_TYPE).equals(Constant.PARAM_KEY_TYPE_SO)){
             ll_deadline.setVisibility(View.VISIBLE);
             tv_deadline_val.setText(
                     ToolBox_Inf.millisecondsToString(
@@ -222,10 +222,12 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         tv_client_lbl.setText(hmAux_Trans.get("client_lbl"));
         tv_client_val.setText(so.get(SM_SODao.CLIENT_NAME));
-        if (so.get(SM_SODao.CLIENT_TYPE).equals(Constant.CLIENT_TYPE_CLIENT)){
-            ll_client.setVisibility(View.VISIBLE);
-        }else{
-            ll_client.setVisibility(View.GONE);
+        if(so.get(Constant.PARAM_KEY_TYPE).equals(Constant.PARAM_KEY_TYPE_SO)) {
+            if (so.get(SM_SODao.CLIENT_TYPE).equals(Constant.CLIENT_TYPE_CLIENT)) {
+                ll_client.setVisibility(View.VISIBLE);
+            } else {
+                ll_client.setVisibility(View.GONE);
+            }
         }
 
         //

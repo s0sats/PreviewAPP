@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
@@ -61,9 +60,10 @@ public class SO_Pack_Express_Local_Sql_009 implements Specification {
 //                        "   "+SO_Pack_Express_LocalDao.RET_MSG+",\n" +
 //                        "   "+SO_Pack_Express_LocalDao.STATUS+",\n" +
                         "   s.*, \n"+
-                        "   '"+Constant.PARAM_KEY_TYPE_SO_EXPRESS+"' "+Constant.PARAM_KEY_TYPE+"\n," +
-                        "   '' "+ SM_SODao.CLIENT_TYPE+",\n" +
-                        "   '' "+ SM_SODao.DEADLINE+"\n" +
+                        "   '"+Constant.PARAM_KEY_TYPE_SO_EXPRESS+"' "+Constant.PARAM_KEY_TYPE+"\n" +
+                        //","+
+                       // "   '' "+ SM_SODao.CLIENT_TYPE+",\n" +
+                       // "   '' "+ SM_SODao.DEADLINE+"\n" +
                         " FROM\n" +
                         SO_Pack_Express_LocalDao.TABLE +" s\n" +
                         " WHERE \n" +
@@ -74,8 +74,8 @@ public class SO_Pack_Express_Local_Sql_009 implements Specification {
                 .append(
                         ";" +HmAuxFields+"#"
                             +Constant.PARAM_KEY_TYPE+"#"
-                            +SM_SODao.CLIENT_TYPE+"#"
-                            +SM_SODao.DEADLINE
+                          //  +SM_SODao.CLIENT_TYPE+"#"
+                          //  +SM_SODao.DEADLINE
                 )
                 .toString();
     }
