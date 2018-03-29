@@ -179,6 +179,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
 
     private void processSO_Pack_Express_Local_Return(TSO_Pack_Express_Rec rec, ArrayList<SO_Pack_Express_Local> so_pack_express_List) {
         switch (rec.getSave()) {
+            case "OK_DUP":
             case "OK":
                 //HMAux auxApReturned = new HMAux();
                 //
@@ -186,14 +187,14 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                     String hmAuxPKKey;
 
                     if (so_pack_express_local.getRet_code().equalsIgnoreCase("OK")) {
-                        hmAuxPKKey = so_pack_express_local.getCustomer_code() + "." +
-                                so_pack_express_local.getSite_code() + "." +
-                                so_pack_express_local.getOperation_code() + "." +
-                                so_pack_express_local.getProduct_code() + "." +
-                                so_pack_express_local.getExpress_tmp();
+                        hmAuxPKKey = String.valueOf(so_pack_express_local.getCustomer_code()) + "." +
+                                String.valueOf(so_pack_express_local.getSite_code()) + "." +
+                                String.valueOf(so_pack_express_local.getOperation_code()) + "." +
+                                String.valueOf(so_pack_express_local.getProduct_code()) + "." +
+                                String.valueOf(so_pack_express_local.getExpress_tmp());
                     } else {
-                        hmAuxPKKey = so_pack_express_local.getCustomer_code() + "." +
-                                so_pack_express_local.getExpress_tmp();
+                        hmAuxPKKey = String.valueOf(so_pack_express_local.getCustomer_code()) + "." +
+                                String.valueOf(so_pack_express_local.getExpress_tmp());
                     }
 
                     auxApReturned.put(
@@ -218,19 +219,18 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     private void moveData(SO_Pack_Express_Local so_pack_express_local, ArrayList<SO_Pack_Express_Local> so_pack_express_list) {
         if (so_pack_express_local.getRet_code().equalsIgnoreCase("OK")) {
 
-
-            String keyL = so_pack_express_local.getCustomer_code() + "." +
-                    so_pack_express_local.getSite_code() + "." +
-                    so_pack_express_local.getOperation_code() + "." +
-                    so_pack_express_local.getProduct_code() + "." +
-                    so_pack_express_local.getExpress_tmp();
+            String keyL = String.valueOf(so_pack_express_local.getCustomer_code()) + "." +
+                    String.valueOf(so_pack_express_local.getSite_code()) + "." +
+                    String.valueOf(so_pack_express_local.getOperation_code()) + "." +
+                    String.valueOf(so_pack_express_local.getProduct_code()) + "." +
+                    String.valueOf(so_pack_express_local.getExpress_tmp());
 
             for (SO_Pack_Express_Local mSo_pack_express_local : so_pack_express_list) {
-                String keyML = mSo_pack_express_local.getCustomer_code() + "." +
-                        mSo_pack_express_local.getSite_code() + "." +
-                        mSo_pack_express_local.getOperation_code() + "." +
-                        mSo_pack_express_local.getProduct_code() + "." +
-                        mSo_pack_express_local.getExpress_tmp();
+                String keyML = String.valueOf(mSo_pack_express_local.getCustomer_code()) + "." +
+                        String.valueOf(mSo_pack_express_local.getSite_code()) + "." +
+                        String.valueOf(mSo_pack_express_local.getOperation_code()) + "." +
+                        String.valueOf(mSo_pack_express_local.getProduct_code()) + "." +
+                        String.valueOf(mSo_pack_express_local.getExpress_tmp());
 
                 if (keyL.equalsIgnoreCase(keyML)) {
                     so_pack_express_local.setPartner_code(mSo_pack_express_local.getPartner_code());
@@ -242,12 +242,12 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                 }
             }
         } else {
-            String keyL = so_pack_express_local.getCustomer_code() + "." +
-                    so_pack_express_local.getExpress_tmp();
+            String keyL = String.valueOf(so_pack_express_local.getCustomer_code()) + "." +
+                    String.valueOf(so_pack_express_local.getExpress_tmp());
 
             for (SO_Pack_Express_Local mSo_pack_express_local : so_pack_express_list) {
-                String keyML = mSo_pack_express_local.getCustomer_code() + "." +
-                        mSo_pack_express_local.getExpress_tmp();
+                String keyML = String.valueOf(mSo_pack_express_local.getCustomer_code()) + "." +
+                        String.valueOf(mSo_pack_express_local.getExpress_tmp());
 
                 if (keyL.equalsIgnoreCase(keyML)) {
                     so_pack_express_local.setSite_code(mSo_pack_express_local.getSite_code());
