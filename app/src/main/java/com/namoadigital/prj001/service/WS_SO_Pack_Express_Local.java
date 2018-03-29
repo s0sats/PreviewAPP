@@ -186,15 +186,27 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                 for (SO_Pack_Express_Local so_pack_express_local : rec.getPack_express()) {
                     String hmAuxPKKey;
 
+                    moveData(so_pack_express_local, so_pack_express_List);
+
                     if (so_pack_express_local.getRet_code().equalsIgnoreCase("OK")) {
                         hmAuxPKKey = String.valueOf(so_pack_express_local.getCustomer_code()) + "." +
                                 String.valueOf(so_pack_express_local.getSite_code()) + "." +
                                 String.valueOf(so_pack_express_local.getOperation_code()) + "." +
                                 String.valueOf(so_pack_express_local.getProduct_code()) + "." +
-                                String.valueOf(so_pack_express_local.getExpress_tmp());
+                                String.valueOf(so_pack_express_local.getExpress_tmp()) +
+                                Constant.MAIN_CONCAT_STRING +
+                                so_pack_express_local.getSo_desc() +
+                                Constant.MAIN_CONCAT_STRING +
+                                so_pack_express_local.getSerial_id();
+
+                        ;
                     } else {
                         hmAuxPKKey = String.valueOf(so_pack_express_local.getCustomer_code()) + "." +
-                                String.valueOf(so_pack_express_local.getExpress_tmp());
+                                String.valueOf(so_pack_express_local.getExpress_tmp()) +
+                                Constant.MAIN_CONCAT_STRING +
+                                so_pack_express_local.getSo_desc() +
+                                Constant.MAIN_CONCAT_STRING +
+                                so_pack_express_local.getSerial_id();
                     }
 
                     auxApReturned.put(
@@ -202,7 +214,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                             (!so_pack_express_local.getRet_code().equalsIgnoreCase("OK") ? so_pack_express_local.getRet_msg() : "OK")
                     );
 
-                    moveData(so_pack_express_local, so_pack_express_List);
+                    // moveData(so_pack_express_local, so_pack_express_List);
 
                     soPackExpressLocalDao.addUpdate(so_pack_express_local);
                 }
@@ -256,6 +268,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                     so_pack_express_local.setExpress_code(mSo_pack_express_local.getExpress_code());
                     so_pack_express_local.setSerial_id(mSo_pack_express_local.getSerial_id());
                     so_pack_express_local.setPartner_code(mSo_pack_express_local.getPartner_code());
+                    so_pack_express_local.setSo_desc(mSo_pack_express_local.getSo_desc());
                     //
                     if (so_pack_express_local.getRet_code().equalsIgnoreCase("ERROR")) {
                         so_pack_express_local.setToken("");

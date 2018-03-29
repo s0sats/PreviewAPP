@@ -15,7 +15,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +24,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -132,8 +132,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("tv_serial_hint");
         transList.add("tv_barcode_hint");
         transList.add("btn_create_so");
+        transList.add("express_desc");
+        transList.add("express_status");
+        transList.add("express_label");
         transList.add("alert_create_so_express_ttl");
         transList.add("alert_create_so_express_msg");
+        transList.add("express_send_error_ttl");
+        transList.add("express_send_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -241,7 +246,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     @Override
-    public void loadSO_Pack_Express(SO_Pack_Express so_pack_express) {
+    public void loadSO_Pack_Express(SO_Pack_Express so_pack_express, String express_code) {
         mSo_pack_express = so_pack_express;
         //
         if (mSo_pack_express != null) {
@@ -250,7 +255,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mket_barcode.getWindowToken(), 0);
         } else {
-            tv_status.setText(hmAux_Trans.get("status_no_pack_msg"));
+            if (md_product == null || express_code.isEmpty()) {
+                tv_status.setText("");
+            } else {
+                tv_status.setText(hmAux_Trans.get("status_no_pack_msg"));
+            }
         }
     }
 
@@ -584,8 +593,21 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         for (String sKey : so_express.keySet()) {
             HMAux hmAux = new HMAux();
             //
-            hmAux.put("so_express_code", sKey);
-            hmAux.put("so_express_result", so_express.get(sKey));
+            String[] sParts = sKey.split(Constant.MAIN_CONCAT_STRING);
+
+            String sFinal = sParts[0] + "\n" + sParts[1] + "\n" + sParts[2];
+
+            //hmAux.put("so_express_code", sFinal);
+            //hmAux.put("so_express_result", so_express.get(sKey));
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_1, hmAux_Trans.get("express_label"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, sParts[0] + "   -   " + sParts[2]);
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_2, hmAux_Trans.get("express_desc"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_2, sParts[1]);
+
+            hmAux.put(Generic_Results_Adapter.LABEL_ITEM_3, hmAux_Trans.get("express_status"));
+            hmAux.put(Generic_Results_Adapter.VALUE_ITEM_3, so_express.get(sKey));
 
             mSO_Express.add(hmAux);
         }
@@ -615,13 +637,23 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         int[] to = {R.id.act038_results_adapter_cell_tv_ttl, R.id.act038_results_adapter_cell_tv_msg_value};
 
 
+//        lv_results.setAdapter(
+//                new SimpleAdapter(
+//                        context,
+//                        so_express,
+//                        R.layout.act038_results_adapter_cell,
+//                        from,
+//                        to
+//                )
+//        );
+
+
         lv_results.setAdapter(
-                new SimpleAdapter(
+                new Generic_Results_Adapter(
                         context,
                         so_express,
-                        R.layout.act038_results_adapter_cell,
-                        from,
-                        to
+                        Generic_Results_Adapter.CONFIG_3_ITENS_NEW,
+                        hmAux_Trans
                 )
         );
 
@@ -645,7 +677,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         });
     }
 
-    private void showMsg(String ttl, String msg) {
+    @Override
+    public void showMsg(String ttl, String msg) {
         ToolBox.alertMSG(
                 context,
                 ttl,

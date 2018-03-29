@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public interface Act040_Main_View {
 
-    void loadSO_Pack_Express(SO_Pack_Express so_pack_express);
+    void loadSO_Pack_Express(SO_Pack_Express so_pack_express, String express_code);
 
     void loadMD_Partner(MD_Partner md_partner);
 
@@ -32,6 +32,8 @@ public interface Act040_Main_View {
     void setPartnerList(ArrayList<HMAux> partnerList);
 
     void showPD(String ttl, String msg);
+
+    void showMsg(String ttl, String msg);
 
     void showMsgToast(String msg);
 
