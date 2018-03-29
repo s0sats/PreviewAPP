@@ -31,4 +31,6 @@ public interface Act021_Main_View {
 
     void showPD(String ttl, String msg);
 
+    void setSoExpressVisibility(boolean isVisible);
+
 }

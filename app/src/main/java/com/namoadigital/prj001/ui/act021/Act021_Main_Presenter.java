@@ -21,4 +21,6 @@ public interface Act021_Main_Presenter {
     void defineSearchResultFlow(String result, String tracking);
 
     void onBackPressedClicked();
+
+    void checkSOExpressProfile();
 }

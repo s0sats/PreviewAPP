@@ -75,26 +75,29 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
                     );
 
             HMAux hmAuxSO = senListSO.get(0);
-
-            ArrayList<HMAux> senListSOExpress =
-                    (ArrayList<HMAux>) soPackExpressLocalDao.query_HM(
-                            new SO_Pack_Express_Local_Sql_011(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    hmAux_Trans
-                            ).toSqlQuery()
-                    );
-
-            HMAux hmAuxSOExpress = senListSOExpress.get(0);
-
             HMAux hmAuxTotal = new HMAux();
+            //
+            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO_EXPRESS,null)){
+                ArrayList<HMAux> senListSOExpress =
+                        (ArrayList<HMAux>) soPackExpressLocalDao.query_HM(
+                                new SO_Pack_Express_Local_Sql_011(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        hmAux_Trans
+                                ).toSqlQuery()
+                        );
 
-            int mTotal = ToolBox_Inf.convertStringToInt(hmAuxSO.get(SM_SO_Sql_015.SENT_QTY)) +
-                    ToolBox_Inf.convertStringToInt(hmAuxSOExpress.get(SM_SO_Sql_015.SENT_QTY));
+                HMAux hmAuxSOExpress = senListSOExpress.get(0);
 
 
-            hmAuxTotal.put(SM_SO_Sql_015.TYPE, hmAuxSOExpress.get(SM_SO_Sql_015.TYPE));
-            hmAuxTotal.put(SM_SO_Sql_015.SENT_QTY, String.valueOf(mTotal));
+                int mTotal = ToolBox_Inf.convertStringToInt(hmAuxSO.get(SM_SO_Sql_015.SENT_QTY)) +
+                        ToolBox_Inf.convertStringToInt(hmAuxSOExpress.get(SM_SO_Sql_015.SENT_QTY));
 
+
+                hmAuxTotal.put(SM_SO_Sql_015.TYPE, hmAuxSO.get(SM_SO_Sql_015.TYPE));
+                hmAuxTotal.put(SM_SO_Sql_015.SENT_QTY, String.valueOf(mTotal));
+            }else{
+                hmAuxTotal = hmAuxSO;
+            }
 
             senList.add(hmAuxTotal);
 

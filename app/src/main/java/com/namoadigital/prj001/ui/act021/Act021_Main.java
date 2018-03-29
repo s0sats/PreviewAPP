@@ -274,6 +274,7 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //
         hideSoftKeyboard();
         //
+        mPresenter.checkSOExpressProfile();
         mPresenter.getPendencies();
         mPresenter.getSync();
     }
@@ -526,6 +527,11 @@ public class Act021_Main extends Base_Activity implements Act021_Main_View {
         //opts.add(aux);
 
         return opts;
+    }
+
+    @Override
+    public void setSoExpressVisibility(boolean isVisible) {
+        btn_so_express.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     @Override
