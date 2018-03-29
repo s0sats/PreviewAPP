@@ -1118,12 +1118,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (!hmAux.isEmpty() && hmAux.size() > 0) {
                 for (Map.Entry<String, String> item : hmAux.entrySet()) {
                     HMAux aux = new HMAux();
-                    String pk = item.getKey();
+                    String [] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);;
                     String status = item.getValue();
-                    String soInfo = pk;
+                    String soInfo = pk[0];
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", "" + soInfo);
+                    mHmAux.put("label", "" + soInfo + "  -  " + pk[2] + "\n" + pk[1]);
                     mHmAux.put("type", "SO_EXPRESS");
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", soInfo + " / " + status);

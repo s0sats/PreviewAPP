@@ -25,7 +25,6 @@ import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -64,7 +63,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                                 product_code,
                                 express_code
                         ).toSqlQuery()
-                )
+                ),
+                express_code
         );
     }
 
@@ -185,9 +185,12 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 connectionStatusAlter = true;
                 mView.setConnectionStatusAlter(connectionStatusAlter);
                 //
-                ToolBox_Inf.showNoConnectionDialog(context);
+                //ToolBox_Inf.showNoConnectionDialog(context);
+                mView.showMsg(
+                        hmAux_Trans.get("express_send_error_ttl"),
+                        hmAux_Trans.get("express_send_error_msg")
+                );
             } else {
-
             }
 
             mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
