@@ -172,7 +172,13 @@ public class SO_Header_Adapter extends BaseAdapter {
         //
         tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
         //
-        tv_so_prefix_code.setText(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
+        if(!so.get(SM_SODao.SO_PREFIX).isEmpty()) {
+            ll_prefix_code.setVisibility(View.VISIBLE);
+            tv_so_prefix_code.setText(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
+        }else{
+            tv_so_prefix_code.setText("");
+            ll_prefix_code.setVisibility(View.INVISIBLE);
+        }
         //
         tv_so_id_lbl.setText(hmAux_Trans.get("so_id_lbl"));
         tv_so_id_val.setText(so.get(SM_SODao.SO_ID));
@@ -307,7 +313,6 @@ public class SO_Header_Adapter extends BaseAdapter {
         }
 
         if(so.get(Constant.PARAM_KEY_TYPE).equals(Constant.PARAM_KEY_TYPE_SO)) {
-            ll_prefix_code.setVisibility(View.VISIBLE);
             ll_priority.setVisibility(View.VISIBLE);
             ll_deadline.setVisibility(View.VISIBLE);
             ll_contract.setVisibility(View.VISIBLE);
@@ -315,7 +320,6 @@ public class SO_Header_Adapter extends BaseAdapter {
             ll_category_price.setVisibility(View.VISIBLE);
             ll_segment.setVisibility(View.VISIBLE);
         }else{
-            ll_prefix_code.setVisibility(View.INVISIBLE);
             ll_so_id.setVisibility(View.GONE);
             ll_priority.setVisibility(View.GONE);
             ll_deadline.setVisibility(View.GONE);
