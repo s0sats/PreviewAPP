@@ -162,6 +162,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("alert_remove_room_confirm_msg");
         transList.add("alert_user_list_user_lbl");
         transList.add("alert_user_list_no_user_lbl");
+        transList.add("alert_no_room_info_ttl");
+        transList.add("alert_no_room_info_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
@@ -267,18 +268,27 @@ public class Act034_Room extends BaseFragment {
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
                 public void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        mRoom_Code = room_code;
-                        mRoom_Type = room_type;
-                        info_room_desc = room_desc;
-                        info_room_image = image_path;
-                        //
-                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                        mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
+                    if(!room_type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SYS)) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            mRoom_Code = room_code;
+                            mRoom_Type = room_type;
+                            info_room_desc = room_desc;
+                            info_room_image = image_path;
+                            //
+                            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                            mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
                     } else {
-                        ToolBox_Inf.showNoConnectionDialog(context);
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_no_room_info_ttl"),
+                                hmAux_Trans.get("alert_no_room_info_msg"),
+                                null,
+                                0
+                        );
                     }
-
                 }
             });
             //
