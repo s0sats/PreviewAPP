@@ -47,6 +47,7 @@ import java.util.Date;
 public class WS_Cleanning extends IntentService {
 
     private String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
+    private int qtyDaysToSub = 10;
 
     public WS_Cleanning() {
         super("WS_Cleanning");
@@ -77,7 +78,7 @@ public class WS_Cleanning extends IntentService {
                 formApDao.query(
                         new WS_Cleaning_Sql_006(
                                 ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                                sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
                         ).toSqlQuery()
                 );
         //
@@ -131,7 +132,7 @@ public class WS_Cleanning extends IntentService {
         // Remove TODOS OS ARQUIVOS vinculados a S.O
         ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) sm_soDao.query(
                 new WS_Cleaning_Sql_003(
-                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
                 ).toSqlQuery()
         );
 
@@ -169,7 +170,7 @@ public class WS_Cleanning extends IntentService {
         // Remove TODAS AS S.O. Express
         soPackExpressLocalDao.remove(
                 new WS_Cleaning_Sql_008(
-                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
                 ).toSqlQuery()
         );
     }
@@ -207,7 +208,7 @@ public class WS_Cleanning extends IntentService {
 
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
                 new WS_Cleaning_Sql_001(
-                        sDTFormat_30_Days("yyyy-MM-dd HH:mm:ss Z")
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
                 ).toSqlQuery()
         );
 
@@ -220,7 +221,7 @@ public class WS_Cleanning extends IntentService {
 
         ArrayList<HMAux> hmAuxFiles = (ArrayList<HMAux>) ge_fileDao.query_HM(
                 new WS_Cleaning_Sql_002(
-                        sDTFormat_35_Days("yyyy-MM-dd HH:mm:ss Z")
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
                 ).toSqlQuery()
         );
 
@@ -301,9 +302,51 @@ public class WS_Cleanning extends IntentService {
 
         fcmMessageDao.remove(
                 new FCMMessage_Sql_006(
-                        sDTFormat_21_Days()
+                        sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z",qtyDaysToSub)
                 ).toSqlQuery()
         );
+    }
+
+    public String sDTFormat_Sub_Days(String sDTFormatS,int days_to_sub) {
+        String sResults = "";
+        Calendar ca1 = Calendar.getInstance();
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - (days_to_sub + 1) );
+        //
+        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
+            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
+                StringBuffer toFix = super.format(date, toAppendTo, pos);
+                return toFix.insert(toFix.length() - 2, ':');
+            }
+        };
+
+        try {
+            sResults = sdf.format(ca1.getTime());
+        } catch (Exception var5) {
+            sResults = "1900-01-01 00:00:00";
+        }
+
+        return sResults;
+    }
+
+    public String sDTFormat_10_Days(String sDTFormatS) {
+        String sResults = "";
+        Calendar ca1 = Calendar.getInstance();
+        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 11);
+
+        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
+            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
+                StringBuffer toFix = super.format(date, toAppendTo, pos);
+                return toFix.insert(toFix.length() - 2, ':');
+            }
+        };
+
+        try {
+            sResults = sdf.format(ca1.getTime());
+        } catch (Exception var5) {
+            sResults = "1900-01-01 00:00:00";
+        }
+
+        return sResults;
     }
 
     public String sDTFormat_5_Days(String sDTFormatS) {
