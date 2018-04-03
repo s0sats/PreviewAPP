@@ -53,7 +53,8 @@ public class Sql_Act008_002 implements Specification {
                         "   '' sketch_url_local,\n" +
                         "   0 sketch_lines,\n" +
                         "   0 sketch_columns,\n" +
-                        "   '#FFFFFF' sketch_color\n" +
+                        "   '#FFFFFF' sketch_color\n," +
+                        "   1 flag_offline\n" +
                         " FROM\n " +
                             GE_Custom_Form_LocalDao.TABLE + " l \n" +
                         " \n" +
