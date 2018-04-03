@@ -975,11 +975,11 @@ public class ToolBox_Con {
         NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         //
-        if (wifi.isAvailable() && wifi.isConnected()) {
+        if (wifi != null && wifi.isAvailable() && wifi.isConnected()) {
             return "WIFI";
         }
         //
-        if (mobile.isAvailable() && mobile.isConnected()) {
+        if (mobile != null && mobile.isAvailable() && mobile.isConnected()) {
             return "MOBILE";
         }
         //

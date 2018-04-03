@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
@@ -119,7 +120,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         if (partnerList.size() == 1) {
             setMD_Partner(
                     Long.parseLong(partnerList.get(0).get("customer_code")),
-                    Long.parseLong(partnerList.get(0).get("partner_id"))
+                    Long.parseLong(partnerList.get(0).get(SearchableSpinner.ID))
             );
         }
     }
