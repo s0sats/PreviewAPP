@@ -391,9 +391,9 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 break;
 
             // FORM_AP
-            case 7:
+            /*case 7:
                 results = false;
-                break;
+                break;*/
 
             // SO
             case 8:
@@ -405,7 +405,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 results = false;
                 break;
 
-            // 0 - Other IMG / 1 - Me IMG / 2 - Other TXT / 3 - Me TXT
+            // 0 - Other IMG / 1 - Me IMG / 2 - Other TXT / 3 - Me TXT / 7 - FORM_AP
             default:
                 results = true;
                 break;
@@ -715,6 +715,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     }
 
     private void processForm_AP(JSONObject message, HMAux hmAux, View convertView) {
+        TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
         TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_ttl);
         TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_hour_ttl);
         TextView tv_type = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_type_label);
@@ -756,6 +757,12 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //
+        if (hmAuxColors.get(hmAux.get("user_code")) == null) {
+            hmAuxColors.put(hmAux.get("user_code"), String.valueOf(ToolBox_Inf.userColor()));
+        }
+        tv_name.setText(hmAux.get("user_nick"));
+        tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
         //
         tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
         //

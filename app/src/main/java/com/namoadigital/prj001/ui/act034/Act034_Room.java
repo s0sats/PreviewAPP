@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act034_Room_Adapter;
@@ -40,6 +41,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -77,6 +80,7 @@ public class Act034_Room extends BaseFragment {
 
     private String mRoom_Code = "";
     private String mRoom_Type = "";
+    private HashMap<String,String> filtersValues = new HashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -128,7 +132,8 @@ public class Act034_Room extends BaseFragment {
         //
         messageDao = new CH_MessageDao(context);
         //
-        filter_workgroup = filter_private = filter_so = filter_pa = false;
+        //filter_workgroup = filter_private = filter_so = filter_pa = false;
+        setIniFilterValues();
         //
         setFilterIconColor();
     }
@@ -263,18 +268,27 @@ public class Act034_Room extends BaseFragment {
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
                 public void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        mRoom_Code = room_code;
-                        mRoom_Type = room_type;
-                        info_room_desc = room_desc;
-                        info_room_image = image_path;
-                        //
-                        SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                        mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
+                    if(!room_type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SYS)) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            mRoom_Code = room_code;
+                            mRoom_Type = room_type;
+                            info_room_desc = room_desc;
+                            info_room_image = image_path;
+                            //
+                            SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                            mMain.startRoomInfoTask(singletonWebSocket.mSocket.id(), room_code);
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
                     } else {
-                        ToolBox_Inf.showNoConnectionDialog(context);
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_no_room_info_ttl"),
+                                hmAux_Trans.get("alert_no_room_info_msg"),
+                                null,
+                                0
+                        );
                     }
-
                 }
             });
             //
@@ -447,6 +461,45 @@ public class Act034_Room extends BaseFragment {
                 }
         );
 
+    }
+
+    public void setFilterValues(HashMap<String,String> filtersValues){
+        this.filtersValues = filtersValues;
+    }
+
+    public void setIniFilterValues(){
+        filter_workgroup = filter_private = filter_so = filter_pa = false;
+        //
+        for(Map.Entry<String, String> item : filtersValues.entrySet()){
+            switch (item.getKey()){
+                case Constant.CHAT_ROOM_TYPE_WORKGROUP:
+                    filter_workgroup = Boolean.parseBoolean(item.getValue());
+                    break;
+                case Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER:
+                    filter_private = Boolean.parseBoolean(item.getValue());
+                    break;
+                case Constant.CHAT_ROOM_TYPE_SO:
+                    filter_so = Boolean.parseBoolean(item.getValue());
+                    break;
+                case Constant.CHAT_ROOM_TYPE_AP:
+                    filter_pa = Boolean.parseBoolean(item.getValue());
+                    break;
+                case Constant.PARAM_KEY_TYPED_FILTER:
+                    mket_search_room.setText(item.getValue());
+                    break;
+            }
+        }
+    }
+
+    public HashMap<String, String> getFilterArrayValues(){
+        if(bStatus){
+            filtersValues.put(Constant.CHAT_ROOM_TYPE_WORKGROUP, String.valueOf(filter_workgroup));
+            filtersValues .put(Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER, String.valueOf(filter_private));
+            filtersValues.put(Constant.CHAT_ROOM_TYPE_SO, String.valueOf(filter_so));
+            filtersValues.put(Constant.CHAT_ROOM_TYPE_AP, String.valueOf(filter_pa));
+            filtersValues.put(Constant.PARAM_KEY_TYPED_FILTER, mket_search_room.getText().toString());
+        }
+        return filtersValues;
     }
 
     //public void showRoomInfoDialog(HMAux auxParam) {

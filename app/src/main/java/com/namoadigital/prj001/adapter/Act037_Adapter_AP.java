@@ -286,7 +286,10 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 for (HMAux hmAux : data_filtered) {
                     String ap_desc = ToolBox_Inf.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.AP_DESCRIPTION).toLowerCase());
-                    if (ap_desc.contains(constraint.toString().toLowerCase())) {
+                    String serial_id = ToolBox_Inf.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.SERIAL_ID).toLowerCase());
+                    if ( ap_desc.contains(constraint.toString().toLowerCase()) ||
+                         serial_id.contains(constraint.toString().toLowerCase())
+                    ) {
                         filterList.add(hmAux);
                     }
                 }

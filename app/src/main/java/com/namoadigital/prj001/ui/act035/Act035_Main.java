@@ -87,6 +87,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -1948,6 +1949,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
             ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
             ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
+            LinearLayout ll_msg = (LinearLayout) view.findViewById(R.id.act034_room_info_ll_msg_layout);
+            //infla layout da msg
+            View msgLayout =  null;
             //
             TextView tv_prefix_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
             //
@@ -1966,6 +1970,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
                 JSONObject jsonObject = new JSONObject(ch_Message.getMsg_obj());
                 JSONObject msg = jsonObject.getJSONObject("message");
+                //
+                //msgLayout = inflateMsgLayout(ch_Message);
 
                 if (msg.getString("type").equalsIgnoreCase("TEXT")) {
                     tv_room_desc.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg.getString("data")), 80));
@@ -2019,6 +2025,35 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             disablePD();
         }
 
+    }
+
+    private View inflateMsgLayout(CH_Message ch_Message) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View msgView = null;
+        //
+        try {
+            JSONObject msg_obj = new JSONObject(ch_Message.getMsg_obj());
+            HashMap<String,String> hmAux =  ToolBox_Inf.JsonToHashMap(msg_obj,"message");
+            //
+            switch(ch_Message.getMsg_type()){
+                case Constant.CHAT_MESSAGE_TYPE_TEXT:
+                    if(ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(ch_Message.getUser_code()))){
+                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_text_me,null);
+                    }else{
+                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_text_other,null);
+                    }
+                    break;
+                case Constant.CHAT_MESSAGE_TYPE_IMAGE:
+                    break;
+                default:
+                    break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //
+        return msgView;
     }
 
     public void updateMemberImage(String user_code, String local_url) {

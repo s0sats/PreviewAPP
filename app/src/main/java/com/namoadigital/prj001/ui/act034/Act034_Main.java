@@ -56,6 +56,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -92,6 +93,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     //private DownloadMemberImgTask downloadMemberImgTask;
     private UserListInfoTask userListInfoTask;
     private long selected_customer;
+    private HashMap<String,String> auxFilters;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -160,6 +162,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         transList.add("alert_remove_room_confirm_msg");
         transList.add("alert_user_list_user_lbl");
         transList.add("alert_user_list_no_user_lbl");
+        transList.add("alert_no_room_info_ttl");
+        transList.add("alert_no_room_info_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -243,6 +247,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         bTT = getIntent().getBooleanExtra(NotificationReceiver.NOTIFICATION, false);
+        auxFilters = new HashMap<>();
         //Por padrão, seta o customer atual como o selecionado
         selected_customer = ToolBox_Con.getPreference_Customer_Code(context);
         if (bundle != null) {
@@ -250,7 +255,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
             String mReload = bundle.getString(Constant.CHAT_RELOAD, "0");
             selected_customer = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
             lastFirstAdapterPosition = bundle.getString(Constant.CHAT_ROOM_POSITION, "0");
-            //
+            if(bundle.containsKey(CH_RoomDao.ROOM_TYPE)){
+                auxFilters = (HashMap<String, String>) bundle.getSerializable(CH_RoomDao.ROOM_TYPE);
+            }
             if (mReload.equalsIgnoreCase("1")) {
                 HMAux item = new HMAux();
                 item.put(CH_RoomDao.ROOM_CODE, returnedRoomCode);
@@ -323,6 +330,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         act034_room.setBaInfra(this);
         act034_room.setHmAux_Trans(hmAux_Trans);
         act034_room.loadDataToScreen();
+        act034_room.setFilterValues(auxFilters);
 
     }
 
@@ -464,6 +472,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
         bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer);
         bundle.putString(Constant.CHAT_ROOM_POSITION, lastFirstAdapterPosition);
+        bundle.putSerializable(CH_RoomDao.ROOM_TYPE,act034_room.getFilterArrayValues());
         //
         mIntent.putExtras(bundle);
         //

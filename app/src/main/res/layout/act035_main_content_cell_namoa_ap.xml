@@ -8,414 +8,459 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@drawable/border_grey_round"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-        <TextView
-            android:id="@+id/act035_main_content_cell_namoa_ap_tv_module_ttl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Formulario - trad"
-            android:textSize="@dimen/font_size_title_md"
-            android:textStyle="bold"
+        <View
+            android:id="@+id/act035_main_content_cell_whats_v_space_left"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
             android:visibility="gone" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_form_ttl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="Formulario - trad"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/act035_main_content_cell_namoa_ap_iv_sync_upload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="2dp"
-                android:padding="2dp"
-                android:src="@drawable/ic_arrow_up_thick_black_24dp"
-                android:tint="@color/namoa_dark_blue"
-                android:visibility="gone" />
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/act035_main_content_cell_whats_iv_other_img"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginRight="-6dp"
+            android:background="@drawable/ic_play" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_type_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Tipo:"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_type_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="Teste" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_form_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Form:"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_form_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="Inspec. Bug" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_data_serv_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Seq.Exec:"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_data_serv_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="666" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_product_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Produto -trad:"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_product_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="666 - ENXOFRE - TRAD" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_serial_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Serial -trad:"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_serial_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="HUEHUE-BR-BR -TRAD" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:background="@drawable/bg_msg_from"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:padding="10dp">
 
             <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_ttl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ActionPlan - Trad"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_code_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="AP.Code - trad"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_code_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="66 - TRAD" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_status_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Status - trad"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_status_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="ATRASADO - TRAD"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_what_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="O que - trad"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_what_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="Wtf? - Traduzir" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_when_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Quando - trad"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_when_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="2049/01/01 00;00" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_who_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="Quem - trad"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_who_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="(-1) Ronaldo - trad" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act035_main_content_cell_namoa_ap_ll_action_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-
-                    android:id="@+id/act035_main_content_cell_namoa_ap_iv_download_ap"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_namoa_main_states"
-                    android:focusable="false"
-                    android:padding="10dp"
-                    android:text="N - Form - trad"
-                    android:textColor="@color/padrao_WHITE" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="30dp"
-                android:layout_height="match_parent" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/act035_main_content_cell_namoa_ap_iv_join_ap"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_namoa_main_states"
-                    android:focusable="false"
-                    android:padding="10dp"
-                    android:text="N - AP - trad"
-                    android:textColor="@color/padrao_WHITE" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right|center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ap_tv_hour_ttl"
+                android:id="@+id/act035_main_content_cell_whats_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="11:30"
-                android:textColor="#9c9b9b"
-                android:textSize="12sp"
-                android:textStyle="normal"
+                android:text="N.Hugo"
+                android:textColor="#f1194f"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 android:typeface="normal" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/act035_main_content_cell_namoa_ap_tv_module_ttl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Formulario - trad"
+                android:textSize="@dimen/font_size_title_md"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_form_ttl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="Formulario - trad"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_iv_sync_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="2dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_arrow_up_thick_black_24dp"
+                    android:tint="@color/namoa_dark_blue"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_type_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Tipo:"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_type_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Teste" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_form_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Form:"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_form_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Inspec. Bug" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_data_serv_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Seq.Exec:"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_data_serv_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="666" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_product_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Produto -trad:"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_product_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="666 - ENXOFRE - TRAD" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_serial_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Serial -trad:"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_serial_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="HUEHUE-BR-BR -TRAD" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_ttl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ActionPlan - Trad"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_code_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="AP.Code - trad"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_code_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="66 - TRAD" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_status_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Status - trad"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_status_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="ATRASADO - TRAD"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_what_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="O que - trad"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_what_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="Wtf? - Traduzir" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_when_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Quando - trad"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_when_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="2049/01/01 00;00" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_who_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Quem - trad"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/act035_main_content_cell_namoa_ap_tv_ap_who_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="(-1) Ronaldo - trad" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act035_main_content_cell_namoa_ap_ll_action_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Button
+
+                        android:id="@+id/act035_main_content_cell_namoa_ap_iv_download_ap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/btn_namoa_main_states"
+                        android:focusable="false"
+                        android:padding="10dp"
+                        android:text="N - Form - trad"
+                        android:textColor="@color/padrao_WHITE" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/act035_main_content_cell_namoa_ap_iv_join_ap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/btn_namoa_main_states"
+                        android:focusable="false"
+                        android:padding="10dp"
+                        android:text="N - AP - trad"
+                        android:textColor="@color/padrao_WHITE" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_msg_code_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="2048.666"
+                    android:textColor="#9c9b9b"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    android:typeface="normal"
+                    android:visibility="gone"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/act035_main_content_cell_namoa_ap_tv_hour_ttl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="11:30"
+                    android:textColor="#9c9b9b"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    android:typeface="normal" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
