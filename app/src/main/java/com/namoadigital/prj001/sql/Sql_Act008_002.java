@@ -5,7 +5,7 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by d.luche on 12/05/2017.
- *
+ * <p>
  * Query que retorna dados do produto, no modelo md_product, porem buscando da
  * tabela custom_form_local.
  * Usada no caso de um form agendado chamar a act008
@@ -13,8 +13,6 @@ import com.namoadigital.prj001.database.Specification;
  * Após a mudança do obj md_product, foi necessario adicionar os campos
  * un, sketch_code, sketch_url, sketch_url_local, sketch_lines, sketch_columns e sketch_olor
  * com valores chumbados para q o obj gerado pela query não desse NULL
- *
- *
  */
 
 public class Sql_Act008_002 implements Specification {
@@ -47,6 +45,7 @@ public class Sql_Act008_002 implements Specification {
                         "   l.custom_product_desc product_desc,\n" +
                         "   l.require_serial,\n" +
                         "   l.allow_new_serial_cl,\n" +
+                        "   '0' flag_offline,\n" +
                         "   'TST' un,\n" +
                         "   0 sketch_code,\n" +
                         "   '' sketch_url,\n" +
@@ -56,14 +55,14 @@ public class Sql_Act008_002 implements Specification {
                         "   '#FFFFFF' sketch_color\n," +
                         "   1 flag_offline\n" +
                         " FROM\n " +
-                            GE_Custom_Form_LocalDao.TABLE + " l \n" +
+                        GE_Custom_Form_LocalDao.TABLE + " l \n" +
                         " \n" +
                         " WHERE\n " +
-                        "  l.customer_code = '"+customer_code+"' \n" +
-                        "  and l.custom_form_type = '"+custom_form_type+"'\n " +
-                        "  and l.custom_form_code = '"+custom_form_code+"'\n" +
-                        "  and l.custom_form_version = '"+custom_form_version+"'\n" +
-                        "  and l.custom_form_data = '"+custom_form_data+"';")
+                        "  l.customer_code = '" + customer_code + "' \n" +
+                        "  and l.custom_form_type = '" + custom_form_type + "'\n " +
+                        "  and l.custom_form_code = '" + custom_form_code + "'\n" +
+                        "  and l.custom_form_version = '" + custom_form_version + "'\n" +
+                        "  and l.custom_form_data = '" + custom_form_data + "';")
                 .toString();
     }
 }
