@@ -1275,18 +1275,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         for (int i = 0; i < customFFs.size(); i++) {
 
             if (ipage == -1) {
-                if (!customFFs.get(i).isValid()) {
+                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                     numberOfErrors += 1;
                 }
 
-                customFFs.get(i).setValidationBackGround();
+                customFFs.get(i).setValidationBackGroundDots();
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
-                    if (!customFFs.get(i).isValid()) {
+                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         numberOfErrors += 1;
                     }
 
-                    customFFs.get(i).setValidationBackGround();
+                    customFFs.get(i).setValidationBackGroundDots();
                 } else {
                 }
             }
@@ -1303,18 +1303,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
         for (int i = 0; i < customFFs.size(); i++) {
 
             if (ipage == -1) {
-                if (!customFFs.get(i).isValid()) {
+                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                     numberOfErrors += 1;
                 }
 
-                customFFs.get(i).setValidationBackGround();
+                customFFs.get(i).setValidationBackGroundDots();
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
-                    if (!customFFs.get(i).isValid()) {
+                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         numberOfErrors += 1;
                     }
 
-                    customFFs.get(i).setValidationBackGround();
+                    customFFs.get(i).setValidationBackGroundDots();
                 } else {
                 }
             }
@@ -1337,7 +1337,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             if (ipage == -1) {
 
-                if (!customFFs.get(i).isValid()) {
+                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                     aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
                     aux.put("value", "ERROR");
                 } else {
@@ -1352,7 +1352,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
             } else {
                 if (ipage == customFFs.get(i).getmPage()) {
-                    if (!customFFs.get(i).isValid()) {
+                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
                         aux.put("value", "ERROR");
                     } else {
