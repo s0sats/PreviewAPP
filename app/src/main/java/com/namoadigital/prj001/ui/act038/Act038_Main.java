@@ -224,6 +224,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_ap_save_msg");
         transList.add("alert_ap_exit_no_save_tll");
         transList.add("alert_ap_exit_no_save_msg");
+        transList.add("alert_discard_changes_ttl");
+        transList.add("alert_discard_changes_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -336,7 +338,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_what_ttl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                show_Edit_InfoDialog(0);
+                show_Edit_InfoDialogV2(0);
             }
         });
         editable_views_list.add(et_form_what_ttl);
@@ -348,7 +350,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_where_ttl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                show_Edit_InfoDialog(1);
+                show_Edit_InfoDialogV2(1);
             }
         });
         editable_views_list.add(et_form_where_ttl);
@@ -360,7 +362,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_why_ttl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                show_Edit_InfoDialog(2);
+                show_Edit_InfoDialogV2(2);
             }
         });
         editable_views_list.add(et_form_why_ttl);
@@ -372,7 +374,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_how_ttl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                show_Edit_InfoDialog(3);
+                show_Edit_InfoDialogV2(3);
             }
         });
         editable_views_list.add(et_form_how_ttl);
@@ -389,7 +391,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         et_form_comments_ttl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                show_Edit_InfoDialog(4);
+                show_Edit_InfoDialogV2(4);
             }
         });
         editable_views_list.add(et_form_comments_ttl);
@@ -1353,6 +1355,146 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         );
     }
 
+    /**
+     * Metodo antigo que alterava o dado diretamente no EditText
+     * Os dados algora só devem ser salvos se o usr clicar em um
+     * dos botões de ação.(Retroceder,Avançar ou Aplicar)
+     * Implementado em 03/04/18
+     * @param index
+     */
+    public void show_Edit_InfoDialogV2(int index) {
+
+        if (index >= 0 && index < editable_views_list_long.size()) {
+            editable_views_current = (TextView) editable_views_list_long.get(index);
+            editable_views_current_Index = index;
+        }
+
+        try {
+            //
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogTheme);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act038_edit_info, null);
+
+            final TextView tv_field_desc = (TextView) view.findViewById(R.id.act038_edit_info_tv_field_desc);
+            final MKEditTextNM mk_value = (MKEditTextNM) view.findViewById(R.id.act038_edit_info_mk_value);
+            final ImageView iv_prev = (ImageView) view.findViewById(R.id.act038_edit_info_iv_prev);
+            final ImageView iv_next = (ImageView) view.findViewById(R.id.act038_edit_info_iv_next);
+            final ImageView iv_cancel = (ImageView) view.findViewById(R.id.act038_edit_info_iv_cancel);
+            final ImageView iv_save = (ImageView) view.findViewById(R.id.act038_edit_info_iv_save);
+
+            tv_field_desc.setText(editable_views_list_long_names.get(index));
+
+            mk_value.setOnReportTextChangeListner(null);
+            //
+            mk_value.setText(editable_views_current.getText().toString().trim());
+            //
+            //mk_value.setOnReportTextChangeListner(txtChange);
+            //
+            iv_prev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Salva alterações no texto
+                    commitMketChages(mk_value.getText().toString().trim());
+                    //
+                    int indexAux = editable_views_current_Index - 1;
+
+                    if (indexAux >= 0 && indexAux < editable_views_list_long.size()) {
+                        editable_views_current = (TextView) editable_views_list_long.get(indexAux);
+                        editable_views_current_Index = indexAux;
+                        //
+                        tv_field_desc.setText(editable_views_list_long_names.get(indexAux));
+                        //
+                        mk_value.setOnReportTextChangeListner(null);
+                        //
+                        mk_value.setText(editable_views_current.getText().toString().trim());
+                        //
+                        //mk_value.setOnReportTextChangeListner(txtChange);
+                    } else {
+                    }
+                }
+            });
+            //
+            iv_next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Salva alterações no texto
+                    commitMketChages(mk_value.getText().toString().trim());
+                    //
+                    int indexAux = editable_views_current_Index + 1;
+
+                    if (indexAux >= 0 && indexAux < editable_views_list_long.size()) {
+                        editable_views_current = (TextView) editable_views_list_long.get(indexAux);
+                        editable_views_current_Index = indexAux;
+                        //
+                        tv_field_desc.setText(editable_views_list_long_names.get(indexAux));
+                        //
+                        mk_value.setOnReportTextChangeListner(null);
+                        //
+                        mk_value.setText(editable_views_current.getText().toString().trim());
+                        //
+                        //mk_value.setOnReportTextChangeListner(txtChange);
+                    } else {
+                    }
+                }
+            });
+            //
+            builder
+                    .setView(view)
+                    .setCancelable(false);
+            //
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            //
+            iv_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final AlertDialog innerDialog = dialog;
+                    String txtNew = mk_value.getText().toString().trim();
+                    String txtOld = editable_views_current.getText().toString().trim();
+                    if(!txtNew.equals(txtOld)){
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_discard_changes_ttl"),
+                                hmAux_Trans.get("alert_discard_changes_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        innerDialog.dismiss();
+                                    }
+                                },
+                                1
+                        );
+                    }else{
+                        dialog.dismiss();
+                    }
+                }
+            });
+            //
+            iv_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    commitMketChages(mk_value.getText().toString().trim());
+                    //
+                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+
+    }
+
+    private void commitMketChages(String new_text) {
+        editable_views_current.setText(new_text);
+    }
+
+    /**
+     * Metodo antigo que alterava o dado diretamente no EditText
+     * Foi substituido pelo V2
+     * @param index
+     */
     public void show_Edit_InfoDialog(int index) {
 
         if (index >= 0 && index < editable_views_list_long.size()) {
