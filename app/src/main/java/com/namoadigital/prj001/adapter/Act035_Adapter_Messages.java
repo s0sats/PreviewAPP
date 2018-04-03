@@ -833,7 +833,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) != null ? item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) : "");
 
         if (item.get(GE_Custom_Form_ApDao.AP_WHEN) != null &&
-                item.get(GE_Custom_Form_ApDao.AP_WHEN).equalsIgnoreCase("null") &&
+                !item.get(GE_Custom_Form_ApDao.AP_WHEN).equalsIgnoreCase("null") &&
                 !item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()) {
             tv_ap_when_val.setText(
                     ToolBox_Inf.millisecondsToString(
