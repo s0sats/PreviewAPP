@@ -1316,8 +1316,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         messages = (ArrayList<HMAux>) chMessageDao.query_HM(
                                 new CH_Message_Sql_008(mRoom_code).toSqlQuery()
                         );
-
-                        Log.d("PC", messages.get(0).get("msg_obj"));
+                        //
+                        Log.d("PC","messages.size = "+ (messages != null ? String.valueOf(messages.size()): "null"));
+                        if(messages != null && messages.size() > 0) {
+                            Log.d("PC", messages.get(0).get("msg_obj"));
+                        }
 
                         while (messages.size() > 0) {
                             //
@@ -1361,6 +1364,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         Log.d("PROCESSO_ASYN", "continuei apos m2");
 
                     } catch (Exception e) {
+                        Log.d("PC", "PC Exception\n"+e.toString());
                     } finally {
                         isProcessing_C_Message = false;
                         //

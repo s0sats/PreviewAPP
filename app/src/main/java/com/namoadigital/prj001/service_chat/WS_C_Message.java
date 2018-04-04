@@ -136,7 +136,7 @@ public class WS_C_Message extends IntentService {
                         chMessage.setRead(1);
                         chMessage.setRead_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     }
-                    chMessage.setStatus_update(1);//verificar a necessidade disso
+                    chMessage.setStatus_update(1);//Sim é necessário
                     chMessage.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                     //Monta obj para chamar sDelivered
                     Chat_S_Delivered sDelivered = new Chat_S_Delivered();
@@ -247,6 +247,15 @@ public class WS_C_Message extends IntentService {
                 }else{
                     ch_message.setTmp(0);
                     hasNewMsg = true;
+                    //
+                    if(
+                        ws_event.equals(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)
+                        && ToolBox_Con.getPreference_User_Code(getApplicationContext()).equals(String.valueOf(ch_message.getUser_code()))
+                        && ch_message.getDelivered() == 1
+                    ){
+                        ch_message.setStatus_update(1);
+                        ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
+                    }
                 }
                 //
                 if (ch_message.getDelivered() == 0 && !ws_event.equals(Constant.CHAT_EVENT_C_MESSAGE_FCM)) {
