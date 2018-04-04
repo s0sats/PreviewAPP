@@ -512,9 +512,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_whats_text_data,
                 R.layout.act035_main_content_cell_whats_text_end,
                 R.layout.act035_main_content_cell_whats_text_trans,
-                R.layout.act035_main_content_cell_namoa_ap,
+                R.layout.act035_main_content_cell_namoa_ap_other,
                 R.layout.act035_main_content_cell_whats_text_other,
                 R.layout.act035_main_content_cell_whats_text_no_read,
+                R.layout.act035_main_content_cell_namoa_ap_me,
                 this.dados,
                 hmAux_Trans,
                 hmAux_Trans_Extra

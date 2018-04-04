@@ -47,6 +47,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_08;
     private int resource_09;
     private int resource_10;
+    private int resource_11;
 
     //
     private ArrayList<HMAux> data;
@@ -63,7 +64,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private String mResource_Name = "act037_adapter_ap";
 
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, int resource_10, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra) {
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, int resource_10, int resource_11, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
@@ -75,6 +76,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.resource_08 = resource_08;
         this.resource_09 = resource_09;
         this.resource_10 = resource_10;
+        this.resource_11 = resource_11;
 
         this.data = data;
 
@@ -315,7 +317,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 10;
+        return 11;
     }
 
     @Override
@@ -349,7 +351,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 return 6;
 
             } else if (message.getString("type").equalsIgnoreCase("FORM_AP")) {
-                return 7;
+                if (!item.get("user_code").equalsIgnoreCase(mUser_Code)) {
+                    return 7;
+                } else {
+                    return 10;
+                }
 
             } else if (message.getString("type").equalsIgnoreCase("SO")) {
                 return 8;
@@ -457,7 +463,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                     convertView = mInflater.inflate(resource_07, parent, false);
                     break;
 
-                // FORM_AP
+                // FORM_AP_other
                 case 7:
                     convertView = mInflater.inflate(resource_08, parent, false);
                     break;
@@ -470,6 +476,10 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 // NO READ
                 case 9:
                     convertView = mInflater.inflate(resource_10, parent, false);
+                    break;
+                // FORM_AP Mine
+                case 10:
+                    convertView = mInflater.inflate(resource_11, parent, false);
                     break;
             }
         }
@@ -524,9 +534,9 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 processTranslate(message, hmAux, convertView);
                 break;
 
-            // Form_AP
+            // Form_AP Other
             case 7:
-                processForm_AP(message, hmAux, convertView);
+                processForm_APOther(message, hmAux, convertView);
                 break;
 
             // SO
@@ -537,6 +547,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
             // NO READ
             case 9:
                 processNoRead(hmAux, convertView);
+                break;
+
+            // Form_AP Mine
+            case 10:
+                processForm_APMe(message, hmAux, convertView);
                 break;
         }
         return convertView;
@@ -714,7 +729,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         tv_message.setText(resultTranslate);
     }
 
-    private void processForm_AP(JSONObject message, HMAux hmAux, View convertView) {
+    private void processForm_APOther(JSONObject message, HMAux hmAux, View convertView) {
         TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
         TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_ttl);
         TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_hour_ttl);
@@ -763,6 +778,169 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         }
         tv_name.setText(hmAux.get("user_nick"));
         tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
+        //
+        tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
+        //
+        tv_hour.setText(
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get("msg_date"), ""),
+                        " HH:mm"
+                )
+        );
+        //
+        tv_type.setText(hmAux_Trans.get("form_type_lbl"));
+        tv_type_val.setText(
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + " - " +
+                        item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE_DESC)
+        );
+        //
+        tv_form_label.setText(hmAux_Trans.get("form_code_lbl"));
+        tv_form_val.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + " - " +
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + " - " +
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DESC)
+        );
+        //
+        tv_data_serv.setText(hmAux_Trans.get("form_data_lbl"));
+        tv_data_serv_val.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
+        //
+        tv_product.setText(hmAux_Trans.get("product_code_lbl"));
+        tv_product_val.setText(
+                item.get("ap_" + GE_Custom_Form_ApDao.PRODUCT_ID) + " - " +
+                        item.get("ap_" + GE_Custom_Form_ApDao.PRODUCT_DESC)
+        );
+        //
+        tv_serial.setText(hmAux_Trans.get("serial_lbl"));
+        tv_serial_val.setText(item.get("ap_" + GE_Custom_Form_ApDao.SERIAL_ID) != "null" ? item.get("ap_" + GE_Custom_Form_ApDao.SERIAL_ID) : "");
+        //
+        tv_ap_ttl.setText(hmAux_Trans.get("ap_ttl"));
+        //
+        tv_ap_code.setText(hmAux_Trans.get("ap_code_lbl"));
+        tv_ap_code_val.setText(
+                item.get(GE_Custom_Form_ApDao.AP_CODE) + " - " +
+                        item.get(GE_Custom_Form_ApDao.AP_DESCRIPTION)
+        );
+        tv_ap_status.setText(hmAux_Trans.get("ap_status_lbl"));
+        tv_ap_status_val.setText(
+                hmAux_Trans.get(item.get(
+                        GE_Custom_Form_ApDao.AP_STATUS
+                        )
+                )
+        );
+        ToolBox_Inf.setAPStatusColor(
+                context,
+                tv_ap_status_val,
+                item.get(GE_Custom_Form_ApDao.AP_STATUS)
+        );
+        tv_ap_what.setText(hmAux_Trans.get("ap_what_lbl"));
+
+        if (item.get(GE_Custom_Form_ApDao.AP_WHAT) != "null" && !item.get(GE_Custom_Form_ApDao.AP_WHAT).isEmpty()) {
+            tv_ap_what_val.setText(
+                    ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(item.get(GE_Custom_Form_ApDao.AP_WHAT)), 45)
+            );
+        } else {
+            tv_ap_what_val.setText("");
+        }
+        tv_ap_who.setText(hmAux_Trans.get("ap_who_lbl"));
+        tv_ap_who_val.setText(
+                item.get("ap_who_name") != "null" ? item.get("ap_who_name") : ""
+        );
+        tv_ap_when.setText(hmAux_Trans.get("ap_when_lbl"));
+        tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) != null ? item.get(GE_Custom_Form_ApDao.AP_WHO_NICK) : "");
+
+        if (item.get(GE_Custom_Form_ApDao.AP_WHEN) != null &&
+                !item.get(GE_Custom_Form_ApDao.AP_WHEN).equalsIgnoreCase("null") &&
+                !item.get(GE_Custom_Form_ApDao.AP_WHEN).isEmpty()) {
+            tv_ap_when_val.setText(
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_ApDao.AP_WHEN), ""),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+            );
+        } else {
+            tv_ap_when_val.setText("");
+            //tv_ap_when_val.setText(item.get(GE_Custom_Form_ApDao.AP_WHEN));
+        }
+
+        iv_download_ap.setTag(item);
+        iv_download_ap.setText(hmAux_Trans.get("lbl_checklist"));
+        iv_download_ap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                HashMap<String, String> itemAux = (HashMap<String, String>) v.getTag();
+
+                if (delegate != null) {
+                    delegate.download_AP(itemAux.get("pk"), itemAux.get("custom_form_url"));
+                }
+            }
+        });
+
+        iv_join_ap.setTag(item);
+        iv_join_ap.setText(hmAux_Trans.get("lbl_form_ap"));
+        iv_join_ap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                HashMap<String, String> itemAux = (HashMap<String, String>) v.getTag();
+
+                if (delegate != null) {
+                    delegate.join_AP(itemAux.get("pk"));
+                }
+            }
+        });
+    }
+
+    private void processForm_APMe(JSONObject message, HMAux hmAux, View convertView) {
+        TextView tv_name = (TextView) convertView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+        TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_ttl);
+        TextView tv_hour = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_hour_ttl);
+        TextView tv_type = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_type_label);
+        TextView tv_form_label = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_label);
+        TextView tv_data_serv = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_data_serv_lbl);
+        TextView tv_product = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_product_lbl);
+        TextView tv_serial = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_serial_lbl);
+        TextView tv_ap_ttl = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_ttl);
+        TextView tv_ap_code = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_code_lbl);
+        TextView tv_ap_status = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_status_lbl);
+        TextView tv_ap_what = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_what_lbl);
+        TextView tv_ap_who = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_who_lbl);
+        TextView tv_ap_when = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_when_lbl);
+        //
+        TextView tv_type_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_type_val);
+        TextView tv_form_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_form_val);
+        TextView tv_data_serv_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_data_serv_val);
+        TextView tv_product_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_product_val);
+        TextView tv_serial_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_serial_val);
+        TextView tv_ap_code_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_code_val);
+        TextView tv_ap_status_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_status_val);
+        TextView tv_ap_what_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_what_val);
+        TextView tv_ap_when_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_when_val);
+        TextView tv_ap_who_val = (TextView) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_tv_ap_who_val);
+        LinearLayout ll_action_btn = (LinearLayout) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_ll_action_btn);
+        //
+        Button iv_download_ap = (Button) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_iv_download_ap);
+        Button iv_join_ap = (Button) convertView.findViewById(R.id.act035_main_content_cell_namoa_ap_iv_join_ap);
+        //
+        ll_action_btn.setVisibility(View.VISIBLE);
+        //
+        HashMap<String, String> item = new HashMap<>();
+
+        try {
+            item = ToolBox_Inf.JsonToHashMap(
+                    message.getJSONObject("data"),
+                    "form_ap"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //
+        if (hmAuxColors.get(hmAux.get("user_code")) == null) {
+            hmAuxColors.put(hmAux.get("user_code"), String.valueOf(ToolBox_Inf.userColor()));
+        }
+
+        tv_name.setText(hmAux.get("user_nick"));
+        tv_name.setTextColor(Integer.parseInt(hmAuxColors.get(hmAux.get("user_code"))));
+        tv_name.setVisibility(View.GONE);
         //
         tv_form_ttl.setText(hmAux_Trans.get("form_ttl"));
         //
