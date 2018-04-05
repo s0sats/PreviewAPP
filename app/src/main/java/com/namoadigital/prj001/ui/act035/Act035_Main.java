@@ -514,9 +514,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_whats_text_data,
                 R.layout.act035_main_content_cell_whats_text_end,
                 R.layout.act035_main_content_cell_whats_text_trans,
-                R.layout.act035_main_content_cell_namoa_ap,
+                R.layout.act035_main_content_cell_namoa_ap_other,
                 R.layout.act035_main_content_cell_whats_text_other,
                 R.layout.act035_main_content_cell_whats_text_no_read,
+                R.layout.act035_main_content_cell_namoa_ap_me,
                 this.dados,
                 hmAux_Trans,
                 hmAux_Trans_Extra
@@ -1320,8 +1321,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         messages = (ArrayList<HMAux>) chMessageDao.query_HM(
                                 new CH_Message_Sql_008(mRoom_code).toSqlQuery()
                         );
-
-                        Log.d("PC", messages.get(0).get("msg_obj"));
+                        //
+                        Log.d("PC","messages.size = "+ (messages != null ? String.valueOf(messages.size()): "null"));
+                        if(messages != null && messages.size() > 0) {
+                            Log.d("PC", messages.get(0).get("msg_obj"));
+                        }
 
                         while (messages.size() > 0) {
                             //
@@ -1365,6 +1369,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         Log.d("PROCESSO_ASYN", "continuei apos m2");
 
                     } catch (Exception e) {
+                        Log.d("PC", "PC Exception\n"+e.toString());
                     } finally {
                         isProcessing_C_Message = false;
                         //

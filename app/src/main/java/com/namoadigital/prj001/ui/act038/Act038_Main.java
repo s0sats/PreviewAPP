@@ -821,6 +821,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         if (!checkDataChanges(properties)) {
             if (mGe_custom_form_ap.getUpload_required() == 1 && mGe_custom_form_ap.getSync_required() == 0) {
                 mDataChanged = false;
+                //Se tudo ok, remove borda de erro dos campos
+                ss_status.setBackground(null);
+                ss_users.setBackground(null);
+                et_form_when_ttl.setBackground(null);
                 return true;
             } else {
                 return false;
@@ -830,6 +834,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         HMAux aux = ss_status.getmValue();
 
         if (aux.isEmpty()) {
+            ss_status.setBackground(context.getDrawable(R.drawable.shape_error));
             return false;
         }
 
@@ -845,6 +850,15 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                         mUser.get(SearchableSpinner.ID).isEmpty() ||
                         et_form_when_ttl.getmValue().isEmpty()) {
 
+                    if(mUser.get(SearchableSpinner.ID) == null ||
+                            mUser.get(SearchableSpinner.ID) == "null" ||
+                            mUser.get(SearchableSpinner.ID).isEmpty()){
+                        ss_users.setBackground(context.getDrawable(R.drawable.shape_error));
+                    }
+                    //
+                    if(et_form_when_ttl.getmValue().isEmpty()){
+                        et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
+                    }
                     return false;
 
                 }
@@ -856,7 +870,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             default:
                 break;
         }
-
+        //Se tudo ok, remove borda de erro dos campos
+        ss_status.setBackground(null);
+        ss_users.setBackground(null);
+        et_form_when_ttl.setBackground(null);
         return true;
     }
 
