@@ -15,7 +15,7 @@ public interface Act034_Main_View {
 
     void callAct005(Context context);
 
-    void callAct035(Context context, HMAux item);
+    void callAct035(Context context, HMAux item, String mReload);
 
     void showPD(String ttl, String msg, boolean cancelable);
 

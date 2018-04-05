@@ -940,14 +940,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 iv_room_thumbnail.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
-                            if (ToolBox_Con.isOnline(context)) {
-                                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
-                                startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
-                            } else {
-                                ToolBox_Inf.showNoConnectionDialog(context);
-                            }
-                        }
+                        callRoomInfo(mRoom);
+                    }
+                });
+                //
+                tv_room_name_val.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callRoomInfo(mRoom);
                     }
                 });
             }
@@ -1075,6 +1075,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     return true;
                 }
             });
+        }
+    }
+
+    private void callRoomInfo(CH_Room mRoom) {
+        if (!mRoom.getRoom_type().equalsIgnoreCase("SYS")) {
+            if (ToolBox_Con.isOnline(context)) {
+                SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
+                startRoomInfoTask(singletonWebSocket.mSocket.id(), mRoom_code);
+            } else {
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
         }
     }
 
@@ -2031,6 +2042,37 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
+                }
+            });
+            //
+            lv_members.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+//
+                    if (!hmAux.get(CH_RoomDao.USER_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
+                        HMAux ccRoom = ch_roomDao.getByStringHM(
+                                new CH_Room_Sql_005(
+                                        hmAux.get(CH_RoomDao.USER_CODE)
+                                ).toSqlQuery()
+                        );
+
+                        if (ccRoom != null) {
+                            if (!ccRoom.get(CH_RoomDao.ROOM_CODE).equalsIgnoreCase(mRoom_code)) {
+                                bundle.putString(CH_RoomDao.ROOM_CODE, ccRoom.get(CH_RoomDao.ROOM_CODE));
+                                bundle.putString(Constant.CHAT_RELOAD, "1");
+                                //
+                                callAct034(context);
+                            } else {
+                            }
+                        } else {
+                            alertForRoomPrivate(hmAux);
+                        }
+                        //
+                        dialog.dismiss();
+
+                    } else {
+                    }
                 }
             });
 

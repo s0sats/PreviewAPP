@@ -80,7 +80,7 @@ public class Act034_Room extends BaseFragment {
 
     private String mRoom_Code = "";
     private String mRoom_Type = "";
-    private HashMap<String,String> filtersValues = new HashMap<>();
+    private HashMap<String, String> filtersValues = new HashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,7 +161,7 @@ public class Act034_Room extends BaseFragment {
                     singletonWebSocket.attemptSendPendingMessages(room.get(CH_RoomDao.ROOM_CODE));
                 }
                 //
-                mMain.callAct035(context, room);
+                mMain.callAct035(context, room, "0");
             }
         });
         //
@@ -268,7 +268,7 @@ public class Act034_Room extends BaseFragment {
             mAdapter.setOnIvRoomClickListner(new Act034_Room_Adapter.OnIvRoomClickListner() {
                 @Override
                 public void onIvRoomClick(String room_code, String room_type, String room_desc, String image_path) {
-                    if(!room_type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SYS)) {
+                    if (!room_type.equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SYS)) {
                         if (ToolBox_Con.isOnline(context)) {
                             mRoom_Code = room_code;
                             mRoom_Type = room_type;
@@ -463,15 +463,15 @@ public class Act034_Room extends BaseFragment {
 
     }
 
-    public void setFilterValues(HashMap<String,String> filtersValues){
+    public void setFilterValues(HashMap<String, String> filtersValues) {
         this.filtersValues = filtersValues;
     }
 
-    public void setIniFilterValues(){
+    public void setIniFilterValues() {
         filter_workgroup = filter_private = filter_so = filter_pa = false;
         //
-        for(Map.Entry<String, String> item : filtersValues.entrySet()){
-            switch (item.getKey()){
+        for (Map.Entry<String, String> item : filtersValues.entrySet()) {
+            switch (item.getKey()) {
                 case Constant.CHAT_ROOM_TYPE_WORKGROUP:
                     filter_workgroup = Boolean.parseBoolean(item.getValue());
                     break;
@@ -491,10 +491,10 @@ public class Act034_Room extends BaseFragment {
         }
     }
 
-    public HashMap<String, String> getFilterArrayValues(){
-        if(bStatus){
+    public HashMap<String, String> getFilterArrayValues() {
+        if (bStatus) {
             filtersValues.put(Constant.CHAT_ROOM_TYPE_WORKGROUP, String.valueOf(filter_workgroup));
-            filtersValues .put(Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER, String.valueOf(filter_private));
+            filtersValues.put(Constant.CHAT_ROOM_TYPE_PRIVATE_CUSTOMER, String.valueOf(filter_private));
             filtersValues.put(Constant.CHAT_ROOM_TYPE_SO, String.valueOf(filter_so));
             filtersValues.put(Constant.CHAT_ROOM_TYPE_AP, String.valueOf(filter_pa));
             filtersValues.put(Constant.PARAM_KEY_TYPED_FILTER, mket_search_room.getText().toString());
@@ -621,7 +621,7 @@ public class Act034_Room extends BaseFragment {
                         );
                         //
                         if (ccRoom != null) {
-                            mMain.callAct035(context, ccRoom);
+                            mMain.callAct035(context, ccRoom, "0");
                         } else {
                             alertForRoomPrivate(hmAux);
                         }
@@ -789,7 +789,7 @@ public class Act034_Room extends BaseFragment {
                                 ).toSqlQuery()
                         );
                         //
-                        mMain.callAct035(context, ccRoom);
+                        mMain.callAct035(context, ccRoom, "0");
                     }
 
                     dialog.dismiss();

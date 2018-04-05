@@ -263,7 +263,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 item.put(CH_RoomDao.ROOM_CODE, returnedRoomCode);
                 item.put(Constant.CHAT_ROOM_POSITION, String.valueOf(act034_room != null ? act034_room.getFirstVisiblePosition() : 0));
                 //
-                callAct035(context, item);
+                callAct035(context, item, mReload);
             } else {
                 SingletonWebSocket.mRoom_private = "";
             }
@@ -463,7 +463,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     }
 
     @Override
-    public void callAct035(Context context, HMAux item) {
+    public void callAct035(Context context, HMAux item, String mReload) {
         Intent mIntent = new Intent(context, Act035_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtra(NotificationReceiver.NOTIFICATION, bTT);
@@ -472,7 +472,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         bundle.putString(CH_RoomDao.ROOM_CODE, item.get(CH_RoomDao.ROOM_CODE));
         bundle.putLong(CH_RoomDao.CUSTOMER_CODE, selected_customer);
         bundle.putString(Constant.CHAT_ROOM_POSITION, lastFirstAdapterPosition);
-        bundle.putSerializable(CH_RoomDao.ROOM_TYPE,act034_room.getFilterArrayValues());
+        //
+        bundle.putSerializable(CH_RoomDao.ROOM_TYPE, mReload.equalsIgnoreCase("0") ?  act034_room.getFilterArrayValues() : auxFilters);
         //
         mIntent.putExtras(bundle);
         //
@@ -547,7 +548,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         disablePD();
         //
         if (room_code != null) {
-            callAct035(context, auxParam);
+            callAct035(context, auxParam, "0");
         } else {
             act034_room.loadDataToScreen();
         }

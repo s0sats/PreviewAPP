@@ -31,7 +31,8 @@
                 android:id="@+id/act035_tv_room_name_val"
                 android:layout_marginLeft="30dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:textStyle="bold"
                 android:textColor="#FFFFFFFF"
                 android:text="N.Hugo"/>
