@@ -120,6 +120,8 @@ public class Chat_UserList_Adapter extends BaseAdapter implements Filterable {
             FilterResults results = new FilterResults();
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
+                constraint = ToolBox_Inf.AccentMapper(constraint.toString());
+                //
                 for (int i = 0; i < source_filtered.size(); i++) {
                     String user_nick = ToolBox_Inf.AccentMapper(source_filtered.get(i).get(USER_NICK).toLowerCase());
                     String user_name = ToolBox_Inf.AccentMapper(source_filtered.get(i).get(USER_NAME).toLowerCase());

@@ -61,9 +61,11 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private HMAux hmAux_Trans_Extra;
     private String mResource_Code;
     private String mResource_Name = "act037_adapter_ap";
+    //Se usr tem acesso ao profile de form_ap ou não
+    private boolean profile_ap = false;
 
 
-    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, int resource_10, int resource_11, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra) {
+    public Act035_Adapter_Messages(Context context, int resource_01, int resource_02, int resource_03, int resource_04, int resource_05, int resource_06, int resource_07, int resource_08, int resource_09, int resource_10, int resource_11, ArrayList<HMAux> data, HMAux hmAux_Trans, HMAux hmAux_Trans_Extra, boolean profile_ap) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
@@ -84,6 +86,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         this.hmAux_Trans = hmAux_Trans;
 
         this.hmAux_Trans_Extra = hmAux_Trans_Extra;
+
+        this.profile_ap = profile_ap;
 
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -887,6 +891,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 }
             }
         });
+        //Seta visibilidade do botão de pendend do perfil do user
+        iv_join_ap.setVisibility(profile_ap ? View.VISIBLE: View.INVISIBLE);
     }
 
     private void processForm_APMe(JSONObject message, HMAux hmAux, View convertView) {
@@ -1050,7 +1056,8 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                 }
             }
         });
-
+        //Seta visibilidade do botão de pendend do perfil do user
+        iv_join_ap.setVisibility(profile_ap ? View.VISIBLE: View.INVISIBLE);
 
     }
 

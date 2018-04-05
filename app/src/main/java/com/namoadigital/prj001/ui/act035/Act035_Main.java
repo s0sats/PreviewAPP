@@ -520,7 +520,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 R.layout.act035_main_content_cell_namoa_ap_me,
                 this.dados,
                 hmAux_Trans,
-                hmAux_Trans_Extra
+                hmAux_Trans_Extra,
+                ToolBox_Inf.profileExists(
+                        context,
+                        Constant.PROFILE_MENU_AP,
+                        null
+                )
         );
 
         act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {
@@ -1333,8 +1338,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 new CH_Message_Sql_008(mRoom_code).toSqlQuery()
                         );
                         //
-                        Log.d("PC","messages.size = "+ (messages != null ? String.valueOf(messages.size()): "null"));
-                        if(messages != null && messages.size() > 0) {
+                        Log.d("PC", "messages.size = " + (messages != null ? String.valueOf(messages.size()) : "null"));
+                        if (messages != null && messages.size() > 0) {
                             Log.d("PC", messages.get(0).get("msg_obj"));
                         }
 
@@ -1380,7 +1385,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         Log.d("PROCESSO_ASYN", "continuei apos m2");
 
                     } catch (Exception e) {
-                        Log.d("PC", "PC Exception\n"+e.toString());
+                        Log.d("PC", "PC Exception\n" + e.toString());
                     } finally {
                         isProcessing_C_Message = false;
                         //
@@ -2405,22 +2410,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 }
             });
             //
-            btn_form_ap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    HMAux hmAux = new HMAux();
-                    //
-                    hmAux.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, String.valueOf(roomFormAp.getCustomer_code()));
-                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, String.valueOf(roomFormAp.getCustom_form_type()));
-                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, String.valueOf(roomFormAp.getCustom_form_code()));
-                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, String.valueOf(roomFormAp.getCustom_form_version()));
-                    hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, String.valueOf(roomFormAp.getCustom_form_data()));
-                    hmAux.put(GE_Custom_Form_ApDao.AP_CODE, String.valueOf(roomFormAp.getAp_code()));
-                    //
-                    mPresenter.checkFormApFlow(hmAux);
-                    //callAct038(context, hmAux);
-                }
-            });
+            if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_AP, null)) {
+                btn_form_ap.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HMAux hmAux = new HMAux();
+                        //
+                        hmAux.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, String.valueOf(roomFormAp.getCustomer_code()));
+                        hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, String.valueOf(roomFormAp.getCustom_form_type()));
+                        hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, String.valueOf(roomFormAp.getCustom_form_code()));
+                        hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, String.valueOf(roomFormAp.getCustom_form_version()));
+                        hmAux.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, String.valueOf(roomFormAp.getCustom_form_data()));
+                        hmAux.put(GE_Custom_Form_ApDao.AP_CODE, String.valueOf(roomFormAp.getAp_code()));
+                        //
+                        mPresenter.checkFormApFlow(hmAux);
+                        //callAct038(context, hmAux);
+                    }
+                });
+            }else{
+                btn_form_ap.setVisibility(View.INVISIBLE);
+            }
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
             //
