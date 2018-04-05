@@ -910,24 +910,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     return true;
                 }
             } else if (propertie instanceof MkDateTime) {
-                String tag = (String) ((MkDateTime) propertie).getTag() == null ? "" : (String) ((MkDateTime) propertie).getTag();
-                String text = ((MkDateTime) propertie).getmValue();
 
-                if (text == null) {
-                    if (tag == null) {
-                        return false;
-                    } else {
-                        mDataChanged = true;
-
-                        return true;
-                    }
-                } else if ((text == null && tag != null) && !text.equals(tag)) {
+                if (((MkDateTime) propertie).hasChanged()){
                     mDataChanged = true;
 
                     return true;
                 } else {
-
                 }
+
             } else {
             }
         }
@@ -1025,7 +1015,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     }
 
     private void setTags(GE_Custom_Form_Ap ap) {
-        et_form_when_ttl.setTag(ap.getAp_when() == null ? "" : ap.getAp_when().replaceAll("[:][0-9][0-9] ", ":00 "));
+        et_form_when_ttl.setTag(ap.getAp_when() == null ? null : ap.getAp_when().replaceAll("[:][0-9][0-9] ", ":00 "));
         et_form_what_ttl.setTag(ap.getAp_what() == null ? "" : String.valueOf(ap.getAp_what()));
         et_form_where_ttl.setTag(ap.getAp_where() == null ? "" : String.valueOf(ap.getAp_where()));
         et_form_why_ttl.setTag(ap.getAp_why() == null ? "" : String.valueOf(ap.getAp_why()));
