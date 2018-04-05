@@ -848,15 +848,16 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 if (mUser.get(SearchableSpinner.ID) == null ||
                         mUser.get(SearchableSpinner.ID) == "null" ||
                         mUser.get(SearchableSpinner.ID).isEmpty() ||
+                        et_form_when_ttl.getmValue() == null ||
                         et_form_when_ttl.getmValue().isEmpty()) {
 
-                    if(mUser.get(SearchableSpinner.ID) == null ||
+                    if (mUser.get(SearchableSpinner.ID) == null ||
                             mUser.get(SearchableSpinner.ID) == "null" ||
-                            mUser.get(SearchableSpinner.ID).isEmpty()){
+                            mUser.get(SearchableSpinner.ID).isEmpty()) {
                         ss_users.setBackground(context.getDrawable(R.drawable.shape_error));
                     }
                     //
-                    if(et_form_when_ttl.getmValue().isEmpty()){
+                    if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty()) {
                         et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
                     }
                     return false;
@@ -912,10 +913,20 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                 String tag = (String) ((MkDateTime) propertie).getTag() == null ? "" : (String) ((MkDateTime) propertie).getTag();
                 String text = ((MkDateTime) propertie).getmValue();
 
-                if (!text.equals(tag)) {
+                if (text == null) {
+                    if (tag == null) {
+                        return false;
+                    } else {
+                        mDataChanged = true;
+
+                        return true;
+                    }
+                } else if ((text == null && tag != null) && !text.equals(tag)) {
                     mDataChanged = true;
 
                     return true;
+                } else {
+
                 }
             } else {
             }
@@ -1377,6 +1388,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
      * Os dados algora só devem ser salvos se o usr clicar em um
      * dos botões de ação.(Retroceder,Avançar ou Aplicar)
      * Implementado em 03/04/18
+     *
      * @param index
      */
     public void show_Edit_InfoDialogV2(int index) {
@@ -1469,7 +1481,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     final AlertDialog innerDialog = dialog;
                     String txtNew = mk_value.getText().toString().trim();
                     String txtOld = editable_views_current.getText().toString().trim();
-                    if(!txtNew.equals(txtOld)){
+                    if (!txtNew.equals(txtOld)) {
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_discard_changes_ttl"),
@@ -1482,7 +1494,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                                 },
                                 1
                         );
-                    }else{
+                    } else {
                         dialog.dismiss();
                     }
                 }
@@ -1510,6 +1522,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     /**
      * Metodo antigo que alterava o dado diretamente no EditText
      * Foi substituido pelo V2
+     *
      * @param index
      */
     public void show_Edit_InfoDialog(int index) {

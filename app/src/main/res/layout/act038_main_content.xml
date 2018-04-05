@@ -257,8 +257,7 @@
                         android:id="@+id/act038_header_et_form_when_ttl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="7dp"
-                        android:layout_marginRight="7dp" />
+                        android:layout_marginBottom="2dp" />
 
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
