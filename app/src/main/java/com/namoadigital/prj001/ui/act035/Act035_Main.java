@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -187,9 +188,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private HMAux hmAux_Trans_Extra = new HMAux();
 
-
     private String pk_pdf;
     private String custom_form_url_pdf;
+
+    private int colorName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -1053,6 +1055,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     if (ToolBox_Con.isOnline(context)) {
 
                         HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
+
+                        colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_whats_tv_name))).getCurrentTextColor();
 
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 
@@ -1941,19 +1945,20 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.act034_message_info, null);
+            View view = inflater.inflate(R.layout.act035_message_info, null);
             //
-            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act034_room_info_iv_dismiss);
-            TextView tv_room_desc = (TextView) view.findViewById(R.id.act034_room_info_tv_room_desc_lbl);
-            ImageView iv_room = (ImageView) view.findViewById(R.id.act034_room_info_iv_image);
-            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act034_room_info_tv_members_lbl);
-            ListView lv_members = (ListView) view.findViewById(R.id.act034_room_info_lv_members);
-            ImageView iv_trash = (ImageView) view.findViewById(R.id.act034_room_info_iv_trash);
-            LinearLayout ll_msg = (LinearLayout) view.findViewById(R.id.act034_room_info_ll_msg_layout);
+            ImageView iv_dismiss = (ImageView) view.findViewById(R.id.act035_room_info_iv_dismiss);
+            LinearLayout ll_view = (LinearLayout) view.findViewById(R.id.act035_room_info_ll);
+            TextView tv_members_lbl = (TextView) view.findViewById(R.id.act035_room_info_tv_members_lbl);
+            ListView lv_members = (ListView) view.findViewById(R.id.act035_room_info_lv_members);
+            ImageView iv_trash = (ImageView) view.findViewById(R.id.act035_room_info_iv_trash);
+            LinearLayout ll_msg = (LinearLayout) view.findViewById(R.id.act035_room_info_ll_msg_layout);
+            LinearLayout ll_info = (LinearLayout) view.findViewById(R.id.act035_room_info_ll_msg);
+
             //infla layout da msg
-            View msgLayout =  null;
+            View msgLayout = null;
             //
-            TextView tv_prefix_code = (TextView) view.findViewById(R.id.act034_room_info_tv_message_prefix_code);
+            TextView tv_prefix_code = (TextView) view.findViewById(R.id.act035_room_info_tv_message_prefix_code);
             //
             iv_trash.setVisibility(View.GONE);
             //
@@ -1971,20 +1976,24 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 JSONObject jsonObject = new JSONObject(ch_Message.getMsg_obj());
                 JSONObject msg = jsonObject.getJSONObject("message");
                 //
-                //msgLayout = inflateMsgLayout(ch_Message);
-
+                msgLayout = inflateMsgLayout(ch_Message, ll_view, ll_info);
+                //
+                if (msgLayout != null) {
+                    ll_view.addView(msgLayout);
+                }
+                //
                 if (msg.getString("type").equalsIgnoreCase("TEXT")) {
-                    tv_room_desc.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg.getString("data")), 80));
-                    iv_room.setImageBitmap(null);
-                    iv_room.setVisibility(View.GONE);
+//                    tv_room_desc.setText(ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(msg.getString("data")), 80));
+//                    iv_room.setImageBitmap(null);
+//                    iv_room.setVisibility(View.GONE);
                 } else if (msg.getString("type").equalsIgnoreCase("IMAGE")) {
-                    tv_room_desc.setText("");
-                    iv_room.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + ch_Message.getMessage_image_local()));
-                    tv_room_desc.setVisibility(View.GONE);
-                    iv_room.setVisibility(View.VISIBLE);
+//                    tv_room_desc.setText("");
+//                    iv_room.setImageBitmap(BitmapFactory.decodeFile(Constant.CACHE_PATH_PHOTO + "/" + ch_Message.getMessage_image_local()));
+//                    tv_room_desc.setVisibility(View.GONE);
+//                    iv_room.setVisibility(View.VISIBLE);
                 } else {
-                    tv_room_desc.setVisibility(View.GONE);
-                    iv_room.setVisibility(View.GONE);
+//                    tv_room_desc.setVisibility(View.GONE);
+//                    iv_room.setVisibility(View.GONE);
                 }
 
                 tv_prefix_code.setText(String.valueOf(ch_Message.getMsg_prefix()) + "." + String.valueOf(ch_Message.getMsg_code()));
@@ -2027,23 +2036,90 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     }
 
-    private View inflateMsgLayout(CH_Message ch_Message) {
+    private View inflateMsgLayout(CH_Message ch_Message, LinearLayout ll_view, LinearLayout ll_info) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View msgView = null;
         //
         try {
             JSONObject msg_obj = new JSONObject(ch_Message.getMsg_obj());
-            HashMap<String,String> hmAux =  ToolBox_Inf.JsonToHashMap(msg_obj,"message");
+            HashMap<String, String> hmAux = ToolBox_Inf.JsonToHashMap(msg_obj, "message");
             //
-            switch(ch_Message.getMsg_type()){
+            switch (ch_Message.getMsg_type()) {
                 case Constant.CHAT_MESSAGE_TYPE_TEXT:
-                    if(ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(ch_Message.getUser_code()))){
-                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_text_me,null);
-                    }else{
-                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_text_other,null);
+                    ll_info.setVisibility(View.GONE);
+                    ll_view.setVisibility(View.VISIBLE);
+
+                    if (ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(ch_Message.getUser_code()))) {
+                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_text_me_info, null);
+                    } else {
+                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_text_other_info, null);
                     }
+
+                    TextView tv_name = (TextView) msgView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+                    TextView tv_message = (TextView) msgView.findViewById(R.id.act035_main_content_cell_whats_tv_message);
+                    TextView tv_hour = (TextView) msgView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+                    ImageView iv_badge = (ImageView) msgView.findViewById(R.id.act035_main_content_cell_iv_badge);
+
+                    //tv_name.setTextColor(Integer.parseInt(String.valueOf(ToolBox_Inf.userColor())));
+                    tv_name.setTextColor(colorName);
+                    tv_message.setText(hmAux.get("data"));
+
+                    tv_name.setText(ch_Message.getUser_nick());
+                    tv_hour.setText(
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(ch_Message.getMsg_date(), ""),
+                                    " HH:mm"
+                            )
+                    );
+
+                    iv_badge.setImageDrawable(processBadge(ch_Message));
+
                     break;
                 case Constant.CHAT_MESSAGE_TYPE_IMAGE:
+                    ll_info.setVisibility(View.GONE);
+                    ll_view.setVisibility(View.VISIBLE);
+
+                    if (ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(ch_Message.getUser_code()))) {
+                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_img_me_info, null);
+                    } else {
+                        msgView = inflater.inflate(R.layout.act035_main_content_cell_whats_img_other_info, null);
+                    }
+
+                    TextView tv_name_img = (TextView) msgView.findViewById(R.id.act035_main_content_cell_whats_tv_name);
+                    ImageView iv_foto_img = (ImageView) msgView.findViewById(R.id.act035_main_content_cell_whats_iv_foto);
+                    TextView tv_hour_img = (TextView) msgView.findViewById(R.id.act035_main_content_cell_whats_tv_hour);
+                    ImageView iv_badge_img = (ImageView) msgView.findViewById(R.id.act035_main_content_cell_iv_badge);
+
+                    //tv_name_img.setTextColor(Integer.parseInt(String.valueOf(ToolBox_Inf.userColor())));
+                    tv_name_img.setTextColor(colorName);
+                    tv_name_img.setText(ch_Message.getUser_nick());
+
+                    if (ch_Message.getMessage_image_local() == null || ch_Message.getMessage_image_local().isEmpty()) {
+                        iv_foto_img.setImageResource(R.drawable.sand_watch_transp);
+                    } else {
+                        iv_foto_img.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
+                                ch_Message.getMessage_image_local().replace(".jpg", "") + "_thumb.jpg"
+                        ));
+                    }
+
+                    tv_hour_img.setText(
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(ch_Message.getMsg_date(), ""),
+                                    " HH:mm"
+                            )
+                    );
+
+                    iv_badge_img.setImageDrawable(processBadgeImage(ch_Message));
+
+                    break;
+
+                case Constant.CHAT_ROOM_TYPE_AP:
+                    ll_info.setVisibility(View.VISIBLE);
+                    ll_view.setVisibility(View.GONE);
+
+                    TextView tv_name_ap = (TextView) ll_info.findViewById(R.id.act035_room_info_tv_msg);
+                    tv_name_ap.setText(hmAux_Trans.get(ch_Message.getMsg_type()));
+
                     break;
                 default:
                     break;
@@ -2272,9 +2348,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             btn_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
             btn_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
-        /*
-        *Configura clique dos btn
-        */
+            /*
+             *Configura clique dos btn
+             */
             btn_form.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -2320,8 +2396,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             ((LinearLayout) view).addView(tv_no_info);
         }
         /*
-        * Configura Dialog
-        */
+         * Configura Dialog
+         */
         builder
                 .setTitle(hmAux_Trans.get("alert_ap_info_ttl"))
                 .setView(view)
@@ -2534,5 +2610,32 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         progressDialog.dismiss();
         //
         resetWSProcess();
+    }
+
+    private Drawable processBadge(CH_Message ch_Message) {
+        // Badge Status for All
+        if (ch_Message.getAll_read() == 1) {
+            return context.getResources().getDrawable(R.drawable.ic_done_all_green_24dp);
+        } else if (ch_Message.getAll_delivered() == 1) {
+            return context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp);
+        } else if (ch_Message.getMsg_code() != 0) {
+            return context.getResources().getDrawable(R.drawable.ic_done_black_24dp);
+        } else {
+            return context.getResources().getDrawable(R.drawable.ic_clock_chat);
+        }
+    }
+
+    private Drawable processBadgeImage(CH_Message ch_Message) {
+        // Badge Status for All
+        if (ch_Message.getAll_read() == 1) {
+            return context.getResources().getDrawable(R.drawable.ic_done_all_green_24dp);
+        } else if (ch_Message.getAll_delivered() == 1) {
+            return context.getResources().getDrawable(R.drawable.ic_done_all_black_24dp);
+        } else if (ch_Message.getMsg_code() != 0
+                && ch_Message.getFile_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)) {
+            return context.getResources().getDrawable(R.drawable.ic_done_black_24dp);
+        } else {
+            return context.getResources().getDrawable(R.drawable.ic_clock_chat);
+        }
     }
 }

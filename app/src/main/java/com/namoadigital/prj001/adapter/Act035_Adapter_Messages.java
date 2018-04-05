@@ -48,7 +48,6 @@ public class Act035_Adapter_Messages extends BaseAdapter {
     private int resource_09;
     private int resource_10;
 
-    //
     private ArrayList<HMAux> data;
 
     private String mUser_Code;
