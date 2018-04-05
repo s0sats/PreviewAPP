@@ -247,7 +247,8 @@ public class WS_C_Message extends IntentService {
                 }else{
                     ch_message.setTmp(0);
                     hasNewMsg = true;
-                    //
+                    //Correção paleativa até o server começar a enviar FCM
+                    //pra mesagens minhas quando eu estou ativo na web e o app não.
                     if(
                         ws_event.equals(Constant.CHAT_EVENT_C_HISTORICAL_MESSAGES)
                         && ToolBox_Con.getPreference_User_Code(getApplicationContext()).equals(String.valueOf(ch_message.getUser_code()))
@@ -287,6 +288,15 @@ public class WS_C_Message extends IntentService {
                     //sRead.setRoom_code(ch_message.getRoom_code());
                     //
                     sReadList.add(gson.toJsonTree(sRead));
+                }
+                //Correção de Delivery_all e Read_all não atualizarem tela quando
+                //essas flags são alterada via cHistoricalMessage
+                if(
+                    (dbMessage.getAll_delivered() == 0 && ch_message.getAll_delivered() == 1)
+                    || (dbMessage.getAll_read() == 0 && ch_message.getAll_read() == 1)
+                ){
+                    ch_message.setStatus_update(1);
+                    ch_message.setMsg_token(ToolBox_Inf.chatNextMSGToken(getApplicationContext()));
                 }
 
                 //Salva lista no banco de dados.
