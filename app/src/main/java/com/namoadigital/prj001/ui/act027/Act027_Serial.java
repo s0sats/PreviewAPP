@@ -394,23 +394,30 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
         listnerSaveSerial = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                if (checkSerialChangesV2()) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        buildSerialFull();
-                        //
-                        mPresenter.updateSerialInfo(serialObj);
-                    }else{
-                        //ToolBox_Inf.showNoConnectionDialog(context);
+                if (validadeSerialLocation()) {
+                    //
+                    if (checkSerialChangesV2()) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            buildSerialFull();
+                            //
+                            mPresenter.updateSerialInfo(serialObj);
+                        } else {
+                            //ToolBox_Inf.showNoConnectionDialog(context);
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+                                    hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                            );
+                        }
+                    } else {
                         showAlertDialog(
-                                hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
-                                hmAux_Trans.get("alert_offline_data_not_saved_msg")
+                                hmAux_Trans.get("alert_no_data_changes_ttl"),
+                                hmAux_Trans.get("alert_no_data_changes_msg")
                         );
                     }
-                } else {
+                }else{
                     showAlertDialog(
-                            hmAux_Trans.get("alert_no_data_changes_ttl"),
-                            hmAux_Trans.get("alert_no_data_changes_msg")
+                            hmAux_Trans.get("alert_invalid_serial_local_ttl"),
+                            hmAux_Trans.get("alert_invalid_serial_local_msg")
                     );
                 }
             }
@@ -1027,6 +1034,38 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                 show.dismiss();
             }
         });
+    }
+
+    private boolean validadeSerialLocation() {
+        boolean site = ss_site.getmValue().get(SearchableSpinner.ID) != null && !ss_site.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean zone = ss_site_zone.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone.getmValue().get(SearchableSpinner.ID).length() > 0;
+        boolean local = ss_site_zone_local.getmValue().get(SearchableSpinner.ID) != null && !ss_site_zone_local.getmValue().get(SearchableSpinner.ID).equals("null") && ss_site_zone_local.getmValue().get(SearchableSpinner.ID).length() > 0;
+        //
+        if (site && zone && local) {
+            //limpa marcação de erro.
+            ss_site.setBackground(null);
+            ss_site_zone.setBackground(null);
+            ss_site_zone_local.setBackground(null);
+            return true;
+        }
+
+        if (!site && !zone && !local) {
+            //limpa marcação de erro.
+            ss_site.setBackground(null);
+            ss_site_zone.setBackground(null);
+            ss_site_zone_local.setBackground(null);
+            return true;
+        }
+        //Seta marcação de erro nos SS
+        ss_site.setBackground(context.getDrawable(R.drawable.shape_error));
+        ss_site_zone.setBackground(context.getDrawable(R.drawable.shape_error));
+        ss_site_zone_local.setBackground(context.getDrawable(R.drawable.shape_error));
+        //Pega posição do ultimo item e faz Scroll
+        int x = (int) ss_site_zone_local.getX();
+        int y = ss_site_zone_local.getTop() + ((View) ss_site_zone_local.getParent()).getTop();
+        sv_serial.smoothScrollTo(x, y);
+
+        return false;
     }
 
     /**
