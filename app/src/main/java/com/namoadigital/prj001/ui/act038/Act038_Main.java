@@ -103,6 +103,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private EditText et_form_version_ttl;
     private TextView tv_form_seq_ttl;
     private EditText et_form_seq_ttl;
+    private TextView tv_product_ttl;
+    private EditText et_product_val;
+    private TextView tv_serial_ttl;
+    private EditText et_serial_val;
     private SearchableSpinner ss_status;
     private MkDateTime et_form_when_ttl;
     private SearchableSpinner ss_users;
@@ -226,6 +230,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         transList.add("alert_ap_exit_no_save_msg");
         transList.add("alert_discard_changes_ttl");
         transList.add("alert_discard_changes_msg");
+        transList.add("product_lbl");
+        transList.add("serial_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -293,6 +299,12 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //
         tv_form_seq_ttl = (TextView) findViewById(R.id.act038_header_tv_form_seq_ttl);
         et_form_seq_ttl = (EditText) findViewById(R.id.act038_header_et_form_seq_ttl);
+        //
+        tv_product_ttl = (TextView) findViewById(R.id.act038_header_tv_product_ttl);
+        et_product_val = (EditText) findViewById(R.id.act038_header_et_product_val);
+        //
+        tv_serial_ttl = (TextView) findViewById(R.id.act038_header_tv_serial_ttl);
+        et_serial_val = (EditText) findViewById(R.id.act038_header_et_serial_val);
         //
         ss_status = (SearchableSpinner) findViewById(R.id.act038_content_ss_status);
         ss_status.setmStyle(1);
@@ -509,6 +521,21 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             tv_form_seq_ttl.setText(hmAux_Trans.get("form_data_lbl"));
             et_form_seq_ttl.setEnabled(false);
             et_form_seq_ttl.setText(String.valueOf(ap.getCustom_form_data()));
+            //
+            tv_product_ttl.setText(hmAux_Trans.get("product_lbl"));
+            et_product_val.setEnabled(false);
+            et_product_val.setText(ap.getProduct_id() +" - "+ap.getProduct_desc());
+            //
+            tv_serial_ttl.setText(hmAux_Trans.get("serial_lbl"));
+            et_serial_val.setEnabled(false);
+            if(ap.getSerial_code() != null) {
+                tv_serial_ttl.setVisibility(View.VISIBLE);
+                et_serial_val.setText(ap.getSerial_id());
+                et_serial_val.setVisibility(View.VISIBLE);
+            }else{
+                tv_serial_ttl.setVisibility(View.GONE);
+                et_serial_val.setVisibility(View.GONE);
+            }
             //
             et_form_when_ttl.setmLabel(hmAux_Trans.get("ap_when_lbl"));
             et_form_when_ttl.setEnabled(true);
