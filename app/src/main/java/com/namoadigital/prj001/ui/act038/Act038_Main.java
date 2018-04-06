@@ -299,6 +299,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         ss_status.setmTextSizeLabel(15);
         ss_status.setmTextSizeValue(15);
         ss_status.setmShowLabel(false);
+        ss_status.setmCanClean(false);
         //ss_status.setmLabel(hmAux_Trans.get("status_lbl"));
         ss_status.setmTitle(hmAux_Trans.get("status_search_lbl"));
         properties.add(ss_status);

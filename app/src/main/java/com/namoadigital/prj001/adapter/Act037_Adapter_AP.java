@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.util.Constant;
@@ -280,13 +281,14 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
-            constraint = ToolBox_Inf.AccentMapper(constraint.toString().toLowerCase());
+            constraint = ToolBox.AccentMapper(constraint.toString().toLowerCase());
 
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 for (HMAux hmAux : data_filtered) {
-                    String ap_desc = ToolBox_Inf.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.AP_DESCRIPTION).toLowerCase());
-                    String serial_id = ToolBox_Inf.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.SERIAL_ID).toLowerCase());
+                    String ap_desc = ToolBox.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.AP_DESCRIPTION).toLowerCase());
+                    String serial_id = ToolBox.AccentMapper(hmAux.get(GE_Custom_Form_ApDao.SERIAL_ID).toLowerCase());
+
                     if ( ap_desc.contains(constraint.toString().toLowerCase()) ||
                          serial_id.contains(constraint.toString().toLowerCase())
                     ) {

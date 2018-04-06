@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
@@ -217,13 +218,13 @@ public class Act034_Room_Adapter extends BaseAdapter implements Filterable {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
-            constraint = ToolBox_Inf.AccentMapper(constraint.toString().toLowerCase());
+            constraint = ToolBox.AccentMapper(constraint.toString().toLowerCase());
 
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 for (HMAux hmAux : source_filtered) {
-                    String room_desc = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_DESC).toLowerCase());
-                    String room_status = ToolBox_Inf.AccentMapper(hmAux.get(CH_RoomDao.ROOM_STATUS).toLowerCase());
+                    String room_desc = ToolBox.AccentMapper(hmAux.get(CH_RoomDao.ROOM_DESC).toLowerCase());
+                    String room_status = ToolBox.AccentMapper(hmAux.get(CH_RoomDao.ROOM_STATUS).toLowerCase());
                     if (
                             room_desc.contains(constraint.toString().toLowerCase()) ||
                                     (room_status != null && room_status.contains(constraint.toString().toLowerCase()))

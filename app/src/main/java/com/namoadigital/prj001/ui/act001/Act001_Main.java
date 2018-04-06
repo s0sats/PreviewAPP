@@ -83,6 +83,13 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         );
         //
         ToolBox_Inf.mkDirectory();
+        //
+        try {
+            Constant.PRJ001_VERSION_NEW = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            Constant.PRJ001_VERSION_NUMBER = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+        } catch (Exception e) {
+        }
+        //
         mPresenter.checkLogin();
     }
 
@@ -95,11 +102,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             @Override
             public void onClick(View view) {
                 mEmail = mk_login.getText().toString().trim();
-                mPassWord = et_password.getText().toString().replace("\"","'").trim();
+                mPassWord = et_password.getText().toString().replace("\"", "'").trim();
                 mNFC = "";
 
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
-                        et_password.getText().toString().replace("\"","'").trim(),
+                        et_password.getText().toString().replace("\"", "'").trim(),
                         ""
                 );
             }
@@ -108,7 +115,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //"TRATATIVA" que identifica se app
         //aponta pra produção ou desenvolvimento
 
-        if(Constant.DEVELOPMENT_BASE){
+        if (Constant.DEVELOPMENT_BASE) {
             tv_dev_db.setText(R.string.login_dev_db_msg);
             tv_dev_db.setVisibility(View.VISIBLE);
         }
@@ -119,7 +126,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     @Override
     protected void nfcData(boolean bStatus, String sMessage) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
 
             if (bStatus) {
                 enableProgressDialog(
@@ -151,7 +158,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 //
 //                updatePD("ERROR_1", sMessage);
             }
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -204,7 +211,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         progressDialog.dismiss();
         //Limpa imagem dos customers
-        ToolBox_Inf.clearFilesByPrefix(Constant.IMG_PATH,"logo_c_");
+        ToolBox_Inf.clearFilesByPrefix(Constant.IMG_PATH, "logo_c_");
         //
         call_Act002_Main(context);
     }
@@ -217,7 +224,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         //
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER,0);
+        bundle.putInt(Constant.EXECUTE_WS_GET_CUSTOMER, 0);
         mIntent.putExtras(bundle);
         //
         context.startActivity(mIntent);
@@ -296,7 +303,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         return super.onOptionsItemSelected(item);
     }
 
-    private class hugo extends AsyncTask<Void, Void, Integer>{
+    private class hugo extends AsyncTask<Void, Void, Integer> {
 
 
         @Override

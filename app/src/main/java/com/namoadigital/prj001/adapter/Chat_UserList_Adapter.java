@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -121,8 +121,8 @@ public class Chat_UserList_Adapter extends BaseAdapter implements Filterable {
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 for (int i = 0; i < source_filtered.size(); i++) {
-                    String user_nick = ToolBox_Inf.AccentMapper(source_filtered.get(i).get(USER_NICK).toLowerCase());
-                    String user_name = ToolBox_Inf.AccentMapper(source_filtered.get(i).get(USER_NAME).toLowerCase());
+                    String user_nick = ToolBox.AccentMapper(source_filtered.get(i).get(USER_NICK).toLowerCase());
+                    String user_name = ToolBox.AccentMapper(source_filtered.get(i).get(USER_NAME).toLowerCase());
                     if ( user_nick.contains(constraint.toString().toLowerCase()) ||
                          user_name.contains(constraint.toString().toLowerCase())
                     ) {
