@@ -863,6 +863,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         if (aux.isEmpty()) {
             ss_status.setBackground(context.getDrawable(R.drawable.shape_error));
             return false;
+        }else{
+            ss_status.setBackground(null);
         }
 
         switch (aux.get(SearchableSpinner.ID)) {
@@ -882,10 +884,14 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                             mUser.get(SearchableSpinner.ID) == "null" ||
                             mUser.get(SearchableSpinner.ID).isEmpty()) {
                         ss_users.setBackground(context.getDrawable(R.drawable.shape_error));
+                    }else{
+                        ss_users.setBackground(null);
                     }
                     //
                     if (et_form_when_ttl.getmValue() == null || et_form_when_ttl.getmValue().isEmpty()) {
                         et_form_when_ttl.setBackground(context.getDrawable(R.drawable.shape_error));
+                    }else{
+                        et_form_when_ttl.setBackground(null);
                     }
                     return false;
 
