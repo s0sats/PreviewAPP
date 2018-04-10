@@ -1192,6 +1192,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION));
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA));
         bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
+        bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

@@ -152,6 +152,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private pdfDownload mPdfDownload;
 
     private int repeatTry = 0;
+    private String mRoom_code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -467,6 +468,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mCustom_Form_Version = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION);
             mCustom_Form_Data = bundle.getString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA);
             mAp_Code = bundle.getString(GE_Custom_Form_ApDao.AP_CODE);
+            mRoom_code = bundle.getString(CH_RoomDao.ROOM_CODE);
             //Fluxo vindo do agendamento
             scheduled_date = bundle.getString(Act016_Main.ACT016_SELECTED_DATE, ToolBox.sDTFormat_Agora("yyyy-MM-dd").replace(":", ""));
             filter_form = bundle.getBoolean(Act016_Main.ACT016_FILTER_FORM, true);
@@ -1137,7 +1139,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private void actionBackPressed() {
         switch (requestingAct.toLowerCase()) {
             case Constant.ACT035:
-                callAct035(context, mGe_custom_form_ap.getRoom_code());
+                callAct035(context, mRoom_code);
                 break;
             case Constant.ACT017:
                 callAct017(context);
