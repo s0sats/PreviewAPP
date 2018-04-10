@@ -752,32 +752,38 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_chat_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
-                        mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
+                if(mGe_custom_form_ap == null){
+                    requestingAct = Constant.ACT037;
+                    //
+                    actionBackPressed();
+                }else {
+                    if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
+                            mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
 
-                    mPresenter.chatFlow(mGe_custom_form_ap, false);
-
-                } else {
-
-                    boolean hasDataChange = checkDataChanges(properties);
-
-                    if (hasDataChange) {
-                        ToolBox.alertMSG(
-                                Act038_Main.this,
-                                hmAux_Trans.get("alert_ap_exit_no_save_tll"),
-                                hmAux_Trans.get("alert_ap_exit_no_save_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mPresenter.chatFlow(mGe_custom_form_ap, false);
-                                    }
-                                },
-                                2,
-                                null
-                        );
+                        mPresenter.chatFlow(mGe_custom_form_ap, false);
 
                     } else {
-                        mPresenter.chatFlow(mGe_custom_form_ap, false);
+
+                        boolean hasDataChange = checkDataChanges(properties);
+
+                        if (hasDataChange) {
+                            ToolBox.alertMSG(
+                                    Act038_Main.this,
+                                    hmAux_Trans.get("alert_ap_exit_no_save_tll"),
+                                    hmAux_Trans.get("alert_ap_exit_no_save_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mPresenter.chatFlow(mGe_custom_form_ap, false);
+                                        }
+                                    },
+                                    2,
+                                    null
+                            );
+
+                        } else {
+                            mPresenter.chatFlow(mGe_custom_form_ap, false);
+                        }
                     }
                 }
             }
@@ -1102,8 +1108,8 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         //super.onBackPressed();
 
         //mPresenter.onBackPressedClicked();
-
-        if (mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
+        if (    mGe_custom_form_ap == null ||
+                mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) ||
                 mGe_custom_form_ap.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
             actionBackPressed();
 
@@ -1276,7 +1282,15 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             showResults(hmAux, sKey, sValue);
             //
-            mPresenter.getloadAP(
+//            mPresenter.getloadAP(
+//                    mCustomer_Code,
+//                    mCustom_Form_Type,
+//                    mCustom_Form_Code,
+//                    mCustom_Form_Version,
+//                    mCustom_Form_Data,
+//                    mAp_Code
+//            );
+            mGe_custom_form_ap = mPresenter.getAp(
                     mCustomer_Code,
                     mCustom_Form_Type,
                     mCustom_Form_Code,
@@ -1284,6 +1298,10 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     mCustom_Form_Data,
                     mAp_Code
             );
+            //
+            if(mGe_custom_form_ap != null) {
+                loadAP(mGe_custom_form_ap);
+            }
         } else {
             resetWSProcess();
             //
@@ -1362,16 +1380,20 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.getloadAP(
-                        mCustomer_Code,
-                        mCustom_Form_Type,
-                        mCustom_Form_Code,
-                        mCustom_Form_Version,
-                        mCustom_Form_Data,
-                        mAp_Code
-                );
-                //
-                show.dismiss();
+                if(mGe_custom_form_ap != null) {
+                    mPresenter.getloadAP(
+                            mCustomer_Code,
+                            mCustom_Form_Type,
+                            mCustom_Form_Code,
+                            mCustom_Form_Version,
+                            mCustom_Form_Data,
+                            mAp_Code
+                    );
+                    //
+                    show.dismiss();
+                }else{
+                    actionBackPressed();
+                }
             }
         });
     }

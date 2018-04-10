@@ -62,7 +62,21 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
 
     @Override
     public void getloadAP(String mCustomer_Code, String mCustom_Form_Type, String mCustom_Form_Code, String mCustom_Form_Version, String mCustom_Form_Data, String mAp_Code) {
-        mGe_custom_form_ap = mGe_custom_form_apDao.getByString(
+        mGe_custom_form_ap = getAp(
+                                    mCustomer_Code,
+                                    mCustom_Form_Type,
+                                    mCustom_Form_Code,
+                                    mCustom_Form_Version,
+                                    mCustom_Form_Data,
+                                    mAp_Code
+        );
+        //
+        mView.loadAP(mGe_custom_form_ap);
+    }
+
+    @Override
+    public GE_Custom_Form_Ap getAp(String mCustomer_Code, String mCustom_Form_Type, String mCustom_Form_Code, String mCustom_Form_Version, String mCustom_Form_Data, String mAp_Code) {
+        return mGe_custom_form_apDao.getByString(
                 new GE_Custom_Form_Ap_Sql_005(
                         mCustomer_Code,
                         mCustom_Form_Type,
@@ -73,8 +87,6 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                         GE_Custom_Form_Ap_Sql_005.RETURN_SQL_OBJ
                 ).toSqlQuery()
         );
-        //
-        mView.loadAP(mGe_custom_form_ap);
     }
 
     @Override
@@ -298,8 +310,8 @@ public class Act038_Main_Presenter_Impl implements Act038_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if (checkRoom){
-            if (chRoom !=  null){
+        if (checkRoom) {
+            if (chRoom != null) {
                 return true;
             } else {
                 return false;

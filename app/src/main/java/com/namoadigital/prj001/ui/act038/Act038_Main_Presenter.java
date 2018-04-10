@@ -23,6 +23,15 @@ public interface Act038_Main_Presenter {
             String mAp_Code
     );
 
+    GE_Custom_Form_Ap getAp(
+            String mCustomer_Code,
+            String mCustom_Form_Type,
+            String mCustom_Form_Code,
+            String mCustom_Form_Version,
+            String mCustom_Form_Data,
+            String mAp_Code
+    );
+
     void loadSSStatus(String ap_status);
 
     void loadSSUsers();
