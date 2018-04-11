@@ -1733,7 +1733,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         if (hmAux.get("pk").equalsIgnoreCase(sKey)) {
             mGe_custom_form_ap.setCustom_form_url_local(hmAux.get("value"));
             //
-            disableProgressDialog();
+            if(progressDialog != null && progressDialog.isShowing()) {
+                disableProgressDialog();
+            }
             //
             btn_pdf.performClick();
         }
