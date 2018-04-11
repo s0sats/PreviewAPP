@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -78,6 +81,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         transList.add("services_tll");
         transList.add("total_lbl");
         transList.add("total_val");
+        transList.add("dialog_service_search_ttl");
+        transList.add("dialog_service_search_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -158,6 +163,19 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         this.currentFrag = currentFrag;
     }
 
+    public void setWs_process(String ws_process) {
+        this.ws_process = ws_process;
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
 
     private void iniUIFooter() {
         iniFooter();
@@ -199,6 +217,67 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral implements Act043_
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
     }
+    //region WS_Return
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        if(ws_process.equalsIgnoreCase(WS_SO_Service_Search.class.getName())){
 
 
+        }
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        disableProgressDialog();
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Tratativa SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+    //endregion
 }

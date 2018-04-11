@@ -536,8 +536,12 @@
         <service android:name=".service_chat.WS_Room_AP" />
 
         <receiver android:name=".receiver.WBR_SO_Pack_Express_Local" />
+
         <service android:name=".service.WS_SO_Pack_Express_Local" />
 
+        <receiver android:name=".receiver.WBR_SO_Service_Search" />
+
+        <service android:name=".service.WS_SO_Service_Search" />
 
     </application>
 

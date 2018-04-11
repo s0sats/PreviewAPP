@@ -31,6 +31,7 @@ public class Constant extends ConstantBaseApp {
 
     public static final String WS_LOGOUT = "https://dev.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SO_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_so.ws";
+    public static final String WS_SO_SERVICE_SEARCH = "https://dev.namoadigital.com/ws/prj001/server_sm_so_pack_service_list_app.ws";
 
     public static final String WS_SO_SAVE = "https://dev.namoadigital.com/ws/prj001/server_save_so.ws";
 
